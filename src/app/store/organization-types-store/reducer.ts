@@ -15,7 +15,7 @@ export function organizationTypeReducer(state: State = initialState, action) {
         case ActionTypes.LOAD_SUCCESS: {
             return {
                 ...state,
-                statuses: action.payload,
+                organizationTypes: action.payload,
                 isLoading: false,
                 error: null,
                 loaded: true

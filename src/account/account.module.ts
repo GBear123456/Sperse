@@ -10,7 +10,6 @@ import { RecaptchaModule } from 'ng-recaptcha';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AccountRoutingModule } from './account-routing.module';
 import { AccountComponent } from './account.component';
-import { AccountRouteGuard } from './auth/account-route-guard';
 import { ConfirmEmailComponent } from './email-activation/confirm-email.component';
 import { EmailActivationComponent } from './email-activation/email-activation.component';
 import { LanguageSwitchComponent } from './language-switch.component';
@@ -60,8 +59,7 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
         CompleteTenantRegistrationComponent
     ],
     providers: [
-        LoginService,
-        AccountRouteGuard
+        LoginService
     ]
 })
 export class AccountModule {

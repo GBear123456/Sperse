@@ -17,7 +17,6 @@ import { SelectTenantComponent } from './login/select-tenant.component';
 import { AccountComponent } from './account.component';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration.component';
-import { AccountRouteGuard } from './auth/account-route-guard';
 
 @NgModule({
     imports: [

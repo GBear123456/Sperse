@@ -271,9 +271,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stage['total'] = dataSource.totalCount();
                     stage['full'] = (stage['leads'].length >= (stage['total'] || 0));
                 } else  {
-                    if (!page)
+                    if (!page || !stage['leads'])
                         stage['leads'] = [];
-                    stage['total'] = stage['leads'].length || 0;
+                    stage['total'] = stage['leads'].length;
                     stage['full'] = true;
                 }
           
@@ -304,9 +304,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         })).load().done((res) => {
             let stages = res.pop();
             stages && this.stages.forEach((stage) => {
-                stage['total'] = stages[stage.id];
-                stage['full'] = stage['total']
-                    <= stage['leads'].length;
+                if (stages[stage.id]) {
+                    stage['total'] = stages[stage.id];
+                    stage['full'] = stage['total']
+                        <= stage['leads'].length;
+                }
             });
         });
     }

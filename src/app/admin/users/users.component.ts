@@ -97,20 +97,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 }
             },
             {
-                text: this.l('Edit Old'),
-                visible: this.permission.isGranted('Pages.Administration.Users.Edit'),
-                action: () => {
-                    this.createOrEditUserModal.show(this.actionRecord.id);
-                }
-            },
-            {
-                text: this.l('Permissions'),
-                visible: this.permission.isGranted('Pages.Administration.Users.ChangePermissions'),
-                action: () => {
-                    this.editUserPermissionsModal.show(this.actionRecord.id, this.actionRecord.userName);
-                }
-            },
-            {
                 text: this.l('Unlock'),
                 visible: this.permission.isGranted('Pages.Administration.Users.ChangePermissions'),
                 action: () => {
@@ -254,9 +240,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     openUserDetails(userId) {
-        this.searchClear = false;
-        this._router.navigate(['app/admin/user/' + userId + '/user-information'],
-            { queryParams: { referrer: 'app/admin/users'} });
+        this.searchClear = false; 
+        this.actionRecord = null;
+        setTimeout(() => {
+            this._router.navigate(['app/admin/user/' + userId + '/user-information'],
+                { queryParams: { referrer: 'app/admin/users'} });
+        }); 
     }
 
     initFilterConfig() {

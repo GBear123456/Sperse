@@ -48,14 +48,13 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
                 });
             });
         } else {
-
             this.model.userId = this._activatedRoute.snapshot.queryParams['userId'];
             this.model.resetCode = this._activatedRoute.snapshot.queryParams['resetCode'];
 
             this._appSessionService.changeTenantIfNeeded(
                 this.parseTenantId(
                     this._activatedRoute.snapshot.queryParams['tenantId']
-                )
+                ), false
             );
         }
     }
@@ -76,7 +75,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
                 this._loginService.authenticateModel.password = this.model.password;
                 this._loginService.authenticate(() => {
                     this.saving = false;
-                });
+                }, undefined, !this.model.resetCode);
             });
     }
 

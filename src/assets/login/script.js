@@ -180,6 +180,8 @@
 
     if (window['loginForm']) {
         var form = window['loginForm'];
+        form.elements['userNameOrEmailAddress'].onkeyup = 
+            form.elements['password'].onkeyup = checkIsValid;
         form.onsubmit = function() {
             if (checkIsValid()) {
                 var params = queryString(document.location.search.substr(1), '&');
