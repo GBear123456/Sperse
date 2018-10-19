@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, Injector, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -53,7 +53,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     styleUrls: ['create-client-dialog.component.less'],
     providers: [ContactGroupServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ]
 })
-export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy {
+export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
@@ -135,6 +135,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     similarCustomers: SimilarContactGroupOutput[];
     similarCustomersDialog: any;
     toolbarConfig = [];
+    showPhotoArea = false;
 
     private namePattern = AppConsts.regexPatterns.name;
     private validationError: string;
@@ -174,6 +175,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.leadStagesLoad();
         }
         this.initToolbarConfig();
+    }
+
+    ngAfterViewInit() { 
+        //!!VP fixed design for photo area under MacOS
+        setTimeout(() => {
+            this.showPhotoArea = true;
+        }, 1000);
     }
 
     initToolbarConfig() {
@@ -841,6 +849,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     emptyInput(field) {
+        if (field == 'phones')
+            this.phoneExtension = '';
         this.setComponentToValid(field, true);
         this.clearButtonVisible[field] = false;
         this.checkSimilarCustomers();
