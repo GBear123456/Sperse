@@ -43,10 +43,6 @@
 
     &.fullscreen {
         top: 0 !important;
-
-        .cashflow #cashflowFooterToolbar {
-            bottom: 0;
-        }
     }
 
     .sidebar-calculator-widget {
@@ -1102,7 +1098,7 @@
 
         #cashflowFooterToolbar {
             position: absolute;
-            bottom: 135px;
+            bottom: 0px;
             width: 100%;
             z-index: 1;
 
@@ -1561,8 +1557,11 @@
             }
         }
 
-        .pivot-grid-wrapper {
+        .cashflow-scroll {
             height: calc(~'100vh - 210px');
+            &.withCashflowFooterToolbar {
+                padding-bottom: 42px;
+            }
         }
     }
 

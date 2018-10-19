@@ -163,9 +163,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     cashflowTypes: any;
 
-    /** Current group by period */
-    private groupBy: 'year' | 'quarter' | 'month' = 'year';
-
     /** Bank accounts of user with extracted bank accounts */
     private bankAccounts: BankAccountDto[];
     private activeBankAccounts: BankAccountDto[];

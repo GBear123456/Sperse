@@ -168,7 +168,7 @@
             </div>
         </dx-data-grid>
     </dx-resizable>
-    <dx-scroll-view class="cashflow-scroll" (onScroll)="onScroll($event)">
+    <dx-scroll-view class="cashflow-scroll" (onScroll)="onScroll($event)" [ngClass]="{ 'withCashflowFooterToolbar' : cashflowGridSettings?.visualPreferences?.showFooterBar}">
         <div class="pivot-grid-wrapper">
             <dx-pivot-grid *ngIf="cashflowData && cashflowData.length" id="operations"
                            class="pivot-grid invisible"
