@@ -5,6 +5,7 @@ import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
 import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy } from 'shared/service-proxies/service-proxies';
 import { Subject, Subscription, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { BehaviorSubject } from '@node_modules/rxjs';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
@@ -18,7 +19,7 @@ export class CFOService extends CFOServiceBase {
         private _contactService: ContactServiceProxy
     ) {
         super();
-
+        this.statusActive = new BehaviorSubject<boolean>(false);
         _appService.subscribeModuleChange((config) => {
             if (config['name'] == 'CFO') {
                 if (this.initialized === undefined) {
@@ -55,7 +56,9 @@ export class CFOService extends CFOServiceBase {
             .subscribe((data) => {
                 if (this.instanceId && data.userId)
                     this.initContactInfo(data.userId);
-                this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
+                const status = data.status == GetStatusOutputStatus.Active;
+                this.statusActive.next(status);
+                this.initialized = status && data.hasSyncAccounts;
                 this.hasTransactions = this.initialized && data.hasTransactions;
                 this.updateMenuItems();
                 callback && callback.call(this, this.hasTransactions);

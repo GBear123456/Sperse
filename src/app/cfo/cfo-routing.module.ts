@@ -12,6 +12,7 @@ import { PermissionsComponent } from './permissions/permissions.component';
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
 import { StatementsComponent } from './statements/statements.component';
+import { CfoInstanceStatusGuard } from '@app/cfo/cfo-instance-status-guard';
 
 @NgModule({
     imports: [
@@ -37,8 +38,18 @@ import { StatementsComponent } from './statements/statements.component';
                             }
                         ]
                     },
-                    { path: 'business-entities', component: BusinessEntitiesComponent, data: { permission: '' } },
-                    { path: 'chart-of-accounts', component: ChartOfAccountsComponent, data: { permission: '' } },
+                    {
+                        path: 'business-entities',
+                        component: BusinessEntitiesComponent,
+                        data: { permission: '' },
+                        canActivate: [ CfoInstanceStatusGuard ]
+                    },
+                    {
+                        path: 'chart-of-accounts',
+                        component: ChartOfAccountsComponent,
+                        data: { permission: '' },
+                        canActivate: [ CfoInstanceStatusGuard ]
+                    },
                     { path: 'cashflow', component: CashflowComponent, data: { permission: '', reuse: true } },
                     { path: 'stats', component: StatsComponent, data: { permission: '', reuse: true } },
                     { path: 'transactions', component: TransactionsComponent, data: { permission: '', reuse: true } },
@@ -51,6 +62,9 @@ import { StatementsComponent } from './statements/statements.component';
     ],
     exports: [
         RouterModule
+    ],
+    providers: [
+        CfoInstanceStatusGuard
     ]
 })
 export class CfoRoutingModule { }
