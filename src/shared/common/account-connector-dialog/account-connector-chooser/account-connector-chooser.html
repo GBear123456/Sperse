@@ -5,7 +5,7 @@
 <ul class="connectors">
     <li *ngFor="let connector of connectors" (click)="selectConnector(connector)" [ngClass]="{
         disabled: connector.disabled,
-        selected: connector === selectedConnector.value
+        selected: connector === selectedConnector
     }">
         <img [src]="'assets/common/icons/' + connector.iconName + '.svg'">
         <div>
@@ -15,5 +15,5 @@
     </li>
 </ul>
 <div class="footer">
-    <button (click)="next()" [disabled]="nextButtonIsHidden$ | async">{{ l('Next') }}</button>
+    <button (click)="next()" [disabled]="!selectedConnector">{{ l('Next') }}</button>
 </div>
