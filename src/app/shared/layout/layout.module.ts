@@ -21,18 +21,14 @@ import { HeaderComponent } from './header.component';
 import { SideBarComponent } from './side-bar.component';
 import { TopBarComponent } from './top-bar.component';
 import { FiltersModule } from '@shared/filters/filters.module';
-import { UtilsModule } from '@shared/utils/utils.module';
-import { SideBarMenuComponent } from './nav/side-bar-menu.component';
-import { TopBarMenuComponent } from './nav/top-bar-menu.component';
+import { UtilsModule } from '@shared/utils/utils.module'
 import { LayoutService } from '@app/shared/layout/layout.service';
 
 let COMPONENTS = [
     PlatformSelectComponent,
     HeaderComponent,
     TopBarComponent,
-    SideBarComponent,
-    SideBarMenuComponent,
-    TopBarMenuComponent
+    SideBarComponent
 ];
 
 @NgModule({
