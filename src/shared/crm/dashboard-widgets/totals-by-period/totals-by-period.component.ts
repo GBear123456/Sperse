@@ -1,11 +1,34 @@
-import { Component, OnInit, Injector } from '@angular/core';
+/** Core imports */
+import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
+
+/** Third party imports */
+import { Observable, of } from 'rxjs';
+import {
+    finalize,
+    first,
+    switchMap,
+    takeUntil,
+    toArray,
+    map,
+    mergeAll,
+    mergeMap,
+    pluck,
+    distinct,
+    publishReplay,
+    refCount,
+    withLatestFrom
+} from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+
+/** Application imports */
+import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { TotalsByPeriodModel } from './totals-by-period.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy, GroupBy, GroupBy2 } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { AppConsts } from '@shared/AppConsts';
-import { finalize } from 'rxjs/operators';
-import * as moment from 'moment';
+import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 @Component({
     selector: 'totals-by-period',
@@ -13,14 +36,15 @@ import * as moment from 'moment';
     styleUrls: ['./totals-by-period.component.less'],
     providers: [ DashboardServiceProxy ]
 })
-export class TotalsByPeriodComponent extends AppComponentBase implements OnInit {
-    totalsData: any = [];
+export class TotalsByPeriodComponent extends AppComponentBase implements OnInit, OnDestroy {
+    totalsData: any[] = [];
+    totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
     startDate: any;
     endDate: any;
     chartWidth = 650;
     currency = 'USD';
 
-    clientColor = '#00aeef';
+    clientColor = '#8487e7';
     leadColor = '#54e4c9';
 
     periods: TotalsByPeriodModel[] = [
@@ -44,28 +68,102 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
         }
     ];
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
+    private series: any[] = [
+        {
+            axis: 'total',
+            type: 'spline',
+            valueField: 'customerCount',
+            name: this.l('Client Count'),
+            color: this.clientColor
+        }
+    ];
+
+    allSeries$: Observable<any>;
+    leadStagesSeries$: Observable<any>;
 
     constructor(injector: Injector,
         private _dashboardServiceProxy: DashboardServiceProxy,
-        private _dashboardWidgetsService: DashboardWidgetsService
+        private _dashboardWidgetsService: DashboardWidgetsService,
+        private store$: Store<CrmStore.State>,
+        private _pipelineService: PipelineService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     ngOnInit() {
-        this._dashboardWidgetsService.subscribePeriodChange((period) => {
-            if (period) {
-                if ([this.l('Today'), this.l('Yesterday'), this.l('This_Week'), this.l('This_Month'), this.l('Last_Month')].indexOf(period.name) >= 0)
-                    this.selectedPeriod = this.periods[0];
-                else
-                    this.selectedPeriod = this.periods[2];
-            }
-            this.startLoading();
-            this._dashboardServiceProxy.getCustomerAndLeadStats(GroupBy2[this.selectedPeriod.name],
-                 this.selectedPeriod.amount, false).pipe(finalize(() => {this.finishLoading();})).subscribe((result) => {
-                     this.totalsData = result;
-                 });
+        this.totalsData$ = this._dashboardWidgetsService.period$.pipe(
+            takeUntil(this.destroy$),
+            map(period => this.savePeriod(period)),
+            switchMap(period => this.loadCustomersAndLeadsStats(period)),
+            publishReplay(),
+            refCount()
+        );
+
+        this.totalsData$.subscribe(data => {
+            /** Move leadStageCount object property inside data object to correctly display the widget */
+            this.totalsData = data.map(dataItem => {
+                return { ...dataItem, ...dataItem['leadStageCount'] };
+            });
         });
+
+        /** Return new stage for each unique stage id every time the total data change */
+        this.leadStagesSeries$ = this.totalsData$.pipe(
+            switchMap(data => this.convertLeadsStatsToSeriesConfig(data))
+        );
+
+        /** Merge default series config for clients and dynamic leads series configs */
+        this.allSeries$ = this.leadStagesSeries$.pipe(
+            withLatestFrom(of(this.series), ((leadStagesSeries , allSeries) => [ ...leadStagesSeries, ...allSeries ]))
+        );
+    }
+
+    private savePeriod(period) {
+        if (period) {
+            if ([this.l('Today'), this.l('Yesterday'), this.l('This_Week'), this.l('This_Month'), this.l('Last_Month')].indexOf(period.name) >= 0)
+                this.selectedPeriod = this.periods[0];
+            else
+                this.selectedPeriod = this.periods[2];
+        }
+        return this.selectedPeriod;
+    }
+
+    private loadCustomersAndLeadsStats(period: any): Observable<GetCustomerAndLeadStatsOutput[]> {
+        this.startLoading();
+        return this._dashboardServiceProxy.getCustomerAndLeadStats(
+            GroupBy2[(period.name as GroupBy2)],
+            period.amount,
+            true
+        ).pipe(finalize(() => { this.finishLoading(); }) );
+    }
+
+    private convertLeadsStatsToSeriesConfig(data): Observable<any> {
+        return of(data).pipe(
+            mergeAll(),
+            pluck('leadStageCount'),
+            mergeMap(leadsStages => Object.keys(leadsStages)),
+            distinct(),
+            switchMap(stageId => this.getLeadStageSeriaConfig(+stageId)),
+            toArray(),
+            map(stages => stages.sort((a, b) => +a.sortOrder > +b.sortOrder ? 1 : (+a.sortOrder === +b.sortOrder ? 0 : -1)))
+        );
+    }
+
+    private getLeadStageSeriaConfig(stageId: number): Observable<any> {
+        return this.store$.select(PipelinesStoreSelectors.getStageById({
+            purpose: AppConsts.PipelinePurposeIds.lead,
+            stageId: stageId
+        })).pipe(
+            first(),
+            map(stage => {
+                return {
+                    valueField: stageId.toString(),
+                    name: stage.name,
+                    color: stage.color || this._pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder),
+                    type: 'stackedBar',
+                    sortOrder: stage.sortOrder
+                };
+            })
+        );
     }
 
     getPeriodBottomAxisCustomizer(period: string) {
@@ -97,5 +195,9 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
 
     onDrawn($event) {
         setTimeout(() => $event.component.render(), 1000);
+    }
+
+    ngOnDestroy() {
+        super.ngOnDestroy();
     }
 }

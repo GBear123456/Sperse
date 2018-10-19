@@ -10,15 +10,28 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
-import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, PipelineServiceProxy, 
+import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, PipelineServiceProxy,
     PipelineDto, ActivityServiceProxy, TransitionActivityDto } from '@shared/service-proxies/service-proxies';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
+
+interface StageColor {
+    [stageSortOrder: string]: string;
+}
 
 @Injectable()
 export class PipelineService {
     public stageChange: Subject<any>;
     private _pipelineDefinitions: any = {};
+    private defaultStagesColors: StageColor = {
+        '-3': '#f05b29',
+        '-2': '#f4ae55',
+        '-1': '#f7d15e',
+        '0': '#00aeef',
+        '1': '#b6cf5e',
+        '2': '#86c45d',
+        '3': '#46aa6e'
+    };
 
     constructor(
         injector: Injector,
@@ -39,7 +52,7 @@ export class PipelineService {
             filter(pipelineDefinition => pipelineDefinition),
             map(pipelineDefinition => {
                 this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
-                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages, 
+                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
                     (stage) => {
                         return stage.sortOrder;
                     });
@@ -50,7 +63,7 @@ export class PipelineService {
 
     getStages(pipelinePurposeId: string): any {
         return this.getPipeline(pipelinePurposeId).stages;
-    };
+    }
 
     getPipeline(pipelinePurposeId: string): PipelineDto {
         return this._pipelineDefinitions[pipelinePurposeId];
@@ -160,5 +173,16 @@ export class PipelineService {
         fromStage.total--;
         toStage.total++;
         this.stageChange.next(entity);
+    }
+
+    getStageDefaultColorByStageSortOrder(stageSortOrder: number) {
+        /** Get default or the closest color */
+        let color = this.defaultStagesColors[stageSortOrder] ;
+        /** If there is not default color for the sort order - get the closest */
+        if (!color) {
+            const defaultColorsKeys = Object.keys(this.defaultStagesColors);
+            color = +defaultColorsKeys[0] > stageSortOrder ? this.defaultStagesColors[defaultColorsKeys[0]] : this.defaultStagesColors[defaultColorsKeys[defaultColorsKeys.length]];
+        }
+        return color;
     }
 }

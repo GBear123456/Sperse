@@ -1,10 +1,12 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { State } from './state';
 import { PipelineDto } from 'shared/service-proxies/service-proxies';
+import { StageDto } from '@shared/service-proxies/service-proxies';
 
 interface Filter {
     id?: number;
-    purpose?: string;
+    purpose?: any;
+    stageId?: number;
 }
 
 export const getPipelinesState = createFeatureSelector<State>('pipelines');
@@ -74,5 +76,12 @@ export const getPipelineTreeSource = (filter: Filter) => createSelector(
             });
         }
         return result;
+    }
+);
+
+export const getStageById = (filter: Filter) => createSelector(
+    getPipelineStages(filter),
+    (stages: StageDto[]) => {
+        return stages.find(stage => stage.id === +filter.stageId);
     }
 );

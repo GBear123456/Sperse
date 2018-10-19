@@ -53,6 +53,7 @@ export class AppConsts {
         UiCustomizationsSiteTitleName: 'SiteTitle'
     };
 
+    /** @todo change to enum */
     static readonly PipelinePurposeIds = {
         lead: 'Lead',
         order: 'Order',
