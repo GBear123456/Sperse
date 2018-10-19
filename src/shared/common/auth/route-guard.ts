@@ -25,8 +25,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-
-        if (state && (UrlHelper.isInstallUrl(state.url) || UrlHelper.isAccountModuleUrl(state.url))) {
+        if (state && (UrlHelper.isInstallUrl(state.url) || UrlHelper.isAccountModuleUrl(state.url) || UrlHelper.isPFMUrl(state.url))) {
             return true;
         }
 

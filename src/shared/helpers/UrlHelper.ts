@@ -46,4 +46,8 @@ export class UrlHelper {
     static isAccountModuleUrl(url): boolean {
         return url && url.indexOf('account/') >= 0;
     }
+
+    static isPFMUrl(url): boolean {
+        return url && url.indexOf('personal-finance') >= 0;
+    }
 }

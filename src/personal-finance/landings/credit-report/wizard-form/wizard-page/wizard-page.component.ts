@@ -19,7 +19,8 @@ import {
     RegisterMemberRequestGender,
     MemberPaymentAuthorizeRequestDto,
     MemberInfoDto, MemberInfoDtoGender, MemberAddressDto,
-    PasswordComplexitySetting
+    PasswordComplexitySetting,
+    RegisterMemberRequestTenantHostType
 } from '@shared/service-proxies/service-proxies';
 import { PaymentInfoComponent } from '@shared/common/widgets/payment-info/payment-info.component';
 import { WizardComponent } from '../wizard.component';
@@ -299,6 +300,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     registerMemberSubmit(): void {
         abp.ui.setBusy();
         this.registrationInProgress = true;
+        this.model.tenantHostType = RegisterMemberRequestTenantHostType.FundingUi;
         this._memberService.registerMember(this.model)
             .subscribe(() => {
                 if (!this.isExistingUser) {
