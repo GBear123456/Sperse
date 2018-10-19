@@ -617,11 +617,11 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.devstaging.ts"
+                  "with": "src/environments/environment.prod.ts"
                 },
                 {
                   "replace": "src/assets/appconfig.json",
-                  "with": "src/assets/appconfig.devstaging.json"
+                  "with": "src/assets/appconfig.prod.json"
                 }
               ]
             }
