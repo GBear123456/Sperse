@@ -1,13 +1,14 @@
-import { Component, EventEmitter, OnInit, Input, Output, Injector } from '@angular/core';
+import { Component, EventEmitter, OnInit, Input, Output, Injector, OnDestroy } from '@angular/core';
 import { QuovoHandler, QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'quovo-login',
     template: ``
 })
-export class QuovoLoginComponent extends CFOComponentBase implements OnInit {
+export class QuovoLoginComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @Input() accountId: any;
     @Input() loadingContainerElement: Element;
     @Output() onClose: EventEmitter<any> = new EventEmitter();
@@ -30,7 +31,17 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit {
             if (this.loading) {
                 this.finishLoading(!this.loadingContainerElement, this.loadingContainerElement);
             }
-            this.quovoHandler.open((e) => this.onQuovoHanderClose(e), this.accountId);
+            /** Open quovo popup only after instance initialization - show the spinner untill that moment */
+            this._cfoService.statusActive
+                .pipe(takeUntil(this.destroy$))
+                .subscribe(statusActive => {
+                    if (statusActive) {
+                        this.quovoHandler.open((e) => this.onQuovoHanderClose(e), this.accountId);
+                        this.finishLoading(!this.loadingContainerElement, this.loadingContainerElement);
+                    } else {
+                        this.startLoading(!this.loadingContainerElement, this.loadingContainerElement);
+                    }
+                });
         } else {
             if (!this.loading) {
                 this.startLoading(!this.loadingContainerElement, this.loadingContainerElement);
@@ -41,5 +52,9 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit {
 
     private onQuovoHanderClose(e) {
         this.onClose.emit(e);
+    }
+
+    ngOnDestroy() {
+        super.ngOnDestroy();
     }
 }
