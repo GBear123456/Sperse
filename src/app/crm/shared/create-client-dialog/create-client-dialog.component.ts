@@ -181,7 +181,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         //!!VP fixed design for photo area under MacOS
         setTimeout(() => {
             this.showPhotoArea = true;
-        }, 1000);
+        }, 1300);
     }
 
     initToolbarConfig() {
