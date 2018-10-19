@@ -6,7 +6,7 @@ import { catchError, map } from 'rxjs/operators';
 import { InstanceServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
-export class CfoInstanceStatusGuard implements CanActivate<any> {
+export class CfoInstanceStatusGuard implements CanActivate {
     constructor(
         private cfoService: CFOService,
         private instanceServiceProxy: InstanceServiceProxy
