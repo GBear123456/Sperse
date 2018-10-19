@@ -450,7 +450,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
     }
 
     getColumnsMappingSuggestions(callback) {
-        this._importProxy.getMappedFields(this.fileData.data[0]).subscribe(callback);
+        this._importProxy.getMappedFields(this.fileData.data[0].filter(Boolean)).subscribe(callback);
     }
 
     checkFileHeaderAvailability() {
