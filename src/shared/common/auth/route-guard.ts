@@ -76,7 +76,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                     return 'app/cfo';
                 }
 
-                if (this._permissionChecker.isGranted('Pages.CFO.BaseAccess')) {
+                if (this._permissionChecker.isGranted('Pages.CFO')) {
 
                     if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))
                         return '/app/cfo/main/';

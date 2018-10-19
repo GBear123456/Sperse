@@ -110,7 +110,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     ) {
         super(injector);
 
-        if (_featureChecker.isEnabled('CFO') && _permissionChecker.isGranted('Pages.CFO.BaseAccess')) {
+        if (_featureChecker.isEnabled('CFO') && _permissionChecker.isGranted('Pages.CFO')) {
             this.memberAreaLinks.unshift(
                 {
                     name: 'accountsLink',
