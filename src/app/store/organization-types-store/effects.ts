@@ -21,7 +21,7 @@ export class OrganizationTypeEffects {
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
-            ofType<organizationTypesActions.LoadRequestAction>(organizationTypesActions.ActionTypes.LOAD_REQUEST),
+        ofType<organizationTypesActions.LoadRequestAction>(organizationTypesActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoaded))),
         exhaustMap(([action, loaded]) => {
 
@@ -31,8 +31,8 @@ export class OrganizationTypeEffects {
 
             return this.dictionaryService.getOrganizationTypes()
                 .pipe(
-                    map((statuses: OrganizationTypeDto[]) => {
-                    return new organizationTypesActions.LoadSuccessAction(statuses);
+                    map((organizationTypes: OrganizationTypeDto[]) => {
+                    return new organizationTypesActions.LoadSuccessAction(organizationTypes);
                     }),
                     catchError(err => {
                         return of(new organizationTypesActions.LoadFailureAction(err));

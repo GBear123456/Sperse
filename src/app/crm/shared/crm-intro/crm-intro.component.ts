@@ -52,7 +52,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
     }
 
     onSubmit() {
-        if (this.showImportUsersStep) {
+        if (this.showImportUsersStep && this.importUsersStepComponent) {
             this.importUsersStepComponent.validateUsers();
             if (!this.importUsersStepComponent.validationResult)
                 return;
