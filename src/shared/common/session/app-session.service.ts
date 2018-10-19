@@ -77,14 +77,14 @@ export class AppSessionService {
         });
     }
 
-    changeTenantIfNeeded(tenantId?: number): boolean {
+    changeTenantIfNeeded(tenantId?: number, reload = true): boolean {
         if (this.isCurrentTenant(tenantId)) {
             return false;
         }
 
         abp.auth.clearToken();
         abp.multiTenancy.setTenantIdCookie(tenantId);
-        location.reload();
+        reload && location.reload();
         return true;
     }
 
