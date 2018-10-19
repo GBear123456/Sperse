@@ -1,12 +1,6 @@
 <header>
     <div class="left-section">
         <h2 class="title">{{l('Statistics By Period')}}</h2>
-        <div class="legend" [hidden]="!totalsData || !totalsData.length">
-            <ul class="legend-list">
-                <li class="legend-item client">{{l('Client Count')}}</li>
-                <li class="legend-item lead">{{l('Lead Count')}}</li>
-            </ul>
-        </div>
     </div>
 </header>
 <div>
@@ -32,14 +26,18 @@
             argumentType="datetime"
             visible="true"
             type="discrete">
-            <dxo-label [customizeText]="customizeBottomAxis"></dxo-label>
+            <dxo-label [customizeText]="customizeBottomAxis" [visible]="true"></dxo-label>
         </dxo-argument-axis>
+
+        <dxi-value-axis>
+            <dxo-label [visible]="false"></dxo-label>
+        </dxi-value-axis>
 
         <dxo-legend [visible]="false"></dxo-legend>
 
         <!-- Common settings for axis -->
-        <dxo-common-axis-settings allowDecimals="false">
-            <dxo-label alignment="center">
+        <dxo-common-axis-settings allowDecimals="false" [visible]="false">
+            <dxo-label alignment="center" [visible]="false">
                 <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
             </dxo-label>
             <dxo-strip-style>

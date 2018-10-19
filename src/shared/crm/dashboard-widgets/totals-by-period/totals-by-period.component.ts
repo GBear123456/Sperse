@@ -75,14 +75,9 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             valueField: 'customerCount',
             name: this.l('Client Count'),
             color: this.clientColor
-        }/*,
-        {
-            valueField: 'leadTotalCount',
-            name: 'Total',
-            color: 'red',
-            type: 'fullstackedbar'
-        }*/
+        }
     ];
+
     allSeries$: Observable<any>;
     leadStagesSeries$: Observable<any>;
 
@@ -161,10 +156,10 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             first(),
             map(stage => {
                 return {
-                    valueField: stageId,
+                    valueField: stageId.toString(),
                     name: stage.name,
                     color: stage.color || this._pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder),
-                    type: 'fullstackedbar',
+                    type: 'stackedBar',
                     sortOrder: stage.sortOrder
                 };
             })
