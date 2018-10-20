@@ -8,7 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatHorizontalStepper } from '@angular/ma
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { ModuleType, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
+import { ModuleType, InviteUserInputModuleType, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 
@@ -58,7 +58,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
                 return;
 
             this.startLoading(true);
-            this.importUsersStepComponent.submitInviteUsers()
+            this.importUsersStepComponent.submitInviteUsers(InviteUserInputModuleType.CRM)
                 .subscribe(() => this.questionnaire.submitQuestionnaire(), () => this.finishLoading(true));
         } else {
             this.startLoading(true);
