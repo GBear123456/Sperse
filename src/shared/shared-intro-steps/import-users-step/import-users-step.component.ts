@@ -6,6 +6,7 @@ import { Component, Injector, Input, OnInit } from '@angular/core';
 /** Application imports */
 import {
     InviteUserInput,
+    InviteUserInputModuleType,
     RoleListDto,
     RoleServiceProxy,
     TenantHostType,
@@ -51,7 +52,7 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
         }
     }
 
-    submitInviteUsers() {
+    submitInviteUsers(moduleType: InviteUserInputModuleType) {
         let users: InviteUserInput[] = [];
         this.importUsers.forEach(v => {
             if (v.email) {
@@ -61,7 +62,8 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
                     name: parsedName.first,
                     surname: parsedName.last,
                     assignedRoleNames: v.roleNames,
-                    tenantHostType: TenantHostType.PlatformApp
+                    tenantHostType: TenantHostType.PlatformApp,
+                    moduleType: moduleType
                 }));
             }
         });
