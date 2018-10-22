@@ -116,7 +116,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
             this.store$.dispatch(new ListsStoreActions.AddList({
                 contactGroupIds: [contactGroupIds[0]],
                 lists: lists,
-                successMessage: this.l('CustomerTagsUpdated'),
+                successMessage: this.l('CustomerListsUpdated'),
                 serviceMethodName: 'updateContactGroupLists'
             }));
     }
