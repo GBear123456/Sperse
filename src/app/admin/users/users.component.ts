@@ -39,6 +39,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     private filters: FilterModel[];
     selectedPermission: string;
     role: number;
+    private subRouteParams: any;
 
     public actionMenuItems: any;
     public actionRecord: any;
@@ -129,7 +130,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             }
         });
 
-        this.activate(true);
+        this.activate();
     }
 
     initToolbarConfig() {
@@ -379,9 +380,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.deactivate();
     }
 
-    activate(initial = false) {
+    activate() {
         super.activate();
 
+        this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
 
@@ -389,8 +391,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.overflowHidden(true);
 
         this.showHostElement();
-        if (!initial)
-            this.dataSource.reload();
     }
 
     deactivate() {
@@ -399,11 +399,21 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
 
+        this.subRouteParams.unsubscribe();
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
        this.hideHostElement();
+    }
+
+    private paramsSubscribe() {
+        if (!this.subRouteParams || this.subRouteParams.closed)
+            this.subRouteParams = this._activatedRoute.queryParams
+                .subscribe(params => {
+                    if (params['refresh'])
+                        this.invalidate();
+                });
     }
 
     onContentReady(event) {
