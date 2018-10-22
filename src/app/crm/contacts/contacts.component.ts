@@ -261,7 +261,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             let contactInfo$ = this._contactGroupService
                 .getContactGroupInfo(customerId);
 
-            if (leadId)
+            if (leadId) 
                 this.loadLeadsStages();
 
             this.customerType = partnerId ? ContactGroupType.Partner : ContactGroupType.Client;
@@ -272,6 +272,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     if (!this.partnerInfo)
                         this.close(true);
                 })).subscribe(result => {
+                    this.loadLeadData();
                     this.fillContactDetails(result[0]);
                     this.fillPartnerDetails(result[1]);
                     this.loadPartnerTypes();
@@ -282,6 +283,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     if (!this.contactInfo)
                         this.close(true);
                 })).subscribe(result => {
+                    this.loadLeadData();
                     this.fillContactDetails(result);
                 });
             }
@@ -481,8 +483,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         let sourceStage = this.leadInfo.stage;
         let targetStage = $event.itemData.text;
         let complete = () => {
-            this.clientStageId = this.leadStages.find(stage => stage.name === this.leadInfo.stage).id;
+            this.clientStageId = this.leadStages.find(stage => stage.name === targetStage).id;
             this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);
+            this.notify.success(this.l('StageSuccessfullyUpdated'));
         };
         if (this._pipelineService.updateEntityStage(AppConsts.PipelinePurposeIds.lead, this.leadInfo, sourceStage, targetStage, complete))
             this.leadInfo.stage = targetStage;
