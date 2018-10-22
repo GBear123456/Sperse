@@ -58,7 +58,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     private rootComponent: any;
     private formatting = AppConsts.formatting;
 
-    dataSource: any;
+    dataSource: DataSource;
 
     constructor(
         injector: Injector,
@@ -129,7 +129,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             }
         });
 
-        this.activate();
+        this.activate(true);
     }
 
     initToolbarConfig() {
@@ -379,7 +379,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.deactivate();
     }
 
-    activate() {
+    activate(initial = false) {
         super.activate();
 
         this.initFilterConfig();
@@ -389,6 +389,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.overflowHidden(true);
 
         this.showHostElement();
+        if (!initial)
+            this.dataSource.reload();
     }
 
     deactivate() {
