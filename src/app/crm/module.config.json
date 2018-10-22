@@ -6,7 +6,7 @@
   "requiredPermission": "Pages.CRM",
   "navigation": [
     [ "Dashboard", "", "icon-home", "/app/crm/dashboard" ],
-    [ "Leads", "Pages.CRM.Leads", "icon-globe", "/app/crm/leads" ],
+    [ "Leads", "Pages.CRM.Customers", "icon-globe", "/app/crm/leads" ],
     [ "Clients", "Pages.CRM.Customers", "icon-globe", "/app/crm/clients" ],
     [ "Tasks", "", "icon-globe", "/app/crm/activity" ],
     [ "Partners", "Pages.CRM.Partners", "icon-globe", "/app/crm/partners" ],
