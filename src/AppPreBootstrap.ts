@@ -101,7 +101,8 @@ export class AppPreBootstrap {
             headers: {
                 '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
                 'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
-            }
+            },
+            abpHandleError: false
         }).done(result => {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
