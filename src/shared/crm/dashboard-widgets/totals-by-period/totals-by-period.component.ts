@@ -1,8 +1,9 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { TotalsByPeriodModel } from './totals-by-period.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy, GroupBy, GroupBy2 } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
+import { DxChartComponent } from 'devextreme-angular';
 import { AppConsts } from '@shared/AppConsts';
 import { finalize } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -14,6 +15,8 @@ import * as moment from 'moment';
     providers: [ DashboardServiceProxy ]
 })
 export class TotalsByPeriodComponent extends AppComponentBase implements OnInit {
+    @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
+
     totalsData: any = [];
     startDate: any;
     endDate: any;
@@ -95,7 +98,8 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit 
         return elem.value.toDateString().split(' ').splice(1, 2).join(' ');
     }
 
-    onDrawn($event) {
-        setTimeout(() => $event.component.render(), 1000);
+    render() {
+        if (this.chartComponent)
+            this.chartComponent.instance.render();
     }
 }

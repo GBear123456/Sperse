@@ -18,6 +18,8 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppConsts } from '@shared/AppConsts';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
+import { TotalsByPeriodComponent } from '@shared/crm/dashboard-widgets/totals-by-period/totals-by-period.component';
+import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 
 @Component({
@@ -28,6 +30,8 @@ import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(RecentClientsComponent) recentClientsComponent: RecentClientsComponent;
+    @ViewChild(TotalsByPeriodComponent) totalsByPeriod: TotalsByPeriodComponent;
+    @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
     @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
     private rootComponent: any;
     private selectedPeriod: any;
@@ -129,6 +133,14 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.zendeskService.showWidget();
 
         this.showHostElement();
+        this.renderWidgets();
+    }
+
+    renderWidgets() {
+        setTimeout(() => {
+            this.totalsByPeriod.render();
+            this.totalsBySource.render();
+        }, 300);
     }
 
     invalidate() {

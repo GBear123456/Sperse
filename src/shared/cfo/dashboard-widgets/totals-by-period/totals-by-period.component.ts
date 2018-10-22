@@ -1,6 +1,7 @@
-import { Component, Injector, OnInit, Input} from '@angular/core';
+import { Component, Injector, OnInit, Input, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardService } from '../dashboard.service';
+import { DxChartComponent } from 'devextreme-angular';
 import {
     BankAccountsServiceProxy,
     GroupBy,
@@ -15,6 +16,8 @@ import { mergeMap, scan } from 'rxjs/operators';
     providers: [BankAccountsServiceProxy]
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
+    @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
+
     @Input() waitForBankAccounts = false;
     @Input() waitForPeriods = false;
     bankAccountIds: number[] = [];
@@ -157,4 +160,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         this.loadStatsData();
     }
 
+    render() {
+        if (this.chartComponent)
+            this.chartComponent.instance.render();
+    }
 }
