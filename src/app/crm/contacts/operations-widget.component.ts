@@ -33,19 +33,7 @@ export class OperationsWidgetComponent implements OnInit {
     @Input()
     set enabled(val: Boolean) {
         this._enabled = val;
-        this.toolbarConfig = val ? this._toolbarConfig : 
-        [ 
-            {
-                location: 'before',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'print',
-                        action: this.print.emit.bind(this.print)
-                    }
-                ]
-            }
-        ];
+        this.initToolbarConfig();
     }
     get enabled(): Boolean {
         return this._enabled;
@@ -83,7 +71,6 @@ export class OperationsWidgetComponent implements OnInit {
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private _enabled: Boolean;
-    private _toolbarConfig = [];
     private _stages: any[] = [];
     private _partnerTypes: any[] = [];
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -104,6 +91,9 @@ export class OperationsWidgetComponent implements OnInit {
     }
 
     initToolbarConfig(config = null) {        
+        if (config)
+            return (this.toolbarConfig = config);
+
         let items = [
             {
                 name: 'assign',
@@ -142,7 +132,7 @@ export class OperationsWidgetComponent implements OnInit {
                 action: this.toggleStars.bind(this),
             }
         ]);
-        this._toolbarConfig = config || [
+        this.toolbarConfig = this._enabled ? [
             {
                 location: 'before',
                 locateInMenu: 'auto',
@@ -160,6 +150,17 @@ export class OperationsWidgetComponent implements OnInit {
                         name: 'delete',
                         action: this.delete.bind(this),
                         visible: Boolean(this.leadId)
+                    }
+                ]
+            }
+        ] : [ 
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'print',
+                        action: this.print.emit.bind(this.print)
                     }
                 ]
             }
