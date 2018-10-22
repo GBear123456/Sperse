@@ -52,7 +52,10 @@ export class TenantsService {
                         if (defaultId) {
                             edition.editionId = +defaultId;
                         }
+                    } else {
+                        edition.editionId = +this.defaultEditionId;
                     }
+
                     this.editionsModels[editions[0].moduleId] = edition;
                     return this.concatEditionsWithDefault(editions);
                 })
@@ -78,7 +81,7 @@ export class TenantsService {
     }
 
     getTenantEditions() {
-        return values(this.editionsModels).filter(editionModel => editionModel.editionId !== +this.defaultEditionId);
+        return values(this.editionsModels).filter(editionModel => editionModel.editionId.toString() !== this.defaultEditionId);
     }
 
     getModuleIdByEditionId(editionId: number, editionsGroups): string {
