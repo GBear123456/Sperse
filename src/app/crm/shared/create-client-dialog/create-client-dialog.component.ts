@@ -725,7 +725,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (field == 'links') {
             value = {
                 isCompany: this.linkForCompany,
-                type: this.linkType,
+                type: this.linkType == this.linkTypeDefault ? undefined: this.linkType,
                 url: this.links
             };
             this.resetComponent(this[field + 'Component']);
