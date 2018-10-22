@@ -69,7 +69,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phonesComponent: any;
     linksComponent: any;
 
-    private readonly SAVE_OPTION_DEFAULT = 1;
+    private readonly SAVE_OPTION_DEFAULT = 2;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private similarCustomersTimeout: any;
     stages: any[] = [];

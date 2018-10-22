@@ -44,14 +44,14 @@
             <dx-text-box #companyComponent
                          name="company"
                          [placeholder]="l('Bussines name')"
-                         [width]="'320px'"
+                         [width]="'270px'"
                          (onKeyUp)="onCompanyKeyUp($event)"
                          [(value)]="company">
             </dx-text-box>
             <dx-text-box #titleComponent
                          name="title"
                          [placeholder]="l('Job title')"
-                         [width]="'320px'"
+                         [width]="'270px'"
                          [(value)]="title">
             </dx-text-box>
             <span [class]="(company || title) && 'clear-contact' || 'hidden'" (click)="company = title = ''">+</span>
@@ -79,7 +79,7 @@
                 </div>
                 <dx-text-box #emailComponent
                              name="email"
-                             [width]="'440px'"
+                             [width]="'410px'"
                              (onKeyUp)="onEmailKeyUp($event)"
                              (onInitialized)="onComponentInitialized($event, 'emails')">
                     <dx-validator>
@@ -125,7 +125,7 @@
                 <dx-number-box
                     class="tabular"
                     name="phoneExtension"
-                    width="100px"
+                    width="80px"
                     [inputAttr]="{maxlength: 5}"
                     [placeholder]="l('Ext')"
                     [(value)]="phoneExtension">
@@ -184,7 +184,7 @@
                 </div>
                 <dx-text-box #linksComponent
                              name="link"
-                             [width]="'440px'"
+                             [width]="'410px'"
                              (onKeyUp)="onLinkKeyUp($event)"
                              (onInitialized)="onComponentInitialized($event, 'links')">
                     <dx-validator>
@@ -243,12 +243,12 @@
                     [class]="addButtonVisible['addresses'] && 'add-contact' || clearButtonVisible['addresses'] && 'clear-contact' || 'hidden'"
                     (click)="clearButtonVisible['addresses'] ? addresses = {}: addAddressContact()">+</span>
             </div>
-            <div class="field addr">
+            <div class="field addr padding-right">
                 <dx-text-box
                     name="city"
                     maxLength="50"
                     placeholder="{{l('City')}}"
-                    [width]="'320px'"
+                    [width]="'270px'"
                     [(value)]="addresses['city']"
                     (onValueChanged)="checkAddressControls()">
                 </dx-text-box>
@@ -258,17 +258,17 @@
                     valueExpr="name"
                     name="state"
                     placeholder="{{l('State')}}"
-                    [width]="'320px'"
+                    [width]="'270px'"
                     [searchEnabled]="true"
                     [(value)]="addresses['state']"
                     (onValueChanged)="checkAddressControls()">
                 </dx-select-box>
             </div>
-            <div class="field addr" style="padding-bottom: 10px;">
+            <div class="field addr padding-right" style="padding-bottom: 10px;">
                 <dx-text-box
                     maxLength="10"
                     placeholder="{{l('Zip')}}"
-                    [width]="'320px'"
+                    [width]="'270px'"
                     [(value)]="addresses['zip']"
                     (onValueChanged)="checkAddressControls()">
                 </dx-text-box>
@@ -278,7 +278,7 @@
                     valueExpr="name"
                     name="country"
                     placeholder="{{l('Country')}}"
-                    [width]="'320px'"
+                    [width]="'270px'"
                     [searchEnabled]="true"
                     [(value)]="addresses['country']"
                     (onValueChanged)="onCountryChange($event)">
@@ -293,7 +293,7 @@
                 <label class="notes-label">{{l('Notes')}}</label>
                 <dx-text-area
                     name="comment"
-                    [width]="'660px'"
+                    [width]="'570px'"
                     [height]="'100px'"
                     (onKeyUp)="onCommentKeyUp($event)"
                     [(value)]="notes">
