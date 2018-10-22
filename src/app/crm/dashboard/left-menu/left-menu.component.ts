@@ -25,7 +25,7 @@ export class DashboardMenuComponent extends AppComponentBase {
 
         this.items = [
             { caption: 'ManageClients', component: '/clients', showPlus: true, hidden: !this.permission.isGranted('Pages.CRM.Customers') },
-            { caption: 'ManageLeads', component: '/leads', showPlus: true, hidden: !this.permission.isGranted('Pages.CRM.Leads') },
+            { caption: 'ManageLeads', component: '/leads', showPlus: true, hidden: !this.permission.isGranted('Pages.CRM.Customers') },
             { caption: 'ImportYourList', component: '/import-list', hidden: !this.permission.isGranted('Pages.CRM.BulkImport') },
             { caption: 'CustomizeSettings', component: '/editions', disabled: true }
             // {
