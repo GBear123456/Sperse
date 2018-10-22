@@ -52,6 +52,7 @@ export class TotalsBySourceComponent extends AppComponentBase {
                                 item.companySizeRange = 'Unknown';
                             this.totalCount += item.customerCount;
                         });
+                        setTimeout(() => { this.render(); }, 300);
                     }
             );
         });

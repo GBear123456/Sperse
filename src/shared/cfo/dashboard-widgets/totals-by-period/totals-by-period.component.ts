@@ -95,6 +95,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     this.totalData.creditPercent = this.getPercentage(maxValue, result.credit);
                     this.totalData.debitPercent = this.getPercentage(maxValue, result.debit);
                     this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
+                    setTimeout(() => { this.render(); }, 300);
                 },
                 e => { this.finishLoading(); },
                 () => this.finishLoading()
