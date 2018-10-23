@@ -26,8 +26,13 @@
         </div>
     </mat-dialog-actions>
 </div>
-<mat-dialog-content>
-    <dx-scroll-view showScrollbar="onHover">
+<mat-dialog-content [ngSwitch]="scrollEnabled" [ngStyle]="{overflow: scrollEnabled ? 'auto': 'hidden'}">
+    <ng-container *ngSwitchCase="true">
+        <dx-scroll-view showScrollbar="onHover">
+            <ng-content></ng-content>
+        </dx-scroll-view>
+    </ng-container>
+    <ng-container *ngSwitchCase="false">
         <ng-content></ng-content>
-    </dx-scroll-view>
+    </ng-container>
 </mat-dialog-content>

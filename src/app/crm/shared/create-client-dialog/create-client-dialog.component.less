@@ -13,11 +13,19 @@
         }
     }
 
-    .tab-content {
+    .toolbar-wraper {
+        width: 100%;
+        app-toolbar {
+            float: right;
+        }
+    }
+
+    .form-content {
         display: flex;
+        margin-top: 70px;
         flex-direction: column;
-        padding: 30px 50px;
-        height: 700px;
+        padding: 30px 0px 30px 50px;
+        height: calc(~"100vh - 150px");
 
         .drop-down-box-wrapper {
             width: 130px;

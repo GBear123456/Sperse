@@ -135,7 +135,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     similarCustomers: SimilarContactGroupOutput[];
     similarCustomersDialog: any;
     toolbarConfig = [];
-    showPhotoArea = false;
 
     private namePattern = AppConsts.regexPatterns.name;
     private validationError: string;
@@ -175,13 +174,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.leadStagesLoad();
         }
         this.initToolbarConfig();
-    }
-
-    ngAfterViewInit() { 
-        //!!VP fixed design for photo area under MacOS
-        setTimeout(() => {
-            this.showPhotoArea = true;
-        }, 1300);
     }
 
     initToolbarConfig() {

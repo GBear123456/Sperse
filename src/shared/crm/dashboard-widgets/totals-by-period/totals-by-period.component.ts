@@ -98,8 +98,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             map(period => this.savePeriod(period)),
             switchMap(period => this.loadCustomersAndLeadsStats(period)),
             publishReplay(),
-            refCount(),
-            finalize(() => setTimeout(() => { this.render(); }, 300))
+            refCount()
         );
 
         this.totalsData$.subscribe(data => {
@@ -107,6 +106,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             this.totalsData = data.map(dataItem => {
                 return { ...dataItem, ...dataItem['leadStageCount'] };
             });
+            setTimeout(() => { this.render(); }, 300);
         });
 
         /** Return new stage for each unique stage id every time the total data change */

@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, AfterViewInit, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
@@ -13,6 +13,7 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
   public data: any;
   public dialogRef: MatDialogRef<ModalDialogComponent, any>;
 
+  @Input() scrollEnabled = true;
   @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
   @Output() onTitleChanged: EventEmitter<any> = new EventEmitter<any>();
 
