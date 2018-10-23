@@ -43,20 +43,15 @@
                     color: #171c34;
                 }
                 span.year-discount {
-                    @media (max-width: 768px) {
-                        position: static!important;
-                    }
-
                     position: absolute;
                     right: -71px;
                     top: -19px;
                     color: #60d956;
                     font-weight: 700;
+                    @media (max-width: 768px) {
+                        position: static;
+                    }
                     &:before {
-                        @media (max-width: 768px) {
-                            display: none!important;
-                        }
-
                         content: '';
                         display: block;
                         width: 11px;
@@ -67,6 +62,9 @@
                         position: absolute;
                         bottom: -15px;
                         left: 2px;
+                        @media (max-width: 768px) {
+                            display: none;
+                        }
                     }
                 }
             }
@@ -121,11 +119,6 @@
             }
         }
         .slider {
-            @media (max-width: 768px) {
-                width: 90%!important;
-                display: block!important;
-            }
-
             display: flex;
             flex-wrap: wrap;
             align-items: center;
@@ -133,15 +126,18 @@
             width: 480px;
             margin: auto;
             position: relative;
+            @media (max-width: 768px) {
+                width: 90%;
+                display: block;
+            }
             .totalSeatsLabel {
-                @media (max-width: 768px) {
-                    position: static!important;
-                    display: block!important;
-                }
-
                 position: absolute;
                 right: calc(100% + 10px);
                 white-space: nowrap;
+                @media (max-width: 768px) {
+                    position: static;
+                    display: block;
+                }
             }
             .minus,
             .plus {
@@ -270,9 +266,15 @@
         display: flex;
         justify-content: center;
         margin-bottom: 35px;
-        flex-wrap: wrap;
+        @media (max-width: 768px) {
+            flex-wrap: wrap;
+        }        
     }
     .footer {
+        @media (min-width: 768px) {
+            padding: 0 180px;
+        }
+
         text-align: center;
         position: relative;
         margin: 0 auto;
