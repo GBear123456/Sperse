@@ -16,7 +16,6 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
     tooltipVisible = false;
-    quovoHandler: QuovoHandler;
     createAccountAvailable: boolean;
     constructor(
         injector: Injector,
@@ -34,9 +33,6 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
 
     ngOnInit(): void {
         super.ngOnInit();
-        if (!this.quovoHandler) {
-            this.quovoHandler = this.quovoService.getQuovoHandler(this.cfoService.instanceType, this.cfoService.instanceId);
-        }
     }
 
     openAddAccountDialog() {

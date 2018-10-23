@@ -24,7 +24,6 @@ import { AccountConnectors } from '@shared/AppEnums';
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     syncCompletedSubscription: Subscription;
     refreshSubscription: Subscription;
-    quovoHandler: any;
     bankAccountsService: BankAccountsService;
     syncAccounts;
 
@@ -58,7 +57,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     ngOnInit() {
         this.activate();
         this.syncAccounts = this.bankAccountsService.filteredSyncAccounts$.pipe(first());
-        this.quovoHandler = this._quovoService.getQuovoHandler(InstanceType[this.instanceType], this.instanceId);
     }
 
     ngOnDestroy() {
