@@ -1,9 +1,8 @@
 import { Injectable, Injector } from '@angular/core';
 
-import { Angular2Csv } from 'angular2-csv/Angular2-csv';
-
 import { DxDataGridComponent } from 'devextreme-angular';
 import { ExportGoogleSheetService } from './export-google-sheets/export-google-sheets';
+import { Angular5Csv } from './export-csv/export-csv';
 import DataSource from 'devextreme/data/data_source';
 
 import * as _s from 'underscore.string';
@@ -54,7 +53,7 @@ export class ExportService {
                 if (data.length > 0)
                     _headers = Object.keys(data[0]);
 
-                new Angular2Csv(data, this.getFileName(), { headers: _headers });
+                new Angular5Csv(data, this.getFileName(), { headers: _headers, replaceNulls: true });
             });      
         }        
     }

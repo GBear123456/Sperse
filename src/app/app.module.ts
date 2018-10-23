@@ -26,7 +26,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = 'sperse.zendesk.com';
     beforePageLoad(zE) {
         zE.setLocale('en');
-        zE.hide();
+//        zE.hide();
     }
 }
 

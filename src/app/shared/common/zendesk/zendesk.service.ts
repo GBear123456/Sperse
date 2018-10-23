@@ -16,35 +16,43 @@ export class ZendeskService {
             return;
         }
 
-        this.zendeskWidgetService.setSettings(
-            {
-                webWidget: {
-                    launcher: {
-                        label: {
-                            '*': abp.localization.localize('QuestionsOrFeedback',
-                                AppConsts.localization.defaultLocalizationSourceName)
+        try {
+            this.zendeskWidgetService.setSettings(
+                {
+                    webWidget: {
+                        launcher: {
+                            label: {
+                                '*': abp.localization.localize('QuestionsOrFeedback',
+                                    AppConsts.localization.defaultLocalizationSourceName)
+                            }
                         }
                     }
                 }
-            }
-        );
+            );
 
-        this.isZendeskWebwidgetSetuped = true;
+            this.isZendeskWebwidgetSetuped = true;
+        } catch(e) { 
+            this.isZendeskWebwidgetSetuped = false;
+        } 
     }
 
     showWidget() {
-        if (environment.zenDeskEnabled) {
-            this.setup();
-            this.showZendeskWebwidgetTimeout = setTimeout(() => {
-                this.zendeskWidgetService.show();
-            }, 2000);
-        }
+        try {
+            if (environment.zenDeskEnabled) {
+                this.setup();
+                this.showZendeskWebwidgetTimeout = setTimeout(() => {
+                    this.zendeskWidgetService.show();
+                }, 2000);
+            }
+        } catch(e) { } 
     }
 
     hideWidget() {
-        if (environment.zenDeskEnabled) {
-            clearTimeout(this.showZendeskWebwidgetTimeout);
-            this.zendeskWidgetService.hide();
-        }
+        try {
+            if (environment.zenDeskEnabled) {
+                clearTimeout(this.showZendeskWebwidgetTimeout);
+                this.zendeskWidgetService.hide();
+            }
+        } catch(e) { } 
     }
 }

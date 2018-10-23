@@ -735,10 +735,6 @@ angular2-counto@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/angular2-counto/-/angular2-counto-1.2.5.tgz#fb43dc0300513cd9a7f996437e68265a84c0f036"
 
-angular2-csv@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/angular2-csv/-/angular2-csv-0.2.5.tgz#8179f4392ed5c62b4043bf819e3bfc1ee8abf8f3"
-
 animate.css@3.5.2:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/animate.css/-/animate.css-3.5.2.tgz#91e668dc069a808e5e499514867b97aae0166c36"
