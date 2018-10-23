@@ -33,20 +33,33 @@ export class ConfirmEmailComponent extends AppComponentBase implements OnInit {
     ngOnInit(): void {
         this.waitMessage = this.l('PleaseWaitToConfirmYourEmailMessage');
 
-        this.model.c = this._activatedRoute.snapshot.queryParams['c'];
+        if (this._activatedRoute.snapshot.queryParams['c']) {
+            this.model.c = this._activatedRoute.snapshot.queryParams['c'];
 
-        this._accountService.resolveTenantId(new ResolveTenantIdInput({ c: this.model.c })).subscribe((tenantId) => {
-            if (isEqual(tenantId, {})) tenantId = null; // hack for host tenant
-            if (this._appSessionService.changeTenantIfNeeded(tenantId)) {
-                return; //changeTenantIfNeeded will reload page
-            }
+            this._accountService.resolveTenantId(new ResolveTenantIdInput({ c: this.model.c })).subscribe((tenantId) => {
+                if (isEqual(tenantId, {})) tenantId = null; // hack for host tenant
+                this.activateEmail(tenantId);
+            });
+        }
+        else {
+            this.model.userId = this._activatedRoute.snapshot.queryParams['userId'];
+            this.model.confirmationCode = this._activatedRoute.snapshot.queryParams['confirmationCode'];
+            let tenantId = this.parseTenantId(this._activatedRoute.snapshot.queryParams['tenantId']);
 
-            this._accountService.activateEmail(this.model)
-                .subscribe(() => {
-                    this.notify.success(this.l('YourEmailIsConfirmedMessage'));
-                    this._router.navigate(['/']);
-                });
-        });
+            this.activateEmail(tenantId);
+        }
+    }
+
+    activateEmail(tenantId) {
+        if (this._appSessionService.changeTenantIfNeeded(tenantId)) {
+            return; //changeTenantIfNeeded will reload page
+        }
+
+        this._accountService.activateEmail(this.model)
+            .subscribe(() => {
+                this.notify.success(this.l('YourEmailIsConfirmedMessage'));
+                this._router.navigate(['/']);
+            });
     }
 
 

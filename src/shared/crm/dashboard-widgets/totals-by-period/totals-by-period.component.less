@@ -1,4 +1,5 @@
 :host {
+    width: 100%;
     min-height: 330px;
     border: 1px solid #E5E9EC;
     background-color: #FFFFFF;
@@ -8,6 +9,7 @@
     display: block;
 
     header {
+        width: 100%;
         display: flex;
         justify-content: space-between;
         font-weight: 500;
@@ -94,21 +96,28 @@
         padding-top: 20px;
     }
 
-    dx-chart {
-        position: relative;
-        color: red;
-        font-size: 36.9px;
-        color: rgba(99, 107, 114, .08);
-        font-weight: 700;
+    .chart-wrapper {
+        width: 100%;
+        /deep/ dx-chart {
+            width: 100%;
+            position: relative;
+            color: red;
+            font-size: 36.9px;
+            color: rgba(99, 107, 114, .08);
+            font-weight: 700;
 
-        @media screen and (max-width: 1024px) {
-            font-size: 30px
-        }
-        .yearArgument {
-            font-size: 10px;
-        }
-        /deep/ g.dxc-arg-line {
-            display: none!important;
+            @media screen and (max-width: 1024px) {
+                font-size: 30px
+            }
+            .yearArgument {
+                font-size: 10px;
+            }
+            svg {
+                width: 100%!important;
+            }
+            g.dxc-arg-line {
+                display: none!important;
+            }
         }
     }
 }

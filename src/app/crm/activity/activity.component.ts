@@ -108,10 +108,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     let customize = ['DELETE', 'PATCH'].indexOf(request.method);
                     if (customize >= 0) {
                         if (customize)
-                            request.method = 'PUT';
+                            request.method = 'POST';
                         let endpoint = this.parseODataURL(request.url);
                         request.url = endpoint.url + 'api/services/CRM/Activity/'
-                            + (customize ? 'Update' : 'Delete?Id=' + endpoint.id);
+                            + (customize ? 'Move' : 'Delete?Id=' + endpoint.id);
                     } else {
                         request.params.$filter = buildQuery(
                             {

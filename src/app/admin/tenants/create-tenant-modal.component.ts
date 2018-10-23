@@ -69,7 +69,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
         this.tenant.isActive = true;
         this.tenant.shouldChangePasswordOnNextLogin = true;
         this.tenant.sendActivationEmail = true;
-        this.editionsGroups$ = this._tenantsService.getEditionsGroupsWithDefaultEdition();
+        this.editionsGroups$ = this._tenantsService.getEditionsGroups();
         this.editionsModels = this._tenantsService.editionsModels;
     }
 

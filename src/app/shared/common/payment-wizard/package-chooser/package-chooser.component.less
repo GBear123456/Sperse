@@ -43,12 +43,20 @@
                     color: #171c34;
                 }
                 span.year-discount {
+                    @media (max-width: 768px) {
+                        position: static!important;
+                    }
+
                     position: absolute;
                     right: -71px;
                     top: -19px;
                     color: #60d956;
                     font-weight: 700;
                     &:before {
+                        @media (max-width: 768px) {
+                            display: none!important;
+                        }
+
                         content: '';
                         display: block;
                         width: 11px;
@@ -113,19 +121,34 @@
             }
         }
         .slider {
+            @media (max-width: 768px) {
+                width: 90%!important;
+                display: block!important;
+            }
+
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
             width: 480px;
             margin: auto;
             position: relative;
             .totalSeatsLabel {
+                @media (max-width: 768px) {
+                    position: static!important;
+                    display: block!important;
+                }
+
                 position: absolute;
                 right: calc(100% + 10px);
                 white-space: nowrap;
             }
             .minus,
             .plus {
+                @media (max-width: 768px) {
+                    display: none!important;
+                }
+
                 margin-top: 2px;
                 font-family: 'FontAwesome';
                 font-size: 11px;
@@ -160,6 +183,10 @@
 
         /deep/ mat-slider.mat-slider:not(.mat-slider-disabled).mat-slider-horizontal {
             width: calc(100% - 83px);
+
+            @media (max-width: 768px) {
+                width: 50%!important;
+            }
 
             &.cdk-focused {
                 .mat-slider-thumb-label {
@@ -243,10 +270,10 @@
         display: flex;
         justify-content: center;
         margin-bottom: 35px;
+        flex-wrap: wrap;
     }
     .footer {
         text-align: center;
-        padding: 0 180px;
         position: relative;
         margin: 0 auto;
         .downgrade {

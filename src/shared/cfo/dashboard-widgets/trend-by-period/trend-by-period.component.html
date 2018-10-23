@@ -28,12 +28,10 @@
         </dx-select-box -->
     </div>
 </header>
-<div>
+<div *ngIf="trendData && trendData.length">
     <dx-chart
-        [hidden]="!trendData || !trendData.length"
         id="bar"
         [dataSource]="trendData"
-        animation="{easing: 'easeOutCubic',duration: 2000}"
         [barWidth]="0.5"
         [size]="{height: 245}"
         #barChart>
@@ -108,5 +106,5 @@
             </dxo-strip-style>
         </dxo-common-axis-settings>
     </dx-chart>
-    <app-no-data [hidden]="loading || (trendData && trendData.length)"></app-no-data>
 </div>
+<app-no-data [hidden]="loading || (trendData && trendData.length)"></app-no-data>

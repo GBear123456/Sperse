@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, OnDestroy } from '@angular/core';
+import { Component, OnInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { Observable, of } from 'rxjs';
@@ -26,6 +26,7 @@ import { TotalsByPeriodModel } from './totals-by-period.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy, GroupBy, GroupBy2 } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
+import { DxChartComponent } from 'devextreme-angular';
 import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -37,6 +38,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
     providers: [ DashboardServiceProxy ]
 })
 export class TotalsByPeriodComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
     totalsData: any[] = [];
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
     startDate: any;
@@ -96,7 +98,8 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             map(period => this.savePeriod(period)),
             switchMap(period => this.loadCustomersAndLeadsStats(period)),
             publishReplay(),
-            refCount()
+            refCount(),
+            finalize(() => setTimeout(() => { this.render(); }, 300))
         );
 
         this.totalsData$.subscribe(data => {
@@ -193,8 +196,9 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         return elem.value.toDateString().split(' ').splice(1, 2).join(' ');
     }
 
-    onDrawn($event) {
-        setTimeout(() => $event.component.render(), 1000);
+    render() {
+        if (this.chartComponent)
+            this.chartComponent.instance.render();
     }
 
     ngOnDestroy() {

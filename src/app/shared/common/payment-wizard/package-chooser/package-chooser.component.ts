@@ -86,7 +86,11 @@ export class PackageChooserComponent implements OnInit {
             this.packages = packages;
             this.selectedPackageIndex = this.packages.indexOf(this.packages.find(packageConfig => packageConfig.bestValue));
             /** Update selected package with the active status to handle next button status */
-            setTimeout(() => { this.selectPackage(this.selectedPackageIndex); }, 10);
+            setTimeout(() => {
+                this.selectPackage(this.selectedPackageIndex);
+                const plan = this.getPlan();
+                this.onPlanChosen.emit(plan);
+            }, 10);
             this.changeDetectionRef.detectChanges();
         });
         packagesConfig$.pipe(
@@ -156,13 +160,19 @@ export class PackageChooserComponent implements OnInit {
             this.selectPackage(this.selectedPackageIndex);
         }
 
+        const plan = this.getPlan();
+        this.onPlanChosen.emit(plan);
+        this.moveToNextStep.next();
+    }
+
+    getPlan() {
         const totalPrice = this.selectedPackageCardComponent.totalPrice;
         const plan: PackageOptions = {
             name: this.selectedPackageCardComponent.name,
             billingPeriod: this.selectedPackageCardComponent.billingPeriod,
             subscriptionFrequency: this.selectedPackageCardComponent.billingPeriod === BillingPeriod.Monthly
-                                   ? SetupSubscriptionInfoDtoFrequency._30
-                                   : SetupSubscriptionInfoDtoFrequency._365,
+                ? SetupSubscriptionInfoDtoFrequency._30
+                : SetupSubscriptionInfoDtoFrequency._365,
             pricePerUserPerMonth: this.selectedPackageCardComponent.pricePerUserPerMonth,
             subtotal: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.selectedPackageCardComponent.monthlyPricePerYear : totalPrice,
             discount: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.yearDiscount : 0,
@@ -171,8 +181,7 @@ export class PackageChooserComponent implements OnInit {
             selectedEditionId: this.selectedPackageCardComponent.selectedEdition.id,
             selectedEditionName: this.selectedPackageCardComponent.selectedEdition.name
         };
-        this.onPlanChosen.emit(plan);
-        this.moveToNextStep.next();
+        return plan;
     }
 
 }

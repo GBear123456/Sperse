@@ -5,9 +5,9 @@ import {
     DefaultTimezoneScope,
     UserNotificationState,
     IsTenantAvailableOutputState,
-    IncomeStatisticsDateInterval,
+    IncomeStatisticsDateInterval
 //    RegisterTenantInputSubscriptionStartType,
-    SalesSummaryDatePeriod
+
 } from '@shared/service-proxies/service-proxies';
 
 export class AppChatMessageReadState {
@@ -60,12 +60,6 @@ export class SubscriptionStartType {
 export class AppEditionExpireAction {
     static DeactiveTenant = 'DeactiveTenant';
     static AssignToAnotherEdition = 'AssignToAnotherEdition';
-}
-
-export class AppSalesSummaryDatePeriod {
-    static Daily: number = SalesSummaryDatePeriod._1;
-    static Weekly: number = SalesSummaryDatePeriod._2;
-    static Monthly: number = SalesSummaryDatePeriod._3;
 }
 
 export class LinkType {

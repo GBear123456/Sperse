@@ -3,16 +3,14 @@
         <h2 class="title">{{l('Statistics By Period')}}</h2>
     </div>
 </header>
-<div>
+<div class="chart-wrapper" *ngIf="totalsData && totalsData.length">
     <dx-chart
-        [hidden]="!totalsData || !totalsData.length"
         id="bar"
-        [dataSource]="totalsData"
-        animation="{easing: 'easeOutCubic',duration: 2000}"
         [barWidth]="0.5"
         (onDrawn)="onDrawn($event)"
         [size]="{height: 245}"
         [series]="allSeries$ | async">
+        [dataSource]="totalsData">
 
         <dxo-size height="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->
@@ -52,5 +50,5 @@
             <dxo-format type="largeNumber" [precision]="1"></dxo-format>
         </dxo-tooltip>
     </dx-chart>
-    <app-no-data [hidden]="loading || (totalsData && totalsData.length)"></app-no-data>
 </div>
+<app-no-data [hidden]="loading || (totalsData && totalsData.length)"></app-no-data>
