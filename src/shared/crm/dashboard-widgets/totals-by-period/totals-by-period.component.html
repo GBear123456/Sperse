@@ -7,7 +7,6 @@
     <dx-chart
         id="bar"
         [barWidth]="0.5"
-        (onDrawn)="onDrawn($event)"
         [size]="{height: 245}"
         [series]="allSeries$ | async">
         [dataSource]="totalsData">
