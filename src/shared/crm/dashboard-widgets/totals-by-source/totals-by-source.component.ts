@@ -1,7 +1,8 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
+import { DxPieChartComponent } from 'devextreme-angular';
 import { AppConsts } from '@shared/AppConsts';
 import { finalize } from 'rxjs/operators';
 
@@ -11,7 +12,8 @@ import { finalize } from 'rxjs/operators';
     styleUrls: ['./totals-by-source.component.less'],
     providers: []
 })
-export class TotalsBySourceComponent extends AppComponentBase implements OnInit {
+export class TotalsBySourceComponent extends AppComponentBase {
+    @ViewChild(DxPieChartComponent) chartComponent: DxPieChartComponent;
     totalsData: any;
     totalCount = 0;
 
@@ -50,19 +52,10 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
                                 item.companySizeRange = 'Unknown';
                             this.totalCount += item.customerCount;
                         });
+                        setTimeout(() => { this.render(); }, 300);
                     }
             );
         });
-    }
-
-    onInitialized($event) {
-        setTimeout(() => {
-            $event.component.render();
-        }, 1000);
-    }
-
-    ngOnInit() {
-
     }
 
     customizePoint = (data) => {
@@ -77,5 +70,10 @@ export class TotalsBySourceComponent extends AppComponentBase implements OnInit 
         this.rangeCount = (isHoverIn ? item.initialValue : this.totalCount).toLocaleString('en');
         this.rangeColor = isHoverIn ? this.rangeColors[item.index] : undefined;
         this.rangeName = item.argument;
+    }
+
+    render() {
+        if (this.chartComponent)
+            this.chartComponent.instance.render();
     }
 }

@@ -3,12 +3,11 @@
         <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
         <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCount}}</span>
         <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>
-        <div class="round-progress">
+        <div class="round-progress" *ngIf="totalsData && totalsData.length">
             <dx-pie-chart [dataSource]="totalsData" 
                 [type]="'doughnut'" 
                 [innerRadius]="0.9"
                 [customizePoint]="customizePoint"
-                (onInitialized)="onInitialized($event)"
                 (onPointHoverChanged)="onPointHoverChanged($event)"
                 (onPointSelectionChanged)="onPointSelectionChanged($event)"
                 [title]="{text: 'Totals by Company Size', font: {color: '#212c36', size: 18, weight: '700', family: 'Montserrat'}}"
@@ -18,5 +17,5 @@
             </dx-pie-chart>
         </div>
     </div>
-    <app-no-data [hidden]="totalCount"></app-no-data>
+    <app-no-data [hidden]="loading || totalCount"></app-no-data>
 </div>

@@ -113,7 +113,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                         originalImage: base64OrigImage,
                         thumbnail: base64ThumbImage
                     })
-                ).subscribe((result) => {});
+                ).subscribe(() => {
+                    if (this._userService['data'] && this._userService['data'].userId == abp.session.userId)
+                        abp.event.trigger('profilePictureChanged');
+                });
             }
         });
         event.stopPropagation();

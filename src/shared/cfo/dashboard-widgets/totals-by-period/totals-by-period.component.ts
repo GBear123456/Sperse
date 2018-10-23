@@ -1,6 +1,7 @@
-import { Component, Injector, OnInit, Input} from '@angular/core';
+import { Component, Injector, OnInit, Input, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardService } from '../dashboard.service';
+import { DxChartComponent } from 'devextreme-angular';
 import {
     BankAccountsServiceProxy,
     GroupBy,
@@ -15,6 +16,8 @@ import { mergeMap, scan } from 'rxjs/operators';
     providers: [BankAccountsServiceProxy]
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
+    @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
+
     @Input() waitForBankAccounts = false;
     @Input() waitForPeriods = false;
     bankAccountIds: number[] = [];
@@ -92,6 +95,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                     this.totalData.creditPercent = this.getPercentage(maxValue, result.credit);
                     this.totalData.debitPercent = this.getPercentage(maxValue, result.debit);
                     this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
+                    setTimeout(() => { this.render(); }, 300);
                 },
                 e => { this.finishLoading(); },
                 () => this.finishLoading()
@@ -157,4 +161,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
         this.loadStatsData();
     }
 
+    render() {
+        if (this.chartComponent)
+            this.chartComponent.instance.render();
+    }
 }

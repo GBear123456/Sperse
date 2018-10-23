@@ -290,6 +290,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     ngOnDestroy() {
+        this._clientService.toolbarUpdate();
         if (this.openDocumentMode) {
             this.closeDocument();
         }
@@ -512,18 +513,25 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     deleteDocument() {
-        this.startLoading(true);
-        this.showViewerType = undefined;
-        this.openDocumentMode = false;
-        this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
-            this.loadDocuments(() => {
-                if (this.actionsTooltip && this.actionsTooltip.visible) {
-                    this.hideActionsMenu();
+        this.message.confirm(
+            this.l('DocumentDeleteWarningMessage', this.currentDocumentInfo.fileName),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.startLoading(true);
+                    this.showViewerType = undefined;
+                    this.openDocumentMode = false;
+                    this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
+                        this.loadDocuments(() => {
+                            if (this.actionsTooltip && this.actionsTooltip.visible) {
+                                this.hideActionsMenu();
+                            }
+                            this.closeDocument();
+                            this.finishLoading(true);
+                        });
+                    });
                 }
-                this.closeDocument();
-                this.finishLoading(true);
-            });
-        });
+            }
+        );
     }
 
     downloadDocument() {

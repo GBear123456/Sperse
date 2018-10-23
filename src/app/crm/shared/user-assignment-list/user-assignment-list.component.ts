@@ -155,7 +155,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                                 this.list = res;
                         }
                     });
-                this.list = result;
+                this.list = result && result.slice(0);
             });
     }
 

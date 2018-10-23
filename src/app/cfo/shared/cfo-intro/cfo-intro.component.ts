@@ -7,7 +7,7 @@ import { MatHorizontalStepper, MAT_DIALOG_DATA, MatDialogRef } from '@angular/ma
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { InstanceType, ModuleType, UserServiceProxy } from 'shared/service-proxies/service-proxies';
+import { InstanceType, ModuleType, InviteUserInputModuleType, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
@@ -56,7 +56,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
                 return;
 
             this.startLoading(true);
-            this.importUsersStepComponent.submitInviteUsers()
+            this.importUsersStepComponent.submitInviteUsers(InviteUserInputModuleType.CFO)
                 .subscribe(() => this.questionnaire.submitQuestionnaire(), () => this.finishLoading(true));
         } else {
             this.startLoading(true);

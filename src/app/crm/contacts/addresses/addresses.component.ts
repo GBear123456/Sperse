@@ -68,10 +68,10 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         }
         this.getAddressTypes()
             .subscribe(types => {
-                this.types = types.map((type) => {
-                    type[type.id] = type.name;
-                    return type['isCompany'] == this.isCompany && type;
-                }).filter(Boolean);
+                types.map((type) => {
+                    if (type['isCompany'] == this.isCompany)
+                        this.types[type.id] = type.name;
+                });
             });
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');

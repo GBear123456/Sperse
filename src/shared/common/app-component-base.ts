@@ -219,8 +219,10 @@ export abstract class AppComponentBase implements OnDestroy {
         let gridInstance = this.dataGrid && this.dataGrid.instance;
         if (gridInstance) {
             let dataSource = gridInstance.getDataSource();
-            this.isDataLoaded = dataSource.isLoaded();
-            this.totalRowCount = dataSource.totalCount();
+            if (dataSource) {
+                this.isDataLoaded = dataSource.isLoaded();
+                this.totalRowCount = dataSource.totalCount();
+            }
         }
     }
 

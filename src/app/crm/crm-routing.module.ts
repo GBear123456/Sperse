@@ -20,7 +20,7 @@ import { ActivityComponent } from './activity/activity.component';
                     { path: 'dashboard', component: DashboardComponent, data: { permission: 'Pages.CRM', reuse: true } },
                     { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.CRM.Customers', reuse: true } },
                     { path: 'partners', component: PartnersComponent, data: { permission: 'Pages.CRM.Partners', reuse: true } },
-                    { path: 'leads', component: LeadsComponent, data: { permission: 'Pages.CRM.Leads', reuse: true } },
+                    { path: 'leads', component: LeadsComponent, data: { permission: 'Pages.CRM.Customers', reuse: true } },
                     { path: 'orders', component: OrdersComponent, data: { permission: 'Pages.CRM.Orders' } },
                     { path: 'import-leads', component: ImportLeadsComponent, data: { permission: 'Pages.CRM.BulkImport', reuse: true } },
                     { path: 'import-list', component: ImportListComponent, data: { permission: 'Pages.CRM.BulkImport', reuse: true } },
