@@ -66,4 +66,5 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
 })
 export class AppModule {
     constructor() {}
+    ngDoBootstrap() {}
 }
