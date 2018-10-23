@@ -24,7 +24,6 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit, OnD
     }
 
     ngOnInit(): void {
-        debugger;
         if (!this.quovoHandler) {
             this.quovoHandler = this._quovoService.getQuovoHandler(this._cfoService.instanceType, this._cfoService.instanceId);
         }
