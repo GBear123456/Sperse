@@ -21,7 +21,7 @@ export class QuovoHandler {
     private _getTokenFunc: Function;
     private _iframe: any;
     private onAdd: Function;
-    private _connectionId: any = null;
+    private _connectionId: number = null;
 
     constructor(instanceType: string, instanceId: number, createQuovoHandlerFunc, onAccountAdd, getTokenFunc) {
         this._instanceType = instanceType;
@@ -46,7 +46,7 @@ export class QuovoHandler {
     onClose: Function;
 
     connect(callback: Function = null) {
-        this._getTokenFunc(this, (token) => { this.createHandler(token); callback && setTimeout(() => callback(), 1500); }, () => this.onHandlerClose());
+        this._getTokenFunc(this, (token) => { this.createHandler(token); callback && setTimeout(() => callback(), 500); }, () => this.onHandlerClose());
     }
 
     get isValid() {
@@ -62,6 +62,7 @@ export class QuovoHandler {
 
     open(onClose: Function = null, connectionId: number = null) {
         if (!this.isLoaded || this.isOpened) { return; }
+        
         this._connectionId = connectionId;
         this.onClose = onClose;
         this.addedConnectionIds.length = 0;
@@ -72,18 +73,13 @@ export class QuovoHandler {
         
     }
 
-    private _open(reopen: boolean = true) {
+    private _open(reopenCount = 0) {
         try {
             if (this._connectionId) {
-                if (typeof (this._connectionId) !== 'number') {
-                    this._connectionId = parseInt(this._connectionId);
-                }
-
                 this.handler.open(
                     {
                         connectionId: this._connectionId
                     });
-
             } else {
                 this.handler.open();
             }
@@ -95,8 +91,10 @@ export class QuovoHandler {
                 console.log('Quovo.EventOriginError', err, 'reconnecting...');
                 this.reconnect();
             } else if (err instanceof Quovo.ConnectError) {
-                console.error('Quovo.ConnectError', err, 'reconnecting...');
-                reopen && setTimeout(() => this._open(false), 2000);
+                if (reopenCount < 10)
+                    setTimeout(() => this._open(reopenCount + 1), 500);
+                else
+                    console.error('Quovo.ConnectError', err, 'reconnecting...');
             } else {
                 console.error('non-Connect related error', err);
             }
