@@ -1315,17 +1315,14 @@ export class ActivityServiceProxy {
     }
 
     /**
-     * @includePhotos (optional) 
      * @return Success
      */
-    getRelatedAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+    getRelatedAssignableUsers(entityId: number): Observable<UserInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Activity/GetRelatedAssignableUsers?";
         if (entityId === undefined || entityId === null)
             throw new Error("The parameter 'entityId' must be defined and cannot be null.");
         else
             url_ += "EntityId=" + encodeURIComponent("" + entityId) + "&"; 
-        if (includePhotos !== undefined)
-            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10242,17 +10239,14 @@ export class CustomerServiceProxy {
     }
 
     /**
-     * @includePhotos (optional) 
      * @return Success
      */
-    getRelatedAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+    getRelatedAssignableUsers(entityId: number): Observable<UserInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Customer/GetRelatedAssignableUsers?";
         if (entityId === undefined || entityId === null)
             throw new Error("The parameter 'entityId' must be defined and cannot be null.");
         else
             url_ += "EntityId=" + encodeURIComponent("" + entityId) + "&"; 
-        if (includePhotos !== undefined)
-            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -14848,17 +14842,14 @@ export class LeadServiceProxy {
     }
 
     /**
-     * @includePhotos (optional) 
      * @return Success
      */
-    getRelatedAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+    getRelatedAssignableUsers(entityId: number): Observable<UserInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetRelatedAssignableUsers?";
         if (entityId === undefined || entityId === null)
             throw new Error("The parameter 'entityId' must be defined and cannot be null.");
         else
             url_ += "EntityId=" + encodeURIComponent("" + entityId) + "&"; 
-        if (includePhotos !== undefined)
-            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -17147,17 +17138,14 @@ export class PartnerServiceProxy {
     }
 
     /**
-     * @includePhotos (optional) 
      * @return Success
      */
-    getRelatedAssignableUsers(entityId: number, includePhotos: boolean | null | undefined): Observable<UserInfoDto[]> {
+    getRelatedAssignableUsers(entityId: number): Observable<UserInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Partner/GetRelatedAssignableUsers?";
         if (entityId === undefined || entityId === null)
             throw new Error("The parameter 'entityId' must be defined and cannot be null.");
         else
             url_ += "EntityId=" + encodeURIComponent("" + entityId) + "&"; 
-        if (includePhotos !== undefined)
-            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -24156,7 +24144,6 @@ export class UserServiceProxy {
     }
 
     /**
-     * @includePhotos (optional) 
      * @filter (optional) 
      * @permission (optional) 
      * @role (optional) 
@@ -24166,10 +24153,8 @@ export class UserServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getUsers(includePhotos: boolean | null | undefined, filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
+    getUsers(filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
-        if (includePhotos !== undefined)
-            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
         if (permission !== undefined)
@@ -27163,7 +27148,6 @@ export class UserInfoDto implements IUserInfoDto {
     name!: string | undefined;
     isActive!: boolean | undefined;
     profileThumbnailId!: string | undefined;
-    profileThumbnail!: string | undefined;
 
     constructor(data?: IUserInfoDto) {
         if (data) {
@@ -27180,7 +27164,6 @@ export class UserInfoDto implements IUserInfoDto {
             this.name = data["name"];
             this.isActive = data["isActive"];
             this.profileThumbnailId = data["profileThumbnailId"];
-            this.profileThumbnail = data["profileThumbnail"];
         }
     }
 
@@ -27197,7 +27180,6 @@ export class UserInfoDto implements IUserInfoDto {
         data["name"] = this.name;
         data["isActive"] = this.isActive;
         data["profileThumbnailId"] = this.profileThumbnailId;
-        data["profileThumbnail"] = this.profileThumbnail;
         return data; 
     }
 }
@@ -27207,7 +27189,6 @@ export interface IUserInfoDto {
     name: string | undefined;
     isActive: boolean | undefined;
     profileThumbnailId: string | undefined;
-    profileThumbnail: string | undefined;
 }
 
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
@@ -37921,6 +37902,7 @@ export class CreditReportOutput implements ICreditReportOutput {
     isPaymentDelayed!: boolean | undefined;
     isSubscriptionCancelled!: boolean | undefined;
     previousReportExists!: boolean | undefined;
+    refreshErrorMessage!: string | undefined;
     memberFullName!: string | undefined;
     providerCreatedDate!: moment.Moment | undefined;
 
@@ -37943,6 +37925,7 @@ export class CreditReportOutput implements ICreditReportOutput {
             this.isPaymentDelayed = data["isPaymentDelayed"];
             this.isSubscriptionCancelled = data["isSubscriptionCancelled"];
             this.previousReportExists = data["previousReportExists"];
+            this.refreshErrorMessage = data["refreshErrorMessage"];
             this.memberFullName = data["memberFullName"];
             this.providerCreatedDate = data["providerCreatedDate"] ? moment(data["providerCreatedDate"].toString()) : <any>undefined;
         }
@@ -37965,6 +37948,7 @@ export class CreditReportOutput implements ICreditReportOutput {
         data["isPaymentDelayed"] = this.isPaymentDelayed;
         data["isSubscriptionCancelled"] = this.isSubscriptionCancelled;
         data["previousReportExists"] = this.previousReportExists;
+        data["refreshErrorMessage"] = this.refreshErrorMessage;
         data["memberFullName"] = this.memberFullName;
         data["providerCreatedDate"] = this.providerCreatedDate ? this.providerCreatedDate.toISOString() : <any>undefined;
         return data; 
@@ -37980,6 +37964,7 @@ export interface ICreditReportOutput {
     isPaymentDelayed: boolean | undefined;
     isSubscriptionCancelled: boolean | undefined;
     previousReportExists: boolean | undefined;
+    refreshErrorMessage: string | undefined;
     memberFullName: string | undefined;
     providerCreatedDate: moment.Moment | undefined;
 }
@@ -49111,7 +49096,6 @@ export interface IGetPasswordComplexitySettingOutput {
 
 export class GetProfilePictureOutput implements IGetProfilePictureOutput {
     profilePicture!: string | undefined;
-    profileThumbnail!: string | undefined;
 
     constructor(data?: IGetProfilePictureOutput) {
         if (data) {
@@ -49125,7 +49109,6 @@ export class GetProfilePictureOutput implements IGetProfilePictureOutput {
     init(data?: any) {
         if (data) {
             this.profilePicture = data["profilePicture"];
-            this.profileThumbnail = data["profileThumbnail"];
         }
     }
 
@@ -49139,14 +49122,12 @@ export class GetProfilePictureOutput implements IGetProfilePictureOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["profilePicture"] = this.profilePicture;
-        data["profileThumbnail"] = this.profileThumbnail;
         return data; 
     }
 }
 
 export interface IGetProfilePictureOutput {
     profilePicture: string | undefined;
-    profileThumbnail: string | undefined;
 }
 
 export class ChangeUserLanguageDto implements IChangeUserLanguageDto {
@@ -49883,6 +49864,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     userName!: string | undefined;
     emailAddress!: string | undefined;
     profilePictureId!: string | undefined;
+    profileThumbnailId!: string | undefined;
     id!: number | undefined;
 
     constructor(data?: IUserLoginInfoDto) {
@@ -49901,6 +49883,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.userName = data["userName"];
             this.emailAddress = data["emailAddress"];
             this.profilePictureId = data["profilePictureId"];
+            this.profileThumbnailId = data["profileThumbnailId"];
             this.id = data["id"];
         }
     }
@@ -49919,6 +49902,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["userName"] = this.userName;
         data["emailAddress"] = this.emailAddress;
         data["profilePictureId"] = this.profilePictureId;
+        data["profileThumbnailId"] = this.profileThumbnailId;
         data["id"] = this.id;
         return data; 
     }
@@ -49930,6 +49914,7 @@ export interface IUserLoginInfoDto {
     userName: string | undefined;
     emailAddress: string | undefined;
     profilePictureId: string | undefined;
+    profileThumbnailId: string | undefined;
     id: number | undefined;
 }
 
@@ -50778,7 +50763,7 @@ export interface ICreateTenantInput {
 }
 
 export class TenantEditEditionDto implements ITenantEditEditionDto {
-    editionId!: number | undefined;
+    editionId!: number;
     maxUserCount!: number | undefined;
 
     constructor(data?: ITenantEditEditionDto) {
@@ -50813,7 +50798,7 @@ export class TenantEditEditionDto implements ITenantEditEditionDto {
 }
 
 export interface ITenantEditEditionDto {
-    editionId: number | undefined;
+    editionId: number;
     maxUserCount: number | undefined;
 }
 
@@ -53834,7 +53819,6 @@ export class UserListDto implements IUserListDto {
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
     profileThumbnailId!: string | undefined;
-    profileThumbnail!: string | undefined;
     isEmailConfirmed!: boolean | undefined;
     roles!: UserListRoleDto[] | undefined;
     lastLoginTime!: moment.Moment | undefined;
@@ -53859,7 +53843,6 @@ export class UserListDto implements IUserListDto {
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.profileThumbnailId = data["profileThumbnailId"];
-            this.profileThumbnail = data["profileThumbnail"];
             this.isEmailConfirmed = data["isEmailConfirmed"];
             if (data["roles"] && data["roles"].constructor === Array) {
                 this.roles = [];
@@ -53888,7 +53871,6 @@ export class UserListDto implements IUserListDto {
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["profileThumbnailId"] = this.profileThumbnailId;
-        data["profileThumbnail"] = this.profileThumbnail;
         data["isEmailConfirmed"] = this.isEmailConfirmed;
         if (this.roles && this.roles.constructor === Array) {
             data["roles"] = [];
@@ -53910,7 +53892,6 @@ export interface IUserListDto {
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     profileThumbnailId: string | undefined;
-    profileThumbnail: string | undefined;
     isEmailConfirmed: boolean | undefined;
     roles: UserListRoleDto[] | undefined;
     lastLoginTime: moment.Moment | undefined;
