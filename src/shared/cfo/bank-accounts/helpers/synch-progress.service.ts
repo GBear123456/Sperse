@@ -10,7 +10,14 @@ export class SynchProgressService {
     private needRefreshSync = new Subject<string>();
     needRefreshSync$ = this.needRefreshSync.asObservable();
 
+    private startSynchronization = new Subject<boolean>();
+    startSynchronization$ = this.startSynchronization.asObservable();
+
     constructor() { }
+
+    syncStart() {
+        this.startSynchronization.next();
+    }
 
     syncProgressCompleted() {
         this.syncCompleted.next();

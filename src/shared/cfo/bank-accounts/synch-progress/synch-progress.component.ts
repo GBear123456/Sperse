@@ -1,14 +1,15 @@
 import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy, ViewChild } from '@angular/core';
-import { SyncServiceProxy, SyncProgressOutput, InstanceType, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
+import { SyncProgressOutput, InstanceType, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from 'shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DxTooltipComponent } from 'devextreme-angular';
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { takeUntil } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     templateUrl: './synch-progress.component.html',
     styleUrls: ['./synch-progress.component.less'],
-    selector: 'synch-progress',
-    providers: [SyncServiceProxy]
+    selector: 'synch-progress'
 })
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
@@ -34,7 +35,8 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     private maxSynchProgressDelay = 10 * 60 * 60 * 1000;
 
     constructor(
-        injector: Injector
+        injector: Injector,
+        private syncProgressService: SynchProgressService
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -43,17 +45,23 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     ngOnInit(): void {
         super.ngOnInit();
         this.requestSyncAjax();
+        this.syncProgressService.startSynchronization$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+                this.requestSyncAjax(true, true);
+            });
     }
 
-    public requestSyncAjax(forcedSync: boolean = false) {
+    public requestSyncAjax(forcedSync: boolean = false, newOnly: boolean = false) {
         let params = {
-            forcedSync: forcedSync
+            forcedSync: forcedSync,
+            newOnly: newOnly
         };
         this.ajaxRequest('/api/services/CFO/Sync/SyncAllAccounts?', 'POST', params)
             .done(result => {
                 this.tryCount = 0;
                 this.hasFailedAccounts = false;
-                if (!this.getSyncProgressRequest && (!this.timeoutsIds || !this.timeoutsIds.length)) {
+                if (forcedSync || (!this.getSyncProgressRequest && (!this.timeoutsIds || !this.timeoutsIds.length))) {
                     this.getSynchProgressAjax();
                 }
             }).fail(result => {

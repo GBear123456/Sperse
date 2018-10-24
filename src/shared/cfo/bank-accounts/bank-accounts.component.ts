@@ -13,7 +13,7 @@ import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { InstanceType, SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
+import { SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors } from '@shared/AppEnums';
 
 @Component({

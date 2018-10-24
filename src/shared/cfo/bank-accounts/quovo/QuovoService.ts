@@ -3,6 +3,7 @@ import { InstanceType, SyncServiceProxy } from '@shared/service-proxies/service-
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 
 declare const Quovo: any;
 
@@ -69,7 +70,6 @@ export class QuovoHandler {
             this.connect(() => this._open());
         else
             this._open();
-        
     }
 
     private _open(reopen: boolean = true) {
@@ -184,6 +184,7 @@ export class QuovoService {
     constructor(
         injector: Injector,
         private _syncService: SyncServiceProxy,
+        private syncProgressService: SynchProgressService
     ) {
         this._cfoService = injector.get(CFOService);
         this._permissionChecker = injector.get(PermissionCheckerService);
@@ -200,7 +201,7 @@ export class QuovoService {
         ) {
             quovoHandler = new QuovoHandler(instanceType, instanceId,
                 (token, onLoad, onOpen, onClose, onAdd) => this.createQuovoHandler(token, onLoad, onOpen, onClose, onAdd),
-                (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id),
+                (_instanceType, _instanceId, _id) => this.onAccountAdd(),
                 (handler, callback, onError) => this.getUIToken(handler, callback, onError));
             this.quovoHandlers[handlerId] = quovoHandler;
 
@@ -217,13 +218,9 @@ export class QuovoService {
             .subscribe((data) => callback(data.token), () => { onError && onError(); });
     }
 
-    private onAccountAdd(instanceType: string, instanceId: number, accountId) {
-        this._syncService.syncAllAccounts(InstanceType[instanceType], instanceId, true, true)
-            .subscribe(() => {
-                if (this._cfoService.instanceType === instanceType && this._cfoService.instanceId === instanceId) {
-                    this._cfoService.instanceChangeProcess();
-                }
-            });
+    private onAccountAdd() {
+        /** Run synchronization */
+        this.syncProgressService.syncStart();
     }
 
     private createQuovoHandler(token, onLoad, onOpen, onClose, onAdd) {
@@ -236,7 +233,7 @@ export class QuovoService {
                 testInstitutions: true
             },
             onLoad: () => { onLoad(); },
-            onAdd: function (err, event) {
+            onSync: function (err, event) {
                 if (!err) {
                     onAdd(event.connection.id);
                 }

@@ -34,6 +34,7 @@ import { ImportXeroChartOfAccountsButtonComponent } from './xero/import-xero-cha
 
 import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
 import { SynchProgressComponent } from './synch-progress/synch-progress.component';
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 
 @NgModule({
     imports: [
@@ -87,7 +88,8 @@ import { SynchProgressComponent } from './synch-progress/synch-progress.componen
         ContactServiceProxy,
         BusinessEntityServiceProxy,
         BankAccountsServiceProxy,
-        SyncServiceProxy
+        SyncServiceProxy,
+        SynchProgressService
     ]
 })
 export class BankAccountsCommonModule {

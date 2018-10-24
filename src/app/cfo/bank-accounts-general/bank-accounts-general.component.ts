@@ -9,7 +9,7 @@ import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
     selector: 'bank-accounts',
     templateUrl: './bank-accounts-general.component.html',
     styleUrls: ['./bank-accounts-general.component.less'],
-    providers: [ SynchProgressService, BankAccountsGeneralService ]
+    providers: [ BankAccountsGeneralService ]
 })
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
