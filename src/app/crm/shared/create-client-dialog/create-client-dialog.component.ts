@@ -640,7 +640,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             !this.checkDuplicateContact(field)
         ) {
             this.contacts[field].push({
-                type: this[field + 'TypeDefault'];
+                type: this[field + 'TypeDefault']
             });
             this.addButtonVisible[field] = false;
         }
