@@ -11,8 +11,8 @@ import { CreditResourcesModule } from './credit-resources/credit-resources.modul
 import { AccountsComponent } from './accounts/accounts.component';
 import { MemberAreaComponent } from './member-area.component';
 
-import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service'
-import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service'
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { UserOnlyCFOService } from '../shared/common/user-only.cfo.service';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';

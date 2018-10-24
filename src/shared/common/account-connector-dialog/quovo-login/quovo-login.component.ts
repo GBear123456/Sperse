@@ -28,22 +28,13 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit, OnD
             this.quovoHandler = this._quovoService.getQuovoHandler(this._cfoService.instanceType, this._cfoService.instanceId);
         }
 
-        if (!this.quovoHandler['token']) {
-            this.onQuovoHanderClose(null);
-            return;
-        }
-
         if (this.quovoHandler.isLoaded) {
-            if (this.loading) {
-                this.finishLoading(!this.loadingContainerElement, this.loadingContainerElement);
-            }
             /** Open quovo popup only after instance initialization - show the spinner untill that moment */
             this._cfoService.statusActive
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(statusActive => {
                     if (statusActive) {
                         this.quovoHandler.open((e) => this.onQuovoHanderClose(e), this.accountId);
-                        this.finishLoading(!this.loadingContainerElement, this.loadingContainerElement);
                     } else {
                         this.startLoading(!this.loadingContainerElement, this.loadingContainerElement);
                     }
@@ -57,6 +48,7 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit, OnD
     }
 
     private onQuovoHanderClose(e) {
+        this.finishLoading(!this.loadingContainerElement, this.loadingContainerElement);
         this.onClose.emit(e);
     }
 

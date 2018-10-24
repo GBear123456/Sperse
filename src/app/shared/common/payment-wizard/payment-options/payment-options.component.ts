@@ -91,7 +91,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
                 paymentInfo.billingInfo = PaymentRequestInfoDto.fromJS({
-                    paymentMethod: PaymentRequestInfoDtoPaymentMethod.Recurring,
+                    paymentMethod: PaymentRequestInfoDtoPaymentMethod.Charge,
                     paymentInfoType: PaymentRequestInfoDtoPaymentInfoType.ACH,
                     achCustomer: ACHCustomerInfoDto.fromJS({
                         customerRoutingNo: eCheckData.routingNumber,

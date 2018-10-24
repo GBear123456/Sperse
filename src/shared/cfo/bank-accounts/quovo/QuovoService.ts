@@ -3,6 +3,7 @@ import { InstanceType, SyncServiceProxy } from '@shared/service-proxies/service-
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 
 declare const Quovo: any;
 
@@ -21,6 +22,7 @@ export class QuovoHandler {
     private _getTokenFunc: Function;
     private _iframe: any;
     private onAdd: Function;
+    private _connectionId: number = null;
 
     constructor(instanceType: string, instanceId: number, createQuovoHandlerFunc, onAccountAdd, getTokenFunc) {
         this._instanceType = instanceType;
@@ -44,8 +46,8 @@ export class QuovoHandler {
 
     onClose: Function;
 
-    connect() {
-        this._getTokenFunc(this, (token) => this.createHandler(token));
+    connect(callback: Function = null) {
+        this._getTokenFunc(this, (token) => { this.createHandler(token); callback && setTimeout(() => callback(), 500); }, () => this.onHandlerClose());
     }
 
     get isValid() {
@@ -61,20 +63,23 @@ export class QuovoHandler {
 
     open(onClose: Function = null, connectionId: number = null) {
         if (!this.isLoaded || this.isOpened) { return; }
-
+        
+        this._connectionId = connectionId;
         this.onClose = onClose;
         this.addedConnectionIds.length = 0;
-        try {
-            if (connectionId) {
-                if (typeof (connectionId) !== 'number') {
-                    connectionId = parseInt(connectionId);
-                }
+        if (!this.token)
+            this.connect(() => this._open());
+        else
+            this._open();
+    }
 
+    private _open(reopenCount = 0) {
+        try {
+            if (this._connectionId) {
                 this.handler.open(
                     {
-                        connectionId: connectionId
+                        connectionId: this._connectionId
                     });
-
             } else {
                 this.handler.open();
             }
@@ -86,7 +91,10 @@ export class QuovoHandler {
                 console.log('Quovo.EventOriginError', err, 'reconnecting...');
                 this.reconnect();
             } else if (err instanceof Quovo.ConnectError) {
-                console.error('Quovo.ConnectError', err);
+                if (reopenCount < 10)
+                    setTimeout(() => this._open(reopenCount + 1), 500);
+                else
+                    console.error('Quovo.ConnectError', err, 'reconnecting...');
             } else {
                 console.error('non-Connect related error', err);
             }
@@ -95,6 +103,11 @@ export class QuovoHandler {
 
     close() {
         this.handler.close();
+    }
+
+    setIsLoaded(isLoaded: boolean) {
+        this._isLoaded = isLoaded;
+        this.token = undefined;
     }
 
     private createHandler(token) {
@@ -169,6 +182,7 @@ export class QuovoService {
     constructor(
         injector: Injector,
         private _syncService: SyncServiceProxy,
+        private syncProgressService: SynchProgressService
     ) {
         this._cfoService = injector.get(CFOService);
         this._permissionChecker = injector.get(PermissionCheckerService);
@@ -185,30 +199,26 @@ export class QuovoService {
         ) {
             quovoHandler = new QuovoHandler(instanceType, instanceId,
                 (token, onLoad, onOpen, onClose, onAdd) => this.createQuovoHandler(token, onLoad, onOpen, onClose, onAdd),
-                (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id),
-                (handler, callback) => this.getUIToken(handler, callback));
+                (_instanceType, _instanceId, _id) => this.onAccountAdd(),
+                (handler, callback, onError) => this.getUIToken(handler, callback, onError));
             this.quovoHandlers[handlerId] = quovoHandler;
 
             jQuery.getScript('https://app.quovo.com/ui.js', () => {
-                quovoHandler.connect();
+                quovoHandler.setIsLoaded(true);
             });
         }
 
         return quovoHandler;
     }
 
-    public getUIToken(quovoHandler: QuovoHandler, callback) {
+    public getUIToken(quovoHandler: QuovoHandler, callback, onError) {
         this._syncService.createProviderUIToken(InstanceType[quovoHandler.instanceType], quovoHandler.instanceId, 'Q')
-            .subscribe((data) => callback(data.token));
+            .subscribe((data) => callback(data.token), () => { onError && onError(); });
     }
 
-    private onAccountAdd(instanceType: string, instanceId: number, accountId) {
-        this._syncService.syncAllAccounts(InstanceType[instanceType], instanceId, true, true)
-            .subscribe(() => {
-                if (this._cfoService.instanceType === instanceType && this._cfoService.instanceId === instanceId) {
-                    this._cfoService.instanceChangeProcess();
-                }
-            });
+    private onAccountAdd() {
+        /** Run synchronization */
+        this.syncProgressService.syncStart();
     }
 
     private createQuovoHandler(token, onLoad, onOpen, onClose, onAdd) {
@@ -221,7 +231,7 @@ export class QuovoService {
                 testInstitutions: true
             },
             onLoad: () => { onLoad(); },
-            onAdd: function (err, event) {
+            onSync: function (err, event) {
                 if (!err) {
                     onAdd(event.connection.id);
                 }

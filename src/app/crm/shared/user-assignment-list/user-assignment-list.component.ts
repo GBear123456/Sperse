@@ -44,6 +44,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     tooltipVisible = false;
     isRelatedUser = false;
 
+    noPhotoUrl = AppConsts.imageUrls.noPhoto;
+
     constructor(
         injector: Injector,
         private _filtersService: FiltersService,
