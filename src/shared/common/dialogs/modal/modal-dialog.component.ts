@@ -13,7 +13,6 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
   public data: any;
   public dialogRef: MatDialogRef<ModalDialogComponent, any>;
 
-  @Input() scrollEnabled = true;
   @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
   @Output() onTitleChanged: EventEmitter<any> = new EventEmitter<any>();
 

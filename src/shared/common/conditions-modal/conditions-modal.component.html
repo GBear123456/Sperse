@@ -1,6 +1,8 @@
 <modal-dialog>
-    <div id="content">
-        <div *ngIf="conditionBody$ | async as body; else loading" [innerHtml]="conditionBody$ | async"></div>
-        <ng-template #loading>Loading...</ng-template>
-    </div>
+    <dx-scroll-view showScrollbar="onHover">
+        <div id="content">
+            <div *ngIf="conditionBody$ | async as body; else loading" [innerHtml]="conditionBody$ | async"></div>
+            <ng-template #loading>Loading...</ng-template>
+        </div>
+    </dx-scroll-view>
 </modal-dialog>

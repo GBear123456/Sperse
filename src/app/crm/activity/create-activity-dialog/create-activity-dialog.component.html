@@ -1,144 +1,146 @@
 <modal-dialog (onTitleKeyUp)="titleChanged($event)">
-    <dx-context-menu
-        [selectByClick]="true"
-        [selectionMode]="'single'"
-        [dataSource]="saveContextMenuItems"
-        [position]="{ my: 'top right', at: 'bottom right' }"
-        (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
-        target="#{{saveButtonId}}">
-    </dx-context-menu>
-    <app-toolbar [config]="toolbarConfig"></app-toolbar>
-    <crm-static-list #stagesList
-                     [width]="'210px'"
-                     [selectedKeys]="[data.appointment.StageId]"
-                     [showConfirmation]="false"
-                     [selectedItems]=""
-                     [hideButtons]="true"
-                     [highlightSelected]="true"
-                     [targetSelector]="'[accessKey=ActivityStage]'"
-                     (onItemSelected)="onStagesChanged($event)"
-                     [showTitle]="false"
-                     [funnelStyling]="true"
-                     [list]="data.stages">
-    </crm-static-list>
-    <crm-user-assignment-list [multiSelection]="true"
-                              [targetSelector]="'[accesskey=\'UserAssign\']'"
-                              [(selectedItemKey)]="data.appointment.AssignedUserIds"
-                              [hideButtons]="true"
-                              [selectedKeys]="[data.appointment.AssignedUserIds]"
-                              [permissionKey]="'Pages.CRM.Events.ManageAssignments'"
-                              (onSelectionChanged)="onUserAssignmentChanged($event)"
-                              [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
-    </crm-user-assignment-list>
+    <dx-scroll-view showScrollbar="onHover">
+        <dx-context-menu
+            [selectByClick]="true"
+            [selectionMode]="'single'"
+            [dataSource]="saveContextMenuItems"
+            [position]="{ my: 'top right', at: 'bottom right' }"
+            (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
+            target="#{{saveButtonId}}">
+        </dx-context-menu>
+        <app-toolbar [config]="toolbarConfig"></app-toolbar>
+        <crm-static-list #stagesList
+                         [width]="'210px'"
+                         [selectedKeys]="[data.appointment.StageId]"
+                         [showConfirmation]="false"
+                         [selectedItems]=""
+                         [hideButtons]="true"
+                         [highlightSelected]="true"
+                         [targetSelector]="'[accessKey=ActivityStage]'"
+                         (onItemSelected)="onStagesChanged($event)"
+                         [showTitle]="false"
+                         [funnelStyling]="true"
+                         [list]="data.stages">
+        </crm-static-list>
+        <crm-user-assignment-list [multiSelection]="true"
+                                  [targetSelector]="'[accesskey=\'UserAssign\']'"
+                                  [(selectedItemKey)]="data.appointment.AssignedUserIds"
+                                  [hideButtons]="true"
+                                  [selectedKeys]="[data.appointment.AssignedUserIds]"
+                                  [permissionKey]="'Pages.CRM.Events.ManageAssignments'"
+                                  (onSelectionChanged)="onUserAssignmentChanged($event)"
+                                  [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
+        </crm-user-assignment-list>
 
-    <crm-static-list #leadsList
-                     [width]="'330px'"
-                     [height]="440"
-                     [targetSelector]="'[accesskey=\'LeadsList\']'"
-                     [title]="l('Lead')"
-                     [showConfirmation]="false"
-                     [highlightSelected]="true"
-                     [selectedKeys]="[data.appointment.LeadId]"
-                     [searchEnabled]="true"
-                     (onItemSelected)="onLeadSelected($event)"
-                     [list]="leads">
-    </crm-static-list>
-    <crm-static-list #clientsList
-                     [width]="'330px'"
-                     [height]="440"
-                     [targetSelector]="'[accesskey=\'ClientsList\']'"
-                     [title]="l('Client')"
-                     [showConfirmation]="false"
-                     [highlightSelected]="true"
-                     [selectedKeys]="[data.appointment.ContactGroupId]"
-                     [searchEnabled]="true"
-                     (onItemSelected)="onClientSelected($event)"
-                     [list]="clients">
-    </crm-static-list>
-    <!--<crm-static-list #ordersList-->
-                     <!--[width]="'330px'"-->
-                     <!--[height]="440"-->
-                     <!--[targetSelector]="'[accesskey=\'OrdersList\']'"-->
-                     <!--[title]="l('Order')"-->
-                     <!--[showConfirmation]="false"-->
-                     <!--[highlightSelected]="true"-->
-                     <!--[selectedKeys]="[data.appointment.OrderId]"-->
-                     <!--[searchEnabled]="true"-->
-                     <!--(onItemSelected)="onOrderSelected($event)"-->
-                     <!--[list]="orders">-->
-    <!--</crm-static-list>-->
+        <crm-static-list #leadsList
+                         [width]="'330px'"
+                         [height]="440"
+                         [targetSelector]="'[accesskey=\'LeadsList\']'"
+                         [title]="l('Lead')"
+                         [showConfirmation]="false"
+                         [highlightSelected]="true"
+                         [selectedKeys]="[data.appointment.LeadId]"
+                         [searchEnabled]="true"
+                         (onItemSelected)="onLeadSelected($event)"
+                         [list]="leads">
+        </crm-static-list>
+        <crm-static-list #clientsList
+                         [width]="'330px'"
+                         [height]="440"
+                         [targetSelector]="'[accesskey=\'ClientsList\']'"
+                         [title]="l('Client')"
+                         [showConfirmation]="false"
+                         [highlightSelected]="true"
+                         [selectedKeys]="[data.appointment.ContactGroupId]"
+                         [searchEnabled]="true"
+                         (onItemSelected)="onClientSelected($event)"
+                         [list]="clients">
+        </crm-static-list>
+        <!--<crm-static-list #ordersList-->
+                         <!--[width]="'330px'"-->
+                         <!--[height]="440"-->
+                         <!--[targetSelector]="'[accesskey=\'OrdersList\']'"-->
+                         <!--[title]="l('Order')"-->
+                         <!--[showConfirmation]="false"-->
+                         <!--[highlightSelected]="true"-->
+                         <!--[selectedKeys]="[data.appointment.OrderId]"-->
+                         <!--[searchEnabled]="true"-->
+                         <!--(onItemSelected)="onOrderSelected($event)"-->
+                         <!--[list]="orders">-->
+        <!--</crm-static-list>-->
 
-    <crm-stars-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true"
-                    (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
+        <crm-stars-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true"
+                        (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
 
-    <div class="tab-content">
-        <dx-validation-group (onInitialized)="initDateValidationGroup($event)">
-            <div class="field date-selector">
-                <div class="row">
-                    <label class="col-12">{{l('Date')}}</label>
-                </div>
-                <div class="row align-items-center">
-                    <div class="col-4 align-self-center">
-                        <ng-container *ngFor="let type of ['date', 'datetime']">
-                            <dx-date-box #startDate
-                                         maxLength="10"
-                                         *ngIf="isAllDay ? type == 'date' : type =='datetime'"
-                                         [type]="type"
-                                         [max]="data.appointment.EndDate"
-                                         [(value)]="data.appointment.StartDate">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required"
-                                                         message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-date-box>
-                        </ng-container>
+        <div class="tab-content">
+            <dx-validation-group (onInitialized)="initDateValidationGroup($event)">
+                <div class="field date-selector">
+                    <div class="row">
+                        <label class="col-12">{{l('Date')}}</label>
                     </div>
+                    <div class="row align-items-center">
+                        <div class="col-4 align-self-center">
+                            <ng-container *ngFor="let type of ['date', 'datetime']">
+                                <dx-date-box #startDate
+                                             maxLength="10"
+                                             *ngIf="isAllDay ? type == 'date' : type =='datetime'"
+                                             [type]="type"
+                                             [max]="data.appointment.EndDate"
+                                             [(value)]="data.appointment.StartDate">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required"
+                                                             message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-date-box>
+                            </ng-container>
+                        </div>
 
-                    <div class="col-1 align-self-center">
-                        <i class="fa fa-arrow-right"></i>
-                    </div>
+                        <div class="col-1 align-self-center">
+                            <i class="fa fa-arrow-right"></i>
+                        </div>
 
-                    <div class="col-4 align-self-center">
-                        <ng-container *ngFor="let type of ['date', 'datetime']">
-                            <dx-date-box #endDate
-                                         *ngIf="isAllDay ? type == 'date' : type =='datetime'"
-                                         maxLength="10"
-                                         [type]="type"
-                                         [min]="data.appointment.StartDate"
-                                         [(value)]="data.appointment.EndDate">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required"
-                                                         message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-date-box>
-                        </ng-container>
-                    </div>
+                        <div class="col-4 align-self-center">
+                            <ng-container *ngFor="let type of ['date', 'datetime']">
+                                <dx-date-box #endDate
+                                             *ngIf="isAllDay ? type == 'date' : type =='datetime'"
+                                             maxLength="10"
+                                             [type]="type"
+                                             [min]="data.appointment.StartDate"
+                                             [(value)]="data.appointment.EndDate">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="required"
+                                                             message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-date-box>
+                            </ng-container>
+                        </div>
 
-                    <div class="col-3 align-self-center text-right">
-                        <div class="dx-field all-day-checkbox">
-                            <div class="dx-field-label">{{l('All day')}}</div>
-                            <div class="dx-field-value">
-                                <dx-check-box [(value)]="isAllDay"></dx-check-box>
+                        <div class="col-3 align-self-center text-right">
+                            <div class="dx-field all-day-checkbox">
+                                <div class="dx-field-label">{{l('All day')}}</div>
+                                <div class="dx-field-value">
+                                    <dx-check-box [(value)]="isAllDay"></dx-check-box>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </dx-validation-group>
-        <div class="field description">
-            <div class="row">
-                <label class="col-12">{{l('Description')}}</label>
-            </div>
+            </dx-validation-group>
+            <div class="field description">
+                <div class="row">
+                    <label class="col-12">{{l('Description')}}</label>
+                </div>
 
-            <div class="row">
-                <div class="col-12">
-                    <dx-text-area name="description"
-                                  [width]="'100%'"
-                                  [height]="'100px'"
-                                  [(value)]="data.appointment.Description">
-                    </dx-text-area>
+                <div class="row">
+                    <div class="col-12">
+                        <dx-text-area name="description"
+                                      [width]="'100%'"
+                                      [height]="'100px'"
+                                      [(value)]="data.appointment.Description">
+                        </dx-text-area>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </dx-scroll-view>
 </modal-dialog>

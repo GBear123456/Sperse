@@ -9,7 +9,7 @@ import { MatProgressBarModule, MatStepperModule, MatInputModule,
     MatDialogModule, MatTabsModule, MatSidenavModule, } from '@angular/material';
 import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule, DxTooltipModule, DxContextMenuModule,
     DxListModule, DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule,
-    DxTextAreaModule, DxValidationGroupModule, DxNumberBoxModule
+    DxTextAreaModule, DxValidationGroupModule, DxNumberBoxModule, DxScrollViewModule
 } from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 import { ModalModule, PopoverModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
@@ -81,6 +81,7 @@ import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-s
         PopoverModule.forRoot(),
         ContactsModule,
 
+        DxScrollViewModule,
         DxValidationGroupModule,
         DxValidationSummaryModule,
         DxFileUploaderModule,
