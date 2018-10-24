@@ -19583,69 +19583,6 @@ export class SessionServiceProxy {
 }
 
 @Injectable()
-export class SubscriptionServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @upgradeEditionId (optional) 
-     * @return Success
-     */
-    upgradeTenantToEquivalentEdition(upgradeEditionId: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/Subscription/UpgradeTenantToEquivalentEdition?";
-        if (upgradeEditionId !== undefined)
-            url_ += "upgradeEditionId=" + encodeURIComponent("" + upgradeEditionId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpgradeTenantToEquivalentEdition(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpgradeTenantToEquivalentEdition(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpgradeTenantToEquivalentEdition(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class SyncServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -21953,6 +21890,110 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     protected processUpdatePayPalSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getBankTransferSettings(): Observable<BankTransferSettings> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetBankTransferSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBankTransferSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBankTransferSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<BankTransferSettings>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BankTransferSettings>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetBankTransferSettings(response: HttpResponseBase): Observable<BankTransferSettings> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? BankTransferSettings.fromJS(resultData200) : new BankTransferSettings();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BankTransferSettings>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateBankTransferSettings(input: BankTransferSettings | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateBankTransferSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateBankTransferSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateBankTransferSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateBankTransferSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -51587,6 +51628,66 @@ export interface IPayPalSettings {
     baseUrl: string | undefined;
     clientId: string | undefined;
     clientSecret: string | undefined;
+}
+
+export class BankTransferSettings implements IBankTransferSettings {
+    beneficiaryInfo!: string | undefined;
+    beneficiaryBank!: string | undefined;
+    bankAccountNumber!: string | undefined;
+    bankRoutingNumberForACH!: string | undefined;
+    bankRoutingNumber!: string | undefined;
+    swiftCodeForUSDollar!: string | undefined;
+    swiftCode!: string | undefined;
+
+    constructor(data?: IBankTransferSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.beneficiaryInfo = data["beneficiaryInfo"];
+            this.beneficiaryBank = data["beneficiaryBank"];
+            this.bankAccountNumber = data["bankAccountNumber"];
+            this.bankRoutingNumberForACH = data["bankRoutingNumberForACH"];
+            this.bankRoutingNumber = data["bankRoutingNumber"];
+            this.swiftCodeForUSDollar = data["swiftCodeForUSDollar"];
+            this.swiftCode = data["swiftCode"];
+        }
+    }
+
+    static fromJS(data: any): BankTransferSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new BankTransferSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["beneficiaryInfo"] = this.beneficiaryInfo;
+        data["beneficiaryBank"] = this.beneficiaryBank;
+        data["bankAccountNumber"] = this.bankAccountNumber;
+        data["bankRoutingNumberForACH"] = this.bankRoutingNumberForACH;
+        data["bankRoutingNumber"] = this.bankRoutingNumber;
+        data["swiftCodeForUSDollar"] = this.swiftCodeForUSDollar;
+        data["swiftCode"] = this.swiftCode;
+        return data; 
+    }
+}
+
+export interface IBankTransferSettings {
+    beneficiaryInfo: string | undefined;
+    beneficiaryBank: string | undefined;
+    bankAccountNumber: string | undefined;
+    bankRoutingNumberForACH: string | undefined;
+    bankRoutingNumber: string | undefined;
+    swiftCodeForUSDollar: string | undefined;
+    swiftCode: string | undefined;
 }
 
 export class TenantSettingsEditDto implements ITenantSettingsEditDto {

@@ -90,14 +90,7 @@ export class SelectEditionComponent extends AppComponentBase implements OnInit {
     }
 
     upgrade(upgradeEdition: EditionSelectDto, editionPaymentType: EditionPaymentType): void {
-        if (editionPaymentType === EditionPaymentType.Upgrade && this.upgradeIsFree(upgradeEdition)) {
-            this._subscriptionService.upgradeTenantToEquivalentEdition(upgradeEdition.id)
-                .subscribe(() => {
-                    this._router.navigate(['app/admin/subscription-management']);
-                });
-        } else {
-            this._router.navigate(['/account/upgrade'], { queryParams: { upgradeEditionId: upgradeEdition.id, editionPaymentType: editionPaymentType } });
-        }
+        this._router.navigate(['/account/upgrade'], { queryParams: { upgradeEditionId: upgradeEdition.id, editionPaymentType: editionPaymentType } });
     }
 
     upgradeIsFree(upgradeEdition: EditionSelectDto): boolean {
