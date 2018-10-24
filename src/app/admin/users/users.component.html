@@ -44,11 +44,11 @@
                         <dxi-column dataField="surname" caption="{{l('Surname')}}"></dxi-column>
                         <dxi-column dataField="name" caption="{{l('Name')}}"></dxi-column>
                         <dxi-column dataField="userName" caption="{{l('UserName')}}"></dxi-column>
-                        <dxi-column dataField="profileThumbnail" caption=" " cellTemplate="photoTemplate"
+                        <dxi-column dataField="profileThumbnailId" caption=" " cellTemplate="photoTemplate"
                             [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
-                            <div [ngStyle]="{'background-image': 'url(' + getPhoto(data.data.profileThumbnail) + ')'}" class="img-circle"></div>
+                            <div [ngStyle]="{'background-image': 'url(' + (data.data.profileThumbnailId ? getProfilePictureUrl(data.data.profileThumbnailId) : noPhotoUrl) + ')'}" class="img-circle"></div>
                         </div>
 
                         <div *dxTemplate="let cellData of 'roleCell'">

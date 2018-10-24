@@ -56,6 +56,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         ]
     };
 
+    noPhotoUrl = AppConsts.imageUrls.noPhoto;
+
     private rootComponent: any;
     private formatting = AppConsts.formatting;
 
@@ -113,7 +115,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             key: 'id',
             load: (loadOptions) => {
                 return this._userServiceProxy.getUsers(
-                    true,
                     this.searchValue || undefined,
                     this.selectedPermission || undefined,
                     this.role || undefined,

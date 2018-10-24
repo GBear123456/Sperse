@@ -81,6 +81,11 @@ export class AppConsts {
         fullName: /^[^\d]+$/
     };
 
+    static readonly imageUrls = {
+        noPhoto: 'assets/common/images/no-photo.png',
+        profileDefault: 'assets/common/images/default-profile-picture.png'
+    };
+
     static readonly defaultCompanyName = 'Unknown company';
     static readonly defaultCountryName = 'United States of America';
 

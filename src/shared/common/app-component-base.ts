@@ -176,11 +176,19 @@ export abstract class AppComponentBase implements OnDestroy {
         if (gender)
             return 'assets/common/images/no-photo-' + gender + '.png';
 
-        return 'assets/common/images/no-photo.png';
+        return AppConsts.imageUrls.noPhoto;
     }
 
     getImageBase64Src(imageBase64: string): string {
         return 'data:image/jpeg;base64,' + imageBase64;
+    }
+
+    getProfilePictureUrl(id) {
+        if (!id)
+            return AppConsts.imageUrls.profileDefault;
+
+        let tenantId = this.appSession.tenantId;
+        return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId ? tenantId + '/' + id : id);
     }
 
     startLoading(globally = false, element: any = null) {
