@@ -21,6 +21,7 @@ export class QuovoHandler {
     private _getTokenFunc: Function;
     private _iframe: any;
     private onAdd: Function;
+    private _connectionId: any = null;
 
     constructor(instanceType: string, instanceId: number, createQuovoHandlerFunc, onAccountAdd, getTokenFunc) {
         this._instanceType = instanceType;
@@ -44,8 +45,8 @@ export class QuovoHandler {
 
     onClose: Function;
 
-    connect() {
-        this._getTokenFunc(this, (token) => this.createHandler(token));
+    connect(callback: Function = null) {
+        this._getTokenFunc(this, (token) => { this.createHandler(token); callback && setTimeout(() => callback(), 1500); }, () => this.onHandlerClose());
     }
 
     get isValid() {
@@ -61,18 +62,26 @@ export class QuovoHandler {
 
     open(onClose: Function = null, connectionId: number = null) {
         if (!this.isLoaded || this.isOpened) { return; }
-
+        this._connectionId = connectionId;
         this.onClose = onClose;
         this.addedConnectionIds.length = 0;
+        if (!this.token)
+            this.connect(() => this._open());
+        else
+            this._open();
+        
+    }
+
+    private _open(reopen: boolean = true) {
         try {
-            if (connectionId) {
-                if (typeof (connectionId) !== 'number') {
-                    connectionId = parseInt(connectionId);
+            if (this._connectionId) {
+                if (typeof (this._connectionId) !== 'number') {
+                    this._connectionId = parseInt(this._connectionId);
                 }
 
                 this.handler.open(
                     {
-                        connectionId: connectionId
+                        connectionId: this._connectionId
                     });
 
             } else {
@@ -86,7 +95,8 @@ export class QuovoHandler {
                 console.log('Quovo.EventOriginError', err, 'reconnecting...');
                 this.reconnect();
             } else if (err instanceof Quovo.ConnectError) {
-                console.error('Quovo.ConnectError', err);
+                console.error('Quovo.ConnectError', err, 'reconnecting...');
+                reopen && setTimeout(() => this._open(false), 2000);
             } else {
                 console.error('non-Connect related error', err);
             }
@@ -95,6 +105,11 @@ export class QuovoHandler {
 
     close() {
         this.handler.close();
+    }
+
+    setIsLoaded(isLoaded: boolean) {
+        this._isLoaded = isLoaded;
+        this.token = undefined;
     }
 
     private createHandler(token) {
@@ -186,20 +201,20 @@ export class QuovoService {
             quovoHandler = new QuovoHandler(instanceType, instanceId,
                 (token, onLoad, onOpen, onClose, onAdd) => this.createQuovoHandler(token, onLoad, onOpen, onClose, onAdd),
                 (_instanceType, _instanceId, _id) => this.onAccountAdd(_instanceType, _instanceId, _id),
-                (handler, callback) => this.getUIToken(handler, callback));
+                (handler, callback, onError) => this.getUIToken(handler, callback, onError));
             this.quovoHandlers[handlerId] = quovoHandler;
 
             jQuery.getScript('https://app.quovo.com/ui.js', () => {
-                quovoHandler.connect();
+                quovoHandler.setIsLoaded(true);
             });
         }
 
         return quovoHandler;
     }
 
-    public getUIToken(quovoHandler: QuovoHandler, callback) {
+    public getUIToken(quovoHandler: QuovoHandler, callback, onError) {
         this._syncService.createProviderUIToken(InstanceType[quovoHandler.instanceType], quovoHandler.instanceId, 'Q')
-            .subscribe((data) => callback(data.token));
+            .subscribe((data) => callback(data.token), () => { onError && onError(); });
     }
 
     private onAccountAdd(instanceType: string, instanceId: number, accountId) {
