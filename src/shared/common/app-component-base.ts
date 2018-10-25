@@ -3,7 +3,7 @@ import { Injector, ApplicationRef, ElementRef, HostBinding, HostListener, OnDest
 
 /** Third party imports */
 import * as _ from 'underscore';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 
 /** Application imports */
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -28,7 +28,10 @@ declare let require: any;
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
-    destroy$: Subject<boolean> = new Subject<boolean>();
+    private destroySubject: Subject<boolean> = new Subject<boolean>();
+    destroy$: Observable<boolean> = this.destroySubject.asObservable();
+    private deactivateSubject: Subject<boolean> = new Subject<boolean>();
+    deactivate$: Observable<boolean> = this.deactivateSubject.asObservable();
     dataGrid: any;
     dataSource: any;
     isDataLoaded = false;
@@ -269,6 +272,7 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     deactivate() {
+        this.deactivateSubject.next(true);
         if (this.dataGrid && this.dataGrid.instance) {
             let scroll = this.dataGrid.instance.getScrollable();
             if (scroll)
@@ -277,7 +281,8 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this.destroy$.next(true);
-        this.destroy$.unsubscribe();
+        this.destroySubject.next(true);
+        this.destroySubject.unsubscribe();
+        this.deactivateSubject.unsubscribe();
     }
 }

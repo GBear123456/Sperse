@@ -335,7 +335,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     cancel() {
         this.reset(() => {
-            this._router.navigate(['app/crm/dashboard']);
+            this._router.navigate(['app/crm/dashboard'], { queryParams: { refresh: true } });
         });
     }
 
@@ -390,7 +390,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     createLeadsInput(data: any): ImportInput {
-        let result = ImportInput.fromJS({  
+        let result = ImportInput.fromJS({
             fileName: this.wizard.fileName,
             fileSize: this.wizard.fileOrigSize,
             fileContent: this.wizard.fileContent,

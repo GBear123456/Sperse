@@ -1,10 +1,11 @@
 /** Core imports */
 import { Component, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Store } from '@ngrx/store';
+import { filter, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -53,7 +54,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private _dashboardWidgetsService: DashboardWidgetsService,
         private zendeskService: ZendeskService,
         public dialog: MatDialog,
-        private store$: Store<RootStore.State>
+        private store$: Store<RootStore.State>,
+        private activatedRoute: ActivatedRoute
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
@@ -95,6 +97,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnDestroy() {
+        super.ngOnDestroy();
         this.deactivate();
 
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
@@ -129,11 +132,21 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
+        this.subscribeToRefreshParam();
         this._appService.updateToolbar(null);
         this.zendeskService.showWidget();
 
         this.showHostElement();
         this.renderWidgets();
+    }
+
+    subscribeToRefreshParam() {
+        this.activatedRoute.queryParams
+            .pipe(
+                takeUntil(this.deactivate$),
+                filter(params => !!params['refresh'])
+            )
+            .subscribe(() => this.invalidate() );
     }
 
     renderWidgets() {
