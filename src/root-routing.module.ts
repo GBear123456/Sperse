@@ -126,9 +126,12 @@ export class RootRoutingModule implements AfterViewInit {
         _router.config[0].children.push(
            {
                path: 'app',
+               loadChildren: 'app/app.module#AppModule',
+/*
                loadChildren: AppConsts.isMobile
                    ? 'mobile/mobile.module#MobileModule' //Lazy load mobile module
                    : 'app/app.module#AppModule',         //Lazy load desktop module
+*/
                data: { preload: true }
            },
            { path: '', redirectTo: 'app', pathMatch: 'full' },
