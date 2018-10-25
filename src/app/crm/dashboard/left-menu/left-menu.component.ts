@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -19,19 +20,39 @@ export class DashboardMenuComponent extends AppComponentBase {
     items = [];
 
     constructor(injector: Injector,
-        private _router: Router
+                private _router: Router,
+                private _appService: AppService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.items = [
-            { caption: 'ManageClients', component: '/clients', showPlus: true, hidden: !this.permission.isGranted('Pages.CRM.Customers') },
-            { caption: 'ManageLeads', component: '/leads', showPlus: true, hidden: !this.permission.isGranted('Pages.CRM.Customers') },
-            { caption: 'ImportYourList', component: '/import-list', hidden: !this.permission.isGranted('Pages.CRM.BulkImport') },
-            { caption: 'CustomizeSettings', component: '/editions', disabled: true }
-            // {
-            //   caption: 'PaymentWizard', component: '/payment-wizard',
-            //   disabled: abp.session.multiTenancySide != abp.multiTenancy.sides.TENANT
-            // }
+            {
+                caption: 'ManageClients',
+                component: '/clients',
+                showPlus: true,
+                hidden: !this.permission.isGranted('Pages.CRM.Customers')
+            },
+            {
+                caption: 'ManageLeads',
+                component: '/leads',
+                showPlus: true,
+                hidden: !this.permission.isGranted('Pages.CRM.Customers')
+            },
+            {
+                caption: 'ImportYourList',
+                component: '/import-list',
+                hidden: !this.permission.isGranted('Pages.CRM.BulkImport')
+            },
+            {
+                caption: 'CustomizeSettings',
+                component: '/editions',
+                disabled: true
+            },
+            {
+                caption: 'PaymentWizard',
+                hidden: abp.session.multiTenancySide != abp.multiTenancy.sides.TENANT ||
+                        !this._appService.subscriptionIsFree()
+            }
         ];
     }
 
@@ -42,14 +63,14 @@ export class DashboardMenuComponent extends AppComponentBase {
         }
 
         if (elem.disabled)
-            return ;
+            return;
 
         if (event.clientX < 260)
             elem.component && this._router.navigate(
                 ['/app/crm' + elem.component]);
         else if (event.target.classList.contains('add-button'))
             this._router.navigate(['/app/crm' + elem.component],
-                { queryParams: { action: 'addNew' } });
+                {queryParams: {action: 'addNew'}});
     }
 
     showDialog() {

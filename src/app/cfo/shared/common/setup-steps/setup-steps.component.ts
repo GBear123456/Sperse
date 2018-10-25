@@ -1,7 +1,10 @@
-import {Component, OnInit, Injector, Input, Output, EventEmitter, ChangeDetectionStrategy} from '@angular/core';
+import { Component, OnInit, Injector, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
+import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
+import { AppService } from '@app/app.service';
+import { Module } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './setup-steps.component.html',
@@ -16,7 +19,12 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
         { caption: 'BusinessEntity', component: '/business-entities', isAlwaysActive: true },
         { caption: 'Chart', component: '/chart-of-accounts', isAlwaysActive: true },
         { caption: 'Rules', component: '/rules', isAlwaysActive: false },
-        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin, isAlwaysActive: false }
+        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin, isAlwaysActive: false },
+        {
+            caption: 'PaymentWizard',
+            visible: abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT &&
+                     this.appService.subscriptionIsFree()
+        }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
@@ -24,7 +32,8 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
     dialogConfig = new MatDialogConfig();
 
     constructor(injector: Injector,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private appService: AppService
     ) {
         super(injector);
     }
@@ -33,6 +42,11 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
     }
 
     onClick(index: number, elem) {
+        if (elem.caption === 'PaymentWizard') {
+            this.showPaymentWizard();
+            return;
+        }
+
         if (elem.isAlwaysActive || this._cfoService.hasTransactions && elem.component)
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + elem.component]);
     }
@@ -41,6 +55,19 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
         if (index < this.SelectedStepIndex) return 'passed';
         else if (index == this.SelectedStepIndex) return 'current';
         else return '';
+    }
+
+    showPaymentWizard() {
+        this.dialog.open(PaymentWizardComponent, {
+            height: '655px',
+            width: '980px',
+            id: 'payment-wizard',
+            panelClass: ['payment-wizard', 'setup'],
+            data: {
+                module: Module.CFO,
+                title: this.ls('Platform', 'UpgradeYourSubscription', Module.CFO)
+            }
+        });
     }
 
     showIntro() {

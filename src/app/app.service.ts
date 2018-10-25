@@ -125,6 +125,11 @@ export class AppService extends AppServiceBase {
         return false;
     }
 
+    subscriptionIsFree(name = undefined): boolean {
+        let sub = this.getModuleSubscription(name);
+        return sub && !sub.endDate;
+    }
+
     subscriptionInGracePeriod(name = undefined): boolean {
         let sub = this.getModuleSubscription(name);
         if (this.hasRecurringBilling(sub))
@@ -156,7 +161,7 @@ export class AppService extends AppServiceBase {
     hasModuleSubscription(name = undefined) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
-        return !this.isNotHostTenant() || !module || !module.endDate || 
+        return !this.isNotHostTenant() || !module || !module.endDate ||
             this.hasRecurringBilling(module) || (module.endDate > moment().utc());
     }
 

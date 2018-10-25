@@ -171,10 +171,6 @@
                         }
                     }
                 }
-                &.hidden {
-                    height: 0;
-                    visibility: hidden;
-                }
             }
             .total {
                 display: flex;
@@ -292,6 +288,20 @@
                 height: 100%;
             }
         }
+        .downgradeToFreeBlock {
+            height: 100%;
+            display: flex;
+            position: relative;
+            padding-bottom: 63px;
+            align-items: center;
+            h2 {
+                text-align: center;
+            }
+            payment-options-footer {
+                position: absolute;
+                bottom: 0;
+            }
+        }
     }
 
     // global styles
@@ -299,39 +309,9 @@
         min-width: 19px;
     }
 
-    /deep/ .step-footer {
-        .terms-text {
-            font-size: 12px;
-            font-weight: 400;
-            font-style: normal;
-            font-stretch: normal;
-            line-height: 1.5;
-            letter-spacing: 0.3px;
-            color: rgb(104, 111, 118);
-
-            p {
-                margin-bottom: 0;
-            }
-
-            a {
-                font-weight: 500;
-                color: rgb(0, 174, 239);
-                text-decoration: none;
-
-                &:hover {
-                    color: darken(rgb(0, 174, 239), 10%);
-                }
-            }
-        }
-
-        .btn-layout {
-            padding: 18px 44px;
-            font-family: Montserrat !important;
-            font-size: 17px !important;
-            font-weight: 600 !important;
-            line-height: 1.25 !important;
-            border-radius: 32px !important;
-            height: auto !important;
-        }
+    .hidden {
+        height: 0;
+        visibility: hidden;
     }
+
 }

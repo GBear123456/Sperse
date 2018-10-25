@@ -65,6 +65,7 @@ import { PackageCardComponent } from './payment-wizard/package-chooser/package-c
 import { PackageChooserComponent } from './payment-wizard/package-chooser/package-chooser.component';
 import { PaymentStatusComponent } from './payment-wizard/payment-status/payment-status.component';
 import { PaymentOptionsComponent } from './payment-wizard/payment-options/payment-options.component';
+import { PaymentOptionsFooterComponent } from '@app/shared/common/payment-wizard/payment-options/payment-options-footer/payment-options-footer.component';
 import { CreditCardComponent } from './payment-wizard/payment-options/credit-card/credit-card.component';
 import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pal.component';
 import { BankTransferComponent } from './payment-wizard/payment-options/bank-transfer/bank-transfer.component';
@@ -161,6 +162,7 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
         PackageChooserComponent,
         PaymentStatusComponent,
         PaymentOptionsComponent,
+        PaymentOptionsFooterComponent,
         CreditCardComponent,
         PayPalComponent,
         BankTransferComponent,

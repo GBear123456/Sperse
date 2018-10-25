@@ -21,7 +21,7 @@
         </div>
 
         <h4 class="planName">{{ plan.name }}</h4>
-        <div class="planPrice">
+        <div *ngIf="plan.total" class="planPrice">
             <div>
                 <span class="currency">{{ plan.currencySymbol || '$' }}</span>
                 <span class="numberPrice">{{ plan.pricePerUserPerMonth | customNumber : '1.0-0' }}</span>
@@ -29,7 +29,10 @@
             </div>
             <span class="perMonthText">{{ l('UserPerMonth') }}</span>
         </div>
-        <div class="usersAmountAndBilledInfo">{{ l('usersAmountAndBilledInfo', plan.usersAmount, getBillingTerm(plan.billingPeriod)) }}</div>
+        <div class="usersAmountAndBilledInfo">
+            <span>{{ l('usersAmountInfo', plan.usersAmount) }}</span>
+            <span *ngIf="plan.total">, {{ l('billedInfo', getBillingTerm(plan.billingPeriod)) }}</span>
+        </div>
         <div class="calculations" [ngClass]="{ hidden: !plan?.discount }">
             <div>
                 <span>{{ l('Subtotal') }}</span>
@@ -48,7 +51,7 @@
 </div>
 <div class="right">
     <div class="header">
-        <h2>{{ l('ChoosePaymentOption') }}</h2>
+        <h2 [ngClass]="{ hidden: !plan?.total }">{{ l('ChoosePaymentOption') }}</h2>
         <div class="phoneBlock">
             <img [src]="'./assets/common/icons/talking.svg'" />
             <div>
@@ -59,7 +62,7 @@
         <button (click)="close()"></button>
     </div>
     <div class="paymentMethods">
-        <mat-tab-group [(selectedIndex)]="selectedGateway">
+        <mat-tab-group *ngIf="plan.total" [(selectedIndex)]="selectedGateway">
             <mat-tab [label]="l('eCheck')">
                 <e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check>
             </mat-tab>
@@ -85,5 +88,12 @@
                 <!--</div>-->
             <!--</mat-tab>-->
         </mat-tab-group>
+        <div *ngIf="!plan.total" class="downgradeToFreeBlock">
+            <h2>{{ l('DowngradeToFreeLimitedVersionText') }}</h2>
+            <payment-options-footer
+                (onSubmit)="submitData($event)"
+                [submitButtonText]="l('FreeTrialConfirm')">
+            </payment-options-footer>
+        </div>
     </div>
 </div>

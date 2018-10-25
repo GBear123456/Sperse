@@ -16,6 +16,7 @@ import {
 /** Third party imports */
 import { MatSliderChange, MatSlider } from '@angular/material';
 import { concatAll, map, max, publishReplay, refCount } from 'rxjs/operators';
+import { partition } from 'lodash';
 
 /** Application imports */
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
@@ -45,12 +46,14 @@ export class PackageChooserComponent implements OnInit {
     @Input() subtitle = this.l('ChoosePlan');
     @Input() yearDiscount = 33;
     @Input() packagesMaxUsersAmount: number;
-    @Input() packages: PackageConfigDto[];
     @Input() nextStepButtonText = this.l('Next');
     @Input() nextButtonPosition: 'right' | 'center' = 'right';
+    @Input() showDowngradeLink = false;
     @Output() onPlanChosen: EventEmitter<PackageOptions> = new EventEmitter();
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     @HostBinding('class.withBackground') @Input() showBackground;
+    packages: PackageConfigDto[];
+    freePackages: PackageConfigDto[];
     selectedBillingPeriod = BillingPeriod.Yearly;
     usersAmount = 5;
     sliderInitialMinValue = 5;
@@ -78,12 +81,13 @@ export class PackageChooserComponent implements OnInit {
         }
         const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
-            refCount(),
-            /** Filter out free packages */
-            map(packages => packages.filter(packageConfig => packageConfig.editions[0].annualPrice))
+            refCount()
         );
-        packagesConfig$.subscribe(packages => {
-            this.packages = packages;
+        packagesConfig$.subscribe((packages: PackageConfigDto[]) => {
+            /** Split packages to free packages and notFreePackages */
+            let [ notFreePackages, freePackages ] = partition(packages, packageConfig => !!packageConfig.editions[0].annualPrice);
+            this.freePackages = freePackages;
+            this.packages = notFreePackages;
             this.selectedPackageIndex = this.packages.indexOf(this.packages.find(packageConfig => packageConfig.bestValue));
             /** Update selected package with the active status to handle next button status */
             setTimeout(() => {
@@ -155,6 +159,20 @@ export class PackageChooserComponent implements OnInit {
         this.slider['first']._step = this.sliderStep = step;
     }
 
+    downGradeToFree() {
+        if (this.showDowngradeLink) {
+            const freePlan = this.getFreePlan();
+            this.onPlanChosen.emit(freePlan);
+            this.moveToNextStep.next();
+        }
+    }
+
+    private getSubscriptionFrequency(): SetupSubscriptionInfoDtoFrequency {
+        return this.selectedPackageCardComponent.billingPeriod === BillingPeriod.Monthly
+               ? SetupSubscriptionInfoDtoFrequency._30
+               : SetupSubscriptionInfoDtoFrequency._365;
+    }
+
     goToNextStep() {
         if (!this.selectedPackageCardComponent) {
             this.selectPackage(this.selectedPackageIndex);
@@ -165,14 +183,28 @@ export class PackageChooserComponent implements OnInit {
         this.moveToNextStep.next();
     }
 
+    getFreePlan() {
+        return {
+            name: this.freePackages[0].editions[0].displayName,
+            billingPeriod: this.selectedPackageCardComponent.billingPeriod,
+            subscriptionFrequency: this.getSubscriptionFrequency(),
+            pricePerUserPerMonth: 0,
+            subtotal: 0,
+            discount: 0,
+            total: 0,
+            usersAmount: +this.freePackages[0].editions[0].features[this.module + '.MaxUserCount'],
+            selectedEditionId: this.freePackages[0].editions[0].id,
+            selectedEditionName: this.freePackages[0].editions[0].name
+        };
+    }
+
+    /** @todo refactor - calculate data in payment service instead of calculating of the plan values from the plan components */
     getPlan() {
         const totalPrice = this.selectedPackageCardComponent.totalPrice;
         const plan: PackageOptions = {
             name: this.selectedPackageCardComponent.name,
             billingPeriod: this.selectedPackageCardComponent.billingPeriod,
-            subscriptionFrequency: this.selectedPackageCardComponent.billingPeriod === BillingPeriod.Monthly
-                ? SetupSubscriptionInfoDtoFrequency._30
-                : SetupSubscriptionInfoDtoFrequency._365,
+            subscriptionFrequency: this.getSubscriptionFrequency(),
             pricePerUserPerMonth: this.selectedPackageCardComponent.pricePerUserPerMonth,
             subtotal: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.selectedPackageCardComponent.monthlyPricePerYear : totalPrice,
             discount: this.selectedBillingPeriod === BillingPeriod.Yearly ? this.yearDiscount : 0,
