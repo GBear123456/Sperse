@@ -186,12 +186,12 @@ export abstract class AppComponentBase implements OnDestroy {
         return 'data:image/jpeg;base64,' + imageBase64;
     }
 
-    getProfilePictureUrl(id) {
+    getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
         if (!id)
-            return AppConsts.imageUrls.profileDefault;
+            return defaultUrl;
 
         let tenantId = this.appSession.tenantId;
-        return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId ? tenantId + '/' + id : id);
+        return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId || 0) + '/' + id;
     }
 
     startLoading(globally = false, element: any = null) {
