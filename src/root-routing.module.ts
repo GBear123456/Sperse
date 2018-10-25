@@ -114,6 +114,7 @@ export class RootRoutingModule implements AfterViewInit {
                 private _injector: Injector,
                 private _applicationRef: ApplicationRef
     ) {
+/*
         if (AppConsts.isMobile) {
             _router.config[0].children.push(
                 {
@@ -123,6 +124,7 @@ export class RootRoutingModule implements AfterViewInit {
                 }
             );
         }
+*/
         _router.config[0].children.push(
            {
                path: 'app',
