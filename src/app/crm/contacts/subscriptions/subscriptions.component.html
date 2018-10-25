@@ -22,7 +22,7 @@
         <a *ngIf="cell.data.tenantId && permission.isGranted('Pages.Tenants.Impersonation')"
            (click)="cell.data.status == 'Active' && showUserImpersonateLookUpModal(cell.data)">{{l('LoginAsThisTenant')}}</a>
         <br />
-        <a *ngIf="cell.data.statusCode != 'C'" (click)="cancelSubscription(cell.data.id)">{{l('cancel')}}</a>
+        <a *ngIf="cell.data.statusCode === 'A'" (click)="cancelSubscription(cell.data.id)">{{l('cancel')}}</a>
     </div>
     <div *dxTemplate="let cell of 'amountTemplate'">
         <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>

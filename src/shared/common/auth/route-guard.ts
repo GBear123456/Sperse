@@ -66,15 +66,11 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 }
             }
 
-            if (!AppConsts.isMobile && this._feature.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM')) {
+            if (this._feature.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM')) {
                 return 'app/crm';
             }
 
             if (this._feature.isEnabled('CFO')) {
-                if (AppConsts.isMobile) {
-                    return 'app/cfo';
-                }
-
                 if (this._permissionChecker.isGranted('Pages.CFO')) {
 
                     if (this._permissionChecker.isGranted('Pages.CFO.MainInstanceAccess'))

@@ -21,7 +21,7 @@
             </mat-step>
             <mat-step>
                 <ng-container *ngIf="paymentStatusData">
-                    <payment-status [paymentStatusData]="paymentStatusData"></payment-status>
+                    <payment-status [paymentStatusData]="paymentStatusData" (onClose)="close()"></payment-status>
                 </ng-container>
             </mat-step>
         </mat-horizontal-stepper>

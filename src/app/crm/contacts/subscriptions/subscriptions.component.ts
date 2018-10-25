@@ -8,6 +8,7 @@ import {
     CommonLookupServiceProxy} from 'shared/service-proxies/service-proxies';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
+import { map } from 'rxjs/operators';
 
 @Component({
     selector: 'subscriptions',
@@ -57,6 +58,8 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
         else
             this._orderSubscriptionService
                 .getSubscriptionHistory(groupId)
+                /** Filter draft subscriptions */
+                .pipe(map(subscriptions => subscriptions.filter(subscription => subscription.statusCode !== 'D')))
                 .subscribe(result => {
                     this._orderSubscriptionService['data'] = {
                         groupId: groupId,
