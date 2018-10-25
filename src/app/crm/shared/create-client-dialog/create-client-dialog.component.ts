@@ -69,6 +69,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phonesComponent: any;
     linksComponent: any;
 
+    private checkValidTymeout;
     private readonly SAVE_OPTION_DEFAULT = 2;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private similarCustomersTimeout: any;
@@ -94,42 +95,34 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phoneValidators: any = [];
     linkValidators: any = [];
 
-    emails;
-    emailTypeDefault = 'P';
-    emailType = this.emailTypeDefault;
-
-    phones;
-    phoneTypeDefault = 'M';
-    phoneType = this.phoneTypeDefault;
-    phoneExtension;
-
-    links;
-    linkTypeDefault = '-';
-    linkForCompany = false;
-    linkType = this.linkTypeDefault;
-
-    addresses = {};
-    addressTypeDefault = 'W';
+    emailsTypeDefault = 'P';
+    phonesTypeDefault = 'M';
+    linksTypeDefault = '-';
+    addressesTypeDefault = 'W';
 
     addressTypes: any = [];
     phoneTypes: any = [];
     emailTypes: any = [];
     linkTypes: any = [];
-    states: any;
+    states: any = [];
     countries: any;
 
     googleAutoComplete: boolean;
     photoOriginalData: string;
     photoThumbnailData: string;
 
-    addButtonVisible = {};
-    clearButtonVisible = {};
+    addButtonVisible = {
+        emails: false,
+        phones: false,
+        links: false,
+        addresses: false
+    };
 
     contacts: any = {
-        emails: [],
-        phones: [],
-        links: [],
-        addresses: []
+        emails: [{type: this.emailsTypeDefault}],
+        phones: [{type: this.phonesTypeDefault}],
+        links: [{type: this.linksTypeDefault}],
+        addresses: [{type: this.addressesTypeDefault}]
     };
 
     similarCustomers: SimilarContactGroupOutput[];
@@ -377,10 +370,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         )
             return;
 
-        this.checkAddContactByField('emails');
-        this.checkAddContactByField('phones');
-        this.checkAddContactByField('links');
-        this.checkAddAddressContact();
+        if (['emails', 'phones', 'links', 'addresses'].some((type) => {
+            let result = this.checkDuplicateContact(type);
+            if (result)
+                this.notify.error(this.l('DuplicateContactDetected', this.l(type)));
+            return result;
+        })) return;
 
         this.createEntity();
     }
@@ -391,16 +386,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         return result;
     }
 
-    checkAddContactByField(field) {
-        this.addButtonVisible[field] && this.addContact(field);
-    }
-
-    checkAddAddressContact() {
-        this.addButtonVisible['addresses'] && this.addAddressContact();
-    }
-
     getEmailContactInput() {
-        return this.contacts.emails.map((val) => {
+        return this.contacts.emails.filter((obj) => obj.email).map((val) => {
             return {
                 emailAddress: val.email,
                 usageTypeId: val.type,
@@ -410,7 +397,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     getPhoneContactInput() {
-        return this.contacts.phones.map((val) => {
+        return this.contacts.phones.filter((obj) => obj.number).map((val) => {
             return {
                 phoneNumber: val.number,
                 phoneExtension: val.ext,
@@ -421,12 +408,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     getLinkContactInput() {
-        return this.contacts.links.map((val) => {
+        return this.contacts.links.filter((obj) => obj.url).map((val) => {
             return {
                 url: val.url,
                 isActive: true,
                 isCompany: val.isCompany,
-                linkTypeId: val.type
+                linkTypeId: val.type == this.linksTypeDefault ? undefined: val.type
             } as CreateContactLinkInput;
         });
     }
@@ -452,7 +439,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                     countryId: this.getCountryCode(address.country),
                     isActive: true,
                     comment: address.comment,
-                    usageTypeId: address.addressType
+                    usageTypeId: address.type
                 } as CreateContactAddressInput;
             } else {
                 return undefined;
@@ -534,68 +521,34 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     getCurrentEmails() {
-        let emails = [];
-        this.contacts.emails.forEach((fields, type) => {
-            emails.push(fields.email);
+        return this.contacts.emails.map((fields) => {
+            return fields.email;
         });
-
-        this.emails && emails.push(this.emails);
-
-        return emails;
     }
 
     getCurrentPhones() {
-        let phones = [];
-        this.contacts.phones.forEach((fields) => {
-            phones.push(fields.number);
+        return this.contacts.phones.forEach((fields) => {
+            return fields.number;
         });
-
-        this.phones && phones.push(this.phones);
-
-        return phones;
     }
 
     getInputElementValue(event) {
         return event.element.getElementsByTagName('input')[0].value;
     }
 
-    focusInput(event) {
-        if (!(event.component._value && event.component._value.trim())) {
-            let input = event.event.originalEvent.target;
-            setTimeout(function () {
-                if (input.createTextRange) {
-                    let part = input.createTextRange();
-                    part.move('character', 0);
-                    part.select();
-                } else if (input.setSelectionRange)
-                    input.setSelectionRange(0, 0);
-
-                input.focus();
-            }, 100);
-        }
-    }
-
-    blurInput(event) {
-        if (!(event.component._value && event.component._value.trim()))
-            event.component.option({mask: '', value: '', isValid: true});
-    }
-
-    onAddressChanged(event) {
+    onAddressChanged(event, i) {
         this.checkAddressControls();
 
         let number = this._angularGooglePlaceService.street_number(event.address_components);
         let street = this._angularGooglePlaceService.street(event.address_components);
 
-        this.addButtonVisible['addresses'] = Boolean(
-            this.addresses['address'] = number ? (number + ' ' + street) : street
-        );
+        this.contacts.addresses[i].address = number ? (number + ' ' + street) : street;
     }
 
-    updateCountryInfo(countryName: string) {
-        this.addresses['country'] =
+    updateCountryInfo(countryName: string, i) {
+        this.contacts.addresses[i]['country'] =
             (countryName == 'United States' ?
-                AppConsts.defaultCountryName :
-                countryName);
+                AppConsts.defaultCountryName : countryName);
     }
 
     countriesStateLoad(): void {
@@ -606,15 +559,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         });
     }
 
-    setDefaultTypeValue(obj, list, field = null) {
-        if (list.length) {
-                if (field)
-                    obj[field] = obj[field] || list[0].id;
-                else
-                    obj = obj || list[0].id;
-        }
-    }
-
     addressTypesLoad() {
         this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());
         this.store$.pipe(
@@ -622,20 +566,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             filter(types => !!types)
         ).subscribe(types => {
             this.addressTypes = types;
-            this.addresses['addressType'] = this.addressTypeDefault;
         });
-
-        if (!this.addresses['country']) {
-            this.loadStatesDataSource(AppConsts.defaultCountry);
-            this.addresses['country'] = AppConsts.defaultCountryName;
-        }
     }
 
-    loadStatesDataSource(countryCode: string) {
+    loadStatesDataSource(countryCode: string, index = 0) {
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }))
             .subscribe(result => {
-                this.states = result;
+                setTimeout(() => this.states[index] = result);
             });
     }
 
@@ -646,7 +584,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             filter(types => !!types)
         ).subscribe(types => {
             this.phoneTypes = types;
-            this.setDefaultTypeValue(this.phoneType, types);
         });
     }
 
@@ -657,7 +594,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             filter(types => !!types)
         ).subscribe(types => {
             this.emailTypes = types;
-            this.setDefaultTypeValue(this.emailType, types);
         });
     }
 
@@ -671,74 +607,72 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 entity['uri'] = entity.name.replace(/ /g,'');
                 return entity;
             });
-            this.setDefaultTypeValue(this.linkType, types);
         });
     }
 
-    onCountryChange(event) {
+    onCountryChange(event, index) {
         this.checkAddressControls();
         let country = _.findWhere(this.countries, {name: event.value});
         if (country) {
-            this.loadStatesDataSource(country['code']);
+            this.loadStatesDataSource(country['code'], index);
         }
     }
 
     checkAddressControls() {
-        this.addButtonVisible['addresses'] = this.addresses['address'] &&
-            this.addresses['city'] && this.addresses['country'];
-        this.clearButtonVisible['addresses'] = !this.addButtonVisible['addresses'];
+        clearTimeout(this.checkValidTymeout);
+        this.checkValidTymeout = setTimeout(() => {
+            this.addButtonVisible['addresses'] = 
+                this.checkEveryContactValid('addresses') && 
+                    !this.checkDuplicateContact('addresses');
+        }, 300);
     }
 
-    addContact(field) {
-        let value = this.getValidateFieldValue(field);
-        if (value && this.contacts[field].every((val) => {
-            return JSON.stringify(value) != JSON.stringify(val);
-        }))
-            this.contacts[field].push(value);
+    checkDuplicateContact(field) {        
+        return this.contacts[field].some((checkItem, checkIndex) => {
+            return !this.contacts[field].every((item, index) => {
+                return (index == checkIndex) || JSON.stringify(checkItem) != JSON.stringify(item);
+            });
+        });
     }
 
-    addAddressContact() {
-        let entity = this.addresses;
-
-        this.contacts['addresses'].push(this.addresses);
-        this.addresses = {
-            addressType: this.addresses['addressType']
-        };
+    addNewContact(field) {
+        if (this.checkEveryContactValid(field) && 
+            !this.checkDuplicateContact(field)
+        ) {
+            this.contacts[field].push({
+                type: this[field + 'TypeDefault']
+            });
+            this.addButtonVisible[field] = false;
+        }
     }
 
-    removeContact(field, index) {
-        this.contacts[field].splice(index, 1);
-
-        this.checkSimilarCustomers();
+    checkEveryContactValid(field) {           
+        return this.contacts[field].every((item) => {
+            if (item.type) {
+                if (field == 'emails')
+                    return this.validateEmailAddress(item.email);
+                else if (field == 'phones')
+                    return Boolean(item.number);
+                else if (field == 'links')
+                    return this.validateLinkAddress(item.url);
+                else if (field == 'addresses')
+                    return item.address && item.city && item.country;
+            } else
+                return false;
+        });
     }
 
-    getValidateFieldValue(field) {
-        let value;
-        if (field == 'links') {
-            value = {
-                isCompany: this.linkForCompany,
-                type: this.linkType == this.linkTypeDefault ? undefined: this.linkType,
-                url: this.links
-            };
-            this.resetComponent(this[field + 'Component']);
-        } else if (field == 'emails') {
-            value = {
-                type: this.emailType,
-                email: this.emails
-            };
-            this.resetComponent(this[field + 'Component']);
-        } else if (field == 'phones') {
-            value = {
-                type: this.phoneType,
-                number: this.phones,
-                ext: this.phoneExtension
-            };
-            this.phoneExtension = undefined;
-            this[field + 'Component'].reset();
+    emptyOrRemoveInput(field, index) {
+        if (index || this.contacts[field].length > 1) {
+            this.contacts[field].splice(index, 1);
+            this.addButtonVisible[field] = this.checkEveryContactValid(field) 
+                && !this.checkDuplicateContact(field);
+        } else {
+            this.contacts[field][index] = {type: this[field + 'TypeDefault']};
+            this.addButtonVisible[field] = false;
         }
 
-        this.addButtonVisible[field] = false;
-        return value;
+        this.checkSimilarCustomers();
     }
 
     resetComponent(component) {
@@ -754,50 +688,25 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         return this.urlRegEx.test(value);
     }
 
-    onTypeChanged($event, field) {
-        if ($event.addedItems) {
-            this[field + 'Type'] = $event.addedItems[0].id;
-        } else {
-            $event.element.parentNode.classList
-                .replace(this[field + 'Type'], $event.value);
-            this[field + 'Type'] = $event.value;
-        }
-    }
-
     initValidationGroup($event, validator) {
         this[validator].push($event.component);
     }
 
-    onEmailKeyUp($event) {
-        let field = 'emails';
+    onFieldKeyUp($event, field, i) {
         let value = this.getInputElementValue($event);
-        this.addButtonVisible[field] = this.validateEmailAddress(value);
 
-        this.emails = value;
+        this.addButtonVisible[field] = 
+            this.checkEveryContactValid(field) && 
+                !this.checkDuplicateContact(field);
 
         this.checkSimilarCustomers();
-        this.clearButtonVisible[field] = value
-            && !this.addButtonVisible[field];
     }
 
-    onLinkKeyUp($event) {
-        let field = 'links';
-        let value = this.getInputElementValue($event);
-        this.addButtonVisible[field] = this.validateLinkAddress(value);
-
-        this.links = value;
-
-        this.checkSimilarCustomers();
-        this.clearButtonVisible[field] = value
-            && !this.addButtonVisible[field];
-    }
-
-    onPhoneKeyUp(value, isValid) {
+    onPhoneKeyUp(value, isValid, i) {
         let field = 'phones';
-        this.addButtonVisible[field] = isValid;
+        this.addButtonVisible[field] = isValid
+            && !this.checkDuplicateContact(field);
         this.checkSimilarCustomers();
-        this.clearButtonVisible[field] = value
-            && !this.addButtonVisible[field];
     }
 
     onCompanyKeyUp($event) {
@@ -807,13 +716,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onCommentKeyUp($event) {
         this.notes = $event.element.getElementsByTagName('textarea')[0].value;
-    }
-
-    setComponentToValid(field, reset = false) {
-        let component = this[field + 'Component'];
-        reset && component.reset();
-        if (component.option)
-            setTimeout(() => component.option('isValid', true));
     }
 
     showUploadPhoto($event) {
@@ -840,39 +742,21 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.phonesComponent = component;
     }
 
-    emptyInput(field) {
-        if (field == 'phones')
-            this.phoneExtension = '';
-        this.setComponentToValid(field, true);
-        this.clearButtonVisible[field] = false;
-        this.checkSimilarCustomers();
-    }
-
     resetFullDialog(forced = true) {
         let resetInternal = () => {
             this.resetComponent(this.emailsComponent);
             this.phonesComponent.reset();
-            this.clearButtonVisible['emails'] = false;
-            this.clearButtonVisible['phones'] = false;
             this.addButtonVisible['emails'] = false;
             this.addButtonVisible['phones'] = false;
-            this.contacts.emails = [];
-            this.contacts.phones = [];
-            this.contacts.links = [];
-            this.contacts.addresses = [];
-            this.phoneExtension = undefined;
+            this.addButtonVisible['links'] = false;
+            this.addButtonVisible['addresses'] = false;
+            this.contacts.emails = [{type: this.emailsTypeDefault}];
+            this.contacts.phones = [{type: this.phonesTypeDefault}];
+            this.contacts.links = [{type: this.linksTypeDefault}];
+            this.contacts.addresses = [{type: this.addressesTypeDefault}];
             this.notes = undefined;
-            this.emails = undefined;
-            this.phones = undefined;
-            this.links = undefined;
-            this.addresses = {
-                addressType: this.addressTypeDefault
-            };
 
             this.person = new PersonInfoDto();
-            this.emailType = this.emailTypeDefault;
-            this.phoneType = this.phoneTypeDefault;
-            this.linkType = this.linkTypeDefault;
             this.addressTypesLoad();
             this.data.title = undefined;
             this.data.isTitleValid = true;

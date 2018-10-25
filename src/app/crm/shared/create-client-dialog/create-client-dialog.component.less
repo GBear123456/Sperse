@@ -52,8 +52,28 @@
             }
         }
 
+        .add-new-button {
+            height: 30px;
+            padding-top: 10px;
+            padding-left: 140px;
+            span {
+                font-size: 14px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.79;
+                letter-spacing: 0.3px;
+                cursor: pointer;
+                color: #00aeef;
+            }
+            &.disabled span {
+                color: #dedede;
+                cursor: default;
+            }
+        }
+
         /deep/ .field {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             &.addr {
                 margin-bottom: 0px;
                 &.padding-right {
@@ -62,6 +82,14 @@
             }
             &.notes {
                 margin-top: 20px; 
+            }
+
+            .editable-item {
+                margin-left: 110px;        
+                &.first-item {
+                    margin-left: 0px;
+                    display: inline-block;
+                }
             }
      
             label {
@@ -170,14 +198,34 @@
                 &.clear-contact {
                     color: red;
                     margin: 0px !important;
-                    transform: rotate(45deg);
                     display: inline-block;
                     left: 30px;
                     width: 8px;
                     height: 8px;
+                    .minus-icon {
+                        width: 16px;
+                        height: 16px;
+                        display: inline-block;
+                        border-radius: 50%;
+                        background: #F9E6E6;
+                        position: absolute;
+                        top: 10px;
+                        cursor: pointer;
+                        &:before {
+                            content: '';
+                            width: 8px;
+                            height: 2px;
+                            background: #e7326a;
+                            position: absolute;
+                            left: 50%;
+                            top: 50%;
+                            -webkit-transform: translate(-50%, -50%);
+                            transform: translate(-50%, -50%);
+                        }
+                    }
                 }
             }
-            dx-text-box, dx-number-box, dx-text-area, dx-select-box, country-phone-number {
+            dx-text-box, dx-number-box, dx-text-area, dx-select-box, country-phone-number, dx-drop-down-box {
                 display: inline-block;
                 margin-left: 30px;  
                 &.dx-invalid {
@@ -270,6 +318,8 @@
     }
 
     .similar-clients-message {
+        top: 70px;
+        position: relative;
         background-color: #ed6d6d;
         color: white;
         padding: 5px 30px;
