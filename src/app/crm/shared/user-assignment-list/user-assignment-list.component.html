@@ -25,7 +25,7 @@
                 <div *dxTemplate="let data of 'item'">
                     <div class="item-row" data-id="{{data.id}}">
                         <div class="user">
-                            <img src="{{ (data.profileThumbnailId ? getProfilePictureUrl(data.profileThumbnailId) : noPhotoUrl) }}" alt="Person Photo">
+                            <img src="{{ getProfilePictureUrl(data.profileThumbnailId, noPhotoUrl) }}" alt="Person Photo">
                             <span class="item-name">{{data.name}}<span *ngIf="!data.isActive"> (inactive)</span></span>
                         </div>                    
                         <a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a>
