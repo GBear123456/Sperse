@@ -18,7 +18,7 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     @ViewChild(PhoneNumberComponent) intPhoneNumber;
     @ViewChild('intPhoneNumberModel') model;
 
-    errorVisible: boolean = false;
+    value: any;
 
     constructor(injector: Injector) {
         super(injector, AppConsts.localization.defaultLocalizationSourceName);
@@ -28,21 +28,8 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
         return this.model.valid;
     }
 
-    setErrorMessageVisible(value) {
-        this.errorVisible = value;
-    }
-
     keyUp(event) {
         this.onKeyUp.emit(event);
-    }
-
-    focusIn(event) {
-        if (!this.isValid())
-            this.setErrorMessageVisible(true);
-    }
-
-    focusOut(event) {
-        this.errorVisible = false;
     }
 
     reset() {
@@ -58,10 +45,8 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     }
 
     ngAfterViewInit() {
-        this.intPhoneNumber.registerOnChange((value) => { 
-            this.phoneNumberChange.emit(value); 
-            if (this.isValid())
-                this.setErrorMessageVisible(false);
+        this.intPhoneNumber.registerOnChange((value) => {             
+            this.phoneNumberChange.emit(this.value = value); 
         });
     }
 }
