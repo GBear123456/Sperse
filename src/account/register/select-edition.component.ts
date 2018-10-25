@@ -4,7 +4,7 @@ import { EditionPaymentType, SubscriptionStartType } from '@shared/AppEnums';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { EditionSelectDto, EditionWithFeaturesDto, EditionsSelectOutput, FlatFeatureSelectDto, SubscriptionServiceProxy, TenantRegistrationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { EditionSelectDto, EditionWithFeaturesDto, EditionsSelectOutput, FlatFeatureSelectDto, TenantRegistrationServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 
 @Component({
@@ -25,7 +25,6 @@ export class SelectEditionComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _tenantRegistrationService: TenantRegistrationServiceProxy,
-        private _subscriptionService: SubscriptionServiceProxy,
         private _appSessionService: AppSessionService,
         private _router: Router
     ) {
