@@ -1,15 +1,18 @@
-import {Component, OnInit, Injector, Input, Output, EventEmitter, ChangeDetectionStrategy} from '@angular/core';
+import { Component, Injector, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
+import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
+import { AppService } from '@app/app.service';
+import { Module } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './setup-steps.component.html',
     styleUrls: ['./setup-steps.component.less'],
     selector: 'setup-steps',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SetupStepComponent extends CFOComponentBase implements OnInit {
+export class SetupStepComponent extends CFOComponentBase {
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
         { caption: 'FinancialAccounts', component: '/linkaccounts', isAlwaysActive: false },
@@ -21,15 +24,14 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
 
-    dialogConfig = new MatDialogConfig();
+    public abp = abp;
+    private dialogConfig = new MatDialogConfig();
 
     constructor(injector: Injector,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        public appService: AppService
     ) {
         super(injector);
-    }
-
-    ngOnInit(): void {
     }
 
     onClick(index: number, elem) {
@@ -41,6 +43,19 @@ export class SetupStepComponent extends CFOComponentBase implements OnInit {
         if (index < this.SelectedStepIndex) return 'passed';
         else if (index == this.SelectedStepIndex) return 'current';
         else return '';
+    }
+
+    showPaymentWizard() {
+        this.dialog.open(PaymentWizardComponent, {
+            height: '655px',
+            width: '980px',
+            id: 'payment-wizard',
+            panelClass: ['payment-wizard', 'setup'],
+            data: {
+                module: Module.CFO,
+                title: this.ls('Platform', 'UpgradeYourSubscription', Module.CFO)
+            }
+        });
     }
 
     showIntro() {

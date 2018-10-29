@@ -49,22 +49,4 @@
         </section>
     </div>
 </div>
-
-<footer class="row align-items-center step-footer">
-    <div class="col-8">
-        <div class="terms-block row align-items-center">
-            <div class="col-1">
-                <img src="./assets/common/icons/information-button.svg" alt="info">
-            </div>
-            <div class="col-11 terms-text">
-                <p>{{ l('BankTransferTermsAndConditionText') }} <a (click)="openTermsModal()">{{ l('TermsConditions') }}</a></p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-4 text-right">
-        <button mat-raised-button class="btn btn-layout">
-            {{ l('SendWire') }}
-        </button>
-    </div>
-</footer>
+<payment-options-footer [submitButtonText]="l('SendWire')"></payment-options-footer>

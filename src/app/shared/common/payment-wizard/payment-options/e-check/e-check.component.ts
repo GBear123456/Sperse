@@ -3,7 +3,6 @@ import { Component, ChangeDetectionStrategy, EventEmitter, OnInit, Output, Injec
 import { FormBuilder, Validators } from '@angular/forms';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -56,8 +55,7 @@ export class ECheckComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private formBuilder: FormBuilder,
         private customNumberPipe: CustomNumberPipe,
-        private numberToWordsPipe: NumberToWordsPipe,
-        private dialog: MatDialog
+        private numberToWordsPipe: NumberToWordsPipe
     ) {
         super(injector);
     }
@@ -81,10 +79,6 @@ export class ECheckComponent extends AppComponentBase implements OnInit {
         if (this.echeckForm.valid) {
             this.onSubmit.next(this.echeckForm.getRawValue());
         }
-    }
-
-    openTermsModal() {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: {type: ConditionsType.Terms } });
     }
 
 }

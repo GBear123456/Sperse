@@ -117,14 +117,16 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     openPaymentWizardDialog() {
-        const dialogRef = this.dialog.open(PaymentWizardComponent, {
+        this.dialog.open(PaymentWizardComponent, {
             height: '655px',
             width: '980px',
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
-            data: { module: Module.CRM }
+            data: {
+                module: Module.CRM,
+                title: this.ls('Platform', 'UpgradeYourSubscription', Module.CRM)
+            }
         });
-        dialogRef.afterClosed().subscribe(() => {});
     }
 
     activate() {

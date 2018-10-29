@@ -1,4 +1,4 @@
-<img [ngClass]="paymentStatusData.status" [src]="'./assets/common/icons/' + paymentStatusData.status + '.svg'">
+<img [ngClass]="paymentStatusData.status" [src]="'./assets/common/icons/' + (paymentStatusData.icon || paymentStatusData.status) + '.svg'">
 <h2>{{ separateToFewLines(l('PaymentStatus_' + paymentStatusData.status )) }}</h2>
 <ng-container *ngIf="paymentStatusData.status === 'payment-failed'">
     <p *ngIf="paymentStatusData.statusText">{{ paymentStatusData.statusText }}</p>

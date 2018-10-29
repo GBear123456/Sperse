@@ -21,6 +21,7 @@ import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'payment-options',
@@ -75,7 +76,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         return billingPeriod === BillingPeriod.Yearly ? 'annually' : 'monthly';
     }
 
-    submitData(data: any, paymentMethod: PaymentMethods) {
+    submitData(data: any, paymentMethod: PaymentMethods = null) {
         /** Go to the third step */
         this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
         this.onChangeStep.emit(2);
@@ -140,10 +141,16 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo) :
             this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
 
-        method.subscribe(
-            () => { this.onStatusChange.emit({ status: PaymentStatusEnum.Confirmed }); },
+        method
+            .pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
+            .subscribe(
+            () => {
+                this.onStatusChange.emit({
+                    status: paymentMethod ? PaymentStatusEnum.Confirmed : PaymentStatusEnum.FreeConfirmed,
+                    icon: PaymentStatusEnum.Confirmed
+                });
+            },
             error => {
-                this.appHttpConfiguration.avoidErrorHandling = false;
                 this.onStatusChange.emit({
                     status: PaymentStatusEnum.Failed,
                     statusText: error.message,

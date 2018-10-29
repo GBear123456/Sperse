@@ -3,8 +3,10 @@
         <mat-horizontal-stepper #stepper>
             <mat-step>
                 <package-chooser
+                    [title]="data?.title"
                     [module]="module"
                     [showBackground]="true"
+                    [showDowngradeLink]="true"
                     (onPlanChosen)="changePlan($event)"
                     (moveToNextStep)="moveToPaymentOptionsStep()">
                 </package-chooser>
