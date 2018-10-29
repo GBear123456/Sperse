@@ -8,7 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatHorizontalStepper } from '@angular/ma
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { ModuleType, InviteUserInputModuleType, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
+import { ModuleType, ModuleType2, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 
@@ -26,6 +26,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
     @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CrmIntroComponent, any>;
     readonly identifier = 'CRM-Setup';
+    readonly moduleType = ModuleType.CRM;
     moduleName: string;
     showImportUsersStep: boolean;
     maxAvailableUserCount: number;
@@ -58,7 +59,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
                 return;
 
             this.startLoading(true);
-            this.importUsersStepComponent.submitInviteUsers(InviteUserInputModuleType.CRM)
+            this.importUsersStepComponent.submitInviteUsers()
                 .subscribe(() => this.questionnaire.submitQuestionnaire(), () => this.finishLoading(true));
         } else {
             this.startLoading(true);
@@ -76,7 +77,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
 
     // GetAvailableUserCount
     getAvailableUserCount() {
-        this._userService.getAvailableUserCount(ModuleType.CRM).subscribe(result => {
+        this._userService.getAvailableUserCount(ModuleType2[this.moduleType]).subscribe(result => {
             this.maxAvailableUserCount = result;
         });
     }

@@ -84,7 +84,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                 key: 'id',
                 load: (loadOptions) => {
                     return this._roleService.getRoles(
-                            this.selectedPermission || undefined
+                            this.selectedPermission || undefined,
+                            undefined
                         ).toPromise().then(response => {
                             return {
                                 data: response.items,
