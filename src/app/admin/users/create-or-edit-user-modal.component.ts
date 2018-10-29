@@ -1,5 +1,4 @@
 import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrUpdateUserInput, OrganizationUnitDto, PasswordComplexitySetting, ProfileServiceProxy, TenantHostType, UserEditDto, UserRoleDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap';
@@ -25,7 +24,6 @@ export class CreateOrEditUserModalComponent extends AppComponentBase implements 
 
     active = false;
     saving = false;
-    canChangeUserName = true;
     isTwoFactorEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
     isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
@@ -64,7 +62,6 @@ export class CreateOrEditUserModalComponent extends AppComponentBase implements 
         this._userService.getUserForEdit(userId).subscribe(userResult => {
             this.user = userResult.user;
             this.roles = userResult.roles;
-            this.canChangeUserName = this.user.userName !== AppConsts.userManagement.defaultAdminUserName;
 
             this.allOrganizationUnits = userResult.allOrganizationUnits;
             this.memberedOrganizationUnits = userResult.memberedOrganizationUnits;
@@ -144,6 +141,7 @@ export class CreateOrEditUserModalComponent extends AppComponentBase implements 
         let input = new CreateOrUpdateUserInput();
 
         input.user = this.user;
+        input.user.userName = this.user.emailAddress;
         input.setRandomPassword = this.setRandomPassword;
         input.sendActivationEmail = this.sendActivationEmail;
         input.assignedRoleNames =

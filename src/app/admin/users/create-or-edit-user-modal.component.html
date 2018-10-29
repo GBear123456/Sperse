@@ -43,13 +43,6 @@
                                 <input id="PhoneNumber" type="text" name="PhoneNumber" class="form-control" [(ngModel)]="user.phoneNumber" maxlength="24">
                             </div>
 
-                            <div class="form-group">
-                                <label for="UserName">{{l("UserName")}} *</label>
-                                <input id="UserName" #userNameInput="ngModel" type="text" [disabled]="!canChangeUserName" name="UserName" class="form-control" [(ngModel)]="user.userName" required maxlength="32">
-                                <span class="help-block" *ngIf="!canChangeUserName">{{l("CanNotChangeAdminUserName")}}</span>
-                                <validation-messages [formCtrl]="userNameInput"></validation-messages>
-                            </div>
-
                             <div class="m-checkbox-list">
                                 <label for="EditUser_SetRandomPassword" class="m-checkbox">
                                     <input id="EditUser_SetRandomPassword" type="checkbox" name="SetRandomPassword" [(ngModel)]="setRandomPassword">

@@ -38,7 +38,6 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
     sendActivationEmail = true;
     setRandomPassword = false;
     passwordComplexityInfo = '';
-    canChangeUserName: boolean;
 
     isTwoFactorEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
     isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
@@ -90,7 +89,6 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
             this.initialRoles = this.roles.map((role) => {
                 return _.clone(role);
             });
-            this.canChangeUserName = this.user.userName !== AppConsts.userManagement.defaultAdminUserName;
 
             this.orgUnits = userResult.allOrganizationUnits;
             this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
@@ -210,9 +208,6 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         if (!this.validatePhoneNumber(this.user.phoneNumber))
             return this.notify.error(this.l('PhoneValidationError'));
 
-        if (!this.user.userName)
-            return this.notify.error(this.l('InvalidUserNameOrPassword'));
-
         return true;
     }
 
@@ -230,6 +225,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         let input = new CreateOrUpdateUserInput();
 
         input.user = this.user;
+        input.user.userName = this.user.emailAddress;
         input.setRandomPassword = this.setRandomPassword;
         input.sendActivationEmail = this.sendActivationEmail;
         input.assignedRoleNames =
