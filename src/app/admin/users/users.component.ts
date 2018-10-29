@@ -24,6 +24,7 @@ import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-
 
 import { AppService } from '@app/app.service';
 import { forkJoin } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { MatDialog } from '@angular/material';
 
@@ -39,7 +40,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     private filters: FilterModel[];
     selectedPermission: string;
     role: number;
-    private subRouteParams: any;
 
     public actionMenuItems: any;
     public actionRecord: any;
@@ -400,7 +400,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
 
-        this.subRouteParams.unsubscribe();
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
@@ -409,12 +408,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     private paramsSubscribe() {
-        if (!this.subRouteParams || this.subRouteParams.closed)
-            this.subRouteParams = this._activatedRoute.queryParams
-                .subscribe(params => {
-                    if (params['refresh'])
-                        this.invalidate();
-                });
+        this._activatedRoute.queryParams
+            .pipe(takeUntil(this.deactivate$))
+            .subscribe(params => {
+                if (params['refresh'])
+                    this.invalidate();
+            });
     }
 
     onContentReady(event) {
