@@ -93,7 +93,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                     accountingType: val['Accounting Type'],
                     cashType: val['Cashflow Type'],
                     category: val['Category'],
-                    subCategory: val['Sub Category'],
+                    subCategory: val['Parent Category'],
                     coAID: val['COAID'],
                     sortId: null
                 }));
