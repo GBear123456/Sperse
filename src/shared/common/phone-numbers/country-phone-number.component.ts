@@ -18,18 +18,27 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     @ViewChild(PhoneNumberComponent) intPhoneNumber;
     @ViewChild('intPhoneNumberModel') model;
 
-    value: any;
+    value: any;    
+    focused = false;
 
     constructor(injector: Injector) {
         super(injector, AppConsts.localization.defaultLocalizationSourceName);
     }
 
     isValid() {
-        return this.model.valid;
+        return !this.value || this.model.valid;
     }
 
     keyUp(event) {
         this.onKeyUp.emit(event);
+    }
+
+    focusIn(event) {
+        this.focused = true;
+    }
+
+    focusOut(event) {
+        this.focused = false;
     }
 
     reset() {
