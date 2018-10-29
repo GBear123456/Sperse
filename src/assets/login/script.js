@@ -102,18 +102,16 @@
     }
 
     function navigate(path, params) {
-        location = location.origin + path + (params ? $.param(params): '');
+        location = location.origin + path + (params ? '?' + $.param(params): '');
     }
 
     function handleAuthResult(authenticateResult) {
         if (authenticateResult.shouldResetPassword) {
             // Password reset
             navigate('/account/reset-password', {
-                queryParams: {
-                    userId: authenticateResult.userId,
-                    tenantId: authenticateResult.detectedTenancies[0].id,
-                    resetCode: authenticateResult.passwordResetCode
-                }
+                userId: authenticateResult.userId,
+                tenantId: authenticateResult.detectedTenancies[0].id,
+                resetCode: authenticateResult.passwordResetCode
             });
 
         } else if (authenticateResult.requiresTwoFactorVerification) {
