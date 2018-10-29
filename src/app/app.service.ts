@@ -2,7 +2,8 @@
 import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
+import { publishReplay, refCount, map } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore' ;
 
@@ -11,8 +12,17 @@ import { AppServiceBase } from '@shared/common/app-service-base';
 import { PanelMenu } from 'app/shared/layout/panel-menu';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { InstanceServiceProxy, UserServiceProxy, ActivateUserForContactInput, SetupInput, TenantHostType,
-    GetUserInstanceInfoOutputStatus, TenantSubscriptionServiceProxy, ModuleSubscriptionInfoDtoModule } from '@shared/service-proxies/service-proxies';
+import {
+    InstanceServiceProxy,
+    UserServiceProxy,
+    ActivateUserForContactInput,
+    SetupInput,
+    TenantHostType,
+    GetUserInstanceInfoOutputStatus,
+    TenantSubscriptionServiceProxy,
+    ModuleSubscriptionInfoDtoModule,
+    ModuleSubscriptionInfoDto
+} from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -30,7 +40,9 @@ export class AppService extends AppServiceBase {
     public contactInfo: any;
 
     private expiredModule: Subject<string>;
-    private moduleSubscriptions: any;
+    private moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
+    private moduleSubscriptions: ModuleSubscriptionInfoDto[];
+    public subscriptionIsFree$: Observable<boolean>;
     private permission: PermissionCheckerService;
     private feature: FeatureCheckerService;
     private instanceServiceProxy: InstanceServiceProxy;
@@ -83,16 +95,21 @@ export class AppService extends AppServiceBase {
     }
 
     loadModeuleSubscriptions() {
-        this._tenantSubscriptionProxy.getModuleSubscriptions().subscribe((res) => {
+        this.moduleSubscriptions$ = this._tenantSubscriptionProxy.getModuleSubscriptions()
+            .pipe(publishReplay(), refCount());
+        this.moduleSubscriptions$.subscribe((res) => {
             this.moduleSubscriptions = res;
             this.checkModuleExpired();
         });
+        this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
+            map(subscriptions => this.checkSubscriptionIsFree(undefined, subscriptions))
+        );
     }
 
-    getModuleSubscription(name = undefined) {
+    getModuleSubscription(name = undefined, moduleSubscriptions = this.moduleSubscriptions) {
         let module = (name || this.getModule()).toUpperCase();
-        if (this.moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
-            return _.find(this.moduleSubscriptions, {module: module})
+        if (moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
+            return _.find(moduleSubscriptions, {module: module})
                 || {module: module, endDate: moment(new Date(0))};
     }
 
@@ -125,7 +142,7 @@ export class AppService extends AppServiceBase {
         return false;
     }
 
-    subscriptionIsFree(name = undefined): boolean {
+    checkSubscriptionIsFree(name = undefined, subscriptions = this.moduleSubscriptions): boolean {
         let sub = this.getModuleSubscription(name);
         return sub && !sub.endDate;
     }

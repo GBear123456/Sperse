@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -13,15 +13,16 @@ import { AppService } from '@app/app.service';
     templateUrl: './left-menu.component.html',
     styleUrls: ['./left-menu.component.less'],
     selector: 'left-menu',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardMenuComponent extends AppComponentBase {
     @Output() openIntro: EventEmitter<any> = new EventEmitter();
     @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
     items = [];
-
+    public abp = abp;
     constructor(injector: Injector,
                 private _router: Router,
-                private _appService: AppService
+                public appService: AppService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -47,11 +48,6 @@ export class DashboardMenuComponent extends AppComponentBase {
                 caption: 'CustomizeSettings',
                 component: '/editions',
                 disabled: true
-            },
-            {
-                caption: 'PaymentWizard',
-                hidden: abp.session.multiTenancySide != abp.multiTenancy.sides.TENANT ||
-                        !this._appService.subscriptionIsFree()
             }
         ];
     }
@@ -71,9 +67,5 @@ export class DashboardMenuComponent extends AppComponentBase {
         else if (event.target.classList.contains('add-button'))
             this._router.navigate(['/app/crm' + elem.component],
                 {queryParams: {action: 'addNew'}});
-    }
-
-    showDialog() {
-        this.openIntro.emit(event);
     }
 }

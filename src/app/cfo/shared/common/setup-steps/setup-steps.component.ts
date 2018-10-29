@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Injector, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
@@ -10,43 +10,31 @@ import { Module } from '@shared/service-proxies/service-proxies';
     templateUrl: './setup-steps.component.html',
     styleUrls: ['./setup-steps.component.less'],
     selector: 'setup-steps',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SetupStepComponent extends CFOComponentBase implements OnInit {
+export class SetupStepComponent extends CFOComponentBase {
     @Input() SelectedStepIndex: number;
     @Input() SetupSteps = [
         { caption: 'FinancialAccounts', component: '/linkaccounts', isAlwaysActive: false },
         { caption: 'BusinessEntity', component: '/business-entities', isAlwaysActive: true },
         { caption: 'Chart', component: '/chart-of-accounts', isAlwaysActive: true },
         { caption: 'Rules', component: '/rules', isAlwaysActive: false },
-        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin, isAlwaysActive: false },
-        {
-            caption: 'PaymentWizard',
-            visible: abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT &&
-                     this.appService.subscriptionIsFree()
-        }
+        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin, isAlwaysActive: false }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
 
-    dialogConfig = new MatDialogConfig();
+    public abp = abp;
+    private dialogConfig = new MatDialogConfig();
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        private appService: AppService
+        public appService: AppService
     ) {
         super(injector);
     }
 
-    ngOnInit(): void {
-    }
-
     onClick(index: number, elem) {
-        if (elem.caption === 'PaymentWizard') {
-            this.showPaymentWizard();
-            return;
-        }
-
         if (elem.isAlwaysActive || this._cfoService.hasTransactions && elem.component)
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + elem.component]);
     }
