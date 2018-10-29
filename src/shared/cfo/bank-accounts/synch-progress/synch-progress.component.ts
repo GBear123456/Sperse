@@ -32,7 +32,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     readonly maxTryCount = 3;
     readonly initialSynchProgressDelay = 5 * 1000;
     private synchProgressDelay = this.initialSynchProgressDelay;
-    private maxSynchProgressDelay = 10 * 60 * 60 * 1000;
+    private maxSynchProgressDelay = 10 * 60 * 1000;
 
     constructor(
         injector: Injector,

@@ -46,7 +46,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     public headlineConfig = {
         names: [this.l('Users')],
         icon: 'people',
-        onRefresh: this.invalidate.bind(this),
+        onRefresh: () => this.invalidate(),
         buttons: [
             {
                 enabled: this.isGranted('Pages.Administration.Users.Create'),
