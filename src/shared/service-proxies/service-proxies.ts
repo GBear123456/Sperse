@@ -17449,6 +17449,60 @@ export class PaymentServiceProxy {
     }
 
     /**
+     * @trackingCode (optional) 
+     * @isCaptured (optional) 
+     * @return Success
+     */
+    completeManualSubscriptionPayment(trackingCode: string | null | undefined, isCaptured: boolean | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Payment/CompleteManualSubscriptionPayment?";
+        if (trackingCode !== undefined)
+            url_ += "trackingCode=" + encodeURIComponent("" + trackingCode) + "&"; 
+        if (isCaptured !== undefined)
+            url_ += "isCaptured=" + encodeURIComponent("" + isCaptured) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCompleteManualSubscriptionPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCompleteManualSubscriptionPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCompleteManualSubscriptionPayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @sorting (optional) 
      * @maxResultCount (optional) 
      * @skipCount (optional) 
@@ -22736,14 +22790,17 @@ export class TenantSubscriptionServiceProxy {
      * @editionId (optional) 
      * @maxUserCount (optional) 
      * @frequency (optional) 
+     * @isManual (optional) 
      * @return Success
      */
-    requestPayment(editionId: number | null | undefined, maxUserCount: number | null | undefined, frequency: Frequency | null | undefined): Observable<string> {
+    requestPayment(editionId: number | null | undefined, maxUserCount: number | null | undefined, frequency: Frequency | null | undefined, isManual: boolean | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPayment?";
         if (editionId !== undefined)
             url_ += "editionId=" + encodeURIComponent("" + editionId) + "&"; 
         if (maxUserCount !== undefined)
             url_ += "maxUserCount=" + encodeURIComponent("" + maxUserCount) + "&"; 
+        if (isManual !== undefined)
+            url_ += "isManual=" + encodeURIComponent("" + isManual) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(frequency);
@@ -36601,6 +36658,7 @@ export interface ICreateContactGroupOutput {
 
 export class SimilarContactGroupOutput implements ISimilarContactGroupOutput {
     id!: number | undefined;
+    contactId!: number | undefined;
     name!: string | undefined;
     photo!: string | undefined;
     companyName!: string | undefined;
@@ -36620,6 +36678,7 @@ export class SimilarContactGroupOutput implements ISimilarContactGroupOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.contactId = data["contactId"];
             this.name = data["name"];
             this.photo = data["photo"];
             this.companyName = data["companyName"];
@@ -36639,6 +36698,7 @@ export class SimilarContactGroupOutput implements ISimilarContactGroupOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["contactId"] = this.contactId;
         data["name"] = this.name;
         data["photo"] = this.photo;
         data["companyName"] = this.companyName;
@@ -36651,6 +36711,7 @@ export class SimilarContactGroupOutput implements ISimilarContactGroupOutput {
 
 export interface ISimilarContactGroupOutput {
     id: number | undefined;
+    contactId: number | undefined;
     name: string | undefined;
     photo: string | undefined;
     companyName: string | undefined;
@@ -56162,6 +56223,7 @@ export enum PaymentRequestInfoDtoPaymentMethod {
     Charge = "Charge", 
     Capture = "Capture", 
     Void = "Void", 
+    Manual = "Manual", 
 }
 
 export enum PaymentRequestInfoDtoPaymentInfoType {

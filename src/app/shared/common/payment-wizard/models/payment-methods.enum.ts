@@ -3,5 +3,6 @@ export enum PaymentMethods {
     CreditCard,
     PayPal,
     BankTransfer,
-    Bitcoin
+    Bitcoin,
+    Free
 }

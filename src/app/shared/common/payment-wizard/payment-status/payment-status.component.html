@@ -1,11 +1,9 @@
-<img [ngClass]="paymentStatusData.status" [src]="'./assets/common/icons/' + (paymentStatusData.icon || paymentStatusData.status) + '.svg'">
-<h2>{{ separateToFewLines(l('PaymentStatus_' + paymentStatusData.status )) }}</h2>
-<ng-container *ngIf="paymentStatusData.status === 'payment-failed'">
-    <p *ngIf="paymentStatusData.statusText">{{ paymentStatusData.statusText }}</p>
-    <p *ngIf="paymentStatusData.errorDetailsText">{{ paymentStatusData.errorDetailsText }}</p>
-</ng-container>
+<img [ngClass]="(_paymentStatusData.icon || _paymentStatusData.status)" [src]="'./assets/common/icons/' + (_paymentStatusData.icon || _paymentStatusData.status) + '.svg'">
+<h2>{{ statusTitle }}</h2>
+<p *ngIf="_paymentStatusData.statusText">{{ _paymentStatusData.statusText }}</p>
+<p *ngIf="_paymentStatusData.errorDetailsText">{{ _paymentStatusData.errorDetailsText }}</p>
 <button mat-button
         matStepperPrevious
         type="button"
-        class="btn btn-layout btn-back">Back</button>
+        class="btn btn-layout btn-back" *ngIf="showBackButton">Back</button>
 <button class="btn-close" (click)="close()"></button>
