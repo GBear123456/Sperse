@@ -6,5 +6,5 @@ export interface StatusInfo {
     icon?: PaymentStatusEnum;
     statusText?: string;
     errorDetailsText?: string;
-    disableBack?: boolean;
+    showBack?: boolean;
 }
