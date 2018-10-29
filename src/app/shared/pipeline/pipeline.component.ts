@@ -78,6 +78,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit() {
+        this.startLoading();
         this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             if (value[0] == this.dragulaName) {
                 let leadId = this.getAccessKey(value[1]),
