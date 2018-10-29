@@ -131,6 +131,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     private namePattern = AppConsts.regexPatterns.name;
     private validationError: string;
+    private isUserSelected = true;
+    private isPartnerTypeSelected = false;
+    private isStageSelected = false;
+    private isStatusSelected = false;
+    private isListsSelected = false;
+    private isTagsSelected = false;
+    private isRatingSelected = false;
 
     constructor(
         injector: Injector,
@@ -177,9 +184,12 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 items: [
                     {
                         name: 'assign',
-                        action: this.toggleUserAssignmen.bind(this),
+                        action: this.toggleUserAssignment.bind(this),
                         options: {
                             accessKey: 'ClientAssign'
+                        },
+                        attr: {
+                            'filter-selected': this.isUserSelected
                         }
                     },
                     this.data.isInLeadMode ? {
@@ -187,6 +197,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         action: this.toggleStages.bind(this),
                         options: {
                             accessKey: 'CreateLeadStage'
+                        },
+                        attr: {
+                            'filter-selected': this.isStageSelected
                         }
                     } : this.data.customerType == ContactGroupType.Client ? {
                             name: 'status',
@@ -203,6 +216,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                                         text: 'Inactive',
                                     }
                                 ]
+                            },
+                            attr: {
+                                'filter-selected': this.isStatusSelected
                             }
                         } :
                         {
@@ -210,6 +226,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                             action: this.togglePartnerTypes.bind(this),
                             options: {
                                 accessKey: 'PartnerTypesList'
+                            },
+                            attr: {
+                                'filter-selected': this.isPartnerTypeSelected
                             }
                         },
                     {
@@ -217,6 +236,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         action: this.toggleLists.bind(this),
                         options: {
                             accessKey: 'ClientLists'
+                        },
+                        attr: {
+                            'filter-selected': this.isListsSelected
                         }
                     },
                     {
@@ -224,6 +246,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         action: this.toggleTags.bind(this),
                         options: {
                             accessKey: 'ClientTags'
+                        },
+                        attr: {
+                            'filter-selected': this.isTagsSelected
                         }
                     },
                     {
@@ -231,6 +256,9 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         action: this.toggleRating.bind(this),
                         options: {
                             accessKey: 'ClientRating'
+                        },
+                        attr: {
+                            'filter-selected': this.isRatingSelected
                         }
                     }
                 ]
@@ -496,7 +524,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.ratingComponent.toggle();
     }
 
-    toggleUserAssignmen() {
+    toggleUserAssignment() {
         this.userAssignmentComponent.toggle();
     }
 
@@ -820,10 +848,14 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onStagesChanged(event) {
         this.stageId = event.id;
+        this.isStageSelected = true;
+        this.initToolbarConfig();
     }
 
     onPartnerTypeChanged(event) {
         this.partnerTypesComponent.apply();
+        this.isPartnerTypeSelected = true;
+        this.initToolbarConfig();
     }
 
     getAssignmentsPermissinKey() {
@@ -834,5 +866,25 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             type = 'Partners';
 
         return 'Pages.CRM.' + type + '.ManageAssignments';
+    }
+
+    onUserAssignmentChanged(event) {
+        this.isUserSelected = Boolean(event.addedItems.length);
+        this.initToolbarConfig();
+    }
+
+    onListsSelected(event) {  
+        this.isListsSelected = Boolean(event.selectedRowKeys.length);
+        this.initToolbarConfig();
+    }
+
+    onTagsSelected(event) {
+        this.isTagsSelected = Boolean(event.selectedRowKeys.length);
+        this.initToolbarConfig();
+    }
+
+    onRatingchanged(event) {
+        this.isRatingSelected = Boolean(event.value);
+        this.initToolbarConfig();
     }
 }

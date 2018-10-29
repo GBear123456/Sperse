@@ -20,16 +20,17 @@
                  [funnelStyling]="true"
                  [disableHindmost]="true">
 </crm-static-list>
-<crm-rating [targetSelector]="'[accesskey=\'ClientRating\']'" [hideButtons]="true"></crm-rating>
+<crm-rating [targetSelector]="'[accesskey=\'ClientRating\']'" [hideButtons]="true" (onValueChanged)="onRatingchanged($event)"></crm-rating>
 <crm-types-list [targetSelector]="'[accesskey=\'PartnerTypesList\']'" [hideButtons]="true"
                 (onSelectedChanged)="onPartnerTypeChanged($event)"></crm-types-list>
-<crm-tags-list [targetSelector]="'[accesskey=\'ClientTags\']'" [hideButtons]="true"></crm-tags-list>
-<crm-lists-list [targetSelector]="'[accesskey=\'ClientLists\']'" [hideButtons]="true"></crm-lists-list>
+<crm-tags-list [targetSelector]="'[accesskey=\'ClientTags\']'" [hideButtons]="true" (onSelectedChanged)="onTagsSelected($event)"></crm-tags-list>
+<crm-lists-list [targetSelector]="'[accesskey=\'ClientLists\']'" [hideButtons]="true" (onSelectionChanged)="onListsSelected($event)"></crm-lists-list>
 <crm-user-assignment-list
-   [targetSelector]="'[accesskey=\'ClientAssign\']'"
-   [permissionKey]="getAssignmentsPermissinKey()"
+    [targetSelector]="'[accesskey=\'ClientAssign\']'"
+    [permissionKey]="getAssignmentsPermissinKey()"
     [selectedItemKey]="currentUserId"
-    [hideButtons]="true">
+    [hideButtons]="true"
+    (onSelectionChanged)="onUserAssignmentChanged($event)">
 </crm-user-assignment-list>
 
 <modal-dialog (onTitleKeyUp)="onFullNameKeyUp($event)">
@@ -37,7 +38,7 @@
         [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 
     <div class="toolbar-wraper">
-        <app-toolbar [config]="toolbarConfig"></app-toolbar>
+        <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
     </div>   
     <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar
         records found. Click here for details
