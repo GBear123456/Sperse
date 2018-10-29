@@ -32,7 +32,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
                 private appService: AppService,
                 private dialogRef: MatDialogRef<PaymentWizardComponent>,
                 private paymentService: PaymentService,
-                @Inject(MAT_DIALOG_DATA) private data: any
+                @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         super(injector);
         this.module = data.module;
