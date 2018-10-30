@@ -58,7 +58,6 @@ export class PackageChooserComponent implements OnInit {
     @HostBinding('class.withBackground') @Input() showBackground;
     packages: PackageConfigDto[];
     freePackages: PackageConfigDto[];
-    selectedBillingPeriod = BillingPeriod.Yearly;
     usersAmount = 5;
     sliderInitialMinValue = 5;
     sliderInitialStep = 5;
@@ -66,7 +65,8 @@ export class PackageChooserComponent implements OnInit {
     sliderStep = 5;
     selectedPackageIndex: number;
     selectedPackageCardComponent: PackageCardComponent;
-    billingPeriodIsMonth: boolean;
+    selectedBillingPeriod = BillingPeriod.Yearly;
+    billingPeriod: BillingPeriod = BillingPeriod;
     private enableSliderScalingChange = false;
 
     constructor(
@@ -123,7 +123,9 @@ export class PackageChooserComponent implements OnInit {
     /** Get default values of usersAmount and billing period from user previous choice */
     changeDefaultSettings(packagesConfig: GetPackagesConfigOutput) {
         this.usersAmount = packagesConfig.currentUserCount || this.usersAmount;
-        this.billingPeriodIsMonth = packagesConfig.currentFrequency && packagesConfig.currentFrequency === GetPackagesConfigOutputCurrentFrequency._30;
+        if (packagesConfig.currentFrequency) {
+            this.selectedBillingPeriod = packagesConfig.currentFrequency === GetPackagesConfigOutputCurrentFrequency._30 ? BillingPeriod.Monthly : BillingPeriod.Yearly;
+        }
     }
 
     /** Return the highest users count from all packages */
