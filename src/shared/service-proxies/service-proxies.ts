@@ -16807,7 +16807,7 @@ export class PackageServiceProxy {
      * @module (optional) 
      * @return Success
      */
-    getPackagesConfig(module: Module | null | undefined): Observable<PackageConfigDto[]> {
+    getPackagesConfig(module: Module | null | undefined): Observable<GetPackagesConfigOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Package/GetPackagesConfig?";
         if (module !== undefined)
             url_ += "Module=" + encodeURIComponent("" + module) + "&"; 
@@ -16829,14 +16829,14 @@ export class PackageServiceProxy {
                 try {
                     return this.processGetPackagesConfig(<any>response_);
                 } catch (e) {
-                    return <Observable<PackageConfigDto[]>><any>_observableThrow(e);
+                    return <Observable<GetPackagesConfigOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<PackageConfigDto[]>><any>_observableThrow(response_);
+                return <Observable<GetPackagesConfigOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetPackagesConfig(response: HttpResponseBase): Observable<PackageConfigDto[]> {
+    protected processGetPackagesConfig(response: HttpResponseBase): Observable<GetPackagesConfigOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16847,11 +16847,7 @@ export class PackageServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(PackageConfigDto.fromJS(item));
-            }
+            result200 = resultData200 ? GetPackagesConfigOutput.fromJS(resultData200) : new GetPackagesConfigOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16859,7 +16855,7 @@ export class PackageServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<PackageConfigDto[]>(<any>null);
+        return _observableOf<GetPackagesConfigOutput>(<any>null);
     }
 }
 
@@ -47886,6 +47882,62 @@ export interface IPackageDto {
     id: number | undefined;
 }
 
+export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
+    currentEditionId!: number | undefined;
+    currentUserCount!: number | undefined;
+    currentFrequency!: GetPackagesConfigOutputCurrentFrequency | undefined;
+    packages!: PackageConfigDto[] | undefined;
+
+    constructor(data?: IGetPackagesConfigOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.currentEditionId = data["currentEditionId"];
+            this.currentUserCount = data["currentUserCount"];
+            this.currentFrequency = data["currentFrequency"];
+            if (data["packages"] && data["packages"].constructor === Array) {
+                this.packages = [];
+                for (let item of data["packages"])
+                    this.packages.push(PackageConfigDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetPackagesConfigOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetPackagesConfigOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currentEditionId"] = this.currentEditionId;
+        data["currentUserCount"] = this.currentUserCount;
+        data["currentFrequency"] = this.currentFrequency;
+        if (this.packages && this.packages.constructor === Array) {
+            data["packages"] = [];
+            for (let item of this.packages)
+                data["packages"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetPackagesConfigOutput {
+    currentEditionId: number | undefined;
+    currentUserCount: number | undefined;
+    currentFrequency: GetPackagesConfigOutputCurrentFrequency | undefined;
+    packages: PackageConfigDto[] | undefined;
+}
+
 export class PackageConfigDto implements IPackageConfigDto {
     id!: number | undefined;
     module!: PackageConfigDtoModule | undefined;
@@ -56152,6 +56204,11 @@ export enum TenantNotificationSeverity {
     _2 = 2, 
     _3 = 3, 
     _4 = 4, 
+}
+
+export enum GetPackagesConfigOutputCurrentFrequency {
+    _30 = 30, 
+    _365 = 365, 
 }
 
 export enum PackageConfigDtoModule {
