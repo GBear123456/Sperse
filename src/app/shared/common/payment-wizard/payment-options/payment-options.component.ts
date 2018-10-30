@@ -1,4 +1,11 @@
+/** Core imports */
 import { Component, ChangeDetectionStrategy, EventEmitter, OnInit, Output, Injector, Input } from '@angular/core';
+
+/** Third party imports */
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
@@ -11,24 +18,21 @@ import {
     BankCardInfoDto,
     PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy,
-    SetupSubscriptionInfoDto,
     PayPalInfoDto,
-    SetupSubscriptionInfoDtoFrequency,
-    PaymentRequestInfoDtoPaymentInfoType
+    PaymentRequestInfoDtoPaymentInfoType, BankTransferSettings, TenantPaymentSettingsServiceProxy, Frequency
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'payment-options',
     templateUrl: './payment-options.component.html',
     styleUrls: ['./payment-options.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ TenantSubscriptionServiceProxy ]
+    providers: [ TenantPaymentSettingsServiceProxy, TenantSubscriptionServiceProxy ]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
     @Input() plan: PackageOptions;
@@ -51,17 +55,28 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     @Output() onClose: EventEmitter<null> = new EventEmitter();
     @Output() onStatusChange: EventEmitter<StatusInfo> = new EventEmitter();
 
+    private paymentMethodsConfig = {
+        [PaymentMethods.BankTransfer]: {
+            successStatus: res => this.l('pendingBankTransferIntentRecorded', res),
+            showBack: false
+        },
+        [PaymentMethods.Free]: {
+            successStatus: this.l('PaymentStatus_payment-free-confirmed')
+        }
+    }
+
     readonly GATEWAY_ECHECK = 0;
     readonly GATEWAY_C_CARD = 1;
     readonly GATEWAY_PAYPAL = 2;
 
     selectedGateway: number = this.GATEWAY_ECHECK;
-
     paymentMethods = PaymentMethods;
+    bankTransferSettings$: Observable<BankTransferSettings>;
     constructor(
         private injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
-        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy
+        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
+        private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy
     ) {
         super(injector);
     }
@@ -76,18 +91,25 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         return billingPeriod === BillingPeriod.Yearly ? 'annually' : 'monthly';
     }
 
-    submitData(data: any, paymentMethod: PaymentMethods = null) {
+    selectedTabChange(e) {
+        if (e.tab.textLabel === this.l('BankTransfer') && !this.bankTransferSettings$) {
+            /** Load transfer data */
+            this.bankTransferSettings$ = this.tenantPaymentSettingsService.getBankTransferSettings();
+        }
+    }
+
+    submitData(data: any, paymentMethod: PaymentMethods = PaymentMethods.Free) {
         /** Go to the third step */
         this.onStatusChange.emit({ status: PaymentStatusEnum.BeingConfirmed });
         this.onChangeStep.emit(2);
         this.appHttpConfiguration.avoidErrorHandling = true;
-        let paymentInfo = SetupSubscriptionInfoDto.fromJS({
+        let paymentInfo: any = {
             editionId: this.plan.selectedEditionId,
             maxUserCount: this.plan.usersAmount,
             frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                ? SetupSubscriptionInfoDtoFrequency._30
-                : SetupSubscriptionInfoDtoFrequency._365
-        });
+                ? Frequency._30
+                : Frequency._365
+        };
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
                 const eCheckData = data as ECheckDataModel;
@@ -133,21 +155,32 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     })
                 });
                 break;
+            case PaymentMethods.BankTransfer:
+                paymentInfo.isManual = true;
+                break;
             default:
                 break;
         }
         /** Start submitting data and change status in a case of error or success */
         let method = paymentMethod == PaymentMethods.PayPal ?
             this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo) :
-            this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
+            paymentMethod === PaymentMethods.BankTransfer ?
+                            this.tenantSubscriptionServiceProxy.requestPayment(
+                                paymentInfo.editionId,
+                                paymentInfo.maxUserCount,
+                                paymentInfo.frequency,
+                                paymentInfo.isManual
+                            ) :
+                            this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
 
         method
             .pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
             .subscribe(
-            () => {
+            res => {
                 this.onStatusChange.emit({
-                    status: paymentMethod ? PaymentStatusEnum.Confirmed : PaymentStatusEnum.FreeConfirmed,
-                    icon: PaymentStatusEnum.Confirmed
+                    status: this.getPaymentStatus(paymentMethod, res),
+                    icon: PaymentStatusEnum.Confirmed,
+                    showBack: this.paymentMethodsConfig[paymentMethod] && this.paymentMethodsConfig[paymentMethod].showBack
                 });
             },
             error => {
@@ -158,6 +191,14 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 });
             }
         );
+    }
+
+    getPaymentStatus(paymentMethod: PaymentMethods, res: any) {
+        return this.paymentMethodsConfig[paymentMethod] && this.paymentMethodsConfig[paymentMethod].successStatus ?
+                typeof this.paymentMethodsConfig[paymentMethod].successStatus === 'function' ?
+                    this.paymentMethodsConfig[paymentMethod]['successStatus'](res) :
+                    this.paymentMethodsConfig[paymentMethod].successStatus
+                : PaymentStatusEnum.Confirmed;
     }
 
     close() {

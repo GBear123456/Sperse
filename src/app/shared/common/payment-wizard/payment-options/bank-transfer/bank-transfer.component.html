@@ -1,52 +1,54 @@
-<div>
+<div #bankTransferSettingsContainer class="bankTransferSettingsContainer">
     <header>
         <h2>{{ titleText }}</h2>
     </header>
-    <div class="sections">
-        <section class="row">
-            <div class="col-5">
-                <h4 class="small-title">
-                    {{ l('BeneficiaryInformation') }}
-                </h4>
-                <address class="company-address">
-                    <p>Sperse LLC</p>
-                    2705 S Alma School Rd #2
-                    Chandler AZ 85286 USA
-                </address>
-            </div>
-            <div class="col-7 bankNumbers">
-                <h4 class="small-title">
-                    {{ l('BankAccountNumber') }}
-                </h4>
-                <p class="text-color-blue">{{ bankTransferData.bankAccountNumber }}</p>
-                <h4 class="small-title">
-                    {{ l('BankRoutingNumberForACHTransfers') }}
-                </h4>
-                <p class="text-color-blue">{{ bankTransferData.bankRoutingNumberForACHTransfers }}</p>
-            </div>
-        </section>
-        <section class="row">
-            <div class="col-5">
-                <h4 class="small-title">
-                    {{ l('BeneficiaryBank') }}
-                </h4>
-                <address class="bank-address">
-                    Bank of America<br />
-                    3881 South Gilbert Road
-                    Gilbert, Arizona 85295 USA
-                </address>
-            </div>
-            <div class="col-7">
-                <h4 class="small-title">
-                    {{ l('IfSendingAsWireUseTheFollowingCodes') }}
-                </h4>
-                <p>
-                    {{ l('BankRoutingNumber') }} <span class="text-color-blue">{{ bankTransferData.bankRoutingNumber }}</span><br />
-                    {{ l('SWIFT_CodeForUSDollar') }} <span class="text-color-blue">{{ bankTransferData.SWIFT_CodeForUSDollar }}</span><br />
-                    {{ l('SWIFT_Code') }} <span class="text-color-blue">{{ bankTransferData.SWIFT_Code }}</span>
-                </p>
-            </div>
-        </section>
+    <div class="sections" >
+        <ng-container *ngIf="bankTransferSettings">
+            <section class="row">
+                <div class="col-5">
+                    <h4 class="small-title">
+                        {{ l('BeneficiaryInformation') }}
+                    </h4>
+                    <address class="company-address">
+                        {{ bankTransferSettings.beneficiaryInfo }}
+                    </address>
+                </div>
+                <div class="col-7 bankNumbers">
+                    <h4 class="small-title">
+                        {{ l('BankAccountNumber') }}
+                    </h4>
+                    <p class="text-color-blue">{{ bankTransferSettings.bankAccountNumber }}</p>
+                    <h4 class="small-title">
+                        {{ l('BankRoutingNumberForACHTransfers') }}
+                    </h4>
+                    <p class="text-color-blue">{{ bankTransferSettings.bankRoutingNumberForACH }}</p>
+                </div>
+            </section>
+            <section class="row">
+                <div class="col-5">
+                    <h4 class="small-title">
+                        {{ l('BeneficiaryBank') }}
+                    </h4>
+                    <address class="bank-address">
+                        {{ bankTransferSettings.beneficiaryBank }}
+                    </address>
+                </div>
+                <div class="col-7">
+                    <h4 class="small-title">
+                        {{ l('IfSendingAsWireUseTheFollowingCodes') }}
+                    </h4>
+                    <p>
+                        {{ l('BankRoutingNumber') }} <span class="text-color-blue">{{ bankTransferSettings.bankRoutingNumber }}</span><br />
+                        {{ l('SWIFT_CodeForUSDollar') }} <span class="text-color-blue">{{ bankTransferSettings.swiftCodeForUSDollar }}</span><br />
+                        {{ l('SWIFT_Code') }} <span class="text-color-blue">{{ bankTransferSettings.swiftCode }}</span>
+                    </p>
+                </div>
+            </section>
+        </ng-container>
     </div>
 </div>
-<payment-options-footer [submitButtonText]="l('SendWire')"></payment-options-footer>
+<payment-options-footer
+    [submitButtonText]="l('SendWire')"
+    [submitButtonDisabled]="!bankTransferSettings"
+    (onSubmit)="submit()">
+</payment-options-footer>

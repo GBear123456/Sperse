@@ -16807,7 +16807,7 @@ export class PackageServiceProxy {
      * @module (optional) 
      * @return Success
      */
-    getPackagesConfig(module: Module | null | undefined): Observable<PackageConfigDto[]> {
+    getPackagesConfig(module: Module | null | undefined): Observable<GetPackagesConfigOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Package/GetPackagesConfig?";
         if (module !== undefined)
             url_ += "Module=" + encodeURIComponent("" + module) + "&"; 
@@ -16829,14 +16829,14 @@ export class PackageServiceProxy {
                 try {
                     return this.processGetPackagesConfig(<any>response_);
                 } catch (e) {
-                    return <Observable<PackageConfigDto[]>><any>_observableThrow(e);
+                    return <Observable<GetPackagesConfigOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<PackageConfigDto[]>><any>_observableThrow(response_);
+                return <Observable<GetPackagesConfigOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetPackagesConfig(response: HttpResponseBase): Observable<PackageConfigDto[]> {
+    protected processGetPackagesConfig(response: HttpResponseBase): Observable<GetPackagesConfigOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16847,11 +16847,7 @@ export class PackageServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(PackageConfigDto.fromJS(item));
-            }
+            result200 = resultData200 ? GetPackagesConfigOutput.fromJS(resultData200) : new GetPackagesConfigOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16859,7 +16855,7 @@ export class PackageServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<PackageConfigDto[]>(<any>null);
+        return _observableOf<GetPackagesConfigOutput>(<any>null);
     }
 }
 
@@ -17446,6 +17442,60 @@ export class PaymentServiceProxy {
             }));
         }
         return _observableOf<PaymentMethodInfo[]>(<any>null);
+    }
+
+    /**
+     * @trackingCode (optional) 
+     * @isCaptured (optional) 
+     * @return Success
+     */
+    completeManualSubscriptionPayment(trackingCode: string | null | undefined, isCaptured: boolean | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Payment/CompleteManualSubscriptionPayment?";
+        if (trackingCode !== undefined)
+            url_ += "trackingCode=" + encodeURIComponent("" + trackingCode) + "&"; 
+        if (isCaptured !== undefined)
+            url_ += "isCaptured=" + encodeURIComponent("" + isCaptured) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCompleteManualSubscriptionPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCompleteManualSubscriptionPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCompleteManualSubscriptionPayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -18348,6 +18398,58 @@ export class ProfileServiceProxy {
             }));
         }
         return _observableOf<GetProfilePictureOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getProfileThumbnailId(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/GetProfileThumbnailId";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProfileThumbnailId(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProfileThumbnailId(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetProfileThumbnailId(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
     }
 
     /**
@@ -22736,14 +22838,17 @@ export class TenantSubscriptionServiceProxy {
      * @editionId (optional) 
      * @maxUserCount (optional) 
      * @frequency (optional) 
+     * @isManual (optional) 
      * @return Success
      */
-    requestPayment(editionId: number | null | undefined, maxUserCount: number | null | undefined, frequency: Frequency | null | undefined): Observable<string> {
+    requestPayment(editionId: number | null | undefined, maxUserCount: number | null | undefined, frequency: Frequency | null | undefined, isManual: boolean | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPayment?";
         if (editionId !== undefined)
             url_ += "editionId=" + encodeURIComponent("" + editionId) + "&"; 
         if (maxUserCount !== undefined)
             url_ += "maxUserCount=" + encodeURIComponent("" + maxUserCount) + "&"; 
+        if (isManual !== undefined)
+            url_ += "isManual=" + encodeURIComponent("" + isManual) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(frequency);
@@ -36601,6 +36706,7 @@ export interface ICreateContactGroupOutput {
 
 export class SimilarContactGroupOutput implements ISimilarContactGroupOutput {
     id!: number | undefined;
+    contactId!: number | undefined;
     name!: string | undefined;
     photo!: string | undefined;
     companyName!: string | undefined;
@@ -36620,6 +36726,7 @@ export class SimilarContactGroupOutput implements ISimilarContactGroupOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.contactId = data["contactId"];
             this.name = data["name"];
             this.photo = data["photo"];
             this.companyName = data["companyName"];
@@ -36639,6 +36746,7 @@ export class SimilarContactGroupOutput implements ISimilarContactGroupOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["contactId"] = this.contactId;
         data["name"] = this.name;
         data["photo"] = this.photo;
         data["companyName"] = this.companyName;
@@ -36651,6 +36759,7 @@ export class SimilarContactGroupOutput implements ISimilarContactGroupOutput {
 
 export interface ISimilarContactGroupOutput {
     id: number | undefined;
+    contactId: number | undefined;
     name: string | undefined;
     photo: string | undefined;
     companyName: string | undefined;
@@ -47825,6 +47934,62 @@ export interface IPackageDto {
     id: number | undefined;
 }
 
+export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
+    currentEditionId!: number | undefined;
+    currentUserCount!: number | undefined;
+    currentFrequency!: GetPackagesConfigOutputCurrentFrequency | undefined;
+    packages!: PackageConfigDto[] | undefined;
+
+    constructor(data?: IGetPackagesConfigOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.currentEditionId = data["currentEditionId"];
+            this.currentUserCount = data["currentUserCount"];
+            this.currentFrequency = data["currentFrequency"];
+            if (data["packages"] && data["packages"].constructor === Array) {
+                this.packages = [];
+                for (let item of data["packages"])
+                    this.packages.push(PackageConfigDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetPackagesConfigOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetPackagesConfigOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["currentEditionId"] = this.currentEditionId;
+        data["currentUserCount"] = this.currentUserCount;
+        data["currentFrequency"] = this.currentFrequency;
+        if (this.packages && this.packages.constructor === Array) {
+            data["packages"] = [];
+            for (let item of this.packages)
+                data["packages"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetPackagesConfigOutput {
+    currentEditionId: number | undefined;
+    currentUserCount: number | undefined;
+    currentFrequency: GetPackagesConfigOutputCurrentFrequency | undefined;
+    packages: PackageConfigDto[] | undefined;
+}
+
 export class PackageConfigDto implements IPackageConfigDto {
     id!: number | undefined;
     module!: PackageConfigDtoModule | undefined;
@@ -56093,6 +56258,11 @@ export enum TenantNotificationSeverity {
     _4 = 4, 
 }
 
+export enum GetPackagesConfigOutputCurrentFrequency {
+    _30 = 30, 
+    _365 = 365, 
+}
+
 export enum PackageConfigDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
@@ -56162,6 +56332,7 @@ export enum PaymentRequestInfoDtoPaymentMethod {
     Charge = "Charge", 
     Capture = "Capture", 
     Void = "Void", 
+    Manual = "Manual", 
 }
 
 export enum PaymentRequestInfoDtoPaymentInfoType {

@@ -1,6 +1,16 @@
-import { Component, Injector, ChangeDetectionStrategy, Input } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef, EventEmitter,
+    Injector,
+    Input,
+    OnChanges,
+    Output,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { BankTransferDataModel } from '@app/shared/common/payment-wizard/models/bank-transfer-data.model';
+import { BankTransferSettings } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'bank-transfer',
@@ -8,20 +18,29 @@ import { BankTransferDataModel } from '@app/shared/common/payment-wizard/models/
     styleUrls: ['./bank-transfer.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BankTransferComponent extends AppComponentBase {
+export class BankTransferComponent extends AppComponentBase implements OnChanges {
     @Input() titleText = this.l('BankTransferTitleText');
-    bankTransferData = <BankTransferDataModel>{
-        bankAccountNumber: 457031074865,
-        bankRoutingNumberForACHTransfers: 122101706,
-        bankRoutingNumber: '026009593',
-        SWIFT_CodeForUSDollar: 'BOFAUS3N',
-        SWIFT_Code: 'BOFAUS6S'
-    };
+    @Input() bankTransferSettings: BankTransferSettings;
+    @Output() onSubmit: EventEmitter<null> = new EventEmitter<null>();
+    @ViewChild('bankTransferSettingsContainer') bankTransferSettingsContainer: ElementRef;
 
     constructor(
         injector: Injector
     ) {
         super(injector);
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.bankTransferSettings) {
+            /** Show spinner while data loading */
+            changes.bankTransferSettings.firstChange ?
+                abp.ui.setBusy(this.bankTransferSettingsContainer.nativeElement) :
+                abp.ui.clearBusy(this.bankTransferSettingsContainer.nativeElement);
+        }
+    }
+
+    submit() {
+        this.onSubmit.next();
     }
 
 }

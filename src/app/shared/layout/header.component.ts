@@ -49,7 +49,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     tenancyName = '';
     userName = '';
 
-    profilePicture = AppConsts.imageUrls.profileDefault;
     profileThumbnailId: string;
     defaultLogo = './assets/common/images/app-logo-on-' + this.ui.getAsideSkin() + '.png';
     recentlyLinkedUsers: LinkedUserDto[];
@@ -90,7 +89,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
         this.shownLoginNameTitle = this.isImpersonatedLogin ? this.l('YouCanBackToYourAccount') : '';
         this.getCurrentLoginInformations();
-        this.getProfilePicture();
         this.getRecentlyLinkedUsers();
 
         this.registerToEvents();
@@ -98,7 +96,9 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     registerToEvents() {
         abp.event.on('profilePictureChanged', () => {
-            this.getProfilePicture();
+            this._profileServiceProxy.getProfileThumbnailId().subscribe(id => {
+                this.profileThumbnailId = id;
+            });
         });
 
         abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
@@ -134,14 +134,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     getShownUserName(linkedUser: LinkedUserDto): string {
         return UserHelper.getShownUserName(linkedUser.username, linkedUser.tenantId, linkedUser.tenancyName);
-    }
-
-    getProfilePicture(): void {
-        this._profileServiceProxy.getProfilePicture().subscribe(result => {
-            if (result && result.profilePicture) {
-                this.profilePicture = this.getImageBase64Src(result.profilePicture);
-            }
-        });
     }
 
     getRecentlyLinkedUsers(): void {

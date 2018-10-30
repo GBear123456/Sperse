@@ -93,6 +93,8 @@
                                  rows="{{primengTableHelper.defaultRecordsCountPerPage}}"
                                  [paginator]="false"
                                  [lazy]="true"
+                                 [sortField]="'creationTime'"
+                                 [sortOrder]="-1"
                                  [responsive]="primengTableHelper.isResponsive">
                             <ng-template pTemplate="header">
                                 <tr>

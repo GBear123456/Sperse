@@ -36,7 +36,6 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     friends: ChatFriendDto[];
     currentUser: UserLoginInfoDto = this._appSessionService.user;
-    profilePicture = './assets/common/images/default-profile-picture.png';
     chatMessage = '';
 
     tenantToTenantChatAllowed = false;
@@ -162,14 +161,6 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
 
     getShownUserName(friend: ChatFriendDto): string {
         return UserHelper.getShownUserName(friend.friendUserName, friend.friendTenantId, friend.friendTenancyName);
-    }
-
-    getProfilePicture(): void {
-        this._profileService.getProfilePicture().subscribe(result => {
-            if (result && result.profilePicture) {
-                this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
-            }
-        });
     }
 
     block(user: FriendDto): void {
@@ -619,8 +610,6 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
                 return this._commonLookupService.findUsers(input);
             }
         });
-
-        this.getProfilePicture();
 
         this.tenantToTenantChatAllowed = this.feature.isEnabled('App.ChatFeature.TenantToTenant');
         this.tenantToHostChatAllowed = this.feature.isEnabled('App.ChatFeature.TenantToHost');

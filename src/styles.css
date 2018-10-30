@@ -149,13 +149,19 @@ body.overflow-hidden.modal-open {
 .tooltip-item.net::before,
 .tooltip-item.forecast.inflows::before,
 .tooltip-item.forecast.outflows::before,
-.tooltip-item.forecast.net::before {
+.tooltip-item.forecast.net::before,
+.tooltip-item .tooltip-item-marker {
     content: '';
     width: 8px;
     height: 8px;
     background: #00aeef;
     display: inline-block;
     margin-right: 5px;
+}
+.tooltip-item .tooltip-item-value {
+    float: right;
+    font-family: Lato;
+    margin-left: 10px
 }
 .tooltip-item.outflows::before {
     background: #f05b2a;

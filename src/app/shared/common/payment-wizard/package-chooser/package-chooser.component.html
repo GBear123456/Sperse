@@ -4,7 +4,7 @@
     <div class="billingPeriod">
         <div [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('BilledMonthly') }}</div>
         <mat-slide-toggle
-            [checked]="true"
+            [checked]="selectedBillingPeriod === billingPeriod.Yearly"
             (change)="billingPeriodChanged($event)">
         </mat-slide-toggle>
         <div [ngClass]="{ 'active': getActiveStatus('year') }">{{ l('BilledYearly') }}

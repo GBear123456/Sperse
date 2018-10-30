@@ -56,7 +56,7 @@ export class PayPalComponent extends AppComponentBase implements AfterViewInit {
             commit: true,
             payment(data, actions) {
                 return self.tenantSubscriptionServiceProxy
-                    .requestPayment(self.editionId, self.maxUserCount, frequency)
+                    .requestPayment(self.editionId, self.maxUserCount, frequency, false)
                     .toPromise()
                     .then((result: string) => {
                         return result;
