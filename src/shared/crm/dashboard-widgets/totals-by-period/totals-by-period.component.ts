@@ -69,13 +69,15 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             amount: 12
         }
     ];
+    selectItems = [
+        this.l('LeadStageRatioAndClientCount')
+    ];
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
     private series: any[] = [
         {
-            axis: 'total',
             type: 'spline',
             valueField: 'customerCount',
-            name: this.l('Client Count'),
+            name: this.l('ClientsCount'),
             color: this.clientColor
         }
     ];

@@ -1,12 +1,25 @@
 <header>
     <div class="left-section">
-        <h2 class="title">{{l('Statistics By Period')}}</h2>
+        <h2 class="title">{{ l('StatisticsByPeriodTitle') }}</h2>
+        <dx-select-box
+            [width]="'215px'"
+            [items]="selectItems"
+            [value]="selectItems[0]">
+        </dx-select-box>
+        <div class="legend">
+            <ul class="legend-list">
+                <li class="legend-item" *ngFor="let seria of allSeries$ | async">
+                    <span class="legendMarker" [ngStyle]="{'backgroundColor' : seria.color }"></span>
+                    {{ seria.name }}
+                </li>
+            </ul>
+        </div>
     </div>
 </header>
 <div class="chart-wrapper" *ngIf="totalsData && totalsData.length">
     <dx-chart
         id="bar"
-        [barWidth]="0.5"
+        [barWidth]="1"
         [size]="{height: 245}"
         [series]="allSeries$ | async"
         [dataSource]="totalsData">
@@ -27,7 +40,7 @@
         </dxo-argument-axis>
 
         <dxi-value-axis>
-            <dxo-label [visible]="false"></dxo-label>
+            <dxo-label [visible]="true"></dxo-label>
         </dxi-value-axis>
 
         <dxo-legend [visible]="false"></dxo-legend>
