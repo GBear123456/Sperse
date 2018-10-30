@@ -66,7 +66,7 @@ export class PackageChooserComponent implements OnInit {
     selectedPackageIndex: number;
     selectedPackageCardComponent: PackageCardComponent;
     selectedBillingPeriod = BillingPeriod.Yearly;
-    billingPeriod: BillingPeriod = BillingPeriod;
+    billingPeriod = BillingPeriod;
     private enableSliderScalingChange = false;
 
     constructor(
