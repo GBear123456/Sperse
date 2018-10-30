@@ -29,6 +29,7 @@ import {
     GetPackagesConfigOutput,
     Module,
     PackageConfigDto,
+    PackageEditionConfigDto,
     PackageServiceProxy,
     SetupSubscriptionInfoDtoFrequency
 } from '@shared/service-proxies/service-proxies';
@@ -130,9 +131,9 @@ export class PackageChooserComponent implements OnInit {
         return packagesConfig$.pipe(
             pluck('packages'),
             concatAll(),
-            map(packages => packages.editions),
+            map((packageConfig: PackageConfigDto) => packageConfig.editions),
             concatAll(),
-            map(editions => +editions.features[this.module + '.MaxUserCount']),
+            map((edition: PackageEditionConfigDto) => +edition.features[this.module + '.MaxUserCount']),
             max()
         );
     }
