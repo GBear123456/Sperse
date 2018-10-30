@@ -14,8 +14,7 @@ export class LoginAttemptsModalComponent extends AppComponentBase {
     @ViewChild('loginAttemptsModal') modal: ModalDirective;
 
     userLoginAttempts: UserLoginAttemptDto[];
-    profilePicture = './assets/common/images/default-profile-picture.png';
-    defaultProfilePicture = './assets/common/images/default-profile-picture.png';
+    profileThumbnailId: string;
 
     constructor(
         injector: Injector,
@@ -28,12 +27,8 @@ export class LoginAttemptsModalComponent extends AppComponentBase {
     show(): void {
         this._userLoginService.getRecentUserLoginAttempts().subscribe(result => {
             this.userLoginAttempts = result.items;
-            this._profileService.getProfilePicture().subscribe(result => {
-                if (result && result.profilePicture) {
-                    this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
-                }
-                this.modal.show();
-            });
+            this.profileThumbnailId = this.appSession.user.profileThumbnailId;
+            this.modal.show();
         });
     }
 

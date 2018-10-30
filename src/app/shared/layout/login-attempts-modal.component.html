@@ -18,8 +18,7 @@
                                 <div class="m-alert m-alert--icon m-alert--icon-solid m-alert--outline alert" [ngClass]="userLoginAttempt.result == 'Success' ? 'alert-success' : 'alert-danger'" role="alert">
                                     <div class="m-alert__icon">
                                         <!-- get image url -->
-                                        <img *ngIf="profilePicture && userLoginAttempt.result == 'Success'" [src]="profilePicture" class="m--img-rounded m--marginless m--img-centered" width="50" height="50"><br />
-                                        <img *ngIf="!profilePicture || userLoginAttempt.result != 'Success'" [src]="defaultProfilePicture" class="m--img-rounded m--marginless m--img-centered" width="50" height="50"><br />
+                                        <img [src]="getProfilePictureUrl(userLoginAttempt.result == 'Success' ? profileThumbnailId : undefined)" class="m--img-rounded m--marginless m--img-centered" width="50" height="50"><br />
                                         <span></span>
                                         <small class="label"> {{userLoginAttempt.result == "Success" ? l("Success") : l("Failed")}} </small>
                                     </div>
