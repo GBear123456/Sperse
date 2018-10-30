@@ -774,7 +774,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 private _bankAccountsServiceProxy: BankAccountsServiceProxy,
                 public dialog: MatDialog,
                 public userPreferencesService: UserPreferencesService,
-                private _appService: AppService,
+                public appService: AppService,
                 private _calculatorService: CalculatorService,
                 private _cellsCopyingService: CellsCopyingService,
                 private cashflowService: CashflowService,
@@ -1341,7 +1341,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** Remove cashflow events handlers */
         this.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
-        this._appService.toolbarIsHidden = false;
+        this.appService.toolbarIsHidden = false;
 
         document.removeEventListener('keydown', this.keyDownEventHandler);
         super.ngOnDestroy();
@@ -1376,7 +1376,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             () => {
                 if (!this.gridDataExists && (!this.cashflowData || !this.cashflowData.length)) {
                     if (this.componentIsActivated)
-                        this._appService.updateToolbar(null);
+                        this.appService.updateToolbar(null);
                 } else {
                     this.gridDataExists = true;
                     this.initToolbarConfig();
@@ -5723,7 +5723,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     deactivate() {
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
         this.rootComponent.overflowHidden();
