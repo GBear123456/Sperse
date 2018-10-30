@@ -41,10 +41,6 @@
     top: 75px;
     position: relative;
 
-    &.fullscreen {
-        top: 0 !important;
-    }
-
     .sidebar-calculator-widget {
         position: absolute;
         top: 0;
@@ -1565,6 +1561,13 @@
         }
     }
 
+    &.fullscreen {
+        top: 0 !important;
+
+        .cashflow-scroll {
+            height: calc(100vh - 63px) !important;
+        }
+    }
 }
 
 /deep/ .dx-overlay-content {
