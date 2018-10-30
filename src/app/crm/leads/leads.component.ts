@@ -148,6 +148,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
+                deserializeDates: false,
                 paginate: true
             }
         };

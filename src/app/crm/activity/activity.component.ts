@@ -33,12 +33,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     private dataSourceURI = 'Activity';
     private stages: any;
 
-    public timezone: string;
+    public timezone: string = 'Etc/UTC';
     public showPipeline = false;
     public pipelineDataSource: any;
     public pipelinePurposeId =
         AppConsts.PipelinePurposeIds.activity;
 
+    public activityTypes = CreateActivityDtoType;
     public selectedLeads: any = [];
     public currentDate = new Date();
     public currentView = 'month';
@@ -126,6 +127,12 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             }
                         ).split('=').pop();
                     }
+                },
+                deserializeDates: false,
+                onLoaded: (res) => {
+                    res.forEach((record) => {
+                        record.fieldTimeZone = 'Etc/UTC';
+                    });
                 },
                 paginate: false
             }
@@ -243,6 +250,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         beforeSend: function (request) {
                             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                         },
+                        deserializeDates: false,
                         paginate: true
                     }
                 };
@@ -319,5 +327,33 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     };
                 });
             });
+    }
+
+    deleteAppointment(appointment) {
+        this.schedulerComponent.instance.deleteAppointment(appointment);
+    }
+
+    onAppointmentDeleted() {
+        this.schedulerComponent.instance.hideAppointmentTooltip();
+    }
+
+    getDateWithTimezone(value) {
+        return new Date(moment(value).format('YYYY-MM-DD HH:mm:ss'));
+    }    
+
+    onAppointmentUpdating(event) {
+        let period = <any>this.getPeriodType();
+        if (period == 'month') {
+            const delimiter = 'T';
+            let diff = moment(event.newData.StartDate).diff(event.oldData.StartDate, 'days'),
+                newDateParts = event.newData.StartDate.split(delimiter),
+                oldDateParts = event.oldData.StartDate.split(delimiter); 
+            event.newData.StartDate = newDateParts.shift() + delimiter + oldDateParts.pop();
+
+            let endDate = moment(event.oldData.EndDate).add(diff, 'days').format('YYYY-MM-DDTHH:mm:ss');
+            newDateParts = endDate.split(delimiter);
+            oldDateParts = event.oldData.EndDate.split(delimiter); 
+            event.newData.EndDate = newDateParts.shift() + delimiter + oldDateParts.pop();
+        }
     }
 }

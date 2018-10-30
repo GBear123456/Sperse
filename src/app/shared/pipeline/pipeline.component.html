@@ -21,8 +21,8 @@
                                     <dx-check-box text=""></dx-check-box>
                                 </div>
                                 <div class="days-ago">
-                                    <img src="./assets/common/icons/clock-circle.svg" class="img-responsive"><span *ngIf="lead?.CreationTime">{{ removeTimezoneOffset(lead?.CreationTime) | timeAgo }}</span>
-                                    <span *ngIf="lead?.StartDate">{{ removeTimezoneOffset(lead?.StartDate) | date : 'M/d, H:mm' }} - {{ removeTimezoneOffset(lead?.EndDate) | date : 'M/d, H:mm' }}</span>
+                                    <img src="./assets/common/icons/clock-circle.svg" class="img-responsive"><span *ngIf="lead?.CreationTime">{{ lead?.CreationTime | timeAgo }}</span>
+                                    <span *ngIf="lead?.StartDate">{{ getDateWithTimezone(lead?.StartDate) | date : 'M/d, H:mm' }} - {{ getDateWithTimezone(lead?.EndDate) | date : 'M/d, H:mm' }}</span>
                                 </div>
                                 <div class="text-right pipeline-photo-wrap">
                                     <div [ngStyle]="{'background-image': lead?.Photo ? 'url(' + getPhoto(lead?.Photo, lead?.Gender) + ')': 'none'}" class="img-responsive img-circle"></div>

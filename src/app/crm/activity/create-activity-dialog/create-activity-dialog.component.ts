@@ -36,8 +36,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
-    @ViewChild('startDate') startDate: DxDateBoxComponent;
-    @ViewChild('endDate') endDate: DxDateBoxComponent;
+    @ViewChild('startDateRef') startDateComponent: DxDateBoxComponent;
+    @ViewChild('endDateRef') endDateComponent: DxDateBoxComponent;
 
     private readonly LOOKUP_RECORDS_COUNT = 20;
     private readonly SAVE_OPTION_DEFAULT   = 1;
@@ -56,6 +56,9 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
     toolbarConfig = [];
     isAllDay = false;
+
+    startDate: Date;
+    endDate: Date;
 
     activityTypeIndex = 0;
 
@@ -80,13 +83,40 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             {text: this.l('SaveAndClose'), selected: false}
         ];
 
-        if (this.data.appointment.Id)
+        if (this.data.appointment.Id) {
+            if (this.data.appointment.StartDate)
+                this.startDate = this.getDateWithTimezone(this.data.appointment.StartDate);
+            if (this.data.appointment.EndDate)
+                this.endDate = this.getDateWithTimezone(this.data.appointment.EndDate);
+
+            let start = moment.utc(this.data.appointment.StartDate),
+                end = moment.utc(this.data.appointment.EndDate);
+
+            this.isAllDay = !end.hour() && !end.minute() && !end.second()
+                && !start.hour() && !start.minute() && !start.second()
+
             this._activityProxy.get(this.data.appointment.Id).subscribe((res) => {
                 this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
             });
+        } else {
+            let dateNow = new Date(moment().format('YYYY-MM-DD HH:mm:ss'));
+            if (this.data.appointment.StartDate) {
+                this.startDate = new Date(this.data.appointment.StartDate);
+                this.startDate.setHours(dateNow.getHours());
+                this.startDate.setMinutes(dateNow.getMinutes());
+                this.startDate.setSeconds(dateNow.getSeconds());
+            } else 
+                this.startDate = new Date(dateNow);
 
-        if (!this.data.appointment.StartDate) this.data.appointment.StartDate = new Date();
-        if (!this.data.appointment.EndDate) this.data.appointment.EndDate = new Date();
+            if (this.data.appointment.EndDate) {
+                this.endDate = new Date(this.data.appointment.EndDate);
+                this.endDate.setHours(dateNow.getHours());
+                this.endDate.setMinutes(dateNow.getMinutes());
+                this.endDate.setSeconds(dateNow.getSeconds());
+            } else 
+                this.endDate = new Date(dateNow);
+        }
+
         this.loadResourcesData();
     }
 
@@ -273,8 +303,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             title: this.data.appointment.Title,
             description: this.data.appointment.Description,
             assignedUserIds: this.data.appointment.AssignedUserIds || [this.appSession.userId],
-            startDate: this.getDateWithoutTimezone(this.data.appointment.StartDate),
-            endDate: this.getDateWithoutTimezone(this.data.appointment.EndDate),
+            startDate: this.getDateWithoutTimezone(this.startDate),
+            endDate: this.getDateWithoutTimezone(this.endDate),
             stageId: this.data.appointment.StageId,
             leadId: this.data.appointment.LeadId,
             orderId: this.data.appointment.OrderId,
@@ -295,8 +325,16 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     getDateWithoutTimezone(date) {
-        date.setTime(date.getTime() - (date.getTimezoneOffset() * 60 * 1000));
-        return moment(date);
+        if (this.isAllDay)
+            return moment.utc(date).startOf('day');
+        else {
+            date.setTime(date.getTime() - ((date.getTimezoneOffset() + moment().utcOffset()) * 60 * 1000));
+            return moment.utc(date);
+        }
+    }
+
+    getDateWithTimezone(date) {
+        return new Date(moment(date).format('YYYY-MM-DD HH:mm:ss'));
     }
 
     private afterSave(): void {
@@ -409,8 +447,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             this.initToolbarConfig();
 
             setTimeout(() => {
-                this.startDate.instance.option('isValid', true);
-                this.endDate.instance.option('isValid', true);
+                this.startDateComponent.instance.option('isValid', true);
+                this.endDateComponent.instance.option('isValid', true);
             }, 100);
         };
 

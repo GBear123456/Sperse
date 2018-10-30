@@ -10,7 +10,7 @@
                 [dataSource]="dataSource"
                 [views]="['day', 'week', 'month', 'agenda']"
                 [resources]="resources"
-                [timeZone]="''"
+                [timeZone]="timezone"
                 [(currentView)]="currentView"
                 [(currentDate)]="currentDate"
                 [showAllDayPanel]="true"
@@ -19,8 +19,22 @@
                 [endDateExpr]="'EndDate'"        
                 [remoteFiltering]="false"
                 [descriptionExpr]="'Description'"
+                [startDateTimeZoneExpr]="'fieldTimeZone'"
+                [endDateTimeZoneExpr]="'fieldTimeZone'"
+                [dropDownAppointmentTemplate]="'appointmentDropDown'"
                 (onContentReady)="onContentReady($event)"
+                (onAppointmentUpdating)="onAppointmentUpdating($event)"
                 (onAppointmentFormCreated)="onAppointmentFormCreated($event)">
+                <div *dxTemplate="let appointment of 'appointmentDropDown'">
+                    <div class="appointment-content">
+                        <div class="appointment-badge" [ngStyle]="{ backgroundColor: appointment.Type == activityTypes.Event ? '#727bd2': '#32c9ed' }">{{appointment.Type[0]}}</div>
+                        <div class="appointment-text">{{appointment.Title}}</div>
+                        <div class="appointment-dates">
+                            {{(getDateWithTimezone(appointment.StartDate) | date : 'MMM d') + ' , ' + (getDateWithTimezone(appointment.StartDate) | date:'shortTime') + ' - ' + (getDateWithTimezone(appointment.EndDate) | date:'shortTime')}}
+                        </div>
+                        <dx-button class = "delete-appointment" icon="trash" (onClick)="deleteAppointment(appointment)"></dx-button>
+                    </div>
+                </div>
             </dx-scheduler>
     
         </div>
