@@ -26,7 +26,6 @@ export class StatsService {
             pointDataObject = data.find(item => !item.isForecast && item.date.toDate().toString() == pointInfo.argument);
         }
 
-
         moment.tz.setDefault(undefined);
         let date = moment(pointInfo.argument);
         moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
@@ -39,7 +38,7 @@ export class StatsService {
                 field.name !== 'forecastAdjustments'
             ) {
                 if (field.label == 'Starting Balance') {
-                    html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">
+                    html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span class="tooltip-item-value">
                             ${(pointDataObject[field.name] - pointDataObject[field.name + 'Adjustments']).toLocaleString('en-EN', {
                                 style: 'currency',
                                 currency: 'USD'
@@ -48,18 +47,18 @@ export class StatsService {
                     if (pointDataObject['forecastAdjustments'] !== 0 && pointDataObject['forecastAdjustments'] !== undefined ||
                         pointDataObject['adjustments'] !== 0 && pointDataObject['adjustments'] !== undefined
                     ) {
-                        html += `<div class="tooltip-item ${field.label.toLowerCase()}"><span style="padding: 0 3px; color: rgb(50, 190, 242); font-weight: bold;">!</span> ${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[field.name].toLocaleString('en-EN', {
+                        html += `<div class="tooltip-item ${field.label.toLowerCase()}"><span style="padding: 0 3px; color: rgb(50, 190, 242); font-weight: bold;">!</span> ${field.label} : <span class="tooltip-item-value">${pointDataObject[field.name].toLocaleString('en-EN', {
                             style: 'currency',
                             currency: 'USD'
                         })}</span></div>`;
                     } else {
-                        html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[field.name].toLocaleString('en-EN', {
+                        html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span class="tooltip-item-value">${pointDataObject[field.name].toLocaleString('en-EN', {
                             style: 'currency',
                             currency: 'USD'
                         })}</span></div>`;
                     }
                 } else if ((field.name.indexOf('BalanceAdjustments') < 0) || pointDataObject[field.name]) {
-                    html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span style="float: right; font-family: Lato; margin-left: 10px">${pointDataObject[field.name].toLocaleString('en-EN', {
+                    html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span class="tooltip-item-value">${pointDataObject[field.name].toLocaleString('en-EN', {
                         style: 'currency',
                         currency: 'USD'
                     })}</span></div>`;
