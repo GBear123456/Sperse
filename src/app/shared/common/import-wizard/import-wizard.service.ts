@@ -3,6 +3,7 @@ import { Subscription, Subject } from 'rxjs';
 import { RouteReuseStrategy } from '@angular/router';
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Injectable()
 export class ImportWizardService {
@@ -15,7 +16,8 @@ export class ImportWizardService {
 
     constructor(injector: Injector,
         private _reuseService: RouteReuseStrategy,
-        private _importProxy: ImportServiceProxy
+        private _importProxy: ImportServiceProxy,
+        private _permissionService: PermissionCheckerService
     ) {
         this.subjectProgress = new Subject<any>();
         this.subjectCancel = new Subject<any>();
@@ -41,25 +43,26 @@ export class ImportWizardService {
     }
 
     startStatusCheck(importId = undefined, method = undefined, invalUri = undefined) {
-        this.setupCheckTimeout((callback) => {
-            this._importProxy.getStatuses(importId).subscribe((res) => {
-                if (res && res.length) {
-                    if (res.length > 1)
-                        this.activeImportId = undefined;
-                    else {
-                        let importStatus = res[0];
-                        method && method(importStatus);
-                        if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
-                            invalUri && (<any>this._reuseService).invalidate(invalUri);
+        if (this._permissionService.isGranted('Pages.CRM.BulkImport'))
+            this.setupCheckTimeout((callback) => {
+                this._importProxy.getStatuses(importId).subscribe((res) => {
+                    if (res && res.length) {
+                        if (res.length > 1)
                             this.activeImportId = undefined;
+                        else {
+                            let importStatus = res[0];
+                            method && method(importStatus);
+                            if ([ImportStatus.Completed, ImportStatus.Cancelled].indexOf(<ImportStatus>importStatus.statusId) >= 0) {
+                                invalUri && (<any>this._reuseService).invalidate(invalUri);
+                                this.activeImportId = undefined;
+                            }
+                            if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)
+                                this.activeImportId = importId;
                         }
-                        if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)
-                            this.activeImportId = importId;
                     }
-                }
-                callback(res);
+                    callback(res);
+                });
             });
-        });
     }
 
     finishStatusCheck() {
