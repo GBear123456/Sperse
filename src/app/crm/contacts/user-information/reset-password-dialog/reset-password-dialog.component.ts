@@ -1,10 +1,9 @@
 /** Core imports */
-import { Component, Inject, Injector, ElementRef, ViewChild } from '@angular/core';
+import { Component, Inject, Injector, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { filter } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 /** Application imports */
@@ -12,8 +11,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ProfileServiceProxy, ResetUserPasswordDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';
 import { PasswordComplexityValidator } from '@shared/utils/validation/password-complexity-validator.directive';
-
-import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: 'reset-password-dialog.html',
@@ -107,10 +104,10 @@ export class ResetPasswordDialog extends AppComponentBase {
         if (!this.passwordObject.passwordInplaceEdit && (this.data.user.setRandomPassword || this.data.user.password)) {
             this.startLoading();
             this._userService.resetPassword(ResetUserPasswordDto.fromJS(this.data.user))
-                .pipe(finalize(() => this.finishLoading())).subscribe(() => { 
+                .pipe(finalize(() => this.finishLoading())).subscribe(() => {
                     this.dialogRef.close();
                 });
-        } else 
+        } else
             this.notify.warn(this.l('PleaseEnterYourNewPassword'));
     }
 }
