@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, HostListener, OnInit,  OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Injector, HostListener, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -7,8 +7,8 @@ import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import { FileSystemFileEntry } from 'ngx-file-drop';
-import { finalize, flatMap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { finalize, flatMap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
@@ -28,7 +28,7 @@ import { ContactsService } from '../contacts.service';
     styleUrls: ['./documents.component.less'],
     providers: [ FileSizePipe, PrinterService ]
 })
-export class DocumentsComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class DocumentsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
@@ -60,6 +60,8 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     public readonly TEXT_VIEWER  = 2;
     public readonly VIDEO_VIEWER  = 3;
 
+    private defaultNoDataText = this.ls('Platform', 'NoData');
+    public noDataText = '';
     public validTextExtensions: String[] = ['txt', 'text'];
     public validVideoExtensions: String[] = ['mp4', 'mov'];
     public viewerToolbarConfig: any = [];
@@ -250,6 +252,9 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
     ngOnInit() {
         this.data = this._customerService['data'];
         this.loadDocumentTypes();
+    }
+
+    ngAfterViewInit() {
         this.loadDocuments();
     }
 
@@ -260,18 +265,38 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
             });
     }
 
+    onDataGridInit(e) {
+        this.startLoading(e.component.element());
+    }
+
+    startLoading(element = null) {
+        super.startLoading(false, element || this.dataGrid.instance.element());
+    }
+
+    finishLoading() {
+        setTimeout(() => this.noDataText = this.defaultNoDataText);
+        super.finishLoading(false, this.dataGrid.instance.element());
+    }
+
     loadDocuments(callback = null) {
+        this.startLoading();
         let documentData = this._documentService['data'], groupId = this.data.contactInfo.id;
-        if (!callback && documentData && documentData.groupId == groupId)
-            this.dataSource = documentData.source;
-        else
-            this._documentService.getAll(groupId).subscribe((result) => {
+        if (!callback && documentData && documentData.groupId == groupId) {
+            setTimeout(() => {
+                this.dataSource = documentData.source;
+                this.finishLoading();
+            });
+        } else {
+            this._documentService.getAll(groupId).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe((result: DocumentInfo[]) => {
                 this._documentService['data'] = {
                     groupId: groupId,
                     source: this.dataSource = result
                 };
                 callback && callback();
             });
+        }
     }
 
     onToolbarPreparing($event) {
