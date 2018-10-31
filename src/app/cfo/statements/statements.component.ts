@@ -239,7 +239,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                 /** After selected accounts change */
                 this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                     /** filter all widgets by new data if change is on this component */
-                    if (this._route['_routerState'].snapshot.url === this._router.url) {
+                    if (this.componentIsActivated) {
                         this.setBankAccountsFilter();
                         /** if change is on another component - mark this for future update */
                     } else {

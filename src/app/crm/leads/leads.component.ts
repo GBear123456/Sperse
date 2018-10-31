@@ -10,7 +10,7 @@ import {
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
+import { RouteReuseStrategy } from '@angular/router';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { Store, select } from '@ngrx/store';
 
@@ -126,12 +126,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     constructor(injector: Injector,
         public dialog: MatDialog,
         public leadService: LeadServiceProxy,
-        private _router: Router,
-        private _route: ActivatedRoute,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _appService: AppService,
-        private _activatedRoute: ActivatedRoute,
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy
     ) {
@@ -172,7 +169,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private paramsSubscribe() {
         if (!this.isActivated())
-            this.subRouteParams = this._route.queryParams.subscribe(params => {
+            this.subRouteParams = this._activatedRoute.queryParams.subscribe(params => {
                 if (params['dataLayoutType']) {
                     let dataLayoutType = params['dataLayoutType'];
                     if (dataLayoutType != this.dataLayoutType) {

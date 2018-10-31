@@ -1,6 +1,5 @@
 import { Component, OnInit, EventEmitter, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { Router } from '@angular/router';
 import { PackageServiceProxy, ListResultDtoOfPackageDto } from '@shared/service-proxies/service-proxies';
 import { PackageIdService } from './package-id.service';
 
@@ -15,7 +14,6 @@ export class PackagesComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private data: PackageIdService,
-        private _router: Router,
         private _packageListService: PackageServiceProxy
     ) {
         super(injector);

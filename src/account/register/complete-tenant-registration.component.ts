@@ -1,5 +1,4 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import {
     TenantSubscriptionServiceProxy, CompleteTenantRegistrationInput, CompleteTenantRegistrationOutput, TenantHostType
 } from '@shared/service-proxies/service-proxies';
@@ -21,9 +20,7 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
 
     constructor(
         injector: Injector,
-        private _router: Router,
         private _appUrlService: AppUrlService,
-        private _activatedRoute: ActivatedRoute,
         public loginService: LoginService,
         private _tenantSubscriptionService: TenantSubscriptionServiceProxy,
         private _authService: AppAuthService

@@ -1,5 +1,6 @@
 /** Core imports */
 import { Injector, ApplicationRef, ElementRef, HostBinding, HostListener, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import * as _ from 'underscore';
@@ -23,7 +24,6 @@ import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customizatio
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
-import {ActivatedRoute, Router} from '@angular/router';
 
 declare let require: any;
 
@@ -53,10 +53,10 @@ export abstract class AppComponentBase implements OnDestroy {
     appUrlService: AppUrlService;
     localizationService: AppLocalizationService;
     oDataService: ODataService;
-    protected _route: ActivatedRoute;
+    protected _activatedRoute: ActivatedRoute;
     protected _router: Router;
     get componentIsActivated(): boolean {
-        return this._route['_routerState'].snapshot.url === this._router.url;
+        return this._activatedRoute['_routerState'].snapshot.url === this._router.url;
     }
 
     public searchClear = true;
@@ -95,7 +95,7 @@ export abstract class AppComponentBase implements OnDestroy {
         this.appUrlService = _injector.get(AppUrlService);
         this.localizationService = _injector.get(AppLocalizationService);
         this.oDataService = this._injector.get(ODataService);
-        this._route = _injector.get(ActivatedRoute);
+        this._activatedRoute = _injector.get(ActivatedRoute);
         this._router = _injector.get(Router);
     }
 

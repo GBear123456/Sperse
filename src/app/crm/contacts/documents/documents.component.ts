@@ -449,7 +449,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         switch (viewerType) {
             case this.WOPI_VIEWER:
                 this.getViewWopiRequestInfoObservable().pipe(finalize(() => {
-                    this.finishLoading(true);
+                    this.finishLoading();
                 })).subscribe((response) => {
                     this.showOfficeOnline(response);
                 });
@@ -457,7 +457,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             case this.VIDEO_VIEWER:
                 this.getDocumentUrlInfoObservable().subscribe((urlInfo) => {
                     this.currentDocumentURL = urlInfo.url;
-                    this.finishLoading(true);
+                    this.finishLoading();
                     this.showViewerType = viewerType;
                     this.openDocumentMode = true;
                 });
@@ -474,7 +474,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                             this.openDocumentMode = true;
                         });
                         reader.readAsDataURL(blob);
-                        this.finishLoading(true);
+                        this.finishLoading();
                     });
                 });
                 break;
@@ -503,7 +503,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         });
         this.startLoading(true);
         this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
-            this.finishLoading(true);
+            this.finishLoading();
         })).subscribe((response) => {
             this.showOfficeOnline(response);
         });
@@ -552,7 +552,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                                 this.hideActionsMenu();
                             }
                             this.closeDocument();
-                            this.finishLoading(true);
+                            this.finishLoading();
                         });
                     });
                 }

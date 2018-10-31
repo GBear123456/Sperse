@@ -1,5 +1,4 @@
 import { Component, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -43,7 +42,6 @@ export class TenantsComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _tenantService: TenantServiceProxy,
-        private _activatedRoute: ActivatedRoute,
         private _commonLookupService: CommonLookupServiceProxy,
         private _impersonationService: ImpersonationService
     ) {

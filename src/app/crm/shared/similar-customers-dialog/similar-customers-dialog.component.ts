@@ -3,7 +3,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { SimilarContactGroupOutput } from 'shared/service-proxies/service-proxies';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'similar-customers-dialog',
@@ -15,8 +14,7 @@ export class SimilarCustomersDialogComponent extends AppComponentBase {
     constructor(
         injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        public dialogRef: MatDialogRef<SimilarCustomersDialogComponent>,
-        private _router: Router
+        public dialogRef: MatDialogRef<SimilarCustomersDialogComponent>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }

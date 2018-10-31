@@ -6,7 +6,6 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -108,11 +107,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     constructor(injector: Injector,
         public dialog: MatDialog,
         public partnerService: PartnerServiceProxy,
-        private _router: Router,
         private _appService: AppService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
-        private _activatedRoute: ActivatedRoute,
         private _clientService: ClientService,
         private _partnerTypeService: PartnerTypeServiceProxy,
         private store$: Store<AppStore.State>

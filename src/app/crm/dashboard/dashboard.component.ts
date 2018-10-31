@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material';
@@ -49,13 +48,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     constructor(
         injector: Injector,
-        private _router: Router,
         private _appService: AppService,
         private _dashboardWidgetsService: DashboardWidgetsService,
         private zendeskService: ZendeskService,
         public dialog: MatDialog,
         private store$: Store<RootStore.State>,
-        private activatedRoute: ActivatedRoute
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
@@ -143,7 +140,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     subscribeToRefreshParam() {
-        this.activatedRoute.queryParams
+        this._activatedRoute.queryParams
             .pipe(
                 takeUntil(this.deactivate$),
                 filter(params => !!params['refresh'])

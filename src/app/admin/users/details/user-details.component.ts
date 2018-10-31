@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
+import { ActivationEnd } from '@angular/router';
 
 /** Third party libraries **/
 import { MatDialog } from '@angular/material';
@@ -43,16 +43,14 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
     private readonly LOCAL_STORAGE = 0;
 
     constructor(injector: Injector,
-        private _router: Router,
         private _dialog: MatDialog,
-        private _route: ActivatedRoute,
         private _userService: UserServiceProxy,
         private _profileService: ProfileServiceProxy) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.rootComponent = this.getRootComponent();
         _userService['data'] = { userId: null, user: null, roles: null };
-        this._route.params
+        this._activatedRoute.params
             .subscribe(params => {
                 this.userId = params['userId'];
                 this._userService['data'].userId = this.userId;

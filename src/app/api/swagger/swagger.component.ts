@@ -1,6 +1,5 @@
 import { Component, Injector, Inject, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -11,14 +10,13 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class SwaggerComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     link: SafeResourceUrl;
     public headlineConfig = {
-        names: [this.l("Interactive API Documentation")],
+        names: [this.l('Interactive API Documentation')],
         icon: 'magic-wand',
         buttons: []
     };
 
     constructor(
         injector: Injector,
-        private _router: Router,
         private _sanitizer: DomSanitizer
     ) {
         super(injector);
@@ -29,7 +27,7 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
     }
 
     ngOnInit() {
-        window.addEventListener("message", this.onSwaggerLoaded);
+        window.addEventListener('message', this.onSwaggerLoaded);
         this.link = this._sanitizer
             .bypassSecurityTrustResourceUrl(
             AppConsts.remoteServiceBaseUrl +
@@ -45,7 +43,7 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
     }
 
     ngOnDestroy() {
-        window.removeEventListener("message", this.onSwaggerLoaded);
+        window.removeEventListener('message', this.onSwaggerLoaded);
         this.getRootComponent().overflowHidden();
     }
 }
