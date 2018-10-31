@@ -383,6 +383,7 @@ export class DocumentsComponent extends AppComponentBase implements OnInit, OnDe
 
     onMenuItemClick($event) {
         this.currentDocumentInfo = this.actionRecordData;
+        this.currentDocumentURL = '';
         $event.itemData.action.call(this);
         this.actionRecordData = null;
     }
