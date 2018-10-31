@@ -4,7 +4,6 @@ import { DashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { AppConsts } from '@shared/AppConsts';
 import { finalize } from 'rxjs/operators';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'recent-clients',
@@ -19,7 +18,6 @@ export class RecentClientsComponent extends AppComponentBase implements OnInit {
     formatting = AppConsts.formatting;
 
     constructor(injector: Injector,
-        private _router: Router,
         private _dashboardServiceProxy: DashboardServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);

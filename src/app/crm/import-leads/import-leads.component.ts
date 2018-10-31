@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, Injector, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
@@ -208,7 +207,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         injector: Injector,
         private _appService: AppService,
         private _importProxy: ImportServiceProxy,
-        private _router: Router,
         private _pipelineService: PipelineService,
         private _nameParser: NameParserService,
         private _importLeadsService: ImportLeadsService,

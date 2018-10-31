@@ -1,5 +1,4 @@
 import {Component, OnInit, Injector, OnDestroy} from '@angular/core';
-import { Router } from '@angular/router';
 import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '../../shared/common/cfo-component-base';
 
@@ -14,8 +13,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
     private rootComponent: any;
 
     constructor(injector: Injector,
-        private _instanceServiceProxy: InstanceServiceProxy,
-        private _router: Router
+        private _instanceServiceProxy: InstanceServiceProxy
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

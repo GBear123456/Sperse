@@ -1,7 +1,6 @@
 import {Component, OnInit, Injector} from '@angular/core';
 import {appModuleAnimation} from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { Router } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 import { finalize } from 'rxjs/operators';
 
@@ -24,8 +23,7 @@ export class CreditSimulatorComponent extends AppComponentBase implements OnInit
 
     constructor(
         injector: Injector,
-        private _simulateScoreService: CreditSimulatorServiceProxy,
-        private _router: Router
+        private _simulateScoreService: CreditSimulatorServiceProxy
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
@@ -88,7 +86,7 @@ export class CreditSimulatorComponent extends AppComponentBase implements OnInit
             }
             historyLog.push({ key: prop, val: formattedValue });
         });
-        
+
         return historyLog;
     }
 

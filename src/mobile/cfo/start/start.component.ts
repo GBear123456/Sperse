@@ -2,7 +2,6 @@ import { Injector, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CFOComponentBase } from '../shared/common/cfo-component-base';
-import { SetupComponent } from './setup/setup.component';
 
 @Component({
     selector: 'start',
@@ -12,9 +11,9 @@ import { SetupComponent } from './setup/setup.component';
 })
 export class StartComponent extends CFOComponentBase implements OnInit {
     constructor(
-        injector: Injector,
-        private _router: Router) {
-            super(injector);
+        injector: Injector
+    ) {
+        super(injector);
     }
 
     ngOnInit() {

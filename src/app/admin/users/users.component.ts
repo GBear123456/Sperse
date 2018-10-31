@@ -1,5 +1,4 @@
 import { Component, Injector, ViewEncapsulation, ViewChild, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
 import {
     UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
@@ -66,14 +65,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _router: Router,
         private _appService: AppService,
         private _filtersService: FiltersService,
         private _userServiceProxy: UserServiceProxy,
         private _notifyService: NotifyService,
         private _fileDownloadService: FileDownloadService,
         private _tokenAuth: TokenAuthServiceProxy,
-        private _activatedRoute: ActivatedRoute,
         private _permissionService: PermissionServiceProxy,
         private _roleService: RoleServiceProxy,
         public _impersonationService: ImpersonationService

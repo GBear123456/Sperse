@@ -6,7 +6,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { KBAServiceProxy, CreditReportServiceProxy, CreditReportOutput } from '@shared/service-proxies/service-proxies';
 import { PageScrollConfig } from 'ngx-page-scroll';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { Router } from '@angular/router';
 
 import * as moment from 'moment';
 @Component({
@@ -49,7 +48,6 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         private _creditReportService: CreditReportServiceProxy,
         private _packageService: PackageIdService,
-        private _router: Router,
         private _sanitizer: DomSanitizer
     ) {
         super(injector);

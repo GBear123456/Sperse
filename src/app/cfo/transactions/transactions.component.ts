@@ -271,12 +271,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     //items: { BusinessEntity: '' }
                 })
             ];
-            this.filtersService.setup(this.filters, this._route.snapshot.queryParams, false);
+            this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();
             /** After selected accounts change */
             this._bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                 /** filter all widgets by new data if change is on this component */
-                if (this._route['_routerState'].snapshot.url === this._router.url) {
+                if (this.componentIsActivated) {
                     this.applyTotalBankAccountFilter();
                 } else {
                     /** if change is on another component - mark this for future update */
@@ -1077,7 +1077,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     activate() {
         this.filtersService.localizationSourceName = this.localizationSourceName;
         this.initFiltering();
-        this.filtersService.setup(this.filters, this._route.snapshot.queryParams, true);
+        this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, true);
         this.initToolbarConfig();
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */

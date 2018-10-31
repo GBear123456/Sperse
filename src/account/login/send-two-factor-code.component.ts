@@ -1,5 +1,5 @@
 import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate } from '@angular/router';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { SendTwoFactorAuthCodeModel, TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -20,8 +20,7 @@ export class SendTwoFactorCodeComponent extends AppComponentBase implements CanA
     constructor(
         injector: Injector,
         public loginService: LoginService,
-        private _tokenAuthService: TokenAuthServiceProxy,
-        private _router: Router
+        private _tokenAuthService: TokenAuthServiceProxy
     ) {
         super(injector);
     }

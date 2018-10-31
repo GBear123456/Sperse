@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, OnInit, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -148,7 +147,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
         private _leadService: LeadServiceProxy,
-        private _router: Router,
         private _nameParser: NameParserService,
         private _pipelineService: PipelineService,
         private dialogService: DialogService,

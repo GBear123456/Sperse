@@ -1,4 +1,4 @@
-<div *ngIf="!openDocumentMode" class="wrapper">
+<div [hidden]="openDocumentMode" class="wrapper">
     <dx-tooltip width="130px">
         <div *dxTemplate="let data of 'content'">
             <div class="lists-tooltip-container">
@@ -17,8 +17,10 @@
                     [allowColumnResizing]="true"
                     [hoverStateEnabled]="true"
                     [pager]="defaultGridPagerConfig"
+                    [noDataText]="noDataText"
                     (onCellClick)="onCellClick($event)"
-                    (onContentReady)="onContentReady()"
+                    (onInitialized)="onDataGridInit($event)"
+                    (onContentReady)="onContentReady($event)"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                     (onToolbarPreparing)="onToolbarPreparing($event)">
             <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
@@ -57,7 +59,7 @@
                 </span>
             </div>
 
-            <dxo-load-panel [enabled]="true"></dxo-load-panel>
+            <dxo-load-panel [enabled]="false"></dxo-load-panel>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
 
             <dxo-sorting mode="multiple"></dxo-sorting>

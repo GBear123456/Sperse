@@ -1,6 +1,5 @@
 /** Core imports */
 import { ChangeDetectionStrategy, Component, Injector, Output, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 
@@ -20,9 +19,9 @@ export class DashboardMenuComponent extends AppComponentBase {
     @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
     items = [];
     public abp = abp;
-    constructor(injector: Injector,
-                private _router: Router,
-                public appService: AppService
+    constructor(
+        injector: Injector,
+        public appService: AppService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 

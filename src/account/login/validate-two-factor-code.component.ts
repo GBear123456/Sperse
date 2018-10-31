@@ -1,5 +1,5 @@
 import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate } from '@angular/router';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { Subscription, timer } from 'rxjs';
@@ -19,8 +19,7 @@ export class ValidateTwoFactorCodeComponent extends AppComponentBase implements 
 
     constructor(
         injector: Injector,
-        public loginService: LoginService,
-        private _router: Router
+        public loginService: LoginService
     ) {
         super(injector);
         this.IsRememberBrowserEnabled = abp.setting.values['Abp.Zero.UserManagement.TwoFactorLogin.IsRememberBrowserEnabled'] === 'true';
