@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Injector, Output, Input, EventEmitter } from '@angular/core';
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
@@ -20,6 +20,7 @@ import { AccountConnectors } from '@shared/AppEnums';
 export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onComplete = new EventEmitter();
     @Output() onClose: EventEmitter<any> = new EventEmitter();
+    @Input() override: boolean;
     createAccountAvailable: boolean;
 
     constructor(
@@ -68,7 +69,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
                     let syncInput = SyncDto.fromJS({
                         syncAccountId: result[0]
                     });
-                    this._categoryTreeServiceProxy.sync(InstanceType[this.instanceType], this.instanceId, syncInput, false)
+                    this._categoryTreeServiceProxy.sync(InstanceType[this.instanceType], this.instanceId, syncInput, this.override)
                         .pipe(finalize(() => { abp.ui.clearBusy(); }))
                         .subscribe(result => {
                             this.notify.info(this.l('SavedSuccessfully'));

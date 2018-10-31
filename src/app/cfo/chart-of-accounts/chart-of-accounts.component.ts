@@ -14,8 +14,8 @@ class UploadCategoryModel {
     'Accounting Type': string;
     'Category': string;
     'Category Id': number;
-    'Sub Category': string;
-    'Sub Category Id': number;
+    'Parent Category': string;
+    'Parent Category Id': number;
     'Transaction Count': number;
     'COAID': number;
 }
@@ -31,6 +31,8 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
+
+    override: boolean = false;
 
     constructor(injector: Injector,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy) {
@@ -102,7 +104,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                 InstanceType[this.instanceType],
                 this.instanceId,
                 accTypes,
-                false
+                this.override
             )
                 .pipe(finalize(() => { abp.ui.clearBusy(); }))
                 .subscribe((result) => {

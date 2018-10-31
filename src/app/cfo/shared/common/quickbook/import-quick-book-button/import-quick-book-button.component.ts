@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Injector, Output, Input, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuickBookServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { finalize } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { finalize } from 'rxjs/operators';
 })
 export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
+    @Input() override: boolean;
 
     constructor(
         injector: Injector,
@@ -58,7 +59,7 @@ export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implem
     }
 
     syncCoA() {
-        this._quickBookService.syncChartOfAccounts(InstanceType[this.instanceType], this.instanceId, false)
+        this._quickBookService.syncChartOfAccounts(InstanceType[this.instanceType], this.instanceId, this.override)
             .subscribe((result) => {
                 this.onDialogClose(null);
             });

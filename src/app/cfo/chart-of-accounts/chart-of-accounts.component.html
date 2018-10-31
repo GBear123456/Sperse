@@ -20,12 +20,12 @@
                 <p class="title">{{l('CustomCharts_Title')}}</p>
                 <div class="links-wrap" *ngIf="isInstanceAdmin">
                     <i class="arrow-icon"></i>
-                    <import-quick-book-button (onClose)="refreshCategories()"></import-quick-book-button>
+                    <import-quick-book-button (onClose)="refreshCategories()" [override]="override"></import-quick-book-button>
                 </div>
                 <hr style="width: calc(100% - 70px); margin-left: 70px;"/>
                 <div class="links-wrap">
                     <i class="arrow-icon"></i>
-                    <import-xero-chart-of-accounts-button (onComplete)="refresh()"></import-xero-chart-of-accounts-button>
+                    <import-xero-chart-of-accounts-button (onComplete)="refresh()" [override]="override"></import-xero-chart-of-accounts-button>
                 </div>
             </div>
 
@@ -42,6 +42,7 @@
                     </label>
                 </div>
                 <div class="info-text">
+                    <dx-check-box text="Override" [(value)]="override" class="override-checkbox"> </dx-check-box>
                     {{l('CustomCharts_InfoText')}}
                 </div>
             </div>
