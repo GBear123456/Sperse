@@ -32,6 +32,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     readonly maxTryCount = 3;
     readonly initialSynchProgressDelay = 5 * 1000;
     private synchProgressDelay = this.initialSynchProgressDelay;
+    private synchProgressDelayMultiplier = 1.2;
     private maxSynchProgressDelay = 10 * 60 * 1000;
 
     constructor(
@@ -123,7 +124,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
 
     /** Increase interval by 2 with every new call until max has reached */
     calcAndGetSynchProgressDelay(): number {
-        this.synchProgressDelay = this.synchProgressDelay * 2;
+        this.synchProgressDelay = this.synchProgressDelay * this.synchProgressDelayMultiplier;
         if (this.synchProgressDelay > this.maxSynchProgressDelay) {
             this.synchProgressDelay = this.maxSynchProgressDelay;
         }
