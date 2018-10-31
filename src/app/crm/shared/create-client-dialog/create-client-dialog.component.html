@@ -40,9 +40,7 @@
     <div class="toolbar-wraper">
         <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
     </div>   
-    <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">Similar
-        records found. Click here for details
-    </div>
+    <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">{{l('SimilarRecordsFound')}}</div>
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
             <div class="field">

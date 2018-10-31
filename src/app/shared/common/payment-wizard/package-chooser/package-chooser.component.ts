@@ -15,7 +15,8 @@ import {
 
 /** Third party imports */
 import { MatSliderChange, MatSlider } from '@angular/material';
-import { concatAll, map, max, publishReplay, refCount } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { concatAll, map, max, pluck, publishReplay, refCount } from 'rxjs/operators';
 import { partition } from 'lodash';
 
 /** Application imports */
@@ -24,8 +25,11 @@ import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-
 import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
 import { AppConsts } from '@shared/AppConsts.ts';
 import {
+    GetPackagesConfigOutputCurrentFrequency,
+    GetPackagesConfigOutput,
     Module,
     PackageConfigDto,
+    PackageEditionConfigDto,
     PackageServiceProxy,
     SetupSubscriptionInfoDtoFrequency
 } from '@shared/service-proxies/service-proxies';
@@ -54,7 +58,6 @@ export class PackageChooserComponent implements OnInit {
     @HostBinding('class.withBackground') @Input() showBackground;
     packages: PackageConfigDto[];
     freePackages: PackageConfigDto[];
-    selectedBillingPeriod = BillingPeriod.Yearly;
     usersAmount = 5;
     sliderInitialMinValue = 5;
     sliderInitialStep = 5;
@@ -62,6 +65,8 @@ export class PackageChooserComponent implements OnInit {
     sliderStep = 5;
     selectedPackageIndex: number;
     selectedPackageCardComponent: PackageCardComponent;
+    selectedBillingPeriod = BillingPeriod.Yearly;
+    billingPeriod = BillingPeriod;
     private enableSliderScalingChange = false;
 
     constructor(
@@ -79,34 +84,60 @@ export class PackageChooserComponent implements OnInit {
             /** Default value for title if any was set in input */
             this.title = this.l('TrialExpired', this.module);
         }
-        const packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
+        const packagesConfig$: Observable<GetPackagesConfigOutput> = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
             refCount()
         );
-        packagesConfig$.subscribe((packages: PackageConfigDto[]) => {
-            /** Split packages to free packages and notFreePackages */
-            let [ notFreePackages, freePackages ] = partition(packages, packageConfig => !!packageConfig.editions[0].annualPrice);
-            this.freePackages = freePackages;
-            this.packages = notFreePackages;
-            this.selectedPackageIndex = this.packages.indexOf(this.packages.find(packageConfig => packageConfig.bestValue));
-            /** Update selected package with the active status to handle next button status */
-            setTimeout(() => {
-                this.selectPackage(this.selectedPackageIndex);
-                const plan = this.getPlan();
-                this.onPlanChosen.emit(plan);
-            }, 10);
+        packagesConfig$.subscribe((packagesConfig: GetPackagesConfigOutput) => {
+            this.changeDefaultSettings(packagesConfig);
+            this.splitPackagesForFreeAndNotFree(packagesConfig);
+            this.preselectPackage(packagesConfig);
             this.changeDetectionRef.detectChanges();
         });
-        packagesConfig$.pipe(
-            concatAll(),
-            map(packages => packages.editions),
-            concatAll(),
-            map(editions => +editions.features[this.module + '.MaxUserCount']),
-            max()
-        ).subscribe(maxAmount => {
+        this.getMaxUsersAmount(packagesConfig$).subscribe(maxAmount => {
             this.packagesMaxUsersAmount = maxAmount;
             this.changeDetectionRef.detectChanges();
         });
+    }
+
+    /** Split packages to free packages and notFreePackages */
+    splitPackagesForFreeAndNotFree(packagesConfig: GetPackagesConfigOutput) {
+        let [ notFreePackages, freePackages ] = partition(packagesConfig.packages, packageConfig => !!packageConfig.editions[0].annualPrice);
+        this.freePackages = freePackages;
+        this.packages = notFreePackages;
+    }
+
+    /** Preselect package if current edition is in list of not free packages, else - preselect best value package */
+    preselectPackage(packagesConfig: GetPackagesConfigOutput) {
+        const selectedPackage = this.packages.find(packageConfig => packageConfig.editions.some(edition => edition.id === packagesConfig.currentEditionId)) ||
+                                this.packages.find(packageConfig => packageConfig.bestValue);
+        this.selectedPackageIndex = this.packages.indexOf(selectedPackage);
+        /** Update selected package with the active status to handle next button status */
+        setTimeout(() => {
+            this.selectPackage(this.selectedPackageIndex);
+            const plan = this.getPlan();
+            this.onPlanChosen.emit(plan);
+        }, 10);
+    }
+
+    /** Get default values of usersAmount and billing period from user previous choice */
+    changeDefaultSettings(packagesConfig: GetPackagesConfigOutput) {
+        this.usersAmount = packagesConfig.currentUserCount || this.usersAmount;
+        if (packagesConfig.currentFrequency) {
+            this.selectedBillingPeriod = packagesConfig.currentFrequency === GetPackagesConfigOutputCurrentFrequency._30 ? BillingPeriod.Monthly : BillingPeriod.Yearly;
+        }
+    }
+
+    /** Return the highest users count from all packages */
+    getMaxUsersAmount(packagesConfig$: Observable<GetPackagesConfigOutput>): Observable<number> {
+        return packagesConfig$.pipe(
+            pluck('packages'),
+            concatAll(),
+            map((packageConfig: PackageConfigDto) => packageConfig.editions),
+            concatAll(),
+            map((edition: PackageEditionConfigDto) => +edition.features[this.module + '.MaxUserCount']),
+            max()
+        );
     }
 
     billingPeriodChanged(e) {

@@ -81,12 +81,12 @@
                     <div class="row align-items-center">
                         <div class="col-4 align-self-center">
                             <ng-container *ngFor="let type of ['date', 'datetime']">
-                                <dx-date-box #startDate
+                                <dx-date-box #startDateRef
                                              maxLength="10"
                                              *ngIf="isAllDay ? type == 'date' : type =='datetime'"
                                              [type]="type"
-                                             [max]="data.appointment.EndDate"
-                                             [(value)]="data.appointment.StartDate">
+                                             [max]="endDate"
+                                             [(value)]="startDate">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
                                                              message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
@@ -101,12 +101,12 @@
 
                         <div class="col-4 align-self-center">
                             <ng-container *ngFor="let type of ['date', 'datetime']">
-                                <dx-date-box #endDate
+                                <dx-date-box #endDateRef
                                              *ngIf="isAllDay ? type == 'date' : type =='datetime'"
                                              maxLength="10"
                                              [type]="type"
-                                             [min]="data.appointment.StartDate"
-                                             [(value)]="data.appointment.EndDate">
+                                             [min]="startDate"
+                                             [(value)]="endDate">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
                                                              message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>

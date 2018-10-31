@@ -859,13 +859,10 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     getAssignmentsPermissinKey() {
-        let type = 'Customers';
-        if (this.data.isInLeadMode)
-            type = 'Leads';
-        else if (this.partnerTypesComponent.selectedItems.length)
-            type = 'Partners';
+        if (this.partnerTypesComponent.selectedItems.length)
+            return 'Pages.CRM.Partners.ManageAssignments';
 
-        return 'Pages.CRM.' + type + '.ManageAssignments';
+        return 'Pages.CRM.Customers.ManageAssignments';
     }
 
     onUserAssignmentChanged(event) {

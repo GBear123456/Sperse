@@ -19,6 +19,8 @@ import {
     withLatestFrom
 } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
+import * as moment from 'moment-timezone';
+import 'moment-timezone';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
@@ -69,18 +71,21 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             amount: 12
         }
     ];
+    selectItems = [
+        this.l('LeadStageRatioAndClientCount')
+    ];
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
     private series: any[] = [
         {
-            axis: 'total',
             type: 'spline',
             valueField: 'customerCount',
-            name: this.l('Client Count'),
+            name: this.l('ClientsCount'),
             color: this.clientColor
         }
     ];
 
     allSeries$: Observable<any>;
+    allSeriesColors: { [seriaName: string]: string } = {};
     leadStagesSeries$: Observable<any>;
 
     constructor(injector: Injector,
@@ -118,6 +123,11 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         this.allSeries$ = this.leadStagesSeries$.pipe(
             withLatestFrom(of(this.series), ((leadStagesSeries , allSeries) => [ ...leadStagesSeries, ...allSeries ]))
         );
+        this.allSeries$.subscribe(series => {
+            series.forEach(seria => {
+                this.allSeriesColors[seria.name] = seria.color;
+            });
+        });
     }
 
     private savePeriod(period) {
@@ -180,6 +190,38 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     customizeBottomAxis = (elem) => {
         return this.getPeriodBottomAxisCustomizer(this.selectedPeriod.name)(elem);
+    }
+
+    customizeTooltip = pointInfo => {
+        let html = '';
+
+        moment.tz.setDefault(undefined);
+        let date = moment(pointInfo.argument);
+        moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+
+        const leadsArePresent = pointInfo.points.length > this.series.length;
+        html += `<header class="tooltip-header">${date.format('MMM YYYY')}</header>`;
+        if (leadsArePresent) {
+            html += `<div class="label">Leads:</div>`;
+        }
+
+        for (let point of pointInfo.points) {
+            const color = this.getColorBySeriesNames(point.seriesName);
+            const isClientsPoint = point.seriesName === this.series[0].name;
+            if (isClientsPoint && leadsArePresent) {
+                html += `<hr style="margin: 5px 0"/>`;
+            }
+            html += `<div class="tooltip-item">
+                        <span class="tooltip-item-marker" style="background-color: ${color}"></span>
+                        ${point.seriesName}
+                        <span class="tooltip-item-value">${point.value}</span>
+                     </div>`;
+        }
+        return { html: html };
+    }
+
+    getColorBySeriesNames(seriaName: string): string {
+        return this.allSeriesColors[seriaName];
     }
 
     /** Factory for method that customize axis */

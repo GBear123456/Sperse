@@ -62,7 +62,7 @@
         <button (click)="close()"></button>
     </div>
     <div class="paymentMethods">
-        <mat-tab-group *ngIf="plan.total" [(selectedIndex)]="selectedGateway">
+        <mat-tab-group *ngIf="plan.total" [(selectedIndex)]="selectedGateway" (selectedTabChange)="selectedTabChange($event)">
             <mat-tab [label]="l('eCheck')">
                 <e-check [price]="plan.total" (onSubmit)="submitData($event, paymentMethods.eCheck)"></e-check>
             </mat-tab>
@@ -78,7 +78,7 @@
                 </pay-pal>
             </mat-tab>
             <mat-tab [label]="l('BankTransfer')">
-                <bank-transfer></bank-transfer>
+                <bank-transfer (onSubmit)="submitData($event, paymentMethods.BankTransfer)" *ngIf="bankTransferSettings$" [bankTransferSettings]="bankTransferSettings$ | async"></bank-transfer>
             </mat-tab>
             <!--<mat-tab [label]="l('Bitcoin')">-->
                 <!--<div class="row align-items-center h-100">-->

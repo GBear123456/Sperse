@@ -553,13 +553,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getAssignmentsPermissinKey = () => {
-        let type = 'Customers';
-        if (this.leadId || this.leadInfo)
-            type = 'Leads';
-        else if (this.customerType == ContactGroupType.Partner)
-            type = 'Partners';
+        if (this.customerType == ContactGroupType.Partner)
+            return 'Pages.CRM.Partners.ManageAssignments';
 
-        return 'Pages.CRM.' + type + '.ManageAssignments';
+        return 'Pages.CRM.Customers.ManageAssignments';
     }
 
     getProxyService = () => {
