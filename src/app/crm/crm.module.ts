@@ -50,6 +50,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { CrmStoreModule } from '@app/crm/store/crm-store.module';
@@ -169,14 +170,16 @@ export class CrmModule {
     constructor(
         private _appService: AppService,
         private _appStoreService: AppStoreService,
-        private _importLeadsService: ImportLeadsService
+        private _importLeadsService: ImportLeadsService,
+        private _permissionService: PermissionCheckerService
     ) {
         setTimeout(() => this._appStoreService.loadUserDictionaries(), 2000);
-        _appService.subscribeModuleChange((config) => {
-            if (config['name'] == this.name)
-                _importLeadsService.setupImportCheck();
-            else
-                _importLeadsService.stopImportCheck();
-        });
+        if (_permissionService.isGranted('Pages.CRM.BulkImport'))
+            _appService.subscribeModuleChange((config) => {
+                if (config['name'] == this.name)
+                    _importLeadsService.setupImportCheck();
+                else
+                    _importLeadsService.stopImportCheck();
+            });
     }
 }
