@@ -58,7 +58,7 @@ export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implem
     }
 
     syncCoA() {
-        this._quickBookService.syncChartOfAccounts(InstanceType[this.instanceType], this.instanceId)
+        this._quickBookService.syncChartOfAccounts(InstanceType[this.instanceType], this.instanceId, false)
             .subscribe((result) => {
                 this.onDialogClose(null);
             });
