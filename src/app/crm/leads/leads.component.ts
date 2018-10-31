@@ -206,6 +206,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.dataGrid.instance.refresh().then(() => {
                 this.setGridDataLoaded();
             });
+            (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
         });
     }
 
@@ -656,7 +657,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             data: {
                 refreshParent: (quite, stageId) => {
                     this.invalidate(quite, stageId);
-                    (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
                 },
                 isInLeadMode: true,
                 customerType: ContactGroupType.Client

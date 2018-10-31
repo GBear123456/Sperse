@@ -392,6 +392,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent.overflowHidden(true);
 
         this.showHostElement();
+
+        this.registerToEvents();
     }
 
     deactivate() {
@@ -414,6 +416,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 if (params['refresh'])
                     this.invalidate();
             });
+    }
+
+    registerToEvents() {
+        abp.event.on('profilePictureChanged', () => {
+            this.dataGrid.instance.refresh();
+        });
     }
 
     onContentReady(event) {
