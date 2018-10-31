@@ -46,7 +46,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         buttons: []
     };
     dialogConfig = new MatDialogConfig();
-    componentIsActive = false;
 
     constructor(
         injector: Injector,
@@ -70,7 +69,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     checkDataEmpty(data) {
         this.dataEmpty = !data.length;
-        if (this.dataEmpty && this.componentIsActive) {
+        if (this.dataEmpty && this.componentIsActivated) {
             clearTimeout(this.openDialogTimeout);
             this.openDialogTimeout = setTimeout(() => {
                 if (this._appService.hasModuleSubscription())
@@ -132,7 +131,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     activate() {
         super.activate();
-        this.componentIsActive = true;
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
@@ -166,7 +164,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     deactivate() {
         super.deactivate();
-        this.componentIsActive = false;
 
         this.finishLoading();
         this.zendeskService.hideWidget();
