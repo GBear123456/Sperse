@@ -363,9 +363,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.subscribers.forEach((sub) => sub.unsubscribe());
     }
 
-    removeTimezoneOffset(utcDateTime) {
+    getDateWithTimezone(utcDateTime) {
         if (utcDateTime)
-            return moment(utcDateTime).add(-(new Date(<any>utcDateTime).getTimezoneOffset()), 'minutes');
+            return new Date(moment(utcDateTime).format('YYYY-MM-DD HH:mm:ss'));
     }
 
     hideStageHighlighting() {
