@@ -11,7 +11,7 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
          DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
-         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule,
+         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxContextMenuModule,
          DxRadioGroupModule, DxDropDownBoxModule, DxTreeViewModule } from 'devextreme-angular';
 import { FileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
@@ -28,6 +28,7 @@ import { OperationsWidgetComponent } from './operations-widget.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddComponent } from './notes/note-add/note-add.component';
+import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
@@ -52,6 +53,7 @@ import { SubscriptionsComponent } from './subscriptions/subscriptions.component'
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
+import { PersonInfoComponent } from './person-info/person-info.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
@@ -97,6 +99,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     OperationsWidgetComponent,
     OrganizationDialogComponent,
     PersonDialogComponent,
+    PersonInfoComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
     NoteAddComponent,
@@ -104,7 +107,8 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     UploadDocumentDialogComponent,
     DocumentTypesListComponent,
     OrganizationUnitsTreeComponent,
-    PermissionTreeComponent
+    PermissionTreeComponent,
+    AddContactDialogComponent
   ],
   imports: [
     FormsModule,
@@ -119,6 +123,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     MatSelectModule,
     ContactsRoutingModule,
     AngularGooglePlaceModule,
+    DxContextMenuModule,
     DxSelectBoxModule,
     DxCheckBoxModule,
     DxButtonModule,
@@ -156,7 +161,8 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     SimilarCustomersDialogComponent,
     NoteAddComponent,
     LeadCancelDialogComponent,
-    UploadDocumentDialogComponent
+    UploadDocumentDialogComponent,
+    AddContactDialogComponent
   ],
   providers: [
     ContactsService,
