@@ -36,36 +36,41 @@
                          [width]="'330px'"
                          [height]="440"
                          [targetSelector]="'[accesskey=\'LeadsList\']'"
-                         [title]="l('Lead')"
+                         [title]="l('Leads')"
                          [showConfirmation]="false"
                          [highlightSelected]="true"
                          [selectedKeys]="[data.appointment.LeadId]"
                          [searchEnabled]="true"
+                         [customSearchEnabled]="true"
                          (onItemSelected)="onLeadSelected($event)"
+                         (onListFiltered)="onListFiltered($event)"
                          [list]="leads">
         </crm-static-list>
         <crm-static-list #clientsList
                          [width]="'330px'"
                          [height]="440"
                          [targetSelector]="'[accesskey=\'ClientsList\']'"
-                         [title]="l('Client')"
+                         [title]="l('Clients')"
                          [showConfirmation]="false"
                          [highlightSelected]="true"
                          [selectedKeys]="[data.appointment.ContactGroupId]"
                          [searchEnabled]="true"
+                         [customSearchEnabled]="true"
                          (onItemSelected)="onClientSelected($event)"
+                         (onListFiltered)="onListFiltered($event)"
                          [list]="clients">
         </crm-static-list>
         <!--<crm-static-list #ordersList-->
                          <!--[width]="'330px'"-->
                          <!--[height]="440"-->
                          <!--[targetSelector]="'[accesskey=\'OrdersList\']'"-->
-                         <!--[title]="l('Order')"-->
+                         <!--[title]="l('Orders')"-->
                          <!--[showConfirmation]="false"-->
                          <!--[highlightSelected]="true"-->
                          <!--[selectedKeys]="[data.appointment.OrderId]"-->
                          <!--[searchEnabled]="true"-->
                          <!--(onItemSelected)="onOrderSelected($event)"-->
+                         <!--(onListFiltered)="onListFiltered($event)"-->
                          <!--[list]="orders">-->
         <!--</crm-static-list>-->
 
