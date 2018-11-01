@@ -2,6 +2,7 @@
     font-size: 15px;
     overflow: hidden; // does it need?
     height: 100%;
+    position: relative;
 
     .title {
         float: left;
@@ -27,6 +28,47 @@
             color: #999;
             cursor: unset;
             pointer-events: none;
+        }
+    }
+    
+    .custom-search {
+        position: absolute;
+        width: 100%;
+        z-index: 10;
+        
+        /deep/ dx-text-box {
+            &.dx-show-clear-button .dx-icon-clear {
+                display: block;
+            }
+    
+            .dx-placeholder {
+                font-weight: 400;
+                left: 34px;
+            }
+            
+            .dx-texteditor-input {
+                padding-left: 34px;
+            }
+            
+            .dx-texteditor-container {
+                
+                &::before {
+                    content: "\f027";
+                    
+                    font: 18px/1 DXIcons;
+                    position: absolute;
+                    top: 50%;
+                    margin-top: -17px;
+                    width: 34px;
+                    height: 34px;
+                    background-position: 8px 8px;
+                    background-size: 18px 18px;
+                    padding: 8px;
+                    text-align: center;
+                    line-height: 18px;
+                    color: #999999;
+                }
+            }
         }
     }
 
