@@ -20162,7 +20162,7 @@ export class SyncAccountServiceProxy {
      * @syncTypeId (optional) 
      * @return Success
      */
-    getActive(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<number[]> {
+    getActive(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<SyncAccountDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/GetActive?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -20188,14 +20188,14 @@ export class SyncAccountServiceProxy {
                 try {
                     return this.processGetActive(<any>response_);
                 } catch (e) {
-                    return <Observable<number[]>><any>_observableThrow(e);
+                    return <Observable<SyncAccountDto[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<number[]>><any>_observableThrow(response_);
+                return <Observable<SyncAccountDto[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetActive(response: HttpResponseBase): Observable<number[]> {
+    protected processGetActive(response: HttpResponseBase): Observable<SyncAccountDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -20209,7 +20209,7 @@ export class SyncAccountServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(item);
+                    result200.push(SyncAccountDto.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -20218,7 +20218,7 @@ export class SyncAccountServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number[]>(<any>null);
+        return _observableOf<SyncAccountDto[]>(<any>null);
     }
 
     /**
@@ -50818,6 +50818,46 @@ export interface ISyncProgressDto {
     progressPercent: number | undefined;
     syncStatus: SyncProgressDtoSyncStatus | undefined;
     lastSyncDate: moment.Moment | undefined;
+}
+
+export class SyncAccountDto implements ISyncAccountDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: ISyncAccountDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): SyncAccountDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncAccountDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ISyncAccountDto {
+    id: number | undefined;
+    name: string | undefined;
 }
 
 export class CreateSyncAccountInput implements ICreateSyncAccountInput {

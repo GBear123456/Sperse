@@ -15,7 +15,8 @@ import {
     DxTagBoxModule,
     DxProgressBarModule,
     DxValidatorModule,
-    DxValidationSummaryModule
+    DxValidationSummaryModule,
+    DxRadioGroupModule
 } from 'devextreme-angular';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { SyncServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -35,6 +36,7 @@ import { ImportXeroChartOfAccountsButtonComponent } from './xero/import-xero-cha
 import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
 import { SynchProgressComponent } from './synch-progress/synch-progress.component';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { ChooseXeroAccountComponent } from './xero/import-xero-chart-of-accounts-button/choose-xero-account/choose-xero-account.component';
 
 @NgModule({
     imports: [
@@ -55,7 +57,8 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
         DxTagBoxModule,
         DxProgressBarModule,
         DxValidatorModule,
-        DxValidationSummaryModule
+        DxValidationSummaryModule,
+        DxRadioGroupModule
     ],
     declarations: [
         BankAccountsComponent,
@@ -65,6 +68,7 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
 
         XeroLoginButtonComponent,
         ImportXeroChartOfAccountsButtonComponent,
+        ChooseXeroAccountComponent,
         AddQuovoAccountButtonComponent,
 
         SelectionFilterComponent,
@@ -78,10 +82,14 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
 
         XeroLoginButtonComponent,
         ImportXeroChartOfAccountsButtonComponent,
+        ChooseXeroAccountComponent,
         AddQuovoAccountButtonComponent,
 
         SelectionFilterComponent,
         SynchProgressComponent
+    ],
+    entryComponents: [
+        ChooseXeroAccountComponent
     ],
     providers: [
         QuovoService,
