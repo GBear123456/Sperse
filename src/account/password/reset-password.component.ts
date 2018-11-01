@@ -1,8 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AccountServiceProxy, PasswordComplexitySetting, ProfileServiceProxy, ResetPasswordOutput, ResolveTenantIdInput } from '@shared/service-proxies/service-proxies';
 import { LoginService } from '../login/login.service';
@@ -23,8 +21,6 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _accountService: AccountServiceProxy,
-        private _router: Router,
-        private _activatedRoute: ActivatedRoute,
         private _loginService: LoginService,
         private _appSessionService: AppSessionService,
         private _profileService: ProfileServiceProxy

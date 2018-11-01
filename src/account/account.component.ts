@@ -1,5 +1,4 @@
 import { Component, Injector, OnInit, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import * as _ from 'lodash';
@@ -23,7 +22,6 @@ export class AccountComponent extends AppComponentBase implements OnInit {
 
     public constructor(
         injector: Injector,
-        private _router: Router,
         private _loginService: LoginService,
         viewContainerRef: ViewContainerRef
     ) {

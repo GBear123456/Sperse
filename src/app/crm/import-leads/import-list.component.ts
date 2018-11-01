@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular';
@@ -34,7 +33,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
     public headlineConfig: any = {};
 
     constructor(injector: Injector,
-        private _router: Router,
         private _importLeadsService: ImportLeadsService,
         private _sizeFormatPipe: FileSizePipe,
         private _importProxy: ImportServiceProxy,

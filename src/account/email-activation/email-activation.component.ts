@@ -1,5 +1,4 @@
 import { Component, Injector } from '@angular/core';
-import { Router } from '@angular/router';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AccountServiceProxy, SendEmailActivationLinkInput, TenantHostType } from '@shared/service-proxies/service-proxies';
@@ -16,9 +15,8 @@ export class EmailActivationComponent extends AppComponentBase {
 
     constructor (
         injector: Injector,
-        private _accountService: AccountServiceProxy,
-        private _router: Router
-        ) {
+        private _accountService: AccountServiceProxy
+    ) {
         super(injector);
     }
 

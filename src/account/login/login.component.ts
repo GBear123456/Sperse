@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, Injector, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -29,7 +28,6 @@ export class LoginComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         public loginService: LoginService,
-        private _router: Router,
         private _sessionService: AbpSessionService,
         private _sessionAppService: SessionServiceProxy,
         private dialog: MatDialog

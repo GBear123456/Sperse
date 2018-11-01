@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Params } from '@angular/router';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LanguageServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -36,8 +36,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     constructor(
         injector: Injector,
         private _languageService: LanguageServiceProxy,
-        private _router: Router,
-        private _activatedRoute: ActivatedRoute
     ) {
         super(injector);
     }

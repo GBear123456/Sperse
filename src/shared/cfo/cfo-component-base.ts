@@ -1,7 +1,5 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { OnInit, OnDestroy, Injector } from '@angular/core';
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
 
 import { takeUntil } from 'rxjs/operators';
 
@@ -16,11 +14,6 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         return (this.instanceType == InstanceType.User) || !isNaN(parseInt(this.instanceType)) ||
             (this.instanceType == InstanceType.Main && this.permission.isGranted('Pages.CFO.MainInstanceAdmin'));
     }
-    get componentIsActivated(): boolean {
-        return this._route['_routerState'].snapshot.url === this._router.url;
-    }
-    protected _route: ActivatedRoute;
-    protected _router: Router;
     _cfoService: CFOService;
 
     constructor(injector: Injector) {
@@ -28,12 +21,10 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
 
         this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
-        this._route = injector.get(ActivatedRoute);
-        this._router = injector.get(Router);
         this._cfoService = injector.get(CFOService);
 
-        if (this.constructor == this._route.component)
-            this._route.params.pipe(
+        if (this.constructor == this._activatedRoute.component)
+            this._activatedRoute.params.pipe(
                 takeUntil(this.destroy$)
             ).subscribe(params => {
                 let instance = params['instance'];

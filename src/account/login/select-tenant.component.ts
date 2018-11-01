@@ -1,5 +1,5 @@
 ﻿import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
-import { Router, CanActivate } from '@angular/router';
+import { CanActivate } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LoginService } from './login.service';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
@@ -14,12 +14,11 @@ export class SelectTenantComponent extends AppComponentBase implements CanActiva
 
     tenants?: TenantModel[] = [];
 
-    saving: boolean = false;
+    saving = false;
 
     constructor(
         injector: Injector,
-        public loginService: LoginService,
-        private _router: Router
+        public loginService: LoginService
     ) {
         super(injector);
     }

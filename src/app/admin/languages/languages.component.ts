@@ -1,5 +1,4 @@
 import { Component, ElementRef, Injector, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
@@ -27,8 +26,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         private _languageService: LanguageServiceProxy,
-        private _sessionService: AbpSessionService,
-        private _router: Router
+        private _sessionService: AbpSessionService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

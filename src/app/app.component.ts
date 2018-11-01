@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service';
 import { AppComponentBase } from 'shared/common/app-component-base';
@@ -20,7 +19,6 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     public constructor(
         injector: Injector,
         private _ngZone: NgZone,
-        private _router: Router,
         private viewContainerRef: ViewContainerRef, // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
         private _chatSignalrService: ChatSignalrService,
         public appService: AppService,
@@ -36,7 +34,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
                 if (moduleName != appService.getDefaultModule()) {
                     clearTimeout(paymentDialogTimeout);
                     if (!appService.subscriptionInGracePeriod(moduleName))
-                        _router.navigate(['app/admin/users']);
+                        this._router.navigate(['app/admin/users']);
                     paymentDialogTimeout = setTimeout(() => {
                         if (!this.dialog.getDialogById('payment-wizard')) {
                             this.dialog.open(PaymentWizardComponent, {

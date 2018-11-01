@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -62,7 +61,6 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
 
     constructor(
         injector: Injector,
-        private _router: Router,
         public dialog: MatDialog,
         private _userService: UserServiceProxy,
         private _profileService: ProfileServiceProxy,

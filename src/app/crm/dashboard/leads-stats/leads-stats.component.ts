@@ -1,5 +1,4 @@
 import { Component, Injector, Output, OnInit, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';
 
@@ -16,7 +15,6 @@ export class LeadsStatsComponent extends AppComponentBase implements OnInit {
     @Output() onDataLoaded = new EventEmitter();
 
     constructor(injector: Injector,
-        private _router: Router,
         private _leadService: LeadServiceProxy) {
         super(injector);
     }

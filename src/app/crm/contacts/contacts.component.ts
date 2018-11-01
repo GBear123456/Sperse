@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
+import { ActivationEnd } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -82,9 +82,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private referrerParams;
 
     constructor(injector: Injector,
-                private _router: Router,
                 private _dialog: MatDialog,
-                private _route: ActivatedRoute,
                 private _cacheService: CacheService,
                 private _userService: UserServiceProxy,
                 private _contactGroupService: ContactGroupServiceProxy,
@@ -104,10 +102,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             partnerInfo: null
         };
         this.rootComponent = this.getRootComponent();
-        this.paramsSubscribe.push(this._route.params
+        this.paramsSubscribe.push(this._activatedRoute.params
             .subscribe(params => this.loadData(params)));
 
-        this.paramsSubscribe.push(this._route.queryParams
+        this.paramsSubscribe.push(this._activatedRoute.queryParams
             .subscribe(params => {
                 this.referrerParams = params;
         }));

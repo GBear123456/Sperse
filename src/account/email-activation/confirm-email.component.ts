@@ -1,5 +1,4 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AccountServiceProxy, ActivateEmailInput, ResolveTenantIdInput } from '@shared/service-proxies/service-proxies';
@@ -22,8 +21,6 @@ export class ConfirmEmailComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _accountService: AccountServiceProxy,
-        private _router: Router,
-        private _activatedRoute: ActivatedRoute,
         private _appSessionService: AppSessionService
 
     ) {
@@ -40,8 +37,7 @@ export class ConfirmEmailComponent extends AppComponentBase implements OnInit {
                 if (isEqual(tenantId, {})) tenantId = null; // hack for host tenant
                 this.activateEmail(tenantId);
             });
-        }
-        else {
+        } else {
             this.model.userId = this._activatedRoute.snapshot.queryParams['userId'];
             this.model.confirmationCode = this._activatedRoute.snapshot.queryParams['confirmationCode'];
             let tenantId = this.parseTenantId(this._activatedRoute.snapshot.queryParams['tenantId']);

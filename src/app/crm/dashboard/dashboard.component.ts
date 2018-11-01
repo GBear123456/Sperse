@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material';
@@ -46,17 +45,14 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         buttons: []
     };
     dialogConfig = new MatDialogConfig();
-    componentIsActive = false;
 
     constructor(
         injector: Injector,
-        private _router: Router,
         private _appService: AppService,
         private _dashboardWidgetsService: DashboardWidgetsService,
         private zendeskService: ZendeskService,
         public dialog: MatDialog,
         private store$: Store<RootStore.State>,
-        private activatedRoute: ActivatedRoute
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
@@ -70,7 +66,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     checkDataEmpty(data) {
         this.dataEmpty = !data.length;
-        if (this.dataEmpty && this.componentIsActive) {
+        if (this.dataEmpty && this.componentIsActivated) {
             clearTimeout(this.openDialogTimeout);
             this.openDialogTimeout = setTimeout(() => {
                 if (this._appService.hasModuleSubscription())
@@ -132,7 +128,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     activate() {
         super.activate();
-        this.componentIsActive = true;
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
@@ -145,7 +140,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     subscribeToRefreshParam() {
-        this.activatedRoute.queryParams
+        this._activatedRoute.queryParams
             .pipe(
                 takeUntil(this.deactivate$),
                 filter(params => !!params['refresh'])
@@ -166,7 +161,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     deactivate() {
         super.deactivate();
-        this.componentIsActive = false;
 
         this.finishLoading();
         this.zendeskService.hideWidget();

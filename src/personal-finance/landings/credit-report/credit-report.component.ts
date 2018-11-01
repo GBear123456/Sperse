@@ -1,6 +1,5 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-root',
@@ -10,8 +9,7 @@ import { Router } from '@angular/router';
 
 export class CreditReportComponent extends AppComponentBase implements OnInit {
     constructor(
-        injector: Injector,
-        private _router: Router
+        injector: Injector
     ) {
         super(injector);
 

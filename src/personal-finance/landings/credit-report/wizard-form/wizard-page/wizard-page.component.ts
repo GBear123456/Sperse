@@ -1,6 +1,5 @@
 /** Core imports */
 import { Component, ViewChild, OnInit, Injector } from '@angular/core';
-import { Router } from '@angular/router';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
@@ -93,7 +92,6 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
         public loginService: LoginService,
         private data: PackageIdService,
         private _memberService: MemberServiceProxy,
-        private _router: Router,
         private _angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>
     ) {

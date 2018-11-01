@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouteReuseStrategy } from '@angular/router';
+import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -95,11 +95,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     constructor(injector: Injector,
         public dialog: MatDialog,
         public customerService: CustomerServiceProxy,
-        private _router: Router,
         private _appService: AppService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
-        private _activatedRoute: ActivatedRoute,
         private _clientService: ClientService,
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy
