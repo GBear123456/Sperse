@@ -1,20 +1,13 @@
 <div class="socials">
   <div class="social">
-    <h3 class="lab">{{l('LinksAndSocial')}}</h3>
-    <div *ngIf="isEditAllowed" class="add-contact" (click)="showEditDialog(null, $event)">+</div>
     <ul>
-      <li *ngFor="let social of contactInfoData?.links" [ngStyle]="{display: social.isSocialNetwork ? 'inline-block': 'none'}">
+      <li *ngFor="let social of contactInfoData?.links; let i = index">
         <a href="{{social.url}}" target="_blank">
           <i class="fa fa-{{LINK_TYPES[social.linkTypeId] || 'share-square-o'}}" aria-hidden="true"></i>
         </a>
-      </li>
-    </ul>
-  </div>
-  <div class="other-links">
-    <ul class="others">
-      <li *ngFor="let social of contactInfoData?.links; let i = index" [ngStyle]="{display: social.isSocialNetwork ? 'none': 'block'}">
         <inplace-edit [data]="getLinkInplaceEditData(social)" (valueChanged)="updateLink(social, $event)" (openDialog)="showEditDialog(social, $event, i)" (itemDeleted)="deleteLink($event)"></inplace-edit>
       </li>
     </ul>
   </div>
+  <div *ngIf="isEditAllowed" class="add-contact" (click)="showEditDialog(null, $event)">+ {{l('Add') + ' ' + l('Link')}}</div>
 </div>

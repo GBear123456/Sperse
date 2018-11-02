@@ -1,4 +1,6 @@
 .socials {  
+    margin-bottom: 15px;
+
     h3 {
       font-size: 12px;
       line-height: 1.67;
@@ -9,14 +11,17 @@
     }
 
     .add-contact {
+      font-size: 14px;
+      font-weight: 300;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: 1.79;
+      letter-spacing: 0.3px;
+      text-align: left;
       color: #00aeef;
-      font-size: 32px;
-      font-weight: 100;
-      float: right;
-      position: relative;
-      bottom: 51px;
       cursor: pointer;
       margin: 0px;
+      padding-left: 35px;
     }
 
     .social {
@@ -25,9 +30,13 @@
 
         li {
           margin: 0px;
+          white-space: nowrap;
         }
         a, i {
-          font-size: 34px;
+          width: 35px;
+          display: inline-block;
+          font-size: 25px;
+          vertical-align: top;
         }
         i.fa-facebook {
           color: #455ea2;
@@ -48,11 +57,7 @@
     }
 
     li {
-      display: inline-block;
       position: relative;
-      margin: 10px;
-      margin-right: 35px;
-      padding: 5px;
       font-size: 15px;
       font-weight: 300;
       line-height: 2;
@@ -87,28 +92,13 @@
       }
     }
 
-    ul.others {
-      padding-left: 0;
-     
-      li {
-        margin-bottom: 10px;
-        display: flex;
-        vertical-align: middle;
-        align-items: center;
-
-        a {
-          font-size: 15px;
-          font-weight: 300;
-          line-height: 1.67;
-          letter-spacing: 0.3px;
-          color: #424c56;
-        }
-      }
-    }
-
     /deep/ inplace-edit {
+        width: 94%;
+        display: inline-block;
+        vertical-align: top;        
+
         .inplace-edit-view-mode {
-            width: 100%;
+            width: 80%;
             cursor: pointer;
             display: inline-block;
             &:hover {

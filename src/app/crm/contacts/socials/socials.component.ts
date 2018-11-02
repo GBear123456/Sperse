@@ -25,9 +25,19 @@ import * as _ from 'underscore';
     providers: [ DialogService ]
 })
 export class SocialsComponent extends AppComponentBase {
-    @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() contactInfo: ContactGroupInfoDto;
+    @Input() isCompany;
+    @Input() set contactInfo(value: ContactGroupInfoDto) {
+        if (this._contactInfo = value)
+            this.contactInfoData = this.isCompany ? 
+                value.organizationContactInfo && value.organizationContactInfo.details: 
+                value.primaryContactInfo && value.primaryContactInfo.details;
 
+    }
+    get contactInfo(): ContactGroupInfoDto {
+        return this._contactInfo;
+    }
+
+    contactInfoData: ContactInfoDetailsDto;
     isEditAllowed = false;
 
     LINK_TYPES = {
@@ -52,11 +62,14 @@ export class SocialsComponent extends AppComponentBase {
         Z: 'rss'
     };
 
+    private _contactInfo: ContactGroupInfoDto;
+
     constructor(injector: Injector,
                 public dialog: MatDialog,
                 private _contactLinkService: ContactLinkServiceProxy,
                 private _organizationContactService: OrganizationContactServiceProxy,
-                private dialogService: DialogService) {
+                private dialogService: DialogService
+    ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
@@ -116,7 +129,7 @@ export class SocialsComponent extends AppComponentBase {
     createOrganization(data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            contactGroupId: this.contactInfo.id,
+            contactGroupId: this._contactInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
@@ -126,7 +139,7 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this.contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this._contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),

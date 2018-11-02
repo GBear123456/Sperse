@@ -26,17 +26,27 @@ import { ContactsService } from '../contacts.service';
 })
 export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
-    @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() contactInfo: ContactGroupInfoDto;
+    @Input() set contactInfo(value: ContactGroupInfoDto) {
+        if (this._contactInfo = value)
+            this.contactInfoData = this.isCompany ? 
+                value.organizationContactInfo && value.organizationContactInfo.details: 
+                value.primaryContactInfo && value.primaryContactInfo.details;
 
+    }
+    get contactInfo(): ContactGroupInfoDto {
+        return this._contactInfo;
+    }
+    @Input() showContactType: string;
+
+    contactInfoData: ContactInfoDetailsDto;
     isEditAllowed = false;
 
-    private masks = AppConsts.masks;
-
+    private masks = AppConsts.masks;   
     private _clickTimeout;
     private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
+    private _contactInfo: ContactGroupInfoDto;
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
@@ -44,7 +54,8 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
                 private _organizationContactService: OrganizationContactServiceProxy,
-                private dialogService: DialogService) {
+                private dialogService: DialogService
+    ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
@@ -113,7 +124,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     createOrganization(field, data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            contactGroupId: this.contactInfo.id,
+            contactGroupId: this._contactInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
@@ -123,7 +134,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this.contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this._contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),
