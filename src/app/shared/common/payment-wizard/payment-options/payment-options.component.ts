@@ -19,7 +19,7 @@ import {
     PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy,
     PayPalInfoDto,
-    PaymentRequestInfoDtoPaymentInfoType, BankTransferSettings, TenantPaymentSettingsServiceProxy, Frequency
+    PaymentRequestInfoDtoPaymentInfoType, BankTransferSettings, TenantPaymentSettingsServiceProxy, RequestPaymentDtoFrequency, RequestPaymentDto, RequestPaymentDtoRequestType
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -107,8 +107,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             editionId: this.plan.selectedEditionId,
             maxUserCount: this.plan.usersAmount,
             frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                ? Frequency._30
-                : Frequency._365
+                ? RequestPaymentDtoFrequency._30
+                : RequestPaymentDtoFrequency._365
         };
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
@@ -165,11 +165,13 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         let method = paymentMethod == PaymentMethods.PayPal ?
             this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo) :
             paymentMethod === PaymentMethods.BankTransfer ?
-                            this.tenantSubscriptionServiceProxy.requestPayment(
-                                paymentInfo.editionId,
-                                paymentInfo.maxUserCount,
-                                paymentInfo.frequency,
-                                paymentInfo.isManual
+                this.tenantSubscriptionServiceProxy.requestPayment(
+                            new RequestPaymentDto({
+                                editionId: paymentInfo.editionId,
+                                maxUserCount: paymentInfo.maxUserCount,
+                                frequency: paymentInfo.frequency,
+                                requestType: RequestPaymentDtoRequestType.ManualBankTransfer
+                            })
                             ) :
                             this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
 
