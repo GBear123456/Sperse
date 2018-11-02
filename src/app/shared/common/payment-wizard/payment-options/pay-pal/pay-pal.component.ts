@@ -21,6 +21,7 @@ export class PayPalComponent extends AppComponentBase implements AfterViewInit {
     @Input() editionId: number;
     @Input() maxUserCount: number;
     @Input() billingPeriod: BillingPeriod = BillingPeriod.Monthly;
+    @Input() environment: string;
 
     @Output() onSubmit: EventEmitter<PayPalDataModel> = new EventEmitter<PayPalDataModel>();
 
@@ -60,7 +61,7 @@ export class PayPalComponent extends AppComponentBase implements AfterViewInit {
                 shape: 'pill',          // pill | rect
                 color: 'blue'           // gold | blue | silver | black
             },
-            env: this.setting.get('App.Payment.PayPal.Environment'),
+            env: this.environment,
             commit: true,
             payment(data, actions) {
                 return self.tenantSubscriptionServiceProxy

@@ -11,19 +11,20 @@ import * as _ from 'underscore';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { PersonContactInfoDto } from '@shared/service-proxies/service-proxies';
+import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 
 @Component({
     templateUrl: 'add-contact-dialog.html',
     styleUrls: ['add-contact-dialog.less']
 })
 export class AddContactDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    private slider: any;
 
-    public fullName: string;
+    private slider: any;
     constructor(injector: Injector,
                 @Inject(MAT_DIALOG_DATA) public data: PersonContactInfoDto,
                 private elementRef: ElementRef,
-                public dialogRef: MatDialogRef<AddContactDialogComponent>
+                private fullNameParser: NameParserService,
+                public dialogRef: MatDialogRef<AddContactDialogComponent>,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -60,7 +61,8 @@ export class AddContactDialogComponent extends AppComponentBase implements OnIni
     }
 
     onValueChanged(event) {  
-        //console.log(event.value, data);
+        this.fullNameParser.parseIntoPerson(
+            this.data.fullName, this.data.person);
     }
 
     onSave(event) {        

@@ -69,12 +69,12 @@
             <mat-tab [label]="l('CreditCard')">
                 <credit-card (onSubmit)="submitData($event, paymentMethods.CreditCard)"></credit-card>
             </mat-tab>
-            <mat-tab>
+            <mat-tab [label]="l('PayPal')">
                 <ng-template mat-tab-label="">
                     <img [src]="'./assets/common/icons/paypal-logo.png'">
                 </ng-template>
-                <pay-pal *ngIf="selectedGateway == GATEWAY_PAYPAL" [editionId]="plan.selectedEditionId" [maxUserCount]="plan.usersAmount" [billingPeriod]="plan.billingPeriod"
-                         (onSubmit)="submitData($event, paymentMethods.PayPal)">
+                <pay-pal *ngIf="payPalEnvironmentSetting && selectedGateway == GATEWAY_PAYPAL" [editionId]="plan.selectedEditionId" [maxUserCount]="plan.usersAmount" [billingPeriod]="plan.billingPeriod"
+                         [environment] ="payPalEnvironmentSetting" (onSubmit)="submitData($event, paymentMethods.PayPal)">
                 </pay-pal>
             </mat-tab>
             <mat-tab [label]="l('BankTransfer')">

@@ -33,6 +33,11 @@ export class PersonInfoComponent extends AppComponentBase {
         }
     }
 
+    getFullName(person) {
+        return [person.namePrefix, person.firstName, person.middleName, person.lastName, 
+            person.nameSuffix && (', ' + person.nameSuffix), person.nickName && ('(' + person.nickName + ')')].filter(Boolean).join(' ');
+    }
+
     updateValue(value, propName){
         value = value.trim();
         let person = this.data.person;
@@ -44,5 +49,7 @@ export class PersonInfoComponent extends AppComponentBase {
             ).subscribe(result => {
                 this.data.fullName = result.fullName;
             });
+        else
+            this.data.fullName = this.getFullName(person);
     }
 }
