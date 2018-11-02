@@ -59,7 +59,6 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
                     });
 
                     dialogRef.afterClosed().subscribe(chooseAccountResult => {
-                        console.log(chooseAccountResult);
                         if (chooseAccountResult) {
                             abp.ui.setBusy();
                             if (chooseAccountResult === -1) {
@@ -72,11 +71,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
                 }
             });
     }
-
-    private onDialogClose(e) {
-        this.onClose.emit(e);
-    }
-
+    
     newConnect() {
         abp.ui.clearBusy();
         if (!this.createAccountAvailable)

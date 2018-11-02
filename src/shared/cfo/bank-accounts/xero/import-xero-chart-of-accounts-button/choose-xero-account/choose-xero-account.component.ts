@@ -1,6 +1,7 @@
 import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { SyncAccountDto } from 'shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'app-choose-xero-account',
@@ -8,7 +9,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
     styleUrls: ['./choose-xero-account.component.less']
 })
 export class ChooseXeroAccountComponent extends CFOComponentBase implements OnInit {
-    accounts = null;
+    accounts: SyncAccountDto[] = null;
     selectedAccountId: number = null;
     createAccountAvailable: boolean = false;
 
