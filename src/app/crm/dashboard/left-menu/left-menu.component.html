@@ -7,7 +7,7 @@
                 <span class="link {{item.showPlus ? 'add-button': ''}}" (click)="onClick($event, item)">{{l('CRMDashboardMenu_' + item.caption)}}</span>
             </li>
         </ng-template>
-        <li class="item steps-progress-item" *ngIf="abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT && (appService.subscriptionIsFree$ | async)">
+        <li class="item steps-progress-item" *ngIf="appService.isNotHostTenant() && (appService.subscriptionIsFree$ | async)">
             <div class="img img-PaymentWizard"></div>
             <span class="link intro-link" (click)="openPaymentWizard.emit()">{{l('CRMDashboardMenu_PaymentWizard')}}</span>
         </li>
