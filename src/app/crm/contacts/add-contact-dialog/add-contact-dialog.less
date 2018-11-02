@@ -18,17 +18,27 @@
     padding: 20px;
     height: calc(~"100vh - 190px");
 
-    dx-text-box {
-      display: inline-block;
-      /deep/ input {
-          height: 48px;
-          font-size: 15px;
-          font-weight: 300;
-          font-style: normal;
-          font-stretch: normal;
-          letter-spacing: 0.3px;
-          color: #424c56;
-      }
+    /deep/ dx-text-box[name="fullName"] {
+        display: inline-block;
+        input {
+            height: 48px;
+            font-size: 15px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            letter-spacing: 0.3px;
+            color: #424c56;
+        }
+        &.dx-state-focused .dx-placeholder {
+            font-size: 10px;
+        }
+        .dx-placeholder {
+            font-size: 14px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            letter-spacing: 0.3px;      
+        }
     }
 
     mat-dialog-actions {
