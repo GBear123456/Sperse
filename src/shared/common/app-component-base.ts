@@ -291,6 +291,5 @@ export abstract class AppComponentBase implements OnDestroy {
     ngOnDestroy() {
         this.destroySubject.next(true);
         this.destroySubject.unsubscribe();
-        this.deactivateSubject.unsubscribe();
     }
 }

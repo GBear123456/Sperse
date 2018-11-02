@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { QuovoService, QuovoHandler } from '../quovo/QuovoService';
+import { QuovoService } from '../quovo/QuovoService';
 import { SyncAccountServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { MatDialog } from '@angular/material';

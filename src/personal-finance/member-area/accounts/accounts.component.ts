@@ -1,9 +1,8 @@
 /** Core imports  */
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -20,7 +19,7 @@ import { AccountConnectors } from '@shared/AppEnums';
     providers: [ ],
     styleUrls: ['./accounts.component.less']
 })
-export class AccountsComponent extends AppComponentBase {
+export class AccountsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(BankAccountsComponent) bankAccounts: BankAccountsComponent;
 
     isStartDisabled = false;
@@ -35,10 +34,13 @@ export class AccountsComponent extends AppComponentBase {
         private dialog: MatDialog
     ) {
         super(injector, AppConsts.localization.CreditReportLocalizationSourceName);
-        _cfoService.instanceChangeProcess(() => {
+    }
+
+    ngOnInit() {
+        this._cfoService.instanceChangeProcess(() => {
             this.isInstanceInfoLoaded = true;
             /** To avoid waiting after clicking "GetStarted" button */
-            this._quovoService.getQuovoHandler(this._cfoService.instanceType, this._cfoService.instanceId);
+            this._quovoService.connect();
         });
     }
 
@@ -47,13 +49,15 @@ export class AccountsComponent extends AppComponentBase {
         if (this._cfoService.initialized)
             this.addAccount();
         else
-            this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType]).subscribe((data) => {
+            this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType]).subscribe(data => {
                 this.addAccount();
             });
     }
 
     onSyncComplete() {
-        this.bankAccounts.activate();
+        if (this.bankAccounts) {
+            this.bankAccounts.activate();
+        }
     }
 
     private addAccount() {
@@ -67,25 +71,15 @@ export class AccountsComponent extends AppComponentBase {
         };
         const dialogRef = this.dialog.open(AccountConnectorDialogComponent, dialogConfig);
         dialogRef.afterClosed().subscribe(e => {
-            this.onQuovoHandlerClose(e);
+            this.onQuovoClose(e);
         });
     }
 
-    private onQuovoHandlerClose(e) {
-        if (e && e.addedIds.length) {
-            this.startLoading(true);
-            this._syncService.syncAllAccounts(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, true, true)
-                .pipe(finalize(() => {
-                    this.isStartDisabled = false;
-                }))
-                .subscribe(() => {
-                    this._cfoService.instanceChangeProcess(() => {
-                        this.bankAccounts.activate();
-                        this.finishLoading(true);
-                    });
-                });
-        } else {
-            this.isStartDisabled = false;
-        }
+    private onQuovoClose(e) {
+        this.isStartDisabled = false;
+    }
+
+    ngOnDestroy() {
+        super.ngOnDestroy();
     }
 }

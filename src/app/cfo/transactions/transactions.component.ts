@@ -1089,7 +1089,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.updateAfterActivation = false;
         }
 
-        this.synchProgressComponent.requestSyncAjax();
+        this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
     }
 

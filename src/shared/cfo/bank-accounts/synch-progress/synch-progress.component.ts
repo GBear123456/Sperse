@@ -4,7 +4,7 @@ import { AppConsts } from 'shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DxTooltipComponent } from 'devextreme-angular';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
-import { takeUntil } from '@node_modules/rxjs/internal/operators';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     templateUrl: './synch-progress.component.html',
@@ -15,25 +15,15 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
     @Output() onComplete = new EventEmitter();
     completed = true;
-    synchData: SyncProgressOutput;
+    syncData: SyncProgressOutput;
     currentProgress: number;
     showComponent = true;
     hasFailedAccounts = false;
     syncFailed = false;
-    lastSyncDate;
-    statusCheckCompleted = false;
     tooltipVisible: boolean;
-    timeoutsIds: any[] = [];
     accountProgressTooltipTarget;
     accountProgressTooltipVisible = false;
     accountProgressTooltipText: string;
-    getSyncProgressRequest;
-    tryCount = 0;
-    readonly maxTryCount = 3;
-    readonly initialSynchProgressDelay = 5 * 1000;
-    private synchProgressDelay = this.initialSynchProgressDelay;
-    private synchProgressDelayMultiplier = 1.1;
-    private maxSynchProgressDelay = 10 * 60 * 1000;
 
     constructor(
         injector: Injector,
@@ -45,90 +35,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.requestSyncAjax();
-        this.syncProgressService.startSynchronization$
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(() => {
-                this.requestSyncAjax(true, true);
-            });
-    }
-
-    public requestSyncAjax(forcedSync: boolean = false, newOnly: boolean = false) {
-        let params = {
-            forcedSync: forcedSync,
-            newOnly: newOnly
-        };
-        this.ajaxRequest('/api/services/CFO/Sync/SyncAllAccounts?', 'POST', params)
-            .done(result => {
-                this.tryCount = 0;
-                this.hasFailedAccounts = false;
-                if (forcedSync || (!this.getSyncProgressRequest && (!this.timeoutsIds || !this.timeoutsIds.length))) {
-                    this.getSynchProgressAjax();
-                }
-            }).fail(result => {
-                this.syncFailed = true;
-                this.cancelRequests();
-            });
-        this.getSynchProgressAjax();
-    }
-
-    public getSynchProgressAjax() {
-        this.getSyncProgressRequest = this.ajaxRequest('/api/services/CFO/Sync/GetSyncProgress?', 'GET', {});
-        this.getSyncProgressRequest
-            .done((result: SyncProgressOutput) => {
-                this.currentProgress = result.totalProgress.progressPercent;
-                this.synchData = result;
-                let hasFailed = false;
-                this.synchData.accountProgresses.forEach(value => {
-                    if (value.syncStatus == SyncProgressDtoSyncStatus.ActionRequired
-                        || value.syncStatus == SyncProgressDtoSyncStatus.SyncPending) {
-                        hasFailed = true;
-                    }
-                });
-                this.hasFailedAccounts = hasFailed;
-                if (this.currentProgress != 100) {
-                    setTimeout(() => { this.completed = false; });
-                    this.timeoutsIds.push(setTimeout(
-                        () => this.getSynchProgressAjax(), this.calcAndGetSynchProgressDelay()
-                    ));
-                } else {
-                    /** Replace with initial delay */
-                    this.synchProgressDelay = this.initialSynchProgressDelay;
-                    if (!this.completed) {
-                        setTimeout(() => { this.completed = true; });
-                        this.onComplete.emit();
-                    } else if (this.lastSyncDate && this.lastSyncDate < result.totalProgress.lastSyncDate) {
-                        this.onComplete.emit();
-                    } else if (this.tryCount < this.maxTryCount) {
-                        this.tryCount++;
-                        this.timeoutsIds.push(setTimeout(
-                            () => this.getSynchProgressAjax(), 10 * 1000
-                        ));
-                    }
-                }
-                this.lastSyncDate = result.totalProgress.lastSyncDate;
-                this._cfoService.instanceType = this.instanceType;
-                if (!this.statusCheckCompleted && result.accountProgresses &&
-                    !result.accountProgresses.every((account) => {
-                        return account.progressPercent < 100;
-                    })
-                ) this._cfoService.instanceChangeProcess((hasTransactions) => {
-                    this.statusCheckCompleted = hasTransactions;
-                });
-                this.getSyncProgressRequest = null;
-            }).fail(result => {
-                this.syncFailed = true;
-                this.getSyncProgressRequest = null;
-            });
-    }
-
-    /** Increase interval by 2 with every new call until max has reached */
-    calcAndGetSynchProgressDelay(): number {
-        this.synchProgressDelay = this.synchProgressDelay * this.synchProgressDelayMultiplier;
-        if (this.synchProgressDelay > this.maxSynchProgressDelay) {
-            this.synchProgressDelay = this.maxSynchProgressDelay;
-        }
-        return this.synchProgressDelay;
+        this.activate();
     }
 
     calculateChartsScrolableHeight() {
@@ -150,32 +57,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             accountStatus == SyncProgressDtoSyncStatus.Unavailable.toString();
     }
 
-    ajaxRequest(url: string, method: string, params) {
-        let _url = AppConsts.remoteServiceBaseUrl + url;
-
-        let requestParams = {
-            instanceType: InstanceType[this.instanceType],
-            instanceId: this.instanceId
-        };
-
-        requestParams = { ...requestParams, ...params };
-        let paramKeys = Object.keys(requestParams);
-        paramKeys.forEach(key => {
-            if (key && requestParams[key] !== undefined)
-                _url += key + '=' + encodeURIComponent('' + requestParams[key]) + '&';
-        });
-        _url = _url.replace(/[?&]$/, '');
-
-        return abp.ajax({
-            url: _url,
-            method: method,
-            headers: {
-                'Authorization': 'Bearer ' + abp.auth.getToken()
-            },
-            abpHandleError: false
-        });
-    }
-
     accountProgressMouseEnter(elementId: string, message: string) {
         this.accountProgressTooltipVisible = true;
         this.accountProgressTooltipTarget = '#' + elementId;
@@ -184,18 +65,20 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         setTimeout(() => this.accountProgressTooltip.instance.repaint());
     }
 
-    clearTimeouts() {
-        if (this.timeoutsIds && this.timeoutsIds.length) {
-            this.timeoutsIds.forEach(id => clearTimeout(id));
-            this.timeoutsIds = [];
-        }
-    }
-
-    cancelRequests() {
-        this.clearTimeouts();
-        if (this.getSyncProgressRequest) {
-            this.getSyncProgressRequest.reject();
-        }
+    activate() {
+        this.syncProgressService.startSynchronization();
+        this.syncProgressService.syncData$.pipe(takeUntil(this.deactivate$)).subscribe(syncData => {
+            this.syncData = syncData;
+        });
+        this.syncProgressService.currentProgress$.pipe(takeUntil(this.deactivate$)).subscribe(currentProgress => this.currentProgress = currentProgress);
+        this.syncProgressService.syncFailed$.pipe(takeUntil(this.deactivate$)).subscribe(() => this.syncFailed = true);
+        this.syncProgressService.hasFailedAccounts$.pipe(takeUntil(this.deactivate$)).subscribe(hasFailedAccounts => this.hasFailedAccounts = hasFailedAccounts);
+        this.syncProgressService.syncCompleted$.pipe(takeUntil(this.deactivate$)).subscribe(completed => {
+            this.completed = completed;
+            if (this.completed) {
+                this.onComplete.emit();
+            }
+        });
     }
 
     ngOnDestroy(): void {
@@ -204,6 +87,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     deactivate() {
-        this.cancelRequests();
+        super.deactivate();
+        this.syncProgressService.cancelRequests();
     }
 }
