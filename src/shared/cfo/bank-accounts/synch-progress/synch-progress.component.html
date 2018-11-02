@@ -1,6 +1,6 @@
 <div class="synch-progress-wrapper">
     <div class="synch-container" *ngIf="showComponent">
-        <div *ngIf="!syncFailed && ((!completed && synchData) || (completed && hasFailedAccounts))" id="synchProgressContainer" (mouseenter)="toggleTooltip()">
+        <div *ngIf="!syncFailed && ((!completed && syncData) || (completed && hasFailedAccounts))" id="synchProgressContainer" (mouseenter)="toggleTooltip()">
             <div *ngIf="!completed" class="loadindicator" [class.error]="hasFailedAccounts"></div>
             <h3>{{l('Sync_status')}}</h3>
             <dx-progress-bar #progressBar
@@ -33,7 +33,7 @@
                         <div class="col-7">
                             <dx-scroll-view [showScrollbar]="onHover" [height]="calculateChartsScrolableHeight()">
                                 <ul class="list-of-synch-accounts">
-                                    <li *ngFor="let acc of synchData.accountProgresses; let i = index" id="accountProgress{{i}}"
+                                    <li *ngFor="let acc of syncData.accountProgresses; let i = index" id="accountProgress{{i}}"
                                         (mouseenter)="accountProgressMouseEnter('accountProgress' + i, acc.syncStatusMessage)"
                                         [class]="'clearfix ' + acc.syncStatus | lowercase">
                                         <span class="name" [ngClass]="{'full-width': completed}">{{ acc.accountName }}{{ completed ? '' : ':'}}</span>

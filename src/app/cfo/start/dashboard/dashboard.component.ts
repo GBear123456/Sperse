@@ -132,7 +132,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
             this.updateAfterActivation = false;
         }
 
-        this.synchProgressComponent.requestSyncAjax();
+        this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
 
         this.renderWidgets();

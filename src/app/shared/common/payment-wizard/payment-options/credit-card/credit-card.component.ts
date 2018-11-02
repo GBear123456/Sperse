@@ -103,7 +103,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
 
     updateStatesInfo(stateName: string) {
         let state;
-        if (this.states.length) {
+        if (this.states && this.states.length) {
             state = _.findWhere(this.states, { name: stateName });
             setTimeout(() => {
                 this.creditCardData.controls.billingState.setValue(state);
@@ -182,7 +182,7 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
     }
 
     getStates(callback: () => any): void {
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode))
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
@@ -195,30 +195,31 @@ export class CreditCardComponent extends AppComponentBase implements OnInit {
         this.store$.pipe(select(CountriesStoreSelectors.getCountries))
             .subscribe(result => {
                 this.countries = result;
-
-                this.filteredCountries = this.creditCardData.get('billingCountry').valueChanges
-                    .pipe(
-                        startWith<string | Country>(''),
-                        map(value => typeof value === 'string' ? value : value.name),
-                        map(name => name ? this._filterCountry(name) : this.countries.slice())
-                    );
+                setTimeout(() => {
+                    this.filteredCountries = this.creditCardData.get('billingCountry').valueChanges
+                        .pipe(
+                            startWith<string | Country>(''),
+                            map(value => typeof value === 'string' ? value : value.name),
+                            map(name => name ? this._filterCountry(name) : this.countries.slice())
+                        );
+                }, 0);
             });
     }
 
     onCountryChange(event) {
-        this.creditCardData.controls.billingState.setValue('');
         this.countryCode = event.option.value.code;
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: this.countryCode }))
             .subscribe(result => {
                 this.states = result;
-
-                this.filteredStates = this.creditCardData.get('billingState').valueChanges
-                    .pipe(
-                        startWith<string | CountryStateDto>(''),
-                        map(value => typeof value === 'string' ? value : value.name),
-                        map(name => name ? this._filterStates(name) : this.states.slice())
-                    );
+                setTimeout(() => {
+                    this.filteredStates = this.creditCardData.get('billingState').valueChanges
+                        .pipe(
+                            startWith<string | CountryStateDto>(''),
+                            map(value => typeof value === 'string' ? value : value.name),
+                            map(name => name ? this._filterStates(name) : this.states.slice())
+                        );
+                }, 0);
             });
     }
 

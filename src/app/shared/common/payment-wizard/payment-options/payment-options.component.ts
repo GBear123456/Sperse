@@ -72,6 +72,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     selectedGateway: number = this.GATEWAY_ECHECK;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettings>;
+    payPalEnvironmentSetting: string;
+
     constructor(
         private injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
@@ -81,7 +83,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         super(injector);
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+    }
 
     goToStep(i) {
         this.onChangeStep.emit(i);
@@ -92,9 +95,13 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     selectedTabChange(e) {
-        if (e.tab.textLabel === this.l('BankTransfer') && !this.bankTransferSettings$) {
+        if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
             /** Load transfer data */
             this.bankTransferSettings$ = this.tenantPaymentSettingsService.getBankTransferSettings();
+        }
+        else if (!this.payPalEnvironmentSetting && e.tab.textLabel === this.l('PayPal')) {
+            this.tenantSubscriptionServiceProxy.getPayPalEnvironmentSetting()
+                .subscribe(environment => this.payPalEnvironmentSetting = environment);
         }
     }
 

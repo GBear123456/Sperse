@@ -5717,7 +5717,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.updateAfterActivation = false;
         }
 
-        this.synchProgressComponent.requestSyncAjax();
+        this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
     }
 

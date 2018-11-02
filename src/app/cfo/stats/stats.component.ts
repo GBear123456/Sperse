@@ -780,7 +780,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             this.updateAfterActivation = false;
         }
 
-        this.synchProgressComponent.requestSyncAjax();
+        this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
     }
 

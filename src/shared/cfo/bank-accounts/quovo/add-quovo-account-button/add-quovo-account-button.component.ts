@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { QuovoService, QuovoHandler } from '../QuovoService';
+import { QuovoService } from '../QuovoService';
 
 @Component({
     selector: 'add-quovo-account-button',
@@ -10,8 +10,7 @@ import { QuovoService, QuovoHandler } from '../QuovoService';
 export class AddQuovoAccountButtonComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
 
-    quovoHandler: QuovoHandler;
-    canShow: boolean = false;
+    canShow = false;
 
     constructor(
         injector: Injector,
@@ -25,23 +24,17 @@ export class AddQuovoAccountButtonComponent extends CFOComponentBase implements 
 
         this.canShow = this.isInstanceAdmin;
 
-        if (this.canShow && !this.quovoHandler) {
-            this.quovoHandler = this._quovoService.getQuovoHandler(this.instanceType, this.instanceId);
+        if (this.canShow) {
+            this._quovoService.connect();
         }
     }
 
     addAccount(): void {
-        if (this.quovoHandler.isLoaded) {
-            if (this.loading) {
-                this.finishLoading(true);
-            }
-            this.quovoHandler.open((e) => this.onQuovoHanderClose(e));
-        } else {
-            if (!this.loading) {
-                this.startLoading(true);
-            }
-            setTimeout(() => this.addAccount(), 100);
-        }
+        this.startLoading(true);
+        this._quovoService.open();
+        this._quovoService.quovoClosed$.subscribe(e => {
+            this.onQuovoHanderClose(e);
+        });
     }
 
     private onQuovoHanderClose(e) {

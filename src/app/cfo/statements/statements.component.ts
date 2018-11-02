@@ -488,7 +488,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.updateAfterActivation = false;
         }
 
-        this.synchProgressComponent.requestSyncAjax();
+        this.synchProgressComponent.activate();
         this.getRootComponent().overflowHidden(true);
     }
 

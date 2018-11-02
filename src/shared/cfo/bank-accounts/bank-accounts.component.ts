@@ -57,6 +57,9 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     ngOnInit() {
         this.activate();
         this.syncAccounts = this.bankAccountsService.filteredSyncAccounts$.pipe(first());
+        this._quovoService.quovoSynced$.subscribe(() => {
+            this.bankAccountsService.load();
+        });
     }
 
     ngOnDestroy() {
@@ -96,18 +99,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
                 }
             }};
         this.dialog.open(AccountConnectorDialogComponent, dialogConfig);
-    }
-
-    addAccountClose(event) {
-        if (event.addedIds.length) {
-            this.bankAccountsService.load();
-            this._synchProgress.refreshSyncComponent();
-        }
-    }
-
-    addAccountComplete() {
-        this.bankAccountsService.load();
-        this._synchProgress.refreshSyncComponent();
     }
 
     bankAccountDataChanged() {
