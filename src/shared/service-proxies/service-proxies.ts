@@ -19093,6 +19093,70 @@ export class QuickBookServiceProxy {
 }
 
 @Injectable()
+export class RecurlyPushNotificationHandlerServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @notification (optional) 
+     * @return Success
+     */
+    handle(notification: any[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/RecurlyPushNotificationHandler/Handle";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(notification);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processHandle(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processHandle(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processHandle(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class RoleServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -22835,23 +22899,14 @@ export class TenantSubscriptionServiceProxy {
     }
 
     /**
-     * @editionId (optional) 
-     * @maxUserCount (optional) 
-     * @frequency (optional) 
-     * @isManual (optional) 
+     * @requestPaymentDto (optional) 
      * @return Success
      */
-    requestPayment(editionId: number | null | undefined, maxUserCount: number | null | undefined, frequency: Frequency | null | undefined, isManual: boolean | null | undefined): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPayment?";
-        if (editionId !== undefined)
-            url_ += "editionId=" + encodeURIComponent("" + editionId) + "&"; 
-        if (maxUserCount !== undefined)
-            url_ += "maxUserCount=" + encodeURIComponent("" + maxUserCount) + "&"; 
-        if (isManual !== undefined)
-            url_ += "isManual=" + encodeURIComponent("" + isManual) + "&"; 
+    requestPayment(requestPaymentDto: RequestPaymentDto | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPayment";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(frequency);
+        const content_ = JSON.stringify(requestPaymentDto);
 
         let options_ : any = {
             body: content_,
@@ -22933,6 +22988,58 @@ export class TenantSubscriptionServiceProxy {
     }
 
     protected processCompleteSubscriptionPayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @module (optional) 
+     * @return Success
+     */
+    rejectPendingPayment(module: Module2 | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RejectPendingPayment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(module);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRejectPendingPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRejectPendingPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRejectPendingPayment(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -23061,6 +23168,110 @@ export class TenantSubscriptionServiceProxy {
             }));
         }
         return _observableOf<CompleteTenantRegistrationOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getHostBankTransferSettings(): Observable<BankTransferSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetHostBankTransferSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetHostBankTransferSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetHostBankTransferSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<BankTransferSettingsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BankTransferSettingsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetHostBankTransferSettings(response: HttpResponseBase): Observable<BankTransferSettingsDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? BankTransferSettingsDto.fromJS(resultData200) : new BankTransferSettingsDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BankTransferSettingsDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getPayPalEnvironmentSetting(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetPayPalEnvironmentSetting";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPayPalEnvironmentSetting(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPayPalEnvironmentSetting(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPayPalEnvironmentSetting(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
     }
 }
 
@@ -51749,7 +51960,6 @@ export interface IRecurlyPaymentSettings {
 
 export class PayPalSettings implements IPayPalSettings {
     environment!: string | undefined;
-    baseUrl!: string | undefined;
     clientId!: string | undefined;
     clientSecret!: string | undefined;
 
@@ -51765,7 +51975,6 @@ export class PayPalSettings implements IPayPalSettings {
     init(data?: any) {
         if (data) {
             this.environment = data["environment"];
-            this.baseUrl = data["baseUrl"];
             this.clientId = data["clientId"];
             this.clientSecret = data["clientSecret"];
         }
@@ -51781,7 +51990,6 @@ export class PayPalSettings implements IPayPalSettings {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["environment"] = this.environment;
-        data["baseUrl"] = this.baseUrl;
         data["clientId"] = this.clientId;
         data["clientSecret"] = this.clientSecret;
         return data; 
@@ -51790,14 +51998,13 @@ export class PayPalSettings implements IPayPalSettings {
 
 export interface IPayPalSettings {
     environment: string | undefined;
-    baseUrl: string | undefined;
     clientId: string | undefined;
     clientSecret: string | undefined;
 }
 
 export class BankTransferSettings implements IBankTransferSettings {
-    beneficiaryInfo!: string | undefined;
-    beneficiaryBank!: string | undefined;
+    beneficiaryInfo!: BeneficiaryInfo | undefined;
+    beneficiaryBank!: BeneficiaryInfo | undefined;
     bankAccountNumber!: string | undefined;
     bankRoutingNumberForACH!: string | undefined;
     bankRoutingNumber!: string | undefined;
@@ -51815,8 +52022,8 @@ export class BankTransferSettings implements IBankTransferSettings {
 
     init(data?: any) {
         if (data) {
-            this.beneficiaryInfo = data["beneficiaryInfo"];
-            this.beneficiaryBank = data["beneficiaryBank"];
+            this.beneficiaryInfo = data["beneficiaryInfo"] ? BeneficiaryInfo.fromJS(data["beneficiaryInfo"]) : <any>undefined;
+            this.beneficiaryBank = data["beneficiaryBank"] ? BeneficiaryInfo.fromJS(data["beneficiaryBank"]) : <any>undefined;
             this.bankAccountNumber = data["bankAccountNumber"];
             this.bankRoutingNumberForACH = data["bankRoutingNumberForACH"];
             this.bankRoutingNumber = data["bankRoutingNumber"];
@@ -51834,8 +52041,8 @@ export class BankTransferSettings implements IBankTransferSettings {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["beneficiaryInfo"] = this.beneficiaryInfo;
-        data["beneficiaryBank"] = this.beneficiaryBank;
+        data["beneficiaryInfo"] = this.beneficiaryInfo ? this.beneficiaryInfo.toJSON() : <any>undefined;
+        data["beneficiaryBank"] = this.beneficiaryBank ? this.beneficiaryBank.toJSON() : <any>undefined;
         data["bankAccountNumber"] = this.bankAccountNumber;
         data["bankRoutingNumberForACH"] = this.bankRoutingNumberForACH;
         data["bankRoutingNumber"] = this.bankRoutingNumber;
@@ -51846,13 +52053,57 @@ export class BankTransferSettings implements IBankTransferSettings {
 }
 
 export interface IBankTransferSettings {
-    beneficiaryInfo: string | undefined;
-    beneficiaryBank: string | undefined;
+    beneficiaryInfo: BeneficiaryInfo | undefined;
+    beneficiaryBank: BeneficiaryInfo | undefined;
     bankAccountNumber: string | undefined;
     bankRoutingNumberForACH: string | undefined;
     bankRoutingNumber: string | undefined;
     swiftCodeForUSDollar: string | undefined;
     swiftCode: string | undefined;
+}
+
+export class BeneficiaryInfo implements IBeneficiaryInfo {
+    name!: string | undefined;
+    streetAddress!: string | undefined;
+    cityAddress!: string | undefined;
+
+    constructor(data?: IBeneficiaryInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.streetAddress = data["streetAddress"];
+            this.cityAddress = data["cityAddress"];
+        }
+    }
+
+    static fromJS(data: any): BeneficiaryInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new BeneficiaryInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["streetAddress"] = this.streetAddress;
+        data["cityAddress"] = this.cityAddress;
+        return data; 
+    }
+}
+
+export interface IBeneficiaryInfo {
+    name: string | undefined;
+    streetAddress: string | undefined;
+    cityAddress: string | undefined;
 }
 
 export class TenantSettingsEditDto implements ITenantSettingsEditDto {
@@ -52459,6 +52710,54 @@ export interface ISetupSubscriptionInfoDto {
     billingInfo: PaymentRequestInfoDto | undefined;
 }
 
+export class RequestPaymentDto implements IRequestPaymentDto {
+    editionId!: number | undefined;
+    maxUserCount!: number | undefined;
+    frequency!: RequestPaymentDtoFrequency | undefined;
+    requestType!: RequestPaymentDtoRequestType | undefined;
+
+    constructor(data?: IRequestPaymentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.editionId = data["editionId"];
+            this.maxUserCount = data["maxUserCount"];
+            this.frequency = data["frequency"];
+            this.requestType = data["requestType"];
+        }
+    }
+
+    static fromJS(data: any): RequestPaymentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new RequestPaymentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["editionId"] = this.editionId;
+        data["maxUserCount"] = this.maxUserCount;
+        data["frequency"] = this.frequency;
+        data["requestType"] = this.requestType;
+        return data; 
+    }
+}
+
+export interface IRequestPaymentDto {
+    editionId: number | undefined;
+    maxUserCount: number | undefined;
+    frequency: RequestPaymentDtoFrequency | undefined;
+    requestType: RequestPaymentDtoRequestType | undefined;
+}
+
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     module!: ModuleSubscriptionInfoDtoModule | undefined;
     endDate!: moment.Moment | undefined;
@@ -52641,6 +52940,110 @@ export interface ICompleteTenantRegistrationOutput {
     userName: string | undefined;
     emailAddress: string | undefined;
     isEmailConfirmationRequired: boolean | undefined;
+}
+
+export class BankTransferSettingsDto implements IBankTransferSettingsDto {
+    beneficiaryInfo!: BeneficiaryInfoDto | undefined;
+    beneficiaryBank!: BeneficiaryInfoDto | undefined;
+    bankAccountNumber!: string | undefined;
+    bankRoutingNumberForACH!: string | undefined;
+    bankRoutingNumber!: string | undefined;
+    swiftCodeForUSDollar!: string | undefined;
+    swiftCode!: string | undefined;
+
+    constructor(data?: IBankTransferSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.beneficiaryInfo = data["beneficiaryInfo"] ? BeneficiaryInfoDto.fromJS(data["beneficiaryInfo"]) : <any>undefined;
+            this.beneficiaryBank = data["beneficiaryBank"] ? BeneficiaryInfoDto.fromJS(data["beneficiaryBank"]) : <any>undefined;
+            this.bankAccountNumber = data["bankAccountNumber"];
+            this.bankRoutingNumberForACH = data["bankRoutingNumberForACH"];
+            this.bankRoutingNumber = data["bankRoutingNumber"];
+            this.swiftCodeForUSDollar = data["swiftCodeForUSDollar"];
+            this.swiftCode = data["swiftCode"];
+        }
+    }
+
+    static fromJS(data: any): BankTransferSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BankTransferSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["beneficiaryInfo"] = this.beneficiaryInfo ? this.beneficiaryInfo.toJSON() : <any>undefined;
+        data["beneficiaryBank"] = this.beneficiaryBank ? this.beneficiaryBank.toJSON() : <any>undefined;
+        data["bankAccountNumber"] = this.bankAccountNumber;
+        data["bankRoutingNumberForACH"] = this.bankRoutingNumberForACH;
+        data["bankRoutingNumber"] = this.bankRoutingNumber;
+        data["swiftCodeForUSDollar"] = this.swiftCodeForUSDollar;
+        data["swiftCode"] = this.swiftCode;
+        return data; 
+    }
+}
+
+export interface IBankTransferSettingsDto {
+    beneficiaryInfo: BeneficiaryInfoDto | undefined;
+    beneficiaryBank: BeneficiaryInfoDto | undefined;
+    bankAccountNumber: string | undefined;
+    bankRoutingNumberForACH: string | undefined;
+    bankRoutingNumber: string | undefined;
+    swiftCodeForUSDollar: string | undefined;
+    swiftCode: string | undefined;
+}
+
+export class BeneficiaryInfoDto implements IBeneficiaryInfoDto {
+    name!: string | undefined;
+    streetAddress!: string | undefined;
+    cityAddress!: string | undefined;
+
+    constructor(data?: IBeneficiaryInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.streetAddress = data["streetAddress"];
+            this.cityAddress = data["cityAddress"];
+        }
+    }
+
+    static fromJS(data: any): BeneficiaryInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BeneficiaryInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["streetAddress"] = this.streetAddress;
+        data["cityAddress"] = this.cityAddress;
+        return data; 
+    }
+}
+
+export interface IBeneficiaryInfoDto {
+    name: string | undefined;
+    streetAddress: string | undefined;
+    cityAddress: string | undefined;
 }
 
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
@@ -55928,9 +56331,10 @@ export enum TenantHostType {
     FundingUi = "FundingUi", 
 }
 
-export enum Frequency {
-    _30 = 30, 
-    _365 = 365, 
+export enum Module2 {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    HUB = "HUB", 
 }
 
 export enum DefaultTimezoneScope {
@@ -56344,6 +56748,16 @@ export enum PaymentRequestInfoDtoPaymentInfoType {
 export enum SetupSubscriptionInfoDtoFrequency {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum RequestPaymentDtoFrequency {
+    _30 = 30, 
+    _365 = 365, 
+}
+
+export enum RequestPaymentDtoRequestType {
+    PayPal = "PayPal", 
+    ManualBankTransfer = "ManualBankTransfer", 
 }
 
 export enum ModuleSubscriptionInfoDtoModule {

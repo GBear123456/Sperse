@@ -19,7 +19,7 @@ import {
     PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy,
     PayPalInfoDto,
-    PaymentRequestInfoDtoPaymentInfoType, BankTransferSettings, TenantPaymentSettingsServiceProxy, Frequency
+    PaymentRequestInfoDtoPaymentInfoType, BankTransferSettings, TenantPaymentSettingsServiceProxy, RequestPaymentDtoFrequency, RequestPaymentDto, RequestPaymentDtoRequestType
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -72,6 +72,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     selectedGateway: number = this.GATEWAY_ECHECK;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettings>;
+    payPalEnvironmentSetting: string;
+
     constructor(
         private injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
@@ -81,7 +83,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         super(injector);
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+    }
 
     goToStep(i) {
         this.onChangeStep.emit(i);
@@ -92,9 +95,13 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     }
 
     selectedTabChange(e) {
-        if (e.tab.textLabel === this.l('BankTransfer') && !this.bankTransferSettings$) {
+        if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
             /** Load transfer data */
             this.bankTransferSettings$ = this.tenantPaymentSettingsService.getBankTransferSettings();
+        }
+        else if (!this.payPalEnvironmentSetting && e.tab.textLabel === this.l('PayPal')) {
+            this.tenantSubscriptionServiceProxy.getPayPalEnvironmentSetting()
+                .subscribe(environment => this.payPalEnvironmentSetting = environment);
         }
     }
 
@@ -107,8 +114,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             editionId: this.plan.selectedEditionId,
             maxUserCount: this.plan.usersAmount,
             frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                ? Frequency._30
-                : Frequency._365
+                ? RequestPaymentDtoFrequency._30
+                : RequestPaymentDtoFrequency._365
         };
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
@@ -165,11 +172,13 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         let method = paymentMethod == PaymentMethods.PayPal ?
             this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo) :
             paymentMethod === PaymentMethods.BankTransfer ?
-                            this.tenantSubscriptionServiceProxy.requestPayment(
-                                paymentInfo.editionId,
-                                paymentInfo.maxUserCount,
-                                paymentInfo.frequency,
-                                paymentInfo.isManual
+                this.tenantSubscriptionServiceProxy.requestPayment(
+                            new RequestPaymentDto({
+                                editionId: paymentInfo.editionId,
+                                maxUserCount: paymentInfo.maxUserCount,
+                                frequency: paymentInfo.frequency,
+                                requestType: RequestPaymentDtoRequestType.ManualBankTransfer
+                            })
                             ) :
                             this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
 

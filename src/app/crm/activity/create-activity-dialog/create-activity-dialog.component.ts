@@ -44,6 +44,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private lookupTimeout: any;
     private latestSearchPhrase = '';
+    private listFilterTimeout: any;
     dateValidator: any;
     stages: any[] = [];
 
@@ -105,16 +106,18 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                 this.startDate.setHours(dateNow.getHours());
                 this.startDate.setMinutes(dateNow.getMinutes());
                 this.startDate.setSeconds(dateNow.getSeconds());
-            } else 
+            } else {
                 this.startDate = new Date(dateNow);
+            }
 
             if (this.data.appointment.EndDate) {
                 this.endDate = new Date(this.data.appointment.EndDate);
                 this.endDate.setHours(dateNow.getHours());
                 this.endDate.setMinutes(dateNow.getMinutes());
                 this.endDate.setSeconds(dateNow.getSeconds());
-            } else 
+            } else {
                 this.endDate = new Date(dateNow);
+            }
         }
 
         this.loadResourcesData();
@@ -399,6 +402,28 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         this.data.appointment.LeadId = e.id;
         this.isLeadsSelected = !!e.id;
         this.initToolbarConfig();
+    }
+
+    onListFiltered(event) {
+        clearTimeout(this.listFilterTimeout);
+        this.listFilterTimeout = setTimeout(() => {
+            let uri = event.listTitle,
+                value = this.getInputElementValue(event);
+
+            this.lookup(uri, value).then(res => {
+                switch (uri) {
+                    case 'Leads':
+                        this.leads = res;
+                        break;
+                    case 'Clients':
+                        this.clients = res;
+                        break;
+                    case 'Orders':
+                        this.orders = res;
+                        break;
+                }
+            });
+        }, 1000);
     }
 
     onClientSelected(e) {

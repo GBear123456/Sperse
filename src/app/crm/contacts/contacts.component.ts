@@ -198,6 +198,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             this._userService['data'].userId = this.primaryContact.userId
         );
         this.InitNavLinks(this.primaryContact);
+        this._contactsService.toolbarUpdate();
         this.storeInitialData();
     }
 

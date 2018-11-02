@@ -29,16 +29,19 @@
         </div>
     </div>
     <div class="header_financial_info">
-
     </div>
+
+
+    <dx-context-menu
+        [selectByClick]="true"
+        [selectionMode]="'single'"
+        [dataSource]="addContextMenuItems"
+        [position]="{ my: 'top right', at: 'bottom right' }"
+        (onSelectionChanged)="addOptionSelectionChanged($event)"
+        target="#addEntity">
+    </dx-context-menu>
 
     <div class="header_buttons" *ngIf="!isAdminModule">
-        <ng-container *ngIf="isClientCFOAvailable()">
-            <span class="link-to-cfo" (click)="redirectToCFO()"></span>
-        </ng-container>
-        <ng-container *ngIf="!isClientCFOAvailable() && canSendVerificationRequest && !isClientProspective()">
-            <button class="btn btn-layout" (click)="requestVerification()">{{l('ClientDetails_RequestVerification')}}</button>
-        </ng-container>
+        <button id="addEntity" class="button-layout button-primary menu" (click)="addEntity($event)">{{'+ ' + addButtonTitle}}</button>
     </div>
-
 </header>

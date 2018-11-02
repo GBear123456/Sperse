@@ -1,8 +1,10 @@
 /** Core imports */
-import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 
 /** Third party import */
 import { MatDialog } from '@angular/material';
+import { CacheService } from 'ng2-cache-service';
+import { DxContextMenuComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -14,6 +16,7 @@ import { OrganizationDialogComponent } from './organization-dialog/organization-
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
+import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
 import { ContactGroupInfoDto, UserServiceProxy, CreateContactPhotoInput,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -28,13 +31,23 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     providers: [ AppService, ContactPhotoServiceProxy, DialogService ]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
+    @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
+
     @Input() data: ContactGroupInfoDto;
     @Input() ratingId: number;
-    canSendVerificationRequest = false;
 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
 
     isAdminModule;
+
+    private readonly ADD_FILES_OPTION   = 0;
+    private readonly ADD_NOTES_OPTION   = 1;
+    private readonly ADD_CONTACT_OPTION = 2;
+    private readonly ADD_OPTION_DEFAULT = this.ADD_FILES_OPTION;
+    private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
+
+    addContextMenuItems = [];
+    addButtonTitle = '';
 
     constructor(
         injector: Injector,
@@ -45,23 +58,22 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         private nameParserService: NameParserService,
         private appService: AppService,
         private dialogService: DialogService,
+        private _cacheService: CacheService,
         private _userService: UserServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isAdminModule = (appService.getModule() == appService.getDefaultModule());
+
+        this.addContextMenuItems = [
+            {text: this.l('AddFiles'), selected: false, icon: 'files'},
+            {text: this.l('AddNotes'), selected: false, icon: 'note'},
+            {text: this.l('AddContact'), selected: false, icon: 'add-contact'}
+        ];
+        this.addOptionsInit();
     }
 
     ngOnInit(): void {
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-
-        this.canSendVerificationRequest =
-            !(this._userService['data'] && this._userService['data'].userId)
-                && this.appService.canSendVerificationRequest();
-    }
-
-    requestVerification() {
-        this.appService.requestVerification(this.data.primaryContactInfo.id);
     }
 
     getDialogPossition(event, shiftX) {
@@ -175,16 +187,48 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         ).subscribe(result => {});
     }
 
-    isClientProspective() {
-        return this.data ? this.data.statusId == ContactGroupStatus.Prospective : true;
+    addOptionsInit() {
+        let cacheKey = this.getCacheKey(this.ADD_OPTION_CACHE_KEY),
+            selectedIndex = this.ADD_OPTION_DEFAULT;
+        if (this._cacheService.exists(cacheKey))
+            selectedIndex = this._cacheService.get(cacheKey);
+        this.addContextMenuItems[selectedIndex].selected = true;
+        this.addButtonTitle = this.addContextMenuItems[selectedIndex].text;
     }
 
-    isClientCFOAvailable() {
-        return this.data && this.data.primaryContactInfo &&
-            this.appService.isCFOAvailable(this.data.primaryContactInfo.userId);
+    updateSaveOption(option) {
+        this.addButtonTitle = option.text;
+        this._cacheService.set(this.getCacheKey(this.ADD_OPTION_CACHE_KEY),
+            this.addContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
-    redirectToCFO() {
-        this.appService.redirectToCFO(this.data.primaryContactInfo.userId);
+    addOptionSelectionChanged(event) {
+        let option = event.addedItems.pop() || event.removedItems.pop() ||
+            this.addContextMenuItems[this.ADD_OPTION_DEFAULT];
+        option.selected = true;
+        event.component.option('selectedItem', option);
+
+        this.updateSaveOption(option);
+
+        this.addEntity();
+    }
+
+    addEntity(event?) {
+        if (event && event.offsetX > 155)
+            return this.addContextComponent
+                .instance.option('visible', true);        
+
+        if (this.addContextMenuItems[this.ADD_CONTACT_OPTION].selected)
+            setTimeout(() => {
+                this.dialog.open(AddContactDialogComponent, {
+                    data: {person: {}},
+                    panelClass: 'slider',
+                    disableClose: false,
+                    closeOnNavigation: false,
+                    hasBackdrop: false
+                }).afterClosed().subscribe(result => {
+                  // some logic
+                });            
+            });
     }
 }

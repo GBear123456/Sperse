@@ -13,6 +13,7 @@ import * as _ from 'underscore';
 })
 export class StaticListComponent extends AppComponentBase {
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
+    @Output() onListFiltered: EventEmitter<any> = new EventEmitter();
     @Input() width: string;
     @Input() height: number;
     @Input() title: string;
@@ -24,6 +25,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() updateConfirmationMessage: string;
     @Input() hideButtons = false;
     @Input() searchEnabled = false;
+    @Input() customSearchEnabled = false;
     @Input() searchExprType = 'name';
 
     @Input() list: any;
@@ -130,5 +132,10 @@ export class StaticListComponent extends AppComponentBase {
 
     checkPermissions() {
         return this.permission.isGranted('Pages.CRM.BulkUpdates');
+    }
+
+    getNewListData(event, title) {
+        event.listTitle = title;
+        this.onListFiltered.emit(event);
     }
 }
