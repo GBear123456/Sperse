@@ -14,7 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { AppConsts } from '@shared/AppConsts';
 import { InplaceSelectBoxModel } from '@app/shared/common/inplace-select-box/inplace-select-box.model';
-import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput } from 'shared/service-proxies/service-proxies';
+import { OrganizationContactInfoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, ContactPhotoServiceProxy, ContactPhotoDto, CreateContactPhotoInput, OrganizationTypeDto } from 'shared/service-proxies/service-proxies';
 
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { OrganizationTypeSelectors } from '@app/store/organization-types-store';
@@ -28,7 +28,7 @@ import { OrganizationTypeSelectors } from '@app/store/organization-types-store';
 export class OrganizationDialogComponent extends AppComponentBase {
     isEditAllowed = false;
 
-    organizationTypes: any;
+    organizationTypes: OrganizationTypeDto[];
     organizationTypesSelectBoxModel: InplaceSelectBoxModel = {
         name: 'typeId',
         options: []
@@ -69,7 +69,7 @@ export class OrganizationDialogComponent extends AppComponentBase {
                 [
                     'industry',
                     {
-                        name: 'typeId',
+                        name: 'type',
                         data: this.organizationTypesSelectBoxModel,
                         onChange: (value) => {
                             if (value !== this.data.organization.typeId) {
@@ -134,6 +134,10 @@ export class OrganizationDialogComponent extends AppComponentBase {
         this.store$.pipe(select(OrganizationTypeSelectors.getOrganizationTypes))
             .subscribe(result => {
                 this.organizationTypes = result;
+                var otherItem = _.find(this.organizationTypes, item => item.id === 'O');
+                this.organizationTypes = _.filter(this.organizationTypes, item => item.id !== 'O');
+                this.organizationTypes.push(otherItem);
+
                 this.organizationTypesSelectBoxModel.options = this.organizationTypes;
                 var item = _.find(this.organizationTypes, item => item.id === this.data.organization['typeId']);
                 this.organizationTypesSelectBoxModel.value = item ? item.id : null; 

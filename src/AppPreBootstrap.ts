@@ -138,9 +138,12 @@ export class AppPreBootstrap {
         const token = abp.auth.getToken();
 
         let requestHeaders = {
-            '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
             'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
         };
+
+        if (cookieLangValue) {
+            requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
+        }
 
         if (token) {
             requestHeaders['Authorization'] = 'Bearer ' + token;
