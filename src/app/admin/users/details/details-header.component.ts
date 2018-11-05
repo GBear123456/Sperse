@@ -41,11 +41,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                     userId: this.data['userId'],
                     image: StringHelper.getBase64(result.origImage),
                     imageThumbnail: StringHelper.getBase64(result.imageThumbnail)
-                })).subscribe(() => {
+                })).subscribe((thumbnailId) => {
                     this.data['photo'] = result.origImage;
 
                     if (this.data['userId'] == abp.session.userId)
-                        abp.event.trigger('profilePictureChanged');
+                        abp.event.trigger('profilePictureChanged', thumbnailId);
                 });
             }
         });
