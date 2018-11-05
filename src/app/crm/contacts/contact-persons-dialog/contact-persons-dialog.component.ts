@@ -25,8 +25,7 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
     }
 
     selectContactPerson(contactPerson): void {
-        _.extend(this.data.primaryContactInfo, contactPerson);
-
+        this.data.primaryContactInfo = contactPerson;
         this.dialogRef.close();
     }
 }
