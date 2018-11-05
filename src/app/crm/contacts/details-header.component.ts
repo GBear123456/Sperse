@@ -36,10 +36,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
 
     @Input() 
-    private set data(data: ContactGroupInfoDto) {
+    public set data(data: ContactGroupInfoDto) {
         this._contactInfoBehaviorSubject.next(data);
     }
-    private get data(): ContactGroupInfoDto {
+    public get data(): ContactGroupInfoDto {
         return this._contactInfoBehaviorSubject.getValue();
     }
 
