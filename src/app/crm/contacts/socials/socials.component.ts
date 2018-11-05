@@ -54,7 +54,7 @@ export class SocialsComponent extends AppComponentBase {
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
-                private store$: Store<RootStore.State>
+                private store$: Store<RootStore.State>,
                 private _contactLinkService: ContactLinkServiceProxy,
                 private _organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService
