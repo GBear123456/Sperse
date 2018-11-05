@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material';
 import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
+import { finalize } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -17,8 +19,8 @@ import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
-import { ContactGroupInfoDto, UserServiceProxy, CreateContactPhotoInput,
-    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
+import { ContactGroupInfoDto, UserServiceProxy, CreateContactPhotoInput, ContactEmploymentServiceProxy,
+    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdateContactEmploymentInput,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { AppService } from '@app/app.service';
@@ -33,25 +35,34 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
 
-    @Input() data: ContactGroupInfoDto;
+    @Input() 
+    private set data(data: ContactGroupInfoDto) {
+        this._contactInfoBehaviorSubject.next(data);
+    }
+    private get data(): ContactGroupInfoDto {
+        return this._contactInfoBehaviorSubject.getValue();
+    }
+
     @Input() ratingId: number;
 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
 
-    isAdminModule;
-
+    private _contactInfoBehaviorSubject = new BehaviorSubject<ContactGroupInfoDto>(ContactGroupInfoDto.fromJS({}));
     private readonly ADD_FILES_OPTION   = 0;
     private readonly ADD_NOTES_OPTION   = 1;
     private readonly ADD_CONTACT_OPTION = 2;
     private readonly ADD_OPTION_DEFAULT = this.ADD_FILES_OPTION;
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
 
+    isAdminModule;
     addContextMenuItems = [];
     addButtonTitle = '';
+    contactEmploymentInfo: any = {};
 
     constructor(
         injector: Injector,
         public dialog: MatDialog,
+        private _contactEmploymentService: ContactEmploymentServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
@@ -74,6 +85,35 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
+        this.initializeEmploymentInfo();
+    }
+
+    initializeEmploymentInfo() {
+        this._contactInfoBehaviorSubject.subscribe(data => {
+            let contactId = data && data.id;
+            if (contactId) {
+                if (this._contactEmploymentService['data'] && this._contactEmploymentService['data'].id == contactId) {
+                    this.contactEmploymentInfo = this._contactEmploymentService['data'].contactEmploymentInfo;
+                } else {
+                    this._contactEmploymentService.get(contactId)
+                        .subscribe(response => {
+                            this._contactEmploymentService['data'] = {
+                                id: contactId,
+                                contactEmploymentInfo: this.contactEmploymentInfo = response.contactEmploymentInfo || {}
+                            };
+                        }
+                    );
+                }
+            }
+        });
+    }
+
+    updateContactEmployment(value) {
+        this.contactEmploymentInfo.jobTitle = value;
+        this._contactEmploymentService.update(UpdateContactEmploymentInput.fromJS({
+            id: this.contactEmploymentInfo.id,
+            contactEmploymentEditInfo: this.contactEmploymentInfo
+        })).subscribe(response => {});
     }
 
     getDialogPossition(event, shiftX) {
@@ -148,6 +188,16 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             };
     }
 
+    getJobTitleInplaceEditData() {        
+        if (this.contactEmploymentInfo)
+            return {
+                id: this.contactEmploymentInfo.id,
+                value: (this.contactEmploymentInfo.jobTitle || '').trim(),
+                lEntityName: 'JobTitle',
+                lEditPlaceholder: this.l('JobTitlePlaceholder')
+            };
+    }
+
     showEditPersonDialog(event) {
         this.dialog.closeAll();
         this.dialog.open(PersonDialogComponent, {
@@ -158,9 +208,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         event.stopPropagation();
     }
 
-    updateCompanyName(value) {
+    updateCompanyField(value, field = 'companyName') {
         let data = this.data.organizationContactInfo;
-        data.organization.companyName = value;
+        data.organization[field] = value;
         this.organizationContactService.updateOrganizationInfo(
             UpdateOrganizationInfoInput.fromJS(
                 _.extend({id: data.id}, data.organization))
