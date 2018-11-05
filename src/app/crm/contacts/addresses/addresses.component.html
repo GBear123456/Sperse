@@ -6,7 +6,7 @@
         <div class="address">
             <h4>{{types[address.usageTypeId] || l("Undefined")}}</h4>
             <p *ngIf="!address.inplaceEdit">{{address | address:
-                address.streetAddress:address.city:address.state:address.zip:address.country}}</p>
+                address.streetAddress:address.city:address.state:address.zip}}</p>
             <div *ngIf="address.inplaceEdit">
                 <input type="text"
                        name="Address"
