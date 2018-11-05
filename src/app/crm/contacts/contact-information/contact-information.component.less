@@ -39,12 +39,16 @@
                     color: #202b35;
                 }
                 th {
+                    &:first-child {
+                        width: 20%;
+                        max-width: 150px;
+                    }
+                    &:not(:first-child) {
+                        width: 40%;
+                    }
+  
                     letter-spacing: 0.6px;
                     text-transform: uppercase;
-                }
-                th:first-child {
-                    width: 20%;
-                    max-width: 150px;
                 }
                 td:first-child {
                     line-height: 30px;

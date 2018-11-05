@@ -13,8 +13,16 @@ import {
     ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
+import { filter } from 'rxjs/operators';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { Store, select } from '@ngrx/store';
+import { RootStore } from '@root/store';
+import {
+    ContactLinkTypesStoreActions,
+    ContactLinkTypesStoreSelectors
+} from '@app/store';
+
 
 import * as _ from 'underscore';
 
@@ -40,32 +48,13 @@ export class SocialsComponent extends AppComponentBase {
     contactInfoData: ContactInfoDetailsDto;
     isEditAllowed = false;
 
-    LINK_TYPES = {
-        F: 'facebook',
-        G: 'google-plus',
-        L: 'linkedin',
-        P: 'pinterest',
-        T: 'twitter',
-        J: 'website',
-        A: 'alexa',
-        B: 'bbb',
-        C: 'crunchbase',
-        D: 'domain',
-        E: 'yelp',
-        I: 'instagram',
-        N: 'nav',
-        O: 'opencorporates',
-        R: 'trustpilot',
-        S: 'glassdoor',
-        W: 'followers',
-        Y: 'youtube',
-        Z: 'rss'
-    };
+    LINK_TYPES = {};
 
     private _contactInfo: ContactGroupInfoDto;
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
+                private store$: Store<RootStore.State>
                 private _contactLinkService: ContactLinkServiceProxy,
                 private _organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService
@@ -73,6 +62,19 @@ export class SocialsComponent extends AppComponentBase {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
+        this.linkTypesLoad();
+    }
+
+    linkTypesLoad() {
+        this.store$.dispatch(new ContactLinkTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
+            filter(types => !!types)
+        ).subscribe(types => {
+            types.forEach((entity) => {
+                this.LINK_TYPES[entity.id] = entity.name.replace(/ /g,'');
+            });
+        });
     }
 
     getDialogPosition(event) {

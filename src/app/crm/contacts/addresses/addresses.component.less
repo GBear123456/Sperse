@@ -31,14 +31,20 @@
       position: absolute;
       background-repeat: no-repeat;
       background-position: 0px 3px;
-    
+
+      &.type-C {
+        background-image: url("../../../../assets/common/icons/address-company.svg");        
+      }    
+      &.type-O {
+        background-image: url("../../../../assets/common/icons/address-other.svg");        
+      }
       &.type-H {
         background-image: url("../../../../assets/common/icons/address-home.svg");        
       }
-      &.type-P {
-        background-image: url("../../../../assets/common/icons/address-primary.svg");        
+      &.type-P, &.type-W {
+        background-image: url("../../../../assets/common/icons/address-work.svg");        
       }
-      &.type-S, &.type-W {
+      &.type-S {
         background-image: url("../../../../assets/common/icons/address-shipping.svg");        
       }
     }

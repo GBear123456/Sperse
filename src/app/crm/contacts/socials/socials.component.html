@@ -3,7 +3,8 @@
     <ul>
       <li *ngFor="let social of contactInfoData?.links; let i = index">
         <a href="{{social.url}}" target="_blank">
-          <i class="fa fa-{{LINK_TYPES[social.linkTypeId] || 'share-square-o'}}" aria-hidden="true"></i>
+          <!-- i class="fa fa-{{LINK_TYPES[social.linkTypeId] || 'share-square-o'}}" aria-hidden="true"></i -->
+            <img src="./assets/common/icons/social/{{LINK_TYPES[social.linkTypeId]}}.svg" onError="this.src='./assets/common/icons/social/OtherLink.svg';" width="25px" height="25px">
         </a>
         <inplace-edit [data]="getLinkInplaceEditData(social)" (valueChanged)="updateLink(social, $event)" (openDialog)="showEditDialog(social, $event, i)" (itemDeleted)="deleteLink($event)"></inplace-edit>
       </li>
