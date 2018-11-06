@@ -25,6 +25,7 @@ import { BankAccountsService } from './helpers/bank-accounts.service';
 import { BankAccountsComponent } from './bank-accounts.component';
 import { BankAccountsWidgetComponent } from './bank-accounts-widgets/bank-accounts-widget.component';
 import { BankAccountsQuovoComponent } from './bank-accounts-quovo/bank-accounts-quovo.component';
+import { QuovoPfmComponent } from './quovo-pfm/quovo-pfm.component';
 import { AddAccountButtonComponent } from './add-account-button/add-account-button.component';
 
 import { QuovoService } from './quovo/QuovoService';
@@ -60,6 +61,7 @@ import { SynchProgressComponent } from './synch-progress/synch-progress.componen
         BankAccountsComponent,
         BankAccountsWidgetComponent,
         BankAccountsQuovoComponent,
+        QuovoPfmComponent,
         AddAccountButtonComponent,
 
         XeroLoginButtonComponent,
@@ -73,6 +75,7 @@ import { SynchProgressComponent } from './synch-progress/synch-progress.componen
         BankAccountsComponent,
         BankAccountsWidgetComponent,
         BankAccountsQuovoComponent,
+        QuovoPfmComponent,
         AddAccountButtonComponent,
 
         XeroLoginButtonComponent,
