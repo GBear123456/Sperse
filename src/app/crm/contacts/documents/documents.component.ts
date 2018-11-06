@@ -437,7 +437,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
         }
 
-        this.startLoading(true);
+        super.startLoading(true);
         this.initViewerToolbar({
             viewerType: viewerType,
             rotateDisabled: ext == 'pdf',
