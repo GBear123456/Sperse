@@ -61,28 +61,30 @@ export class SynchProgressService {
 
     public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false) {
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.runSyncAll(forcedSync, newOnly);
-        this.runSynchProgress();
-    }
-
-    private runSyncAll(forcedSync, newOnly) {
-        this.syncServiceProxy.syncAllAccounts(
-            InstanceType[this.cfoService.instanceType],
-            this.cfoService.instanceId,
-            forcedSync,
-            newOnly
-        ).pipe(finalize(() => this.appHttpConfiguration.avoidErrorHandling = false))
-            .subscribe(() => {
+        this.runSyncAll(forcedSync, newOnly).subscribe(() => {
                 this.tryCount = 0;
                 this.hasFailedAccounts = false;
                 if (forcedSync || (!this.getSyncProgressSubscription && (!this.timeoutsIds || !this.timeoutsIds.length))) {
                     this.runSynchProgress();
                 }
             },
-            () => {
-                this.syncFailed.next();
-                this.cancelRequests();
-            });
+            this.syncAllFailed.bind(this)
+        );
+        this.runSynchProgress();
+    }
+
+    private syncAllFailed() {
+        this.syncFailed.next();
+        this.cancelRequests();
+    }
+
+    private runSyncAll(forcedSync: boolean = false, newOnly: boolean = false) {
+        return this.syncServiceProxy.syncAllAccounts(
+            InstanceType[this.cfoService.instanceType],
+            this.cfoService.instanceId,
+            forcedSync,
+            newOnly
+        ).pipe(finalize(() => this.appHttpConfiguration.avoidErrorHandling = false));
     }
 
     private runSynchProgress() {
@@ -122,8 +124,14 @@ export class SynchProgressService {
                             this.syncCompleted.next(true);
                         } else if (this.tryCount < this.maxTryCount) {
                             this.tryCount++;
+                            /** Run sync All after 10 sec and then syncProgress 3 times*/
                             this.timeoutsIds.push(setTimeout(
-                                () => this.runSynchProgress(), 10 * 1000
+                                () => {
+                                    this.runSyncAll(true).subscribe(
+                                        () => this.runSynchProgress(),
+                                        this.syncAllFailed.bind(this)
+                                    );
+                                }, 10 * 1000
                             ));
                         }
                     }
