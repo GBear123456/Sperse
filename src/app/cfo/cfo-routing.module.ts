@@ -4,6 +4,7 @@ import { StartComponent } from './start/start.component';
 import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
 import { BankAccountsComponent } from '@shared/cfo/bank-accounts/bank-accounts.component';
 import { BankAccountsQuovoComponent } from '@shared/cfo/bank-accounts/bank-accounts-quovo/bank-accounts-quovo.component';
+import { QuovoPfmComponent } from '@shared/cfo/bank-accounts/quovo-pfm/quovo-pfm.component';
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { StatsComponent } from './stats/stats.component';
 import { TransactionsComponent } from './transactions/transactions.component';
@@ -35,6 +36,10 @@ import { CfoInstanceStatusGuard } from '@app/cfo/cfo-instance-status-guard';
                             {
                                 path: 'quovo',
                                 component: BankAccountsQuovoComponent
+                            },
+                            {
+                                path: 'pfm',
+                                component: QuovoPfmComponent
                             }
                         ]
                     },

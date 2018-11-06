@@ -437,7 +437,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
         }
 
-        this.startLoading(true);
+        super.startLoading(true);
         this.initViewerToolbar({
             viewerType: viewerType,
             rotateDisabled: ext == 'pdf',
@@ -501,7 +501,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this.initViewerToolbar({
             editDisabled: true
         });
-        this.startLoading(true);
+        super.startLoading(true);
         this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
             super.finishLoading(true);
         })).subscribe((response) => {
@@ -543,7 +543,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             this.l('DocumentDeleteWarningMessage', this.currentDocumentInfo.fileName),
             isConfirmed => {
                 if (isConfirmed) {
-                    this.startLoading(true);
+                    super.startLoading(true);
                     this.showViewerType = undefined;
                     this.openDocumentMode = false;
                     this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
