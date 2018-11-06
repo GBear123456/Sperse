@@ -1,22 +1,60 @@
 :host {
-  .row {
-    padding: 0 20px;
-  }
+    display: block;
+    height: 100%;
 
-  /deep/ .mat-tab-label {
-      color: #677380;
-      text-transform: uppercase;
-      font-size: 14px;
-      font-weight: 300;
-      line-height: 1.71;
-      letter-spacing: 0.6px;
-      opacity: 1;
-  }
+    .table-wrapper {
+        width: 100%;
+        padding: 0px 100px 25px 25px;
+        table { 
+            height: 100%;
+            min-height: 500px;
+            tr {
+                td {
+                    vertical-align: top;
+                }
 
-  /deep/ .mat-tab-label-active {
-      border-bottom: none;
-      background: none;
-      font-weight: 500;
-      color: #202b35;
-  }
+                &:not(:nth-child(2)) {
+                    td {
+                        padding-top: 25px;
+                    }
+                }
+  
+                &:not(:last-child) {
+                    td {
+                        &:not(:first-child) {
+                            border-bottom: 1px solid #e5e9ec;
+                        }
+                    }
+                }
+
+                th:not(:first-child) {
+                    padding-left: 35px;
+                }
+
+                th, td:first-child {
+                    font-size: 14px;
+                    font-weight: 500;
+                    font-style: normal;
+                    font-stretch: normal;
+                    color: #202b35;
+                }
+                th {
+                    &:first-child {
+                        width: 20%;
+                        max-width: 150px;
+                    }
+                    &:not(:first-child) {
+                        width: 40%;
+                    }
+  
+                    letter-spacing: 0.6px;
+                    text-transform: uppercase;
+                }
+                td:first-child {
+                    line-height: 30px;
+                    letter-spacing: 0.3px;
+                }
+            }
+        }
+    }
 }

@@ -68,7 +68,7 @@
                     <div *ngFor="let email of contacts.emails; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
-                                width="450px"
+                                width="370px"
                                 name="emailType"
                                 placeholder="{{l('Type')}}"
                                 [dataSource]="emailTypes"
@@ -77,7 +77,7 @@
                                 [(value)]="email.type"
                                 [itemTemplate]="'emailTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'emailTypeItemTemplate'">
-                                    <div title="{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}"><span
+                                    <div class="usage-type-item" title="{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}"><span
                                         style="display:inline-block;width:100px;">{{data.name}}</span><span>{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}</span>
                                     </div>
                                 </div>
@@ -106,7 +106,7 @@
                     <div *ngFor="let phone of contacts.phones; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
-                                width="450px"
+                                width="370px"
                                 name="phoneType"
                                 placeholder="{{l('Type')}}"
                                 [dataSource]="phoneTypes"
@@ -115,7 +115,7 @@
                                 [value]="phone.type"
                                 [itemTemplate]="'phoneTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
-                                    <div title="{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}"><span
+                                    <div class="usage-type-item" title="{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}"><span
                                         style="display:inline-block;width:100px;">{{data.name}}</span><span>{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span>
                                     </div>
                                 </div>
@@ -206,7 +206,7 @@
                         <label [hidden]="i" class="address-label">{{l('Address')}}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
-                                width="500px"
+                                width="400px"
                                 name="addressType"
                                 placeholder="{{l('Type')}}"
                                 [dataSource]="addressTypes"
@@ -215,7 +215,7 @@
                                 [(value)]="address['type']"
                                 [itemTemplate]="'addressTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'addressTypeItemTemplate'">
-                                    <div title="{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}"><span
+                                    <div class="usage-type-item" title="{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}"><span
                                         style="display:inline-block;width:100px;">{{data.name}}</span><span>{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span>
                                     </div>
                                 </div>

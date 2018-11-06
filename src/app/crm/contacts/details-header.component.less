@@ -155,7 +155,17 @@
             }
         }
 
+        h3 {
+            top: 40px;
+            position: absolute;
+            padding-left: 80px;
+        }
+
         h2 {
+            &.shift-top {
+                position: relative;
+                bottom: 10px;
+            }
             display: inline-block;
             color: #424c56;
             font-size: 16px;
@@ -164,6 +174,9 @@
             letter-spacing: 0.3px;
             margin: 0px !important;
             vertical-align: middle;
+        }
+
+        h2, h3 {
             /deep/ inplace-edit {
                 i.dx-icon {
                     font-size: 14px!important;
@@ -181,7 +194,11 @@
             }
         }
 
-        .info-icon {
+        .info-icon {    
+            &.shift-top {
+                position: relative;
+                bottom: 6px;
+            }
             margin-left: 8px;
             display: inline-block;
             cursor: pointer;

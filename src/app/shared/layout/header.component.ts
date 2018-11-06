@@ -95,10 +95,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     registerToEvents() {
-        abp.event.on('profilePictureChanged', () => {
-            this._profileServiceProxy.getProfileThumbnailId().subscribe(id => {
-                this.profileThumbnailId = id;
-            });
+        abp.event.on('profilePictureChanged', (thumbnailId) => {
+            this.profileThumbnailId = thumbnailId;
         });
 
         abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {

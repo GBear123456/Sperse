@@ -94,14 +94,20 @@ export class AppPreBootstrap {
 
     private static impersonatedAuthenticate(impersonationToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
         abp.multiTenancy.setTenantIdCookie(tenantId);
+
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
+        let requestHeaders = {
+            'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
+        };
+
+        if (cookieLangValue) {
+            requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
+        }
+
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/ImpersonatedAuthenticate?secureId=' + impersonationToken,
             method: 'POST',
-            headers: {
-                '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
-                'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
-            },
+            headers: requestHeaders,
             abpHandleError: false
         }).done(result => {
             abp.auth.setToken(result.accessToken);
@@ -116,14 +122,20 @@ export class AppPreBootstrap {
 
     private static linkedAccountAuthenticate(switchAccountToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
         abp.multiTenancy.setTenantIdCookie(tenantId);
+
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
+        let requestHeaders = {
+            'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
+        };
+
+        if (cookieLangValue) {
+            requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
+        }
+
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/LinkedAccountAuthenticate?switchAccountToken=' + switchAccountToken,
             method: 'POST',
-            headers: {
-                '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
-                'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
-            }
+            headers: requestHeaders
         }).done(result => {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
@@ -138,9 +150,12 @@ export class AppPreBootstrap {
         const token = abp.auth.getToken();
 
         let requestHeaders = {
-            '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
             'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
         };
+
+        if (cookieLangValue) {
+            requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
+        }
 
         if (token) {
             requestHeaders['Authorization'] = 'Bearer ' + token;

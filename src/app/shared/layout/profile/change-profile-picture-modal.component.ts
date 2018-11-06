@@ -138,11 +138,11 @@ export class ChangeProfilePictureModalComponent extends AppComponentBase {
         this.saving = true;
         self._profileService.updateProfilePicture(input)
             .pipe(finalize(() => { this.saving = false; }))
-            .subscribe(() => {
+            .subscribe((thumbnailId) => {
                 const self = this;
                 self._$jcropApi.destroy();
                 self._$jcropApi = null;
-                abp.event.trigger('profilePictureChanged');
+                abp.event.trigger('profilePictureChanged', thumbnailId);
                 self.close();
             });
     }

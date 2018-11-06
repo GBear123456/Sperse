@@ -1,48 +1,31 @@
-<mat-tab-group (selectedTabChange)="selectedTabChange($event)">
-    <mat-tab [label]="l('ContactInformation_PersonTitle')">
-        <dx-scroll-view showScrollbar="onHover">
-            <div class="row">
-                <div class="col-md-12">
-                    <contacts-area [contactInfoData]="data?.contactInfo?.primaryContactInfo?.details"></contacts-area>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <addresses [contactInfoData]="data?.contactInfo?.primaryContactInfo?.details"></addresses>
-                </div>
-                <div class="col-md-6">
-                    <socials [contactInfoData]="data?.contactInfo?.primaryContactInfo?.details"></socials>
-                </div>
-            </div>
-        </dx-scroll-view>
-    </mat-tab>
-    <mat-tab [label]="l('ContactInformation_CompanyTitle')">
-        <dx-scroll-view showScrollbar="onHover">
-            <div class="row">
-                <div class="col-md-12">
-                    <contacts-area [isCompany]="true"
-                        [contactInfoData]="data?.contactInfo?.organizationContactInfo?.details"
-                        [contactInfo]="data?.contactInfo"></contacts-area>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <addresses [isCompany]="true"
-                        [contactInfoData]="data?.contactInfo?.organizationContactInfo?.details"
-                        [contactInfo]="data?.contactInfo"></addresses>
-                </div>
-                <div class="col-md-6">
-                    <socials [contactInfoData]="data?.contactInfo?.organizationContactInfo?.details"
-                        [contactInfo]="data?.contactInfo"></socials>
-                </div>
-            </div>
-        </dx-scroll-view>
-    </mat-tab>
-    <mat-tab [label]="l('ContactInformation_EmploymentTitle')">
-        <dx-scroll-view *ngIf="checkTabEnabled(EMPLOYMENT_TAB_INDEX)" showScrollbar="onHover">
-            <employment [contactId]="data?.contactInfo?.primaryContactInfo?.id"></employment>
-        </dx-scroll-view>
-    </mat-tab>
-    <mat-tab [label]="l('ContactInformation_ConfidentialTitle')">
-    </mat-tab>
-</mat-tab-group>
+<dx-scroll-view showScrollbar="onHover" direction="both">
+    <div class="table-wrapper">
+        <table width="100%" height="100%">
+            <tr>
+                <th height="70px"></th>
+                <th>{{l('ContactInformation_PersonTitle')}}</th>
+                <th>{{l('ContactInformation_CompanyTitle')}}</th>
+            </tr>
+            <tr>
+                <td>{{l('Emails')}}</td>
+                <td><contacts-area [contactInfo]="data?.contactInfo" [showContactType]="'emails'"></contacts-area></td>
+                <td><contacts-area [isCompany]="true" [contactInfo]="data?.contactInfo" [showContactType]="'emails'"></contacts-area></td>
+            </tr>
+            <tr>
+                <td>{{l('Phones')}}</td>
+                <td><contacts-area [contactInfo]="data?.contactInfo" [showContactType]="'phones'"></contacts-area></td>
+                <td><contacts-area [isCompany]="true" [contactInfo]="data?.contactInfo" [showContactType]="'phones'"></contacts-area></td>        
+            </tr>
+            <tr>
+                <td>{{l('Links')}}</td>
+                <td><socials [contactInfo]="data?.contactInfo"></socials></td>
+                <td><socials [isCompany]="true" [contactInfo]="data?.contactInfo"></socials></td>        
+            </tr>
+            <tr>
+                <td>{{l('Addresses')}}</td>
+                <td><addresses [contactInfo]="data?.contactInfo"></addresses></td>
+                <td><addresses [isCompany]="true" [contactInfo]="data?.contactInfo"></addresses></td>
+            </tr>
+        </table>
+    </div>
+</dx-scroll-view>

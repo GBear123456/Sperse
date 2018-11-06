@@ -31,8 +31,16 @@ import {
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
-    @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() contactInfo: ContactGroupInfoDto;
+    @Input() set contactInfo(value: ContactGroupInfoDto) {
+        if (this._contactInfo = value)
+            this.contactInfoData = this.isCompany ? 
+                value.organizationContactInfo && value.organizationContactInfo.details: 
+                value.primaryContactInfo && value.primaryContactInfo.details;
+
+    }
+    get contactInfo(): ContactGroupInfoDto {
+        return this._contactInfo;
+    }
 
     types: Object = {};
     country: string;
@@ -42,12 +50,13 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     state: string;
     zip: string;
 
+    contactInfoData: ContactInfoDetailsDto;
     isEditAllowed = false;
 
     private _clickTimeout;
     private _clickCounter = 0;
     private _itemInEditMode: any;
-
+    private _contactInfo: ContactGroupInfoDto;
     private _latestFormatedAddress: string;
 
     constructor(injector: Injector,
@@ -143,7 +152,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     createOrganization(address, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            contactGroupId: this.contactInfo.id,
+            contactGroupId: this._contactInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
@@ -153,7 +162,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this.contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this._contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),
