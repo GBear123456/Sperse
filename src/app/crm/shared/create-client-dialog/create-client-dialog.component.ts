@@ -132,7 +132,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private validationError: string;
     private isUserSelected = true;
     private isPartnerTypeSelected = false;
-    private isStageSelected = false;
+    private isStageSelected = true;
     private isStatusSelected = false;
     private isListsSelected = false;
     private isTagsSelected = false;
@@ -653,7 +653,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         }, 300);
     }
 
-    checkDuplicateContact(field) {        
+    checkDuplicateContact(field) {
         return this.contacts[field].some((checkItem, checkIndex) => {
             return !this.contacts[field].every((item, index) => {
                 return (index == checkIndex) || JSON.stringify(checkItem) != JSON.stringify(item);
@@ -662,7 +662,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     addNewContact(field) {
-        if (this.checkEveryContactValid(field) && 
+        if (this.addButtonVisible[field] &&
+            this.checkEveryContactValid(field) && 
             !this.checkDuplicateContact(field)
         ) {
             this.contacts[field].push({
@@ -672,18 +673,25 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         }
     }
 
-    checkEveryContactValid(field) {           
+    checkFieldValid(field, item) {
+        let isObject = typeof(item) == 'object';
+        if (field == 'emails')
+            return this.validateEmailAddress(isObject ? item.email: item);
+        else if (field == 'phones')
+            return Boolean(isObject ? item.number: item);
+        else if (field == 'links')
+            return this.validateLinkAddress(isObject ? item.url: item);
+        else if (field == 'addresses')
+            return item.address && item.city && item.country;
+        else
+            return false;
+    }
+
+    checkEveryContactValid(field) {
         return this.contacts[field].every((item) => {
-            if (item.type) {
-                if (field == 'emails')
-                    return this.validateEmailAddress(item.email);
-                else if (field == 'phones')
-                    return Boolean(item.number);
-                else if (field == 'links')
-                    return this.validateLinkAddress(item.url);
-                else if (field == 'addresses')
-                    return item.address && item.city && item.country;
-            } else
+            if (item.type)
+                return this.checkFieldValid(field, item);
+            else
                 return false;
         });
     }
@@ -718,21 +726,22 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this[validator].push($event.component);
     }
 
-    onFieldKeyUp($event, field, i) {
+    onFieldChanged($event, field, i) {
         let value = this.getInputElementValue($event);
-
         this.addButtonVisible[field] = 
-            this.checkEveryContactValid(field) && 
+            this.checkFieldValid(field, value) && 
                 !this.checkDuplicateContact(field);
 
         this.checkSimilarCustomers();
     }
 
-    onPhoneKeyUp(value, isValid, i) {
-        let field = 'phones';
-        this.addButtonVisible[field] = isValid
-            && !this.checkDuplicateContact(field);
-        this.checkSimilarCustomers();
+    onPhoneChanged(component) {
+        setTimeout(() => {
+            let field = 'phones';
+            this.addButtonVisible[field] = component.isValid() 
+                && !this.checkDuplicateContact(field);
+            this.checkSimilarCustomers();
+        });
     }
 
     onCompanyKeyUp($event) {
