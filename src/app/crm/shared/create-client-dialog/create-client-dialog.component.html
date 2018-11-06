@@ -285,7 +285,11 @@
                         </dx-select-box>
                     </div>
                 </div>
-                <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['addresses']}"><span (click)="addNewContact('addresses')">{{l('+ Add address')}}</span></div>
+                <div class="field">
+                    <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['addresses']}">
+                        <span (click)="addNewContact('addresses')">{{l('+ Add address')}}</span>
+                    </div>
+                </div>
             </dx-validation-group>
 
             <div class="field notes">
