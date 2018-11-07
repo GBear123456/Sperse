@@ -29,10 +29,19 @@
     <mat-sidenav-container>
         <mat-sidenav mode="side" opened="true" [disableClose]="true" position="start">
             <div class="short-contact">
-                <div class="small-phones">
-                    <div class="phone" *ngFor="let phone of primaryContact?.phones">
-                        <i class="icons phone type-{{phone.usageTypeId || 'P'}}"></i>{{phone.phoneNumber | phone}}
+                <div class="related-contacts">
+                    <div *ngIf="contactInfo?.contactPersons?.length > 1; else addNew" class="contact-persons-info" (click)="showContactPersons($event)">
+                        <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">
+                        <span class="similar-contacts-count">{{ contactInfo.contactPersons.length - 1 }} related contact<span *ngIf="contactInfo.contactPersons.length - 1 > 1">s</span></span>
+                        <img src="./assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
                     </div>
+
+                    <ng-template #addNew>
+                        <div class="contact-persons-info" (click)="addNewContact($event)">
+                            <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">
+                            <a class="add-new-contact">{{l('AddRelatedContact')}}</a>
+                        </div>
+                    </ng-template>
                 </div>
             </div>
             <dx-scroll-view showScrollbar="onHover">
