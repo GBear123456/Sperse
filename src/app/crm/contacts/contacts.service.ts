@@ -75,8 +75,8 @@ export class ContactsService {
         return this.subscribe(this.invalidateSubject.asObservable().subscribe(callback), ident);
     }
 
-    invalidate() {
-        this.invalidateSubject.next();
+    invalidate(area = undefined) {
+        this.invalidateSubject.next(area);
     }
 
     loadLeadInfoSubscribe(callback, ident = undefined) {

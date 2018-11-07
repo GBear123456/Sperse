@@ -8,22 +8,22 @@
             </tr>
             <tr>
                 <td>{{l('Emails')}}</td>
-                <td><contacts-area [contactInfo]="data?.contactInfo" [showContactType]="'emails'"></contacts-area></td>
+                <td><contacts-area [contactInfo]="data?.contactInfo" [showContactType]="'emails'" [contactInfoData]="data?.contactInfo?.primaryContactInfo?.details"></contacts-area></td>
                 <td><contacts-area [isCompany]="true" [contactInfo]="data?.contactInfo" [showContactType]="'emails'"></contacts-area></td>
             </tr>
             <tr>
                 <td>{{l('Phones')}}</td>
-                <td><contacts-area [contactInfo]="data?.contactInfo" [showContactType]="'phones'"></contacts-area></td>
+                <td><contacts-area [contactInfo]="data?.contactInfo" [showContactType]="'phones'" [contactInfoData]="data?.contactInfo?.primaryContactInfo?.details"></contacts-area></td>
                 <td><contacts-area [isCompany]="true" [contactInfo]="data?.contactInfo" [showContactType]="'phones'"></contacts-area></td>        
             </tr>
             <tr>
                 <td>{{l('Links')}}</td>
-                <td><socials [contactInfo]="data?.contactInfo"></socials></td>
+                <td><socials [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.primaryContactInfo?.details"></socials></td>
                 <td><socials [isCompany]="true" [contactInfo]="data?.contactInfo"></socials></td>        
             </tr>
             <tr>
                 <td>{{l('Addresses')}}</td>
-                <td><addresses [contactInfo]="data?.contactInfo"></addresses></td>
+                <td><addresses [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.primaryContactInfo?.details"></addresses></td>
                 <td><addresses [isCompany]="true" [contactInfo]="data?.contactInfo"></addresses></td>
             </tr>
         </table>

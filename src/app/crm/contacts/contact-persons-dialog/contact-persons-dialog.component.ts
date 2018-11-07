@@ -1,10 +1,8 @@
 import { Component, Inject, Injector } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { PersonContactInfoDto, ContactGroupInfoDto } from 'shared/service-proxies/service-proxies';
-
-import * as _ from 'underscore';
 
 @Component({
     selector: 'contact-persons-dialog',
@@ -27,5 +25,25 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
     selectContactPerson(contactPerson): void {
         this.data.primaryContactInfo = contactPerson;
         this.dialogRef.close();
+    }
+
+    addNewContact() {
+        this.dialogRef.close('addNewContact');
+    }
+
+    filterList(event) {
+        let filter, ul, li, element;
+        filter = event.target.value.toUpperCase();
+        ul = document.getElementById('related-contact-list');
+        li = ul.getElementsByTagName('li');
+
+        for (let i = 0; i < li.length; i++) {
+            element = li[i].querySelector('.full-name h1');
+            if (element.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = '';
+            } else {
+                li[i].style.display = 'none';
+            }
+        }
     }
 }

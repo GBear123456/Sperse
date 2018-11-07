@@ -92,6 +92,13 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 action: this.deleteDocument.bind(this)
             }
         ];
+
+        _clientService.invalidateSubscribe((area) => {
+            if (area == 'documents') {
+                this._documentService['data'] = undefined;
+                this.loadDocuments(); 
+            }           
+        });
     }
 
     private storeUrlToCache(id: string, urlInfo: GetUrlOutput) {
@@ -383,7 +390,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     showActionsMenu(data, target) {
         this.actionRecordData = data;
         this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).visible = data.isEditSupportedByWopi;
-        this.actionsTooltip.instance.show(target);
+        setTimeout(() => {
+            this.actionsTooltip.instance.show(target);
+        });
     }
 
     onCellClick($event) {

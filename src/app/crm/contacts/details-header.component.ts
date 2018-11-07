@@ -20,6 +20,7 @@ import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dial
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
+import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { ContactGroupInfoDto, UserServiceProxy, CreateContactPhotoInput, ContactEmploymentServiceProxy,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdateContactEmploymentInput,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -38,7 +39,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
 
     @Input() 
-    public set data(data: ContactGroupInfoDto) {
+    public set data(data: ContactGroupInfoDto) {        
         this._contactInfoBehaviorSubject.next(data);
     }
     public get data(): ContactGroupInfoDto {
@@ -135,18 +136,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         event.stopPropagation();
     }
 
-    showContactPersons(event) {
-        this.dialog.closeAll();
-        this.dialog.open(ContactPersonsDialogComponent, {
-            data: this.data,
-            hasBackdrop: false,
-            position: this.getDialogPossition(event, 170)
-        }).afterClosed().subscribe(result => {
-            this.onContactSelected.emit(this.data.primaryContactInfo);
-        });
-        event.stopPropagation();
-    }
-
     showUploadPhotoDialog(event, isCompany = undefined) {
         this.dialog.closeAll();
         this.dialog.open(UploadPhotoDialogComponent, {
@@ -190,7 +179,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             };
     }
 
-    getJobTitleInplaceEditData() {        
+    getJobTitleInplaceEditData() {
         if (this.contactEmploymentInfo)
             return {
                 id: this.contactEmploymentInfo.id,
@@ -266,8 +255,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     addEntity(event?) {
         if (event && event.offsetX > 155)
             return this.addContextComponent
-                .instance.option('visible', true);        
+                .instance.option('visible', true);
 
+        let dialogClass;
         if (this.addContextMenuItems[this.ADD_CONTACT_OPTION].selected)
             setTimeout(() => {
                 this.dialog.open(CreateClientDialogComponent, {
@@ -278,7 +268,19 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                         refreshParent: () => {},
                         customerType: ContactGroupType.Client
                     }
-                }).afterClosed().subscribe(() => {});
+                });
+            });
+        else if (this.addContextMenuItems[this.ADD_FILES_OPTION].selected)
+            setTimeout(() => {
+                this.dialog.open(UploadDocumentsDialogComponent, {
+                    panelClass: 'slider',
+                    disableClose: false,
+                    hasBackdrop: false,
+                    closeOnNavigation: true,
+                    data: {
+                        contactId: this.data.id
+                    }
+                });
             });
     }
 }

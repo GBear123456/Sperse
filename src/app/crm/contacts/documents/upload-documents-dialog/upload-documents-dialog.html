@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{l('UploadDocumentsDialogTitle')}}<span class="close" (click)="close()"></span></h2>
+<mat-dialog-content>
+    <div class="drop-down" #dropDown>
+        <file-drop (onFileDrop)="fileDropped($event)">
+            <img src="./assets/common/icons/upload-file.svg">
+            <p>{{l('DragAndDrop')}}</p>
+            <p style="color: #677380;">{{l('or')}}</p>
+            <p class="alter-text">
+                <input id="custom-input" type="file" (change)="fileChangeListener($event)" multiple>
+                <a href="javascript:void(0);">{{l('SelectFileFrom')}}</a>
+            </p>
+        </file-drop>
+    </div>
+    <div class="uploading" #uploading>
+        <img src="./assets/common/icons/upload-file.svg">
+        <h3>{{l('Uploading')}}<span>{{uploadedCount + ' of ' + totalCount + 'files'}}</span></h3>
+        <ng-container *ngFor="let file of files">
+            <div class="file-progress-wraper"><span>{{file.name}}</span><div class="progress" [ngStyle]="{width: file.progress + 'px'}"></div><span class="cancel"></span></div>
+        </ng-container>
+    </div>
+</mat-dialog-content>

@@ -1,6 +1,56 @@
 :host {
-    .dialog-title {
-        margin-bottom: 24px;
+    display: inline-block;
+    position: relative;
+    width: 100%;
+
+    header {
+        .dialog-title {
+            margin-bottom: 24px;
+            font-size: 12px;
+            text-transform: uppercase;
+            line-height: 1.57;
+        }
+
+        .add-new-contact {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.57;
+            letter-spacing: 0.3px;
+            text-align: left;
+            color: rgb(0, 174, 239);
+            margin-left: 10px;
+            text-decoration: none;
+            text-transform: none;
+
+            &:hover {
+                color: lighten(rgb(0, 174, 239), 5%);
+            }
+        }
+
+        .search-wrapper {
+            margin-bottom: 20px;
+            position: relative;
+
+            &::before {
+                position: absolute;
+                content: '';
+                background: url(../../../../assets/common/icons/search-icon.svg) 50% 50%;
+                background-size: contain;
+                width: 16px;
+                height: 16px;
+                left: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            input {
+                width: 100%;
+                padding: 8px;
+                padding-left: 34px;
+                border: 1px solid #dadee1;
+                border-radius: 3px;
+            }
+        }
     }
 
     mat-dialog-content {
@@ -10,6 +60,8 @@
     .contact-persons-container {
         display: flex;
         flex-direction: column;
+        margin: 0;
+        padding: 0;
 
         h5 {
             color: #677380;
@@ -17,30 +69,38 @@
     }
 
     .contact-person-info {
-        display: flex; 
-        flex-direction: row; 
+        display: flex;
+        flex-direction: row;
+        padding: 0 24px;
+        align-items: center;
+        height: 90px;
+
+        &.odd {
+            background: #f3f7fa;
+        }
 
         &:hover {
             cursor: pointer;
-            background: #f3f7fa;
+            background: darken(#f3f7fa, 3%);
         }
     }
 
     .full-name {
         font-family: Montserrat;
         display: flex;
-        justify-content: space-between; 
+        justify-content: space-between;
 
         h1 {
-            color: #202b35;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            font-size: 22px !important;
-            font-weight: 400;
-            line-height: 1;
+            font-size: 17px;
+            font-weight: 500;
+            line-height: 1.18;
+            letter-spacing: normal;
+            text-align: left;
+            color: rgb(32, 43, 53);
+            margin-bottom: 0;
 
             &.no-name {
-                font-size: 18px !important;
+                font-size: 17px !important;
                 font-weight: 200;
                 font-style: italic;
             }
@@ -51,59 +111,69 @@
         display: flex;
         justify-content: flex-end;
         height: 18px;
-        margin-top: 8px;
         margin-left: 5px;
     }
 
     .avatar {
-        margin: 10px;
+        margin-right: 14px;
         z-index: 1;
     }
 
     .avatar img {
         border-radius: 50%;
-        height: 80px;
-        width: 80px;
+        height: 56px;
+        width: 56px;
         background-color: #fff;
     }
 
-    // mat-progress-bar {
-    //     width: 100px;
-    //     height: 3px;
-    // }
+    mat-progress-bar {
+        width: 88px;
+        height: 3px;
+    }
 
-    // /deep/ .mat-progress-bar-fill:after {
-    //     background-color: #00aeef;
-    // }
+    /deep/ .mat-progress-bar-fill:after {
+        background-color: #00aeef;
+    }
 
     .personal-info {
-        margin-top: 5px;
         padding-right: 12px;
         width: 100%;
 
-        // .rating {
-        //     display: flex;
-        //     bottom: 2px;
-        //     align-items: center;
-        //     position: relative;
-        //     justify-content: flex-end;
+        .rating {
+            display: flex;
+            bottom: 2px;
+            align-items: center;
+            position: relative;
+            justify-content: flex-start;
 
-        //     & > * {
-        //         max-width: 50%;
-        //     }
+            & > * {
+                max-width: 50%;
+            }
 
-        //     mat-progress-bar {
-        //         margin-right: 10px;
-        //     }
-        // }
+            mat-progress-bar {
+                margin-right: 10px;
+            }
+
+            &_int {
+                font-size: 12px;
+                font-weight: 600;
+            }
+        }
     }
 
-    .person-title {
+    .job-title {
         display: flex;
         justify-content: space-between;
 
         h6 {
             font-size: 12px;
+            margin-bottom: 0;
+            font-weight: 400;
+            font-style: normal;
+            line-height: 1.58;
+            letter-spacing: 0.2px;
+            text-align: left;
+            color: rgb(66, 76, 86);
         }
     }
 
@@ -140,5 +210,34 @@
             margin: 0;
             font-size: 15px;
         }
+    }
+}
+
+/deep/ .related-contacts mat-dialog-container {
+    overflow: visible;
+    box-shadow: 3px 3px 12px -1px rgba(0,0,0,0.4);
+    border: 1px solid #e5e9ec;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        left: -10px;
+        top: 75px;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid #e5e9ec;
+        display: block;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: 77px;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-right: 8px solid #fff;
+        display: block;
     }
 }
