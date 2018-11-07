@@ -116,7 +116,7 @@ export class AppPreBootstrap {
             location.search = '';
             callback();
         }).fail(() => {
-            location.href = AppConsts.appBaseUrl + '/account/login';
+            location.href = AppConsts.appBaseUrl;
         });
     }
 

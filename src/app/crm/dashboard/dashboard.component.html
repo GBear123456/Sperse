@@ -4,7 +4,7 @@
 </app-headline>
 <div [@routerTransition]>
   <left-menu (openIntro)="openDialog()" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
-  <div class="lead-status">
+  <div class="widgets-wrapper">
       <div class="col-lg-6 col-xs-12 col-sm-12 wrapper">
           <!-- BEGIN PORTLET-->
           <div *ngIf="dataEmpty == true" class="dashboard-stub">

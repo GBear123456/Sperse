@@ -19,12 +19,14 @@ import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
+import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { ContactGroupInfoDto, UserServiceProxy, CreateContactPhotoInput, ContactEmploymentServiceProxy,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdateContactEmploymentInput,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { ContactGroupType } from '@shared/AppEnums';
 
 @Component({
     selector: 'details-header',
@@ -268,15 +270,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
 
         if (this.addContextMenuItems[this.ADD_CONTACT_OPTION].selected)
             setTimeout(() => {
-                this.dialog.open(AddContactDialogComponent, {
-                    data: {person: {}},
+                this.dialog.open(CreateClientDialogComponent, {
                     panelClass: 'slider',
-                    disableClose: false,
+                    disableClose: true,
                     closeOnNavigation: false,
-                    hasBackdrop: false
-                }).afterClosed().subscribe(result => {
-                  // some logic
-                });            
+                    data: {
+                        refreshParent: () => {},
+                        customerType: ContactGroupType.Client
+                    }
+                }).afterClosed().subscribe(() => {});
             });
     }
 }

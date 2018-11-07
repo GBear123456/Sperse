@@ -95,7 +95,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         }, this.constructor.name);
 
         if (!(this.roles = _roleServiceProxy['data']))
-            _roleServiceProxy.getRoles(undefined).subscribe((res) => {
+            _roleServiceProxy.getRoles(undefined, undefined).subscribe((res) => {
                 _roleServiceProxy['data'] = this.roles = res.items;
             });
 

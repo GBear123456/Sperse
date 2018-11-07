@@ -36,6 +36,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     private rootComponent: any;
     private selectedPeriod: any;
     private openDialogTimeout: any;
+    private loadingContainer: any;
     public dataEmpty: boolean;
     public headlineConfig = {
         names: [this.l('Dashboard')],
@@ -59,7 +60,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     refresh() {
-        this.startLoading();
+        this.startLoading(false, this.loadingContainer);
         this.periodChanged(this.selectedPeriod);
         this.recentClientsComponent.refresh();
     }
@@ -73,7 +74,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
                     this.openDialog();
             }, 500);
         }
-        this.finishLoading();
+        this.finishLoading(false, this.loadingContainer);
     }
 
     addClient() {
@@ -87,8 +88,11 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit(): void {
-        this.startLoading();
+        this.loadingContainer = this.getElementRef().nativeElement.getElementsByClassName('widgets-wrapper')[0];
+        this.startLoading(false, this.loadingContainer);
+
         this.activate();
+
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
@@ -162,7 +166,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     deactivate() {
         super.deactivate();
 
-        this.finishLoading();
+        this.finishLoading(false, this.loadingContainer);
         this.zendeskService.hideWidget();
         this.rootComponent.overflowHidden();
 

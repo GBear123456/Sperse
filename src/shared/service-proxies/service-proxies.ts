@@ -4609,14 +4609,17 @@ export class CategoryTreeServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @input (optional) 
+     * @isOverride (optional) 
      * @return Success
      */
-    sync(instanceType: InstanceType42 | null | undefined, instanceId: number | null | undefined, input: SyncDto | null | undefined): Observable<void> {
+    sync(instanceType: InstanceType42 | null | undefined, instanceId: number | null | undefined, input: SyncDto | null | undefined, isOverride: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/Sync?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (isOverride !== undefined)
+            url_ += "isOverride=" + encodeURIComponent("" + isOverride) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -4667,14 +4670,17 @@ export class CategoryTreeServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @input (optional) 
+     * @isOverride (optional) 
      * @return Success
      */
-    import(instanceType: InstanceType43 | null | undefined, instanceId: number | null | undefined, input: AccountingCategoryDto[] | null | undefined): Observable<void> {
+    import(instanceType: InstanceType43 | null | undefined, instanceId: number | null | undefined, input: AccountingCategoryDto[] | null | undefined, isOverride: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/Import?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (isOverride !== undefined)
+            url_ += "isOverride=" + encodeURIComponent("" + isOverride) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -18992,14 +18998,17 @@ export class QuickBookServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @isOverride (optional) 
      * @return Success
      */
-    syncChartOfAccounts(instanceType: InstanceType75 | null | undefined, instanceId: number | null | undefined): Observable<void> {
+    syncChartOfAccounts(instanceType: InstanceType75 | null | undefined, instanceId: number | null | undefined, isOverride: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/QuickBook/SyncChartOfAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (isOverride !== undefined)
+            url_ += "isOverride=" + encodeURIComponent("" + isOverride) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -19121,12 +19130,15 @@ export class RoleServiceProxy {
 
     /**
      * @permission (optional) 
+     * @moduleType (optional) 
      * @return Success
      */
-    getRoles(permission: string | null | undefined): Observable<ListResultDtoOfRoleListDto> {
+    getRoles(permission: string | null | undefined, moduleType: ModuleType | null | undefined): Observable<ListResultDtoOfRoleListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/Role/GetRoles?";
         if (permission !== undefined)
             url_ += "Permission=" + encodeURIComponent("" + permission) + "&"; 
+        if (moduleType !== undefined)
+            url_ += "ModuleType=" + encodeURIComponent("" + moduleType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -20102,7 +20114,7 @@ export class SyncAccountServiceProxy {
      * @syncTypeId (optional) 
      * @return Success
      */
-    getActive(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<number[]> {
+    getActive(instanceType: InstanceType85 | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<SyncAccountDto[]> {
         let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/GetActive?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -20128,14 +20140,14 @@ export class SyncAccountServiceProxy {
                 try {
                     return this.processGetActive(<any>response_);
                 } catch (e) {
-                    return <Observable<number[]>><any>_observableThrow(e);
+                    return <Observable<SyncAccountDto[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<number[]>><any>_observableThrow(response_);
+                return <Observable<SyncAccountDto[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetActive(response: HttpResponseBase): Observable<number[]> {
+    protected processGetActive(response: HttpResponseBase): Observable<SyncAccountDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -20149,7 +20161,7 @@ export class SyncAccountServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(item);
+                    result200.push(SyncAccountDto.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -20158,7 +20170,7 @@ export class SyncAccountServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number[]>(<any>null);
+        return _observableOf<SyncAccountDto[]>(<any>null);
     }
 
     /**
@@ -25477,7 +25489,7 @@ export class UserServiceProxy {
      * @moduleType (optional) 
      * @return Success
      */
-    getAvailableUserCount(moduleType: ModuleType | null | undefined): Observable<number> {
+    getAvailableUserCount(moduleType: ModuleType2 | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetAvailableUserCount?";
         if (moduleType !== undefined)
             url_ += "moduleType=" + encodeURIComponent("" + moduleType) + "&"; 
@@ -30954,7 +30966,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
     cashType!: string | undefined;
     accountingType!: string;
     category!: string;
-    subCategory!: string | undefined;
+    parentCategory!: string | undefined;
     sortId!: number | undefined;
 
     constructor(data?: IAccountingCategoryDto) {
@@ -30972,7 +30984,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
             this.cashType = data["cashType"];
             this.accountingType = data["accountingType"];
             this.category = data["category"];
-            this.subCategory = data["subCategory"];
+            this.parentCategory = data["parentCategory"];
             this.sortId = data["sortId"];
         }
     }
@@ -30990,7 +31002,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
         data["cashType"] = this.cashType;
         data["accountingType"] = this.accountingType;
         data["category"] = this.category;
-        data["subCategory"] = this.subCategory;
+        data["parentCategory"] = this.parentCategory;
         data["sortId"] = this.sortId;
         return data; 
     }
@@ -31001,7 +31013,7 @@ export interface IAccountingCategoryDto {
     cashType: string | undefined;
     accountingType: string;
     category: string;
-    subCategory: string | undefined;
+    parentCategory: string | undefined;
     sortId: number | undefined;
 }
 
@@ -48232,7 +48244,9 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
     monthlyPrice!: number | undefined;
     annualPrice!: number | undefined;
     trialDayCount!: number | undefined;
-    features!: { [key: string] : string; } | undefined;
+    maxUserCount!: number | undefined;
+    features!: PackageEditionConfigFeatureDto[] | undefined;
+    staticFeatures!: any[] | undefined;
 
     constructor(data?: IPackageEditionConfigDto) {
         if (data) {
@@ -48251,12 +48265,16 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
             this.monthlyPrice = data["monthlyPrice"];
             this.annualPrice = data["annualPrice"];
             this.trialDayCount = data["trialDayCount"];
-            if (data["features"]) {
-                this.features = {};
-                for (let key in data["features"]) {
-                    if (data["features"].hasOwnProperty(key))
-                        this.features[key] = data["features"][key];
-                }
+            this.maxUserCount = data["maxUserCount"];
+            if (data["features"] && data["features"].constructor === Array) {
+                this.features = [];
+                for (let item of data["features"])
+                    this.features.push(PackageEditionConfigFeatureDto.fromJS(item));
+            }
+            if (data["staticFeatures"] && data["staticFeatures"].constructor === Array) {
+                this.staticFeatures = [];
+                for (let item of data["staticFeatures"])
+                    this.staticFeatures.push(item);
             }
         }
     }
@@ -48276,12 +48294,16 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
         data["monthlyPrice"] = this.monthlyPrice;
         data["annualPrice"] = this.annualPrice;
         data["trialDayCount"] = this.trialDayCount;
-        if (this.features) {
-            data["features"] = {};
-            for (let key in this.features) {
-                if (this.features.hasOwnProperty(key))
-                    data["features"][key] = this.features[key];
-            }
+        data["maxUserCount"] = this.maxUserCount;
+        if (this.features && this.features.constructor === Array) {
+            data["features"] = [];
+            for (let item of this.features)
+                data["features"].push(item.toJSON());
+        }
+        if (this.staticFeatures && this.staticFeatures.constructor === Array) {
+            data["staticFeatures"] = [];
+            for (let item of this.staticFeatures)
+                data["staticFeatures"].push(item);
         }
         return data; 
     }
@@ -48294,7 +48316,69 @@ export interface IPackageEditionConfigDto {
     monthlyPrice: number | undefined;
     annualPrice: number | undefined;
     trialDayCount: number | undefined;
-    features: { [key: string] : string; } | undefined;
+    maxUserCount: number | undefined;
+    features: PackageEditionConfigFeatureDto[] | undefined;
+    staticFeatures: any[] | undefined;
+}
+
+export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeatureDto {
+    name!: any | undefined;
+    value!: string | undefined;
+    isVariable!: boolean | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: IPackageEditionConfigFeatureDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["name"]) {
+                this.name = {};
+                for (let key in data["name"]) {
+                    if (data["name"].hasOwnProperty(key))
+                        this.name[key] = data["name"][key];
+                }
+            }
+            this.value = data["value"];
+            this.isVariable = data["isVariable"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): PackageEditionConfigFeatureDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PackageEditionConfigFeatureDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.name) {
+            data["name"] = {};
+            for (let key in this.name) {
+                if (this.name.hasOwnProperty(key))
+                    data["name"][key] = this.name[key];
+            }
+        }
+        data["value"] = this.value;
+        data["isVariable"] = this.isVariable;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IPackageEditionConfigFeatureDto {
+    name: any | undefined;
+    value: string | undefined;
+    isVariable: boolean | undefined;
+    sortOrder: number | undefined;
 }
 
 export class PartnerInfoDto implements IPartnerInfoDto {
@@ -50805,6 +50889,46 @@ export interface ISyncProgressDto {
     progressPercent: number | undefined;
     syncStatus: SyncProgressDtoSyncStatus | undefined;
     lastSyncDate: moment.Moment | undefined;
+}
+
+export class SyncAccountDto implements ISyncAccountDto {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: ISyncAccountDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): SyncAccountDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncAccountDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface ISyncAccountDto {
+    id: number | undefined;
+    name: string | undefined;
 }
 
 export class CreateSyncAccountInput implements ICreateSyncAccountInput {
@@ -56200,6 +56324,12 @@ export enum InstanceType75 {
     Main = "Main", 
 }
 
+export enum ModuleType {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    HUB = "HUB", 
+}
+
 export enum InstanceType76 {
     User = "User", 
     Main = "Main", 
@@ -56315,7 +56445,7 @@ export enum InstanceType93 {
     Main = "Main", 
 }
 
-export enum ModuleType {
+export enum ModuleType2 {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 

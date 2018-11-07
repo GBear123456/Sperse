@@ -34,7 +34,7 @@ export class RoleComboComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {
         const self = this;
-        this._roleService.getRoles(undefined).subscribe(result => {
+        this._roleService.getRoles(undefined, undefined).subscribe(result => {
             this.roles = result.items;
             setTimeout(() => {
                 $(self.roleComboboxElement.nativeElement).selectpicker('refresh');
