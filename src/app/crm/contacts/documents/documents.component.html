@@ -66,16 +66,6 @@
             <dxo-group-panel [visible]="false"></dxo-group-panel>
         </dx-data-grid>
     </div>
-    <div class="drop-down">
-        <h1>{{l('DropYourFile')}}</h1>
-        <file-drop
-            (onFileDrop)="fileDropped($event)">
-            <p>{{l('DragAndDrop')}}</p>
-        </file-drop>
-        <p class="alter-text">or <a href="javascript:void(0);" (click)="showUploadDocumentDialog($event)">{{l('SelectFileFrom')}}</a></p>
-        <div class="file-container">
-        </div>
-    </div>
 </div>
 <div *ngIf="openDocumentMode" class="documentView">
     <form *ngIf="showViewerType == WOPI_VIEWER" id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">

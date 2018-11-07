@@ -31,14 +31,13 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
             this.contactInfoData = this.isCompany ? 
                 value.organizationContactInfo && value.organizationContactInfo.details: 
                 value.primaryContactInfo && value.primaryContactInfo.details;
-
     }
     get contactInfo(): ContactGroupInfoDto {
         return this._contactInfo;
     }
     @Input() showContactType: string;
+    @Input() contactInfoData: ContactInfoDetailsDto;
 
-    contactInfoData: ContactInfoDetailsDto;
     isEditAllowed = false;
 
     private masks = AppConsts.masks;   

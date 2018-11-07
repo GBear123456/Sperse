@@ -34,6 +34,7 @@ import * as _ from 'underscore';
 })
 export class SocialsComponent extends AppComponentBase {
     @Input() isCompany;
+    @Input() contactInfoData: ContactInfoDetailsDto;
     @Input() set contactInfo(value: ContactGroupInfoDto) {
         if (this._contactInfo = value)
             this.contactInfoData = this.isCompany ? 
@@ -45,7 +46,6 @@ export class SocialsComponent extends AppComponentBase {
         return this._contactInfo;
     }
 
-    contactInfoData: ContactInfoDetailsDto;
     isEditAllowed = false;
 
     LINK_TYPES = {};

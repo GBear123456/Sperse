@@ -17,7 +17,7 @@
     <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('phoneNumber', null, $event)">+ {{l('Add') + ' ' + l('Phone')}}</div>
   </div>
   <div *ngIf="showContactType == 'emails'">
-    <div class="emails" *ngIf="contactInfoData?.emails.length; let i = index">
+    <div class="emails" *ngIf="contactInfoData?.emails?.length">
       <i class="icons email"></i>
       <ul *ngFor="let email of contactInfoData?.emails; let i = index;">
         <div *ngIf="!email.inplaceEdit">

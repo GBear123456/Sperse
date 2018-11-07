@@ -31,6 +31,7 @@ import {
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
+    @Input() contactInfoData: ContactInfoDetailsDto;
     @Input() set contactInfo(value: ContactGroupInfoDto) {
         if (this._contactInfo = value)
             this.contactInfoData = this.isCompany ? 
@@ -50,7 +51,6 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     state: string;
     zip: string;
 
-    contactInfoData: ContactInfoDetailsDto;
     isEditAllowed = false;
 
     private _clickTimeout;

@@ -57,6 +57,7 @@ import { PersonInfoComponent } from './person-info/person-info.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
+import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
 import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
@@ -105,6 +106,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     NoteAddComponent,
     DocumentsComponent,
     UploadDocumentDialogComponent,
+    UploadDocumentsDialogComponent,
     DocumentTypesListComponent,
     OrganizationUnitsTreeComponent,
     PermissionTreeComponent,
@@ -162,6 +164,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     NoteAddComponent,
     LeadCancelDialogComponent,
     UploadDocumentDialogComponent,
+    UploadDocumentsDialogComponent,
     AddContactDialogComponent
   ],
   providers: [

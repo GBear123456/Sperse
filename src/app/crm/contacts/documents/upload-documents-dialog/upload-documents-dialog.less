@@ -1,0 +1,102 @@
+/deep/ .cdk-overlay-container {
+    .cdk-overlay-pane.slider {
+        transition: margin 1s!important;
+
+        .mat-dialog-container {
+            overflow: visible;
+            padding: 0px;
+            margin: 0px;
+        }
+    }
+}
+/deep/ .hide {
+    display: none;
+}
+:host {
+    display: block;
+    min-width: 400px;
+    padding: 20px;
+
+    h2 {  
+        position: relative;
+        padding-left: 10px;
+
+        .close {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: -5px;
+            right: 15px;
+            cursor: pointer;
+            background-color: #FFF;
+            &:after, &:before {
+                position: absolute;
+                top: 10px;
+                left: 20px;
+                content: ' ';
+                height: 20px;
+                width: 2px;
+                background-color: #202b35;
+            }
+            &:before {
+                transform: rotate(45deg);
+            }
+            &:after {
+                transform: rotate(-45deg);
+            }
+        }
+    }
+
+    .drop-down {
+        width: 100%;
+        h1 {
+            text-align: center;
+            font-weight: 300;
+            font-size: 34px;
+            padding-bottom: 20px;
+            color: #dedede;
+        }
+        /deep/ .drop-zone {
+            width: 350px;
+            height: calc(~"100vh - 260px");
+            border: 1px dashed #00aeef;
+            background-color: #F5FCFE;
+            border-radius: 5px;
+            text-transform: none;
+
+            .content {
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                flex-flow: column;
+            }
+            p {
+                color: #333333;
+                padding: 10px 0px;
+                font-weight: 500;
+                margin: 0px;
+            }
+        }
+        p.alter-text {
+            position: relative;
+            text-align: center;
+            input {
+                cursor: pointer;
+                opacity: 0;
+                left: -100px;
+                width: 300px;
+                position: absolute;
+            }
+        }
+    }
+
+    .uploading {
+        display: none;
+    }
+
+    mat-dialog-content {
+        max-height: 100%!important;
+        min-height: 300px;
+        padding-left: 30px;
+    }
+  }

@@ -131,7 +131,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             if (this.rightPanelSetting.id == RP_USER_INFO_ID)
                 this.rightPanelSetting.opened = Boolean(userId);
         });
-        _contactsService.invalidateSubscribe(() => this.invalidate());
+        _contactsService.invalidateSubscribe((area) => { this.invalidate(area) });
         _contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
     }
 
@@ -220,8 +220,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.storeInitialData();
     }
 
-    invalidate() {
-        this.loadData(this.params);
+    invalidate(area = undefined) {
+        !area && this.loadData(this.params);
     }
 
     loadData(params) {
