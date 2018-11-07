@@ -12,6 +12,7 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppStore, PartnerTypesStoreSelectors, PartnerAssignedUsersStoreSelectors, LeadAssignedUsersStoreSelectors, CustomerAssignedUsersStoreSelectors } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroupType, ContactGroupStatus } from '@shared/AppEnums';
@@ -33,6 +34,8 @@ import { OperationsWidgetComponent } from './operations-widget.component';
 import { ContactsService } from './contacts.service';
 import { RP_DEFAULT_ID, RP_USER_INFO_ID } from './contacts.const';
 import { AppStoreService } from '@app/store/app-store.service';
+import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
+import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -40,7 +43,7 @@ import { AppStoreService } from '@app/store/app-store.service';
     host: {
         '(document:click)': 'closeEditDialogs($event)'
     },
-    providers: [ AppStoreService ]
+    providers: [ AppStoreService, DialogService ]
 })
 export class ContactsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
@@ -83,6 +86,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(injector: Injector,
                 private _dialog: MatDialog,
+                private _dialogService: DialogService,
                 private _cacheService: CacheService,
                 private _userService: UserServiceProxy,
                 private _contactGroupService: ContactGroupServiceProxy,
@@ -260,7 +264,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             let contactInfo$ = this._contactGroupService
                 .getContactGroupInfo(customerId);
 
-            if (leadId) 
+            if (leadId)
                 this.loadLeadsStages();
 
             this.customerType = partnerId ? ContactGroupType.Partner : ContactGroupType.Client;
@@ -301,7 +305,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             leadInfo$.pipe(finalize(() => {
                 this.finishLoading(true);
             })).subscribe(result => {
-                this.fillLeadDetails(result);                
+                this.fillLeadDetails(result);
             });
         }
     }
@@ -392,6 +396,25 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             confirmedCount,
             items.length
         );
+    }
+
+    showContactPersons(event) {
+        this._dialog.closeAll();
+        this._dialog.open(ContactPersonsDialogComponent, {
+            data: this.contactInfo,
+            hasBackdrop: false,
+            minWidth: 420,
+            position: this.getDialogPossition(event, -182, 89),
+            panelClass: ['related-contacts']
+        }).afterClosed().subscribe(result => {
+            if (result == 'addNewContact') this.addNewContact(event);
+            // this.onContactSelected(this.data.primaryContactInfo);
+        });
+        event.stopPropagation();
+    }
+
+    getDialogPossition(event, shiftX, shiftY) {
+        return this._dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
     }
 
     close(force = false) {
@@ -567,5 +590,19 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
         if (this.customerType == ContactGroupType.Client)
             return this._customerService;
+    }
+
+    addNewContact(event) {
+        this._dialog.closeAll();
+        this._dialog.open(CreateClientDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                refreshParent: () => {},
+                customerType: ContactGroupType.Client
+            }
+        }).afterClosed().subscribe(() => {});
+        event.stopPropagation();
     }
 }

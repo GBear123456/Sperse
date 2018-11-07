@@ -136,18 +136,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         event.stopPropagation();
     }
 
-    showContactPersons(event) {
-        this.dialog.closeAll();
-        this.dialog.open(ContactPersonsDialogComponent, {
-            data: this.data,
-            hasBackdrop: false,
-            position: this.getDialogPossition(event, 170)
-        }).afterClosed().subscribe(result => {
-            this.onContactSelected.emit(this.data.primaryContactInfo);
-        });
-        event.stopPropagation();
-    }
-
     showUploadPhotoDialog(event, isCompany = undefined) {
         this.dialog.closeAll();
         this.dialog.open(UploadPhotoDialogComponent, {
@@ -191,7 +179,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             };
     }
 
-    getJobTitleInplaceEditData() {        
+    getJobTitleInplaceEditData() {
         if (this.contactEmploymentInfo)
             return {
                 id: this.contactEmploymentInfo.id,
@@ -267,7 +255,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     addEntity(event?) {
         if (event && event.offsetX > 155)
             return this.addContextComponent
-                .instance.option('visible', true);        
+                .instance.option('visible', true);
 
         let dialogClass;
         if (this.addContextMenuItems[this.ADD_CONTACT_OPTION].selected)

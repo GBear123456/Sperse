@@ -682,25 +682,35 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         let data = this.categorization;
         if (data.categories) {
             let transactionCount = items || [];
-            let categories = [];
-            _.mapObject(data.categories, (item, key) => {
+            let categories = this.getChildCategories(data, transactionCount, null);
+            this.excelData = categories;
+        }
+    }
+
+    getChildCategories(data: GetCategoryTreeOutput, transactionCount, parentId) {
+        let categories = [];
+        _.mapObject(data.categories, (item, key) => {
+            if (item.parentId === parentId) {
                 let accType = data.accountingTypes[item.accountingTypeId];
-                let category = data.categories[item.parentId];
+                let parentCategory = data.categories[item.parentId];
                 let cashflowType = data.types[accType.typeId];
-                let hasParent = category ? true : false;
+                let hasParent = parentCategory ? true : false;
                 categories.push({
                     CashflowType: cashflowType ? cashflowType.name : null,
                     AccountingType: accType.name,
-                    Category: hasParent ? category.name : item.name,
-                    CategoryId: hasParent ? item.parentId : key,
-                    SubCategory: hasParent ? item.name : '',
-                    SubCategoryId: hasParent ? key : null,
+                    Category: item.name,
+                    CategoryId: key,
+                    ParentCategory: hasParent ? parentCategory.name : '',
+                    ParentCategoryId: item.parentId || null,
                     TransactionCount: transactionCount[parseInt(key)] || null,
                     COAID: item.coAID
                 });
-            });
-            this.excelData = categories;
-        }
+                let childCategories = this.getChildCategories(data, transactionCount, parseInt(key));
+                if (childCategories.length)
+                    categories = categories.concat(childCategories);
+            }
+        });
+        return categories;
     }
 
     refreshTransactionsCountDataSource() {

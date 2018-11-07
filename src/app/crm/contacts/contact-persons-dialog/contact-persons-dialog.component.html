@@ -1,7 +1,15 @@
-<h5 class="dialog-title">{{l('RelatedOrSimilarContacts')}}</h5>
+<header>
+    <h5 class="dialog-title">
+        {{l('RelatedContacts')}}
+        <a (click)="addNewContact()" class="float-right add-new-contact">{{l('AddRelatedContact')}}</a>
+    </h5>
+    <div class="search-wrapper clearfix">
+        <input type="text" id="search-related-contacts" class="search-related-contacts" placeholder="Search contacts..." (keyup)="filterList($event)">
+    </div>
+</header>
 <mat-dialog-content>
-    <div class="contact-persons-container">
-        <div class="contact-person-info" *ngFor="let contactPerson of contactPersonsFiltered" (click)='selectContactPerson(contactPerson)'>
+    <ul class="contact-persons-container" id="related-contact-list">
+        <li class="contact-person-info" [class.odd]="odd" *ngFor="let contactPerson of contactPersonsFiltered; let odd = odd" (click)='selectContactPerson(contactPerson)'>
             <div class="avatar">
                 <img src="{{ getPhoto(contactPerson?.primaryPhoto?.thumbnail )}}" alt="{{l('AltPersonPhoto')}}">
             </div>
@@ -9,22 +17,18 @@
                 <div class="full-name">
                     <h1 *ngIf="contactPerson?.fullName">{{ contactPerson?.fullName }}</h1>
                     <h1 *ngIf="!contactPerson?.fullName" class="no-name">{{ l('ClientNoName') }}</h1>
-                    <div class="person-info-actions">
-                        <a class="action-link action-link-favorite"></a>
-                        <a class="action-link action-link-edit"></a>
-                    </div>
                 </div>
-                <div class="person-title">
+                <div class="job-title">
                     <h6>{{contactPerson?.jobTitle}}</h6>
-                    <!-- <div class="rating">
-                        <mat-progress-bar ng-reflect-color="#2fb8f0" color="#2fb8f0" value="{{ person.rating * 10}}"></mat-progress-bar>
-                        <span class="rating_int">{{person.rating}}/10</span>
-                    </div> -->
                 </div>
-                <div class="organization-name">
-                    <h5 *ngIf="data?.organizationContactInfo">{{data?.organizationContactInfo?.fullName}}</h5>
+                <div class="rating">
+                    <mat-progress-bar ng-reflect-color="#2fb8f0" color="#2fb8f0" value="{{ data.ratingId * 10}}"></mat-progress-bar>
+                    <span class="rating_int">{{data.ratingId}}/10</span>
                 </div>
             </div>
-        </div>
-    </div>
+            <div class="person-info-actions">
+                <a class="action-link action-link-edit"></a>
+            </div>
+        </li>
+    </ul>
 </mat-dialog-content>

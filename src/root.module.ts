@@ -115,7 +115,7 @@ export function getCurrentLanguage(): string {
 
 export function getBaseHref(platformLocation: PlatformLocation): string {
     let baseUrl = document.head.getElementsByTagName('base')[0].href;  //platformLocation.getBaseHrefFromDOM();
-    return (/http[s]{0,1}:\/\//g).test(baseUrl) ? baseUrl: getDocumentOrigin() + baseUrl;
+    return (/http[s]{0,1}:\/\//g).test(baseUrl) ? baseUrl : getDocumentOrigin() + baseUrl;
 }
 
 function handleLogoutRequest(authService: AppAuthService) {

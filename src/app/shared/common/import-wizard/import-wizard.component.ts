@@ -69,7 +69,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
     private reviewGroups: any = [];
     private validateFieldList: string[] = ['email', 'phone', 'url'];
     private invalidRowKeys: any = {};
-    private similarFieldsIndex: any = {};    
+    private similarFieldsIndex: any = {};
 
     readonly UPLOAD_STEP_INDEX = 0;
     readonly MAPPING_STEP_INDEX = 1;
@@ -153,7 +153,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         if (this.stepper.selectedIndex == this.UPLOAD_STEP_INDEX) {
             this.uploadFile.controls.valid.updateValueAndValidity();
             if (this.uploadFile.valid)
-                this.buildMappingDataSource().then(() => this.stepper.next());                
+                this.buildMappingDataSource().then(() => this.stepper.next());
             else
                 this.message.error(this.l('ChooseCorrectCSV'));
         } else if (this.stepper.selectedIndex == this.MAPPING_STEP_INDEX) {
@@ -182,7 +182,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
                                     rowData = _.clone(row);
                                     this.invalidRowKeys[row.uniqueIdent].forEach((field) => {
                                         rowData[field] = undefined;
-                                    });                                    
+                                    });
                                 }
                                 return rowData;
                             }), dialogData.importAll);
@@ -221,7 +221,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
 
         let data = rows || this.reviewGrid.instance.getSelectedRowsData();
         this.onComplete.emit({
-            fields: this.fileHeaderWasGenerated ? undefined:
+            fields: this.fileHeaderWasGenerated ? undefined :
                 this.getMappedFields().map((entity) => {
                     return ImportFieldInfoDto.fromJS({
                         inputFieldName: entity.sourceField,
@@ -229,14 +229,14 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
                     });
                 }
             ),
-            records: data.length && data || this.reviewDataSource, 
+            records: data.length && data || this.reviewDataSource,
             importAll: importAll,
         });
     }
 
     showFinishStep() {
-        this.stepper.selectedIndex = 
-            this.selectedStepIndex = 
+        this.stepper.selectedIndex =
+            this.selectedStepIndex =
                 this.FINISH_STEP_INDEX;
     }
 
@@ -474,21 +474,21 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
             if (this.fileData && this.fileData.data && this.fileData.data.length) {
                 this.checkFileHeaderAvailability();
                 let createDataSourceInternal = (mappingSuggestions = []) => {
-                    let noNameCount = 0, 
+                    let noNameCount = 0,
                         data = this.fileData.data[0].map((field, index) => {
                             let fieldId, suggestionField = _.findWhere(mappingSuggestions, {inputFieldName: field});
                             return {
                                 id: index,
                                 sourceField: field || this.l('NoName', [++noNameCount]),
                                 sampleValue: this.lookForValueExample(index),
-                                mappedField: field ? (this.lookupFields.every((item) => {                                      
-                                    let isSameField = suggestionField ? suggestionField.outputFieldName == item.id: 
+                                mappedField: field ? (this.lookupFields.every((item) => {
+                                    let isSameField = suggestionField ? suggestionField.outputFieldName == item.id :
                                         (item.id.split(ImportWizardComponent.FieldSeparator).pop().toLowerCase()
                                             .indexOf(field.replace(/\s|_/g, '').toLowerCase()) >= 0);
                                     if (isSameField)
                                         fieldId = item.id;
                                     return !isSameField;
-                                }) ? '' : fieldId): undefined
+                                }) ? '' : fieldId) : undefined
                             };
                         });
 
@@ -514,8 +514,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
                 else this.getColumnsMappingSuggestions((res) => {
                     createDataSourceInternal(res);
                 });
-                
-            } else 
+
+            } else
                 resolve();
         });
     }
@@ -600,8 +600,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
                     $event.errorText = this.l('FieldMapError', [row.sourceField]);
                 }
             });
-        }
-        else
+        } else
             $event.component.deselectRows([$event.key]);
 
         if ($event.isValid)
@@ -682,7 +681,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
             this.checkSimilarFields.forEach((list, index) => {
                 let parts = list.split(':'),
                     insideIndex = parts.indexOf(column.dataField);
-    
+
                 if (insideIndex >= 0)
                     column.visibleIndex = index + insideIndex;
             });
@@ -703,11 +702,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
     validateRowFields(data) {
         this.validateFieldList.forEach((fld) => {
             Object.keys(data).forEach((field) => {
-                if (field.toLowerCase().includes(fld) && 
+                if (field.toLowerCase().includes(fld) &&
                     !this.checkFieldValid(fld, {value: data[field]})
                 )
                     this.addInvalidField(data.uniqueIdent, field);
-            })
+            });
         });
     }
 
