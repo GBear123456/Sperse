@@ -27,8 +27,10 @@ import {
     RenamePartnerTypeInput
 } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
-import { getLoaded } from './selectors';
+import { getLoadedTime } from './selectors';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { StoreHelper } from '@root/store/store.helper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class PartnerTypesStoreEffects {
@@ -43,10 +45,10 @@ export class PartnerTypesStoreEffects {
         ofType<partnerTypesActions.LoadRequestAction>(partnerTypesActions.ActionTypes.LOAD_REQUEST),
         filter(() => this.permissionCheckerService.isGranted('Pages.CRM.Partners') ||
                              this.permissionCheckerService.isGranted('Pages.Administration.Users')),
-        withLatestFrom(this.store$.pipe(select(getLoaded))),
-        exhaustMap(([action, loaded]) => {
+        withLatestFrom(this.store$.pipe(select(getLoadedTime))),
+        exhaustMap(([action, loadedTime]) => {
 
-            if (loaded) {
+            if (StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {
                 return empty();
             }
 

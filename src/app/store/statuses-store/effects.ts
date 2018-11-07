@@ -11,7 +11,9 @@ import { catchError, exhaustMap, map, startWith, switchMap, withLatestFrom } fro
 import * as statusesActions from './actions';
 import { ContactGroupServiceProxy, ContactGroupStatusDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
-import { getLoaded } from './selectors';
+import { getLoadedTime } from './selectors';
+import { StoreHelper } from '@root/store/store.helper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class StatusesStoreEffects {
@@ -22,10 +24,10 @@ export class StatusesStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<statusesActions.LoadRequestAction>(statusesActions.ActionTypes.LOAD_REQUEST),
-        withLatestFrom(this.store$.pipe(select(getLoaded))),
-        exhaustMap(([action, loaded]) => {
+        withLatestFrom(this.store$.pipe(select(getLoadedTime))),
+        exhaustMap(([action, loadedTime]) => {
 
-            if (loaded) {
+            if (StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {
                 return empty();
             }
 

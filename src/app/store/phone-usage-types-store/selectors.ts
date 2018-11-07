@@ -8,7 +8,7 @@ export const getPhoneUsageTypes = createSelector(
     (state: State) => state.phoneUsageTypes
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getPhoneUsageTypesState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );

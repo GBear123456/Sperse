@@ -15,7 +15,9 @@ import {
 } from 'shared/service-proxies/service-proxies';
 import * as tagsActions from './actions';
 import { State } from './state';
-import { getLoaded } from './selectors';
+import { getLoadedTime } from './selectors';
+import { AppConsts } from '@shared/AppConsts';
+import { StoreHelper } from '@root/store/store.helper';
 
 @Injectable()
 export class TagsStoreEffects {
@@ -28,10 +30,10 @@ export class TagsStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<tagsActions.LoadRequestAction>(tagsActions.ActionTypes.LOAD_REQUEST),
-        withLatestFrom(this.store$.pipe(select(getLoaded))),
-        exhaustMap(([action, loaded]) => {
+        withLatestFrom(this.store$.pipe(select(getLoadedTime))),
+        exhaustMap(([action, loadedTime]) => {
 
-            if (loaded) {
+            if (StoreHelper.dataLoadingIsNotNeeded(loadedTime)) {
                 return empty();
             }
 

@@ -8,7 +8,7 @@ export const getOrganizationTypes = createSelector(
     (state: State) => state.organizationTypes
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getOrganizationTypesState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );

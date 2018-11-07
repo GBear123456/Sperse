@@ -11,7 +11,9 @@ import { catchError, exhaustMap, map, startWith, switchMap, withLatestFrom } fro
 import * as organizationTypesActions from './actions';
 import { DictionaryServiceProxy, OrganizationTypeDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
-import { getLoaded } from './selectors';
+import { getLoadedTime } from './selectors';
+import { StoreHelper } from '@root/store/store.helper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class OrganizationTypeEffects {
@@ -22,17 +24,17 @@ export class OrganizationTypeEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<organizationTypesActions.LoadRequestAction>(organizationTypesActions.ActionTypes.LOAD_REQUEST),
-        withLatestFrom(this.store$.pipe(select(getLoaded))),
-        exhaustMap(([action, loaded]) => {
+        withLatestFrom(this.store$.pipe(select(getLoadedTime))),
+        exhaustMap(([action, loadedTime]) => {
 
-            if (loaded) {
+            if (StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {
                 return empty();
             }
 
             return this.dictionaryService.getOrganizationTypes()
                 .pipe(
                     map((organizationTypes: OrganizationTypeDto[]) => {
-                    return new organizationTypesActions.LoadSuccessAction(organizationTypes);
+                        return new organizationTypesActions.LoadSuccessAction(organizationTypes);
                     }),
                     catchError(err => {
                         return of(new organizationTypesActions.LoadFailureAction(err));

@@ -8,7 +8,7 @@ export const getStars = createSelector(
     (state: State) => state.stars
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getStarsState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );

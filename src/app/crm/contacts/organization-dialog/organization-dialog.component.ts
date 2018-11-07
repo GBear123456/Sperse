@@ -73,7 +73,7 @@ export class OrganizationDialogComponent extends AppComponentBase {
                         data: this.organizationTypesSelectBoxModel,
                         onChange: (value) => {
                             if (value !== this.data.organization.typeId) {
-                                let item = _.find(this.organizationTypes, item => item.id === value)
+                                let item = _.find(this.organizationTypes, item => item.id === value);
                                 item && this.updateValue(item.id, 'typeId');
                             }
                         }
@@ -140,7 +140,7 @@ export class OrganizationDialogComponent extends AppComponentBase {
 
                 this.organizationTypesSelectBoxModel.options = this.organizationTypes;
                 var item = _.find(this.organizationTypes, item => item.id === this.data.organization['typeId']);
-                this.organizationTypesSelectBoxModel.value = item ? item.id : null; 
+                this.organizationTypesSelectBoxModel.value = item ? item.id : null;
             });
     }
 
@@ -219,7 +219,7 @@ export class OrganizationDialogComponent extends AppComponentBase {
             this.data.organization['sizeTo'] = toValue;
         } else
             this.data.organization[fieldName] = value;
-        
+
         this._orgContactService.updateOrganizationInfo(
             UpdateOrganizationInfoInput.fromJS(
                 _.extend({id: this.data.id}, this.data.organization))

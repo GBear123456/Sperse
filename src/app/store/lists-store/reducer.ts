@@ -9,7 +9,7 @@ export function listsReducer(state: State = initialState, action) {
                 ...state,
                 isLoading: true,
                 error: null,
-                loaded: reload ? false : state.loaded
+                loadedTime: reload ? null : state.loadedTime
             };
         }
         case ActionTypes.LOAD_SUCCESS: {
@@ -18,7 +18,7 @@ export function listsReducer(state: State = initialState, action) {
                 lists: action.payload,
                 isLoading: false,
                 error: null,
-                loaded: true
+                loadedTime: new Date().getTime()
             };
         }
         case ActionTypes.LOAD_FAILURE: {

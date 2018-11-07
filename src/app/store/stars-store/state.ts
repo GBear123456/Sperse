@@ -9,12 +9,12 @@ export interface State {
     stars: ContactGroupStarInfoDto[];
     isLoading: boolean;
     error: string;
-    loaded: boolean;
+    loadedTime: number;
 }
 
 export const initialState: State = {
     stars: null,
     isLoading: false,
     error: null,
-    loaded: false
+    loadedTime: null
 };

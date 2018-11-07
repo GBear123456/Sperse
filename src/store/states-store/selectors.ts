@@ -10,7 +10,10 @@ export const getStates = createSelector(
 
 export const getState = createSelector(
     getStates,
-    (states, props) => {
-        return states[props.countryCode];
-    }
+    (states, props) => states[props.countryCode] && states[props.countryCode].items
+);
+
+export const getLoadedTime = createSelector(
+    getStates,
+    (states, props) => states[props.countryCode] && states[props.countryCode].loadedTime
 );

@@ -8,7 +8,7 @@ export const getCountries = createSelector(
     (state: State) => state.countries
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getCountriesState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );
