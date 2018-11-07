@@ -32,7 +32,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.dialog.open(UploadPhotoDialogComponent, {
             data: {
                 source: this.data['photo'],
-                maxSizeBytes: 1048576
+                maxSizeBytes: 5242880
             },
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
