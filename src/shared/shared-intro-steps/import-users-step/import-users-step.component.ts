@@ -7,6 +7,7 @@ import { Component, Injector, Input, OnInit } from '@angular/core';
 import {
     InviteUserInput,
     InviteUserInputModuleType,
+    ModuleType,
     RoleListDto,
     RoleServiceProxy,
     TenantHostType,
@@ -25,6 +26,7 @@ import * as nameParser from 'parse-full-name';
 export class ImportUsersStepComponent extends AppComponentBase implements OnInit {
     @Input() showImportUsersStep: boolean;
     @Input() maxAvailableUserCount: number;
+    @Input() moduleType: ModuleType;
     importUsers: ImportUserData[] = [];
     importValidators: any[] = [];
     roles: RoleListDto[] = [];
@@ -39,7 +41,7 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
     }
 
     ngOnInit() {
-        this._roleService.getRoles(undefined).subscribe(result => {
+        this._roleService.getRoles(undefined, this.moduleType).subscribe(result => {
             this.roles = result.items;
         });
         this.setImportUsers();
@@ -52,7 +54,7 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
         }
     }
 
-    submitInviteUsers(moduleType: InviteUserInputModuleType) {
+    submitInviteUsers() {
         let users: InviteUserInput[] = [];
         this.importUsers.forEach(v => {
             if (v.email) {
@@ -63,7 +65,7 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
                     surname: parsedName.last,
                     assignedRoleNames: v.roleNames,
                     tenantHostType: TenantHostType.PlatformApp,
-                    moduleType: moduleType
+                    moduleType: InviteUserInputModuleType[this.moduleType]
                 }));
             }
         });
