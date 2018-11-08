@@ -4,12 +4,12 @@ export interface State {
     partnerTypes: PartnerTypeDto[];
     isLoading: boolean;
     error: string;
-    loaded: boolean;
+    loadedTime: number;
 }
 
 export const initialState: State = {
     partnerTypes: null,
     isLoading: false,
     error: null,
-    loaded: false
+    loadedTime: null
 };

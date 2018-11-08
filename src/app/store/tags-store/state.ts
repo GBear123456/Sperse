@@ -9,12 +9,12 @@ export interface State {
     tags: ContactGroupTagInfoDto[];
     isLoading: boolean;
     error: string;
-    loaded: boolean;
+    loadedTime: number;
 }
 
 export const initialState: State = {
     tags: null,
     isLoading: false,
     error: null,
-    loaded: false
+    loadedTime: null
 };

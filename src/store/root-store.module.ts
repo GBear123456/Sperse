@@ -12,6 +12,7 @@ import { StatesStoreModule } from './states-store';
 
 /** For storing some entities in local storage */
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
+    const tenantSpecificFeatures = ['pipelines', 'stars', 'partnerTypes'];
     return localStorageSync({
         /** entities keys for storing */
         keys: [
@@ -20,10 +21,17 @@ export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionRedu
             'contactLinkTypes',
             'emailUsageTypes',
             'states',
-            'phoneUsageTypes'
+            'phoneUsageTypes',
+            'pipelines',
+            'stars',
+            'ratings',
+            'statuses',
+            'partnerTypes',
+            'organizationTypes'
         ],
         /** to load entities states from storage instead of their initial state */
-        rehydrate: true
+        rehydrate: true,
+        storageKeySerializer: (key: string) => tenantSpecificFeatures.indexOf(key) > -1 ? key + '_' + abp.session.tenantId : key
     })(reducer);
 }
 

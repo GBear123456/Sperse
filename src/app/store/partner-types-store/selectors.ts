@@ -5,12 +5,10 @@ export const getPartnerTypesState = createFeatureSelector<State>('partnerTypes')
 
 export const getPartnerTypes = createSelector(
     getPartnerTypesState,
-    (state: State) => {
-        return state.partnerTypes
-    }
+    (state: State) => state.partnerTypes
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getPartnerTypesState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );

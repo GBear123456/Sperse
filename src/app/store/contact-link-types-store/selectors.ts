@@ -8,7 +8,7 @@ export const getContactLinkTypes = createSelector(
     (state: State) => state.contactLinkTypes
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getContactLinkTypesState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );

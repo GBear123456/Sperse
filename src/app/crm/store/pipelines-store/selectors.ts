@@ -16,9 +16,9 @@ export const getPipelines = createSelector(
     (state: State) => state.pipelines
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getPipelinesState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );
 
 /** @todo change with using memoization (test on orders page where component destroy) */

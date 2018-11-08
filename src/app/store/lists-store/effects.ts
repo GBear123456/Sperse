@@ -15,7 +15,8 @@ import {
 } from 'shared/service-proxies/service-proxies';
 import * as listsActions from './actions';
 import { State } from './state';
-import { getLoaded } from './selectors';
+import { getLoadedTime } from './selectors';
+import { StoreHelper } from '@root/store/store.helper';
 
 @Injectable()
 export class ListsStoreEffects {
@@ -28,10 +29,10 @@ export class ListsStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<listsActions.LoadRequestAction>(listsActions.ActionTypes.LOAD_REQUEST),
-        withLatestFrom(this.store$.pipe(select(getLoaded))),
-        exhaustMap(([action, loaded]) => {
+        withLatestFrom(this.store$.pipe(select(getLoadedTime))),
+        exhaustMap(([action, loadedTime]) => {
 
-            if (loaded) {
+            if (StoreHelper.dataLoadingIsNotNeeded(loadedTime)) {
                 return empty();
             }
 

@@ -9,10 +9,12 @@ import { catchError, exhaustMap, map, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import * as contactLinkTypesActions from '@app/store/contact-link-types-store/actions';
-import { ContactLinkTypeDto, ContactLinkServiceProxy } from 'shared/service-proxies/service-proxies';
+import { ContactLinkServiceProxy } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
-import { getLoaded } from './selectors';
+import { getLoadedTime } from './selectors';
 import { ListResultDtoOfContactLinkTypeDto } from '@shared/service-proxies/service-proxies';
+import { StoreHelper } from '@root/store/store.helper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class ContactLinkTypesStoreEffects {
@@ -23,10 +25,10 @@ export class ContactLinkTypesStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<contactLinkTypesActions.LoadRequestAction>(contactLinkTypesActions.ActionTypes.LOAD_REQUEST),
-        withLatestFrom(this.store$.pipe(select(getLoaded))),
-        exhaustMap(([action, loaded]) => {
+        withLatestFrom(this.store$.pipe(select(getLoadedTime))),
+        exhaustMap(([action, loadedTime]) => {
 
-            if (loaded) {
+            if (StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {
                 return empty();
             }
 

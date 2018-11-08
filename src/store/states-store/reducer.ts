@@ -8,7 +8,10 @@ export function statesReducer(state: State = initialState, action): State {
                 ...state,
                 entities: {
                     ...state.entities,
-                    ...{ [action.payload.countryCode]: action.payload.states }
+                    ...{ [action.payload.countryCode]: {
+                        items: action.payload.states,
+                        loadedTime: new Date().getTime()
+                    }}
                 }
             };
         }

@@ -8,7 +8,7 @@ export const getAddressUsageTypes = createSelector(
     (state: State) => state.addressUsageTypes
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getAddressUsageTypesState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );

@@ -5,7 +5,7 @@ export interface State {
     contactLinkTypes: ContactLinkTypeDto[];
     isLoading: boolean;
     error: string;
-    loaded: boolean;
+    loadedTime: number;
 }
 
 export const initialState: State = {
@@ -17,5 +17,5 @@ export const initialState: State = {
     ],
     isLoading: false,
     error: null,
-    loaded: false
+    loadedTime: null
 };
