@@ -2,6 +2,9 @@ import { Component, Injector, OnInit, ViewEncapsulation } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
+import { PaymentWizardComponent } from '../../common/payment-wizard/payment-wizard.component';
+import { AppService } from '@app/app.service';
+import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: './header-notifications.component.html',
@@ -14,10 +17,23 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     notifications: IFormattedUserNotification[] = [];
     unreadNotificationCount = 0;
 
+    shownLoginInfo: { fullName, email, tenantName?};
+    tenancyName = '';
+    userName = '';
+
+    subscriptionInfoTitle: string;
+    subscriptionInfoText: string;
+
+    profileThumbnailId: string;
+    defaultLogo = './assets/common/images/app-logo-on-' + this.ui.getAsideSkin() + '.png';
+    subscriptionExpiringDayCount = null;
+
     constructor(
         injector: Injector,
+        private _dialog: MatDialog,
         private _notificationService: NotificationServiceProxy,
-        private _userNotificationHelper: UserNotificationHelper
+        private _userNotificationHelper: UserNotificationHelper,
+        private _appService: AppService,
     ) {
         super(injector);
     }
@@ -25,6 +41,47 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     ngOnInit(): void {
         this.loadNotifications();
         this.registerToEvents();
+        this.getCurrentLoginInformations();
+        this._appService.moduleSubscriptions$.subscribe((res) => {
+            this.getSubscriptionInfo();
+        });
+        this.getSubscriptionInfo();
+    }
+
+    getSubscriptionInfo() {
+        this.subscriptionExpiringDayCount = -1;
+        let module = this._appService.getModule().toUpperCase();
+        if (this._appService.checkSubscriptionIsFree(module)) {
+            this.subscriptionInfoTitle = this.l("YouAreUsingTheFreePlan", module);
+            this.subscriptionInfoText = this.l("UpgradeToUnlockAllOurFeatures");
+        }
+        else if (this._appService.checkModuleExpired()) {
+            this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
+            this.subscriptionInfoText = this.l("ChoosePlanToContinueService");
+        } else if (this.subscriptionInGracePeriod()) {
+            let dayCount = this._appService.getGracePeriodDayCount();
+            this.subscriptionInfoTitle = this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
+            this.subscriptionInfoText = this.l("GracePeriodNotification", (dayCount ?
+                (this.l('PeriodDescription', dayCount,
+                    this.l(dayCount === 1 ? 'Tomorrow' : 'Periods_Day_plural'))
+                ) : this.l('Today')).toLowerCase());
+        } else {
+            let dayCount = this._appService.getSubscriptionExpiringDayCount();
+            if (!dayCount && dayCount !== 0) {
+                this.subscriptionExpiringDayCount = null;
+            } else {
+                this.subscriptionInfoText = this.l("ChoosePlanThatsRightForYou");
+                this.subscriptionInfoTitle = this.l("YourTrialWillExpire", module) + " "
+                    + (!dayCount ? this.l("Today") : (dayCount === 1 ? this.l("Tomorrow") : ("in " + dayCount.toString() + " " + this.l("Periods_Day_plural")))).toLowerCase()
+                    + "!";
+            }
+        }
+        return this.subscriptionInfoTitle;
+    }
+
+    getCurrentLoginInformations(): void {
+        this.shownLoginInfo = this.appSession.getShownLoginInfo();
+        this.profileThumbnailId = this.appSession.user.profileThumbnailId;
     }
 
     hideDropDown() {
@@ -80,5 +137,23 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         if (url) {
             location.href = url;
         }
+    }
+
+    subscriptionStatusBarVisible(): boolean {
+        return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted("Pages.Administration.Tenant.SubscriptionManagement");
+    }
+    
+    subscriptionInGracePeriod() {
+        return this._appService.subscriptionInGracePeriod();
+    }
+
+    openPaymentWizardDialog() {
+        this._dialog.open(PaymentWizardComponent, {
+            height: '655px',
+            width: '980px',
+            id: 'payment-wizard',
+            panelClass: ['payment-wizard', 'setup'],
+            data: { module: this._appService.getModule().toUpperCase() }
+        }).afterClosed().subscribe(result => { });
     }
 }

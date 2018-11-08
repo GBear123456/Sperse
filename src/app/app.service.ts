@@ -40,7 +40,7 @@ export class AppService extends AppServiceBase {
     public contactInfo: any;
 
     private expiredModule: Subject<string>;
-    private moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
+    public moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
     private moduleSubscriptions: ModuleSubscriptionInfoDto[];
     public subscriptionIsFree$: Observable<boolean>;
     private permission: PermissionCheckerService;
@@ -111,6 +111,11 @@ export class AppService extends AppServiceBase {
         if (moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
             return _.find(moduleSubscriptions, {module: module})
                 || {module: module, endDate: moment(new Date(0))};
+    }
+
+    checkModuleSubscriptionEnabled() {
+        let module = this.getModule();
+        return ModuleSubscriptionInfoDtoModule[module.toUpperCase()] ? true : false;
     }
 
     subscriptionStatusBarIsHidden(): boolean {

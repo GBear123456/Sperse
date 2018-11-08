@@ -3,3 +3,72 @@
         position: static;
     }
 }
+
+.notification-header {
+    width: 460px !important;
+
+    /deep/.notification-drop-down-arrow {
+        color: #43383b !important;
+    }
+
+    .user-info {
+        color: #fff !important;
+        font-size: 1.1rem;
+        font-weight: 400;
+        display: block;
+        word-break: break-word;
+        width: 100%;
+
+        .fullName {
+            font-weight: 600;
+            font-size: 18px;
+            text-transform: capitalize;
+        }
+
+        .email {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: left;
+            height: 20px;
+        }
+
+        .m-card-user__pic {
+            float: right;
+        }
+    }
+
+    .subscription-info {
+        color: #fff !important;
+        display: block;
+        word-break: break-word;
+        width: 100%;
+
+        .upgrade-button {
+            font-size: 1.1rem;
+            background-color: #f57c02;
+            width: 100px;
+            height: 100px;
+            border-radius: 50px;
+            float: right;
+            text-align: center;
+            padding-top: 28px;
+            cursor: pointer;
+        }
+
+        .details {
+            float: left;
+            width: 340px;
+            font-size: 1.3rem;
+            padding-top: 25px;
+
+            .vertical-align {
+                vertical-align: middle;
+            }
+
+            .title {
+                font-weight: 600;
+            }
+        }
+    }
+}
