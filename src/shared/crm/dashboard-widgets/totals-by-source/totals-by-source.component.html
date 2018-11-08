@@ -1,19 +1,23 @@
 <div class="wrapper">
+    <h2 class="title">{{ l('TotalsByCompanySize') }}</h2>
     <div *ngIf="totalCount">
-        <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
-        <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCount}}</span>
-        <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>
+        <div class="totalsNumbers" [ngStyle]="{top: totalNumbersTop}">
+            <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
+            <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCount}}</span>
+            <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>
+        </div>
         <div class="round-progress" *ngIf="totalsData && totalsData.length">
-            <dx-pie-chart [dataSource]="totalsData" 
-                [type]="'doughnut'" 
+            <dx-pie-chart [dataSource]="totalsData"
+                [type]="'doughnut'"
                 [innerRadius]="0.9"
                 [customizePoint]="customizePoint"
                 (onPointHoverChanged)="onPointHoverChanged($event)"
                 (onPointSelectionChanged)="onPointSelectionChanged($event)"
-                [title]="{text: 'Totals by Company Size', font: {color: '#212c36', size: 18, weight: '700', family: 'Montserrat'}}"
-                [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}">
+                [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}"
+                (onDrawn)="onDrawn($event)">
                 <dxo-common-series-settings argumentField="companySizeRange"></dxo-common-series-settings>
                 <dxi-series valueField="customerCount"></dxi-series>
+                <dxo-animation [enabled]="false"></dxo-animation>
             </dx-pie-chart>
         </div>
     </div>

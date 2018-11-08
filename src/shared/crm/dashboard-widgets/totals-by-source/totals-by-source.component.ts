@@ -29,6 +29,7 @@ export class TotalsBySourceComponent extends AppComponentBase {
     rangeCount: number;
     rangeName: string;
     rangeColor: string;
+    totalNumbersTop: string;
 
     constructor(
         injector: Injector,
@@ -75,5 +76,17 @@ export class TotalsBySourceComponent extends AppComponentBase {
     render() {
         if (this.chartComponent)
             this.chartComponent.instance.render();
+    }
+
+    onDrawn(e) {
+        this.updatePieChartTopPositions(e);
+    }
+
+    private updatePieChartTopPositions(e) {
+        const componentTop = this.getElementRef().nativeElement.getBoundingClientRect().top;
+        const circleBoundingRect = e.component.getAllSeries()[0]._group.element.getBoundingClientRect();
+        const circleTop = circleBoundingRect.top;
+        const circleCenterY = (circleTop - componentTop) + circleBoundingRect.height / 2;
+        this.totalNumbersTop = circleCenterY - 55 + 'px';
     }
 }
