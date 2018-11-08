@@ -17,10 +17,6 @@ import { LoginAttemptsModalComponent } from './login-attempts-modal.component';
 import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
 import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component';
-import { PaymentWizardComponent } from '../common/payment-wizard/payment-wizard.component';
-
-import { MatDialog } from '@angular/material';
-import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './header.component.html',
@@ -62,8 +58,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _dialog: MatDialog,
-        private _appService: AppService,
         private _abpSessionService: AbpSessionService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
@@ -182,44 +176,5 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     get notificationEnabled(): boolean {
         return (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
-    }
-
-    subscriptionStatusBarVisible(): boolean {
-        return !this._appService.subscriptionStatusBarIsHidden();
-    }
-
-    hideSubscriptionStatusBar() {
-        this._appService.hideSubscriptionStatusBar();
-    }
-
-    subscriptionIsExpiringSoon() {
-        return this._appService.subscriptionIsExpiringSoon();
-    }
-
-    subscriptionInGracePeriod() {
-        return this._appService.subscriptionInGracePeriod();
-    }
-
-    getSubscriptionExpiringDayCount(gracePeriod): number {
-        return gracePeriod ? this._appService.getGracePeriodDayCount() :
-            this._appService.getSubscriptionExpiringDayCount();
-    }
-
-    getExpireNotification(localizationKey: string, grace = false): string {
-        let dayCount = this.getSubscriptionExpiringDayCount(grace);
-        return this.l(localizationKey, (dayCount ?
-            (this.l('PeriodDescription', dayCount,
-                this.l(dayCount > 1 ? 'Periods_Day_plural' : 'Periods_Day'))
-            ) : this.l('Today')).toLowerCase());
-    }
-
-    openPaymentWizardDialog() {
-        this._dialog.open(PaymentWizardComponent, {
-            height: '655px',
-            width: '980px',
-            id: 'payment-wizard',
-            panelClass: ['payment-wizard', 'setup'],
-            data: { module: this._appService.getModule().toUpperCase() }
-        }).afterClosed().subscribe(result => {});
     }
 }
