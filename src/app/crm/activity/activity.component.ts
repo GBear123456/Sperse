@@ -157,6 +157,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     getPeriodType() {
+        if (!this.currentView) {
+            return 'month';
+        }
+
         return this.currentView == 'agenda' ? 'day' : this.currentView;
     }
 
@@ -306,7 +310,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 }
             }
             else {
-                if (this.scheduleView != this.currentView)
+                if (!this.currentView)
+                    this.scheduleView = this.currentView = 'month';
+                else if (this.scheduleView != this.currentView)
                     this.scheduleView = this.currentView;
             }
 
@@ -315,9 +321,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     setPipelineDataSource(refresh: boolean = true) {
-        this.pipelineDataSource = {
+        let dataSource = {
             uri: this.dataSourceURI,
-            customFilter: { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] },
             requireTotalCount: true,
             store: {
                 key: 'Id',
@@ -331,6 +336,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 paginate: true
             }
         };
+        if (this.pipelineView)
+            dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] }
+
+        this.pipelineDataSource = dataSource;
 
         if (refresh)
             this.pipelineComponent.refresh();
@@ -435,14 +444,17 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     onViewChanged(view: string) {
-        this.currentView = view;
+        if (this.showPipeline && this.currentView == view)
+            this.currentView = null;
+        else
+            this.currentView = view;
 
         if (this.showPipeline) {
-            this.pipelineView = view;
+            this.pipelineView = this.currentView;
             this.setPipelineDataSource();
         }
         else {
-            this.scheduleView = view;
+            this.scheduleView = this.currentView;
         }
 
         this.initToolbarConfig();
