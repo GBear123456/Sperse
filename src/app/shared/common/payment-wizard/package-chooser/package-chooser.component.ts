@@ -135,7 +135,7 @@ export class PackageChooserComponent implements OnInit {
             concatAll(),
             map((packageConfig: PackageConfigDto) => packageConfig.editions),
             concatAll(),
-            map((edition: PackageEditionConfigDto) => +edition.features[this.module + '.MaxUserCount']),
+            map((edition: PackageEditionConfigDto) => edition.maxUserCount),
             max()
         );
     }
@@ -223,7 +223,7 @@ export class PackageChooserComponent implements OnInit {
             subtotal: 0,
             discount: 0,
             total: 0,
-            usersAmount: +this.freePackages[0].editions[0].features[this.module + '.MaxUserCount'],
+            usersAmount: +this.freePackages[0].editions[0].maxUserCount,
             selectedEditionId: this.freePackages[0].editions[0].id,
             selectedEditionName: this.freePackages[0].editions[0].name
         };
