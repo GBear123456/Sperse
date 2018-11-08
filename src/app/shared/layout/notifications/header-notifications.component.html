@@ -4,22 +4,50 @@
         <i class="flaticon-music-2" [attr.aria-label]="l('Notifications')"></i>
     </span>
 </a>
-<div class="m-dropdown__wrapper">
-    <span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust"></span>
+<div class="m-dropdown__wrapper notification-header">
+    <span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust notification-drop-down-arrow"></span>
     <div class="m-dropdown__inner">
-        <div class="m-dropdown__header m--align-center" [ngStyle]="{ 'background': 'url(' + appRootUrl() + 'assets/metronic/dist/html/' + ui.getTheme() + '/assets/demo/' + ui.getTheme() + '/media/img/misc/notification_bg.jpg)', 'background-size': 'cover'}">
-            <span class="m-dropdown__header-title">
-                {{unreadNotificationCount}} {{l("NewNotifications")}}
-            </span>
+        <div class="m-dropdown__header" style="background: linear-gradient(to right, #43383b 60%, gray); box-shadow: inset 2px 5px 12px 2px #43383b;">
+            <div class="row">
+                <div *ngIf="subscriptionStatusBarVisible()" class="subscription-info">
+                    <div class="details">
+                        <div class="vertical-align">
+                            <span class="title">{{subscriptionInfoTitle}}</span>
+                            <br />
+                            <span>{{subscriptionInfoText}}</span>
+                        </div>
+                    </div>
+                    <div class="upgrade-button" (click)="openPaymentWizardDialog()">
+                        <span class="">{{l("Upgrade").toUpperCase()}}</span>
+                        <br />
+                        <span class="">{{l("Today")}}</span>
+                    </div>
+                </div>
+                <div *ngIf="!subscriptionStatusBarVisible()" class="user-info">
+                    <div class="m-card-user m-card-user--skin-dark">
+                        <div class="m-card-user__details">
+                            <span class="tenantName">
+                                {{l("NotificationsFor")}}:
+                            </span> <br />
+                            <span class="fullName">
+                                {{shownLoginInfo.fullName}}
+                            </span>
+                        </div>
+                        <div class="m-card-user__pic">
+                            <img alt="" class="header-profile-picture m--img-rounded m--marginless m--img-centered" [src]="getProfilePictureUrl(profileThumbnailId)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="m-dropdown__body">
             <div class="m-dropdown__content">
                 <div class="row">
-                    <div class="text-left col-md-8">
-                        <a href="javascript:;" (click)="setAllNotificationsAsRead(); $event.preventDefault(); $event.stopPropagation();" *ngIf="unreadNotificationCount">{{l("SetAllAsRead")}}</a>
+                    <div class="text-left col-md-5">
+                        <a routerLink="notifications" (click)="hideDropDown()">{{l("SeeAllNotifications")}}</a>
                     </div>
-                    <div class="text-right col-md-4">
-                        <a (click)="openNotificationSettingsModal()" class="text-right" href="javascript:;">{{l("Settings")}}</a>
+                    <div class="text-right col-md-7">
+                        <a href="javascript:;" class="text-right" (click)="setAllNotificationsAsRead(); $event.preventDefault(); $event.stopPropagation();" *ngIf="unreadNotificationCount">{{l("SetAllAsRead")}}</a>
                     </div>
                 </div>
                 <hr />
@@ -41,11 +69,13 @@
                             </div>
                             <span *ngIf="!notifications.length" class="notification-empty-text">
                                 {{l("ThereIsNoNotification")}}
-                            </span>  
+                            </span>
                         </div>
                         <div *ngIf="notifications.length" class="m-nav__separator m-nav__separator--fit"></div>
                         <div *ngIf="notifications.length" class="external notifications-footer">
-                            <div class="text-center"><a routerLink="notifications" (click)="hideDropDown()">{{l("SeeAllNotifications")}}</a></div>
+                            <div class="text-left">
+                                <a (click)="openNotificationSettingsModal()" href="javascript:;">{{l("Preferences")}}</a>
+                            </div>
                         </div>
                     </div>
                 </div>
