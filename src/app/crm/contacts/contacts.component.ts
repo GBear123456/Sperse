@@ -432,7 +432,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     closeEditDialogs(event) {
         if (document.body.contains(event.target) && !this._dialog.getDialogById('permanent') &&
-            !event.target.closest('.mat-dialog-container, .dx-popup-wrapper')
+            !event.target.closest('.mat-dialog-container, .dx-popup-wrapper, .swal-modal')
         )
             this._dialog.closeAll();
     }

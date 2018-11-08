@@ -91,10 +91,97 @@
     }
 
     .uploading {
-        display: none;
+        border: solid 1px #e5e9ec;
+
+        .wrapper {
+            display: flex;
+            height: calc(~"100vh - 260px");
+            justify-content: baseline;
+            flex-flow: column;
+            align-items: center;
+            margin: 0px 25px;
+            img {
+                margin: 25px 0px;
+            }
+            h3 {
+                width: 100%;
+                font-size: 16px;
+                font-weight: 500;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.56;
+                letter-spacing: normal;
+                color: #424c56;
+                span {
+                    float: right;
+                    font-size: 14px;
+                    font-weight: 400;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.79;
+                    letter-spacing: normal;
+                    color: #677380;
+                }
+            }
+            .file-progress-wrapper {
+                width: 100%;
+                height: 28px;
+                margin-top: 14px;
+                background-color: #f3f7fa;
+                img {
+                    margin: 5px;
+                }                  
+                span {
+                    font-size: 13px;
+                    font-weight: 400;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 2.1;
+                    letter-spacing: 0.3px;
+                    color: #677380;
+                    &.cancel {
+                        cursor: pointer;
+                        float: right;
+                        width: 40px;
+                        height: 28px;
+                        position: relative;
+                        &:after, &:before {
+                            position: absolute;
+                            top: 6px;
+                            left: 20px;
+                            content: ' ';
+                            height: 14px;
+                            width: 1px;
+                            background-color: #e7326a;
+                        }
+                        &:before {
+                            transform: rotate(45deg);
+                        }
+                        &:after {
+                            transform: rotate(-45deg);
+                        }
+                    }
+                    &.completed {
+                        &:before {
+                            content: "\2713";
+                            color: #37d749;
+                            font-size: 20px;
+                            position: relative;
+                            left: 10px;
+                            bottom: 6px;
+                            font-weight: 500;
+                        }
+                        float: right;
+                        width: 40px;
+                        height: 28px;
+                    }
+                }
+            }
+        }
     }
 
     mat-dialog-content {
+        overflow: hidden;
         max-height: 100%!important;
         min-height: 300px;
         padding-left: 30px;

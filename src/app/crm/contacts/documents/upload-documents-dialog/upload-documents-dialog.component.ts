@@ -20,11 +20,9 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['upload-documents-dialog.less']
 })
 export class UploadDocumentsDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    @ViewChild('dropDown') dropDownElement: ElementRef;
-    @ViewChild('uploading') uploadingElement: ElementRef;
-
     public files = [];
     private slider: any;
+    private uploadSubscribers = [];
 
     uploadedCount = 0;
     totalCount    = 0; 
@@ -84,27 +82,29 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
             });
         });
     }
-
   
     close() {
         this.dialogRef.close();
     }
 
-    displayElement(element, visible = true) {
-        element.nativeElement.style.display = visible ? 'block': 'none';
+    getFileTypeByExt(fileName) {
+        let ext = fileName.split('.').pop();
+        if (['xdoc', 'doc', 'txt'].indexOf(ext) >= 0)
+            return 'doc';
+        return ext;
     }
 
     uploadFiles(files) {
         this.files = [];
         this.uploadedCount = 0;
+        this.uploadSubscribers = [];
         this.totalCount = files.length;
-        this.displayElement(this.dropDownElement, false);
-        this.displayElement(this.uploadingElement, true);
 
-        Array.prototype.forEach.call(files, (file) => {
+        Array.prototype.forEach.call(files, (file, index) => {
             let fileReader: FileReader = new FileReader();
             fileReader.onloadend = (loadEvent: any) => {
                 this.files.push({
+                    type: this.getFileTypeByExt(file.name),
                     name: file.name, 
                     progress: 0
                 });
@@ -112,38 +112,54 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
                     name: file.name,
                     size: file.size,
                     fileBase64: StringHelper.getBase64(loadEvent.target.result)
-                });
+                }, index);
             };
             fileReader.readAsDataURL(file);
         });
     }
 
-    updateUploadProgress(data) {
-        let elm = document.querySelector('file-drop .content');
-        if (elm && data.progress < 90 || data.progress > 95)
-            elm['style'].background = 'linear-gradient(to right, #e9f7fb ' + (data.progress++) + '%, #F8F7FC 0%)';
+    finishUploadProgress(index) {
+        this.files[index].progress = 100;
     }
 
-    uploadFile(input) {
-        let data = {progress: 0},
-            progressInterval = setInterval(
-                this.updateUploadProgress.bind(this, data),
+    updateUploadProgress(index) {
+        let file = this.files[index];
+        if (file && file.progress < 95)
+            file.progress++;
+    }
+
+    uploadFile(input, index) {
+        let progressInterval = setInterval(
+                this.updateUploadProgress.bind(this, index),
                 Math.round(input.size / 10000)
             );
-        this._documentService.upload(UploadDocumentInput.fromJS({
-            contactGroupId: this.data.contactId,
-            fileName: input.name,
-            size: input.size,
-            fileBase64: input.fileBase64
-        })).pipe(finalize(() => {
-            this.uploadedCount++;
-            clearInterval(progressInterval);
-            this.updateUploadProgress({progress: 100});
-            setTimeout(() => {
-                this.updateUploadProgress({progress: 0});
-            }, 5000);
-        })).subscribe(() => {
-            this._clientService.invalidate('documents');
-        });
+        this.uploadSubscribers.push(
+            this._documentService.upload(UploadDocumentInput.fromJS({
+                contactGroupId: this.data.contactId,
+                fileName: input.name,
+                size: input.size,
+                fileBase64: input.fileBase64
+            })).pipe(finalize(() => {
+                this.uploadedCount++;            
+                clearInterval(progressInterval);
+                this.finishUploadProgress(index);
+                if (this.uploadedCount >= this.totalCount) {
+                    this.totalCount = 0;
+                    this.uploadedCount = 0;
+                }                
+            })).subscribe(() => {
+                this._clientService.invalidate('documents');
+            })
+        );
+    }
+
+    cancelUpload(index) {
+        let file = this.files[index];
+        if (file && file.progress < 100 && this.uploadSubscribers[index]) {
+            this.uploadSubscribers[index].unsubscribe();
+            this.uploadSubscribers.splice(index, 1);
+            this.files.splice(index, 1);
+            this.totalCount = this.files.length;
+        }
     }
 }
