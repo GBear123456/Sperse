@@ -582,14 +582,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getProxyService = () => {
-        if (this.leadId || this.leadInfo)
-            return this._leadService;
-
         if (this.customerType == ContactGroupType.Partner)
             return this._partnerService;
 
         if (this.customerType == ContactGroupType.Client)
             return this._customerService;
+
+        if (this.leadId || this.leadInfo)
+            return this._leadService;
     }
 
     addNewContact(event) {
