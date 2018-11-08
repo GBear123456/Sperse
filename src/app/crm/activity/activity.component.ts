@@ -42,7 +42,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public activityTypes = CreateActivityDtoType;
     public selectedLeads: any = [];
     public currentDate = new Date();
+
     public currentView = 'month';
+    public pipelineView = this.currentView;
+    public scheduleView = this.currentView;
     public resources: any[] = [
         {
             fieldExpr: 'Type',
@@ -176,6 +179,64 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 areItemsDependent: true,
                 items: [
                     {
+                        name: 'Day',
+                        widget: 'dxButton',
+                        options: {
+                            text: 'Day',
+                            checkPressed: () => {
+                                return (this.currentView == 'day');
+                            }
+                        },
+                        action: () => {
+                            this.onViewChanged('day');
+                        }
+                    },
+                    {
+                        name: 'Week',
+                        widget: 'dxButton',
+                        options: {
+                            text: 'Week',
+                            checkPressed: () => {
+                                return (this.currentView == 'week');
+                            }
+                        },
+                        action: () => {
+                            this.onViewChanged('week');
+                        }
+                    },
+                    {
+                        name: 'Month',
+                        widget: 'dxButton',
+                        options: {
+                            text: 'Month',
+                            checkPressed: () => {
+                                return (this.currentView == 'month');
+                            }
+                        },
+                        action: () => {
+                            this.onViewChanged('month');
+                        }
+                    },
+                    {
+                        name: 'Agenda',
+                        widget: 'dxButton',
+                        options: {
+                            text: 'Agenda',
+                            checkPressed: () => {
+                                return (this.currentView == 'agenda');
+                            }
+                        },
+                        action: () => {
+                            this.onViewChanged('agenda');
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                areItemsDependent: true,
+                items: [
+                    {
                         name: 'pipeline',
                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
                         options: {
@@ -237,26 +298,42 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         let showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         if (this.showPipeline != showPipeline) {
             this.dataLayoutType = dataLayoutType;
-            if ((this.showPipeline = showPipeline) && !this.pipelineDataSource)
-                this.pipelineDataSource = {
-                    uri: this.dataSourceURI,
-//                    customFilter: {AssignedUserIds: {any: {Id: this.appSession.userId}}},
-                    requireTotalCount: true,
-                    store: {
-                        key: 'Id',
-                        type: 'odata',
-                        url: this.getODataUrl(this.dataSourceURI),
-                        version: AppConsts.ODataVersion,
-                        beforeSend: function (request) {
-                            request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        },
-                        deserializeDates: false,
-                        paginate: true
-                    }
-                };
+            this.showPipeline = showPipeline;
+            if (this.showPipeline) {
+                if (!this.pipelineDataSource || this.pipelineView != this.currentView) {
+                    this.pipelineView = this.currentView;
+                    this.setPipelineDataSource(!!this.pipelineDataSource);
+                }
+            }
+            else {
+                if (this.scheduleView != this.currentView)
+                    this.scheduleView = this.currentView;
+            }
 
             this.initToolbarConfig();
         }
+    }
+
+    setPipelineDataSource(refresh: boolean = true) {
+        this.pipelineDataSource = {
+            uri: this.dataSourceURI,
+            customFilter: { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] },
+            requireTotalCount: true,
+            store: {
+                key: 'Id',
+                type: 'odata',
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                },
+                deserializeDates: false,
+                paginate: true
+            }
+        };
+
+        if (refresh)
+            this.pipelineComponent.refresh();
     }
 
     showActivityDialog(appointment) {
@@ -355,5 +432,19 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             oldDateParts = event.oldData.EndDate.split(delimiter); 
             event.newData.EndDate = newDateParts.shift() + delimiter + oldDateParts.pop();
         }
+    }
+
+    onViewChanged(view: string) {
+        this.currentView = view;
+
+        if (this.showPipeline) {
+            this.pipelineView = view;
+            this.setPipelineDataSource();
+        }
+        else {
+            this.scheduleView = view;
+        }
+
+        this.initToolbarConfig();
     }
 }

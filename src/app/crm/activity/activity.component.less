@@ -77,12 +77,19 @@
 
     &.fullscreen {
         top: 0px !important;
+
         /deep/ dx-scheduler {
-            height: calc(~"100vh - 60px")!important;
+            height: calc(~"100vh - 60px") !important;
         }
     }
 
     /deep/ dx-scheduler {
+        .dx-scheduler-header {
+            .dx-scheduler-view-switcher{
+                display: none;
+            }
+        }
+
         .dx-loadpanel-content {
             display: none;
         }
