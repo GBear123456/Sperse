@@ -1,7 +1,7 @@
 :host {
     display: block;
     .wrapper {
-        width: 100%;        
+        width: 100%;
         text-align: center;
         .round-progress {
             width: 100%;
@@ -9,37 +9,38 @@
             max-width: 100%;
             display: inline-block;
         }
-    }
+        .title {
+            font-size: 18px;
+            font-family: Montserrat;
+            font-weight: 700;
+            fill: #212c36;
+            cursor: default;
+            line-height: 38px;
+        }
+        .totalsNumbers {
+            position: absolute;
+            display: flex;
+            left: 0;
+            right: 0;
+            flex-direction: column;
+            justify-content: center;
+            height: 100px;
+            max-width: 125px;
+            margin: auto;
+            .percentage {
+                font-weight: 500;
+                font-size: 14px;
+            }
 
-    .percentage {
-        position: absolute;
-        top: calc(~"50% + 15px");
-        left: calc(~"50% - 25px");
-        width: 50px;
-        font-weight: 500;
-        font-size: 14px;
-        display: inline-block;
-
-    }
-
-    .total-count {
-        position: absolute;
-        top: calc(~"50% - 40px");
-        left: calc(~"50% - 100px");
-        width: 200px;
-        font-weight: 600;
-        font-size: 36px;
-        display: inline-block;
-    }
-
-    .range-name {
-        position: absolute;
-        top: calc(~"50% - 60px");
-        left: calc(~"50% - 75px");
-        width: 150px;
-        font-size: 18px;
-        font-weight: 500;
-        display: inline-block;
+            .total-count {
+                font-weight: 600;
+                font-size: 36px;
+            }
+            .range-name {
+                font-size: 18px;
+                font-weight: 500;
+            }
+        }
     }
 
     app-no-data {
