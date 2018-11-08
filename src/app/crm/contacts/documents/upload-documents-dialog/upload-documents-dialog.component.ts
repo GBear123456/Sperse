@@ -23,7 +23,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
     @ViewChild('dropDown') dropDownElement: ElementRef;
     @ViewChild('uploading') uploadingElement: ElementRef;
 
-    private files = [];
+    public files = [];
     private slider: any;
 
     uploadedCount = 0;
