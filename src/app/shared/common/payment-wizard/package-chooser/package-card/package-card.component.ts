@@ -125,7 +125,7 @@ export class PackageCardComponent implements OnChanges {
         if (feature.value !== undefined) {
             featureValue += ': ';
             if (feature.isVariable && feature.value !== '-1') {
-                featureValue += feature.value / this.usersCoefficient;
+                featureValue += +feature.value / this.usersCoefficient;
             } else if (feature.value === '-1') {
                 featureValue += this.l('Unlimited');
             } else {
