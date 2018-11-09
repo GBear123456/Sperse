@@ -726,6 +726,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this[validator].push($event.component);
     }
 
+    onEmailKeyUp(event) {
+        event.component.option('valueChangeEvent', 
+            event.component.option('isValid') ? 'change': 'keyup');
+    }
+
     onFieldChanged($event, field, i) {
         let value = this.getInputElementValue($event);
         this.addButtonVisible[field] = 

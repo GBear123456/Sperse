@@ -85,6 +85,7 @@
                                      name="email"
                                      [width]="'410px'"
                                      [(value)]="email.email"
+                                     (onKeyUp)="onEmailKeyUp($event)"
                                      (onValueChanged)="onFieldChanged($event, 'emails', i)"
                                      (onInitialized)="onComponentInitialized($event, 'emails')">
                             <dx-validator>

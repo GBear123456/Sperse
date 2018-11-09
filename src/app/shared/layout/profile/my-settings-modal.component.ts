@@ -1,4 +1,4 @@
-import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, ViewChild, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -7,20 +7,19 @@ import { CurrentUserProfileEditDto, DefaultTimezoneScope, ProfileServiceProxy, U
 import { ModalDirective } from 'ngx-bootstrap';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { finalize } from 'rxjs/operators';
+import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { MatDialog } from '@angular/material';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
 @Component({
-    selector: 'mySettingsModal',
-    templateUrl: './my-settings-modal.component.html'
+    templateUrl: './my-settings-modal.component.html',
+    providers: [DialogService]
 })
-export class MySettingsModalComponent extends AppComponentBase implements AfterViewChecked {
-
-
+export class MySettingsModalComponent extends ModalDialogComponent implements AfterViewChecked, OnInit {
     @ViewChild('nameInput') nameInput: ElementRef;
-    @ViewChild('mySettingsModal') modal: ModalDirective;
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
-
-    public active = false;
+    
     public saving = false;
     public isGoogleAuthenticatorEnabled = false;
     public isPhoneNumberConfirmed: boolean;
@@ -34,10 +33,12 @@ export class MySettingsModalComponent extends AppComponentBase implements AfterV
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _profileService: ProfileServiceProxy,
         private _appSessionService: AppSessionService
     ) {
         super(injector);
+        this.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
     }
 
     ngAfterViewChecked(): void {
@@ -46,20 +47,31 @@ export class MySettingsModalComponent extends AppComponentBase implements AfterV
         $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
     }
 
-    show(): void {
-        this.active = true;
+    ngOnInit() {
+        super.ngOnInit();
+        
+        this.data.title = this.l("MySettings");
+        this.data.editTitle = false;
+        this.data.titleClearButton = false;
+        this.data.placeholder = this.l('MySettings');
+        
+        this.data.buttons = [{
+            title: this.l('Save'),
+            class: 'primary menu',
+            action: this.save.bind(this)
+        }];
+
         this._profileService.getCurrentUserProfileForEdit().subscribe((result) => {
             this.smsEnabled = this.setting.getBoolean('App.UserManagement.SmsVerificationEnabled');
             this.user = result;
             this._initialTimezone = result.timezone;
             this.canChangeUserName = this.user.name !== AppConsts.userManagement.defaultAdminUserName;
-            this.modal.show();
             this.isGoogleAuthenticatorEnabled = result.isGoogleAuthenticatorEnabled;
             this.isPhoneNumberConfirmed = result.isPhoneNumberConfirmed;
             this.isPhoneNumberEmpty = result.phoneNumber === '';
         });
     }
-
+    
     updateQrCodeSetupImageUrl(): void {
         this._profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
             this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
@@ -77,16 +89,7 @@ export class MySettingsModalComponent extends AppComponentBase implements AfterV
     changePhoneNumberToVerified(): void {
         this.isPhoneNumberConfirmed = true;
     }
-
-    onShown(): void {
-        $(this.nameInput.nativeElement).focus();
-    }
-
-    close(): void {
-        this.active = false;
-        this.modal.hide();
-    }
-
+    
     save(): void {
         this.saving = true;
         this._profileService.updateCurrentUserProfile(this.user)
@@ -98,7 +101,7 @@ export class MySettingsModalComponent extends AppComponentBase implements AfterV
                 this._appSessionService.user.emailAddress = this.user.emailAddress;
 
                 this.notify.info(this.l('SavedSuccessfully'));
-                this.close();
+                this.close(true);
                 this.modalSave.emit(null);
 
                 if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {

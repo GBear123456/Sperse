@@ -23059,8 +23059,8 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @return Success
      */
-    getPayPalEnvironmentSetting(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetPayPalEnvironmentSetting";
+    getPayPalSettings(): Observable<PayPalSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetPayPalSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -23073,20 +23073,20 @@ export class TenantSubscriptionServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPayPalEnvironmentSetting(response_);
+            return this.processGetPayPalSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetPayPalEnvironmentSetting(<any>response_);
+                    return this.processGetPayPalSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
+                    return <Observable<PayPalSettingsDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string>><any>_observableThrow(response_);
+                return <Observable<PayPalSettingsDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetPayPalEnvironmentSetting(response: HttpResponseBase): Observable<string> {
+    protected processGetPayPalSettings(response: HttpResponseBase): Observable<PayPalSettingsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -23097,7 +23097,7 @@ export class TenantSubscriptionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? PayPalSettingsDto.fromJS(resultData200) : new PayPalSettingsDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -23105,7 +23105,7 @@ export class TenantSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string>(<any>null);
+        return _observableOf<PayPalSettingsDto>(<any>null);
     }
 }
 
@@ -53034,6 +53034,42 @@ export interface IBeneficiaryInfoDto {
     name: string | undefined;
     streetAddress: string | undefined;
     cityAddress: string | undefined;
+}
+
+export class PayPalSettingsDto implements IPayPalSettingsDto {
+    environment!: string | undefined;
+
+    constructor(data?: IPayPalSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.environment = data["environment"];
+        }
+    }
+
+    static fromJS(data: any): PayPalSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PayPalSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["environment"] = this.environment;
+        return data; 
+    }
+}
+
+export interface IPayPalSettingsDto {
+    environment: string | undefined;
 }
 
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
