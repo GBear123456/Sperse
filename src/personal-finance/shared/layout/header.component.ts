@@ -29,6 +29,7 @@ import { NotificationSettingsModalComponent } from '@app/shared/layout/notificat
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
 import * as _ from 'lodash';
+import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: 'header.component.html',
@@ -45,7 +46,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
     @ViewChild('changePasswordModal') changePasswordModal: ChangePasswordModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
-    @ViewChild('mySettingsModal') mySettingsModal: MySettingsModalComponent;
 
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
@@ -93,6 +93,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _abpSessionService: AbpSessionService,
         private _abpMultiTenancyService: AbpMultiTenancyService,
         private _profileServiceProxy: ProfileServiceProxy,
@@ -205,7 +206,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     changeMySettings(): void {
-        this.mySettingsModal.show();
+        this.dialog.open(MySettingsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     logout(): void {

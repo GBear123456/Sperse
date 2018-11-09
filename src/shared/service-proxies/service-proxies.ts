@@ -23059,8 +23059,8 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @return Success
      */
-    getPayPalEnvironmentSetting(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetPayPalEnvironmentSetting";
+    getPayPalSettings(): Observable<PayPalSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetPayPalSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -23073,20 +23073,20 @@ export class TenantSubscriptionServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPayPalEnvironmentSetting(response_);
+            return this.processGetPayPalSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetPayPalEnvironmentSetting(<any>response_);
+                    return this.processGetPayPalSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
+                    return <Observable<PayPalSettingsDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string>><any>_observableThrow(response_);
+                return <Observable<PayPalSettingsDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetPayPalEnvironmentSetting(response: HttpResponseBase): Observable<string> {
+    protected processGetPayPalSettings(response: HttpResponseBase): Observable<PayPalSettingsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -23097,7 +23097,7 @@ export class TenantSubscriptionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? PayPalSettingsDto.fromJS(resultData200) : new PayPalSettingsDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -23105,7 +23105,7 @@ export class TenantSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string>(<any>null);
+        return _observableOf<PayPalSettingsDto>(<any>null);
     }
 }
 
@@ -48116,7 +48116,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
     trialDayCount!: number | undefined;
     maxUserCount!: number | undefined;
     features!: PackageEditionConfigFeatureDto[] | undefined;
-    staticFeatures!: any[] | undefined;
 
     constructor(data?: IPackageEditionConfigDto) {
         if (data) {
@@ -48140,11 +48139,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
                 this.features = [];
                 for (let item of data["features"])
                     this.features.push(PackageEditionConfigFeatureDto.fromJS(item));
-            }
-            if (data["staticFeatures"] && data["staticFeatures"].constructor === Array) {
-                this.staticFeatures = [];
-                for (let item of data["staticFeatures"])
-                    this.staticFeatures.push(item);
             }
         }
     }
@@ -48170,11 +48164,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
             for (let item of this.features)
                 data["features"].push(item.toJSON());
         }
-        if (this.staticFeatures && this.staticFeatures.constructor === Array) {
-            data["staticFeatures"] = [];
-            for (let item of this.staticFeatures)
-                data["staticFeatures"].push(item);
-        }
         return data; 
     }
 }
@@ -48188,15 +48177,11 @@ export interface IPackageEditionConfigDto {
     trialDayCount: number | undefined;
     maxUserCount: number | undefined;
     features: PackageEditionConfigFeatureDto[] | undefined;
-    staticFeatures: any[] | undefined;
 }
 
 export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeatureDto {
-    name!: any | undefined;
+    feature!: PricingTableFeature | undefined;
     value!: string | undefined;
-    measurementUnit!: PackageEditionConfigFeatureDtoMeasurementUnit | undefined;
-    isVariable!: boolean | undefined;
-    sortOrder!: number | undefined;
 
     constructor(data?: IPackageEditionConfigFeatureDto) {
         if (data) {
@@ -48209,17 +48194,8 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     init(data?: any) {
         if (data) {
-            if (data["name"]) {
-                this.name = {};
-                for (let key in data["name"]) {
-                    if (data["name"].hasOwnProperty(key))
-                        this.name[key] = data["name"][key];
-                }
-            }
+            this.feature = data["feature"] ? PricingTableFeature.fromJS(data["feature"]) : <any>undefined;
             this.value = data["value"];
-            this.measurementUnit = data["measurementUnit"];
-            this.isVariable = data["isVariable"];
-            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -48232,27 +48208,87 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.name) {
-            data["name"] = {};
-            for (let key in this.name) {
-                if (this.name.hasOwnProperty(key))
-                    data["name"][key] = this.name[key];
-            }
-        }
+        data["feature"] = this.feature ? this.feature.toJSON() : <any>undefined;
         data["value"] = this.value;
-        data["measurementUnit"] = this.measurementUnit;
-        data["isVariable"] = this.isVariable;
-        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
 
 export interface IPackageEditionConfigFeatureDto {
-    name: any | undefined;
+    feature: PricingTableFeature | undefined;
     value: string | undefined;
-    measurementUnit: PackageEditionConfigFeatureDtoMeasurementUnit | undefined;
+}
+
+export class PricingTableFeature implements IPricingTableFeature {
+    name!: string | undefined;
+    displayName!: any | undefined;
+    isVariable!: boolean | undefined;
+    sortOrder!: number | undefined;
+    isStatic!: boolean | undefined;
+    measurementUnit!: PricingTableFeatureMeasurementUnit | undefined;
+    isCommon!: boolean | undefined;
+
+    constructor(data?: IPricingTableFeature) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["displayName"]) {
+                this.displayName = {};
+                for (let key in data["displayName"]) {
+                    if (data["displayName"].hasOwnProperty(key))
+                        this.displayName[key] = data["displayName"][key];
+                }
+            }
+            this.isVariable = data["isVariable"];
+            this.sortOrder = data["sortOrder"];
+            this.isStatic = data["isStatic"];
+            this.measurementUnit = data["measurementUnit"];
+            this.isCommon = data["isCommon"];
+        }
+    }
+
+    static fromJS(data: any): PricingTableFeature {
+        data = typeof data === 'object' ? data : {};
+        let result = new PricingTableFeature();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.displayName) {
+            data["displayName"] = {};
+            for (let key in this.displayName) {
+                if (this.displayName.hasOwnProperty(key))
+                    data["displayName"][key] = this.displayName[key];
+            }
+        }
+        data["isVariable"] = this.isVariable;
+        data["sortOrder"] = this.sortOrder;
+        data["isStatic"] = this.isStatic;
+        data["measurementUnit"] = this.measurementUnit;
+        data["isCommon"] = this.isCommon;
+        return data; 
+    }
+}
+
+export interface IPricingTableFeature {
+    name: string | undefined;
+    displayName: any | undefined;
     isVariable: boolean | undefined;
     sortOrder: number | undefined;
+    isStatic: boolean | undefined;
+    measurementUnit: PricingTableFeatureMeasurementUnit | undefined;
+    isCommon: boolean | undefined;
 }
 
 export class PartnerInfoDto implements IPartnerInfoDto {
@@ -53000,6 +53036,42 @@ export interface IBeneficiaryInfoDto {
     cityAddress: string | undefined;
 }
 
+export class PayPalSettingsDto implements IPayPalSettingsDto {
+    environment!: string | undefined;
+
+    constructor(data?: IPayPalSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.environment = data["environment"];
+        }
+    }
+
+    static fromJS(data: any): PayPalSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PayPalSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["environment"] = this.environment;
+        return data; 
+    }
+}
+
+export interface IPayPalSettingsDto {
+    environment: string | undefined;
+}
+
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
     items!: NameValueDto[] | undefined;
 
@@ -56633,7 +56705,7 @@ export enum PackageConfigDtoModule {
     HUB = "HUB", 
 }
 
-export enum PackageEditionConfigFeatureDtoMeasurementUnit {
+export enum PricingTableFeatureMeasurementUnit {
     GB = "GB", 
 }
 

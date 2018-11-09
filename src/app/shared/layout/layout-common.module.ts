@@ -9,7 +9,9 @@ import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-boots
 import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, PaginatorModule } from 'primeng/primeng';
 import { TableModule } from 'primeng/table';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
-
+import {
+    DxScrollViewModule
+} from 'devextreme-angular';
 /** Application imports */
 import { SmsVerificationModalComponent } from '@app/shared/layout/profile/sms-verification-modal.component';
 import { HeaderNotificationsComponent } from './notifications/header-notifications.component';
@@ -29,6 +31,7 @@ import { ChatSignalrService } from './chat/chat-signalr.service';
 import { QuickSideBarChat } from './chat/QuickSideBarChat';
 import { LinkedAccountService } from './linked-account.service';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
+import { CommonModule } from '@shared/common/common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 
 let COMPONENTS = [
@@ -44,7 +47,7 @@ let COMPONENTS = [
     ChatMessageComponent,
     ChatFriendListItemComponent,
     NotificationSettingsModalComponent,
-    SmsVerificationModalComponent,
+    SmsVerificationModalComponent
 ];
 
 @NgModule({
@@ -59,11 +62,12 @@ let COMPONENTS = [
         PopoverModule.forRoot(),
         UtilsModule,
         FileUploadModule,
-
+        CommonModule,
         PrimeNgFileUploadModule,
         ProgressBarModule,
         TableModule,
-        PaginatorModule
+        PaginatorModule,
+        DxScrollViewModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,
@@ -72,6 +76,9 @@ let COMPONENTS = [
         UserNotificationHelper,
         ChatSignalrService,
         QuickSideBarChat
+    ],
+    entryComponents: [
+        MySettingsModalComponent
     ]
 })
 export class LayoutCommonModule {}

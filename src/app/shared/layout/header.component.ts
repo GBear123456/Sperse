@@ -10,6 +10,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDto, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { UserHelper } from '../helpers/UserHelper';
+import { MatDialog } from '@angular/material';
 
 import * as _ from 'lodash';
 import { LinkedAccountsModalComponent } from './linked-accounts-modal.component';
@@ -26,12 +27,10 @@ import { MySettingsModalComponent } from './profile/my-settings-modal.component'
 export class HeaderComponent extends AppComponentBase implements OnInit {
 
     @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalComponent;
-
     @ViewChild('loginAttemptsModal') loginAttemptsModal: LoginAttemptsModalComponent;
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
     @ViewChild('changePasswordModal') changePasswordModal: ChangePasswordModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
-    @ViewChild('mySettingsModal') mySettingsModal: MySettingsModalComponent;
 
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
@@ -58,6 +57,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _abpSessionService: AbpSessionService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
@@ -151,7 +151,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     changeMySettings(): void {
-        this.mySettingsModal.show();
+        this.dialog.open(MySettingsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     logout(): void {
