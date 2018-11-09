@@ -41,11 +41,18 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     public activityTypes = CreateActivityDtoType;
     public selectedLeads: any = [];
-    public currentDate = new Date();
 
-    public currentView = 'month';
-    public pipelineView = this.currentView;
+    public currentDate = new Date();
+    public scheduleDate = new Date(this.currentDate);
+    private pipelineDate = new Date(this.currentDate);
+    private calendarCaption: string;
+    public calendarInitialized: boolean = false;
+
+    private currentView = 'month';
+    private pipelineView = this.currentView;
     public scheduleView = this.currentView;
+
+    public popoverCalendarVisible: boolean = false;
     public resources: any[] = [
         {
             fieldExpr: 'Type',
@@ -95,6 +102,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         if (abp.clock.provider.supportsMultipleTimezone)
             this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;
 
+        this.updateCalendarCaption();
         this.initDataSource();
     }
 
@@ -178,6 +186,45 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     initToolbarConfig() {
         this._appService.updateToolbar([
+            {
+                location: 'before',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'calendar-navigator-left',
+                        widget: 'dxButton',
+                        options: {
+                            icon: 'chevronprev'
+                        },
+                        action: () => {
+                            this.updateCurrentDate(-1);
+                        }
+                    },
+                    {
+                        name: 'calendar-navigator-body',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.calendarCaption
+                        },
+                        action: () => {
+                            this.popoverCalendarVisible = true;
+                        },
+                        attr: {
+                            'id': 'calendar-navigator-body'
+                        }
+                    },
+                    {
+                        name: 'calendar-navigator-right',
+                        widget: 'dxButton',
+                        options: {
+                            icon: 'chevronnext'
+                        },
+                        action: () => {
+                            this.updateCurrentDate(1);
+                        }
+                    },
+                ]
+            },
             {
                 location: 'after',
                 areItemsDependent: true,
@@ -304,16 +351,26 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             this.dataLayoutType = dataLayoutType;
             this.showPipeline = showPipeline;
             if (this.showPipeline) {
-                if (!this.pipelineDataSource || this.pipelineView != this.currentView) {
+                if (!this.pipelineDataSource || this.pipelineView != this.currentView || this.pipelineDate != this.currentDate) {
                     this.pipelineView = this.currentView;
+                    this.pipelineDate = new Date(this.currentDate);
                     this.setPipelineDataSource(!!this.pipelineDataSource);
                 }
             }
             else {
-                if (!this.currentView)
+                this.schedulerComponent.instance.option('dataSource', null);
+                if (!this.currentView) {
                     this.scheduleView = this.currentView = 'month';
+                    this.updateCalendarCaption();
+                }
                 else if (this.scheduleView != this.currentView)
                     this.scheduleView = this.currentView;
+
+                if (this.scheduleDate != this.currentDate)
+                    this.scheduleDate = new Date(this.currentDate);
+
+                //this is done to prevent double data retrieving after settings scheduleView and scheduleDate
+                setTimeout(() => this.schedulerComponent.instance.option('dataSource', this.dataSource))
             }
 
             this.initToolbarConfig();
@@ -457,6 +514,67 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             this.scheduleView = this.currentView;
         }
 
+        this.updateCalendarCaption();
         this.initToolbarConfig();
+    }
+
+    currentDateChange() {
+        if (this.showPipeline) {
+            this.pipelineDate = new Date(this.currentDate);
+            if (this.pipelineView)
+                this.setPipelineDataSource();
+        }
+        else {
+            this.scheduleDate = new Date(this.currentDate);
+        }
+
+        this.updateCalendarCaption();
+        this.initToolbarConfig();
+        this.popoverCalendarVisible = false;
+    }
+
+    updateCurrentDate(direction: 1 | -1) {
+        let newDate = new Date(this.currentDate);
+        switch (this.currentView) {
+            case 'agenda':
+            case 'day':
+                newDate.setDate(newDate.getDate() + direction);
+                break;
+            case 'week':
+                newDate.setDate(newDate.getDate() + (direction * 7));
+                break;
+            case 'month':
+                newDate.setMonth(newDate.getMonth() + direction);
+                break;
+        }
+
+        this.currentDate = newDate;
+        if (!this.calendarInitialized)
+            this.currentDateChange();
+    }
+
+    updateCalendarCaption() {
+        switch (this.currentView) {
+            case 'agenda':
+            case 'day':
+                this.calendarCaption = moment(this.currentDate).format("D MMMM YYYY");
+                break;
+            case 'week':
+                let momentDate = moment(this.currentDate);
+                let weekStart = moment(this.currentDate).startOf("week");
+                let weekEnd = moment(this.currentDate).endOf("week");
+                if (weekStart.month() == momentDate.month() && weekEnd.month() == momentDate.month()) {
+                    this.calendarCaption = `${weekStart.date()} - ${weekEnd.date()} ${momentDate.format("MMMM YYYY")}`;
+                }
+                else {
+                    this.calendarCaption = `${weekStart.date()} ${weekStart.format("MMM")} - ${weekEnd.date()} ${weekEnd.format("MMM")} ${weekEnd.year()}`
+                }
+                break;
+            case 'month':
+                this.calendarCaption = moment(this.currentDate).format("MMMM YYYY");
+                break;
+            default:
+                this.calendarCaption = 'All period';
+        }
     }
 }
