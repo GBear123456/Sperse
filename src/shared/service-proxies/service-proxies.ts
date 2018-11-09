@@ -48116,7 +48116,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
     trialDayCount!: number | undefined;
     maxUserCount!: number | undefined;
     features!: PackageEditionConfigFeatureDto[] | undefined;
-    staticFeatures!: any[] | undefined;
 
     constructor(data?: IPackageEditionConfigDto) {
         if (data) {
@@ -48140,11 +48139,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
                 this.features = [];
                 for (let item of data["features"])
                     this.features.push(PackageEditionConfigFeatureDto.fromJS(item));
-            }
-            if (data["staticFeatures"] && data["staticFeatures"].constructor === Array) {
-                this.staticFeatures = [];
-                for (let item of data["staticFeatures"])
-                    this.staticFeatures.push(item);
             }
         }
     }
@@ -48170,11 +48164,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
             for (let item of this.features)
                 data["features"].push(item.toJSON());
         }
-        if (this.staticFeatures && this.staticFeatures.constructor === Array) {
-            data["staticFeatures"] = [];
-            for (let item of this.staticFeatures)
-                data["staticFeatures"].push(item);
-        }
         return data; 
     }
 }
@@ -48188,15 +48177,11 @@ export interface IPackageEditionConfigDto {
     trialDayCount: number | undefined;
     maxUserCount: number | undefined;
     features: PackageEditionConfigFeatureDto[] | undefined;
-    staticFeatures: any[] | undefined;
 }
 
 export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeatureDto {
-    name!: any | undefined;
+    feature!: PricingTableFeature | undefined;
     value!: string | undefined;
-    measurementUnit!: PackageEditionConfigFeatureDtoMeasurementUnit | undefined;
-    isVariable!: boolean | undefined;
-    sortOrder!: number | undefined;
 
     constructor(data?: IPackageEditionConfigFeatureDto) {
         if (data) {
@@ -48209,17 +48194,8 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     init(data?: any) {
         if (data) {
-            if (data["name"]) {
-                this.name = {};
-                for (let key in data["name"]) {
-                    if (data["name"].hasOwnProperty(key))
-                        this.name[key] = data["name"][key];
-                }
-            }
+            this.feature = data["feature"] ? PricingTableFeature.fromJS(data["feature"]) : <any>undefined;
             this.value = data["value"];
-            this.measurementUnit = data["measurementUnit"];
-            this.isVariable = data["isVariable"];
-            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -48232,27 +48208,87 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.name) {
-            data["name"] = {};
-            for (let key in this.name) {
-                if (this.name.hasOwnProperty(key))
-                    data["name"][key] = this.name[key];
-            }
-        }
+        data["feature"] = this.feature ? this.feature.toJSON() : <any>undefined;
         data["value"] = this.value;
-        data["measurementUnit"] = this.measurementUnit;
-        data["isVariable"] = this.isVariable;
-        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
 
 export interface IPackageEditionConfigFeatureDto {
-    name: any | undefined;
+    feature: PricingTableFeature | undefined;
     value: string | undefined;
-    measurementUnit: PackageEditionConfigFeatureDtoMeasurementUnit | undefined;
+}
+
+export class PricingTableFeature implements IPricingTableFeature {
+    name!: string | undefined;
+    displayName!: any | undefined;
+    isVariable!: boolean | undefined;
+    sortOrder!: number | undefined;
+    isStatic!: boolean | undefined;
+    measurementUnit!: PricingTableFeatureMeasurementUnit | undefined;
+    isCommon!: boolean | undefined;
+
+    constructor(data?: IPricingTableFeature) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["displayName"]) {
+                this.displayName = {};
+                for (let key in data["displayName"]) {
+                    if (data["displayName"].hasOwnProperty(key))
+                        this.displayName[key] = data["displayName"][key];
+                }
+            }
+            this.isVariable = data["isVariable"];
+            this.sortOrder = data["sortOrder"];
+            this.isStatic = data["isStatic"];
+            this.measurementUnit = data["measurementUnit"];
+            this.isCommon = data["isCommon"];
+        }
+    }
+
+    static fromJS(data: any): PricingTableFeature {
+        data = typeof data === 'object' ? data : {};
+        let result = new PricingTableFeature();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.displayName) {
+            data["displayName"] = {};
+            for (let key in this.displayName) {
+                if (this.displayName.hasOwnProperty(key))
+                    data["displayName"][key] = this.displayName[key];
+            }
+        }
+        data["isVariable"] = this.isVariable;
+        data["sortOrder"] = this.sortOrder;
+        data["isStatic"] = this.isStatic;
+        data["measurementUnit"] = this.measurementUnit;
+        data["isCommon"] = this.isCommon;
+        return data; 
+    }
+}
+
+export interface IPricingTableFeature {
+    name: string | undefined;
+    displayName: any | undefined;
     isVariable: boolean | undefined;
     sortOrder: number | undefined;
+    isStatic: boolean | undefined;
+    measurementUnit: PricingTableFeatureMeasurementUnit | undefined;
+    isCommon: boolean | undefined;
 }
 
 export class PartnerInfoDto implements IPartnerInfoDto {
@@ -56633,7 +56669,7 @@ export enum PackageConfigDtoModule {
     HUB = "HUB", 
 }
 
-export enum PackageEditionConfigFeatureDtoMeasurementUnit {
+export enum PricingTableFeatureMeasurementUnit {
     GB = "GB", 
 }
 
