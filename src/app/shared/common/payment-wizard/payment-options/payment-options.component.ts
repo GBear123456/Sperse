@@ -100,8 +100,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             this.bankTransferSettings$ = this.tenantPaymentSettingsService.getBankTransferSettings();
         }
         else if (!this.payPalEnvironmentSetting && e.tab.textLabel === this.l('PayPal')) {
-            this.tenantSubscriptionServiceProxy.getPayPalEnvironmentSetting()
-                .subscribe(environment => this.payPalEnvironmentSetting = environment);
+            this.tenantSubscriptionServiceProxy.getPayPalSettings()
+                .subscribe(settings => this.payPalEnvironmentSetting = settings.environment);
         }
     }
 
