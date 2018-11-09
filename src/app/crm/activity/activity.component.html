@@ -12,7 +12,7 @@
                 [resources]="resources"
                 [timeZone]="timezone"
                 [(currentView)]="scheduleView"
-                [(currentDate)]="currentDate"
+                [(currentDate)]="scheduleDate"
                 [showAllDayPanel]="true"
                 [textExpr]="'Title'"
                 [startDateExpr]="'StartDate'"
@@ -58,4 +58,15 @@
         </div>
     </div>
 
+    <dx-popover target="#calendar-navigator-body"
+                position="bottom"
+                [(visible)]="popoverCalendarVisible">
+        <div *dxTemplate="let data of 'content'">
+            <dx-calendar
+                [(value)]="currentDate"
+                (onValueChanged) = "currentDateChange()"
+                (onInitialized) = "calendarInitialized = true">
+            </dx-calendar>
+        </div>
+    </dx-popover>
 </div>
