@@ -26915,6 +26915,7 @@ export class ActivityDto implements IActivityDto {
     assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
@@ -26943,6 +26944,7 @@ export class ActivityDto implements IActivityDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
@@ -26971,6 +26973,7 @@ export class ActivityDto implements IActivityDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
@@ -26988,6 +26991,7 @@ export interface IActivityDto {
     assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
@@ -27001,6 +27005,7 @@ export class CreateActivityDto implements ICreateActivityDto {
     assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
@@ -27027,6 +27032,7 @@ export class CreateActivityDto implements ICreateActivityDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
@@ -27053,6 +27059,7 @@ export class CreateActivityDto implements ICreateActivityDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
@@ -27068,6 +27075,7 @@ export interface ICreateActivityDto {
     assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
@@ -27082,6 +27090,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
     assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
@@ -27109,6 +27118,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
@@ -27136,6 +27146,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
@@ -27152,6 +27163,7 @@ export interface IUpdateActivityDto {
     assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
@@ -27162,6 +27174,7 @@ export class MoveActivityDto implements IMoveActivityDto {
     id!: number;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
 
     constructor(data?: IMoveActivityDto) {
         if (data) {
@@ -27177,6 +27190,7 @@ export class MoveActivityDto implements IMoveActivityDto {
             this.id = data["id"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
         }
     }
 
@@ -27192,6 +27206,7 @@ export class MoveActivityDto implements IMoveActivityDto {
         data["id"] = this.id;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         return data; 
     }
 }
@@ -27200,6 +27215,7 @@ export interface IMoveActivityDto {
     id: number;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
 }
 
 export class TransitionActivityDto implements ITransitionActivityDto {
