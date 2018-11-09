@@ -563,15 +563,16 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getAssignedUsersStoreSelectors = () => {
-        if (this.leadId || this.leadInfo)
-            return LeadAssignedUsersStoreSelectors;
-
         if (this.customerType == ContactGroupType.Partner)
             return PartnerAssignedUsersStoreSelectors;
 
         if (this.customerType == ContactGroupType.Client)
             return CustomerAssignedUsersStoreSelectors;
-        return {};
+
+        if (this.leadId || this.leadInfo)
+            return LeadAssignedUsersStoreSelectors;
+
+        return CustomerAssignedUsersStoreSelectors;
     }
 
     getAssignmentsPermissinKey = () => {
@@ -590,6 +591,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
         if (this.leadId || this.leadInfo)
             return this._leadService;
+
+        return this._customerService
     }
 
     addNewContact(event) {
