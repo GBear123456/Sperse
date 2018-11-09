@@ -2217,72 +2217,6 @@ export class BankAccountsServiceProxy {
 }
 
 @Injectable()
-export class BaseCommercePushNotificationHandlerServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @merchant_username (optional) 
-     * @push_notification (optional) 
-     * @return Success
-     */
-    handle(merchant_username: string | null | undefined, push_notification: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/BaseCommercePushNotificationHandler/Handle?";
-        if (merchant_username !== undefined)
-            url_ += "merchant_username=" + encodeURIComponent("" + merchant_username) + "&"; 
-        if (push_notification !== undefined)
-            url_ += "push_notification=" + encodeURIComponent("" + push_notification) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processHandle(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processHandle(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processHandle(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class BusinessEntityServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -19054,70 +18988,6 @@ export class QuickBookServiceProxy {
 }
 
 @Injectable()
-export class RecurlyPushNotificationHandlerServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @notification (optional) 
-     * @return Success
-     */
-    handle(notification: any[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/RecurlyPushNotificationHandler/Handle";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(notification);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processHandle(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processHandle(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processHandle(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class RoleServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -23137,8 +23007,8 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @return Success
      */
-    getHostBankTransferSettings(): Observable<BankTransferSettingsDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetHostBankTransferSettings";
+    getBankTransferSettings(): Observable<BankTransferSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetBankTransferSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -23151,11 +23021,11 @@ export class TenantSubscriptionServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetHostBankTransferSettings(response_);
+            return this.processGetBankTransferSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetHostBankTransferSettings(<any>response_);
+                    return this.processGetBankTransferSettings(<any>response_);
                 } catch (e) {
                     return <Observable<BankTransferSettingsDto>><any>_observableThrow(e);
                 }
@@ -23164,7 +23034,7 @@ export class TenantSubscriptionServiceProxy {
         }));
     }
 
-    protected processGetHostBankTransferSettings(response: HttpResponseBase): Observable<BankTransferSettingsDto> {
+    protected processGetBankTransferSettings(response: HttpResponseBase): Observable<BankTransferSettingsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -48324,6 +48194,7 @@ export interface IPackageEditionConfigDto {
 export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeatureDto {
     name!: any | undefined;
     value!: string | undefined;
+    measurementUnit!: PackageEditionConfigFeatureDtoMeasurementUnit | undefined;
     isVariable!: boolean | undefined;
     sortOrder!: number | undefined;
 
@@ -48346,6 +48217,7 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
                 }
             }
             this.value = data["value"];
+            this.measurementUnit = data["measurementUnit"];
             this.isVariable = data["isVariable"];
             this.sortOrder = data["sortOrder"];
         }
@@ -48368,6 +48240,7 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
             }
         }
         data["value"] = this.value;
+        data["measurementUnit"] = this.measurementUnit;
         data["isVariable"] = this.isVariable;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -48377,6 +48250,7 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 export interface IPackageEditionConfigFeatureDto {
     name: any | undefined;
     value: string | undefined;
+    measurementUnit: PackageEditionConfigFeatureDtoMeasurementUnit | undefined;
     isVariable: boolean | undefined;
     sortOrder: number | undefined;
 }
@@ -56757,6 +56631,10 @@ export enum PackageConfigDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+}
+
+export enum PackageEditionConfigFeatureDtoMeasurementUnit {
+    GB = "GB", 
 }
 
 export enum PaymentMethodInfoType {
