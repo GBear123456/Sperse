@@ -85,8 +85,19 @@
 
     /deep/ dx-scheduler {
         .dx-scheduler-header {
-            .dx-scheduler-view-switcher{
-                display: none;
+            display: none;
+        }
+
+        .dx-scheduler-work-space {
+            padding-top: 0;
+            margin-top: 0;
+
+            &.dx-scheduler-work-space-week .dx-scheduler-all-day-title {
+                top: 50px;
+            }
+
+            &.dx-scheduler-work-space-day:not(.dx-scheduler-work-space-grouped) .dx-scheduler-all-day-title {
+                top: 1px;
             }
         }
 
