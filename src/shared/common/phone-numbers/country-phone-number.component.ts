@@ -28,7 +28,7 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     isValid() {        
         let country = this.intPhoneNumber.selectedCountry;
         return !this.value || (country && this.value.match(
-            new RegExp('^\\+' + country.dialCode + '$')) || this.model.valid;
+            new RegExp('^\\+' + country.dialCode + '$'))) || this.model.valid;
     }
 
     keyUp(event) {
