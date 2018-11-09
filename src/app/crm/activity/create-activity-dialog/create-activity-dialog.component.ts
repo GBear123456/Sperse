@@ -544,4 +544,12 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         this.isUserSelected = !!event.addedItems.length;
         this.initToolbarConfig();
     }
+
+    openCalendar(event) {
+        event.component.open();
+    }
+
+    removeFocusFromElement(event) {
+        event.component.blur();
+    }
 }

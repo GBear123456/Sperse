@@ -91,6 +91,8 @@
                                              *ngIf="isAllDay ? type == 'date' : type =='datetime'"
                                              [type]="type"
                                              [max]="endDate"
+                                             (onFocusIn)="openCalendar($event)"
+                                             (onClosed)="removeFocusFromElement($event)"
                                              [(value)]="startDate">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
@@ -111,6 +113,8 @@
                                              maxLength="10"
                                              [type]="type"
                                              [min]="startDate"
+                                             (onFocusIn)="openCalendar($event)"
+                                             (onClosed)="removeFocusFromElement($event)"
                                              [(value)]="endDate">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
