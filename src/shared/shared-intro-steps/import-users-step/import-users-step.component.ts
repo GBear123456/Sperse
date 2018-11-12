@@ -151,6 +151,6 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
 
     onEmailKeyPress(i: number) {
         if (!this.importUsers[i].roleNames)
-            this.importUsers[i].roleNames = ['Employee'];
+            this.importUsers[i].roleNames = [this.moduleType + ' User'];
     }
 }

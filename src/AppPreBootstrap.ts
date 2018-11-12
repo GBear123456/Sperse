@@ -116,6 +116,7 @@ export class AppPreBootstrap {
             location.search = '';
             callback();
         }).fail(() => {
+            abp.multiTenancy.setTenantIdCookie();
             location.href = AppConsts.appBaseUrl;
         });
     }

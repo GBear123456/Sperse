@@ -26915,6 +26915,7 @@ export class ActivityDto implements IActivityDto {
     assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
@@ -26943,6 +26944,7 @@ export class ActivityDto implements IActivityDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
@@ -26971,6 +26973,7 @@ export class ActivityDto implements IActivityDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
@@ -26988,6 +26991,7 @@ export interface IActivityDto {
     assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
@@ -27001,6 +27005,7 @@ export class CreateActivityDto implements ICreateActivityDto {
     assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
@@ -27027,6 +27032,7 @@ export class CreateActivityDto implements ICreateActivityDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
@@ -27053,6 +27059,7 @@ export class CreateActivityDto implements ICreateActivityDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
@@ -27068,6 +27075,7 @@ export interface ICreateActivityDto {
     assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
@@ -27082,6 +27090,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
     assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
@@ -27109,6 +27118,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
@@ -27136,6 +27146,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
@@ -27152,6 +27163,7 @@ export interface IUpdateActivityDto {
     assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
@@ -27162,6 +27174,7 @@ export class MoveActivityDto implements IMoveActivityDto {
     id!: number;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
 
     constructor(data?: IMoveActivityDto) {
         if (data) {
@@ -27177,6 +27190,7 @@ export class MoveActivityDto implements IMoveActivityDto {
             this.id = data["id"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
         }
     }
 
@@ -27192,6 +27206,7 @@ export class MoveActivityDto implements IMoveActivityDto {
         data["id"] = this.id;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         return data; 
     }
 }
@@ -27200,6 +27215,7 @@ export interface IMoveActivityDto {
     id: number;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
 }
 
 export class TransitionActivityDto implements ITransitionActivityDto {
@@ -47984,9 +48000,7 @@ export interface IPackageDto {
 }
 
 export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
-    currentEditionId!: number | undefined;
-    currentUserCount!: number | undefined;
-    currentFrequency!: GetPackagesConfigOutputCurrentFrequency | undefined;
+    currentSubscriptionInfo!: ModuleSubscriptionInfo | undefined;
     packages!: PackageConfigDto[] | undefined;
 
     constructor(data?: IGetPackagesConfigOutput) {
@@ -48000,9 +48014,7 @@ export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
 
     init(data?: any) {
         if (data) {
-            this.currentEditionId = data["currentEditionId"];
-            this.currentUserCount = data["currentUserCount"];
-            this.currentFrequency = data["currentFrequency"];
+            this.currentSubscriptionInfo = data["currentSubscriptionInfo"] ? ModuleSubscriptionInfo.fromJS(data["currentSubscriptionInfo"]) : <any>undefined;
             if (data["packages"] && data["packages"].constructor === Array) {
                 this.packages = [];
                 for (let item of data["packages"])
@@ -48020,9 +48032,7 @@ export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["currentEditionId"] = this.currentEditionId;
-        data["currentUserCount"] = this.currentUserCount;
-        data["currentFrequency"] = this.currentFrequency;
+        data["currentSubscriptionInfo"] = this.currentSubscriptionInfo ? this.currentSubscriptionInfo.toJSON() : <any>undefined;
         if (this.packages && this.packages.constructor === Array) {
             data["packages"] = [];
             for (let item of this.packages)
@@ -48033,10 +48043,52 @@ export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
 }
 
 export interface IGetPackagesConfigOutput {
-    currentEditionId: number | undefined;
-    currentUserCount: number | undefined;
-    currentFrequency: GetPackagesConfigOutputCurrentFrequency | undefined;
+    currentSubscriptionInfo: ModuleSubscriptionInfo | undefined;
     packages: PackageConfigDto[] | undefined;
+}
+
+export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
+    editionId!: number;
+    maxUserCount!: number | undefined;
+    frequency!: ModuleSubscriptionInfoFrequency;
+
+    constructor(data?: IModuleSubscriptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.editionId = data["editionId"];
+            this.maxUserCount = data["maxUserCount"];
+            this.frequency = data["frequency"];
+        }
+    }
+
+    static fromJS(data: any): ModuleSubscriptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ModuleSubscriptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["editionId"] = this.editionId;
+        data["maxUserCount"] = this.maxUserCount;
+        data["frequency"] = this.frequency;
+        return data; 
+    }
+}
+
+export interface IModuleSubscriptionInfo {
+    editionId: number;
+    maxUserCount: number | undefined;
+    frequency: ModuleSubscriptionInfoFrequency;
 }
 
 export class PackageConfigDto implements IPackageConfigDto {
@@ -52653,9 +52705,7 @@ export interface IPayPalInfoDto {
 }
 
 export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
-    editionId!: number;
-    maxUserCount!: number | undefined;
-    frequency!: SetupSubscriptionInfoDtoFrequency;
+    subscriptionInfo!: ModuleSubscriptionInfo | undefined;
     billingInfo!: PaymentRequestInfoDto | undefined;
 
     constructor(data?: ISetupSubscriptionInfoDto) {
@@ -52669,9 +52719,7 @@ export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.editionId = data["editionId"];
-            this.maxUserCount = data["maxUserCount"];
-            this.frequency = data["frequency"];
+            this.subscriptionInfo = data["subscriptionInfo"] ? ModuleSubscriptionInfo.fromJS(data["subscriptionInfo"]) : <any>undefined;
             this.billingInfo = data["billingInfo"] ? PaymentRequestInfoDto.fromJS(data["billingInfo"]) : <any>undefined;
         }
     }
@@ -52685,25 +52733,19 @@ export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["editionId"] = this.editionId;
-        data["maxUserCount"] = this.maxUserCount;
-        data["frequency"] = this.frequency;
+        data["subscriptionInfo"] = this.subscriptionInfo ? this.subscriptionInfo.toJSON() : <any>undefined;
         data["billingInfo"] = this.billingInfo ? this.billingInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface ISetupSubscriptionInfoDto {
-    editionId: number;
-    maxUserCount: number | undefined;
-    frequency: SetupSubscriptionInfoDtoFrequency;
+    subscriptionInfo: ModuleSubscriptionInfo | undefined;
     billingInfo: PaymentRequestInfoDto | undefined;
 }
 
 export class RequestPaymentDto implements IRequestPaymentDto {
-    editionId!: number | undefined;
-    maxUserCount!: number | undefined;
-    frequency!: RequestPaymentDtoFrequency | undefined;
+    subscriptionInfo!: ModuleSubscriptionInfo | undefined;
     requestType!: RequestPaymentDtoRequestType | undefined;
 
     constructor(data?: IRequestPaymentDto) {
@@ -52717,9 +52759,7 @@ export class RequestPaymentDto implements IRequestPaymentDto {
 
     init(data?: any) {
         if (data) {
-            this.editionId = data["editionId"];
-            this.maxUserCount = data["maxUserCount"];
-            this.frequency = data["frequency"];
+            this.subscriptionInfo = data["subscriptionInfo"] ? ModuleSubscriptionInfo.fromJS(data["subscriptionInfo"]) : <any>undefined;
             this.requestType = data["requestType"];
         }
     }
@@ -52733,18 +52773,14 @@ export class RequestPaymentDto implements IRequestPaymentDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["editionId"] = this.editionId;
-        data["maxUserCount"] = this.maxUserCount;
-        data["frequency"] = this.frequency;
+        data["subscriptionInfo"] = this.subscriptionInfo ? this.subscriptionInfo.toJSON() : <any>undefined;
         data["requestType"] = this.requestType;
         return data; 
     }
 }
 
 export interface IRequestPaymentDto {
-    editionId: number | undefined;
-    maxUserCount: number | undefined;
-    frequency: RequestPaymentDtoFrequency | undefined;
+    subscriptionInfo: ModuleSubscriptionInfo | undefined;
     requestType: RequestPaymentDtoRequestType | undefined;
 }
 
@@ -56694,7 +56730,7 @@ export enum TenantNotificationSeverity {
     _4 = 4, 
 }
 
-export enum GetPackagesConfigOutputCurrentFrequency {
+export enum ModuleSubscriptionInfoFrequency {
     _30 = 30, 
     _365 = 365, 
 }
@@ -56779,16 +56815,6 @@ export enum PaymentRequestInfoDtoPaymentInfoType {
     BankCard = "BankCard", 
     ACH = "ACH", 
     PayPal = "PayPal", 
-}
-
-export enum SetupSubscriptionInfoDtoFrequency {
-    _30 = 30, 
-    _365 = 365, 
-}
-
-export enum RequestPaymentDtoFrequency {
-    _30 = 30, 
-    _365 = 365, 
 }
 
 export enum RequestPaymentDtoRequestType {
