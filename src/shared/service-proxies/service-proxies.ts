@@ -9712,7 +9712,7 @@ export class CreditReportServiceProxy {
      * @return Success
      */
     getLastCreditReport(dateTime: moment.Moment | null | undefined): Observable<CreditReportOutput> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetLastCreditReport?";
+        let url_ = this.baseUrl + "/api/services/PFM/CreditReport/GetLastCreditReport?";
         if (dateTime !== undefined)
             url_ += "DateTime=" + encodeURIComponent(dateTime ? "" + dateTime.toJSON() : "") + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -9768,7 +9768,7 @@ export class CreditReportServiceProxy {
      * @return Success
      */
     getAccountInfo(creditReport: number | null | undefined, accountIds: number[] | null | undefined): Observable<AccountInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetAccountInfo?";
+        let url_ = this.baseUrl + "/api/services/PFM/CreditReport/GetAccountInfo?";
         if (creditReport !== undefined)
             url_ += "creditReport=" + encodeURIComponent("" + creditReport) + "&"; 
         if (accountIds !== undefined)
@@ -9830,7 +9830,7 @@ export class CreditReportServiceProxy {
      * @return Success
      */
     getCreditReportHistory(periodYears: number | null | undefined, reportId: number | null | undefined): Observable<KeyValuePairOfStringAndListOfScoreHistoryDto[]> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/GetCreditReportHistory?";
+        let url_ = this.baseUrl + "/api/services/PFM/CreditReport/GetCreditReportHistory?";
         if (periodYears !== undefined)
             url_ += "periodYears=" + encodeURIComponent("" + periodYears) + "&"; 
         if (reportId !== undefined)
@@ -9890,7 +9890,7 @@ export class CreditReportServiceProxy {
      * @return Success
      */
     loadAlerts(): Observable<AlertDto[]> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/CreditReport/LoadAlerts";
+        let url_ = this.baseUrl + "/api/services/PFM/CreditReport/LoadAlerts";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -9958,7 +9958,7 @@ export class CreditSimulatorServiceProxy {
      * @return Success
      */
     getScoreSimulatorInfo(): Observable<ScoreSimulatorInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/CreditSimulator/GetScoreSimulatorInfo";
+        let url_ = this.baseUrl + "/api/services/PFM/CreditSimulator/GetScoreSimulatorInfo";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10011,7 +10011,7 @@ export class CreditSimulatorServiceProxy {
      * @return Success
      */
     simulateScore(simulatorData: ScoreSimulatorDto | null | undefined): Observable<number> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/CreditSimulator/SimulateScore";
+        let url_ = this.baseUrl + "/api/services/PFM/CreditSimulator/SimulateScore";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(simulatorData);
@@ -13410,7 +13410,7 @@ export class KBAServiceProxy {
      * @return Success
      */
     requestKBA(input: RequestKBAInput | null | undefined): Observable<RequestKBAOutput> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/KBA/RequestKBA";
+        let url_ = this.baseUrl + "/api/services/PFM/KBA/RequestKBA";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -13466,7 +13466,7 @@ export class KBAServiceProxy {
      * @return Success
      */
     processKBAResponse(input: KBAResult | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/KBA/ProcessKBAResponse";
+        let url_ = this.baseUrl + "/api/services/PFM/KBA/ProcessKBAResponse";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -14926,7 +14926,7 @@ export class MemberServiceProxy {
      * @return Success
      */
     selectPackage(packageId: number | null | undefined): Observable<SelectPackageResponseDto> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Member/SelectPackage?";
+        let url_ = this.baseUrl + "/api/services/PFM/Member/SelectPackage?";
         if (packageId !== undefined)
             url_ += "packageId=" + encodeURIComponent("" + packageId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14981,7 +14981,7 @@ export class MemberServiceProxy {
      * @return Success
      */
     submitMemberInfo(memberInfo: MemberInfoDto | null | undefined): Observable<SubmitMemberInfoResultDto> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Member/SubmitMemberInfo";
+        let url_ = this.baseUrl + "/api/services/PFM/Member/SubmitMemberInfo";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(memberInfo);
@@ -15037,7 +15037,7 @@ export class MemberServiceProxy {
      * @return Success
      */
     paymentAuthorize(input: MemberPaymentAuthorizeRequestDto | null | undefined): Observable<PaymentAuthorizeResponseDto> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Member/PaymentAuthorize";
+        let url_ = this.baseUrl + "/api/services/PFM/Member/PaymentAuthorize";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -15093,7 +15093,7 @@ export class MemberServiceProxy {
      * @return Success
      */
     registerMember(input: RegisterMemberRequest | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Member/RegisterMember";
+        let url_ = this.baseUrl + "/api/services/PFM/Member/RegisterMember";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -15144,7 +15144,7 @@ export class MemberServiceProxy {
      * @return Success
      */
     cancelMembership(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Member/CancelMembership";
+        let url_ = this.baseUrl + "/api/services/PFM/Member/CancelMembership";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -16695,7 +16695,7 @@ export class PackageServiceProxy {
      * @return Success
      */
     getAll(): Observable<ListResultDtoOfPackageDto> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/Package/GetAll";
+        let url_ = this.baseUrl + "/api/services/PFM/Package/GetAll";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -22340,7 +22340,7 @@ export class TenantSettingsCreditReportServiceProxy {
      * @return Success
      */
     getIdcsSettings(): Observable<IdcsSettings> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/TenantSettingsCreditReport/GetIdcsSettings";
+        let url_ = this.baseUrl + "/api/services/PFM/TenantSettingsCreditReport/GetIdcsSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -22393,7 +22393,7 @@ export class TenantSettingsCreditReportServiceProxy {
      * @return Success
      */
     updateIdcsSettings(input: IdcsSettings | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CreditReport/TenantSettingsCreditReport/UpdateIdcsSettings";
+        let url_ = this.baseUrl + "/api/services/PFM/TenantSettingsCreditReport/UpdateIdcsSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
