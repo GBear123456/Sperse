@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { ContactGroupTagInfoDto, ContactGroupTagInput } from 'shared/service-proxies/service-proxies';
+import { ContactTagInfoDto, ContactTagInput } from 'shared/service-proxies/service-proxies';
 
 export enum ActionTypes {
     LOAD_REQUEST       = '[Tags] Load Request',
@@ -28,14 +28,14 @@ export class LoadFailureAction implements Action {
 
 export class LoadSuccessAction implements Action {
     readonly type = ActionTypes.LOAD_SUCCESS;
-    constructor(public payload: ContactGroupTagInfoDto[]) {}
+    constructor(public payload: ContactTagInfoDto[]) {}
 }
 
 export class AddTag implements Action {
     readonly type = ActionTypes.ADD_TAG;
     constructor(public payload: {
         contactGroupIds: number[],
-        tags: ContactGroupTagInput[],
+        tags: ContactTagInput[],
         successMessage: string,
         serviceMethodName: string
     }) {}
@@ -45,7 +45,7 @@ export class AddTagSuccess implements Action {
     readonly type = ActionTypes.ADD_TAG_SUCCESS;
     constructor(public payload: {
         contactGroupIds: number[],
-        tags: ContactGroupTagInput[],
+        tags: ContactTagInput[],
         successMessage: string,
         serviceMethodName: string
     }) {}

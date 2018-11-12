@@ -10,7 +10,7 @@ import * as _ from 'underscore';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
-UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, ContactGroupInfoDto } from '@shared/service-proxies/service-proxies';
+UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 
@@ -24,7 +24,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     @ViewChild('currentDateBox') currentDateBox: DxDateBoxComponent;
 
     private slider: any;
-    private _contactInfo: ContactGroupInfoDto;
+    private _contactInfo: ContactInfoDto;
     private validator: any;
 
     masks = AppConsts.masks;
@@ -66,8 +66,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
         if (this.data.contactInfo.contactPersons) {
             this._contactInfo = this.data.contactInfo;
-            let orgContact = <any>this._contactInfo.organizationContactInfo,
-                contacts = this._contactInfo.contactPersons.length ? this._contactInfo.contactPersons : [this._contactInfo.primaryContactInfo];
+            let orgContact = <any>this._contactInfo.primaryOrganizationContactInfo,
+                contacts = this._contactInfo.contactPersons.length ? this._contactInfo.contactPersons : [this._contactInfo.personContactInfo];
             this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
             this.onContactChanged({value: this.contacts[0].id});
         }

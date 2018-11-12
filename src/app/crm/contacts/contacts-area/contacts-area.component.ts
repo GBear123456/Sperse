@@ -10,7 +10,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ContactGroupInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
+    ContactInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
     UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
@@ -26,13 +26,13 @@ import { ContactsService } from '../contacts.service';
 })
 export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
-    @Input() set contactInfo(value: ContactGroupInfoDto) {
+    @Input() set contactInfo(value: ContactInfoDto) {
         if (this._contactInfo = value)
             this.contactInfoData = this.isCompany ? 
-                value.organizationContactInfo && value.organizationContactInfo.details: 
-                value.primaryContactInfo && value.primaryContactInfo.details;
+                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details: 
+                value.personContactInfo && value.personContactInfo.details;
     }
-    get contactInfo(): ContactGroupInfoDto {
+    get contactInfo(): ContactInfoDto {
         return this._contactInfo;
     }
     @Input() showContactType: string;
@@ -45,7 +45,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
-    private _contactInfo: ContactGroupInfoDto;
+    private _contactInfo: ContactInfoDto;
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
@@ -133,7 +133,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this._contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),

@@ -15,7 +15,7 @@ import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-rea
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroupTagsServiceProxy, ContactGroupTagInfoDto, ContactGroupTagInput, UntagContactGroupsInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupTagsServiceProxy, ContactTagInfoDto, ContactTagInput, UntagContactsInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
   selector: 'crm-tags-list',
@@ -34,7 +34,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
     get selectedItems() {
         return this.selectedTags.map(item => {
-            return ContactGroupTagInput.fromJS(_.findWhere(this.list, {id: item}));
+            return ContactTagInput.fromJS(_.findWhere(this.list, {id: item}));
         });
     }
     @Output() onSelectedChanged: EventEmitter<any> = new EventEmitter();
@@ -93,8 +93,8 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         let tags = this.selectedItems;
         if (this.bulkUpdateMode) {
             if (isRemove)
-                this._tagsService.untagContactGroups(UntagContactGroupsInput.fromJS({
-                    contactGroupIds: contactGroupIds,
+                this._tagsService.untagContactGroups(UntagContactsInput.fromJS({
+                    contactIds: contactGroupIds,
                     tagIds: this.selectedTags
                 })).pipe(finalize(() => {
                     this.listComponent.deselectAll();
@@ -138,7 +138,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
-        this.store$.pipe(select(TagsStoreSelectors.getTags)).subscribe((tags: ContactGroupTagInfoDto[]) => {
+        this.store$.pipe(select(TagsStoreSelectors.getTags)).subscribe((tags: ContactTagInfoDto[]) => {
             this.list = tags;
         });
     }

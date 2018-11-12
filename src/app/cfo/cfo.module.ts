@@ -72,7 +72,7 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 import { StatementsComponent } from './statements/statements.component';
-import { ContactGroupServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
@@ -169,7 +169,7 @@ import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.comp
         UsersDialogComponent
     ],
     providers: [
-        ContactGroupServiceProxy,
+        ContactServiceProxy,
         SyncServiceProxy,
         CalculatorService,
         ZendeskService

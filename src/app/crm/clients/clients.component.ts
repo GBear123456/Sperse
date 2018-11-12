@@ -43,7 +43,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { CustomerServiceProxy, ContactGroupStatusDto } from '@shared/service-proxies/service-proxies';
+import { CustomerServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 
@@ -70,7 +70,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private canSendVerificationRequest = false;
     private dependencyChanged = false;
 
-    statuses: ContactGroupStatusDto[];
+    statuses: ContactStatusDto[];
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;

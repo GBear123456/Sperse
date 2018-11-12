@@ -10,8 +10,8 @@ import { catchError, exhaustMap, finalize, map, mergeMap, startWith, withLatestF
 
 /** Application imports */
 import {
-    ContactGroupListsServiceProxy, ContactGroupListInfoDto, AddContactGroupsToListsInput,
-    UpdateContactGroupListInput, UpdateContactGroupListsInput, DictionaryServiceProxy
+    ContactGroupListsServiceProxy, ContactListInfoDto, AddContactGroupsToListsInput,
+    UpdateContactListInput, UpdateContactListsInput, DictionaryServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import * as listsActions from './actions';
 import { State } from './state';
@@ -38,7 +38,7 @@ export class ListsStoreEffects {
 
             return this._dictionaryService.getLists()
                 .pipe(
-                    map((lists: ContactGroupListInfoDto[]) => {
+                    map((lists: ContactListInfoDto[]) => {
                         return new listsActions.LoadSuccessAction(lists);
                     }),
                     catchError(err => {
@@ -60,8 +60,8 @@ export class ListsStoreEffects {
                              lists: payload.lists
                           }));
             } else if (payload.serviceMethodName === 'updateContactGroupLists') {
-                request = this._listsService.updateContactGroupLists(UpdateContactGroupListsInput.fromJS({
-                             contactGroupId: payload.contactGroupIds[0],
+                request = this._listsService.updateContactGroupLists(UpdateContactListsInput.fromJS({
+                             contactId: payload.contactGroupIds[0],
                              lists: payload.lists
                           }));
             } else {
@@ -86,7 +86,7 @@ export class ListsStoreEffects {
         ofType<listsActions.RenameList>(listsActions.ActionTypes.RENAME_LIST),
         map(action => action.payload),
         mergeMap(payload => {
-            return this._listsService.rename(UpdateContactGroupListInput.fromJS({
+            return this._listsService.rename(UpdateContactListInput.fromJS({
                 id: payload.id,
                 name: payload.name
             })).pipe(

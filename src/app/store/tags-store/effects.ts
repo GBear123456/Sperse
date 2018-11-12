@@ -10,8 +10,8 @@ import { catchError, map, startWith, withLatestFrom, finalize, exhaustMap, merge
 
 /** Application imports */
 import {
-    ContactGroupTagsServiceProxy, ContactGroupTagInfoDto, TagContactGroupsInput,
-    UpdateContactGroupTagInput, UpdateContactGroupTagsInput, DictionaryServiceProxy
+    ContactGroupTagsServiceProxy, ContactTagInfoDto, TagContactsInput,
+    UpdateContactTagInput, UpdateContactTagsInput, DictionaryServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import * as tagsActions from './actions';
 import { State } from './state';
@@ -39,7 +39,7 @@ export class TagsStoreEffects {
 
             return this._dictionaryService.getTags()
                 .pipe(
-                    map((tags: ContactGroupTagInfoDto[]) => {
+                    map((tags: ContactTagInfoDto[]) => {
                         return new tagsActions.LoadSuccessAction(tags);
                     }),
                     catchError(err => {
@@ -56,13 +56,13 @@ export class TagsStoreEffects {
         mergeMap(payload => {
             let request: Observable<any>;
             if (payload.serviceMethodName === 'tagContactGroups') {
-                request = this._tagsService[payload.serviceMethodName ](TagContactGroupsInput.fromJS({
-                             contactGroupIds: payload.contactGroupIds,
+                request = this._tagsService[payload.serviceMethodName ](TagContactsInput.fromJS({
+                             contactIds: payload.contactGroupIds,
                              tags: payload.tags
                           }));
             } else if (payload.serviceMethodName === 'updateContactGroupTags') {
-                request = this._tagsService.updateContactGroupTags(UpdateContactGroupTagsInput.fromJS({
-                             contactGroupId: payload.contactGroupIds[0],
+                request = this._tagsService.updateContactGroupTags(UpdateContactTagsInput.fromJS({
+                             contactId: payload.contactGroupIds[0],
                              tags: payload.tags
                           }));
             } else {
@@ -87,7 +87,7 @@ export class TagsStoreEffects {
         ofType<tagsActions.RenameTag>(tagsActions.ActionTypes.RENAME_TAG),
         map(action => action.payload),
         mergeMap(payload => {
-            return this._tagsService.rename(UpdateContactGroupTagInput.fromJS({
+            return this._tagsService.rename(UpdateContactTagInput.fromJS({
                 id: payload.id,
                 name: payload.name
             })).pipe(
