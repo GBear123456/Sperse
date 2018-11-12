@@ -6,28 +6,24 @@ import { MatDialog } from '@angular/material';
 import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
-import { finalize } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroupStatus } from '@shared/AppEnums';
-import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
-import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
-import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
-import { ContactGroupInfoDto, UserServiceProxy, CreateContactPhotoInput, ContactEmploymentServiceProxy,
+import { ContactGroupInfoDto, CreateContactPhotoInput, ContactEmploymentServiceProxy,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdateContactEmploymentInput,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactGroupType } from '@shared/AppEnums';
+import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
 
 @Component({
     selector: 'details-header',
@@ -38,8 +34,8 @@ import { ContactGroupType } from '@shared/AppEnums';
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
 
-    @Input() 
-    public set data(data: ContactGroupInfoDto) {        
+    @Input()
+    public set data(data: ContactGroupInfoDto) {
         this._contactInfoBehaviorSubject.next(data);
     }
     public get data(): ContactGroupInfoDto {
@@ -72,8 +68,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         private nameParserService: NameParserService,
         private appService: AppService,
         private dialogService: DialogService,
-        private _cacheService: CacheService,
-        private _userService: UserServiceProxy
+        private _cacheService: CacheService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -123,17 +118,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
-    showOrganizationDetails(event) {
-        let dialogData = this.data.organizationContactInfo;
+    showCompanyDialog() {
         this.dialog.closeAll();
-        this.dialog.open(OrganizationDialogComponent, {
-            data: dialogData,
-            hasBackdrop: false,
-            position: this.getDialogPossition(event, 304)
-        }).afterClosed().subscribe(result => {
-          // some logic
+        this.dialog.open(CompanyDialogComponent, {
+            data: {
+                company: this.data.organizationContactInfo
+            },
+            panelClass: 'slider',
+            maxWidth: '830px'
         });
-        event.stopPropagation();
     }
 
     showUploadPhotoDialog(event, isCompany = undefined) {

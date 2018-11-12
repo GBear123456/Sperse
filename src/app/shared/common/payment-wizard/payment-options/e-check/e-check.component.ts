@@ -10,8 +10,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
 import { NumberToWordsPipe } from '@shared/common/pipes/number-to-words/number-to-words.pipe';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { ConditionsType } from '@shared/AppEnums';
 
 @Component({
     selector: 'e-check',

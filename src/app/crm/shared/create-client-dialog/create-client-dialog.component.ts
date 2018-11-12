@@ -439,7 +439,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 url: val.url,
                 isActive: true,
                 isCompany: val.isCompany,
-                linkTypeId: val.type == this.linksTypeDefault ? undefined: val.type
+                linkTypeId: val.type == this.linksTypeDefault ? undefined : val.type
             } as CreateContactLinkInput;
         });
     }
@@ -630,7 +630,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             filter(types => !!types)
         ).subscribe(types => {
             this.linkTypes = types.map((entity) => {
-                entity['uri'] = entity.name.replace(/ /g,'');
+                entity['uri'] = entity.name.replace(/ /g, '');
                 return entity;
             });
         });
@@ -647,8 +647,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     checkAddressControls() {
         clearTimeout(this.checkValidTymeout);
         this.checkValidTymeout = setTimeout(() => {
-            this.addButtonVisible['addresses'] = 
-                this.checkEveryContactValid('addresses') && 
+            this.addButtonVisible['addresses'] =
+                this.checkEveryContactValid('addresses') &&
                     !this.checkDuplicateContact('addresses');
         }, 300);
     }
@@ -663,7 +663,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     addNewContact(field) {
         if (this.addButtonVisible[field] &&
-            this.checkEveryContactValid(field) && 
+            this.checkEveryContactValid(field) &&
             !this.checkDuplicateContact(field)
         ) {
             this.contacts[field].push({
@@ -676,11 +676,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     checkFieldValid(field, item) {
         let isObject = typeof(item) == 'object';
         if (field == 'emails')
-            return this.validateEmailAddress(isObject ? item.email: item);
+            return this.validateEmailAddress(isObject ? item.email : item);
         else if (field == 'phones')
-            return Boolean(isObject ? item.number: item);
+            return Boolean(isObject ? item.number : item);
         else if (field == 'links')
-            return this.validateLinkAddress(isObject ? item.url: item);
+            return this.validateLinkAddress(isObject ? item.url : item);
         else if (field == 'addresses')
             return item.address && item.city && item.country;
         else
@@ -699,7 +699,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     emptyOrRemoveInput(field, index) {
         if (index || this.contacts[field].length > 1) {
             this.contacts[field].splice(index, 1);
-            this.addButtonVisible[field] = this.checkEveryContactValid(field) 
+            this.addButtonVisible[field] = this.checkEveryContactValid(field)
                 && !this.checkDuplicateContact(field);
         } else {
             this.contacts[field][index] = {type: this[field + 'TypeDefault']};
@@ -728,8 +728,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onFieldChanged($event, field, i) {
         let value = this.getInputElementValue($event);
-        this.addButtonVisible[field] = 
-            this.checkFieldValid(field, value) && 
+        this.addButtonVisible[field] =
+            this.checkFieldValid(field, value) &&
                 !this.checkDuplicateContact(field);
 
         this.checkSimilarCustomers();
@@ -738,7 +738,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     onPhoneChanged(component) {
         setTimeout(() => {
             let field = 'phones';
-            this.addButtonVisible[field] = component.isValid() 
+            this.addButtonVisible[field] = component.isValid()
                 && !this.checkDuplicateContact(field);
             this.checkSimilarCustomers();
         });
@@ -877,7 +877,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.initToolbarConfig();
     }
 
-    onListsSelected(event) {  
+    onListsSelected(event) {
         this.isListsSelected = Boolean(event.selectedRowKeys.length);
         this.initToolbarConfig();
     }
