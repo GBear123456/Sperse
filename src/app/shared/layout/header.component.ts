@@ -25,11 +25,9 @@ import { MySettingsModalComponent } from './profile/my-settings-modal.component'
     selector: 'app-header'
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
-
     @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalComponent;
     @ViewChild('loginAttemptsModal') loginAttemptsModal: LoginAttemptsModalComponent;
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
-    @ViewChild('changePasswordModal') changePasswordModal: ChangePasswordModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
 
     languages: abp.localization.ILanguageInfo[];
@@ -143,7 +141,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     changePassword(): void {
-        this.changePasswordModal.show();
+        this.dialog.open(ChangePasswordModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     changeProfilePicture(): void {
