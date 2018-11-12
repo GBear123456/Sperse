@@ -1,7 +1,7 @@
-import { ContactGroupStatusDto } from 'shared/service-proxies/service-proxies';
+import { ContactStatusDto } from 'shared/service-proxies/service-proxies';
 
 export interface State {
-    statuses: ContactGroupStatusDto[];
+    statuses: ContactStatusDto[];
     isLoading: boolean;
     error: string;
     loadedTime: number;

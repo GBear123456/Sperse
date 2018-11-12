@@ -2,7 +2,7 @@ import { Component, Inject, Injector } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { SimilarContactGroupOutput } from 'shared/service-proxies/service-proxies';
+import { SimilarContactOutput } from 'shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'similar-customers-dialog',
@@ -19,7 +19,7 @@ export class SimilarCustomersDialogComponent extends AppComponentBase {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    selectSimilarCustomer(similarCustomer: SimilarContactGroupOutput): void {
+    selectSimilarCustomer(similarCustomer: SimilarContactOutput): void {
         this.data.componentRef.close();
         this.dialogRef.close();
         this._router.navigate(['app/crm/client/' + similarCustomer.id + '/contact-information'],

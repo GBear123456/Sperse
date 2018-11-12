@@ -21,7 +21,7 @@ import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
-import { ContactGroupInfoDto, UserServiceProxy, CreateContactPhotoInput, ContactEmploymentServiceProxy,
+import { ContactInfoDto, UserServiceProxy, CreateContactPhotoInput, ContactEmploymentServiceProxy,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdateContactEmploymentInput,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -40,10 +40,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
 
     @Input() 
-    public set data(data: ContactGroupInfoDto) {        
+    public set data(data: ContactInfoDto) {        
         this._contactInfoBehaviorSubject.next(data);
     }
-    public get data(): ContactGroupInfoDto {
+    public get data(): ContactInfoDto {
         return this._contactInfoBehaviorSubject.getValue();
     }
 
@@ -51,7 +51,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
 
-    private _contactInfoBehaviorSubject = new BehaviorSubject<ContactGroupInfoDto>(ContactGroupInfoDto.fromJS({}));
+    private _contactInfoBehaviorSubject = new BehaviorSubject<ContactInfoDto>(ContactInfoDto.fromJS({}));
     private readonly ADD_FILES_OPTION   = 0;
     private readonly ADD_NOTES_OPTION   = 1;
     private readonly ADD_CONTACT_OPTION = 2;
@@ -125,7 +125,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     showOrganizationDetails(event) {
-        let dialogData = this.data.organizationContactInfo;
+        let dialogData = this.data.primaryOrganizationContactInfo;
         this.dialog.closeAll();
         this.dialog.open(OrganizationDialogComponent, {
             data: dialogData,
@@ -164,7 +164,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         event.stopPropagation();
     }
 
-    getNameInplaceEditData(field = 'primaryContactInfo') {
+    getNameInplaceEditData(field = 'personContactInfo') {
         let contactInfo = this.data && this.data[field];
         if (contactInfo)
             return {
@@ -193,7 +193,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     showEditPersonDialog(event) {
         this.dialog.closeAll();
         this.dialog.open(PersonDialogComponent, {
-            data: this.data.primaryContactInfo,
+            data: this.data.personContactInfo,
             hasBackdrop: false,
             position: this.getDialogPossition(event, 200)
         });
@@ -201,7 +201,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     updateCompanyField(value, field = 'companyName') {
-        let data = this.data.organizationContactInfo;
+        let data = this.data.primaryOrganizationContactInfo;
         data.organization[field] = value;
         this.organizationContactService.updateOrganizationInfo(
             UpdateOrganizationInfoInput.fromJS(
@@ -216,9 +216,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         if (!value)
             return;
 
-        this.data.primaryContactInfo.fullName = value;
+        this.data.personContactInfo.fullName = value;
 
-        let person = this.data.primaryContactInfo.person;
+        let person = this.data.personContactInfo.person;
         this.nameParserService.parseIntoPerson(value, person);
 
         this.personContactServiceProxy.updatePersonInfo(

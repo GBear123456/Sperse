@@ -10,7 +10,7 @@ import * as moment from 'moment';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactGroupServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentMethodInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentMethodInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'payment-information',
@@ -34,13 +34,13 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     constructor(
         injector: Injector,
         private paymentServiceProxy: PaymentServiceProxy,
-        private contactGroupService: ContactGroupServiceProxy
+        private contactService: ContactServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     ngOnInit() {
-        const groupId = this.contactGroupService['data'].contactInfo.id;
+        const groupId = this.contactService['data'].contactInfo.id;
         this.balanceAmount$ = of(0);
         /** Create data prop if not exists */
         this.paymentServiceProxy['data'] = this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][groupId]

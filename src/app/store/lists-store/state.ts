@@ -1,7 +1,7 @@
-import { ContactGroupListInfoDto } from 'shared/service-proxies/service-proxies';
+import { ContactListInfoDto } from 'shared/service-proxies/service-proxies';
 
 export interface State {
-    lists: ContactGroupListInfoDto[];
+    lists: ContactListInfoDto[];
     isLoading: boolean;
     error: string;
     loadedTime: number;

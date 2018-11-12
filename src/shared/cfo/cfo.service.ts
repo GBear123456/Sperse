@@ -40,7 +40,7 @@ export class CFOService extends CFOServiceBase {
     }
 
     initContactInfo(userId) {
-        this._contactService.getContactInfoByUser(userId).subscribe(response => {
+        this._contactService.getContactShortInfoForUser(userId).subscribe(response => {
             this._appService.contactInfo = response;
         });
     }

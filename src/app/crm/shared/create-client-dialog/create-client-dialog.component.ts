@@ -29,9 +29,9 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroupType } from '@shared/AppEnums';
 import {
-    ContactGroupServiceProxy, CreateContactGroupInput, ContactAddressServiceProxy, CreateContactEmailInput,
+    ContactServiceProxy, CreateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, SimilarContactGroupOutput, ContactPhotoInput,
+    ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput,
     PersonInfoDto, LeadServiceProxy, CreateLeadInput, CreateContactLinkInput
 } from '@shared/service-proxies/service-proxies';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
@@ -50,7 +50,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ContactGroupServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ]
+    providers: [ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
@@ -124,7 +124,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         addresses: [{type: this.addressesTypeDefault}]
     };
 
-    similarCustomers: SimilarContactGroupOutput[];
+    similarCustomers: SimilarContactOutput[];
     similarCustomersDialog: any;
     toolbarConfig = [];
 
@@ -142,7 +142,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         injector: Injector,
         public dialog: MatDialog,
         private _cacheService: CacheService,
-        private _contactGroupService: ContactGroupServiceProxy,
+        private _contactService: ContactServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
@@ -345,7 +345,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             lists: lists,
             tags: tags,
             ratingId: ratingId,
-            contactGroupTypeId: this.data.customerType,
+            contactGroupId: this.data.customerType,
             partnerTypeName: partnerTypeName
         };
 
@@ -356,7 +356,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.contactGroupId, result.id));
         else
-            this._contactGroupService.createContactGroup(CreateContactGroupInput.fromJS(dataObj))
+            this._contactService.createContact(CreateContactInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.id));
     }
@@ -529,7 +529,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     checkSimilarCustomers() {
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
-            this._contactGroupService.getSimilarContactGroups(
+            this._contactService.getSimilarContacts(
                 this.person.namePrefix || undefined,
                 this.person.firstName || undefined,
                 this.person.middleName || undefined,

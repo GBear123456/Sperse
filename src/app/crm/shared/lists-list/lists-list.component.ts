@@ -13,7 +13,7 @@ import { AppStore, ListsStoreActions, ListsStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroupListsServiceProxy, ContactGroupListInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroupListsServiceProxy, ContactListInput } from '@shared/service-proxies/service-proxies';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 
 @Component({
@@ -33,7 +33,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
     get selectedItems() {
         return this.selectedLists.map(item => {
-            return ContactGroupListInput.fromJS(_.findWhere(this.list, {id: item}));
+            return ContactListInput.fromJS(_.findWhere(this.list, {id: item}));
         }).filter(Boolean);
     }
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();

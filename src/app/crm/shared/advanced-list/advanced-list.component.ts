@@ -3,8 +3,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { ContactGroupListsServiceProxy, AddContactGroupsToListsInput, ContactGroupListInput,
-    UpdateContactGroupListInput, UpdateContactGroupListsInput} from '@shared/service-proxies/service-proxies';
+import { ContactGroupListsServiceProxy, AddContactGroupsToListsInput, ContactListInput,
+    UpdateContactListInput, UpdateContactListsInput} from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
@@ -33,7 +33,7 @@ export class AdvancedListComponent extends AppComponentBase implements OnInit {
     }
     get selectedItems() {
         return this.selectedLists.map(item => {
-            return ContactGroupListInput.fromJS(_.findWhere(this.list, {id: item}));
+            return ContactListInput.fromJS(_.findWhere(this.list, {id: item}));
         }).filter(Boolean);
     }
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
