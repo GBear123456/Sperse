@@ -25,7 +25,6 @@ import { ChangeProfilePictureModalComponent } from '@app/shared/layout/profile/c
 import { MySettingsModalComponent } from '@app/shared/layout/profile/my-settings-modal.component';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
-import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
 import * as _ from 'lodash';
@@ -39,7 +38,6 @@ import { MatDialog } from '@angular/material';
     providers: [ImpersonationService]
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
-    @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalComponent;
     @ViewChild('loginAttemptsModal') loginAttemptsModal: LoginAttemptsModalComponent;
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
@@ -127,8 +125,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._userNotificationHelper.settingsModal = this.notificationSettingsModal;
-
         this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled == false);
         this.currentLanguage = this.localization.currentLanguage;
         this.isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;

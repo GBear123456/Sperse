@@ -79,7 +79,8 @@ let COMPONENTS = [
     ],
     entryComponents: [
         MySettingsModalComponent,
-        ChangePasswordModalComponent
+        ChangePasswordModalComponent,
+        NotificationSettingsModalComponent
     ]
 })
 export class LayoutCommonModule {}
