@@ -14,7 +14,7 @@ export class ConsumerStatementsComponent extends AppComponentBase implements OnI
     injector: Injector
   ) {
     super(injector);
-    this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
+    this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
   }
 
   ngOnInit() {

@@ -31,7 +31,7 @@ export class AppConsts {
         defaultLocalizationSourceName: 'Platform',
         CRMLocalizationSourceName: 'CRM',
         CFOLocalizationSourceName: 'CFO',
-        CreditReportLocalizationSourceName: 'CreditReport'
+        PFMLocalizationSourceName: 'PFM'
     };
 
     static readonly modules = {

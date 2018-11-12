@@ -33,7 +33,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         private _instanceServiceProxy: InstanceServiceProxy,
         private dialog: MatDialog
     ) {
-        super(injector, AppConsts.localization.CreditReportLocalizationSourceName);
+        super(injector, AppConsts.localization.PFMLocalizationSourceName);
     }
 
     ngOnInit() {

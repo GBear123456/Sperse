@@ -23,7 +23,7 @@ export class KbaResultComponent extends AppComponentBase implements OnInit {
     private _KBAService: KBAServiceProxy
   ) {
     super (injector);
-    this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
+    this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
     this.parseParams ();
     this.showingError = decodeURIComponent(this.params.err).replace(/[+]/g, ' ');
   }

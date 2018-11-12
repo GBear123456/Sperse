@@ -14,7 +14,7 @@ export class CreditorContactsComponent extends AppComponentBase implements OnIni
     injector: Injector
   ) {
     super(injector);
-    this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
+    this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
   }
 
   ngOnInit() {

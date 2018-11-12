@@ -25,7 +25,7 @@ export class CreditHistoryComponent extends AppComponentBase implements OnInit {
         private _creditReportService: CreditReportServiceProxy
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
+        this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
     }
 
     ngOnInit() {
