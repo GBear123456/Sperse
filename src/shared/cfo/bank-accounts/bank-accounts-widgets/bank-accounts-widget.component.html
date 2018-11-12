@@ -6,7 +6,7 @@
         </dx-tabs>
     </div>
 </div>
-<dx-scroll-view showScrollbar="onHover" [height]="calculateHeight()" [width]="'100%'">
+<dx-scroll-view showScrollbar="onHover" [height]="scrollHeight" [width]="'100%'">
     <div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
         <dx-data-grid id="gridContainer"
                       [width]="'100%'"
