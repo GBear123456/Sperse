@@ -19,7 +19,12 @@ import {
     PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy,
     PayPalInfoDto,
-    PaymentRequestInfoDtoPaymentInfoType, BankTransferSettings, TenantPaymentSettingsServiceProxy, ModuleSubscriptionInfoFrequency, RequestPaymentDto, RequestPaymentDtoRequestType, SetupSubscriptionInfoDto, ModuleSubscriptionInfo
+    PaymentRequestInfoDtoPaymentInfoType,
+    ModuleSubscriptionInfoFrequency,
+    RequestPaymentDto,
+    RequestPaymentDtoRequestType,
+    ModuleSubscriptionInfo,
+    BankTransferSettingsDto
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -32,7 +37,7 @@ import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
     templateUrl: './payment-options.component.html',
     styleUrls: ['./payment-options.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantPaymentSettingsServiceProxy, TenantSubscriptionServiceProxy]
+    providers: [ TenantSubscriptionServiceProxy ]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
     @Input() plan: PackageOptions;
@@ -71,14 +76,13 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
 
     selectedGateway: number = this.GATEWAY_ECHECK;
     paymentMethods = PaymentMethods;
-    bankTransferSettings$: Observable<BankTransferSettings>;
+    bankTransferSettings$: Observable<BankTransferSettingsDto>;
     payPalEnvironmentSetting: string;
 
     constructor(
         private injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
-        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
-        private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy
+        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy
     ) {
         super(injector);
     }
@@ -97,9 +101,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     selectedTabChange(e) {
         if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
             /** Load transfer data */
-            this.bankTransferSettings$ = this.tenantPaymentSettingsService.getBankTransferSettings();
-        }
-        else if (!this.payPalEnvironmentSetting && e.tab.textLabel === this.l('PayPal')) {
+            this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
+        } else if (!this.payPalEnvironmentSetting && e.tab.textLabel === this.l('PayPal')) {
             this.tenantSubscriptionServiceProxy.getPayPalSettings()
                 .subscribe(settings => this.payPalEnvironmentSetting = settings.environment);
         }
