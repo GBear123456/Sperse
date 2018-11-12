@@ -51,7 +51,6 @@ import { ReferralHistoryComponent } from './referral-history/referral-history.co
 import { PaymentInformationComponent } from './payment-information/payment-information.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
-import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { PersonInfoComponent } from './person-info/person-info.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
@@ -68,6 +67,7 @@ import { ContactServiceProxy, MemberServiceProxy, OrganizationContactServiceProx
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
+import { CompanyDialogComponent } from './company-dialog/company-dialog.component';
 
 @NgModule({
   declarations: [
@@ -98,7 +98,6 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     ActivityLogsComponent,
     VerificationChecklistComponent,
     OperationsWidgetComponent,
-    OrganizationDialogComponent,
     PersonDialogComponent,
     PersonInfoComponent,
     ContactPersonsDialogComponent,
@@ -110,7 +109,8 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     DocumentTypesListComponent,
     OrganizationUnitsTreeComponent,
     PermissionTreeComponent,
-    AddContactDialogComponent
+    AddContactDialogComponent,
+    CompanyDialogComponent
   ],
   imports: [
     FormsModule,
@@ -157,7 +157,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     EditContactDialog,
     EditAddressDialog,
     ResetPasswordDialog,
-    OrganizationDialogComponent,
+    CompanyDialogComponent,
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,

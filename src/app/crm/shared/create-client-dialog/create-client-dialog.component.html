@@ -109,7 +109,7 @@
                                 [dataSource]="phoneTypes"
                                 displayExpr="name"
                                 valueExpr="id"
-                                [value]="phone.type"
+                                [(value)]="phone.type"
                                 [itemTemplate]="'phoneTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
                                     <div class="usage-type-item"><span style="width: 100px;">{{data.name}}</span><span>{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>

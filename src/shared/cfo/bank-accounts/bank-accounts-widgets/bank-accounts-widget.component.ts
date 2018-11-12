@@ -78,6 +78,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     popupVisible = false;
     bankAccountInfo: RenameSyncAccountInput = new RenameSyncAccountInput();
     bankAccountsService: BankAccountsService;
+    scrollHeight: number;
 
     constructor(
         injector: Injector,
@@ -206,6 +207,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     contentReady() {
+        this.calculateHeight();
         this.addEmptyRows();
     }
 
@@ -335,7 +337,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     calculateHeight() {
         /** Get bottom position of previous element */
         let filtersBottomPosition = this.filterActions.nativeElement.getBoundingClientRect().bottom;
-        return window.innerHeight - filtersBottomPosition - 20;
+        this.scrollHeight = window.innerHeight - filtersBottomPosition - 20;
     }
 
     removeAccount(syncAccountId) {
