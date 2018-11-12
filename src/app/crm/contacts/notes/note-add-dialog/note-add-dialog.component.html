@@ -1,0 +1,88 @@
+<dx-scroll-view showScrollbar="onHover">
+    <mat-dialog-content>
+        <div class="content">
+            <dx-validation-group (onInitialized)="initValidationGroup($event)">
+                <div class="field type">
+                    <dx-select-box
+                        width="320px"
+                        [dataSource]="types"
+                        [dropDownButtonTemplate]="''"
+                        [displayExpr]="'name'"
+                        [valueExpr]="'id'"
+                        [(value)]="type">
+                    </dx-select-box>
+                    <span class="close" (click)="close()"></span>
+                </div>
+                <div class="field">
+                    <label>{{l('Summary') | uppercase }}</label>
+                    <dx-text-area width="355px" [height]="'100px'" [(value)]="summary">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{l('NoteIsRequired')}}"></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-text-area>
+                </div>
+                <div *ngIf="contacts.length > 1" class="field">
+                    <label>{{l('Contact') | uppercase }}</label>
+                    <dx-select-box
+                        width="355px"
+                        [dataSource]="contacts"
+                        [displayExpr]="'fullName'"
+                        [valueExpr]="'id'"
+                        (onValueChanged)="onContactChanged($event)"
+                        [(value)]="contact">
+                    </dx-select-box>
+                </div>
+                <div class="field">
+                    <label>{{l('FollowUpDate') | uppercase }}</label>
+                    <dx-date-box
+                        #followUpDateBox
+                        width="355px"
+                        type="datetime"
+                        [(value)]="followupDate">
+                    </dx-date-box>
+                </div>
+                <div class="field phone">
+                    <label>{{l('Phone') | uppercase }}</label>
+                    <dx-select-box
+                        [width]="'320px'"
+                        [dataSource]="phones"
+                        [displayExpr]="'phoneNumber'"
+                        [valueExpr]="'id'"
+                        [(value)]="phone">
+                    </dx-select-box>
+                    <div class="add-phone" (click)="showAddPhoneDialog($event)">+</div>
+                </div>
+                <span [hidden]="showOrigin" class="show-origin" (click)="showOrigin = true">{{l('Update Origin')}}</span>
+                <div [hidden]="!showOrigin">
+                    <div class="field">
+                        <label>{{l('Date') | uppercase }}</label>
+                        <dx-date-box
+                            #currentDateBox
+                            width="355px"
+                            type="datetime"
+                            [(value)]="currentDate">
+                        </dx-date-box>
+                    </div>
+                    <div class="field">
+                        <label>{{l('AddedBy') | uppercase }}</label>
+                        <dx-select-box
+                            width="355px"
+                            [placeholder]="l('EditValuePlaceholder')"
+                            [acceptCustomValue]="true"
+                            [dataSource]="users"
+                            [valueChangeEvent]="'keyup'"
+                            [displayExpr]="'fullName'"
+                            [valueExpr]="'id'"
+                            (onCustomItemCreating)="onUserSearch($event)"
+                            [(value)]="addedBy">
+                        </dx-select-box>
+                    </div>
+                </div>
+            </dx-validation-group>
+        </div>
+        <mat-dialog-actions>
+            <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+            <button mat-button (click)="saveNote()" class="button-layout button-primary">{{l('Save')}}</button>
+        </mat-dialog-actions>
+    </mat-dialog-content>
+</dx-scroll-view>

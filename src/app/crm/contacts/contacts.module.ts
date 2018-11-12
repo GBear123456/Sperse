@@ -27,7 +27,7 @@ import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
-import { NoteAddComponent } from './notes/note-add/note-add.component';
+import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
@@ -82,7 +82,7 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     ContactsAreaComponent,
     AddressesComponent,
     EmploymentComponent,
-    ClientScoresComponent,
+    ClientScoresComponent,                                                     
     TotalApprovedComponent,
     CreditLinesComponent,
     ContactInformationComponent,
@@ -102,7 +102,7 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     PersonInfoComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddComponent,
+    NoteAddDialogComponent,
     DocumentsComponent,
     UploadDocumentDialogComponent,
     UploadDocumentsDialogComponent,
@@ -161,11 +161,11 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddComponent,
     LeadCancelDialogComponent,
     UploadDocumentDialogComponent,
     UploadDocumentsDialogComponent,
-    AddContactDialogComponent
+    AddContactDialogComponent,
+    NoteAddDialogComponent
   ],
   providers: [
     ContactsService,

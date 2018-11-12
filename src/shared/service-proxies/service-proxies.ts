@@ -2217,72 +2217,6 @@ export class BankAccountsServiceProxy {
 }
 
 @Injectable()
-export class BaseCommercePushNotificationHandlerServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @merchant_username (optional) 
-     * @push_notification (optional) 
-     * @return Success
-     */
-    handle(merchant_username: string | null | undefined, push_notification: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/BaseCommercePushNotificationHandler/Handle?";
-        if (merchant_username !== undefined)
-            url_ += "merchant_username=" + encodeURIComponent("" + merchant_username) + "&"; 
-        if (push_notification !== undefined)
-            url_ += "push_notification=" + encodeURIComponent("" + push_notification) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processHandle(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processHandle(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processHandle(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class BusinessEntityServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -19054,70 +18988,6 @@ export class QuickBookServiceProxy {
 }
 
 @Injectable()
-export class RecurlyPushNotificationHandlerServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @notification (optional) 
-     * @return Success
-     */
-    handle(notification: any[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/RecurlyPushNotificationHandler/Handle";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(notification);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processHandle(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processHandle(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processHandle(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class RoleServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -23137,8 +23007,8 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @return Success
      */
-    getHostBankTransferSettings(): Observable<BankTransferSettingsDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetHostBankTransferSettings";
+    getBankTransferSettings(): Observable<BankTransferSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetBankTransferSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -23151,11 +23021,11 @@ export class TenantSubscriptionServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetHostBankTransferSettings(response_);
+            return this.processGetBankTransferSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetHostBankTransferSettings(<any>response_);
+                    return this.processGetBankTransferSettings(<any>response_);
                 } catch (e) {
                     return <Observable<BankTransferSettingsDto>><any>_observableThrow(e);
                 }
@@ -23164,7 +23034,7 @@ export class TenantSubscriptionServiceProxy {
         }));
     }
 
-    protected processGetHostBankTransferSettings(response: HttpResponseBase): Observable<BankTransferSettingsDto> {
+    protected processGetBankTransferSettings(response: HttpResponseBase): Observable<BankTransferSettingsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -23189,8 +23059,8 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @return Success
      */
-    getPayPalEnvironmentSetting(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetPayPalEnvironmentSetting";
+    getPayPalSettings(): Observable<PayPalSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetPayPalSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -23203,20 +23073,20 @@ export class TenantSubscriptionServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPayPalEnvironmentSetting(response_);
+            return this.processGetPayPalSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetPayPalEnvironmentSetting(<any>response_);
+                    return this.processGetPayPalSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
+                    return <Observable<PayPalSettingsDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string>><any>_observableThrow(response_);
+                return <Observable<PayPalSettingsDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetPayPalEnvironmentSetting(response: HttpResponseBase): Observable<string> {
+    protected processGetPayPalSettings(response: HttpResponseBase): Observable<PayPalSettingsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -23227,7 +23097,7 @@ export class TenantSubscriptionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? PayPalSettingsDto.fromJS(resultData200) : new PayPalSettingsDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -23235,7 +23105,7 @@ export class TenantSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string>(<any>null);
+        return _observableOf<PayPalSettingsDto>(<any>null);
     }
 }
 
@@ -27045,6 +26915,7 @@ export class ActivityDto implements IActivityDto {
     assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
@@ -27073,6 +26944,7 @@ export class ActivityDto implements IActivityDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
@@ -27101,6 +26973,7 @@ export class ActivityDto implements IActivityDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
@@ -27118,6 +26991,7 @@ export interface IActivityDto {
     assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
@@ -27131,6 +27005,7 @@ export class CreateActivityDto implements ICreateActivityDto {
     assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
@@ -27157,6 +27032,7 @@ export class CreateActivityDto implements ICreateActivityDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
@@ -27183,6 +27059,7 @@ export class CreateActivityDto implements ICreateActivityDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
@@ -27198,6 +27075,7 @@ export interface ICreateActivityDto {
     assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
@@ -27212,6 +27090,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
     assignedUserIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
     orderId!: number | undefined;
@@ -27239,6 +27118,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
             }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.orderId = data["orderId"];
@@ -27266,6 +27146,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
         }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["orderId"] = this.orderId;
@@ -27282,6 +27163,7 @@ export interface IUpdateActivityDto {
     assignedUserIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
     orderId: number | undefined;
@@ -27292,6 +27174,7 @@ export class MoveActivityDto implements IMoveActivityDto {
     id!: number;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
+    allDay!: boolean | undefined;
 
     constructor(data?: IMoveActivityDto) {
         if (data) {
@@ -27307,6 +27190,7 @@ export class MoveActivityDto implements IMoveActivityDto {
             this.id = data["id"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.allDay = data["allDay"];
         }
     }
 
@@ -27322,6 +27206,7 @@ export class MoveActivityDto implements IMoveActivityDto {
         data["id"] = this.id;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["allDay"] = this.allDay;
         return data; 
     }
 }
@@ -27330,6 +27215,7 @@ export interface IMoveActivityDto {
     id: number;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
+    allDay: boolean | undefined;
 }
 
 export class TransitionActivityDto implements ITransitionActivityDto {
@@ -48114,9 +48000,7 @@ export interface IPackageDto {
 }
 
 export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
-    currentEditionId!: number | undefined;
-    currentUserCount!: number | undefined;
-    currentFrequency!: GetPackagesConfigOutputCurrentFrequency | undefined;
+    currentSubscriptionInfo!: ModuleSubscriptionInfo | undefined;
     packages!: PackageConfigDto[] | undefined;
 
     constructor(data?: IGetPackagesConfigOutput) {
@@ -48130,9 +48014,7 @@ export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
 
     init(data?: any) {
         if (data) {
-            this.currentEditionId = data["currentEditionId"];
-            this.currentUserCount = data["currentUserCount"];
-            this.currentFrequency = data["currentFrequency"];
+            this.currentSubscriptionInfo = data["currentSubscriptionInfo"] ? ModuleSubscriptionInfo.fromJS(data["currentSubscriptionInfo"]) : <any>undefined;
             if (data["packages"] && data["packages"].constructor === Array) {
                 this.packages = [];
                 for (let item of data["packages"])
@@ -48150,9 +48032,7 @@ export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["currentEditionId"] = this.currentEditionId;
-        data["currentUserCount"] = this.currentUserCount;
-        data["currentFrequency"] = this.currentFrequency;
+        data["currentSubscriptionInfo"] = this.currentSubscriptionInfo ? this.currentSubscriptionInfo.toJSON() : <any>undefined;
         if (this.packages && this.packages.constructor === Array) {
             data["packages"] = [];
             for (let item of this.packages)
@@ -48163,10 +48043,52 @@ export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
 }
 
 export interface IGetPackagesConfigOutput {
-    currentEditionId: number | undefined;
-    currentUserCount: number | undefined;
-    currentFrequency: GetPackagesConfigOutputCurrentFrequency | undefined;
+    currentSubscriptionInfo: ModuleSubscriptionInfo | undefined;
     packages: PackageConfigDto[] | undefined;
+}
+
+export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
+    editionId!: number;
+    maxUserCount!: number | undefined;
+    frequency!: ModuleSubscriptionInfoFrequency;
+
+    constructor(data?: IModuleSubscriptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.editionId = data["editionId"];
+            this.maxUserCount = data["maxUserCount"];
+            this.frequency = data["frequency"];
+        }
+    }
+
+    static fromJS(data: any): ModuleSubscriptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ModuleSubscriptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["editionId"] = this.editionId;
+        data["maxUserCount"] = this.maxUserCount;
+        data["frequency"] = this.frequency;
+        return data; 
+    }
+}
+
+export interface IModuleSubscriptionInfo {
+    editionId: number;
+    maxUserCount: number | undefined;
+    frequency: ModuleSubscriptionInfoFrequency;
 }
 
 export class PackageConfigDto implements IPackageConfigDto {
@@ -48246,7 +48168,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
     trialDayCount!: number | undefined;
     maxUserCount!: number | undefined;
     features!: PackageEditionConfigFeatureDto[] | undefined;
-    staticFeatures!: any[] | undefined;
 
     constructor(data?: IPackageEditionConfigDto) {
         if (data) {
@@ -48270,11 +48191,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
                 this.features = [];
                 for (let item of data["features"])
                     this.features.push(PackageEditionConfigFeatureDto.fromJS(item));
-            }
-            if (data["staticFeatures"] && data["staticFeatures"].constructor === Array) {
-                this.staticFeatures = [];
-                for (let item of data["staticFeatures"])
-                    this.staticFeatures.push(item);
             }
         }
     }
@@ -48300,11 +48216,6 @@ export class PackageEditionConfigDto implements IPackageEditionConfigDto {
             for (let item of this.features)
                 data["features"].push(item.toJSON());
         }
-        if (this.staticFeatures && this.staticFeatures.constructor === Array) {
-            data["staticFeatures"] = [];
-            for (let item of this.staticFeatures)
-                data["staticFeatures"].push(item);
-        }
         return data; 
     }
 }
@@ -48318,14 +48229,11 @@ export interface IPackageEditionConfigDto {
     trialDayCount: number | undefined;
     maxUserCount: number | undefined;
     features: PackageEditionConfigFeatureDto[] | undefined;
-    staticFeatures: any[] | undefined;
 }
 
 export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeatureDto {
-    name!: any | undefined;
+    feature!: PricingTableFeature | undefined;
     value!: string | undefined;
-    isVariable!: boolean | undefined;
-    sortOrder!: number | undefined;
 
     constructor(data?: IPackageEditionConfigFeatureDto) {
         if (data) {
@@ -48338,16 +48246,8 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     init(data?: any) {
         if (data) {
-            if (data["name"]) {
-                this.name = {};
-                for (let key in data["name"]) {
-                    if (data["name"].hasOwnProperty(key))
-                        this.name[key] = data["name"][key];
-                }
-            }
+            this.feature = data["feature"] ? PricingTableFeature.fromJS(data["feature"]) : <any>undefined;
             this.value = data["value"];
-            this.isVariable = data["isVariable"];
-            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -48360,25 +48260,87 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (this.name) {
-            data["name"] = {};
-            for (let key in this.name) {
-                if (this.name.hasOwnProperty(key))
-                    data["name"][key] = this.name[key];
-            }
-        }
+        data["feature"] = this.feature ? this.feature.toJSON() : <any>undefined;
         data["value"] = this.value;
-        data["isVariable"] = this.isVariable;
-        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
 
 export interface IPackageEditionConfigFeatureDto {
-    name: any | undefined;
+    feature: PricingTableFeature | undefined;
     value: string | undefined;
+}
+
+export class PricingTableFeature implements IPricingTableFeature {
+    name!: string | undefined;
+    displayName!: any | undefined;
+    isVariable!: boolean | undefined;
+    sortOrder!: number | undefined;
+    isStatic!: boolean | undefined;
+    measurementUnit!: PricingTableFeatureMeasurementUnit | undefined;
+    isCommon!: boolean | undefined;
+
+    constructor(data?: IPricingTableFeature) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            if (data["displayName"]) {
+                this.displayName = {};
+                for (let key in data["displayName"]) {
+                    if (data["displayName"].hasOwnProperty(key))
+                        this.displayName[key] = data["displayName"][key];
+                }
+            }
+            this.isVariable = data["isVariable"];
+            this.sortOrder = data["sortOrder"];
+            this.isStatic = data["isStatic"];
+            this.measurementUnit = data["measurementUnit"];
+            this.isCommon = data["isCommon"];
+        }
+    }
+
+    static fromJS(data: any): PricingTableFeature {
+        data = typeof data === 'object' ? data : {};
+        let result = new PricingTableFeature();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        if (this.displayName) {
+            data["displayName"] = {};
+            for (let key in this.displayName) {
+                if (this.displayName.hasOwnProperty(key))
+                    data["displayName"][key] = this.displayName[key];
+            }
+        }
+        data["isVariable"] = this.isVariable;
+        data["sortOrder"] = this.sortOrder;
+        data["isStatic"] = this.isStatic;
+        data["measurementUnit"] = this.measurementUnit;
+        data["isCommon"] = this.isCommon;
+        return data; 
+    }
+}
+
+export interface IPricingTableFeature {
+    name: string | undefined;
+    displayName: any | undefined;
     isVariable: boolean | undefined;
     sortOrder: number | undefined;
+    isStatic: boolean | undefined;
+    measurementUnit: PricingTableFeatureMeasurementUnit | undefined;
+    isCommon: boolean | undefined;
 }
 
 export class PartnerInfoDto implements IPartnerInfoDto {
@@ -52743,9 +52705,7 @@ export interface IPayPalInfoDto {
 }
 
 export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
-    editionId!: number;
-    maxUserCount!: number | undefined;
-    frequency!: SetupSubscriptionInfoDtoFrequency;
+    subscriptionInfo!: ModuleSubscriptionInfo | undefined;
     billingInfo!: PaymentRequestInfoDto | undefined;
 
     constructor(data?: ISetupSubscriptionInfoDto) {
@@ -52759,9 +52719,7 @@ export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.editionId = data["editionId"];
-            this.maxUserCount = data["maxUserCount"];
-            this.frequency = data["frequency"];
+            this.subscriptionInfo = data["subscriptionInfo"] ? ModuleSubscriptionInfo.fromJS(data["subscriptionInfo"]) : <any>undefined;
             this.billingInfo = data["billingInfo"] ? PaymentRequestInfoDto.fromJS(data["billingInfo"]) : <any>undefined;
         }
     }
@@ -52775,25 +52733,19 @@ export class SetupSubscriptionInfoDto implements ISetupSubscriptionInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["editionId"] = this.editionId;
-        data["maxUserCount"] = this.maxUserCount;
-        data["frequency"] = this.frequency;
+        data["subscriptionInfo"] = this.subscriptionInfo ? this.subscriptionInfo.toJSON() : <any>undefined;
         data["billingInfo"] = this.billingInfo ? this.billingInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface ISetupSubscriptionInfoDto {
-    editionId: number;
-    maxUserCount: number | undefined;
-    frequency: SetupSubscriptionInfoDtoFrequency;
+    subscriptionInfo: ModuleSubscriptionInfo | undefined;
     billingInfo: PaymentRequestInfoDto | undefined;
 }
 
 export class RequestPaymentDto implements IRequestPaymentDto {
-    editionId!: number | undefined;
-    maxUserCount!: number | undefined;
-    frequency!: RequestPaymentDtoFrequency | undefined;
+    subscriptionInfo!: ModuleSubscriptionInfo | undefined;
     requestType!: RequestPaymentDtoRequestType | undefined;
 
     constructor(data?: IRequestPaymentDto) {
@@ -52807,9 +52759,7 @@ export class RequestPaymentDto implements IRequestPaymentDto {
 
     init(data?: any) {
         if (data) {
-            this.editionId = data["editionId"];
-            this.maxUserCount = data["maxUserCount"];
-            this.frequency = data["frequency"];
+            this.subscriptionInfo = data["subscriptionInfo"] ? ModuleSubscriptionInfo.fromJS(data["subscriptionInfo"]) : <any>undefined;
             this.requestType = data["requestType"];
         }
     }
@@ -52823,18 +52773,14 @@ export class RequestPaymentDto implements IRequestPaymentDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["editionId"] = this.editionId;
-        data["maxUserCount"] = this.maxUserCount;
-        data["frequency"] = this.frequency;
+        data["subscriptionInfo"] = this.subscriptionInfo ? this.subscriptionInfo.toJSON() : <any>undefined;
         data["requestType"] = this.requestType;
         return data; 
     }
 }
 
 export interface IRequestPaymentDto {
-    editionId: number | undefined;
-    maxUserCount: number | undefined;
-    frequency: RequestPaymentDtoFrequency | undefined;
+    subscriptionInfo: ModuleSubscriptionInfo | undefined;
     requestType: RequestPaymentDtoRequestType | undefined;
 }
 
@@ -53124,6 +53070,42 @@ export interface IBeneficiaryInfoDto {
     name: string | undefined;
     streetAddress: string | undefined;
     cityAddress: string | undefined;
+}
+
+export class PayPalSettingsDto implements IPayPalSettingsDto {
+    environment!: string | undefined;
+
+    constructor(data?: IPayPalSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.environment = data["environment"];
+        }
+    }
+
+    static fromJS(data: any): PayPalSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PayPalSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["environment"] = this.environment;
+        return data; 
+    }
+}
+
+export interface IPayPalSettingsDto {
+    environment: string | undefined;
 }
 
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {
@@ -56748,7 +56730,7 @@ export enum TenantNotificationSeverity {
     _4 = 4, 
 }
 
-export enum GetPackagesConfigOutputCurrentFrequency {
+export enum ModuleSubscriptionInfoFrequency {
     _30 = 30, 
     _365 = 365, 
 }
@@ -56757,6 +56739,10 @@ export enum PackageConfigDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+}
+
+export enum PricingTableFeatureMeasurementUnit {
+    GB = "GB", 
 }
 
 export enum PaymentMethodInfoType {
@@ -56829,16 +56815,6 @@ export enum PaymentRequestInfoDtoPaymentInfoType {
     BankCard = "BankCard", 
     ACH = "ACH", 
     PayPal = "PayPal", 
-}
-
-export enum SetupSubscriptionInfoDtoFrequency {
-    _30 = 30, 
-    _365 = 365, 
-}
-
-export enum RequestPaymentDtoFrequency {
-    _30 = 30, 
-    _365 = 365, 
 }
 
 export enum RequestPaymentDtoRequestType {

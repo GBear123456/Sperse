@@ -41,8 +41,18 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     public activityTypes = CreateActivityDtoType;
     public selectedLeads: any = [];
+
     public currentDate = new Date();
-    public currentView = 'month';
+    public scheduleDate = new Date(this.currentDate);
+    private pipelineDate = new Date(this.currentDate);
+    private calendarCaption: string;
+    public calendarInitialized: boolean = false;
+
+    private currentView = 'month';
+    private pipelineView = this.currentView;
+    public scheduleView = this.currentView;
+
+    public popoverCalendarVisible: boolean = false;
     public resources: any[] = [
         {
             fieldExpr: 'Type',
@@ -92,6 +102,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         if (abp.clock.provider.supportsMultipleTimezone)
             this.timezone = abp.timing.timeZoneInfo.iana.timeZoneId;
 
+        this.updateCalendarCaption();
         this.initDataSource();
     }
 
@@ -154,6 +165,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     getPeriodType() {
+        if (!this.currentView) {
+            return 'month';
+        }
+
         return this.currentView == 'agenda' ? 'day' : this.currentView;
     }
 
@@ -171,6 +186,103 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     initToolbarConfig() {
         this._appService.updateToolbar([
+            {
+                location: 'before',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'calendar-navigator-left',
+                        widget: 'dxButton',
+                        options: {
+                            icon: 'chevronprev'
+                        },
+                        action: () => {
+                            this.updateCurrentDate(-1);
+                        }
+                    },
+                    {
+                        name: 'calendar-navigator-body',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.calendarCaption
+                        },
+                        action: () => {
+                            this.popoverCalendarVisible = true;
+                        },
+                        attr: {
+                            'id': 'calendar-navigator-body'
+                        }
+                    },
+                    {
+                        name: 'calendar-navigator-right',
+                        widget: 'dxButton',
+                        options: {
+                            icon: 'chevronnext'
+                        },
+                        action: () => {
+                            this.updateCurrentDate(1);
+                        }
+                    },
+                ]
+            },
+            {
+                location: 'after',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'Day',
+                        widget: 'dxButton',
+                        options: {
+                            text: 'Day',
+                            checkPressed: () => {
+                                return (this.currentView == 'day');
+                            }
+                        },
+                        action: () => {
+                            this.onViewChanged('day');
+                        }
+                    },
+                    {
+                        name: 'Week',
+                        widget: 'dxButton',
+                        options: {
+                            text: 'Week',
+                            checkPressed: () => {
+                                return (this.currentView == 'week');
+                            }
+                        },
+                        action: () => {
+                            this.onViewChanged('week');
+                        }
+                    },
+                    {
+                        name: 'Month',
+                        widget: 'dxButton',
+                        options: {
+                            text: 'Month',
+                            checkPressed: () => {
+                                return (this.currentView == 'month');
+                            }
+                        },
+                        action: () => {
+                            this.onViewChanged('month');
+                        }
+                    },
+                    {
+                        name: 'Agenda',
+                        widget: 'dxButton',
+                        options: {
+                            text: 'Agenda',
+                            checkPressed: () => {
+                                return (this.currentView == 'agenda');
+                            }
+                        },
+                        action: () => {
+                            this.onViewChanged('agenda');
+                        }
+                    }
+                ]
+            },
             {
                 location: 'after',
                 areItemsDependent: true,
@@ -237,26 +349,57 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         let showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         if (this.showPipeline != showPipeline) {
             this.dataLayoutType = dataLayoutType;
-            if ((this.showPipeline = showPipeline) && !this.pipelineDataSource)
-                this.pipelineDataSource = {
-                    uri: this.dataSourceURI,
-//                    customFilter: {AssignedUserIds: {any: {Id: this.appSession.userId}}},
-                    requireTotalCount: true,
-                    store: {
-                        key: 'Id',
-                        type: 'odata',
-                        url: this.getODataUrl(this.dataSourceURI),
-                        version: AppConsts.ODataVersion,
-                        beforeSend: function (request) {
-                            request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        },
-                        deserializeDates: false,
-                        paginate: true
-                    }
-                };
+            this.showPipeline = showPipeline;
+            if (this.showPipeline) {
+                if (!this.pipelineDataSource || this.pipelineView != this.currentView || this.pipelineDate != this.currentDate) {
+                    this.pipelineView = this.currentView;
+                    this.pipelineDate = new Date(this.currentDate);
+                    this.setPipelineDataSource(!!this.pipelineDataSource);
+                }
+            }
+            else {
+                this.schedulerComponent.instance.option('dataSource', null);
+                if (!this.currentView) {
+                    this.scheduleView = this.currentView = 'month';
+                    this.updateCalendarCaption();
+                }
+                else if (this.scheduleView != this.currentView)
+                    this.scheduleView = this.currentView;
+
+                if (this.scheduleDate != this.currentDate)
+                    this.scheduleDate = new Date(this.currentDate);
+
+                //this is done to prevent double data retrieving after settings scheduleView and scheduleDate
+                setTimeout(() => this.schedulerComponent.instance.option('dataSource', this.dataSource))
+            }
 
             this.initToolbarConfig();
         }
+    }
+
+    setPipelineDataSource(refresh: boolean = true) {
+        let dataSource = {
+            uri: this.dataSourceURI,
+            requireTotalCount: true,
+            store: {
+                key: 'Id',
+                type: 'odata',
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                },
+                deserializeDates: false,
+                paginate: true
+            }
+        };
+        if (this.pipelineView)
+            dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] }
+
+        this.pipelineDataSource = dataSource;
+
+        if (refresh)
+            this.pipelineComponent.refresh();
     }
 
     showActivityDialog(appointment) {
@@ -354,6 +497,84 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             newDateParts = endDate.split(delimiter);
             oldDateParts = event.oldData.EndDate.split(delimiter); 
             event.newData.EndDate = newDateParts.shift() + delimiter + oldDateParts.pop();
+        }
+    }
+
+    onViewChanged(view: string) {
+        if (this.showPipeline && this.currentView == view)
+            this.currentView = null;
+        else
+            this.currentView = view;
+
+        if (this.showPipeline) {
+            this.pipelineView = this.currentView;
+            this.setPipelineDataSource();
+        }
+        else {
+            this.scheduleView = this.currentView;
+        }
+
+        this.updateCalendarCaption();
+        this.initToolbarConfig();
+    }
+
+    currentDateChange() {
+        if (this.showPipeline) {
+            this.pipelineDate = new Date(this.currentDate);
+            if (this.pipelineView)
+                this.setPipelineDataSource();
+        }
+        else {
+            this.scheduleDate = new Date(this.currentDate);
+        }
+
+        this.updateCalendarCaption();
+        this.initToolbarConfig();
+        this.popoverCalendarVisible = false;
+    }
+
+    updateCurrentDate(direction: 1 | -1) {
+        let newDate = new Date(this.currentDate);
+        switch (this.currentView) {
+            case 'agenda':
+            case 'day':
+                newDate.setDate(newDate.getDate() + direction);
+                break;
+            case 'week':
+                newDate.setDate(newDate.getDate() + (direction * 7));
+                break;
+            case 'month':
+                newDate.setMonth(newDate.getMonth() + direction);
+                break;
+        }
+
+        this.currentDate = newDate;
+        if (!this.calendarInitialized)
+            this.currentDateChange();
+    }
+
+    updateCalendarCaption() {
+        switch (this.currentView) {
+            case 'agenda':
+            case 'day':
+                this.calendarCaption = moment(this.currentDate).format("D MMMM YYYY");
+                break;
+            case 'week':
+                let momentDate = moment(this.currentDate);
+                let weekStart = moment(this.currentDate).startOf("week");
+                let weekEnd = moment(this.currentDate).endOf("week");
+                if (weekStart.month() == momentDate.month() && weekEnd.month() == momentDate.month()) {
+                    this.calendarCaption = `${weekStart.date()} - ${weekEnd.date()} ${momentDate.format("MMMM YYYY")}`;
+                }
+                else {
+                    this.calendarCaption = `${weekStart.date()} ${weekStart.format("MMM")} - ${weekEnd.date()} ${weekEnd.format("MMM")} ${weekEnd.year()}`
+                }
+                break;
+            case 'month':
+                this.calendarCaption = moment(this.currentDate).format("MMMM YYYY");
+                break;
+            default:
+                this.calendarCaption = 'All period';
         }
     }
 }

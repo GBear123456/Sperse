@@ -4,9 +4,10 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import {
     TenantSubscriptionServiceProxy,
-    RequestPaymentDtoFrequency,
+    ModuleSubscriptionInfoFrequency,
     RequestPaymentDto,
-    RequestPaymentDtoRequestType
+    RequestPaymentDtoRequestType,
+    ModuleSubscriptionInfo
 } from '@shared/service-proxies/service-proxies';
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 
@@ -45,12 +46,13 @@ export class PayPalComponent extends AppComponentBase implements AfterViewInit {
     preparePaypalButton(): void {
         const self = this;
         let frequency = this.billingPeriod == BillingPeriod.Monthly
-            ? RequestPaymentDtoFrequency._30
-            : RequestPaymentDtoFrequency._365;
+            ? ModuleSubscriptionInfoFrequency._30
+            : ModuleSubscriptionInfoFrequency._365;
         let model = new RequestPaymentDto();
-        model.editionId = this.editionId;
-        model.maxUserCount = this.maxUserCount;
-        model.frequency = frequency;
+        model.subscriptionInfo = new ModuleSubscriptionInfo();
+        model.subscriptionInfo.editionId = this.editionId;
+        model.subscriptionInfo.maxUserCount = this.maxUserCount;
+        model.subscriptionInfo.frequency = frequency;
         model.requestType = RequestPaymentDtoRequestType.PayPal;
 
         this.finishLoading();

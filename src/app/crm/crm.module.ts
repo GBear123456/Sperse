@@ -41,7 +41,9 @@ import {
     DxCheckBoxModule,
     DxTagBoxModule,
     DxDropDownBoxModule,
-    DxSchedulerModule
+    DxSchedulerModule,
+    DxPopoverModule,
+    DxCalendarModule
 } from 'devextreme-angular';
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
@@ -109,6 +111,8 @@ import { AppStoreService } from '@app/store/app-store.service';
       DxCheckBoxModule,
       DxTagBoxModule,
       DxSchedulerModule,
+      DxPopoverModule,
+      DxCalendarModule,
 
       MatSidenavModule,
       MatProgressBarModule,

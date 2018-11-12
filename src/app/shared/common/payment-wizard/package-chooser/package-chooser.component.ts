@@ -25,13 +25,12 @@ import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-
 import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
 import { AppConsts } from '@shared/AppConsts.ts';
 import {
-    GetPackagesConfigOutputCurrentFrequency,
     GetPackagesConfigOutput,
+    ModuleSubscriptionInfoFrequency,
     Module,
     PackageConfigDto,
     PackageEditionConfigDto,
-    PackageServiceProxy,
-    SetupSubscriptionInfoDtoFrequency
+    PackageServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -109,7 +108,8 @@ export class PackageChooserComponent implements OnInit {
 
     /** Preselect package if current edition is in list of not free packages, else - preselect best value package */
     preselectPackage(packagesConfig: GetPackagesConfigOutput) {
-        const selectedPackage = this.packages.find(packageConfig => packageConfig.editions.some(edition => edition.id === packagesConfig.currentEditionId)) ||
+        let currentEditionId = packagesConfig.currentSubscriptionInfo ? packagesConfig.currentSubscriptionInfo.editionId : undefined;
+        const selectedPackage = this.packages.find(packageConfig => packageConfig.editions.some(edition => edition.id === currentEditionId)) ||
                                 this.packages.find(packageConfig => packageConfig.bestValue);
         this.selectedPackageIndex = this.packages.indexOf(selectedPackage);
         /** Update selected package with the active status to handle next button status */
@@ -122,9 +122,9 @@ export class PackageChooserComponent implements OnInit {
 
     /** Get default values of usersAmount and billing period from user previous choice */
     changeDefaultSettings(packagesConfig: GetPackagesConfigOutput) {
-        this.usersAmount = packagesConfig.currentUserCount || this.usersAmount;
-        if (packagesConfig.currentFrequency) {
-            this.selectedBillingPeriod = packagesConfig.currentFrequency === GetPackagesConfigOutputCurrentFrequency._30 ? BillingPeriod.Monthly : BillingPeriod.Yearly;
+        this.usersAmount = (packagesConfig.currentSubscriptionInfo && packagesConfig.currentSubscriptionInfo.maxUserCount) || this.usersAmount;
+        if (packagesConfig.currentSubscriptionInfo && packagesConfig.currentSubscriptionInfo.frequency) {
+            this.selectedBillingPeriod = packagesConfig.currentSubscriptionInfo.frequency === ModuleSubscriptionInfoFrequency._30 ? BillingPeriod.Monthly : BillingPeriod.Yearly;
         }
     }
 
@@ -198,10 +198,10 @@ export class PackageChooserComponent implements OnInit {
         }
     }
 
-    private getSubscriptionFrequency(): SetupSubscriptionInfoDtoFrequency {
+    private getSubscriptionFrequency(): ModuleSubscriptionInfoFrequency {
         return this.selectedPackageCardComponent.billingPeriod === BillingPeriod.Monthly
-               ? SetupSubscriptionInfoDtoFrequency._30
-               : SetupSubscriptionInfoDtoFrequency._365;
+            ? ModuleSubscriptionInfoFrequency._30
+            : ModuleSubscriptionInfoFrequency._365;
     }
 
     goToNextStep() {

@@ -563,6 +563,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]);
     }
 
+    exportToCSV() {
+        if (this.dataGrid && !this.dataGrid.instance.getDataSource()) this.setDataGridInstance();
+        super.exportToCSV('all');
+    }
+
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
         this.dataGrid.instance.updateDimensions();
@@ -638,11 +643,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (!this.pipelineDataSource)
                 setTimeout(() => { this.pipelineDataSource = this.dataSource; });
         } else {
-            let instance = this.dataGrid && this.dataGrid.instance;
-            if (instance && !instance.option('dataSource')) {
-                instance.option('dataSource', this.dataSource);
-                this.startLoading();
-            }
+            this.setDataGridInstance();
+        }
+    }
+
+    setDataGridInstance() {
+        let instance = this.dataGrid && this.dataGrid.instance;
+        if (instance && !instance.option('dataSource')) {
+            instance.option('dataSource', this.dataSource);
+            this.startLoading();
         }
     }
 

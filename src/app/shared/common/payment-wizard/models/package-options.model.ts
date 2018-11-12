@@ -1,10 +1,10 @@
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { SetupSubscriptionInfoDtoFrequency } from '@shared/service-proxies/service-proxies';
+import { ModuleSubscriptionInfoFrequency } from '@shared/service-proxies/service-proxies';
 
 export interface PackageOptions {
     name: string;
     billingPeriod: BillingPeriod;
-    subscriptionFrequency: SetupSubscriptionInfoDtoFrequency;
+    subscriptionFrequency: ModuleSubscriptionInfoFrequency;
     currencySymbol?: string;
     pricePerUserPerMonth: number;
     subtotal: number;

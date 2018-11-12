@@ -18,15 +18,17 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     @ViewChild(PhoneNumberComponent) intPhoneNumber;
     @ViewChild('intPhoneNumberModel') model;
 
-    value: any;    
+    value = '';
     focused = false;
 
     constructor(injector: Injector) {
         super(injector, AppConsts.localization.defaultLocalizationSourceName);
     }
 
-    isValid() {
-        return !this.value || this.model.valid;
+    isValid() {        
+        let country = this.intPhoneNumber.selectedCountry;
+        return !this.value || (country && this.value.match(
+            new RegExp('^\\+' + country.dialCode + '$'))) || this.model.valid;
     }
 
     keyUp(event) {

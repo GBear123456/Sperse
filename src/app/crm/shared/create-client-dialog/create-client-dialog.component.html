@@ -77,7 +77,7 @@
                                 [(value)]="email.type"
                                 [itemTemplate]="'emailTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'emailTypeItemTemplate'">
-                                    <div class="usage-type-item" title="{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}"><span>{{data.name}}</span><span>{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}</span></div>
+                                    <div class="usage-type-item"><span>{{data.name}}</span><span>{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}</span></div>
                                 </div>
                             </dx-select-box>
                         </div>
@@ -85,6 +85,7 @@
                                      name="email"
                                      [width]="'410px'"
                                      [(value)]="email.email"
+                                     (onKeyUp)="onEmailKeyUp($event)"
                                      (onValueChanged)="onFieldChanged($event, 'emails', i)"
                                      (onInitialized)="onComponentInitialized($event, 'emails')">
                             <dx-validator>
@@ -111,7 +112,7 @@
                                 [value]="phone.type"
                                 [itemTemplate]="'phoneTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
-                                    <div class="usage-type-item" title="{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}"><span style="width: 100px;">{{data.name}}</span><span>{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
+                                    <div class="usage-type-item"><span style="width: 100px;">{{data.name}}</span><span>{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
                                 </div>
                             </dx-select-box>
                         </div>
@@ -207,7 +208,7 @@
                                 [(value)]="address['type']"
                                 [itemTemplate]="'addressTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'addressTypeItemTemplate'">
-                                    <div class="usage-type-item" title="{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}"><span>{{data.name}}</span><span>{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span></div>
+                                    <div class="usage-type-item"><span>{{data.name}}</span><span>{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span></div>
                                 </div>
                             </dx-select-box>
                         </div>

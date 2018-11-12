@@ -20,6 +20,7 @@ import { ContactGroupInfoDto, CreateContactPhotoInput, ContactEmploymentServiceP
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdateContactEmploymentInput,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
+import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactGroupType } from '@shared/AppEnums';
@@ -274,6 +275,18 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                         contactId: this.data.id
                     }
                 });
+            });
+        else if (this.addContextMenuItems[this.ADD_NOTES_OPTION].selected)
+            setTimeout(() => {
+                this.dialog.open(NoteAddDialogComponent, {
+                    panelClass: 'slider',
+                    disableClose: false,
+                    hasBackdrop: false,
+                    closeOnNavigation: true,
+                    data: {
+                        contactInfo: this.data,
+                    }
+                });       
             });
     }
 }

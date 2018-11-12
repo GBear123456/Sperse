@@ -77,12 +77,30 @@
 
     &.fullscreen {
         top: 0px !important;
+
         /deep/ dx-scheduler {
-            height: calc(~"100vh - 60px")!important;
+            height: calc(~"100vh - 60px") !important;
         }
     }
 
     /deep/ dx-scheduler {
+        .dx-scheduler-header {
+            display: none;
+        }
+
+        .dx-scheduler-work-space {
+            padding-top: 0;
+            margin-top: 0;
+
+            &.dx-scheduler-work-space-week .dx-scheduler-all-day-title {
+                top: 50px;
+            }
+
+            &.dx-scheduler-work-space-day:not(.dx-scheduler-work-space-grouped) .dx-scheduler-all-day-title {
+                top: 1px;
+            }
+        }
+
         .dx-loadpanel-content {
             display: none;
         }
