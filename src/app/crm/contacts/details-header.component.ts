@@ -119,7 +119,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
-    showCompanyDialog() {
+    showCompanyDialog(e) {
         this.dialog.closeAll();
         this.dialog.open(CompanyDialogComponent, {
             data: {
@@ -128,6 +128,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             panelClass: 'slider',
             maxWidth: '830px'
         });
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
     }
 
     showUploadPhotoDialog(event, isCompany = undefined) {
@@ -286,7 +289,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                     data: {
                         contactInfo: this.data,
                     }
-                });       
+                });
             });
     }
 }
