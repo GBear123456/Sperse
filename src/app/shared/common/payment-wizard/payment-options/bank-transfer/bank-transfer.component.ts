@@ -10,7 +10,7 @@ import {
     ViewChild
 } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { BankTransferSettings } from '@shared/service-proxies/service-proxies';
+import { BankTransferSettingsDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'bank-transfer',
@@ -20,7 +20,7 @@ import { BankTransferSettings } from '@shared/service-proxies/service-proxies';
 })
 export class BankTransferComponent extends AppComponentBase implements OnChanges {
     @Input() titleText = this.l('BankTransferTitleText');
-    @Input() bankTransferSettings: BankTransferSettings;
+    @Input() bankTransferSettings: BankTransferSettingsDto;
     @Output() onSubmit: EventEmitter<null> = new EventEmitter<null>();
     @ViewChild('bankTransferSettingsContainer') bankTransferSettingsContainer: ElementRef;
 

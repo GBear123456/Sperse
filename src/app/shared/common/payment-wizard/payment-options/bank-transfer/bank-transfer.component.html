@@ -10,7 +10,9 @@
                         {{ l('BeneficiaryInformation') }}
                     </h4>
                     <address class="company-address">
-                        {{ bankTransferSettings.beneficiaryInfo }}
+                        {{ bankTransferSettings.beneficiaryInfo.name }}<br/>
+                        {{ bankTransferSettings.beneficiaryInfo.streetAddress }}<br/>
+                        {{ bankTransferSettings.beneficiaryInfo.cityAddress }}
                     </address>
                 </div>
                 <div class="col-7 bankNumbers">
@@ -30,7 +32,9 @@
                         {{ l('BeneficiaryBank') }}
                     </h4>
                     <address class="bank-address">
-                        {{ bankTransferSettings.beneficiaryBank }}
+                        {{ bankTransferSettings.beneficiaryBank.name }}<br/>
+                        {{ bankTransferSettings.beneficiaryBank.streetAddress }}<br/>
+                        {{ bankTransferSettings.beneficiaryBank.cityAddress }}
                     </address>
                 </div>
                 <div class="col-7">
