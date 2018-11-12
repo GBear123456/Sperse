@@ -136,7 +136,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private isStatusSelected = false;
     private isListsSelected = false;
     private isTagsSelected = false;
-    private isRatingSelected = false;
+    private isRatingSelected = true;
 
     constructor(
         injector: Injector,
@@ -807,7 +807,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.title = undefined;
             this.tagsComponent.reset();
             this.listsComponent.reset();
-            this.userAssignmentComponent.reset();
+            this.partnerTypesComponent.reset();
+            this.userAssignmentComponent.selectedItemKey = this.currentUserId;
             this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
             this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
         };
@@ -866,7 +867,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onPartnerTypeChanged(event) {
         this.partnerTypesComponent.apply();
-        this.isPartnerTypeSelected = true;
+        this.isPartnerTypeSelected = Boolean(event.selectedRowKeys.length);
         this.initToolbarConfig();
     }
 

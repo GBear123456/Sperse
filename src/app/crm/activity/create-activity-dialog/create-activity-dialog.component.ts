@@ -45,6 +45,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     private lookupTimeout: any;
     private latestSearchPhrase = '';
     private listFilterTimeout: any;
+    private initialStageId;
+
     dateValidator: any;
     stages: any[] = [];
 
@@ -265,7 +267,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             this.data.appointment.AssignedUserIds = [this.appSession.userId];
 
         if (!this.data.appointment.StageId && this.data.stages)
-            this.data.appointment.StageId =
+            this.initialStageId = this.data.appointment.StageId =
                 this.data.stages[Math.floor(this.data.stages.length / 2)].id;
 
         if (!this.data.appointment.Type)
@@ -459,19 +461,19 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         let resetInternal = () => {
             this.data.title = '';
             this.data.isTitleValid = true;
-            this.userAssignmentComponent.reset();
             this.data.appointment = {
-                Type: CreateActivityDtoType.Task
+                Type: CreateActivityDtoType.Task,
+                StageId: this.initialStageId
             };
 
             this.isUserSelected = false;
-            this.isStatusSelected = false;
             this.isLeadsSelected = false;
             this.isClientSelected = false;
             this.isStarSelected = false;
             this.initToolbarConfig();
 
             setTimeout(() => {
+                this.userAssignmentComponent.reset();
                 this.startDateComponent.instance.option('isValid', true);
                 this.endDateComponent.instance.option('isValid', true);
             }, 100);
