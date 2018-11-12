@@ -19,7 +19,7 @@ import {
     PaymentRequestInfoDto,
     TenantSubscriptionServiceProxy,
     PayPalInfoDto,
-    PaymentRequestInfoDtoPaymentInfoType, BankTransferSettings, TenantPaymentSettingsServiceProxy, RequestPaymentDtoFrequency, RequestPaymentDto, RequestPaymentDtoRequestType
+    PaymentRequestInfoDtoPaymentInfoType, BankTransferSettings, TenantPaymentSettingsServiceProxy, ModuleSubscriptionInfoFrequency, RequestPaymentDto, RequestPaymentDtoRequestType, SetupSubscriptionInfoDto, ModuleSubscriptionInfo
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -32,7 +32,7 @@ import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
     templateUrl: './payment-options.component.html',
     styleUrls: ['./payment-options.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ TenantPaymentSettingsServiceProxy, TenantSubscriptionServiceProxy ]
+    providers: [TenantPaymentSettingsServiceProxy, TenantSubscriptionServiceProxy]
 })
 export class PaymentOptionsComponent extends AppComponentBase implements OnInit {
     @Input() plan: PackageOptions;
@@ -111,11 +111,13 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         this.onChangeStep.emit(2);
         this.appHttpConfiguration.avoidErrorHandling = true;
         let paymentInfo: any = {
-            editionId: this.plan.selectedEditionId,
-            maxUserCount: this.plan.usersAmount,
-            frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                ? RequestPaymentDtoFrequency._30
-                : RequestPaymentDtoFrequency._365
+            subscriptionInfo: {
+                editionId: this.plan.selectedEditionId,
+                maxUserCount: this.plan.usersAmount,
+                frequency: this.plan.billingPeriod == BillingPeriod.Monthly
+                    ? ModuleSubscriptionInfoFrequency._30
+                    : ModuleSubscriptionInfoFrequency._365
+            }
         };
         switch (paymentMethod) {
             case PaymentMethods.eCheck:
@@ -163,7 +165,6 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 });
                 break;
             case PaymentMethods.BankTransfer:
-                paymentInfo.isManual = true;
                 break;
             default:
                 break;
@@ -173,41 +174,43 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo) :
             paymentMethod === PaymentMethods.BankTransfer ?
                 this.tenantSubscriptionServiceProxy.requestPayment(
-                            new RequestPaymentDto({
-                                editionId: paymentInfo.editionId,
-                                maxUserCount: paymentInfo.maxUserCount,
-                                frequency: paymentInfo.frequency,
-                                requestType: RequestPaymentDtoRequestType.ManualBankTransfer
-                            })
-                            ) :
-                            this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
+                    new RequestPaymentDto({
+                        subscriptionInfo: ModuleSubscriptionInfo.fromJS({
+                            editionId: paymentInfo.subscriptionInfo.editionId,
+                            maxUserCount: paymentInfo.subscriptionInfo.maxUserCount,
+                            frequency: paymentInfo.subscriptionInfo.frequency
+                        }),
+                        requestType: RequestPaymentDtoRequestType.ManualBankTransfer
+                    })
+                ) :
+                this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
 
         method
             .pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
             .subscribe(
-            res => {
-                this.onStatusChange.emit({
-                    status: this.getPaymentStatus(paymentMethod, res),
-                    icon: PaymentStatusEnum.Confirmed,
-                    showBack: this.paymentMethodsConfig[paymentMethod] && this.paymentMethodsConfig[paymentMethod].showBack
-                });
-            },
-            error => {
-                this.onStatusChange.emit({
-                    status: PaymentStatusEnum.Failed,
-                    statusText: error.message,
-                    errorDetailsText: error.details
-                });
-            }
-        );
+                res => {
+                    this.onStatusChange.emit({
+                        status: this.getPaymentStatus(paymentMethod, res),
+                        icon: PaymentStatusEnum.Confirmed,
+                        showBack: this.paymentMethodsConfig[paymentMethod] && this.paymentMethodsConfig[paymentMethod].showBack
+                    });
+                },
+                error => {
+                    this.onStatusChange.emit({
+                        status: PaymentStatusEnum.Failed,
+                        statusText: error.message,
+                        errorDetailsText: error.details
+                    });
+                }
+            );
     }
 
     getPaymentStatus(paymentMethod: PaymentMethods, res: any) {
         return this.paymentMethodsConfig[paymentMethod] && this.paymentMethodsConfig[paymentMethod].successStatus ?
-                typeof this.paymentMethodsConfig[paymentMethod].successStatus === 'function' ?
-                    this.paymentMethodsConfig[paymentMethod]['successStatus'](res) :
-                    this.paymentMethodsConfig[paymentMethod].successStatus
-                : PaymentStatusEnum.Confirmed;
+            typeof this.paymentMethodsConfig[paymentMethod].successStatus === 'function' ?
+                this.paymentMethodsConfig[paymentMethod]['successStatus'](res) :
+                this.paymentMethodsConfig[paymentMethod].successStatus
+            : PaymentStatusEnum.Confirmed;
     }
 
     close() {
