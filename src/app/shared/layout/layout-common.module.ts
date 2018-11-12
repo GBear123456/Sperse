@@ -80,7 +80,8 @@ let COMPONENTS = [
     entryComponents: [
         MySettingsModalComponent,
         ChangePasswordModalComponent,
-        NotificationSettingsModalComponent
+        NotificationSettingsModalComponent,
+        LoginAttemptsModalComponent
     ]
 })
 export class LayoutCommonModule {}

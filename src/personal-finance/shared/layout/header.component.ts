@@ -38,7 +38,6 @@ import { MatDialog } from '@angular/material';
     providers: [ImpersonationService]
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
-    @ViewChild('loginAttemptsModal') loginAttemptsModal: LoginAttemptsModalComponent;
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
 
@@ -183,7 +182,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     showLoginAttempts(): void {
-        this.loginAttemptsModal.show();
+        this.dialog.open(LoginAttemptsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     showLinkedAccounts(): void {
