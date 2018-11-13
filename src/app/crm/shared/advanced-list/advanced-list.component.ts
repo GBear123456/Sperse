@@ -3,7 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { ContactGroupListsServiceProxy, AddContactGroupsToListsInput, ContactListInput,
+import { ContactListsServiceProxy, AddContactsToListsInput, ContactListInput,
     UpdateContactListInput, UpdateContactListsInput} from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
@@ -15,7 +15,7 @@ import { finalize } from 'rxjs/operators';
     selector: 'app-advanced-list',
     templateUrl: './advanced-list.component.html',
     styleUrls: ['./advanced-list.component.less'],
-    providers: [ContactGroupListsServiceProxy]
+    providers: [ContactListsServiceProxy]
 })
 export class AdvancedListComponent extends AppComponentBase implements OnInit {
     @Input() name: string;

@@ -23,7 +23,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
-import { ContactGroupType } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
 
 @Component({
@@ -263,7 +263,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                     closeOnNavigation: false,
                     data: {
                         refreshParent: () => {},
-                        customerType: ContactGroupType.Client
+                        customerType: ContactGroup.Client
                     }
                 });
             });

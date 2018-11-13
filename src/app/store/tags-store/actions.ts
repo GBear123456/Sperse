@@ -34,7 +34,7 @@ export class LoadSuccessAction implements Action {
 export class AddTag implements Action {
     readonly type = ActionTypes.ADD_TAG;
     constructor(public payload: {
-        contactGroupIds: number[],
+        contactIds: number[],
         tags: ContactTagInput[],
         successMessage: string,
         serviceMethodName: string
@@ -44,7 +44,7 @@ export class AddTag implements Action {
 export class AddTagSuccess implements Action {
     readonly type = ActionTypes.ADD_TAG_SUCCESS;
     constructor(public payload: {
-        contactGroupIds: number[],
+        contactIds: number[],
         tags: ContactTagInput[],
         successMessage: string,
         serviceMethodName: string

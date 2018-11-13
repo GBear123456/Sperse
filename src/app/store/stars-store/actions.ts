@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { ContactGroupStarInfoDto } from 'shared/service-proxies/service-proxies';
+import { ContactStarInfoDto } from 'shared/service-proxies/service-proxies';
 
 export enum ActionTypes {
     LOAD_REQUEST       = '[Stars] Load Request',
@@ -19,7 +19,7 @@ export class LoadFailureAction implements Action {
 
 export class LoadSuccessAction implements Action {
     readonly type = ActionTypes.LOAD_SUCCESS;
-    constructor(public payload: ContactGroupStarInfoDto[]) {}
+    constructor(public payload: ContactStarInfoDto[]) {}
 }
 
 export type Actions = LoadRequestAction | LoadFailureAction | LoadSuccessAction;

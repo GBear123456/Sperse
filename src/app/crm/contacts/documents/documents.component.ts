@@ -352,7 +352,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 Math.round(input.size / 10000)
             );
         this._documentService.upload(UploadDocumentInput.fromJS({
-            contactGroupId: this.data.contactInfo.id,
+            contactId: this.data.contactInfo.id,
             typeId: input.typeId,
             fileName: input.name,
             size: input.size,

@@ -10,7 +10,7 @@ import { catchError, map, startWith, withLatestFrom, finalize, exhaustMap, merge
 
 /** Application imports */
 import {
-    ContactGroupTagsServiceProxy, ContactTagInfoDto, TagContactsInput,
+    ContactTagsServiceProxy, ContactTagInfoDto, TagContactsInput,
     UpdateContactTagInput, UpdateContactTagsInput, DictionaryServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import * as tagsActions from './actions';
@@ -21,7 +21,7 @@ import { StoreHelper } from '@root/store/store.helper';
 
 @Injectable()
 export class TagsStoreEffects {
-    constructor(private _tagsService: ContactGroupTagsServiceProxy,
+    constructor(private _tagsService: ContactTagsServiceProxy,
                 private _dictionaryService: DictionaryServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>,
@@ -55,14 +55,14 @@ export class TagsStoreEffects {
         map(action => action.payload),
         mergeMap(payload => {
             let request: Observable<any>;
-            if (payload.serviceMethodName === 'tagContactGroups') {
+            if (payload.serviceMethodName === 'tagContacts') {
                 request = this._tagsService[payload.serviceMethodName ](TagContactsInput.fromJS({
-                             contactIds: payload.contactGroupIds,
+                             contactIds: payload.contactIds,
                              tags: payload.tags
                           }));
-            } else if (payload.serviceMethodName === 'updateContactGroupTags') {
-                request = this._tagsService.updateContactGroupTags(UpdateContactTagsInput.fromJS({
-                             contactId: payload.contactGroupIds[0],
+            } else if (payload.serviceMethodName === 'updateContactTags') {
+                request = this._tagsService.updateContactTags(UpdateContactTagsInput.fromJS({
+                             contactId: payload.contactIds[0],
                              tags: payload.tags
                           }));
             } else {

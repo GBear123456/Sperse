@@ -24,7 +24,7 @@ import { ClientService } from '@app/crm/clients/clients.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
+import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
@@ -183,7 +183,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             closeOnNavigation: false,
             data: {
                 refreshParent: this.invalidate.bind(this),
-                customerType: ContactGroupType.Client
+                customerType: ContactGroup.Client
             }
         }).afterClosed().subscribe(() => this.invalidate());
     }
@@ -578,9 +578,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     updateClientStatuses(status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this._clientService.updateContactGroupStatuses(
+        this._clientService.updateContactStatuses(
             selectedIds,
-            ContactGroupType.Client,
+            ContactGroup.Client,
             status.id,
             () => {
                 this.invalidate();

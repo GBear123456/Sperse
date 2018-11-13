@@ -313,7 +313,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             stageId: this.data.appointment.StageId,
             leadId: this.data.appointment.LeadId,
             orderId: this.data.appointment.OrderId,
-            customerId: this.data.appointment.ContactGroupId
+            customerId: this.data.appointment.ContactId
         };
     }
 
@@ -429,7 +429,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     onClientSelected(e) {
-        this.data.appointment.ContactGroupId = e.id;
+        this.data.appointment.ContactId = e.id;
         this.isClientSelected = !!e.id;
         this.initToolbarConfig();
     }

@@ -42,15 +42,13 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         this.loadNotifications();
         this.registerToEvents();
         this.getCurrentLoginInformations();
-        this._appService.moduleSubscriptions$.subscribe((res) => {
-            this.getSubscriptionInfo();
-        });
+        this._appService.loadModuleSubscriptionsCallback = this.getSubscriptionInfo.bind(this);
         this.getSubscriptionInfo();
     }
 
-    getSubscriptionInfo() {
+    getSubscriptionInfo(module = null) {
         this.subscriptionExpiringDayCount = -1;
-        let module = this._appService.getModule().toUpperCase();
+        module = module || this._appService.getModule().toUpperCase();
         if (this._appService.checkSubscriptionIsFree(module)) {
             this.subscriptionInfoTitle = this.l("YouAreUsingTheFreePlan", module);
             this.subscriptionInfoText = this.l("UpgradeToUnlockAllOurFeatures");

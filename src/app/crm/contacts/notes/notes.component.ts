@@ -46,17 +46,17 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     ngOnInit() {
         let notesData = this._notesService['data'];
         this.data = this._contactService['data'];
-        if (notesData && notesData.groupId == this.data.contactInfo.id)
+        if (notesData && notesData.contactId == this.data.contactInfo.id)
             this.dataSource = notesData.source;
         else
             this.loadData();
     }
 
     loadData() {
-        let groupId = this.data.contactInfo.id;
-        this._notesService.getNotes(groupId).subscribe((result) => {
+        let contactId = this.data.contactInfo.id;
+        this._notesService.getNotes(contactId).subscribe((result) => {
             this._notesService['data'] = {
-                groupId: groupId,
+                contactId: contactId,
                 source: this.dataSource = result
             };            
         });
