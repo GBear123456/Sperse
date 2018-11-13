@@ -135,7 +135,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
             );
         this.uploadSubscribers.push(
             this._documentService.upload(UploadDocumentInput.fromJS({
-                contactGroupId: this.data.contactId,
+                contactId: this.data.contactId,
                 fileName: input.name,
                 size: input.size,
                 fileBase64: input.fileBase64

@@ -16,7 +16,7 @@ import { Store, select } from '@ngrx/store';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
+import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
     LeadAssignedUsersStoreSelectors,
@@ -665,7 +665,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.invalidate(quite, stageId);
                 },
                 isInLeadMode: true,
-                customerType: ContactGroupType.Client
+                customerType: ContactGroup.Client
             }
         });
     }

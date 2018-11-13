@@ -95,13 +95,13 @@ export class ContactTypes {
     static Business = 'business';
 }
 
-export class ContactGroupStatus {
+export class ContactStatus {
     static Prospective = 'P';
     static Active = 'A';
     static Inactive = 'I';
 }
 
-export class ContactGroupType {
+export class ContactGroup {
     static Client = 'C';
     static Partner = 'P';
     static UserProfile = 'U';

@@ -27,7 +27,7 @@ import {
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroupType } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import {
     ContactServiceProxy, CreateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
@@ -199,7 +199,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         attr: {
                             'filter-selected': this.isStageSelected
                         }
-                    } : this.data.customerType == ContactGroupType.Client ? {
+                    } : this.data.customerType == ContactGroup.Client ? {
                             name: 'status',
                             widget: 'dxDropDownMenu',
                             disabled: true,
@@ -354,20 +354,20 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
-                .subscribe(result => this.afterSave(result.contactGroupId, result.id));
+                .subscribe(result => this.afterSave(result.contactId, result.id));
         else
             this._contactService.createContact(CreateContactInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.id));
     }
 
-    private afterSave(contactGroupId: number, leadId?: number): void {
+    private afterSave(contactId: number, leadId?: number): void {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
             this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
-            this.redirectToClientDetails(contactGroupId, leadId);
+            this.redirectToClientDetails(contactId, leadId);
             this.data.refreshParent(true, this.stageId);
         } else {
             this.data.refreshParent(false, this.stageId);
@@ -475,7 +475,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     redirectToClientDetails(id: number, leadId?: number) {
         setTimeout(() => {
-            let path = this.data.customerType == ContactGroupType.Partner ?
+            let path = this.data.customerType == ContactGroup.Partner ?
                 `app/crm/partner/${id}/contact-information` :
                 `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
             this._router.navigate([path], {queryParams: {referrer: this._router.url.split('?').shift()}});

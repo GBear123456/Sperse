@@ -34,7 +34,7 @@ export class LoadSuccessAction implements Action {
 export class AddList implements Action {
     readonly type = ActionTypes.ADD_LIST;
     constructor(public payload: {
-        contactGroupIds: number[],
+        contactIds: number[],
         lists: ContactListInput[],
         successMessage: string,
         serviceMethodName: string
@@ -44,7 +44,7 @@ export class AddList implements Action {
 export class AddListSuccess implements Action {
     readonly type = ActionTypes.ADD_LIST_SUCCESS;
     constructor(public payload: {
-        contactGroupIds: number[],
+        contactIds: number[],
         lists: ContactListInput[],
         successMessage: string,
         serviceMethodName: string

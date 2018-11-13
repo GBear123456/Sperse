@@ -152,7 +152,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     createOrganization(address, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            contactGroupId: this._contactInfo.id,
+            relatedContactId: this._contactInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
