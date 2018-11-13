@@ -68,7 +68,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     phonesComponent: any;
     linksComponent: any;
 
-    private checkValidTymeout;
+    private checkValidTimeout;
     private readonly SAVE_OPTION_DEFAULT = 2;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private similarCustomersTimeout: any;
@@ -124,7 +124,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         addresses: [{type: this.addressesTypeDefault}]
     };
 
-    similarCustomers: SimilarContactOutput[];
+    similarCustomers: SimilarContactOutput[] = [];
     similarCustomersDialog: any;
     toolbarConfig = [];
 
@@ -483,13 +483,19 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.close();
     }
 
+    getSimilarContacts() {
+        return ['emails', 'phones', 'addresses'].reduce((similar, field) => {
+            return similar.concat(this.getSimilarCustomers(field));
+        }, []).concat(this.similarCustomers);
+    }
+
     showSimilarCustomers(event) {
         if (this.similarCustomersDialog)
             this.similarCustomersDialog.close();
 
         this.similarCustomersDialog = this.dialog.open(SimilarCustomersDialogComponent, {
             data: {
-                similarCustomers: this.similarCustomers,
+                similarCustomers: _.sortBy(this.getSimilarContacts(), 'score'),
                 componentRef: this
             },
             hasBackdrop: false,
@@ -526,36 +532,45 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.userAssignmentComponent.toggle();
     }
 
-    checkSimilarCustomers() {
+    checkSimilarCustomers(field = undefined, index = undefined) {
+        let person = this.person,
+            isAddress = field == 'addresses',
+            contact = field && this.contacts[field][index];
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
             this._contactService.getSimilarContacts(
-                this.person.namePrefix || undefined,
-                this.person.firstName || undefined,
-                this.person.middleName || undefined,
-                this.person.lastName || undefined,
-                this.person.nameSuffix || undefined,
-                this.company || undefined,
-                this.getCurrentEmails() || undefined,
-                this.getCurrentPhones() || undefined,
-                undefined, undefined, undefined, undefined, undefined, this.data.customerType)
-                .subscribe(response => {
-                    if (response)
-                        this.similarCustomers = response;
+                field ? undefined: person.namePrefix || undefined,
+                field ? undefined: person.firstName || undefined,
+                field ? undefined: person.middleName || undefined,
+                field ? undefined: person.lastName || undefined,
+                field ? undefined: person.nameSuffix || undefined,
+                field ? undefined: this.company || undefined,
+                (field == 'emails') && contact.email && [contact.email] || undefined,
+                (field == 'phones') && contact.number && [contact.number] || undefined,
+                isAddress && contact.address || undefined, 
+                isAddress && contact.city || undefined, 
+                isAddress && this.getStateCode(contact.state) || undefined, 
+                isAddress && contact.zip || undefined, 
+                isAddress && this.getCountryCode(contact.country) || undefined, 
+                this.data.customerType).subscribe(response => {
+                    if (response) {
+                        if (field) 
+                            contact.similarCustomers = response;
+                        else
+                            this.similarCustomers = response;
+                    }
                 });
         }, 1000);
     }
 
-    getCurrentEmails() {
-        return this.contacts.emails.map((fields) => {
-            return fields.email;
-        });
+    getSimilarCustomers(field) {
+        return this.contacts[field].reduce((similar, fields) => {
+            return fields.similarCustomers ? similar.concat(fields.similarCustomers): similar;
+        }, []);
     }
 
-    getCurrentPhones() {
-        return this.contacts.phones.forEach((fields) => {
-            return fields.number;
-        });
+    similarCustomersAvailable() {
+        return Boolean(this.getSimilarContacts().length);
     }
 
     getInputElementValue(event) {
@@ -563,7 +578,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     onAddressChanged(event, i) {
-        this.checkAddressControls();
+        this.checkAddressControls(i);
 
         let number = this._angularGooglePlaceService.street_number(event.address_components);
         let street = this._angularGooglePlaceService.street(event.address_components);
@@ -637,19 +652,21 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     onCountryChange(event, index) {
-        this.checkAddressControls();
+        this.checkAddressControls(index);
         let country = _.findWhere(this.countries, {name: event.value});
         if (country) {
             this.loadStatesDataSource(country['code'], index);
         }
     }
 
-    checkAddressControls() {
-        clearTimeout(this.checkValidTymeout);
-        this.checkValidTymeout = setTimeout(() => {
-            this.addButtonVisible['addresses'] =
-                this.checkEveryContactValid('addresses') &&
-                    !this.checkDuplicateContact('addresses');
+    checkAddressControls(index) {
+        clearTimeout(this.checkValidTimeout);
+        this.checkValidTimeout = setTimeout(() => {
+            let field = 'addresses';
+            this.checkSimilarCustomers(field, index);
+            this.addButtonVisible[field] =
+                this.checkEveryContactValid(field) &&
+                    !this.checkDuplicateContact(field);
         }, 300);
     }
 
@@ -705,8 +722,6 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.contacts[field][index] = {type: this[field + 'TypeDefault']};
             this.addButtonVisible[field] = false;
         }
-
-        this.checkSimilarCustomers();
     }
 
     resetComponent(component) {
@@ -737,15 +752,15 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.checkFieldValid(field, value) &&
                 !this.checkDuplicateContact(field);
 
-        this.checkSimilarCustomers();
+        this.checkSimilarCustomers(field, i);
     }
 
-    onPhoneChanged(component) {
+    onPhoneChanged(component, i) {
         setTimeout(() => {
             let field = 'phones';
             this.addButtonVisible[field] = component.isValid()
                 && !this.checkDuplicateContact(field);
-            this.checkSimilarCustomers();
+            this.checkSimilarCustomers(field, i);
         });
     }
 
