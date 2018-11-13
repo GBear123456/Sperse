@@ -142,7 +142,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             if (result) {
                 let base64OrigImage = StringHelper.getBase64(result.origImage),
                     base64ThumbImage = StringHelper.getBase64(result.thumImage),
-                    dataField = (isCompany ? 'organization' : 'primary') + 'ContactInfo';
+                    dataField = (isCompany ? 'primaryOrganization' : 'person') + 'ContactInfo';
                 this.data[dataField].primaryPhoto = ContactPhotoDto.fromJS({
                     original: base64OrigImage,
                     thumbnail: base64ThumbImage
