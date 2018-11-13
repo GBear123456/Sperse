@@ -9,7 +9,7 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ContactGroupInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
+    ContactInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
     ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
@@ -35,14 +35,14 @@ import * as _ from 'underscore';
 export class SocialsComponent extends AppComponentBase {
     @Input() isCompany;
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() set contactInfo(value: ContactGroupInfoDto) {
+    @Input() set contactInfo(value: ContactInfoDto) {
         if (this._contactInfo = value)
             this.contactInfoData = this.isCompany ? 
-                value.organizationContactInfo && value.organizationContactInfo.details: 
-                value.primaryContactInfo && value.primaryContactInfo.details;
+                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details: 
+                value.personContactInfo && value.personContactInfo.details;
 
     }
-    get contactInfo(): ContactGroupInfoDto {
+    get contactInfo(): ContactInfoDto {
         return this._contactInfo;
     }
 
@@ -50,7 +50,7 @@ export class SocialsComponent extends AppComponentBase {
 
     LINK_TYPES = {};
 
-    private _contactInfo: ContactGroupInfoDto;
+    private _contactInfo: ContactInfoDto;
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
@@ -141,7 +141,7 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this._contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),

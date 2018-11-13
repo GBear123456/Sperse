@@ -11,7 +11,7 @@
             <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
         </div>
     </div>
-    <div class="slider">
+    <div class="slider" *ngIf="usersAmount !== null">
         <span class="totalSeatsLabel">{{ l('TotalSeatsLabel') }}</span>
         <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
         <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>

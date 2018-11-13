@@ -1,0 +1,168 @@
+<modal-dialog>
+    <div class="form-content container">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="row">
+                <div class="left col-md-7">
+                    <div class="field">
+                        <label for="shortName">{{l('Company_ShortName')}}</label>
+                        <dx-text-box name="shortName"
+                                     [inputAttr]="{ id: 'shortName' }"
+                                     [valueChangeEvent]="'keyup'"
+                                     [(value)]="company.shortName">
+                        </dx-text-box>
+                        <span [class]="company.shortName && 'clear-contact' || 'hidden'" (click)="company.shortName = ''"><i class="minus-icon"></i></span>
+                    </div>
+                    <div class="field companyType">
+                        <label for="companyType">{{l('Company_CompanyType')}}</label>
+                        <div class="drop-down-box-wrapper">
+                            <dx-select-box
+                                [inputAttr]="{ id: 'companyType' }"
+                                name="companyType"
+                                displayExpr="name"
+                                valueExpr="id"
+                                [dataSource]="companyTypes"
+                                [(value)]="company.companyType">
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class="field companySize">
+                        <label for="companySize">{{ l('Company_CompanySize') }}</label>
+                        <div class="drop-down-box-wrapper">
+                            <dx-select-box
+                                [inputAttr]="{ id: 'companySize' }"
+                                name="companySize"
+                                displayExpr="name"
+                                valueExpr="id"
+                                placeholder="{{l('Select')}}"
+                                [dataSource]="companySizes"
+                                [(value)]="company.companySize">
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class="field annualRevenue">
+                        <label for="annualRevenue">{{l('Company_AnnualRevenue')}}</label>
+                        <dx-text-box name="annualRevenue"
+                                     [inputAttr]="{ id: 'annualRevenue' }"
+                                     [valueChangeEvent]="'keyup'"
+                                     [(value)]="company.annualRevenue">
+                        </dx-text-box>
+                        <span [class]="company.annualRevenue && 'clear-contact' || 'hidden'" (click)="company.annualRevenue = ''"><i class="minus-icon"></i></span>
+                    </div>
+
+                    <div class="field state">
+                        <label for="state">{{ l('State') }}</label>
+                        <div class="drop-down-box-wrapper">
+                            <dx-select-box
+                                [inputAttr]="{ id: 'state' }"
+                                name="state"
+                                displayExpr="name"
+                                valueExpr="code"
+                                placeholder="{{l('Select')}}"
+                                [dataSource]="states"
+                                [(value)]="company.state">
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class="field country">
+                        <label for="country">{{ l('Country') }}</label>
+                        <div class="drop-down-box-wrapper">
+                            <dx-select-box
+                                [inputAttr]="{ id: 'country' }"
+                                displayExpr="name"
+                                valueExpr="code"
+                                name="country"
+                                [dataSource]="countries"
+                                [(value)]="company.countryCode"
+                                (onValueChanged)="loadStates($event._value)">
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class="field industry">
+                        <label for="industry">{{l('Company_Industry')}}</label>
+                        <dx-text-box name="industry"
+                                     [inputAttr]="{ id: 'industry' }"
+                                     [valueChangeEvent]="'keyup'"
+                                     [(value)]="company.industry">
+                        </dx-text-box>
+                        <span [class]="company.industry && 'clear-contact' || 'hidden'" (click)="company.industry = ''"><i class="minus-icon"></i></span>
+                    </div>
+                    <div class="field sicCode">
+                        <label for="sicCode">{{l('Company_sicCode')}}</label>
+                        <dx-text-box name="industry"
+                                     [inputAttr]="{ id: 'sicCode' }"
+                                     [valueChangeEvent]="'keyup'"
+                                     [(value)]="company.businessSicCode">
+                        </dx-text-box>
+                        <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = ''"><i class="minus-icon"></i></span>
+                    </div>
+                    <div class="field productsAndServices">
+                        <label for="productsAndServices">{{l('Company_ProductsAndServices')}}</label>
+                        <dx-text-area
+                            name="productsAndServices"
+                            [inputAttr]="{ id: 'productsAndServices' }"
+                            [height]="'140px'"
+                            [(value)]="company.productsAndServices">
+                        </dx-text-area>
+                        <span class="{{company.productsAndServices && 'clear-contact' || 'hidden'}}" (click)="company.productsAndServices = ''"><i class="minus-icon"></i></span>
+                    </div>
+                </div>
+                <div class="right col-md-5">
+                    <file-drop (onFileDrop)="fileDropped($event)">
+                        <input id="custom-input" type="file" (change)="fileChangeListener($event)" multiple #fileInput>
+                        <a href="javascript:void(0);" (click)="fileInput.click()">
+                            <span *ngIf="!data?.company?.primaryPhoto?.original">+ {{l('Company_AddLogo')}}</span>
+                            <img *ngIf="data?.company?.primaryPhoto?.original" src="{{ 'data:image/png;base64,' + data.company.primaryPhoto.original }}" alt="Organization Logo">
+                        </a>
+                    </file-drop>
+                    <div class="field foundedIn">
+                        <label for="foundedIn">{{l('Company_FoundedIn')}}</label>
+                        <dx-text-box name="foundedIn"
+                                     [inputAttr]="{ id: 'foundedIn' }"
+                                     [valueChangeEvent]="'keyup'"
+                                     [(value)]="company.foundedIn">
+                        </dx-text-box>
+                        <span [class]="company.foundedIn && 'clear-contact' || 'hidden'" (click)="company.foundedIn = ''"><i class="minus-icon"></i></span>
+                    </div>
+                    <div class="field ein">
+                        <label for="ein">{{l('Company_EIN')}}</label>
+                        <dx-text-box name="ein"
+                                     [inputAttr]="{ id: 'ein' }"
+                                     [valueChangeEvent]="'keyup'"
+                                     [(value)]="company.ein">
+                        </dx-text-box>
+                        <span [class]="company.ein && 'clear-contact' || 'hidden'" (click)="company.ein = ''"><i class="minus-icon"></i></span>
+                    </div>
+                    <div class="field duns">
+                        <label for="dusn">{{l('Company_DUNS')}}</label>
+                        <dx-text-box name="duns"
+                                     [inputAttr]="{ id: 'dusn' }"
+                                     [valueChangeEvent]="'keyup'"
+                                     [(value)]="company.duns">
+                        </dx-text-box>
+                        <span [class]="company.duns && 'clear-contact' || 'hidden'" (click)="company.duns = ''"><i class="minus-icon"></i></span>
+                    </div>
+                    <div class="field stockSymbol">
+                        <label for="stockSymbol">{{l('Company_StockSymbol')}}</label>
+                        <dx-text-box name="stockSymbol"
+                                     [inputAttr]="{ id: 'stockSymbol' }"
+                                     [valueChangeEvent]="'keyup'"
+                                     [(value)]="company.stockSymbol">
+                        </dx-text-box>
+                        <span [class]="company.stockSymbol && 'clear-contact' || 'hidden'" (click)="company.stockSymbol = ''"><i class="minus-icon"></i></span>
+                    </div>
+                    <div class="field notes">
+                        <label for="notes">{{l('Company_Notes')}}</label>
+                        <dx-text-area
+                            name="notes"
+                            [inputAttr]="{ id: 'notes' }"
+                            [height]="'140px'"
+                            [(value)]="company.notes">
+                        </dx-text-area>
+                        <span class="{{company.notes && 'clear-contact' || 'hidden'}}" (click)="company.notes = ''"><i class="minus-icon"></i></span>
+                    </div>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </div>
+
+</modal-dialog>

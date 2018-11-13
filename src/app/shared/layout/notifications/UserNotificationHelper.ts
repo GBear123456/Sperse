@@ -4,6 +4,7 @@ import { EntityDtoOfGuid, NotificationServiceProxy } from '@shared/service-proxi
 import * as moment from 'moment';
 import * as Push from 'push.js'; // if using ES6
 import { NotificationSettingsModalComponent } from './notification-settings-modal.component';
+import { MatDialog } from '@angular/material';
 
 export interface IFormattedUserNotification {
     userNotificationId: string;
@@ -19,11 +20,9 @@ export interface IFormattedUserNotification {
 
 @Injectable()
 export class UserNotificationHelper extends AppComponentBase {
-
-    settingsModal: NotificationSettingsModalComponent;
-
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _notificationService: NotificationServiceProxy
     ) {
         super(injector);
@@ -126,6 +125,11 @@ export class UserNotificationHelper extends AppComponentBase {
     }
 
     openSettingsModal(): void {
-        this.settingsModal.show();
+        this.dialog.open(NotificationSettingsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 }

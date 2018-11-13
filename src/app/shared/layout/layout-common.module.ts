@@ -78,7 +78,10 @@ let COMPONENTS = [
         QuickSideBarChat
     ],
     entryComponents: [
-        MySettingsModalComponent
+        MySettingsModalComponent,
+        ChangePasswordModalComponent,
+        NotificationSettingsModalComponent,
+        LoginAttemptsModalComponent
     ]
 })
 export class LayoutCommonModule {}

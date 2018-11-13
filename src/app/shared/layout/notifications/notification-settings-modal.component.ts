@@ -1,33 +1,47 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { GetNotificationSettingsOutput, NotificationServiceProxy, NotificationSubscriptionDto, UpdateNotificationSettingsInput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
-import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
+import { MatDialog } from '@angular/material';
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'notificationSettingsModal',
-    templateUrl: './notification-settings-modal.component.html'
+    templateUrl: './notification-settings-modal.component.html',
+    providers: [DialogService]
 })
-export class NotificationSettingsModalComponent extends AppComponentBase {
-
-    @ViewChild('modal') modal: ModalDirective;
-
+export class NotificationSettingsModalComponent extends ModalDialogComponent implements OnInit  {
     saving = false;
 
     settings: GetNotificationSettingsOutput;
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _notificationService: NotificationServiceProxy
     ) {
         super(injector);
+        this.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
     }
 
-    show() {
-        this.getSettings(() => {
-            this.modal.show();
-        });
+    ngOnInit() {
+        super.ngOnInit();
+
+        this.data.title = this.l("NotificationSettings");
+        this.data.editTitle = false;
+        this.data.titleClearButton = false;
+        this.data.placeholder = this.l('NotificationSettings');
+
+        this.data.buttons = [{
+            title: this.l('SaveAndClose'),
+            class: 'primary menu',
+            action: this.save.bind(this)
+        }];
+
+        this.getSettings(() => {});
     }
 
     onShown(): void {
@@ -56,11 +70,7 @@ export class NotificationSettingsModalComponent extends AppComponentBase {
                 this.close();
             });
     }
-
-    close(): void {
-        this.modal.hide();
-    }
-
+    
     private getSettings(callback: () => void) {
         this._notificationService.getNotificationSettings().subscribe((result: GetNotificationSettingsOutput) => {
             this.settings = result;
