@@ -115,7 +115,7 @@ export class AppService extends AppServiceBase {
 
     checkModuleSubscriptionEnabled() {
         let module = this.getModule();
-        return ModuleSubscriptionInfoDtoModule[module.toUpperCase()] ? true : false;
+        return Boolean(ModuleSubscriptionInfoDtoModule[module.toUpperCase()]);
     }
 
     subscriptionStatusBarIsHidden(): boolean {

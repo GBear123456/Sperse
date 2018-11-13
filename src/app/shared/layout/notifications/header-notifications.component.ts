@@ -55,12 +55,12 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
             this.subscriptionInfoTitle = this.l("YouAreUsingTheFreePlan", module);
             this.subscriptionInfoText = this.l("UpgradeToUnlockAllOurFeatures");
         }
-        else if (this._appService.checkModuleExpired()) {
+        else if (!this._appService.hasModuleSubscription()) {
             this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
             this.subscriptionInfoText = this.l("ChoosePlanToContinueService");
         } else if (this.subscriptionInGracePeriod()) {
             let dayCount = this._appService.getGracePeriodDayCount();
-            this.subscriptionInfoTitle = this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
+            this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
             this.subscriptionInfoText = this.l("GracePeriodNotification", (dayCount ?
                 (this.l('PeriodDescription', dayCount,
                     this.l(dayCount === 1 ? 'Tomorrow' : 'Periods_Day_plural'))
@@ -70,10 +70,16 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
             if (!dayCount && dayCount !== 0) {
                 this.subscriptionExpiringDayCount = null;
             } else {
-                this.subscriptionInfoText = this.l("ChoosePlanThatsRightForYou");
-                this.subscriptionInfoTitle = this.l("YourTrialWillExpire", module) + " "
-                    + (!dayCount ? this.l("Today") : (dayCount === 1 ? this.l("Tomorrow") : ("in " + dayCount.toString() + " " + this.l("Periods_Day_plural")))).toLowerCase()
-                    + "!";
+                if (dayCount >= 0 && dayCount <= 15) {
+                    this.subscriptionInfoText = this.l("ChoosePlanThatsRightForYou");
+                    this.subscriptionInfoTitle = this.l("YourTrialWillExpire", module) + " "
+                        + (!dayCount ? this.l("Today") : (dayCount === 1 ? this.l("Tomorrow") : ("in " + dayCount.toString() + " " + this.l("Periods_Day_plural")))).toLowerCase()
+                        + "!";
+                } else {
+                    var subscription = this._appService.getModuleSubscription(module);
+                    this.subscriptionInfoText = this.l("UpgradOrChangeYourPlanAnyTime");
+                    this.subscriptionInfoTitle = this.l("YouAreUsingPlan", subscription.editionName);
+                }
             }
         }
         return this.subscriptionInfoTitle;
