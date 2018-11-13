@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Input, HostListener } from '@angular/core';
+import { Component, OnInit, Injector, Input, HostListener, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
     BankAccountsServiceProxy,
@@ -12,6 +12,7 @@ import { merge, from, asapScheduler } from 'rxjs';
 import { take, toArray } from 'rxjs/operators';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { DashboardService } from '../dashboard.service';
+import { DxChartComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -20,6 +21,7 @@ import { DashboardService } from '../dashboard.service';
     styleUrls: ['./trend-by-period.component.less']
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
+    @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
     @Input() waitForBankAccounts = false;
     @Input() waitForPeriods = false;
     bankAccountIds: number[] = [];
@@ -30,6 +32,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     currency = 'USD';
     isForecast = false;
     initCallback;
+    renderTimeout;
     historicalCreditColor = '#00aeef';
     historicalDebitColor = '#f05b2a';
     forecastCreditColor = '#a9e3f9';
@@ -278,4 +281,14 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         this.loadStatsData();
     }
 
+    render(component = undefined) {
+        component = component || this.chartComponent 
+            && this.chartComponent.instance;
+        if (component) {
+            clearTimeout(this.renderTimeout);
+            this.renderTimeout = setTimeout(
+                () => component.render()
+            , 300);
+        }
+    }
 }
