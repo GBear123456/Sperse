@@ -1,12 +1,12 @@
 import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
-import { ContactGroupStarInfoDto } from 'shared/service-proxies/service-proxies';
+import { ContactStarInfoDto } from 'shared/service-proxies/service-proxies';
 
 export const starsAdapter: EntityAdapter<
-    ContactGroupStarInfoDto
-> = createEntityAdapter<ContactGroupStarInfoDto>({});
+    ContactStarInfoDto
+> = createEntityAdapter<ContactStarInfoDto>({});
 
 export interface State {
-    stars: ContactGroupStarInfoDto[];
+    stars: ContactStarInfoDto[];
     isLoading: boolean;
     error: string;
     loadedTime: number;

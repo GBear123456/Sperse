@@ -65,24 +65,24 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
         // );
     }
 
-    getPayments(contactGroupId): Observable<MonthlyPaymentInfo[]> {
+    getPayments(contactId): Observable<MonthlyPaymentInfo[]> {
         abp.ui.setBusy(this.paymentsContainer.nativeElement);
-        return (this.paymentServiceProxy['data'][contactGroupId] && this.paymentServiceProxy['data'][contactGroupId].payments ?
-               of(this.paymentServiceProxy['data'][contactGroupId].payments) :
-               this.paymentServiceProxy.getPayments(contactGroupId).pipe(
+        return (this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].payments ?
+               of(this.paymentServiceProxy['data'][contactId].payments) :
+               this.paymentServiceProxy.getPayments(contactId).pipe(
                    publishReplay(),
                    refCount(),
-                   tap(payments => this.paymentServiceProxy['data'][contactGroupId].payments = payments)
+                   tap(payments => this.paymentServiceProxy['data'][contactId].payments = payments)
                )).pipe(
                    finalize(() => abp.ui.clearBusy(this.paymentsContainer.nativeElement))
                 );
     }
 
-    getPaymentMethods(contactGroupId): Observable<PaymentMethodInfo[]> {
-        return this.paymentServiceProxy['data'][contactGroupId] && this.paymentServiceProxy['data'][contactGroupId].paymentMethods ?
-               of(this.paymentServiceProxy['data'][contactGroupId].paymentMethods) :
-               this.paymentServiceProxy.getPaymentMethods(contactGroupId).pipe(
-                   tap(paymentMethods => this.paymentServiceProxy['data'][contactGroupId].paymentMethods = paymentMethods)
+    getPaymentMethods(contactId): Observable<PaymentMethodInfo[]> {
+        return this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].paymentMethods ?
+               of(this.paymentServiceProxy['data'][contactId].paymentMethods) :
+               this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
+                   tap(paymentMethods => this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods)
                );
     }
 

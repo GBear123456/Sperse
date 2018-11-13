@@ -9,7 +9,7 @@ import { catchError, exhaustMap, map, startWith, withLatestFrom } from 'rxjs/ope
 
 /** Application imports */
 import * as starsActions from './actions';
-import { DictionaryServiceProxy, ContactGroupStarInfoDto } from 'shared/service-proxies/service-proxies';
+import { DictionaryServiceProxy, ContactStarInfoDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
 import { StoreHelper } from '@root/store/store.helper';
@@ -33,7 +33,7 @@ export class StarsStoreEffects {
 
             return this.dictionaryService.getStars()
                 .pipe(
-                    map((stars: ContactGroupStarInfoDto[]) => {
+                    map((stars: ContactStarInfoDto[]) => {
                         return new starsActions.LoadSuccessAction(stars);
                     }),
                     catchError(err => {

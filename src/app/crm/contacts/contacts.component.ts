@@ -15,7 +15,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppStore, PartnerTypesStoreSelectors, PartnerAssignedUsersStoreSelectors, LeadAssignedUsersStoreSelectors, CustomerAssignedUsersStoreSelectors } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroupType, ContactGroupStatus } from '@shared/AppEnums';
+import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactServiceProxy,
@@ -159,14 +159,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 label: contact.userId ? 'User Information' : 'Invite User',
                 hidden: !(this.permission.isGranted(contact.userId ?
                     'Pages.Administration.Users' : 'Pages.Administration.Users.Create') &&
-                    (contact.userId || this.contactInfo.statusId != ContactGroupStatus.Prospective)),
+                    (contact.userId || this.contactInfo.statusId != ContactStatus.Prospective)),
                 route: 'user-information'
             },
             {label: 'Documents', route: 'documents'},
             {label: 'Notes', route: 'notes'},
             {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
             {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
-            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroupType.Partner},
+            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroup.Partner},
             {label: 'Referral History', route: 'referral-history', disabled: true},
             {label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true},
             {label: 'Questionnaire', route: 'questionnaire', disabled: true},
@@ -175,7 +175,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     isClientDetailPage() {
-        return this.customerType !== ContactGroupType.Partner && !this.partnerTypeId && !this.leadId;
+        return this.customerType !== ContactGroup.Partner && !this.partnerTypeId && !this.leadId;
     }
 
     private storeInitialData() {
@@ -194,7 +194,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             });
         }
 
-        this.operationsEnabled = (result.typeId != ContactGroupType.UserProfile);
+        this.operationsEnabled = (result.typeId != ContactGroup.UserProfile);
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
@@ -269,8 +269,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             if (leadId)
                 this.loadLeadsStages();
 
-            this.customerType = partnerId ? ContactGroupType.Partner : ContactGroupType.Client;
-            if (this.customerType == ContactGroupType.Partner) {
+            this.customerType = partnerId ? ContactGroup.Partner : ContactGroup.Client;
+            if (this.customerType == ContactGroup.Partner) {
                 let partnerInfo$ = this._partnerService.get(partnerId);
                 forkJoin(contactInfo$, partnerInfo$).pipe(finalize(() => {
                     this.finishLoading(true);
@@ -565,10 +565,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getAssignedUsersStoreSelectors = () => {
-        if (this.customerType == ContactGroupType.Partner)
+        if (this.customerType == ContactGroup.Partner)
             return PartnerAssignedUsersStoreSelectors;
 
-        if (this.customerType == ContactGroupType.Client)
+        if (this.customerType == ContactGroup.Client)
             return CustomerAssignedUsersStoreSelectors;
 
         if (this.leadId || this.leadInfo)
@@ -578,23 +578,23 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getAssignmentsPermissinKey = () => {
-        if (this.customerType == ContactGroupType.Partner)
+        if (this.customerType == ContactGroup.Partner)
             return 'Pages.CRM.Partners.ManageAssignments';
 
         return 'Pages.CRM.Customers.ManageAssignments';
     }
 
     getProxyService = () => {
-        if (this.customerType == ContactGroupType.Partner)
+        if (this.customerType == ContactGroup.Partner)
             return this._partnerService;
 
-        if (this.customerType == ContactGroupType.Client)
+        if (this.customerType == ContactGroup.Client)
             return this._customerService;
 
         if (this.leadId || this.leadInfo)
             return this._leadService;
 
-        return this._customerService
+        return this._customerService;
     }
 
     addNewContact(event) {
@@ -605,7 +605,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             closeOnNavigation: false,
             data: {
                 refreshParent: () => {},
-                customerType: ContactGroupType.Client
+                customerType: ContactGroup.Client
             }
         }).afterClosed().subscribe(() => {});
         event.stopPropagation();

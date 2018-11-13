@@ -27,7 +27,7 @@ import {
     TagsStoreSelectors
 } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
+import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
@@ -194,7 +194,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             closeOnNavigation: false,
             data: {
                 refreshParent: this.invalidate.bind(this),
-                customerType: ContactGroupType.Partner
+                customerType: ContactGroup.Partner
             }
         }).afterClosed().subscribe(() => this.invalidate());
     }
@@ -617,9 +617,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     updatePartnerStatuses(status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this._clientService.updateContactGroupStatuses(
+        this._clientService.updateContactStatuses(
             selectedIds,
-            ContactGroupType.Partner,
+            ContactGroup.Partner,
             status.id,
             () => {
                 this.invalidate();

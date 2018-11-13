@@ -114,9 +114,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     saveNote() {
         if (this.validator.validate().isValid)
             this._notesService.createNote(CreateNoteInput.fromJS({
-                contactGroupId: this._contactInfo.id,
+                contactId: this._contactInfo.id,
                 text: this.summary,
-                contactId: this.contact,
                 contactPhoneId: this.phone || undefined,
                 typeId: this.type,
                 followUpDateTime: this.followupDate || undefined,
