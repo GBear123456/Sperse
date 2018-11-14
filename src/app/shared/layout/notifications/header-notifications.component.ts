@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit, ViewEncapsulation } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { NotificationServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { PaymentWizardComponent } from '../../common/payment-wizard/payment-wizard.component';
 import { AppService } from '@app/app.service';
@@ -10,7 +10,8 @@ import { MatDialog } from '@angular/material';
     templateUrl: './header-notifications.component.html',
     styleUrls: ['./header-notifications.component.less'],
     selector: '[headerNotifications]',
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    providers: [ AppService, InstanceServiceProxy, TenantSubscriptionServiceProxy ]
 })
 export class HeaderNotificationsComponent extends AppComponentBase implements OnInit {
 
@@ -33,7 +34,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         private _dialog: MatDialog,
         private _notificationService: NotificationServiceProxy,
         private _userNotificationHelper: UserNotificationHelper,
-        private _appService: AppService,
+        private _appService: AppService
     ) {
         super(injector);
     }
@@ -54,8 +55,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         if (this._appService.checkSubscriptionIsFree(module)) {
             this.subscriptionInfoTitle = this.l("YouAreUsingTheFreePlan", module);
             this.subscriptionInfoText = this.l("UpgradeToUnlockAllOurFeatures");
-        }
-        else if (this._appService.checkModuleExpired()) {
+        } else if (this._appService.checkModuleExpired()) {
             this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
             this.subscriptionInfoText = this.l("ChoosePlanToContinueService");
         } else if (this.subscriptionInGracePeriod()) {
@@ -142,7 +142,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     subscriptionStatusBarVisible(): boolean {
         return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted("Pages.Administration.Tenant.SubscriptionManagement");
     }
-    
+
     subscriptionInGracePeriod() {
         return this._appService.subscriptionInGracePeriod();
     }

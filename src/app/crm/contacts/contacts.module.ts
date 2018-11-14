@@ -82,7 +82,7 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     ContactsAreaComponent,
     AddressesComponent,
     EmploymentComponent,
-    ClientScoresComponent,                                                     
+    ClientScoresComponent,
     TotalApprovedComponent,
     CreditLinesComponent,
     ContactInformationComponent,
