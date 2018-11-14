@@ -239,12 +239,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     get notificationEnabled(): boolean {
         return (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
     }
-
-    subscriptionStatusBarVisible(): boolean {
-        return false;
-        //return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
-    }
-
+    
     subscriptionIsExpiringSoon(): boolean {
         return false;
     }

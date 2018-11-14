@@ -206,13 +206,6 @@
         [memberAreaLinks]="memberAreaLinks">
     </member-area-navigation>
 
-    <div *ngIf="subscriptionStatusBarVisible()"
-         [ngClass]="{'hidden': !subscriptionStatusBarVisible()}" class="alert hidden subscription-info">
-        <a *ngIf="subscriptionIsExpiringSoon()" routerLink="/app/admin/subscription-management">
-            <span *ngIf="subscriptionIsExpiringSoon() && tenant.isInTrialPeriod"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("TrialExpireNotification")}}</span>
-            <span *ngIf="subscriptionIsExpiringSoon() && !tenant.isInTrialPeriod"><i class="fa fa-exclamation-circle"></i> {{getExpireNotification("SubscriptionExpireNotification")}}</span>
-        </a>
-    </div>
 </div>
 <linkedAccountsModal #linkedAccountsModal (modalClose)="getRecentlyLinkedUsers()"></linkedAccountsModal>
 <changeProfilePictureModal #changeProfilePictureModal></changeProfilePictureModal>

@@ -172,8 +172,7 @@
         class="cashflow-scroll"
         (onScroll)="onScroll($event)"
         [ngClass]="{
-            'withCashflowFooterToolbar' : cashflowGridSettings?.visualPreferences?.showFooterBar,
-            'subscriptionBarIsVisible': appService.subscriptionStatusBarIsHidden()
+            'withCashflowFooterToolbar' : cashflowGridSettings?.visualPreferences?.showFooterBar
         }">
         <div class="pivot-grid-wrapper">
             <dx-pivot-grid *ngIf="cashflowData && cashflowData.length" id="operations"
