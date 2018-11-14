@@ -100,7 +100,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     private destroy: Subject<null> = new Subject<null>();
     private destroy$: Observable<null> = this.destroy.asObservable();
 
-    private selectedSorting: BehaviorSubject<string> = new BehaviorSubject(this.sortings[0].field);
+    selectedSorting: BehaviorSubject<string> = new BehaviorSubject(this.sortings[0].field);
     private selectedSorting$ = this.selectedSorting.asObservable();
     scrollHeight: number;
     private rootComponent: RootComponent;
