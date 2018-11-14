@@ -24,7 +24,7 @@ import { ClientService } from '@app/crm/clients/clients.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
+import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
@@ -43,7 +43,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { CustomerServiceProxy, ContactGroupStatusDto } from '@shared/service-proxies/service-proxies';
+import { CustomerServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 
@@ -70,7 +70,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private canSendVerificationRequest = false;
     private dependencyChanged = false;
 
-    statuses: ContactGroupStatusDto[];
+    statuses: ContactStatusDto[];
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
@@ -183,7 +183,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             closeOnNavigation: false,
             data: {
                 refreshParent: this.invalidate.bind(this),
-                customerType: ContactGroupType.Client
+                customerType: ContactGroup.Client
             }
         }).afterClosed().subscribe(() => this.invalidate());
     }
@@ -578,9 +578,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     updateClientStatuses(status) {
         let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this._clientService.updateContactGroupStatuses(
+        this._clientService.updateContactStatuses(
             selectedIds,
-            ContactGroupType.Client,
+            ContactGroup.Client,
             status.id,
             () => {
                 this.invalidate();

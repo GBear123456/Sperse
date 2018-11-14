@@ -113,7 +113,7 @@
                                     <span [class]="'link-to-cfo-column'" (click)="redirectToCFO($event, data.data.UserId)"></span>
                                 </span>
                                 <span *ngSwitchCase="false">
-                                    <a *ngIf="canSendVerificationRequest" class="link link-request-verification" (click)="requestVerification(data.data.PrimaryContactId)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
+                                    <a *ngIf="canSendVerificationRequest" class="link link-request-verification" (click)="requestVerification(data.data.Id)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
                                 </span>
                             </ng-container>
                         </div>

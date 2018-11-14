@@ -47,7 +47,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     endDate: any;
     chartWidth = 650;
     currency = 'USD';
-
+    
     clientColor = '#8487e7';
     leadColor = '#54e4c9';
 
@@ -75,6 +75,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         this.l('LeadStageRatioAndClientCount')
     ];
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
+    private renderTimeout;
     private series: any[] = [
         {
             type: 'spline',
@@ -111,7 +112,6 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             this.totalsData = data.map(dataItem => {
                 return { ...dataItem, ...dataItem['leadStageCount'] };
             });
-            setTimeout(() => { this.render(); }, 300);
         });
 
         /** Return new stage for each unique stage id every time the total data change */
@@ -238,9 +238,15 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         return elem.value.toDateString().split(' ').splice(1, 2).join(' ');
     }
 
-    render() {
-        if (this.chartComponent)
-            this.chartComponent.instance.render();
+    render(component = undefined) {
+        component = component || this.chartComponent 
+            && this.chartComponent.instance;
+        if (component) {
+            clearTimeout(this.renderTimeout);
+            this.renderTimeout = setTimeout(
+                () => component.render()
+            , 300);
+        }
     }
 
     ngOnDestroy() {

@@ -10,8 +10,8 @@ import { catchError, exhaustMap, finalize, map, mergeMap, startWith, withLatestF
 
 /** Application imports */
 import {
-    ContactGroupListsServiceProxy, ContactGroupListInfoDto, AddContactGroupsToListsInput,
-    UpdateContactGroupListInput, UpdateContactGroupListsInput, DictionaryServiceProxy
+    ContactListsServiceProxy, ContactListInfoDto, AddContactsToListsInput,
+    UpdateContactListInput, UpdateContactListsInput, DictionaryServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import * as listsActions from './actions';
 import { State } from './state';
@@ -20,7 +20,7 @@ import { StoreHelper } from '@root/store/store.helper';
 
 @Injectable()
 export class ListsStoreEffects {
-    constructor(private _listsService: ContactGroupListsServiceProxy,
+    constructor(private _listsService: ContactListsServiceProxy,
                 private _dictionaryService: DictionaryServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>,
@@ -38,7 +38,7 @@ export class ListsStoreEffects {
 
             return this._dictionaryService.getLists()
                 .pipe(
-                    map((lists: ContactGroupListInfoDto[]) => {
+                    map((lists: ContactListInfoDto[]) => {
                         return new listsActions.LoadSuccessAction(lists);
                     }),
                     catchError(err => {
@@ -54,14 +54,14 @@ export class ListsStoreEffects {
         map(action => action.payload),
         mergeMap(payload => {
             let request: Observable<any>;
-            if (payload.serviceMethodName === 'addContactGroupsToLists') {
-                request = this._listsService[payload.serviceMethodName ](AddContactGroupsToListsInput.fromJS({
-                             contactGroupIds: payload.contactGroupIds,
+            if (payload.serviceMethodName === 'addContactsToLists') {
+                request = this._listsService[payload.serviceMethodName ](AddContactsToListsInput.fromJS({
+                             contactIds: payload.contactIds,
                              lists: payload.lists
                           }));
-            } else if (payload.serviceMethodName === 'updateContactGroupLists') {
-                request = this._listsService.updateContactGroupLists(UpdateContactGroupListsInput.fromJS({
-                             contactGroupId: payload.contactGroupIds[0],
+            } else if (payload.serviceMethodName === 'updateContactLists') {
+                request = this._listsService.updateContactLists(UpdateContactListsInput.fromJS({
+                             contactId: payload.contactIds[0],
                              lists: payload.lists
                           }));
             } else {
@@ -86,7 +86,7 @@ export class ListsStoreEffects {
         ofType<listsActions.RenameList>(listsActions.ActionTypes.RENAME_LIST),
         map(action => action.payload),
         mergeMap(payload => {
-            return this._listsService.rename(UpdateContactGroupListInput.fromJS({
+            return this._listsService.rename(UpdateContactListInput.fromJS({
                 id: payload.id,
                 name: payload.name
             })).pipe(

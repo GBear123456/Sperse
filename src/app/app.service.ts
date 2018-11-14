@@ -54,6 +54,8 @@ export class AppService extends AppServiceBase {
     private _subscriptionBarsClosed = {};
     private _subscriptionBarVisible: Boolean;
 
+    public loadModuleSubscriptionsCallback: Function;
+
     constructor(injector: Injector) {
         super(
             injector,
@@ -100,6 +102,8 @@ export class AppService extends AppServiceBase {
         this.moduleSubscriptions$.subscribe((res) => {
             this.moduleSubscriptions = res;
             this.checkModuleExpired();
+            if (this.loadModuleSubscriptionsCallback)
+                this.loadModuleSubscriptionsCallback();
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree(undefined, subscriptions))
@@ -115,7 +119,7 @@ export class AppService extends AppServiceBase {
 
     checkModuleSubscriptionEnabled() {
         let module = this.getModule();
-        return ModuleSubscriptionInfoDtoModule[module.toUpperCase()] ? true : false;
+        return Boolean(ModuleSubscriptionInfoDtoModule[module.toUpperCase()]);
     }
 
     subscriptionStatusBarIsHidden(): boolean {
@@ -210,6 +214,9 @@ export class AppService extends AppServiceBase {
         }
 
         super.switchModule(name, params);
+
+        if (this.loadModuleSubscriptionsCallback)
+            this.loadModuleSubscriptionsCallback(name);
     }
 
     expiredModuleSubscribe(callback) {

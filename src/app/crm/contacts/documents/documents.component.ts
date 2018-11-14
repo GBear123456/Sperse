@@ -15,7 +15,7 @@ import { CacheService } from 'ng2-cache-service';
 import { UploadDocumentDialogComponent } from '../upload-document-dialog/upload-document-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactGroupServiceProxy, ContactGroupInfoDto, DocumentServiceProxy, UploadDocumentInput,
+import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy, UploadDocumentInput,
 DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming, GetUrlOutput } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
@@ -39,7 +39,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     private currentDocumentURL: string;
 
     public data: {
-        contactInfo: ContactGroupInfoDto
+        contactInfo: ContactInfoDto
     };
     public formatting = AppConsts.formatting;
     public dataSource: DocumentInfo[];
@@ -71,7 +71,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         private _fileSizePipe: FileSizePipe,
         private _documentService: DocumentServiceProxy,
         private _documentTypeService: DocumentTypeServiceProxy,
-        private _customerService: ContactGroupServiceProxy,
+        private _contactService: ContactServiceProxy,
         private _clientService: ContactsService,
         private printerService: PrinterService,
         private cacheService: CacheService
@@ -257,7 +257,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnInit() {
-        this.data = this._customerService['data'];
+        this.data = this._contactService['data'];
         this.loadDocumentTypes();
     }
 
@@ -352,7 +352,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 Math.round(input.size / 10000)
             );
         this._documentService.upload(UploadDocumentInput.fromJS({
-            contactGroupId: this.data.contactInfo.id,
+            contactId: this.data.contactInfo.id,
             typeId: input.typeId,
             fileName: input.name,
             size: input.size,

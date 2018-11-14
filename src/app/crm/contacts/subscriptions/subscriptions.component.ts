@@ -2,7 +2,7 @@ import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ContactGroupServiceProxy, OrderSubscriptionServiceProxy, OrderSubscriptionDto, ContactGroupInfoDto,
+    ContactServiceProxy, OrderSubscriptionServiceProxy, OrderSubscriptionDto, ContactInfoDto,
     NameValueDto,
     FindUsersInput,
     CommonLookupServiceProxy} from 'shared/service-proxies/service-proxies';
@@ -19,13 +19,13 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     @ViewChild('impersonateUserLookupModal') impersonateUserLookupModal: CommonLookupModalComponent;
 
     public data: {
-        contactInfo: ContactGroupInfoDto
+        contactInfo: ContactInfoDto
     };
     public dataSource: OrderSubscriptionDto[] = [];
 
     constructor(
         injector: Injector,
-        private _customerService: ContactGroupServiceProxy,
+        private _contactService: ContactServiceProxy,
         private _orderSubscriptionService: OrderSubscriptionServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
         private _impersonationService: ImpersonationService
@@ -34,7 +34,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this.data = this._customerService['data'];
+        this.data = this._contactService['data'];
         this.refreshData();
 
         this.impersonateUserLookupModal.configure({
