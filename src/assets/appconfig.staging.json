@@ -1,4 +1,5 @@
 {
+  "enforceRemoteServiceBaseUrl": false,
   "remoteServiceBaseUrl": "https://testadmin.sperse.com",
   "recaptchaSiteKey": "6Lcmdi8UAAAAAFMAymcmeUJaZ79EFp47MiSlCCCF",
   "googleSheetClientId": "1052585251895-gvkssvuv6s3f9fbaq97p011ugpvn8jsh.apps.googleusercontent.com",
