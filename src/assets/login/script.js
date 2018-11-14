@@ -47,28 +47,9 @@
 
     function getAppConfig() {
         ajax('./assets/appconfig.json').then(function(result) {
-            remoteServiceUrl = result.remoteServiceBaseUrl;
-            var cookie = queryString(document.cookie, ';');
-            var currentUrl = window.location.protocol + '//' + window.location.host;
-            if (result.appBaseUrl !== currentUrl) {
-                ajax(remoteServiceUrl + '/api/services/Platform/TenantHost/GetTenantAppHost',
-                    {
-                        'Accept-Language': cookie[AbpLocalizationCultureName]
-                    }
-                ).then((tenantApiHostOutput) => {
-                    let apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
-
-                    if (tenantApiHostOutput.result && tenantApiHostOutput.result.apiHostName) {
-                        remoteServiceUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.result.apiHostName;
-                    } else {
-                        remoteServiceUrl = result.remoteServiceBaseUrl;
-                    }
-
-                    getCurrentLoginInformations();
-                });
-            } else {
-                getCurrentLoginInformations();
-            }
+            remoteServiceUrl = result.enforceRemoteServiceBaseUrl
+                ? result.remoteServiceBaseUrl: location.origin;
+            getCurrentLoginInformations();
         });
     }
 

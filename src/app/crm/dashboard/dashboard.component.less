@@ -1,17 +1,19 @@
 :host {
     display: block;
     position: relative;
-    height: calc(~"100vh - 150px");
 
     .wrapper {
-        padding: 20px 0px 20px 340px!important;
+        padding: 20px 0px 20px 20px!important;
         max-width: 100%!important;
-        @media (max-width: 768px) {
-            padding: 20px 0px 20px 20px!important;
-        }
     }
-    .lead-status {
+    .widgets-wrapper {
+        margin-left: 320px;
+        height: calc(~"100vh - 150px");
         margin-top: 76px;
+
+        @media (max-width: 768px) {
+            margin-left: 0px;
+        }
     }
 
     .add-client {

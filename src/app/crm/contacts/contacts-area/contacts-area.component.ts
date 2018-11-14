@@ -10,7 +10,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ContactGroupInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
+    ContactInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
     UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
@@ -26,17 +26,26 @@ import { ContactsService } from '../contacts.service';
 })
 export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
+    @Input() set contactInfo(value: ContactInfoDto) {
+        if (this._contactInfo = value)
+            this.contactInfoData = this.isCompany ? 
+                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details: 
+                value.personContactInfo && value.personContactInfo.details;
+    }
+    get contactInfo(): ContactInfoDto {
+        return this._contactInfo;
+    }
+    @Input() showContactType: string;
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() contactInfo: ContactGroupInfoDto;
 
     isEditAllowed = false;
 
-    private masks = AppConsts.masks;
-
+    private masks = AppConsts.masks;   
     private _clickTimeout;
     private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
+    private _contactInfo: ContactInfoDto;
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
@@ -44,7 +53,8 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
                 private _organizationContactService: OrganizationContactServiceProxy,
-                private dialogService: DialogService) {
+                private dialogService: DialogService
+    ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
@@ -113,7 +123,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     createOrganization(field, data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            contactGroupId: this.contactInfo.id,
+            relatedContactId: this._contactInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
@@ -123,7 +133,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this.contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),

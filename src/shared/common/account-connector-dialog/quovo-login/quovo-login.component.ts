@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnInit, Input, Output, Injector, OnDestroy } from '@angular/core';
-import { QuovoHandler, QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
+import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { takeUntil } from 'rxjs/operators';
+import { first, takeUntil, tap, filter, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'quovo-login',
@@ -13,41 +13,34 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit, OnD
     @Input() loadingContainerElement: Element;
     @Output() onClose: EventEmitter<any> = new EventEmitter();
 
-    quovoHandler: QuovoHandler;
-
     constructor(
         injector: Injector,
-        private _quovoService: QuovoService,
-        public _cfoService: CFOService
+        private quovoService: QuovoService,
+        public cfoService: CFOService
     ) {
         super(injector);
     }
 
     ngOnInit(): void {
-        if (!this.quovoHandler) {
-            this.quovoHandler = this._quovoService.getQuovoHandler(this._cfoService.instanceType, this._cfoService.instanceId);
-        }
+        this.startLoading(!this.loadingContainerElement, this.loadingContainerElement);
 
-        if (this.quovoHandler.isLoaded) {
-            /** Open quovo popup only after instance initialization - show the spinner untill that moment */
-            this._cfoService.statusActive
-                .pipe(takeUntil(this.destroy$))
-                .subscribe(statusActive => {
-                    if (statusActive) {
-                        this.quovoHandler.open((e) => this.onQuovoHanderClose(e), this.accountId);
-                    } else {
-                        this.startLoading(!this.loadingContainerElement, this.loadingContainerElement);
-                    }
-                });
-        } else {
-            if (!this.loading) {
-                this.startLoading(!this.loadingContainerElement, this.loadingContainerElement);
-            }
-            setTimeout(() => this.ngOnInit(), 100);
-        }
+        /** Open quovo popup only after instance initialization - show the spinner until that moment */
+        this.cfoService.statusActive.pipe(filter(statusActive => statusActive))
+            .pipe(
+                switchMap(() => this.quovoService.connect().pipe(filter(loaded => loaded))),
+                first(),
+                takeUntil(this.destroy$),
+                tap(x => 'quovo login open event'),
+                switchMap(() => this.quovoService.open(this.accountId))
+            ).subscribe(() => { console.log('quovo login open'); });
+
+        this.quovoService.quovoClosed$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(e => this.onQuovoClose(e));
+
     }
 
-    private onQuovoHanderClose(e) {
+    private onQuovoClose(e) {
         this.finishLoading(!this.loadingContainerElement, this.loadingContainerElement);
         this.onClose.emit(e);
     }

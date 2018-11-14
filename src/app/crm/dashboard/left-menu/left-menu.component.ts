@@ -18,7 +18,6 @@ export class DashboardMenuComponent extends AppComponentBase {
     @Output() openIntro: EventEmitter<any> = new EventEmitter();
     @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
     items = [];
-    public abp = abp;
     constructor(
         injector: Injector,
         public appService: AppService

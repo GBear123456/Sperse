@@ -11,7 +11,9 @@ import { catchError, exhaustMap, map, mergeMap } from 'rxjs/operators';
 import * as statesActions from './actions';
 import { CountryStateDto, CountryServiceProxy } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
-import { getState } from './selectors';
+import { getState, getLoadedTime } from './selectors';
+import { StoreHelper } from '@root/store/store.helper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class StatesStoreEffects {
@@ -26,12 +28,13 @@ export class StatesStoreEffects {
             const payload$ = of(action.payload);
             /** Check if country states have been already loaded to the store */
             const countryStates$ = this.store$.pipe(select(getState, { countryCode: action.payload }));
-            return zip(payload$, countryStates$);
+            const loadedTime$ = this.store$.pipe(select(getLoadedTime, { countryCode: action.payload }));
+            return zip(payload$, countryStates$, loadedTime$);
         }),
-        exhaustMap(([payload, countryStates]) => {
+        exhaustMap(([payload, countryStates, loadedTime]) => {
 
             /** If country states have been already loaded - don't do that again */
-            if (countryStates && countryStates.length) {
+            if (countryStates && countryStates.length && StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {
                 return empty();
             }
 

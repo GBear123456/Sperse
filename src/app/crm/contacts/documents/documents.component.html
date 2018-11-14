@@ -20,7 +20,7 @@
                     [noDataText]="noDataText"
                     (onCellClick)="onCellClick($event)"
                     (onInitialized)="onDataGridInit($event)"
-                    (onContentReady)="onContentReady($event)"
+                    (onContentReady)="onContentReady()"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                     (onToolbarPreparing)="onToolbarPreparing($event)">
             <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
@@ -65,16 +65,6 @@
             <dxo-sorting mode="multiple"></dxo-sorting>
             <dxo-group-panel [visible]="false"></dxo-group-panel>
         </dx-data-grid>
-    </div>
-    <div class="drop-down">
-        <h1>{{l('DropYourFile')}}</h1>
-        <file-drop
-            (onFileDrop)="fileDropped($event)">
-            <p>{{l('DragAndDrop')}}</p>
-        </file-drop>
-        <p class="alter-text">or <a href="javascript:void(0);" (click)="showUploadDocumentDialog($event)">{{l('SelectFileFrom')}}</a></p>
-        <div class="file-container">
-        </div>
     </div>
 </div>
 <div *ngIf="openDocumentMode" class="documentView">

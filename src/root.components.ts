@@ -16,7 +16,7 @@ import * as _ from 'underscore';
 })
 export class RootComponent implements AfterViewInit {
     constructor(@Inject(DOCUMENT) private document,
-                private hostElement: ElementRef,
+                public hostElement: ElementRef,
                 private _uiCustomizationService: AppUiCustomizationService,
                 private title: Title
     ) {

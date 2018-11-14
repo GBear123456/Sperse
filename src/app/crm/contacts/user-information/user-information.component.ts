@@ -2,7 +2,7 @@ import { Injector, Component, OnInit, OnDestroy, ViewChild } from '@angular/core
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
-    UpdateUserOptionsDto, UpdateUserRoleInput, ContactGroupInfoDto, ContactGroupServiceProxy, PersonContactServiceProxy,
+    UpdateUserOptionsDto, UpdateUserRoleInput, ContactInfoDto, ContactServiceProxy, PersonContactServiceProxy,
     CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
@@ -74,8 +74,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         public phoneFormatPipe: PhoneFormatPipe,
         private _userService: UserServiceProxy,
         private _contactsService: ContactsService,
-        private _contactsServiceProxy: PersonContactServiceProxy,
-        private _contactGroupService: ContactGroupServiceProxy,
+        private _personContactServiceProxy: PersonContactServiceProxy,
+        private _contactService: ContactServiceProxy,
         private _roleServiceProxy: RoleServiceProxy
     ) {
         super(injector);
@@ -104,7 +104,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     ngOnInit() {
-        this.contactInfoData = this._contactGroupService['data'];
+        this.contactInfoData = this._contactService['data'];
         if ((this.data = this._userService['data']).userId)
             this.loadData();
         else
@@ -115,7 +115,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         this.showInviteUserForm = this.data && !this.data.userId &&
             this.permission.isGranted('Pages.Administration.Users.Create');
 
-        let contactInfo = this.contactInfoData.contactInfo.primaryContactInfo;
+        let contactInfo = this.contactInfoData.contactInfo.personContactInfo;
         if (contactInfo) {
             this.phones = contactInfo.details.phones
                 .filter(item => item.isActive );
@@ -166,8 +166,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading();
-                    this.inviteData.contactId = this.contactInfoData.contactInfo.primaryContactInfo.id;
-                    this._contactsServiceProxy.createUserForContact(_.extend(_.clone(this.inviteData),
+                    this.inviteData.contactId = this.contactInfoData.contactInfo.personContactInfo.id;
+                    this._personContactServiceProxy.createUserForContact(_.extend(_.clone(this.inviteData),
                         { phoneNumber: this.inviteData.phoneNumber.replace(/\D/g, '') }))
                         .pipe(finalize(() => this.finishLoading())).subscribe(() => {
                             this._contactsService.invalidate();

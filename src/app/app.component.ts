@@ -54,7 +54,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
     ngOnInit(): void {
         this.appService.initModule();
 
-        if (this.appSession.application && this.appSession.application.features['SignalR']) {
+        if (this.appSession.application) {
             SignalRHelper.initSignalR(() => { this._chatSignalrService.init(); });
         }
 

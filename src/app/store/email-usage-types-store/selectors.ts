@@ -8,7 +8,7 @@ export const getEmailUsageTypes = createSelector(
     (state: State) => state.emailUsageTypes
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getEmailUsageTypesState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );

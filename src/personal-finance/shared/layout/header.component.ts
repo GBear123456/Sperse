@@ -25,10 +25,10 @@ import { ChangeProfilePictureModalComponent } from '@app/shared/layout/profile/c
 import { MySettingsModalComponent } from '@app/shared/layout/profile/my-settings-modal.component';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
-import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
 import * as _ from 'lodash';
+import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: 'header.component.html',
@@ -38,14 +38,8 @@ import * as _ from 'lodash';
     providers: [ImpersonationService]
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
-
-    @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalComponent;
-
-    @ViewChild('loginAttemptsModal') loginAttemptsModal: LoginAttemptsModalComponent;
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
-    @ViewChild('changePasswordModal') changePasswordModal: ChangePasswordModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
-    @ViewChild('mySettingsModal') mySettingsModal: MySettingsModalComponent;
 
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
@@ -93,6 +87,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         private _abpSessionService: AbpSessionService,
         private _abpMultiTenancyService: AbpMultiTenancyService,
         private _profileServiceProxy: ProfileServiceProxy,
@@ -129,8 +124,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._userNotificationHelper.settingsModal = this.notificationSettingsModal;
-
         this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled == false);
         this.currentLanguage = this.localization.currentLanguage;
         this.isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;
@@ -143,10 +136,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     registerToEvents() {
-        abp.event.on('profilePictureChanged', () => {
-            this._profileServiceProxy.getProfileThumbnailId().subscribe(id => {
-                this.profileThumbnailId = id;
-            });
+        abp.event.on('profilePictureChanged', (thumbnailId) => {
+            this.profileThumbnailId = thumbnailId;
         });
 
         abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
@@ -191,7 +182,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     showLoginAttempts(): void {
-        this.loginAttemptsModal.show();
+        this.dialog.open(LoginAttemptsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     showLinkedAccounts(): void {
@@ -199,7 +195,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     changePassword(): void {
-        this.changePasswordModal.show();
+        this.dialog.open(ChangePasswordModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     changeProfilePicture(): void {
@@ -207,7 +208,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     changeMySettings(): void {
-        this.mySettingsModal.show();
+        this.dialog.open(MySettingsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     logout(): void {
@@ -227,7 +233,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     get chatEnabled(): boolean {
-        return this.appSession.application.features['SignalR'] && (!this._abpSessionService.tenantId || this.feature.isEnabled('App.ChatFeature'));
+        return (!this._abpSessionService.tenantId || this.feature.isEnabled('App.ChatFeature'));
     }
 
     get notificationEnabled(): boolean {

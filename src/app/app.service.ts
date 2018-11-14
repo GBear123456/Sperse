@@ -40,7 +40,7 @@ export class AppService extends AppServiceBase {
     public contactInfo: any;
 
     private expiredModule: Subject<string>;
-    private moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
+    public moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
     private moduleSubscriptions: ModuleSubscriptionInfoDto[];
     public subscriptionIsFree$: Observable<boolean>;
     private permission: PermissionCheckerService;
@@ -53,6 +53,8 @@ export class AppService extends AppServiceBase {
     private _tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
     private _subscriptionBarsClosed = {};
     private _subscriptionBarVisible: Boolean;
+
+    public loadModuleSubscriptionsCallback: Function;
 
     constructor(injector: Injector) {
         super(
@@ -100,6 +102,8 @@ export class AppService extends AppServiceBase {
         this.moduleSubscriptions$.subscribe((res) => {
             this.moduleSubscriptions = res;
             this.checkModuleExpired();
+            if (this.loadModuleSubscriptionsCallback)
+                this.loadModuleSubscriptionsCallback();
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree(undefined, subscriptions))
@@ -111,6 +115,11 @@ export class AppService extends AppServiceBase {
         if (moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
             return _.find(moduleSubscriptions, {module: module})
                 || {module: module, endDate: moment(new Date(0))};
+    }
+
+    checkModuleSubscriptionEnabled() {
+        let module = this.getModule();
+        return Boolean(ModuleSubscriptionInfoDtoModule[module.toUpperCase()]);
     }
 
     subscriptionStatusBarIsHidden(): boolean {
@@ -205,6 +214,9 @@ export class AppService extends AppServiceBase {
         }
 
         super.switchModule(name, params);
+
+        if (this.loadModuleSubscriptionsCallback)
+            this.loadModuleSubscriptionsCallback(name);
     }
 
     expiredModuleSubscribe(callback) {

@@ -33,7 +33,7 @@
       }
 
       &.phone {
-        &.type-H, &.type-P {
+        &.type-H, &.type-P, &.type-C {
           background-image: url("../../../assets/common/icons/phone.svg");
         }
 
@@ -107,39 +107,44 @@
     }
 
     mat-sidenav {
-      width: 288px;
-      padding-bottom: 120px;
-      overflow-y: hidden;
+        width: 288px;
+        padding-bottom: 120px;
+        overflow-y: hidden;
 
-      .short-contact {
-        width: 85%;
-        margin: 0 auto;
-        min-height: 50px;
-        position: relative;
-        border-bottom: 1px solid #e5e9ec;
-
-        .small-phones {
-          padding-top: 15px;
-          font-size: 12px;
-          font-weight: 300;
-          line-height: 1.83;
-          letter-spacing: 0.2px;
-          color: #677380;
-          i.icons {
-            width: 20px;
-            height: 16px;
+        .short-contact {
+            width: 85%;
+            margin: 0 auto;
+            min-height: 50px;
             position: relative;
-            display: inline-block;
-            background-size: contain;
-            background-position: center;
-            top: 3px;
-          }
+            border-bottom: 1px solid #e5e9ec;
+            display: flex;
+            align-items: center;
+
+            .related-contacts {
+                .similar-contacts-count {
+                    margin: 0 10px;
+                }
+
+                .add-new-contact {
+                    font-size: 14px;
+                    font-weight: 400;
+                    line-height: 1.57;
+                    letter-spacing: 0.3px;
+                    text-align: left;
+                    color: rgb(0, 174, 239);
+                    margin-left: 10px;
+                    text-decoration: none;
+
+                    &:hover {
+                        color: lighten(rgb(0, 174, 239), 5%);
+                    }
+                }
+            }
         }
-      }
-      .mat-tab-nav-bar {
-        border: none;
-        padding-top: 12px;
-      }
+        .mat-tab-nav-bar {
+            border: none;
+            padding-top: 12px;
+        }
     }
 
     mat-sidenav.right_sidenav {

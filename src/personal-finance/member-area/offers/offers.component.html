@@ -1,0 +1,78 @@
+<div class="container wrapper">
+    <header>
+        <h1>{{ ls.l('CreditCards') }}</h1>
+        <div class="subHeader">
+            <div class="foundCount">
+                {{ ls.ls('Platform', 'Offers_WeFoundCountOfCreditCards', creditCardsAmount) }}
+            </div>
+            <div class="sortBy">
+                <span>{{ ls.l('Offers_SortBy') }}</span>
+                <mat-select (selectionChange)="selectedSorting.next($event.value);" [value]="sortings[0].field">
+                    <mat-option *ngFor="let sorting of sortings" [value]="sorting.field">
+                        {{ sorting.name }}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+    </header>
+    <div class="row main">
+        <div class="filter-side-bar col-md-3">
+            <dx-scroll-view [height]="scrollHeight">
+                <ul class="filters">
+                    <ng-container *ngFor="let filter of filters">
+                        <li *ngIf="filter.values.length">
+                            <div class="filterName">{{ filter.name.toUpperCase() }}</div>
+                            <ng-container *ngFor="let filterValue of filter.values; let i = index">
+                                <mat-checkbox *ngIf="filter.showAll || i < maxDisplayedFilterValues" (change)="selectedFilter.next(filtersValues)" [(ngModel)]="filtersValues[filter.field][filterValue]">
+                                    <span *ngIf="!filter.type">{{ filterValue }}</span>
+                                    <stars-rating *ngIf="filter.type === 'rating'" [maxRating]="filterValue"></stars-rating>
+                                </mat-checkbox>
+                            </ng-container>
+                            <button class="viewMore" *ngIf="!filter.showAll" (click)="filter.showAll = true">{{ ls.l('Offers_ViewMore') }}</button>
+                        </li>
+                    </ng-container>
+                </ul>
+            </dx-scroll-view>
+        </div>
+        <div class="col-md-9" #creditCardsList>
+            <dx-scroll-view [height]="scrollHeight">
+                <ul class="credit-cards-list">
+                    <li class="row" *ngFor="let creditCardItem of displayedCreditCards$ | async">
+                        <div class="image col-md-3">
+                            <img [src]="'./assets/images/offers/' + creditCardItem.imageName + '.svg'" [alt]="creditCardItem.cardName">
+                        </div>
+                        <div class="description col-md-6">
+                            <h4>{{ creditCardItem.bankName + ' - ' + creditCardItem.cardName }}</h4>
+                            <div class="rating">
+                                <stars-rating [currentRating]="creditCardItem.rating"></stars-rating>
+                                <span>({{ creditCardItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span>
+                            </div>
+                            <ul class="descriptionItems">
+                                <li>
+                                    <h5>{{ ls.l('Offers_AnnualFee') }}</h5>
+                                    <p>{{ creditCardItem.annualFee }}</p>
+                                </li>
+                                <li>
+                                    <h5>{{ ls.l('Offers_RewardsRate') }}</h5>
+                                    <p>{{ creditCardItem.rewardsRate }}</p>
+                                </li>
+                                <li>
+                                    <h5>{{ ls.l('Offers_RewardsBonus') }}</h5>
+                                    <p>{{ creditCardItem.rewardsBonus }}</p>
+                                </li>
+                                <li>
+                                    <h5>{{ ls.l('Offers_APR') }}</h5>
+                                    <p>{{ creditCardItem.apr }}</p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="actions col-md-3">
+                            <button class="applyButton" (click)="applyCard(creditCardItem)"><span>{{ ls.l('Apply') }}</span></button>
+                            <button class="viewMore" (click)="viewCardDetails(creditCardItem)">{{ ls.l('View_details') }}</button>
+                        </div>
+                    </li>
+                </ul>
+            </dx-scroll-view>
+        </div>
+    </div>
+</div>

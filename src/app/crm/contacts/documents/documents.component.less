@@ -33,7 +33,7 @@
 
         .grid-view {
             width: auto;
-            max-width: calc(~"100% - 380px");
+            max-width: 100%;
             height: 100%;
             /deep/ dx-data-grid {
                  table {
@@ -42,6 +42,17 @@
                          direction: ltr;
                      }
                  }
+
+                &#gridContainer .dx-datagrid-header-panel .dx-toolbar .dx-toolbar-after {
+                    margin-right: 0px!important;
+                }
+
+                .dx-datagrid-search-panel {
+                    input {
+                        border-radius: 3px;
+                        border: solid 1px #dadee1;
+                    }
+                }
 
                 .dx-row {
                     .dx-link.dx-link-edit {
@@ -71,47 +82,6 @@
                 }
                 input {
                     border-bottom: none;
-                }
-            }
-        }
-
-        .drop-down {
-            width: 30%;
-            min-width: 340px;
-            margin: 50px 0px 0px 30px;
-            h1 {
-                text-align: center;
-                font-weight: 300;
-                font-size: 34px;
-                padding-bottom: 20px;
-                color: #dedede;
-            }
-            /deep/ .drop-zone {
-                margin: auto;
-                height: 100px;
-                border: 1px solid #dedede;
-                border-radius: 5px;
-                background-color: #F8F7FC;
-                text-transform: uppercase;
-
-                width: 300px;
-                .content {
-                    height: 98px;
-                    border-radius: 5px;
-                }
-                p {
-                    color: #333333;
-                    padding-top: 10px;
-                    font-weight: 500;
-                }
-            }
-            p.alter-text {
-                text-align: center;
-                padding-top: 20px;
-                input {
-                    opacity: 0;
-                    width: 200px;
-                    position: absolute;
                 }
             }
         }

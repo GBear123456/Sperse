@@ -1,20 +1,20 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
-import { ContactGroupTagInfoDto } from 'shared/service-proxies/service-proxies';
+import { ContactTagInfoDto } from 'shared/service-proxies/service-proxies';
 
 export const tagsAdapter: EntityAdapter<
-    ContactGroupTagInfoDto
-> = createEntityAdapter<ContactGroupTagInfoDto>({});
+    ContactTagInfoDto
+> = createEntityAdapter<ContactTagInfoDto>({});
 
 export interface State {
-    tags: ContactGroupTagInfoDto[];
+    tags: ContactTagInfoDto[];
     isLoading: boolean;
     error: string;
-    loaded: boolean;
+    loadedTime: number;
 }
 
 export const initialState: State = {
     tags: null,
     isLoading: false,
     error: null,
-    loaded: false
+    loadedTime: null
 };

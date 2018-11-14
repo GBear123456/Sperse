@@ -11,8 +11,10 @@ import { catchError, exhaustMap, map, withLatestFrom } from 'rxjs/operators';
 import * as emailUsageTypesActions from '@app/store/email-usage-types-store/actions';
 import { ContactEmailServiceProxy } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
-import { getLoaded } from './selectors';
+import { getLoadedTime } from './selectors';
 import { ListResultDtoOfEmailUsageTypeDto } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
+import { StoreHelper } from '@root/store/store.helper';
 
 @Injectable()
 export class EmailUsageTypesStoreEffects {
@@ -23,10 +25,10 @@ export class EmailUsageTypesStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<emailUsageTypesActions.LoadRequestAction>(emailUsageTypesActions.ActionTypes.LOAD_REQUEST),
-        withLatestFrom(this.store$.pipe(select(getLoaded))),
-        exhaustMap(([action, loaded]) => {
+        withLatestFrom(this.store$.pipe(select(getLoadedTime))),
+        exhaustMap(([action, loadedTime]) => {
 
-            if (loaded) {
+            if (StoreHelper.dataLoadingIsNotNeeded(loadedTime, AppConsts.generalDictionariesCacheLifetime)) {
                 return empty();
             }
 

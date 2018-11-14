@@ -2,6 +2,18 @@
     border-radius: 5px;
 }
 
+/deep/ .usage-type-item {
+    span{
+        &:first-child {
+            display: inline-block;
+            width: 80px;
+        }
+        &:last-child {
+            font-size: 10px;
+        }
+    }
+}
+
 :host {
     /deep/ .mat-dialog-header {
         padding: 0px 10px 0px 130px!important;
@@ -35,7 +47,7 @@
             display: inline-block;
             /deep/ .dx-widget {
                 margin: 0px;
-                input {                        
+                input {
                     font-size: 15px;
                     font-weight: 400;
                     line-height: 1.79;
@@ -45,8 +57,8 @@
                 }
                 .dx-texteditor-buttons-container {
                     left: 97px;
-                    .dx-dropdowneditor-button { 
-                        float: left;    
+                    .dx-dropdowneditor-button {
+                        float: left;
                     }
                 }
             }
@@ -81,17 +93,17 @@
                 }
             }
             &.notes {
-                margin-top: 20px; 
+                margin-top: 20px;
             }
 
             .editable-item {
-                margin-left: 110px;        
+                margin-left: 110px;
                 &.first-item {
                     margin-left: 0px;
                     display: inline-block;
                 }
             }
-     
+
             label {
                 height: 22px;
                 font-size: 15px;
@@ -147,7 +159,7 @@
                     }
                 }
                 &.address {
-                    padding-left: 60px;  
+                    padding-left: 60px;
                     &.P {
                         background: url("../../../../assets/common/icons/address-primary.png") no-repeat 30px 0px;
                     }
@@ -158,14 +170,14 @@
                         background: url("../../../../assets/common/icons/address-shipping.png") no-repeat 30px 0px;
                     }
                 }
-                span {  
+                span {
                     top: 0px;
                     right: 0px;
                     position: absolute;
                     width: 20px;
                     height: 20px;
                     cursor: pointer;
-                    background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;                        
+                    background: url('../../../../assets/common/icons/delete-icon.svg') no-repeat center;
                 }
             }
             input[name="Address"] {
@@ -175,9 +187,9 @@
                 font-weight: 400;
                 line-height: 1.79;
                 letter-spacing: 0.3px;
-                color: #424c56;                    
+                color: #424c56;
                 padding: 0px;
-                vertical-align: top;                      
+                vertical-align: top;
                 margin-left: 30px;
             }
             span {
@@ -227,7 +239,10 @@
             }
             dx-text-box, dx-number-box, dx-text-area, dx-select-box, country-phone-number, dx-drop-down-box {
                 display: inline-block;
-                margin-left: 30px;  
+                margin-left: 30px;
+                &[name="phoneExtension"] {
+                    margin-left: 60px;
+                }
                 &.dx-invalid {
                     input {
                         color: #d9534f!important;
@@ -238,7 +253,7 @@
                         top: -30px;
                     }
                 }
-                .dx-placeholder, input, textarea {                        
+                .dx-placeholder, input, textarea {
                     font-size: 15px;
                     font-weight: 400;
                     line-height: 1.79;
@@ -282,7 +297,6 @@
             }
         }
     }
-    
 
     .photo-area {
         top: 30px;

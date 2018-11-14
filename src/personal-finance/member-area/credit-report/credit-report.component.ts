@@ -52,7 +52,7 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
     ) {
         super(injector);
         PageScrollConfig.defaultDuration = 500;
-        this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
+        this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
     }
 
     ngOnInit(): void {

@@ -25,7 +25,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     ) {
         super(injector);
         this._synchProgress.needRefreshSync$.subscribe(() => {
-            this.syncComponent.requestSyncAjax();
+            this._synchProgress.startSynchronization();
         });
     }
 
@@ -52,7 +52,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     onNextClick() {
         setTimeout(() => {
-            this.syncComponent.requestSyncAjax(true);
+            this._synchProgress.startSynchronization(true);
             this._cfoService.instanceChangeProcess(() => {
                 this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
             });
@@ -72,7 +72,4 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this.zendeskService.hideWidget();
     }
 
-    progressCompleted() {
-        this._synchProgress.syncProgressCompleted();
-    }
 }

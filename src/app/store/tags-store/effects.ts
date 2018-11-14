@@ -10,16 +10,18 @@ import { catchError, map, startWith, withLatestFrom, finalize, exhaustMap, merge
 
 /** Application imports */
 import {
-    ContactGroupTagsServiceProxy, ContactGroupTagInfoDto, TagContactGroupsInput,
-    UpdateContactGroupTagInput, UpdateContactGroupTagsInput, DictionaryServiceProxy
+    ContactTagsServiceProxy, ContactTagInfoDto, TagContactsInput,
+    UpdateContactTagInput, UpdateContactTagsInput, DictionaryServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import * as tagsActions from './actions';
 import { State } from './state';
-import { getLoaded } from './selectors';
+import { getLoadedTime } from './selectors';
+import { AppConsts } from '@shared/AppConsts';
+import { StoreHelper } from '@root/store/store.helper';
 
 @Injectable()
 export class TagsStoreEffects {
-    constructor(private _tagsService: ContactGroupTagsServiceProxy,
+    constructor(private _tagsService: ContactTagsServiceProxy,
                 private _dictionaryService: DictionaryServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>,
@@ -28,16 +30,16 @@ export class TagsStoreEffects {
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
         ofType<tagsActions.LoadRequestAction>(tagsActions.ActionTypes.LOAD_REQUEST),
-        withLatestFrom(this.store$.pipe(select(getLoaded))),
-        exhaustMap(([action, loaded]) => {
+        withLatestFrom(this.store$.pipe(select(getLoadedTime))),
+        exhaustMap(([action, loadedTime]) => {
 
-            if (loaded) {
+            if (StoreHelper.dataLoadingIsNotNeeded(loadedTime)) {
                 return empty();
             }
 
             return this._dictionaryService.getTags()
                 .pipe(
-                    map((tags: ContactGroupTagInfoDto[]) => {
+                    map((tags: ContactTagInfoDto[]) => {
                         return new tagsActions.LoadSuccessAction(tags);
                     }),
                     catchError(err => {
@@ -53,14 +55,14 @@ export class TagsStoreEffects {
         map(action => action.payload),
         mergeMap(payload => {
             let request: Observable<any>;
-            if (payload.serviceMethodName === 'tagContactGroups') {
-                request = this._tagsService[payload.serviceMethodName ](TagContactGroupsInput.fromJS({
-                             contactGroupIds: payload.contactGroupIds,
+            if (payload.serviceMethodName === 'tagContacts') {
+                request = this._tagsService[payload.serviceMethodName ](TagContactsInput.fromJS({
+                             contactIds: payload.contactIds,
                              tags: payload.tags
                           }));
-            } else if (payload.serviceMethodName === 'updateContactGroupTags') {
-                request = this._tagsService.updateContactGroupTags(UpdateContactGroupTagsInput.fromJS({
-                             contactGroupId: payload.contactGroupIds[0],
+            } else if (payload.serviceMethodName === 'updateContactTags') {
+                request = this._tagsService.updateContactTags(UpdateContactTagsInput.fromJS({
+                             contactId: payload.contactIds[0],
                              tags: payload.tags
                           }));
             } else {
@@ -85,7 +87,7 @@ export class TagsStoreEffects {
         ofType<tagsActions.RenameTag>(tagsActions.ActionTypes.RENAME_TAG),
         map(action => action.payload),
         mergeMap(payload => {
-            return this._tagsService.rename(UpdateContactGroupTagInput.fromJS({
+            return this._tagsService.rename(UpdateContactTagInput.fromJS({
                 id: payload.id,
                 name: payload.name
             })).pipe(

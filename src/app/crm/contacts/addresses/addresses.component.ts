@@ -18,7 +18,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ContactsService } from '../contacts.service';
 import {
-    ContactGroupInfoDto, ContactAddressServiceProxy, CountryDto,
+    ContactInfoDto, ContactAddressServiceProxy, CountryDto,
     ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
@@ -32,7 +32,16 @@ import {
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() contactInfo: ContactGroupInfoDto;
+    @Input() set contactInfo(value: ContactInfoDto) {
+        if (this._contactInfo = value)
+            this.contactInfoData = this.isCompany ? 
+                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details: 
+                value.personContactInfo && value.personContactInfo.details;
+
+    }
+    get contactInfo(): ContactInfoDto {
+        return this._contactInfo;
+    }
 
     types: Object = {};
     country: string;
@@ -47,7 +56,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     private _clickTimeout;
     private _clickCounter = 0;
     private _itemInEditMode: any;
-
+    private _contactInfo: ContactInfoDto;
     private _latestFormatedAddress: string;
 
     constructor(injector: Injector,
@@ -143,7 +152,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     createOrganization(address, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            contactGroupId: this.contactInfo.id,
+            relatedContactId: this._contactInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
@@ -153,7 +162,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this.contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),

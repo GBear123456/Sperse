@@ -9,12 +9,20 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ContactGroupInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
+    ContactInfoDto, ContactInfoDetailsDto, ContactLinkServiceProxy,
     ContactLinkDto, CreateContactLinkInput, UpdateContactLinkInput,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
+import { filter } from 'rxjs/operators';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { Store, select } from '@ngrx/store';
+import { RootStore } from '@root/store';
+import {
+    ContactLinkTypesStoreActions,
+    ContactLinkTypesStoreSelectors
+} from '@app/store';
+
 
 import * as _ from 'underscore';
 
@@ -25,41 +33,48 @@ import * as _ from 'underscore';
     providers: [ DialogService ]
 })
 export class SocialsComponent extends AppComponentBase {
+    @Input() isCompany;
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() contactInfo: ContactGroupInfoDto;
+    @Input() set contactInfo(value: ContactInfoDto) {
+        if (this._contactInfo = value)
+            this.contactInfoData = this.isCompany ? 
+                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details: 
+                value.personContactInfo && value.personContactInfo.details;
+
+    }
+    get contactInfo(): ContactInfoDto {
+        return this._contactInfo;
+    }
 
     isEditAllowed = false;
 
-    LINK_TYPES = {
-        F: 'facebook',
-        G: 'google-plus',
-        L: 'linkedin',
-        P: 'pinterest',
-        T: 'twitter',
-        J: 'website',
-        A: 'alexa',
-        B: 'bbb',
-        C: 'crunchbase',
-        D: 'domain',
-        E: 'yelp',
-        I: 'instagram',
-        N: 'nav',
-        O: 'opencorporates',
-        R: 'trustpilot',
-        S: 'glassdoor',
-        W: 'followers',
-        Y: 'youtube',
-        Z: 'rss'
-    };
+    LINK_TYPES = {};
+
+    private _contactInfo: ContactInfoDto;
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
+                private store$: Store<RootStore.State>,
                 private _contactLinkService: ContactLinkServiceProxy,
                 private _organizationContactService: OrganizationContactServiceProxy,
-                private dialogService: DialogService) {
+                private dialogService: DialogService
+    ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
+        this.linkTypesLoad();
+    }
+
+    linkTypesLoad() {
+        this.store$.dispatch(new ContactLinkTypesStoreActions.LoadRequestAction());
+        this.store$.pipe(
+            select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
+            filter(types => !!types)
+        ).subscribe(types => {
+            types.forEach((entity) => {
+                this.LINK_TYPES[entity.id] = entity.name.replace(/ /g,'');
+            });
+        });
     }
 
     getDialogPosition(event) {
@@ -116,7 +131,7 @@ export class SocialsComponent extends AppComponentBase {
     createOrganization(data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            contactGroupId: this.contactInfo.id,
+            relatedContactId: this._contactInfo.id,
             companyName: companyName
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
@@ -126,7 +141,7 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this.contactInfo.organizationContactInfo = OrganizationContactInfoDto.fromJS({
+        this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
             organization: OrganizationInfoDto.fromJS({
                 companyName: companyName
             }),

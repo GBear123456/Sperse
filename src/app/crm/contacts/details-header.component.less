@@ -148,22 +148,38 @@
             margin: 20px 20px;
             cursor: pointer;
             img {
-                border-radius: 50%;
+                max-width: 100%;
                 height: 40px;
-                width: 40px;
-                background-color: #fff;
+                background-color: transparent;
             }
         }
 
+        h3 {
+            top: 45px;
+            position: absolute;
+            padding-left: 45px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #677380;
+        }
+
         h2 {
-            display: inline-block;
-            color: #424c56;
-            font-size: 16px;
-            font-weight: 300;
-            line-height: 1.56;
+            &.shift-top {
+                position: relative;
+                bottom: 5px;
+            }
+            padding-left: 15px;
+            display: inline-block;            
+            color: #202b35;
+            font-size: 19px;
+            font-weight: 500;
             letter-spacing: 0.3px;
             margin: 0px !important;
-            vertical-align: middle;
+            vertical-align: text-bottom;
+            padding-right: 70px;
+        }
+
+        h2, h3 {
             /deep/ inplace-edit {
                 i.dx-icon {
                     font-size: 14px!important;
@@ -181,8 +197,8 @@
             }
         }
 
-        .info-icon {
-            margin-left: 8px;
+        .info-icon {    
+            margin-left: 15px;
             display: inline-block;
             cursor: pointer;
 
@@ -232,40 +248,10 @@
 
     .header_buttons {
         margin-left: auto;
-        margin-right: 60px;
-        .link-to-cfo {
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-            margin-right: 20px;
-            width: 100%;
+        margin-right: 100px;
 
-            &::after {
-                content: '';
-                background: url('../../../assets/common/icons/cfo-check.svg') no-repeat center;
-                position: absolute;
-                left: 10px;
-                width: 11px;
-                height: 9px;
-                top: 5px;
-            }
-
-            &::before {
-                padding-top: 2px;
-                content: 'CFO';
-                border-radius: 14px;
-                background-image: linear-gradient(41deg, #f76b1c, #fad961);
-                background-size: cover;
-                color: #ffffff;
-                font-size: 10px;
-                font-weight: 600;
-                line-height: 2.2;
-                letter-spacing: 0.2px;
-                width: 72px;
-                height: 23px;
-                display: inline-block;
-                padding-left: 10px;
-            }
+        #addEntity {
+            width: 187px;
         }
     }
 

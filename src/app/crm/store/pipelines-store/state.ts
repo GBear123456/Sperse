@@ -4,12 +4,12 @@ export interface State {
     pipelines: PipelineDto[];
     error: string;
     loading: boolean;
-    loaded: boolean;
+    loadedTime: number;
 }
 
 export const initialState: State = {
     pipelines: null,
     error: null,
     loading: false,
-    loaded: false
+    loadedTime: null
 };

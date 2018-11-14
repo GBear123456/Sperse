@@ -4,12 +4,12 @@ export interface State {
     phoneUsageTypes: PhoneUsageTypeDto[];
     isLoading: boolean;
     error: string;
-    loaded: boolean;
+    loadedTime: number;
 }
 
 export const initialState: State = {
     phoneUsageTypes: null,
     isLoading: false,
     error: null,
-    loaded: false
+    loadedTime: null
 };

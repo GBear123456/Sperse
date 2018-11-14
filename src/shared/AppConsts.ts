@@ -31,7 +31,7 @@ export class AppConsts {
         defaultLocalizationSourceName: 'Platform',
         CRMLocalizationSourceName: 'CRM',
         CFOLocalizationSourceName: 'CFO',
-        CreditReportLocalizationSourceName: 'CreditReport'
+        PFMLocalizationSourceName: 'PFM'
     };
 
     static readonly modules = {
@@ -100,5 +100,8 @@ export class AppConsts {
     static readonly ODataVersion = 4;
 
     static readonly maxRatingValue = 10;
+
+    /** 2 hours */
+    static readonly generalDictionariesCacheLifetime = 2 * 60 * 60 * 1000;
 }
 

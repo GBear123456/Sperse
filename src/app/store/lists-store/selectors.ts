@@ -8,7 +8,7 @@ export const getLists = createSelector(
     (state: State) => state.lists
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getListsState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );

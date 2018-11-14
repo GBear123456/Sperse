@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>{{l('CreateContactDialogTitle')}}</h2>
+<dx-scroll-view showScrollbar="onHover">
+    <mat-dialog-content>
+        <dx-text-box 
+          name="fullName"
+          width="350px"
+          [placeholder]="l('FullName')"
+          [(value)]="data.fullName"
+          [valueChangeEvent]="'keyup'"
+          (onKeyUp)="onValueChanged($event)">
+          <dx-validator>
+            <dxi-validation-rule type="required" message="{{l('FullNameIsRequired')}}."></dxi-validation-rule>
+          </dx-validator>
+        </dx-text-box>
+        <dx-validation-group>
+            <person-info [data]="data"></person-info>
+        </dx-validation-group>      
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+      <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{l('Create')}}</button>
+    </mat-dialog-actions>
+</dx-scroll-view>

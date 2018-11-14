@@ -4,7 +4,7 @@
             <h3 class="lab">{{l('EmployerInfo')}}</h3>
             <i class="icons company"></i>
             <div class="info-container">
-                <h4>{{l('CompanyName')}}</h4>
+                <h4>{{l('Customer.CompanyName')}}</h4>
                 <p *ngIf="contactEmploymentInfo?.inplaceEditField != 'orgName'" (click)="inPlaceEditOrganization(contactEmploymentInfo)">{{contactEmploymentInfo?.orgName}}</p>
                 <div *ngIf="contactEmploymentInfo?.inplaceEditField == 'orgName'" class="inplace-edit-wrapper">
                     <dx-validation-group>

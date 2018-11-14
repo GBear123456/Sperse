@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>{{l('UploadDocumentsDialogTitle')}}<span class="close" (click)="close()"></span></h2>
+<mat-dialog-content>
+    <div class="drop-down" *ngIf="!totalCount">
+        <file-drop (onFileDrop)="fileDropped($event)">
+            <img src="./assets/common/icons/upload-file.svg">
+            <p>{{l('DragAndDrop')}}</p>
+            <p style="color: #677380;">{{l('or')}}</p>
+            <p class="alter-text">
+                <input id="custom-input" type="file" (change)="fileChangeListener($event)" multiple>
+                <a href="javascript:void(0);">{{l('SelectFileFrom')}}</a>
+            </p>
+        </file-drop>
+    </div>
+    <div class="uploading" *ngIf="totalCount > 0">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="wrapper">
+                <img src="./assets/common/icons/upload-file.svg">
+                <h3>{{l('Uploading')}}<span>{{uploadedCount + ' of ' + totalCount + ' files'}}</span></h3>
+                <ng-container *ngFor="let file of files; let i = index">
+                    <div class="file-progress-wrapper" [ngStyle]="{background: 'linear-gradient(to right, #00aeef21 ' + file.progress + '%, #f3f7fa 0%)'}"><img width="16px" height="16px" src="./assets/common/icons/file-types/{{file.type}}.svg" onError="this.src='./assets/common/icons/files.svg';"><span>{{file.name}}</span><span (click)="cancelUpload(i)" [ngClass]="{cancel: file.progress < 100, completed: file.progress >= 100}"></span></div>
+                </ng-container>
+            </div>
+        </dx-scroll-view>
+    </div>
+</mat-dialog-content>

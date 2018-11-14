@@ -162,7 +162,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     reset() {
-        this.selectedItemKey = null;
+        this.selectedItemKey = this.multiSelection ? []: null;
     }
 
     highlightSelectedFilters() {

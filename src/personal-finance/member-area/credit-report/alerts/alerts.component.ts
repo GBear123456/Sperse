@@ -17,7 +17,7 @@ export class AlertsComponent extends AppComponentBase implements OnInit {
     private _loadAlertsService: CreditReportServiceProxy
   ) {
     super(injector);
-    this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
+    this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
   }
 
   ngOnInit() {

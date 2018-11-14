@@ -132,7 +132,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
             this.updateAfterActivation = false;
         }
 
-        this.synchProgressComponent.requestSyncAjax();
+        this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
 
         this.renderWidgets();
@@ -141,6 +141,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     renderWidgets() {
         setTimeout(() => {
             this.totalsByPeriodComponent.render();
+            this.trendByPeriodComponent.render();
         }, 300);
     }
 

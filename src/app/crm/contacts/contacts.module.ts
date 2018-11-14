@@ -11,7 +11,7 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
          DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
-         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule,
+         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxContextMenuModule,
          DxRadioGroupModule, DxDropDownBoxModule, DxTreeViewModule } from 'devextreme-angular';
 import { FileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
@@ -27,7 +27,8 @@ import { DetailsHeaderComponent } from './details-header.component';
 import { OperationsWidgetComponent } from './operations-widget.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
-import { NoteAddComponent } from './notes/note-add/note-add.component';
+import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
+import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
@@ -50,21 +51,23 @@ import { ReferralHistoryComponent } from './referral-history/referral-history.co
 import { PaymentInformationComponent } from './payment-information/payment-information.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
-import { OrganizationDialogComponent } from './organization-dialog/organization-dialog.component';
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
+import { PersonInfoComponent } from './person-info/person-info.component';
 import { SimilarCustomersDialogComponent } from '@app/crm/shared/similar-customers-dialog/similar-customers-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
+import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
 import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
-import { ContactGroupServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy, DocumentServiceProxy,
+import { ContactServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy, DocumentServiceProxy,
     ContactEmploymentServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy,
     PartnerServiceProxy, PartnerTypeServiceProxy, NotesServiceProxy, OrderSubscriptionServiceProxy, CustomerServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
+import { CompanyDialogComponent } from './company-dialog/company-dialog.component';
 
 @NgModule({
   declarations: [
@@ -95,16 +98,19 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     ActivityLogsComponent,
     VerificationChecklistComponent,
     OperationsWidgetComponent,
-    OrganizationDialogComponent,
     PersonDialogComponent,
+    PersonInfoComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddComponent,
+    NoteAddDialogComponent,
     DocumentsComponent,
     UploadDocumentDialogComponent,
+    UploadDocumentsDialogComponent,
     DocumentTypesListComponent,
     OrganizationUnitsTreeComponent,
-    PermissionTreeComponent
+    PermissionTreeComponent,
+    AddContactDialogComponent,
+    CompanyDialogComponent
   ],
   imports: [
     FormsModule,
@@ -119,6 +125,7 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     MatSelectModule,
     ContactsRoutingModule,
     AngularGooglePlaceModule,
+    DxContextMenuModule,
     DxSelectBoxModule,
     DxCheckBoxModule,
     DxButtonModule,
@@ -150,17 +157,19 @@ import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancella
     EditContactDialog,
     EditAddressDialog,
     ResetPasswordDialog,
-    OrganizationDialogComponent,
+    CompanyDialogComponent,
     PersonDialogComponent,
     ContactPersonsDialogComponent,
     SimilarCustomersDialogComponent,
-    NoteAddComponent,
     LeadCancelDialogComponent,
-    UploadDocumentDialogComponent
+    UploadDocumentDialogComponent,
+    UploadDocumentsDialogComponent,
+    AddContactDialogComponent,
+    NoteAddDialogComponent
   ],
   providers: [
     ContactsService,
-    ContactGroupServiceProxy,
+    ContactServiceProxy,
     CustomerServiceProxy,
     PartnerServiceProxy,
     PartnerTypeServiceProxy,

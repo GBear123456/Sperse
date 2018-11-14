@@ -16,7 +16,7 @@ import { Store, select } from '@ngrx/store';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, ContactGroupType } from '@shared/AppEnums';
+import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
     LeadAssignedUsersStoreSelectors,
@@ -563,6 +563,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]);
     }
 
+    exportToCSV() {
+        if (this.dataGrid && !this.dataGrid.instance.getDataSource()) this.setDataGridInstance();
+        super.exportToCSV('all');
+    }
+
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
         this.dataGrid.instance.updateDimensions();
@@ -638,11 +643,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (!this.pipelineDataSource)
                 setTimeout(() => { this.pipelineDataSource = this.dataSource; });
         } else {
-            let instance = this.dataGrid && this.dataGrid.instance;
-            if (instance && !instance.option('dataSource')) {
-                instance.option('dataSource', this.dataSource);
-                this.startLoading();
-            }
+            this.setDataGridInstance();
+        }
+    }
+
+    setDataGridInstance() {
+        let instance = this.dataGrid && this.dataGrid.instance;
+        if (instance && !instance.option('dataSource')) {
+            instance.option('dataSource', this.dataSource);
+            this.startLoading();
         }
     }
 
@@ -656,7 +665,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.invalidate(quite, stageId);
                 },
                 isInLeadMode: true,
-                customerType: ContactGroupType.Client
+                customerType: ContactGroup.Client
             }
         });
     }

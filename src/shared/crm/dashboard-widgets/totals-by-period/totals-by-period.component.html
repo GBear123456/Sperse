@@ -22,7 +22,8 @@
         [barWidth]="1"
         [size]="{height: 245}"
         [series]="allSeries$ | async"
-        [dataSource]="totalsData">
+        [dataSource]="totalsData"
+        (onDrawn)="render($event.component)">
 
         <dxo-size height="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->

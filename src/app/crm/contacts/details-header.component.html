@@ -1,44 +1,48 @@
 <header>
     <div class="avatar">
         <div class="active"></div>
-        <div class="photo-area" (click)="showUploadPhotoDialog($event)" [ngStyle]="{'background-image': data?.primaryContactInfo?.primaryPhoto ? 'url(data:image/png;base64,' + data.primaryContactInfo.primaryPhoto.original + ')': ''}"></div>
+        <div class="photo-area" (click)="showUploadPhotoDialog($event)" [ngStyle]="{'background-image': data?.personContactInfo?.primaryPhoto ? 'url(data:image/png;base64,' + data.personContactInfo.primaryPhoto.original + ')': ''}"></div>
     </div>
     <div class="personal_info">
         <div class="full_name">
-            <h1 *ngIf="data && data?.primaryContactInfo">
+            <h1 *ngIf="data && data?.personContactInfo">
                 <inplace-edit [data]="getNameInplaceEditData()" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
             </h1>
-            <div *ngIf="data?.contactPersons?.length > 1" class="contact-persons-info" (click)="showContactPersons($event)">
-                <img src="./assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
-            </div>
         </div>
         <rating-bar rating="{{ ratingId || 0 }}"></rating-bar>
     </div>
-    <div *ngIf="data?.organizationContactInfo" class="organization_info">
+    <div *ngIf="data?.primaryOrganizationContactInfo" class="organization_info">
         <div class="delimiter"></div>
-        <div class="organization_logo">
-            <img (click)="showUploadPhotoDialog($event, true)" src="{{ data?.organizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.organizationContactInfo.primaryPhoto.thumbnail : './assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
+        <div class="info-icon" (click)="showCompanyDialog($event)" [ngClass]="{'shift-top': this?.contactEmploymentInfo?.id}">
+            <img src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
         </div>
 
-        <h2 *ngIf="data && data?.organizationContactInfo?.fullName">
-            <inplace-edit [data]="getNameInplaceEditData('organizationContactInfo')" (valueChanged)="updateCompanyName($event)" (openDialog)="showOrganizationDetails($event)"></inplace-edit>
-        </h2>
 
-        <div class="info-icon" (click)="showOrganizationDetails($event)">
-            <img src="./assets/common/icons/info-icon.svg" alt="Organization Details">
+        <h2 *ngIf="data && data?.primaryOrganizationContactInfo?.fullName" [ngClass]="{'shift-top': this?.contactEmploymentInfo?.id}">
+            <inplace-edit [data]="getNameInplaceEditData('primaryOrganizationContactInfo')" (valueChanged)="updateCompanyField($event)" (openDialog)="showCompanyDialog($event)"></inplace-edit>
+        </h2>
+        <h3 *ngIf="this?.contactEmploymentInfo?.id">
+            <inplace-edit [data]="getJobTitleInplaceEditData()" (valueChanged)="updateContactEmployment($event)"></inplace-edit>
+        </h3>
+
+
+        <div class="organization_logo">
+            <img (click)="showUploadPhotoDialog($event, true)" src="{{ data?.primaryOrganizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.primaryOrganizationContactInfo.primaryPhoto.original : './assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
         </div>
     </div>
     <div class="header_financial_info">
-
     </div>
+
+    <dx-context-menu
+        [selectByClick]="true"
+        [selectionMode]="'single'"
+        [dataSource]="addContextMenuItems"
+        [position]="{ my: 'top right', at: 'bottom right' }"
+        (onSelectionChanged)="addOptionSelectionChanged($event)"
+        target="#addEntity">
+    </dx-context-menu>
 
     <div class="header_buttons" *ngIf="!isAdminModule">
-        <ng-container *ngIf="isClientCFOAvailable()">
-            <span class="link-to-cfo" (click)="redirectToCFO()"></span>
-        </ng-container>
-        <ng-container *ngIf="!isClientCFOAvailable() && canSendVerificationRequest && !isClientProspective()">
-            <button class="btn btn-layout" (click)="requestVerification()">{{l('ClientDetails_RequestVerification')}}</button>
-        </ng-container>
+        <button id="addEntity" class="button-layout button-primary menu" (click)="addEntity($event)">{{'+ ' + addButtonTitle}}</button>
     </div>
-
 </header>

@@ -4,12 +4,12 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
-import { NotificationSettingsModalComponent } from '@app/shared/layout/notifications/notification-settings-modal.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDto, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { UserHelper } from '../helpers/UserHelper';
+import { MatDialog } from '@angular/material';
 
 import * as _ from 'lodash';
 import { LinkedAccountsModalComponent } from './linked-accounts-modal.component';
@@ -17,10 +17,6 @@ import { LoginAttemptsModalComponent } from './login-attempts-modal.component';
 import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
 import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component';
-import { PaymentWizardComponent } from '../common/payment-wizard/payment-wizard.component';
-
-import { MatDialog } from '@angular/material';
-import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './header.component.html',
@@ -28,14 +24,8 @@ import { AppService } from '@app/app.service';
     selector: 'app-header'
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
-
-    @ViewChild('notificationSettingsModal') notificationSettingsModal: NotificationSettingsModalComponent;
-
-    @ViewChild('loginAttemptsModal') loginAttemptsModal: LoginAttemptsModalComponent;
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
-    @ViewChild('changePasswordModal') changePasswordModal: ChangePasswordModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
-    @ViewChild('mySettingsModal') mySettingsModal: MySettingsModalComponent;
 
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
@@ -62,8 +52,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _dialog: MatDialog,
-        private _appService: AppService,
+        public dialog: MatDialog,
         private _abpSessionService: AbpSessionService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,
@@ -81,8 +70,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this._userNotificationHelper.settingsModal = this.notificationSettingsModal;
-
         this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled === false);
         this.currentLanguage = this.localization.currentLanguage;
         this.isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;
@@ -95,10 +82,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     registerToEvents() {
-        abp.event.on('profilePictureChanged', () => {
-            this._profileServiceProxy.getProfileThumbnailId().subscribe(id => {
-                this.profileThumbnailId = id;
-            });
+        abp.event.on('profilePictureChanged', (thumbnailId) => {
+            this.profileThumbnailId = thumbnailId;
         });
 
         abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
@@ -143,7 +128,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     showLoginAttempts(): void {
-        this.loginAttemptsModal.show();
+        this.dialog.open(LoginAttemptsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     showLinkedAccounts(): void {
@@ -151,7 +141,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     changePassword(): void {
-        this.changePasswordModal.show();
+        this.dialog.open(ChangePasswordModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     changeProfilePicture(): void {
@@ -159,7 +154,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     changeMySettings(): void {
-        this.mySettingsModal.show();
+        this.dialog.open(MySettingsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
     }
 
     logout(): void {
@@ -179,49 +179,10 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     get chatEnabled(): boolean {
-        return this.appSession.application.features['SignalR'] && (!this._abpSessionService.tenantId || this.feature.isEnabled('App.ChatFeature'));
+        return (!this._abpSessionService.tenantId || this.feature.isEnabled('App.ChatFeature'));
     }
 
     get notificationEnabled(): boolean {
         return (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
-    }
-
-    subscriptionStatusBarVisible(): boolean {
-        return !this._appService.subscriptionStatusBarIsHidden();
-    }
-
-    hideSubscriptionStatusBar() {
-        this._appService.hideSubscriptionStatusBar();
-    }
-
-    subscriptionIsExpiringSoon() {
-        return this._appService.subscriptionIsExpiringSoon();
-    }
-
-    subscriptionInGracePeriod() {
-        return this._appService.subscriptionInGracePeriod();
-    }
-
-    getSubscriptionExpiringDayCount(gracePeriod): number {
-        return gracePeriod ? this._appService.getGracePeriodDayCount() :
-            this._appService.getSubscriptionExpiringDayCount();
-    }
-
-    getExpireNotification(localizationKey: string, grace = false): string {
-        let dayCount = this.getSubscriptionExpiringDayCount(grace);
-        return this.l(localizationKey, (dayCount ?
-            (this.l('PeriodDescription', dayCount,
-                this.l(dayCount > 1 ? 'Periods_Day_plural' : 'Periods_Day'))
-            ) : this.l('Today')).toLowerCase());
-    }
-
-    openPaymentWizardDialog() {
-        this._dialog.open(PaymentWizardComponent, {
-            height: '655px',
-            width: '980px',
-            id: 'payment-wizard',
-            panelClass: ['payment-wizard', 'setup'],
-            data: { module: this._appService.getModule().toUpperCase() }
-        }).afterClosed().subscribe(result => {});
     }
 }

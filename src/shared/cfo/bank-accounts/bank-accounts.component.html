@@ -6,10 +6,7 @@
         [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
         (selectionChanged)="entitiesItemsChanged($event)">
     </selection-filter>
-    <add-account-button *ngIf="isInstanceAdmin" class="add-link"
-                        (onComplete)="addAccountComplete()"
-                        (onClose)="addAccountClose($event)">
-    </add-account-button>
+    <add-account-button *ngIf="isInstanceAdmin" class="add-link"></add-account-button>
 </div>
 <div class="accountsSummary">
     <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="bankAccountsService.accountsDataTotalNetWorth$ | async  | currency: 'USD' : 'symbol' : '1.2-2'" [description]="l('Current_Balance')"></info-component>

@@ -10,6 +10,16 @@
                 <!--<span class="filter-apply" [class.disabled]="!checkPermissions() || !staticList.selectedItems?.length" (click)="apply()">{{l('Apply')}}</span>
             </div>-->
             </div>
+            <div class="custom-search" *ngIf="customSearchEnabled">
+                <div class="dx-field">
+                    <div class="dx-field-value w-100">
+                        <dx-text-box [showClearButton]="true"
+                                     (onInput)="getNewListData($event, title)"
+                                     placeholder="{{l('Search')}}">
+                        </dx-text-box>
+                    </div>
+                </div>
+            </div>
             <dx-list #staticList
                      [ngClass]="{
                         'funnel-styling': funnelStyling,
@@ -19,6 +29,7 @@
                      }"
                      [searchEnabled]="searchEnabled"
                      [searchExpr]="searchExprType"
+                     [searchTimeout]="1000"
                      [selectionMode]="selectedKeys?.length ? 'single': 'none'"
                      [showSelectionControls]="true"
                      [dataSource]="list"

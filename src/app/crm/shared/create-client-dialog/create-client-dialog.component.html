@@ -47,7 +47,7 @@
                 <label class="company-label">{{l('Company')}}</label>
                 <dx-text-box #companyComponent
                              name="company"
-                             [placeholder]="l('Bussines name')"
+                             [placeholder]="l('CompanyName')"
                              [width]="'270px'"
                              [valueChangeEvent]="'keyup'"
                              (onKeyUp)="onCompanyKeyUp($event)"
@@ -68,7 +68,7 @@
                     <div *ngFor="let email of contacts.emails; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
-                                width="450px"
+                                width="340px"
                                 name="emailType"
                                 placeholder="{{l('Type')}}"
                                 [dataSource]="emailTypes"
@@ -77,22 +77,19 @@
                                 [(value)]="email.type"
                                 [itemTemplate]="'emailTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'emailTypeItemTemplate'">
-                                    <div title="{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}"><span
-                                        style="display:inline-block;width:100px;">{{data.name}}</span><span>{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}</span>
-                                    </div>
+                                    <div class="usage-type-item"><span>{{data.name}}</span><span>{{l('ContactInformation_EmailTypeTooltip_' + data.id)}}</span></div>
                                 </div>
                             </dx-select-box>
                         </div>
                         <dx-text-box #emailComponent
                                      name="email"
                                      [width]="'410px'"
-                                     [valueChangeEvent]="'keyup'"
                                      [(value)]="email.email"
-                                     (onKeyUp)="onFieldKeyUp($event, 'emails', i)"
+                                     (onKeyUp)="onEmailKeyUp($event)"
+                                     (onValueChanged)="onFieldChanged($event, 'emails', i)"
                                      (onInitialized)="onComponentInitialized($event, 'emails')">
                             <dx-validator>
-                                <dxi-validation-rule type="pattern" [pattern]="emailRegEx"
-                                                     message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
                         <span [class]="(i || email.email) && 'clear-contact' || 'hidden'" (click)="emptyOrRemoveInput('emails', i)"><i class="minus-icon"></i></span>
@@ -106,37 +103,34 @@
                     <div *ngFor="let phone of contacts.phones; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
-                                width="450px"
+                                width="370px"
                                 name="phoneType"
                                 placeholder="{{l('Type')}}"
                                 [dataSource]="phoneTypes"
                                 displayExpr="name"
                                 valueExpr="id"
-                                [value]="phone.type"
+                                [(value)]="phone.type"
                                 [itemTemplate]="'phoneTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
-                                    <div title="{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}"><span
-                                        style="display:inline-block;width:100px;">{{data.name}}</span><span>{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span>
-                                    </div>
+                                    <div class="usage-type-item"><span style="width: 100px;">{{data.name}}</span><span>{{l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
                                 </div>
                             </dx-select-box>
                         </div>
                         <country-phone-number #countryPhoneNumber
-                                              [(phoneNumber)]="phone.number"
-                                              [required]="false"
-                                              (onKeyUp)="onPhoneKeyUp($event, countryPhoneNumber.isValid(), i)"
-                                              (onInitialized)="onPhoneComponentInitialized($event)">
+                            [(phoneNumber)]="phone.number"
+                            [required]="false"
+                            (phoneNumberChange)="onPhoneChanged(countryPhoneNumber)"
+                            (onInitialized)="onPhoneComponentInitialized($event)">
                         </country-phone-number>
                         <dx-number-box
                             class="tabular"
                             name="phoneExtension"
-                            width="80px"
+                            width="50px"
                             [inputAttr]="{maxlength: 5}"
                             [placeholder]="l('Ext')"
                             [(value)]="phone.ext">
                             <dx-validator>
-                                <dxi-validation-rule type="stringLength" [max]="5"
-                                                     message="{{l('PhoneExtensionExceedsMaxSize')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="stringLength" [max]="5" message="{{l('PhoneExtensionExceedsMaxSize')}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-number-box>
                         <span [class]="(i || phone.number || phone.ext) && 'clear-contact' || 'hidden'" (click)="emptyOrRemoveInput('phones', i)"><i class="minus-icon"></i></span>
@@ -163,7 +157,7 @@
                                         <mat-sidenav mode="side" opened="true" position="start" style="height:50px;width:100%;">
                                             <mat-tab-group (selectedTabChange)="link.isCompany = !!$event.index">
                                                 <mat-tab label="{{l('Person')}}"></mat-tab>
-                                                <mat-tab label="{{l('Bussines')}}"></mat-tab>
+                                                <mat-tab label="{{l('Company')}}"></mat-tab>
                                             </mat-tab-group>
                                         </mat-sidenav>
                                         <dx-list
@@ -187,9 +181,8 @@
                         <dx-text-box #linksComponent
                                      name="link"
                                      [width]="'410px'"
-                                     [valueChangeEvent]="'keyup'"
                                      [(value)]="link.url"                      
-                                     (onKeyUp)="onFieldKeyUp($event, 'links', i)"
+                                     (onValueChanged)="onFieldChanged($event, 'links', i)"
                                      (onInitialized)="onComponentInitialized($event, 'links')">
                             <dx-validator>
                                 <dxi-validation-rule type="pattern" [pattern]="urlRegEx" message="{{l('LinkIsNotValid')}}."></dxi-validation-rule>
@@ -206,7 +199,7 @@
                         <label [hidden]="i" class="address-label">{{l('Address')}}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
-                                width="500px"
+                                width="380px"
                                 name="addressType"
                                 placeholder="{{l('Type')}}"
                                 [dataSource]="addressTypes"
@@ -215,9 +208,7 @@
                                 [(value)]="address['type']"
                                 [itemTemplate]="'addressTypeItemTemplate'">
                                 <div *dxTemplate="let data of 'addressTypeItemTemplate'">
-                                    <div title="{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}"><span
-                                        style="display:inline-block;width:100px;">{{data.name}}</span><span>{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span>
-                                    </div>
+                                    <div class="usage-type-item"><span>{{data.name}}</span><span>{{l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span></div>
                                 </div>
                             </dx-select-box>
                         </div>
@@ -285,7 +276,11 @@
                         </dx-select-box>
                     </div>
                 </div>
-                <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['addresses']}"><span (click)="addNewContact('addresses')">{{l('+ Add address')}}</span></div>
+                <div class="field">
+                    <div class="add-new-button" [ngClass]="{disabled: !addButtonVisible['addresses']}">
+                        <span (click)="addNewContact('addresses')">{{l('+ Add address')}}</span>
+                    </div>
+                </div>
             </dx-validation-group>
 
             <div class="field notes">

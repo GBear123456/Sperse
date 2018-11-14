@@ -7,7 +7,7 @@ import {
     ViewEncapsulation
 } from '@angular/core';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
-import { PackageEditionConfigDto } from '@shared/service-proxies/service-proxies';
+import { PackageEditionConfigDto, PackageEditionConfigFeatureDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { Module } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
@@ -38,7 +38,7 @@ export class PackageCardComponent implements OnChanges {
     lastActiveTotalPrice: number;
     lastActivePricePerUserPerMonth: number;
 
-    constructor(private localizationService: AppLocalizationService) {}
+    constructor(public localizationService: AppLocalizationService) {}
 
     ngOnChanges() {
         this.isActive = this.editions && !!this.selectedEdition;
@@ -50,14 +50,13 @@ export class PackageCardComponent implements OnChanges {
 
     get selectedEdition(): PackageEditionConfigDto {
         return this.editions.find(edition => {
-            const maxUsersCount = +edition.features[this.module + '.MaxUserCount'];
-            return this.usersAmount <= maxUsersCount;
+            return this.usersAmount <= edition.maxUserCount;
         });
     }
 
     get selectedEditionUsersAmount(): number {
         if (this.isActive) {
-            this.lastActiveSelectedEditionUsersAmount = +this.selectedEdition.features[this.module + '.MaxUserCount'];
+            this.lastActiveSelectedEditionUsersAmount = +this.selectedEdition.maxUserCount;
         }
         return this.lastActiveSelectedEditionUsersAmount;
     }
@@ -69,30 +68,9 @@ export class PackageCardComponent implements OnChanges {
         return this.lastActiveDisplayedUsersAmount;
     }
 
-    get features() {
+    get features(): PackageEditionConfigFeatureDto[] {
         if (this.isActive) {
-            const maxActiveContactCount = +this.selectedEdition.features[this.module + '.MaxActiveContactCount'] ? (+this.selectedEdition.features[this.module + '.MaxActiveContactCount']).toLocaleString() : this.l('Unlimited');
-            const maxSpaceGB = +this.selectedEdition.features['Admin.MaxSpaceGB'] ?
-                (+this.selectedEdition.features['Admin.MaxSpaceGB'] / this.usersCoefficient) + ' ' + this.l('GB') :
-                this.l('Unlimited');
-            this.lastActiveFeatures = [
-                {
-                    name: 'Contacts',
-                    value: this.l('FeaturesContacts') + ': ' + maxActiveContactCount
-                },
-                {
-                    name: 'File Storage',
-                    value: this.l('FeaturesFileStorage') + ': ' + maxSpaceGB
-                },
-                {
-                    name: 'Lead Management Pipeline Funnel',
-                    value: this.l('LeadManagementPipelineFunnel')
-                },
-                {
-                    name: 'Team Permission Management',
-                    value: this.l('Team Permission Management')
-                }
-            ];
+            this.lastActiveFeatures = this.selectedEdition.features;
         }
         return this.lastActiveFeatures;
     }
@@ -140,6 +118,21 @@ export class PackageCardComponent implements OnChanges {
 
     get usersCoefficient() {
         return this.selectedEditionUsersAmount / this.usersAmount;
+    }
+
+    getFeatureValue(feature: PackageEditionConfigFeatureDto): string {
+        let featureValue = '';
+        if (feature.value !== undefined) {
+            featureValue += ': ';
+            if (feature.feature.isVariable && feature.value !== '-1') {
+                featureValue += +feature.value / this.usersCoefficient;
+            } else if (feature.value === '-1') {
+                featureValue += this.l('Unlimited');
+            } else {
+                featureValue += feature.value;
+            }
+        }
+        return featureValue;
     }
 
 }

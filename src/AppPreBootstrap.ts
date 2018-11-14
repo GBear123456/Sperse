@@ -17,6 +17,13 @@ export class AppPreBootstrap {
             abpAjax.defaultError.details = AppConsts.defaultErrorMessage;
         }
 
+        let _handleUnAuthorizedRequest = abpAjax['handleUnAuthorizedRequest'];
+        abpAjax['handleUnAuthorizedRequest'] = (messagePromise: any, targetUrl?: string) => {
+            if (!targetUrl || targetUrl == '/')
+                targetUrl = location.origin;
+            _handleUnAuthorizedRequest.call(abpAjax, messagePromise, targetUrl);
+        }
+
         AppPreBootstrap.getApplicationConfig(appRootUrl, () => {
             const queryStringObj = UrlHelper.getQueryParameters();
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
@@ -43,7 +50,6 @@ export class AppPreBootstrap {
     }
 
     private static getApplicationConfig(appRootUrl: string, callback: () => void) {
-
         return abp.ajax({
             url: appRootUrl + 'assets/' + environment.appConfig,
             method: 'GET',
@@ -54,29 +60,9 @@ export class AppPreBootstrap {
             AppConsts.googleSheetClientId = result.googleSheetClientId;
             AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
             AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
-
-            if (environment.appBaseUrl !== AppConsts.appBaseUrl) {
-                abp.ajax({
-                    url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantAppHost',
-                    method: 'GET',
-                    headers: {
-                        'Accept-Language': abp.utils.getCookieValue('Abp.Localization.CultureName')
-                    }
-                }).done((tenantApiHostOutput: TenantAppHostOutput) => {
-                    let apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
-
-                    if (tenantApiHostOutput.appHostName !== null) {
-                        AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.appHostName;
-                    } else {
-                        AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
-                    }
-
-                    callback();
-                });
-            } else {
-                AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
-                callback();
-            }
+            AppConsts.remoteServiceBaseUrl = result.enforceRemoteServiceBaseUrl 
+                ? result.remoteServiceBaseUrl: location.origin;
+            callback();
         });
     }
 
@@ -94,14 +80,20 @@ export class AppPreBootstrap {
 
     private static impersonatedAuthenticate(impersonationToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
         abp.multiTenancy.setTenantIdCookie(tenantId);
+
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
+        let requestHeaders = {
+            'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
+        };
+
+        if (cookieLangValue) {
+            requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
+        }
+
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/ImpersonatedAuthenticate?secureId=' + impersonationToken,
             method: 'POST',
-            headers: {
-                '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
-                'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
-            },
+            headers: requestHeaders,
             abpHandleError: false
         }).done(result => {
             abp.auth.setToken(result.accessToken);
@@ -110,20 +102,27 @@ export class AppPreBootstrap {
             location.search = '';
             callback();
         }).fail(() => {
-            location.href = AppConsts.appBaseUrl + '/account/login';
+            abp.multiTenancy.setTenantIdCookie();
+            location.href = AppConsts.appBaseUrl;
         });
     }
 
     private static linkedAccountAuthenticate(switchAccountToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
         abp.multiTenancy.setTenantIdCookie(tenantId);
+
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
+        let requestHeaders = {
+            'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
+        };
+
+        if (cookieLangValue) {
+            requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
+        }
+
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/LinkedAccountAuthenticate?switchAccountToken=' + switchAccountToken,
             method: 'POST',
-            headers: {
-                '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
-                'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
-            }
+            headers: requestHeaders
         }).done(result => {
             abp.auth.setToken(result.accessToken);
             AppPreBootstrap.setEncryptedTokenCookie(result.encryptedAccessToken);
@@ -138,9 +137,12 @@ export class AppPreBootstrap {
         const token = abp.auth.getToken();
 
         let requestHeaders = {
-            '.AspNetCore.Culture': ('c=' + cookieLangValue + '|uic=' + cookieLangValue),
             'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
         };
+
+        if (cookieLangValue) {
+            requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
+        }
 
         if (token) {
             requestHeaders['Authorization'] = 'Bearer ' + token;

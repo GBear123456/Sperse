@@ -24,7 +24,6 @@ export class SetupStepComponent extends CFOComponentBase {
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
 
-    public abp = abp;
     private dialogConfig = new MatDialogConfig();
 
     constructor(injector: Injector,

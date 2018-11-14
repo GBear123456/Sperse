@@ -27,11 +27,11 @@ import {
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroupType } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import {
-    ContactGroupServiceProxy, CreateContactGroupInput, ContactAddressServiceProxy, CreateContactEmailInput,
+    ContactServiceProxy, CreateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, SimilarContactGroupOutput, ContactPhotoInput,
+    ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput,
     PersonInfoDto, LeadServiceProxy, CreateLeadInput, CreateContactLinkInput
 } from '@shared/service-proxies/service-proxies';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
@@ -50,7 +50,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: ['create-client-dialog.component.less'],
-    providers: [ContactGroupServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ]
+    providers: [ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ]
 })
 export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
@@ -124,7 +124,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         addresses: [{type: this.addressesTypeDefault}]
     };
 
-    similarCustomers: SimilarContactGroupOutput[];
+    similarCustomers: SimilarContactOutput[];
     similarCustomersDialog: any;
     toolbarConfig = [];
 
@@ -132,17 +132,17 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     private validationError: string;
     private isUserSelected = true;
     private isPartnerTypeSelected = false;
-    private isStageSelected = false;
+    private isStageSelected = true;
     private isStatusSelected = false;
     private isListsSelected = false;
     private isTagsSelected = false;
-    private isRatingSelected = false;
+    private isRatingSelected = true;
 
     constructor(
         injector: Injector,
         public dialog: MatDialog,
         private _cacheService: CacheService,
-        private _contactGroupService: ContactGroupServiceProxy,
+        private _contactService: ContactServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
@@ -199,7 +199,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                         attr: {
                             'filter-selected': this.isStageSelected
                         }
-                    } : this.data.customerType == ContactGroupType.Client ? {
+                    } : this.data.customerType == ContactGroup.Client ? {
                             name: 'status',
                             widget: 'dxDropDownMenu',
                             disabled: true,
@@ -345,7 +345,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             lists: lists,
             tags: tags,
             ratingId: ratingId,
-            contactGroupTypeId: this.data.customerType,
+            contactGroupId: this.data.customerType,
             partnerTypeName: partnerTypeName
         };
 
@@ -354,20 +354,20 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
-                .subscribe(result => this.afterSave(result.contactGroupId, result.id));
+                .subscribe(result => this.afterSave(result.contactId, result.id));
         else
-            this._contactGroupService.createContactGroup(CreateContactGroupInput.fromJS(dataObj))
+            this._contactService.createContact(CreateContactInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; }))
                 .subscribe(result => this.afterSave(result.id));
     }
 
-    private afterSave(contactGroupId: number, leadId?: number): void {
+    private afterSave(contactId: number, leadId?: number): void {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
             this.notify.info(this.l('SavedSuccessfully'));
             this.data.refreshParent(true, this.stageId);
         } else if (this.saveContextMenuItems[1].selected) {
-            this.redirectToClientDetails(contactGroupId, leadId);
+            this.redirectToClientDetails(contactId, leadId);
             this.data.refreshParent(true, this.stageId);
         } else {
             this.data.refreshParent(false, this.stageId);
@@ -439,7 +439,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
                 url: val.url,
                 isActive: true,
                 isCompany: val.isCompany,
-                linkTypeId: val.type == this.linksTypeDefault ? undefined: val.type
+                linkTypeId: val.type == this.linksTypeDefault ? undefined : val.type
             } as CreateContactLinkInput;
         });
     }
@@ -475,7 +475,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     redirectToClientDetails(id: number, leadId?: number) {
         setTimeout(() => {
-            let path = this.data.customerType == ContactGroupType.Partner ?
+            let path = this.data.customerType == ContactGroup.Partner ?
                 `app/crm/partner/${id}/contact-information` :
                 `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
             this._router.navigate([path], {queryParams: {referrer: this._router.url.split('?').shift()}});
@@ -529,7 +529,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     checkSimilarCustomers() {
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
-            this._contactGroupService.getSimilarContactGroups(
+            this._contactService.getSimilarContacts(
                 this.person.namePrefix || undefined,
                 this.person.firstName || undefined,
                 this.person.middleName || undefined,
@@ -630,7 +630,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             filter(types => !!types)
         ).subscribe(types => {
             this.linkTypes = types.map((entity) => {
-                entity['uri'] = entity.name.replace(/ /g,'');
+                entity['uri'] = entity.name.replace(/ /g, '');
                 return entity;
             });
         });
@@ -647,13 +647,13 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     checkAddressControls() {
         clearTimeout(this.checkValidTymeout);
         this.checkValidTymeout = setTimeout(() => {
-            this.addButtonVisible['addresses'] = 
-                this.checkEveryContactValid('addresses') && 
+            this.addButtonVisible['addresses'] =
+                this.checkEveryContactValid('addresses') &&
                     !this.checkDuplicateContact('addresses');
         }, 300);
     }
 
-    checkDuplicateContact(field) {        
+    checkDuplicateContact(field) {
         return this.contacts[field].some((checkItem, checkIndex) => {
             return !this.contacts[field].every((item, index) => {
                 return (index == checkIndex) || JSON.stringify(checkItem) != JSON.stringify(item);
@@ -662,7 +662,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     addNewContact(field) {
-        if (this.checkEveryContactValid(field) && 
+        if (this.addButtonVisible[field] &&
+            this.checkEveryContactValid(field) &&
             !this.checkDuplicateContact(field)
         ) {
             this.contacts[field].push({
@@ -672,18 +673,25 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         }
     }
 
-    checkEveryContactValid(field) {           
+    checkFieldValid(field, item) {
+        let isObject = typeof(item) == 'object';
+        if (field == 'emails')
+            return this.validateEmailAddress(isObject ? item.email : item);
+        else if (field == 'phones')
+            return Boolean(isObject ? item.number : item);
+        else if (field == 'links')
+            return this.validateLinkAddress(isObject ? item.url : item);
+        else if (field == 'addresses')
+            return item.address && item.city && item.country;
+        else
+            return false;
+    }
+
+    checkEveryContactValid(field) {
         return this.contacts[field].every((item) => {
-            if (item.type) {
-                if (field == 'emails')
-                    return this.validateEmailAddress(item.email);
-                else if (field == 'phones')
-                    return Boolean(item.number);
-                else if (field == 'links')
-                    return this.validateLinkAddress(item.url);
-                else if (field == 'addresses')
-                    return item.address && item.city && item.country;
-            } else
+            if (item.type)
+                return this.checkFieldValid(field, item);
+            else
                 return false;
         });
     }
@@ -691,7 +699,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     emptyOrRemoveInput(field, index) {
         if (index || this.contacts[field].length > 1) {
             this.contacts[field].splice(index, 1);
-            this.addButtonVisible[field] = this.checkEveryContactValid(field) 
+            this.addButtonVisible[field] = this.checkEveryContactValid(field)
                 && !this.checkDuplicateContact(field);
         } else {
             this.contacts[field][index] = {type: this[field + 'TypeDefault']};
@@ -718,21 +726,27 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this[validator].push($event.component);
     }
 
-    onFieldKeyUp($event, field, i) {
-        let value = this.getInputElementValue($event);
+    onEmailKeyUp(event) {
+        event.component.option('valueChangeEvent', 
+            event.component.option('isValid') ? 'change': 'keyup');
+    }
 
-        this.addButtonVisible[field] = 
-            this.checkEveryContactValid(field) && 
+    onFieldChanged($event, field, i) {
+        let value = this.getInputElementValue($event);
+        this.addButtonVisible[field] =
+            this.checkFieldValid(field, value) &&
                 !this.checkDuplicateContact(field);
 
         this.checkSimilarCustomers();
     }
 
-    onPhoneKeyUp(value, isValid, i) {
-        let field = 'phones';
-        this.addButtonVisible[field] = isValid
-            && !this.checkDuplicateContact(field);
-        this.checkSimilarCustomers();
+    onPhoneChanged(component) {
+        setTimeout(() => {
+            let field = 'phones';
+            this.addButtonVisible[field] = component.isValid()
+                && !this.checkDuplicateContact(field);
+            this.checkSimilarCustomers();
+        });
     }
 
     onCompanyKeyUp($event) {
@@ -793,7 +807,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
             this.title = undefined;
             this.tagsComponent.reset();
             this.listsComponent.reset();
-            this.userAssignmentComponent.reset();
+            this.partnerTypesComponent.reset();
+            this.userAssignmentComponent.selectedItemKey = this.currentUserId;
             this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
             this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
         };
@@ -852,7 +867,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     onPartnerTypeChanged(event) {
         this.partnerTypesComponent.apply();
-        this.isPartnerTypeSelected = true;
+        this.isPartnerTypeSelected = Boolean(event.selectedRowKeys.length);
         this.initToolbarConfig();
     }
 
@@ -868,7 +883,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         this.initToolbarConfig();
     }
 
-    onListsSelected(event) {  
+    onListsSelected(event) {
         this.isListsSelected = Boolean(event.selectedRowKeys.length);
         this.initToolbarConfig();
     }

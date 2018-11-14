@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, Input, Injector } from '@angular/core';
+import { Component, OnInit, Input, Injector } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
@@ -14,7 +14,7 @@ export class CreditSummaryComponent extends AppComponentBase implements OnInit {
         injector: Injector
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
+        this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
     }
 
     ngOnInit() {

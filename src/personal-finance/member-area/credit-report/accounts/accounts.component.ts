@@ -32,7 +32,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, After
         private _accountInfoService: CreditReportServiceProxy
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
+        this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
     }
 
     ngOnInit() {}

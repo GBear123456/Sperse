@@ -17,7 +17,7 @@ export class PublicInfoComponent extends AppComponentBase implements OnInit {
       injector: Injector
     ) {
       super(injector);
-      this.localizationSourceName = AppConsts.localization.CreditReportLocalizationSourceName;
+      this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
     }
 
     ngOnInit() {

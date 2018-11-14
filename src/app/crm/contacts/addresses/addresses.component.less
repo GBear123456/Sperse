@@ -10,15 +10,18 @@
   }
 
   .add-address {
-    color: #00aeef;
-    font-size: 32px;
-    font-weight: 100;
-    float: right;
-    position: relative;
-    bottom: 56px;
-    cursor: pointer;
+      font-size: 14px;
+      font-weight: 300;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: 1.79;
+      letter-spacing: 0.3px;
+      color: #00aeef;
+      cursor: pointer;
+      padding-left: 35px;
   }
   .address-wrapper {
+    position: relative;
     margin-bottom: 20px;
     cursor: pointer;
 
@@ -28,22 +31,28 @@
       position: absolute;
       background-repeat: no-repeat;
       background-position: 0px 3px;
-    
+
+      &.type-C {
+        background-image: url("../../../../assets/common/icons/address-company.svg");        
+      }    
+      &.type-O {
+        background-image: url("../../../../assets/common/icons/address-other.svg");        
+      }
       &.type-H {
         background-image: url("../../../../assets/common/icons/address-home.svg");        
       }
-      &.type-P {
-        background-image: url("../../../../assets/common/icons/address-primary.svg");        
+      &.type-P, &.type-W {
+        background-image: url("../../../../assets/common/icons/address-work.svg");        
       }
-      &.type-S, &.type-W {
+      &.type-S {
         background-image: url("../../../../assets/common/icons/address-shipping.svg");        
       }
     }
 
     .actions  {
-      position: absolute;
       display: none;
-      right: 50px;
+      position: absolute;
+      right: calc(~"10% + 45px");
 
       i {
         font-size: 18px;
@@ -81,7 +90,8 @@
   }
 
   .address {
-    padding-left: 30px;
+    width: 90%;
+    padding-left: 35px;
 
     input {
       max-width: 80%;
@@ -111,7 +121,6 @@
       color: #424c56;
       overflow: hidden;
       margin-right: 30px;
-      white-space: nowrap;
       text-overflow: ellipsis;
     }
   }

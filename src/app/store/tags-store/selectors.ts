@@ -8,11 +8,7 @@ export const getTags = createSelector(
     (state: State) => state.tags
 );
 
-export const getLoaded = createSelector(
+export const getLoadedTime = createSelector(
     getTagsState,
-    (state: State) => state.loaded
+    (state: State) => state.loadedTime
 );
-
-// export const getAllTags: (
-//     state: object
-// ) => ContactGroupTagInfoDto[] = tagsAdapter.getSelectors(selectTagsState).selectAll;

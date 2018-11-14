@@ -1,7 +1,5 @@
-<div class="contacts row">
-  <div class="col-md-6">
-    <h3 class="lab">{{l('Phones')}}</h3>
-    <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('phoneNumber', null, $event)">+</div>
+<div class="contacts">
+  <div *ngIf="showContactType == 'phones'">
     <div class="phone" *ngFor="let phone of contactInfoData?.phones; let i = index;">
       <i class="icons phone type-{{phone?.usageTypeId || 'P'}}"></i>
       <ul *ngIf="!phone.inplaceEdit">
@@ -16,11 +14,10 @@
         <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit('phoneNumber', phone)"></dx-button>
       </div>
     </div>
+    <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('phoneNumber', null, $event)">+ {{l('Add') + ' ' + l('Phone')}}</div>
   </div>
-  <div class="col-md-6">
-    <h3 class="lab">{{l('Emails')}}</h3>
-    <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('emailAddress', null, $event)">+</div>
-    <div class="emails" *ngIf="contactInfoData?.emails.length; let i = index">
+  <div *ngIf="showContactType == 'emails'">
+    <div class="emails" *ngIf="contactInfoData?.emails?.length">
       <i class="icons email"></i>
       <ul *ngFor="let email of contactInfoData?.emails; let i = index;">
         <div *ngIf="!email.inplaceEdit">
@@ -41,5 +38,6 @@
         </div>
       </ul>
     </div>
+    <div *ngIf="isEditAllowed" class="add-contact" (click)="showDialog('emailAddress', null, $event)">+ {{l('Add') + ' ' + l('Email')}}</div>
   </div>
 </div>

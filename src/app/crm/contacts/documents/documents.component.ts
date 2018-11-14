@@ -15,7 +15,7 @@ import { CacheService } from 'ng2-cache-service';
 import { UploadDocumentDialogComponent } from '../upload-document-dialog/upload-document-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactGroupServiceProxy, ContactGroupInfoDto, DocumentServiceProxy, UploadDocumentInput,
+import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy, UploadDocumentInput,
 DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming, GetUrlOutput } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
@@ -39,7 +39,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     private currentDocumentURL: string;
 
     public data: {
-        contactInfo: ContactGroupInfoDto
+        contactInfo: ContactInfoDto
     };
     public formatting = AppConsts.formatting;
     public dataSource: DocumentInfo[];
@@ -71,7 +71,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         private _fileSizePipe: FileSizePipe,
         private _documentService: DocumentServiceProxy,
         private _documentTypeService: DocumentTypeServiceProxy,
-        private _customerService: ContactGroupServiceProxy,
+        private _contactService: ContactServiceProxy,
         private _clientService: ContactsService,
         private printerService: PrinterService,
         private cacheService: CacheService
@@ -92,6 +92,13 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 action: this.deleteDocument.bind(this)
             }
         ];
+
+        _clientService.invalidateSubscribe((area) => {
+            if (area == 'documents') {
+                this._documentService['data'] = undefined;
+                this.loadDocuments(); 
+            }           
+        });
     }
 
     private storeUrlToCache(id: string, urlInfo: GetUrlOutput) {
@@ -250,7 +257,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnInit() {
-        this.data = this._customerService['data'];
+        this.data = this._contactService['data'];
         this.loadDocumentTypes();
     }
 
@@ -345,7 +352,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 Math.round(input.size / 10000)
             );
         this._documentService.upload(UploadDocumentInput.fromJS({
-            contactGroupId: this.data.contactInfo.id,
+            contactId: this.data.contactInfo.id,
             typeId: input.typeId,
             fileName: input.name,
             size: input.size,
@@ -383,7 +390,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     showActionsMenu(data, target) {
         this.actionRecordData = data;
         this.actionMenuItems.find(menuItem => menuItem.text === this.l('Edit')).visible = data.isEditSupportedByWopi;
-        this.actionsTooltip.instance.show(target);
+        setTimeout(() => {
+            this.actionsTooltip.instance.show(target);
+        });
     }
 
     onCellClick($event) {
@@ -437,7 +446,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
         }
 
-        this.startLoading(true);
+        super.startLoading(true);
         this.initViewerToolbar({
             viewerType: viewerType,
             rotateDisabled: ext == 'pdf',
@@ -449,7 +458,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         switch (viewerType) {
             case this.WOPI_VIEWER:
                 this.getViewWopiRequestInfoObservable().pipe(finalize(() => {
-                    this.finishLoading();
+                    super.finishLoading(true);
                 })).subscribe((response) => {
                     this.showOfficeOnline(response);
                 });
@@ -457,7 +466,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             case this.VIDEO_VIEWER:
                 this.getDocumentUrlInfoObservable().subscribe((urlInfo) => {
                     this.currentDocumentURL = urlInfo.url;
-                    this.finishLoading();
+                    super.finishLoading(true);
                     this.showViewerType = viewerType;
                     this.openDocumentMode = true;
                 });
@@ -474,7 +483,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                             this.openDocumentMode = true;
                         });
                         reader.readAsDataURL(blob);
-                        this.finishLoading();
+                        super.finishLoading(true);
                     });
                 });
                 break;
@@ -501,9 +510,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this.initViewerToolbar({
             editDisabled: true
         });
-        this.startLoading(true);
+        super.startLoading(true);
         this._documentService.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
-            this.finishLoading();
+            super.finishLoading(true);
         })).subscribe((response) => {
             this.showOfficeOnline(response);
         });
@@ -543,7 +552,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             this.l('DocumentDeleteWarningMessage', this.currentDocumentInfo.fileName),
             isConfirmed => {
                 if (isConfirmed) {
-                    this.startLoading(true);
+                    super.startLoading(true);
                     this.showViewerType = undefined;
                     this.openDocumentMode = false;
                     this._documentService.delete(this.currentDocumentInfo.id).subscribe((response) => {
@@ -552,7 +561,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                                 this.hideActionsMenu();
                             }
                             this.closeDocument();
-                            this.finishLoading();
+                            super.finishLoading(true);
                         });
                     });
                 }

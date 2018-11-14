@@ -15,10 +15,17 @@ export class AppHttpConfiguration extends AbpHttpConfiguration {
         this.defaultError.details = AppConsts.defaultErrorMessage;
     }
 
+    getTargetURL(value) {
+        if (!value || value == '/')
+            return location.origin;        
+        return value;
+    }
+
     handleUnAuthorizedRequest(messagePromise: any, targetUrl?: string) {
         sessionStorage.setItem('redirectUrl', location.href);
         abp.multiTenancy.setTenantIdCookie();
-        super.handleUnAuthorizedRequest(messagePromise, targetUrl);
+
+        super.handleUnAuthorizedRequest(messagePromise, this.getTargetURL(targetUrl));
     }
 
 }

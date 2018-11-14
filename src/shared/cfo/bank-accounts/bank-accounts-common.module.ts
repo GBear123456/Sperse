@@ -15,7 +15,8 @@ import {
     DxTagBoxModule,
     DxProgressBarModule,
     DxValidatorModule,
-    DxValidationSummaryModule
+    DxValidationSummaryModule,
+    DxRadioGroupModule
 } from 'devextreme-angular';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { SyncServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -25,6 +26,7 @@ import { BankAccountsService } from './helpers/bank-accounts.service';
 import { BankAccountsComponent } from './bank-accounts.component';
 import { BankAccountsWidgetComponent } from './bank-accounts-widgets/bank-accounts-widget.component';
 import { BankAccountsQuovoComponent } from './bank-accounts-quovo/bank-accounts-quovo.component';
+import { QuovoPfmComponent } from './quovo-pfm/quovo-pfm.component';
 import { AddAccountButtonComponent } from './add-account-button/add-account-button.component';
 
 import { QuovoService } from './quovo/QuovoService';
@@ -35,6 +37,7 @@ import { ImportXeroChartOfAccountsButtonComponent } from './xero/import-xero-cha
 import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
 import { SynchProgressComponent } from './synch-progress/synch-progress.component';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { ChooseXeroAccountComponent } from './xero/import-xero-chart-of-accounts-button/choose-xero-account/choose-xero-account.component';
 
 @NgModule({
     imports: [
@@ -55,16 +58,19 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
         DxTagBoxModule,
         DxProgressBarModule,
         DxValidatorModule,
-        DxValidationSummaryModule
+        DxValidationSummaryModule,
+        DxRadioGroupModule
     ],
     declarations: [
         BankAccountsComponent,
         BankAccountsWidgetComponent,
         BankAccountsQuovoComponent,
+        QuovoPfmComponent,
         AddAccountButtonComponent,
 
         XeroLoginButtonComponent,
         ImportXeroChartOfAccountsButtonComponent,
+        ChooseXeroAccountComponent,
         AddQuovoAccountButtonComponent,
 
         SelectionFilterComponent,
@@ -74,14 +80,19 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
         BankAccountsComponent,
         BankAccountsWidgetComponent,
         BankAccountsQuovoComponent,
+        QuovoPfmComponent,
         AddAccountButtonComponent,
 
         XeroLoginButtonComponent,
         ImportXeroChartOfAccountsButtonComponent,
+        ChooseXeroAccountComponent,
         AddQuovoAccountButtonComponent,
 
         SelectionFilterComponent,
         SynchProgressComponent
+    ],
+    entryComponents: [
+        ChooseXeroAccountComponent
     ],
     providers: [
         QuovoService,

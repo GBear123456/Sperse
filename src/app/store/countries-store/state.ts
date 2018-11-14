@@ -4,12 +4,12 @@ export interface State {
     countries: CountryDto[];
     isLoading: boolean;
     error: string;
-    loaded: boolean;
+    loadedTime: number;
 }
 
 export const initialState: State = {
     countries: null,
     isLoading: false,
     error: null,
-    loaded: false
+    loadedTime: null
 };
