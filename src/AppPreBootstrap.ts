@@ -17,6 +17,13 @@ export class AppPreBootstrap {
             abpAjax.defaultError.details = AppConsts.defaultErrorMessage;
         }
 
+        let _handleUnAuthorizedRequest = abpAjax['handleUnAuthorizedRequest'];
+        abpAjax['handleUnAuthorizedRequest'] = (messagePromise: any, targetUrl?: string) => {
+            if (!targetUrl || targetUrl == '/')
+                targetUrl = location.origin;
+            _handleUnAuthorizedRequest.call(abpAjax, messagePromise, targetUrl);
+        }
+
         AppPreBootstrap.getApplicationConfig(appRootUrl, () => {
             const queryStringObj = UrlHelper.getQueryParameters();
             if (queryStringObj.redirect && queryStringObj.redirect === 'TenantRegistration') {
@@ -43,7 +50,6 @@ export class AppPreBootstrap {
     }
 
     private static getApplicationConfig(appRootUrl: string, callback: () => void) {
-
         return abp.ajax({
             url: appRootUrl + 'assets/' + environment.appConfig,
             method: 'GET',
@@ -54,29 +60,9 @@ export class AppPreBootstrap {
             AppConsts.googleSheetClientId = result.googleSheetClientId;
             AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
             AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
-
-            if (environment.appBaseUrl !== AppConsts.appBaseUrl) {
-                abp.ajax({
-                    url: result.remoteServiceBaseUrl + '/api/services/Platform/TenantHost/GetTenantAppHost',
-                    method: 'GET',
-                    headers: {
-                        'Accept-Language': abp.utils.getCookieValue('Abp.Localization.CultureName')
-                    }
-                }).done((tenantApiHostOutput: TenantAppHostOutput) => {
-                    let apiProtocolUrl = new URL(result.remoteServiceBaseUrl);
-
-                    if (tenantApiHostOutput.appHostName !== null) {
-                        AppConsts.remoteServiceBaseUrl = apiProtocolUrl.protocol + '//' + tenantApiHostOutput.appHostName;
-                    } else {
-                        AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
-                    }
-
-                    callback();
-                });
-            } else {
-                AppConsts.remoteServiceBaseUrl = result.remoteServiceBaseUrl;
-                callback();
-            }
+            AppConsts.remoteServiceBaseUrl = result.enforceRemoteServiceBaseUrl 
+                ? result.remoteServiceBaseUrl: location.origin;
+            callback();
         });
     }
 
