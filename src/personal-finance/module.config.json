@@ -2,7 +2,7 @@
   "code": "PFM",
   "name": "PersonalFinance",
   "search": false,
-  "requiredFeature": "CreditReportFeature",
+  "requiredFeature": "PFM.CreditReport",
   "defaultPath": "/personal-finance/member-area",
   "hostDisabled": true,
   "navigation": [

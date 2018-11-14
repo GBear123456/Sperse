@@ -19,7 +19,7 @@ export class TopBarComponent extends AppComponentBase implements OnInit {
 
       var crUrl = abp.session.userId ? 'personal-finance/member-area' : '/personal-finance';
       this.addMenuItem({ url: crUrl, title: 'personal-finance', img: '/assets/landing/credit-report-icon.svg', imgActive: '/assets/landing/credit-reports-active-icon.svg' },
-                              'CreditReportFeature');
+                              'PFM.CreditReport');
   }
 
   addMenuItem(item, feature = null): void {

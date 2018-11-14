@@ -124,7 +124,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     let data = event.snapshot.data,
                         rightPanelId = this.getCheckPropertyValue(data, 'rightPanelId', RP_DEFAULT_ID);
                     this.rightPanelSetting.opened = this.getCheckPropertyValue(data, 'rightPanelOpened',
-                        rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled('CreditReportFeature')
+                        rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled('PFM.CreditReport')
                         || rightPanelId == RP_USER_INFO_ID && this._userService['data'].userId
                     );
                     if (this.rightPanelSetting.opened)

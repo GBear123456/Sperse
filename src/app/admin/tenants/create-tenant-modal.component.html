@@ -123,17 +123,17 @@
                                 <label>{{l("DatabaseConnectionString")}}</label>
                             </div>
                             <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <label>{{ls("PFM", "MemberDb")}}</label>
-                            </div>
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <input type="text" name="MemberDbConnectionString" class="form-control" [(ngModel)]="tenant.memberDbConnectionString" [ngClass]="{'edited':tenant.memberDbConnectionString}" maxlength="1024">
-                                <label>{{l("DatabaseConnectionString")}}</label>
-                            </div>
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
                                 <label>{{ls("CFO", "CFO")}}</label>
                             </div>
                             <div class="form-group form-md-line-input form-md-floating-label no-hint">
                                 <input type="text" name="CFODbConnectionString" class="form-control" [(ngModel)]="tenant.cfoConnectionString" [ngClass]="{'edited':tenant.cfoConnectionString}" maxlength="1024">
+                                <label>{{l("DatabaseConnectionString")}}</label>
+                            </div>
+                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                                <label>{{ls("PFM", "PFM")}}</label>
+                            </div>
+                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                                <input type="text" name="MemberDbConnectionString" class="form-control" [(ngModel)]="tenant.memberDbConnectionString" [ngClass]="{'edited':tenant.memberDbConnectionString}" maxlength="1024">
                                 <label>{{l("DatabaseConnectionString")}}</label>
                             </div>
                         </tab>

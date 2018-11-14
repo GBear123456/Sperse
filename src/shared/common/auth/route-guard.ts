@@ -102,7 +102,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             return '/app/admin/users';
         }
 
-        if (this._feature.isEnabled('CreditReportFeature')) {
+        if (this._feature.isEnabled('PFM.CreditReport')) {
             return '/personal-finance';
         }
 

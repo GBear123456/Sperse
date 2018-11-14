@@ -21,7 +21,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        if (!this._featureChecker.isEnabled('CreditReportFeature')) {
+        if (!this._featureChecker.isEnabled('PFM.CreditReport')) {
             this._router.navigate(['/']);
             return false;
         }
