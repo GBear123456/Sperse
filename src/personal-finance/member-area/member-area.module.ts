@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module'
+import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
 import { MemberAreaRoutingModule } from './member-area-routing.module';
 import { CreditReportModule } from './credit-report/credit-report.module';
 import { CreditSimulatorModule } from './credit-simulator/credit-simulator.module';
@@ -16,6 +16,7 @@ import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/ba
 import { CFOService } from '@shared/cfo/cfo.service';
 import { UserOnlyCFOService } from '../shared/common/user-only.cfo.service';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OffersModule } from '@root/personal-finance/member-area/offers/offers.module';
 
 @NgModule({
     imports: [
@@ -26,6 +27,7 @@ import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
         MemberAreaRoutingModule,
         CreditSimulatorModule,
         CreditResourcesModule,
+        OffersModule,
         BankAccountsCommonModule.forRoot()
     ],
     declarations: [

@@ -10,7 +10,7 @@ import * as moment from 'moment';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactGroupServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentMethodInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentMethodInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'payment-information',
@@ -34,13 +34,13 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     constructor(
         injector: Injector,
         private paymentServiceProxy: PaymentServiceProxy,
-        private contactGroupService: ContactGroupServiceProxy
+        private contactService: ContactServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
     ngOnInit() {
-        const groupId = this.contactGroupService['data'].contactInfo.id;
+        const groupId = this.contactService['data'].contactInfo.id;
         this.balanceAmount$ = of(0);
         /** Create data prop if not exists */
         this.paymentServiceProxy['data'] = this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][groupId]
@@ -65,24 +65,24 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
         // );
     }
 
-    getPayments(contactGroupId): Observable<MonthlyPaymentInfo[]> {
+    getPayments(contactId): Observable<MonthlyPaymentInfo[]> {
         abp.ui.setBusy(this.paymentsContainer.nativeElement);
-        return (this.paymentServiceProxy['data'][contactGroupId] && this.paymentServiceProxy['data'][contactGroupId].payments ?
-               of(this.paymentServiceProxy['data'][contactGroupId].payments) :
-               this.paymentServiceProxy.getPayments(contactGroupId).pipe(
+        return (this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].payments ?
+               of(this.paymentServiceProxy['data'][contactId].payments) :
+               this.paymentServiceProxy.getPayments(contactId).pipe(
                    publishReplay(),
                    refCount(),
-                   tap(payments => this.paymentServiceProxy['data'][contactGroupId].payments = payments)
+                   tap(payments => this.paymentServiceProxy['data'][contactId].payments = payments)
                )).pipe(
                    finalize(() => abp.ui.clearBusy(this.paymentsContainer.nativeElement))
                 );
     }
 
-    getPaymentMethods(contactGroupId): Observable<PaymentMethodInfo[]> {
-        return this.paymentServiceProxy['data'][contactGroupId] && this.paymentServiceProxy['data'][contactGroupId].paymentMethods ?
-               of(this.paymentServiceProxy['data'][contactGroupId].paymentMethods) :
-               this.paymentServiceProxy.getPaymentMethods(contactGroupId).pipe(
-                   tap(paymentMethods => this.paymentServiceProxy['data'][contactGroupId].paymentMethods = paymentMethods)
+    getPaymentMethods(contactId): Observable<PaymentMethodInfo[]> {
+        return this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].paymentMethods ?
+               of(this.paymentServiceProxy['data'][contactId].paymentMethods) :
+               this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
+                   tap(paymentMethods => this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods)
                );
     }
 

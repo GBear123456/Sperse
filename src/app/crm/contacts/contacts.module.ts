@@ -61,7 +61,7 @@ import { DocumentTypesListComponent } from './document-types-list/document-types
 import { OrganizationUnitsTreeComponent } from './organization-units-tree/organization-units-tree.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
-import { ContactGroupServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy, DocumentServiceProxy,
+import { ContactServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy, DocumentServiceProxy,
     ContactEmploymentServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy,
     PartnerServiceProxy, PartnerTypeServiceProxy, NotesServiceProxy, OrderSubscriptionServiceProxy, CustomerServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
@@ -82,7 +82,7 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     ContactsAreaComponent,
     AddressesComponent,
     EmploymentComponent,
-    ClientScoresComponent,                                                     
+    ClientScoresComponent,
     TotalApprovedComponent,
     CreditLinesComponent,
     ContactInformationComponent,
@@ -169,7 +169,7 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
   ],
   providers: [
     ContactsService,
-    ContactGroupServiceProxy,
+    ContactServiceProxy,
     CustomerServiceProxy,
     PartnerServiceProxy,
     PartnerTypeServiceProxy,

@@ -10,14 +10,14 @@ import { Store } from '@ngrx/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
-import { ContactGroupStarsServiceProxy, MarkContactGroupInput, MarkContactGroupsInput } from '@shared/service-proxies/service-proxies';
+import { ContactStarsServiceProxy, MarkContactInput, MarkContactsInput } from '@shared/service-proxies/service-proxies';
 import { AppStore, StarsStoreSelectors } from '@app/store';
 
 @Component({
   selector: 'crm-stars-list',
   templateUrl: './stars-list.component.html',
   styleUrls: ['./stars-list.component.less'],
-  providers: [ContactGroupStarsServiceProxy]
+  providers: [ContactStarsServiceProxy]
 })
 export class StarsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
@@ -42,7 +42,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _filtersService: FiltersService,
-        private _starsService: ContactGroupStarsServiceProxy,
+        private _starsService: ContactStarsServiceProxy,
         private store$: Store<AppStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
@@ -76,8 +76,8 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     process() {
         if (this.bulkUpdateMode)
-            this._starsService.markContactGroups(MarkContactGroupsInput.fromJS({
-                contactGroupIds: this.selectedKeys,
+            this._starsService.markContacts(MarkContactsInput.fromJS({
+                contactIds: this.selectedKeys,
                 starId: this.selectedItemKey
             })).pipe(finalize(() => {
                 this.listComponent.unselectAll();
@@ -85,8 +85,8 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
                 this.notify.success(this.l('CustomersMarked'));
             });
         else
-            this._starsService.markContactGroup(MarkContactGroupInput.fromJS({
-                contactGroupId: this.selectedKeys[0],
+            this._starsService.markContact(MarkContactInput.fromJS({
+                contactId: this.selectedKeys[0],
                 starId: this.selectedItemKey
             })).subscribe((result) => {
                 this.notify.success(this.l('CustomersMarked'));

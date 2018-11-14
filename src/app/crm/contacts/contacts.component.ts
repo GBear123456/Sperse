@@ -15,12 +15,12 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppStore, PartnerTypesStoreSelectors, PartnerAssignedUsersStoreSelectors, LeadAssignedUsersStoreSelectors, CustomerAssignedUsersStoreSelectors } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroupType, ContactGroupStatus } from '@shared/AppEnums';
+import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ContactGroupServiceProxy,
-    ContactGroupInfoDto,
-    UpdateContactGroupStatusInput,
+    ContactServiceProxy,
+    ContactInfoDto,
+    UpdateContactStatusInput,
     LeadServiceProxy,
     LeadInfoDto,
     PartnerServiceProxy,
@@ -53,7 +53,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     customerId: number;
     customerType: string;
-    contactInfo: ContactGroupInfoDto;
+    contactInfo: ContactInfoDto;
     primaryContact: any;
     verificationChecklist: VerificationChecklistItem[];
     leadInfo: LeadInfoDto;
@@ -89,7 +89,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 private _dialogService: DialogService,
                 private _cacheService: CacheService,
                 private _userService: UserServiceProxy,
-                private _contactGroupService: ContactGroupServiceProxy,
+                private _contactService: ContactServiceProxy,
                 private _partnerService: PartnerServiceProxy,
                 private _leadService: LeadServiceProxy,
                 private _pipelineService: PipelineService,
@@ -100,7 +100,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this._appStoreService.loadUserDictionaries();
-        _contactGroupService['data'] = {
+        _contactService['data'] = {
             contactInfo: null,
             leadInfo: null,
             partnerInfo: null
@@ -159,14 +159,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 label: contact.userId ? 'User Information' : 'Invite User',
                 hidden: !(this.permission.isGranted(contact.userId ?
                     'Pages.Administration.Users' : 'Pages.Administration.Users.Create') &&
-                    (contact.userId || this.contactInfo.statusId != ContactGroupStatus.Prospective)),
+                    (contact.userId || this.contactInfo.statusId != ContactStatus.Prospective)),
                 route: 'user-information'
             },
             {label: 'Documents', route: 'documents'},
             {label: 'Notes', route: 'notes'},
             {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
             {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
-            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroupType.Partner},
+            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroup.Partner},
             {label: 'Referral History', route: 'referral-history', disabled: true},
             {label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true},
             {label: 'Questionnaire', route: 'questionnaire', disabled: true},
@@ -175,26 +175,28 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     isClientDetailPage() {
-        return this.customerType !== ContactGroupType.Partner && !this.partnerTypeId && !this.leadId;
+        return this.customerType !== ContactGroup.Partner && !this.partnerTypeId && !this.leadId;
     }
 
     private storeInitialData() {
-        this.initialData = JSON.stringify(this._contactGroupService['data']);
+        this.initialData = JSON.stringify(this._contactService['data']);
     }
 
-    private fillContactDetails(result, primaryContactId = null) {
-        this._contactGroupService['data'].contactInfo = result;
-        primaryContactId = primaryContactId || result.primaryContactInfo.id;
-        result.contactPersons.every((contact) => {
-            let isPrimaryContact = (contact.id == primaryContactId);
-            if (isPrimaryContact)
-                result.primaryContactInfo = contact;
-            return !isPrimaryContact;
-        });
+    private fillContactDetails(result, contactId = null) {
+        this._contactService['data'].contactInfo = result;
+        contactId = contactId || result.personContactInfo.id;
+        if (result.contactPersons) {
+            result.contactPersons.every((contact) => {
+                let isPrimaryContact = (contact.id == contactId);
+                if (isPrimaryContact)
+                    result.personContactInfo = contact;
+                return !isPrimaryContact;
+            });
+        }
 
-        this.operationsEnabled = (result.typeId != ContactGroupType.UserProfile);
+        this.operationsEnabled = (result.typeId != ContactGroup.UserProfile);
         this.ratingId = result.ratingId;
-        this.primaryContact = result.primaryContactInfo;
+        this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
         this.initVerificationChecklist();
 
@@ -207,7 +209,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private fillLeadDetails(result) {
-        this._contactGroupService['data'].leadInfo = this.leadInfo = result;
+        this._contactService['data'].leadInfo = this.leadInfo = result;
 
         this.loadLeadsStages(() => {
             if (this.leadInfo.stage)
@@ -219,7 +221,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private fillPartnerDetails(result) {
-        this._contactGroupService['data'].partnerInfo = this.partnerInfo = result;
+        this._contactService['data'].partnerInfo = this.partnerInfo = result;
         this.partnerTypeId = result.typeId;
         this.storeInitialData();
     }
@@ -239,10 +241,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this._userService['data'] = {
             userId: userId, user: null, roles: null
         };
-        this._contactGroupService['data'].contactInfo = {
+        this._contactService['data'].contactInfo = {
             id: this.customerId = customerId
         };
-        this._contactGroupService['data'].leadInfo = {
+        this._contactService['data'].leadInfo = {
             id: leadId
         };
 
@@ -253,22 +255,22 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadDataForUser(userId) {
-        this._contactGroupService.getContactGroupForUser(userId).subscribe((res) => {
-            this.fillContactDetails(res.contactGroupInfo, res.userContactId);
+        this._contactService.getContactInfoForUser(userId).subscribe((res) => {
+            this.fillContactDetails(res, res.id);
         });
     }
 
     loadDataForClient(customerId: number, leadId: number, partnerId: number) {
         if (customerId) {
             this.startLoading(true);
-            let contactInfo$ = this._contactGroupService
-                .getContactGroupInfo(customerId);
+            let contactInfo$ = this._contactService
+                .getContactInfo(customerId);
 
             if (leadId)
                 this.loadLeadsStages();
 
-            this.customerType = partnerId ? ContactGroupType.Partner : ContactGroupType.Client;
-            if (this.customerType == ContactGroupType.Partner) {
+            this.customerType = partnerId ? ContactGroup.Partner : ContactGroup.Client;
+            if (this.customerType == ContactGroup.Partner) {
                 let partnerInfo$ = this._partnerService.get(partnerId);
                 forkJoin(contactInfo$, partnerInfo$).pipe(finalize(() => {
                     this.finishLoading(true);
@@ -294,8 +296,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadLeadData() {
-        let contactInfo  = this._contactGroupService['data'].contactInfo,
-            leadInfo = this._contactGroupService['data'].leadInfo;
+        let contactInfo  = this._contactService['data'].contactInfo,
+            leadInfo = this._contactService['data'].leadInfo;
         if (!this.leadInfo && contactInfo && leadInfo) {
             this.startLoading(true);
             let leadId = leadInfo.id,
@@ -342,7 +344,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private getCustomerName() {
-        return this.contactInfo.primaryContactInfo.fullName;
+        return this.contactInfo.personContactInfo.fullName;
     }
 
     private showConfirmationDialog(status) {
@@ -365,8 +367,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private updateStatusInternal(statusId: string) {
-        return this._contactGroupService.updateContactGroupStatus(new UpdateContactGroupStatusInput({
-            contactGroupId: this.contactInfo.id,
+        return this._contactService.updateContactStatus(new UpdateContactStatusInput({
+            contactId: this.contactInfo.id,
             statusId: statusId
         }));
     }
@@ -408,7 +410,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             panelClass: ['related-contacts']
         }).afterClosed().subscribe(result => {
             if (result == 'addNewContact') this.addNewContact(event);
-            // this.onContactSelected(this.data.primaryContactInfo);
+            // this.onContactSelected(this.data.personContactInfo);
         });
         event.stopPropagation();
     }
@@ -419,7 +421,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     close(force = false) {
         this._dialog.closeAll();
-        let data = force || JSON.stringify(this._contactGroupService['data']);
+        let data = force || JSON.stringify(this._contactService['data']);
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
             { queryParams: _.extend(_.mapObject(this.referrerParams,
@@ -464,7 +466,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 if (isConfirmed) {
                     this._leadService.deleteLead(this.leadId).subscribe(() => {
                         this.notify.success(this.l('SuccessfullyDeleted'));
-                        this._contactGroupService['data']['deleted'] = true;
+                        this._contactService['data']['deleted'] = true;
                         this.close();
                     });
                 }
@@ -563,10 +565,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getAssignedUsersStoreSelectors = () => {
-        if (this.customerType == ContactGroupType.Partner)
+        if (this.customerType == ContactGroup.Partner)
             return PartnerAssignedUsersStoreSelectors;
 
-        if (this.customerType == ContactGroupType.Client)
+        if (this.customerType == ContactGroup.Client)
             return CustomerAssignedUsersStoreSelectors;
 
         if (this.leadId || this.leadInfo)
@@ -576,23 +578,23 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getAssignmentsPermissinKey = () => {
-        if (this.customerType == ContactGroupType.Partner)
+        if (this.customerType == ContactGroup.Partner)
             return 'Pages.CRM.Partners.ManageAssignments';
 
         return 'Pages.CRM.Customers.ManageAssignments';
     }
 
     getProxyService = () => {
-        if (this.customerType == ContactGroupType.Partner)
+        if (this.customerType == ContactGroup.Partner)
             return this._partnerService;
 
-        if (this.customerType == ContactGroupType.Client)
+        if (this.customerType == ContactGroup.Client)
             return this._customerService;
 
         if (this.leadId || this.leadInfo)
             return this._leadService;
 
-        return this._customerService
+        return this._customerService;
     }
 
     addNewContact(event) {
@@ -603,7 +605,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             closeOnNavigation: false,
             data: {
                 refreshParent: () => {},
-                customerType: ContactGroupType.Client
+                customerType: ContactGroup.Client
             }
         }).afterClosed().subscribe(() => {});
         event.stopPropagation();

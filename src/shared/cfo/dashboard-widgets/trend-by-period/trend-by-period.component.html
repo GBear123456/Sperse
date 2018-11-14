@@ -33,6 +33,7 @@
         id="bar"
         [dataSource]="trendData"
         [barWidth]="0.5"
+        (onDrawn)="render($event.component)"
         [size]="{height: 245}"
         #barChart>
         <dxo-size height="356" [width]="chartWidth"></dxo-size>

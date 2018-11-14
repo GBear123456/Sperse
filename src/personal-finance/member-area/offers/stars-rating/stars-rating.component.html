@@ -1,0 +1,3 @@
+<ng-container *ngFor="let ratingItem of ratings; let i = index">
+    <i class="fa fa-star" [ngClass]="{ 'empty fa-star-o': i + 1 > currentRating }"></i>
+</ng-container>

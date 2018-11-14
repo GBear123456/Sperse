@@ -141,6 +141,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     renderWidgets() {
         setTimeout(() => {
             this.totalsByPeriodComponent.render();
+            this.trendByPeriodComponent.render();
         }, 300);
     }
 

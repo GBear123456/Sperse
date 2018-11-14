@@ -9,7 +9,7 @@ import { catchError, exhaustMap, map, startWith, switchMap, withLatestFrom } fro
 
 /** Application imports */
 import * as statusesActions from './actions';
-import { ContactGroupServiceProxy, ContactGroupStatusDto } from 'shared/service-proxies/service-proxies';
+import { ContactServiceProxy, ContactStatusDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
 import { StoreHelper } from '@root/store/store.helper';
@@ -17,7 +17,7 @@ import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class StatusesStoreEffects {
-    constructor(private contactGroupStatusesService: ContactGroupServiceProxy,
+    constructor(private contactService: ContactServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>) {}
 
@@ -31,9 +31,9 @@ export class StatusesStoreEffects {
                 return empty();
             }
 
-            return this.contactGroupStatusesService.getContactGroupStatuses()
+            return this.contactService.getContactStatuses()
                 .pipe(
-                    map((statuses: ContactGroupStatusDto[]) => {
+                    map((statuses: ContactStatusDto[]) => {
                         return new statusesActions.LoadSuccessAction(statuses);
                     }),
                     catchError(err => {
