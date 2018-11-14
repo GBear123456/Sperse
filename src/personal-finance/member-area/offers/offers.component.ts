@@ -8,28 +8,16 @@ import {
     OnDestroy,
     ElementRef, ViewChild, HostListener
 } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { first, map, publishReplay, refCount, takeUntil } from 'rxjs/operators';
 import { isEmpty, pickBy } from 'lodash';
 
 import { RootComponent } from '@root/root.components';
-
-interface CreditCard {
-    cardName: string;
-    bankName: string;
-    reviewsAmount: number;
-    annualFee: string;
-    rewardsRate: string;
-    rewardsBonus: string;
-    apr: string;
-    rating: number;
-    imageName: string;
-    type: string;
-    category: string;
-    network: string;
-}
+import { CreditCard } from '@root/personal-finance/member-area/offers/models/credit-card.interface';
+import { CreditCardsService } from '@root/personal-finance/member-area/offers/credit-cards.service';
 
 interface FilterValues {
     [field: string]: { [filterValue: string]: string };
@@ -99,6 +87,8 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
 
     private destroy: Subject<null> = new Subject<null>();
     private destroy$: Observable<null> = this.destroy.asObservable();
+    private deactivateSubject: Subject<null> = new Subject<null>();
+    private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
 
     selectedSorting: BehaviorSubject<string> = new BehaviorSubject(this.sortings[0].field);
     private selectedSorting$ = this.selectedSorting.asObservable();
@@ -107,120 +97,51 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
 
     constructor(
         injector: Injector,
+        applicationRef: ApplicationRef,
         public ls: AppLocalizationService,
-        private applicationRef: ApplicationRef
+        private router: Router,
+        private creditCardsService: CreditCardsService
     ) {
-        this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
+        this.rootComponent = injector.get(applicationRef.componentTypes[0]);
     }
 
     ngOnInit() {
-        this.creditCards$ = of([
-            {
-                bankName: 'Bank of America',
-                cardName: 'BankAmercard',
-                reviewsAmount: 765,
-                annualFee: 'None',
-                rewardsRate: '1.5% cashback',
-                rewardsBonus: '$100',
-                apr: '5.5%',
-                rating: 3,
-                imageName: 'bankAmericard',
-                type: 'Small business',
-                category: 'Hotel points',
-                network: 'AmEx'
-            },
-            {
-                bankName: 'Capital One',
-                cardName: 'Quicksilver One',
-                reviewsAmount: 152,
-                annualFee: '$45',
-                rewardsRate: '1.5% cashback',
-                rewardsBonus: '$100',
-                apr: '5.5%',
-                rating: 3,
-                imageName: 'quickSilver',
-                type: 'Personal',
-                category: 'Cashback',
-                network: 'Diners Club'
-            },
-            {
-                bankName: 'City Bank',
-                cardName: 'Adbantage',
-                reviewsAmount: 765,
-                annualFee: 'None',
-                rewardsRate: '1.5% cashback',
-                rewardsBonus: '$100',
-                apr: '5.5%',
-                rating: 4,
-                imageName: 'advantage',
-                type: 'Small business',
-                category: 'Airline miles',
-                network: 'Master'
-            },
-            {
-                bankName: 'City Bank',
-                cardName: 'Adbantage',
-                reviewsAmount: 765,
-                annualFee: 'None',
-                rewardsRate: '1.5% cashback',
-                rewardsBonus: '$100',
-                apr: '5.5%',
-                rating: 4,
-                imageName: 'advantage',
-                type: 'Small business',
-                category: 'Airline miles',
-                network: 'AmEx'
-            },
-            {
-                bankName: 'Capital One',
-                cardName: 'Quicksilver One',
-                reviewsAmount: 152,
-                annualFee: '$45',
-                rewardsRate: '1.5% cashback',
-                rewardsBonus: '$100',
-                apr: '5.5%',
-                rating: 3,
-                imageName: 'quickSilver',
-                type: 'Personal',
-                category: 'Cashback',
-                network: 'Visa'
-            },
-        ]);
+        this.creditCards$ = this.creditCardsService.getCreditCards().pipe(publishReplay(), refCount());
         /** Insert filters values from credit cards data */
-        this.creditCards$.pipe(takeUntil(this.destroy$)).subscribe(creditCards => {
-            creditCards.forEach(creditCard => {
-                this.filters.forEach(filter => {
-                    if (creditCard[filter.field] !== undefined && filter.values.indexOf(creditCard[filter.field]) === -1) {
-                        filter.values.push(creditCard[filter.field]);
-                    }
-                });
-            });
-            /** Change whether to dispay all filter values */
+        this.creditCards$.pipe(first()).subscribe(creditCards => {
+            this.fullFillFilterValues(creditCards);
+            this.hideTooBigFilters();
+        });
+        this.creditCards$.pipe(first()).subscribe(creditCards => this.creditCardsAmount = creditCards.length);
+        this.createFiltersObject();
+        this.activate();
+    }
+
+    /**
+     * Fullfill filters with credit cards values
+     * @param {CreditCard[]} creditCards
+     */
+    private fullFillFilterValues(creditCards: CreditCard[]) {
+        creditCards.forEach(creditCard => {
             this.filters.forEach(filter => {
-                if (filter.values.length <= this.maxDisplayedFilterValues) {
-                    filter.showAll = true;
+                if (creditCard[filter.field] !== undefined && filter.values.indexOf(creditCard[filter.field]) === -1) {
+                    filter.values.push(creditCard[filter.field]);
                 }
             });
         });
-        this.creditCards$.pipe(takeUntil(this.destroy$)).subscribe(creditCards => this.creditCardsAmount = creditCards.length);
-        this.displayedCreditCards$ =
-            combineLatest(
-                this.creditCards$,
-                this.selectedFilter$,
-                this.selectedSorting$
-            ).pipe(
-                takeUntil(this.destroy$),
-                map(([creditCards, filtersValues, sortingField]) => this.sortCards(
-                    this.filterCards(creditCards, filtersValues),
-                    sortingField
-                ))
-            );
+    }
 
+    private hideTooBigFilters() {
+        /** Change whether to dispay all filter values */
         this.filters.forEach(filter => {
-            this.filtersValues[filter.field] = {};
+            if (filter.values.length <= this.maxDisplayedFilterValues) {
+                filter.showAll = true;
+            }
         });
-        /** Set overflow hidden to container */
-        this.rootComponent.overflowHidden(true);
+    }
+
+    private createFiltersObject() {
+        this.filters.forEach(filter => this.filtersValues[filter.field] = {});
     }
 
     ngAfterViewInit() {
@@ -264,11 +185,37 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     viewCardDetails(card: CreditCard) {
-        console.log(card);
+        this.router.navigate(['personal-finance/member-area/offer', card.id]);
     }
 
     ngOnDestroy() {
         this.destroy.next();
+        this.deactivate();
+    }
+
+    activate() {
+        this.displayedCreditCards$ =
+            combineLatest(
+                this.creditCards$,
+                this.selectedFilter$,
+                this.selectedSorting$
+            ).pipe(
+                takeUntil(this.deactivate$),
+                map(([creditCards, filtersValues, sortingField]) => this.sortCards(
+                    this.filterCards(creditCards, filtersValues),
+                    sortingField
+                ))
+            );
+        this.displayedCreditCards$.pipe(takeUntil(this.deactivate$)).subscribe(displayedCreditCards => {
+            this.creditCardsService.displayedCards = displayedCreditCards;
+        });
+
+        /** Set overflow hidden to container */
+        this.rootComponent.overflowHidden(true);
+    }
+
+    deactivate() {
+        this.deactivateSubject.next();
         this.rootComponent.overflowHidden(false);
     }
 }

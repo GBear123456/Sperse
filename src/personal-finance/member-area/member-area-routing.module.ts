@@ -7,6 +7,7 @@ import { CreditSimulatorComponent } from './credit-simulator/credit-simulator.co
 import { CreditResourcesComponent } from './credit-resources/credit-resources.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { OffersComponent } from '@root/personal-finance/member-area/offers/offers.component';
+import { OfferDetailsComponent } from '@root/personal-finance/member-area/offers/offer-details/offer-details.component';
 
 @NgModule({
     imports: [
@@ -19,7 +20,8 @@ import { OffersComponent } from '@root/personal-finance/member-area/offers/offer
                     { path: 'credit-simulator', component: CreditSimulatorComponent },
                     { path: 'credit-resources', component: CreditResourcesComponent },
                     { path: 'accounts', component: AccountsComponent },
-                    { path: 'offers', component: OffersComponent }
+                    { path: 'offers', component: OffersComponent, data: { permission: '', reuse: true } },
+                    { path: 'offer/:id', component: OfferDetailsComponent, data: { permission: '', reuse: true } }
                 ]
             }
         ])

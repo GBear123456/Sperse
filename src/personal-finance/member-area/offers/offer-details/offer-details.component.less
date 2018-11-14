@@ -1,0 +1,144 @@
+@border-color: #DFDFDF;
+
+:host {
+    ul {
+        padding-left: 0;
+        list-style: none;
+    }
+    button {
+        cursor: pointer;
+        border: none;
+        background: none;
+    }
+
+    h5.title {
+        color: #171C1D;
+        font-size: 15px;
+        font-weight: bold;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        text-align: left;
+    }
+
+    .leftBlock {
+        h1 {
+            color: #002849;
+            font-size: 46px;
+            font-weight: bold;
+            line-height: 57px;
+            text-align: center;
+        }
+        h3 {
+            color: #002849;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+        }
+        .creditCardsList {
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            line-height: 20px;
+            .cardInfo {
+                h5 {
+                    font-weight: bold;
+                    font-size: 18px;
+                    color: #002849;
+                }
+            }
+            /deep/ mat-radio-button {
+                &.mat-radio-button-selected {
+                    img {
+                        border: 3px solid #F5A623;
+                        border-radius: 4px;
+                    }
+                }
+            }
+        }
+    }
+    .rightBlock {
+        .bankHeader {
+            padding-bottom: 29px;
+            border-bottom: 1px solid @border-color;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .bankDetails {
+                display: flex;
+                .cardInfo {
+                    h5 {
+                        font-size: 28px;
+                        color: #002849;
+                        letter-spacing: 0.22px;
+                        font-weight: bold;
+                    }
+                }
+            }
+            .actions {
+                text-align: center;
+                button {
+                    &.applyButton {
+                        border-radius: 2px;
+                        background-color: #EC9D1A;
+                        box-shadow: 0 3px 10px 0 rgba(245,166,35,0.35);
+                        width: 143px;
+                        height: 38px;
+                        -webkit-transform: skew(-20deg);
+                        -moz-transform: skew(-20deg);
+                        -o-transform: skew(-20deg);
+                        margin-bottom: 7px;
+                        span {
+                            display: block;
+                            -webkit-transform: skew(20deg);
+                            -moz-transform: skew(20deg);
+                            -o-transform: skew(20deg);
+                            color: #FFFFFF;
+                            font-size: 16px;
+                            font-weight: bold;
+                            letter-spacing: 0.13px;
+                            text-align: center;
+                        }
+                    }
+                }
+            }
+        }
+        .cardDetails {
+            .detailsListBlock {
+                ul.detailsList {
+                    list-style-type: circle;
+                }
+            }
+            .aprVariable ul {
+                display: flex;
+                justify-content: space-between;
+                li {
+                    font-size: 16px;
+                    letter-spacing: 0.18px;
+                    h5 {
+                        font-weight: 500;
+                    }
+                    p {
+                        color: #002849;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+        .fightSideBar {
+            background-color: rgba(62,74,84,0.05);
+            .prosAndCons {
+                color: #3E4A54;
+                font-size: 16px;
+                letter-spacing: 0.23px;
+                padding-bottom: 25px;
+                border-bottom: 1px solid @border-color;
+            }
+            .recommendedCreditScore {
+                padding: 22.5px 0 0 31.5px;
+                border-bottom: 1px solid @border-color;
+            }
+        }
+    }
+}
