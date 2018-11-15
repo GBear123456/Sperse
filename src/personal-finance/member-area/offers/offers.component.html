@@ -21,7 +21,7 @@
                 <ul class="filters">
                     <ng-container *ngFor="let filter of filters">
                         <li *ngIf="filter.values.length">
-                            <div class="filterName">{{ filter.name.toUpperCase() }}</div>
+                            <div class="filterName">{{ filter.name }}</div>
                             <ng-container *ngFor="let filterValue of filter.values; let i = index">
                                 <mat-checkbox *ngIf="filter.showAll || i < maxDisplayedFilterValues" (change)="selectedFilter.next(filtersValues)" [(ngModel)]="filtersValues[filter.field][filterValue]">
                                     <span *ngIf="!filter.type">{{ filterValue }}</span>

@@ -1,0 +1,91 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 leftBlock">
+            <h1>{{ ls.l('Offers_CreditCards') }}</h1>
+            <h3 #availableCards>{{ ls.l('Offers_AvailableCreditCards') }} ({{ cardsAmount }})</h3>
+            <div class="creditCardsList">
+                <dx-scroll-view [height]="scrollHeight">
+                    <mat-radio-group (change)="creditCardChanged($event)">
+                        <mat-radio-button *ngFor="let creditCard of creditCards$ | async" [value]="creditCard.id">
+                            <img [src]="'./assets/images/offers/' + creditCard.imageName + '.svg'" [alt]="creditCard.cardName">
+                            <div class="cardInfo">
+                                <h4>{{ creditCard.bankName }}</h4>
+                                <h5>{{ creditCard.cardName }}</h5>
+                            </div>
+                        </mat-radio-button>
+                    </mat-radio-group>
+                </dx-scroll-view>
+            </div>
+        </div>
+        <div class="col-md-9 rightBlock" *ngIf="(selectedCardDetails$ | async) as cardDetails">
+            <div class="bankHeader">
+                <div class="bankDetails">
+                    <img [src]="'./assets/images/offers/' + cardDetails.bankName + '.svg'" [alt]="cardDetails.bankName">
+                    <div class="cardInfo">
+                        <h4>{{ cardDetails.bankName }}</h4>
+                        <h5>{{ cardDetails.cardName }}</h5>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="applyButton" (click)="applyCard(cardDetails.id)"><span>{{ ls.l('Apply') }}</span></button>
+                </div>
+            </div>
+            <div class="cardDetails row">
+                <div class="col-md-8">
+                    <div class="detailsListBlock">
+                        <h5 class="title">{{ ls.l('Offers_CardDetails') }}</h5>
+                        <ul class="detailsList">
+                            <li *ngFor="let detail of cardDetails.details">{{ detail }}</li>
+                        </ul>
+                    </div>
+                    <div class="aprVariable">
+                        <h5 class="title"></h5>
+                        <ul>
+                            <li>
+                                <h5>{{ ls.l('Offers_APR') }}</h5>
+                                <p>{{ cardDetails.apr }}</p>
+                            </li>
+                            <li>
+                                <h5>{{ ls.l('Offers_PenaltyAPR') }}</h5>
+                                <p>{{ cardDetails.apr }}</p>
+                            </li>
+                            <li>
+                                <h5>{{ ls.l('Offers_CashAdvancedAPR') }}</h5>
+                                <p>{{ cardDetails.apr }}</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4 fightSideBar">
+                    <div class="prosAndCons">
+                        <h5 class="title">{{ ls.l('Offers_Pros') }}</h5>
+                        <ul class="pros"><li *ngFor="let pro of cardDetails.pros">{{ pro }}</li></ul>
+                        <h5 class="title">{{ ls.l('Offers_Cons') }}</h5>
+                        <ul class="cons"><li *ngFor="let con of cardDetails.cons">{{ con }}</li></ul>
+                    </div>
+                    <div class="recommendedCreditScore">
+                        <h5 class="title">{{ ls.l('Offers_RecommendedCreditScore') }}</h5>
+                        <round-progress [max]="850" [current]="cardDetails.recommendedCreditScore.max" [semicircle]="true"></round-progress>
+                        <span>{{ cardDetails.recommendedCreditScore.name }}</span>
+                    </div>
+                    <div class="otherParams">
+                        <ul>
+                            <li>
+                                <h5 class="title">{{ ls.l('Offers_RewardsRate') }}</h5>
+                                <p>{{ cardDetails.rewardsRate }}</p>
+                            </li>
+                            <li>
+                                <h5 class="title">{{ ls.l('Offers_AnnualFee') }}</h5>
+                                <p>{{ cardDetails.annualFee }}</p>
+                            </li>
+                            <li>
+                                <h5 class="title">{{ ls.l('Offers_IntroApr') }}</h5>
+                                <p>{{ cardDetails.introApr }}</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
