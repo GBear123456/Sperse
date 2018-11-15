@@ -1,23 +1,31 @@
 <div class="top-footer">
-    <div class="container">
+    <div class="top-container">
         <div class="footer-menu">
+            <span class="logo" *ngIf="hasPfmAppFeature">{{appSession?.tenant?.name}}</span>
             <ul class="footer-menu-list">
                 <li class="footer-menu-item" *ngFor="let item of footerMenuItems">
                     <a class="footer-menu-link" [routerLink]="[item.url]">{{l(item.name)}}</a>
                 </li>
             </ul>
+            <div class="social-links" *ngIf="hasPfmAppFeature"><span class="facebook"></span><span class="twitter"></span><span class="youtube"></span></div>
         </div><!-- footer-menu -->
-        <div class="copyright">
-            © {{appSession?.tenant?.name}} {{currentYear}}, all rights reserved
+        <div class="separator"></div>
+        <div>
+            <div class="disclosure">
+                <b>{{l("DisclosureTitle", hasPfmAppFeature ? 'PFM': 'Platform')}}</b>: {{l("DisclosureText", hasPfmAppFeature ? 'PFM': 'Platform', appSession?.tenant?.name)}}
+            </div>
+            <div class="score" *ngIf="hasPfmAppFeature">The Credit Score data on Lendspace is the VantageScore® 3.0 by TransUnion®.</div>
         </div>
     </div>
 </div>
 <div class="bottom-footer">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                {{l("DisclosureTitle")}}: {{appSession?.tenant?.name}} {{l("DisclosureText")}}
-            </div>
-        </div>
+    <div class="bottom-container">
+        <span class="copyright">
+            © {{appSession?.tenant?.name}} {{currentYear}}, all rights reserved
+        </span>
+        <ul class="footer-menu">
+            <li><a [routerLink]="['/personal-finance/privacy-policy']">Privacy policy</a></li>
+            <li><a [routerLink]="['/personal-finance/terms-of-service']">Terms and Conditions</a></li>
+        </ul>
     </div>
 </div>

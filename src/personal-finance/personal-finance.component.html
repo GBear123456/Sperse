@@ -1,9 +1,9 @@
-<header *ngIf="loggedUserId"></header>
+<header></header>
 
 <div class="page-content">
-    <div class="wrapper" [ngClass]="{'pfm-app': hasPfmAppFeature}">
+    <div [ngClass]="{'wrapper': wrapperEnabled, 'pfm-app': hasPfmAppFeature}">
         <router-outlet></router-outlet>
     </div>
 </div>
 
-<footer *ngIf="loggedUserId"></footer>
+<footer></footer>

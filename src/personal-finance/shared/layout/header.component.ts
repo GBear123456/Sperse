@@ -44,6 +44,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     isImpersonatedLogin = false;
     hasPlatformPermissions = false;
     hasPfmAppFeature = false;
+    showDefaultHeader = true;
 
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName?};
@@ -113,12 +114,18 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         }
 
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
+        this.showDefaultHeader = this.isMemberArea() || this.hasPfmAppFeature;
 
         this.hasPlatformPermissions =
             (this.feature.isEnabled('CFO') && this._permissionChecker.isGranted('Pages.CFO')) ||
             (this.feature.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM')) ||
             (this.feature.isEnabled('Admin') && this._permissionChecker.isGranted('Pages.Administration.Users'));
     }
+
+    isMemberArea() {
+        return location.pathname.includes('member-area');
+    }
+
     get multiTenancySideIsTenant(): boolean {
         return this._abpSessionService.tenantId > 0;
     }

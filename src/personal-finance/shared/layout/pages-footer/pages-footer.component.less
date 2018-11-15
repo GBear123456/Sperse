@@ -1,79 +1,206 @@
-* {
-    color: rgba(255, 255, 255, .5);
-  }
-  .top-footer {
-    background-color: #133240;
-    padding: 56px 0;
-    text-align: center;
-  }
-  .footer-social {
-    margin-top: 32px;
-  }
-  .footer-social-list {
-    list-style-type: none;
-    padding-left: 0;
-  }
-  .footer-social-list-item {
-    display: inline-block;
-    padding: 0 16px;
-  }
-  .footer-social-list-item-link {
-    display: block;
-  }
-  svg {
-    display: block;
-    transition: fill .4s ease;
-  }
-  circle, g, path {
-    transition: fill .4s ease;
-  }
-  svg {
-    display: block;
-    transition: fill .4s ease;
-  }
-  circle:hover {
-    fill: #fff;
-    fill-opacity: 1;
-  }
-  path:hover {
-    fill: #ed9d1a;
-    fill-opacity: 1;
-  }
-  .footer-menu {
-    list-style-type: none;
-    padding-left: 0;
-    margin-top: 48px;
-    &-list {padding-left: 0;}
-    &-item {
-      display: inline-block;
-      padding: 0 25px;
+:host {
+    &:not(.pfm-app) {
+        .top-footer {
+            background-color: #133240;
+        }
+        .bottom-footer {
+            background-color: #0c2531;
+        }
     }
-    &-link {
-      color: #fff;
-      font-size: 16px;
-      font-weight: 500;
-      letter-spacing: 0.3px;
-      text-align: center;
-      text-decoration: none;
-      &:hover,
-      &:focus {
-        color: rgba(255, 255, 255, .6);
-      }
+    &.pfm-app {
+        .top-footer {
+            background-color: #002849;
+        }
+        .bottom-footer {
+            background-color: #052941;
+        }
     }
-  }
-  .copyright {
-    margin-top: 32px;
-    font-size: 13px;
-    letter-spacing: 0.3px;
-    color: rgba(255, 255, 255, .5);
-  }
-  .bottom-footer {
-    background-color: #0c2531;
-    padding: 20px 0;
-    font-size: 13px;
-    line-height: 1.23;
-    letter-spacing: 0.2px;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.5);
-  }
-  
+
+    .top-container {
+        width: 100%;
+    }
+
+    .top-footer {
+        padding: 59px 0;
+        text-align: center;
+    }
+    .footer-social {
+        margin-top: 32px;
+    }
+    .footer-social-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .footer-social-list-item {
+        display: inline-block;
+        padding: 0 16px;
+    }
+    .footer-social-list-item-link {
+        display: block;
+    }
+    svg {
+        display: block;
+        transition: fill .4s ease;
+    }
+    circle, g, path {
+        transition: fill .4s ease;
+    }
+    svg {
+        display: block;
+        transition: fill .4s ease;
+    }
+    circle:hover {
+        fill: #fff;
+        fill-opacity: 1;
+    }
+    path:hover {
+        fill: #ed9d1a;
+        fill-opacity: 1;
+    }
+    .footer-menu {
+        list-style-type: none;
+        padding-left: 0;
+        margin: 14px 55px 70px 55px;
+        &-list {
+            padding-left: 0;
+            display: inline-block;
+        }
+        &-item {
+            display: inline-block;
+            padding: 0 25px;
+        }
+        &-link {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-align: center;
+            text-decoration: none;
+            &:hover,
+            &:focus {
+                color: rgba(255, 255, 255, .6);
+            }
+        }
+
+        .logo {
+            float: left;
+            font-family: Calluna;
+            font-size: 25px;
+            font-weight: 600;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: normal;
+            color: #ffffff;
+            padding-left: 40px;
+            background: url(/assets/common/icons/social/telegram.svg) no-repeat;
+            background-position: 0px 0px;
+            background-size: 30px 25px;
+        }
+
+        .social-links {
+            display: inline-block;
+            float: right;
+            span {
+                display: inline-block;
+            }
+            .facebook {    
+                width: 10px;
+                height: 20px;
+                background: url(/assets/common/icons/facebook-icon.svg) no-repeat;
+            }
+            .twitter {
+                width: 18px;
+                height: 16px;
+                margin: 0px 32px;
+                background: url(/assets/common/icons/twitter-icon.svg) no-repeat;
+            }
+            .youtube {
+                width: 21px;
+                height: 16px;
+                background: url(/assets/common/icons/youtube-icon.svg) no-repeat;
+            }
+        }
+    }
+
+    .separator {
+        height: 1px;
+        margin: 0px 50px 36px 50px;
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .disclosure {
+        margin: 0px 50px;
+        text-align: left;
+        font-family: Open Sans;
+        font-size: 14px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        color: #ffffff;
+    }
+
+    .score {
+        text-align: left;
+        margin: 16px 50px 0px 50px;
+        font-family: Open Sans;
+        font-size: 14px;
+        font-weight: bold;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        color: #ffffff;        
+    }
+
+    .copyright {
+        float: left;
+        font-family: Open Sans;
+        font-size: 14px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        color: #ffffff;
+    }
+    .bottom-footer {
+        height: 80px;
+        padding: 20px 0;
+        font-size: 13px;
+        line-height: 1.23;
+        letter-spacing: 0.2px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.5);
+        .bottom-container {
+            padding: 10px 50px;
+            .footer-menu {
+                float: right;
+                list-style-type: none;
+                margin: 0;
+                li {
+                    display: inline-block;
+                    a {
+                        display: block;
+                        color: #fff;
+                        padding: 3px 20px;
+                        font-family: Open Sans;
+                        font-size: 14px;
+                        font-weight: normal;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: normal;
+                        letter-spacing: normal;
+                    }
+                    &:last-child {
+                        a {
+                            padding-right: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }  
+}

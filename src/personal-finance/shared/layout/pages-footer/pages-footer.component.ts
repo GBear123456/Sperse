@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
@@ -6,20 +6,31 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     templateUrl: './pages-footer.component.html',
     styleUrls: ['./pages-footer.component.less']
 })
-export class PagesFooterComponent extends AppComponentBase implements OnInit {
-    footerMenuItems = [
+export class PagesFooterComponent extends AppComponentBase {
+    @HostBinding('class.pfm-app') hasPfmAppFeature: boolean = false;
+
+    appMenuItems = [
+        { url: '/personal-finance/products', name: 'Products' },
+        { url: '/personal-finance/features', name: 'Features' },
+        { url: '/account/about-us', name: 'About' },
+        { url: '/personal-finance/contact-us', name: 'Contact us' }
+    ];
+    defaultMenuItems = [
         { url: '/personal-finance/about-us', name: 'AboutUs' },
         { url: '/personal-finance/contact-us', name: 'ContactUs' },
         { url: '/account/login', name: 'LoginBtn' },
         { url: '/personal-finance/', name: 'GetStarted' }
     ];
-    currentYear = new Date().getFullYear();
+    footerMenuItems = [];
 
+    currentYear = new Date().getFullYear();
     constructor(
         injector: Injector
     ) {
         super(injector);
-    }
 
-    ngOnInit() { }
+
+        this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
+        this.footerMenuItems = this.hasPfmAppFeature ? this.appMenuItems: this.defaultMenuItems;
+    }
 }

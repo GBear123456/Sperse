@@ -34,23 +34,28 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
                     },
                     {
                         path: 'member-area/kba-result',
-                        component: KbaResultComponent
+                        component: KbaResultComponent,
+                        data: {wrapperDisabled: true}
                     },
                     {
                         path: 'privacy-policy',
-                        component: PrivacyPolicyComponent
+                        component: PrivacyPolicyComponent,
+                        data: {wrapperDisabled: true}
                     },
                     {
                         path: 'terms-of-service',
-                        component: TermsOfServiceComponent
+                        component: TermsOfServiceComponent,
+                        data: {wrapperDisabled: true}
                     },
                     {
                         path: 'about-us',
-                        component: AboutUsComponent
+                        component: AboutUsComponent,
+                        data: {wrapperDisabled: true}
                     },
                     {
                         path: 'contact-us',
-                        component: ContactUsComponent
+                        component: ContactUsComponent,
+                        data: {wrapperDisabled: true}
                     }
                 ]
             }

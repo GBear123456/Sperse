@@ -1,4 +1,5 @@
-<div class="page-footer-default" *ngIf="!hasPfmAppFeature">
+<app-pages-footer *ngIf="!showDefaultHeader"></app-pages-footer>
+<div class="page-footer-inner" *ngIf="showDefaultHeader">
   <p class="copyright">
     © {{appSession?.tenant?.name}} {{ currentYear }}, all rights reserved
   </p>
@@ -7,19 +8,4 @@
     <li><a (click)="openConditionsDialog(conditions.Policies)">Privacy policy</a></li>
     <li><a (click)="openConditionsDialog(conditions.Terms)">Terms and Conditions</a></li>
   </ul>
-</div>
-
-<div class="page-footer-app" *ngIf="hasPfmAppFeature">
-    <div class="footer-top">
-
-    </div>
-    <div class="footer-bottom">        
-        <div class="separator"></div>
-        <div class="description">
-        </div>
-        <ul class="bottom-menu">
-          <li><a (click)="openConditionsDialog(conditions.Policies)">Privacy policy</a></li>
-          <li><a (click)="openConditionsDialog(conditions.Terms)">Terms and Conditions</a></li>
-        </ul>
-    </div>
 </div>
