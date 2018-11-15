@@ -32907,7 +32907,7 @@ export class ContactInfoDto implements IContactInfoDto {
     id!: number | undefined;
     statusId!: string | undefined;
     status!: string | undefined;
-    groupId!: string | undefined;
+    typeId!: string | undefined;
     assignedUserId!: number | undefined;
     creatorUserId!: number | undefined;
     starId!: number | undefined;
@@ -32936,7 +32936,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.id = data["id"];
             this.statusId = data["statusId"];
             this.status = data["status"];
-            this.groupId = data["groupId"];
+            this.typeId = data["typeId"];
             this.assignedUserId = data["assignedUserId"];
             this.creatorUserId = data["creatorUserId"];
             this.starId = data["starId"];
@@ -32977,7 +32977,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["id"] = this.id;
         data["statusId"] = this.statusId;
         data["status"] = this.status;
-        data["groupId"] = this.groupId;
+        data["typeId"] = this.typeId;
         data["assignedUserId"] = this.assignedUserId;
         data["creatorUserId"] = this.creatorUserId;
         data["starId"] = this.starId;
@@ -33011,7 +33011,7 @@ export interface IContactInfoDto {
     id: number | undefined;
     statusId: string | undefined;
     status: string | undefined;
-    groupId: string | undefined;
+    typeId: string | undefined;
     assignedUserId: number | undefined;
     creatorUserId: number | undefined;
     starId: number | undefined;
@@ -33581,7 +33581,7 @@ export interface IContactInfoDetailsDto {
 
 export class OrganizationInfoDto implements IOrganizationInfoDto {
     companyName!: string;
-    shortname!: string | undefined;
+    shortName!: string | undefined;
     industry!: string | undefined;
     annualRevenue!: number | undefined;
     ein!: string | undefined;
@@ -33611,7 +33611,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     init(data?: any) {
         if (data) {
             this.companyName = data["companyName"];
-            this.shortname = data["shortname"];
+            this.shortName = data["shortName"];
             this.industry = data["industry"];
             this.annualRevenue = data["annualRevenue"];
             this.ein = data["ein"];
@@ -33641,7 +33641,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
-        data["shortname"] = this.shortname;
+        data["shortName"] = this.shortName;
         data["industry"] = this.industry;
         data["annualRevenue"] = this.annualRevenue;
         data["ein"] = this.ein;
@@ -33664,7 +33664,7 @@ export class OrganizationInfoDto implements IOrganizationInfoDto {
 
 export interface IOrganizationInfoDto {
     companyName: string;
-    shortname: string | undefined;
+    shortName: string | undefined;
     industry: string | undefined;
     annualRevenue: number | undefined;
     ein: string | undefined;
@@ -46864,7 +46864,7 @@ export interface IOrganizationShortInfo {
 export class CreateOrganizationInput implements ICreateOrganizationInput {
     relatedContactId!: number;
     companyName!: string;
-    shortname!: string | undefined;
+    shortName!: string | undefined;
     industry!: string | undefined;
     annualRevenue!: number | undefined;
     ein!: string | undefined;
@@ -46895,7 +46895,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         if (data) {
             this.relatedContactId = data["relatedContactId"];
             this.companyName = data["companyName"];
-            this.shortname = data["shortname"];
+            this.shortName = data["shortName"];
             this.industry = data["industry"];
             this.annualRevenue = data["annualRevenue"];
             this.ein = data["ein"];
@@ -46926,7 +46926,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         data = typeof data === 'object' ? data : {};
         data["relatedContactId"] = this.relatedContactId;
         data["companyName"] = this.companyName;
-        data["shortname"] = this.shortname;
+        data["shortName"] = this.shortName;
         data["industry"] = this.industry;
         data["annualRevenue"] = this.annualRevenue;
         data["ein"] = this.ein;
@@ -46950,7 +46950,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
 export interface ICreateOrganizationInput {
     relatedContactId: number;
     companyName: string;
-    shortname: string | undefined;
+    shortName: string | undefined;
     industry: string | undefined;
     annualRevenue: number | undefined;
     ein: string | undefined;
@@ -47008,7 +47008,7 @@ export interface ICreateOrganizationOutput {
 export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
     id!: number;
     companyName!: string;
-    shortname!: string | undefined;
+    shortName!: string | undefined;
     industry!: string | undefined;
     annualRevenue!: number | undefined;
     ein!: string | undefined;
@@ -47039,7 +47039,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         if (data) {
             this.id = data["id"];
             this.companyName = data["companyName"];
-            this.shortname = data["shortname"];
+            this.shortName = data["shortName"];
             this.industry = data["industry"];
             this.annualRevenue = data["annualRevenue"];
             this.ein = data["ein"];
@@ -47070,7 +47070,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["companyName"] = this.companyName;
-        data["shortname"] = this.shortname;
+        data["shortName"] = this.shortName;
         data["industry"] = this.industry;
         data["annualRevenue"] = this.annualRevenue;
         data["ein"] = this.ein;
@@ -47094,7 +47094,7 @@ export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput
 export interface IUpdateOrganizationInfoInput {
     id: number;
     companyName: string;
-    shortname: string | undefined;
+    shortName: string | undefined;
     industry: string | undefined;
     annualRevenue: number | undefined;
     ein: string | undefined;
