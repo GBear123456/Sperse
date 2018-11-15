@@ -164,14 +164,14 @@ export class AppService extends AppServiceBase {
         return false;
     }
 
-    getSubscriptionExpiringDayCount(): number {
-        let sub = this.getModuleSubscription();
+    getSubscriptionExpiringDayCount(name = undefined): number {
+        let sub = this.getModuleSubscription(name);
         return sub && sub.endDate && Math.round(moment(
             sub.endDate).diff(moment().utc(), 'days', true));
     }
 
-    getGracePeriodDayCount() {
-        let sub = this.getModuleSubscription();
+    getGracePeriodDayCount(name = undefined) {
+        let sub = this.getModuleSubscription(name);
         return sub && sub.endDate && Math.round(moment(sub.endDate)
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
