@@ -39,6 +39,7 @@ import {  DxSelectBoxModule,
           DxValidatorModule,
           DxValidationSummaryModule } from 'devextreme-angular';
 import { AngularGooglePlaceModule } from 'angular-google-place';
+import { OffersModule } from '@root/personal-finance/shared/offers/offers.module';
 
 @NgModule({
     imports: [
@@ -66,7 +67,8 @@ import { AngularGooglePlaceModule } from 'angular-google-place';
         DxValidationSummaryModule,
         ReportWizardModule,
         UtilsModule,
-        PaymentInfoModule
+        PaymentInfoModule,
+        OffersModule
     ],
     declarations: [
         LandingComponent,

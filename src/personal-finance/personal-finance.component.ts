@@ -1,4 +1,4 @@
-import { Component, ViewContainerRef, OnInit, AfterViewInit, Injector } from '@angular/core';
+import { Component, ViewContainerRef, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 declare const Typekit: any;

@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     AfterViewInit,
     ApplicationRef,
@@ -11,17 +12,19 @@ import {
     HostListener,
     Renderer2
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
+/** Third party imports */
+import { BehaviorSubject, Observable, Subject, combineLatest } from 'rxjs';
 import { first, map, publishReplay, refCount, takeUntil } from 'rxjs/operators';
 import { isEmpty, pickBy } from 'lodash';
-
-import { RootComponent } from '@root/root.components';
-import { CreditCard } from '@root/personal-finance/member-area/offers/models/credit-card.interface';
-import { CreditCardsService } from '@root/personal-finance/member-area/offers/credit-cards.service';
 import { MatSelect } from '@angular/material';
+
+/** Third party improrts */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { RootComponent } from '@root/root.components';
+import { CreditCard } from '@root/personal-finance/shared/offers/models/credit-card.interface';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
 interface FilterValues {
     [field: string]: { [filterValue: string]: string };
@@ -91,8 +94,6 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     selectedFilter = new BehaviorSubject(this.filtersValues);
     private selectedFilter$ = this.selectedFilter.asObservable();
 
-    private destroy: Subject<null> = new Subject<null>();
-    private destroy$: Observable<null> = this.destroy.asObservable();
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
 
@@ -106,14 +107,15 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         applicationRef: ApplicationRef,
         public ls: AppLocalizationService,
         private router: Router,
-        private creditCardsService: CreditCardsService,
-        private renderer: Renderer2
+        private offersService: OffersService,
+        private renderer: Renderer2,
+        private route: ActivatedRoute
     ) {
         this.rootComponent = injector.get(applicationRef.componentTypes[0]);
     }
 
     ngOnInit() {
-        this.creditCards$ = this.creditCardsService.getCreditCards().pipe(publishReplay(), refCount());
+        this.creditCards$ = this.offersService.getCreditCards().pipe(publishReplay(), refCount());
         /** Insert filters values from credit cards data */
         this.creditCards$.pipe(first()).subscribe(creditCards => {
             this.fullFillFilterValues(creditCards);
@@ -138,7 +140,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
                 ))
             );
         this.displayedCreditCards$.pipe(takeUntil(this.deactivate$)).subscribe(displayedCreditCards => {
-            this.creditCardsService.displayedCards = displayedCreditCards;
+            this.offersService.displayedCards = displayedCreditCards;
         });
 
         /** Set overflow hidden to container */
@@ -213,7 +215,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     viewCardDetails(card: CreditCard) {
-        this.router.navigate(['personal-finance/member-area/offer', card.id]);
+        this.router.navigate(['../offer', card.id], { relativeTo: this.route });
     }
 
     showFiltering(e) {
@@ -227,7 +229,6 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.destroy.next();
         this.deactivate();
     }
 

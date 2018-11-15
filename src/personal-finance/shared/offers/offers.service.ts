@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
-import { CreditCard } from '@root/personal-finance/member-area/offers/models/credit-card.interface';
-import { CreditCardDetails } from '@root/personal-finance/member-area/offers/models/credit-card-details.interface';
+import { CreditCard } from '@root/personal-finance/shared/offers/models/credit-card.interface';
+import { CreditCardDetails } from '@root/personal-finance/shared/offers/models/credit-card-details.interface';
 
 @Injectable()
-export class CreditCardsService {
+export class OffersService {
     displayedCards: CreditCard[];
     cardDetails = {
         '1': {
@@ -151,9 +151,6 @@ export class CreditCardsService {
     }
 
     getCreditCardDetails(cardId: number): Observable<CreditCardDetails> {
-
-        console.log(this.cardDetails[cardId.toString()]);
-
         return of(this.cardDetails[cardId.toString()]).pipe(delay(500), tap(x => console.log('card details in service', x)));
     }
 }

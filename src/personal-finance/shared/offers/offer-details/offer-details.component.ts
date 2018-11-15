@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     ApplicationRef,
     AfterViewInit,
@@ -10,16 +11,19 @@ import {
     Injector
 } from '@angular/core';
 import { Location } from '@angular/common';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { CreditCard } from '@root/personal-finance/member-area/offers/models/credit-card.interface';
-import { CreditCardDetails } from '@root/personal-finance/member-area/offers/models/credit-card-details.interface';
-import { MatRadioChange } from '@angular/material/radio';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject, of, combineLatest } from 'rxjs';
-import { filter, map, switchMap, tap, takeUntil } from 'rxjs/operators';
-import { CreditCardsService } from '@root/personal-finance/member-area/offers/credit-cards.service';
+
+/** Third party imports */
+import { MatRadioChange } from '@angular/material/radio';
+import { Observable, Subject, ReplaySubject, of } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
+
+/** Application imports */
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CreditCard } from '@root/personal-finance/shared/offers/models/credit-card.interface';
+import { CreditCardDetails } from '@root/personal-finance/shared/offers/models/credit-card-details.interface';
 import { RootComponent } from '@root/root.components';
-import { BehaviorSubject, ReplaySubject } from '@node_modules/rxjs';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
 @Component({
     templateUrl: 'offer-details.component.html',
@@ -32,23 +36,19 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
     scrollHeight: number;
     selectedCardId: ReplaySubject<number> = new ReplaySubject<number>();
     selectedCardId$: Observable<number> = this.selectedCardId.asObservable();
-
     selectedCardDetails$: Observable<CreditCardDetails>;
-
-    private destroy: Subject<null> = new Subject<null>();
-    private destroy$: Observable<null> = this.destroy.asObservable();
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
-
     private rootComponent: RootComponent;
+
     constructor(
         injector: Injector,
         applicationRef: ApplicationRef,
         public ls: AppLocalizationService,
         private route: ActivatedRoute,
         private router: Router,
-        private creditCardsService: CreditCardsService,
-        private location: Location
+        private location: Location,
+        private offersService: OffersService
     ) {
         this.rootComponent = injector.get(applicationRef.componentTypes[0]);
     }
@@ -65,16 +65,15 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
 
         this.selectedCardDetails$ = this.selectedCardId$.pipe(
             takeUntil(this.deactivate$),
-            switchMap(cardId => this.creditCardsService.getCreditCardDetails(cardId))
+            switchMap(cardId => this.offersService.getCreditCardDetails(cardId))
         );
 
-        this.creditCards$ = this.creditCardsService.displayedCards && this.creditCardsService.displayedCards.length ?
-            of(this.creditCardsService.displayedCards) :
-            this.creditCardsService.getCreditCards();
+        this.creditCards$ = this.offersService.displayedCards && this.offersService.displayedCards.length ?
+            of(this.offersService.displayedCards) :
+            this.offersService.getCreditCards();
 
         /** Set overflow hidden to container */
         this.rootComponent.overflowHidden(true);
-        console.log('offers details activate');
     }
 
     ngAfterViewInit() {
@@ -104,8 +103,6 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.deactivate();
-        this.destroy.next();
-        this.destroy.unsubscribe();
     }
 
     deactivate() {

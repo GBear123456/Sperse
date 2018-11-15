@@ -219,7 +219,7 @@
 
 :host {
     .wrapper {
-        &:not(.pfm-app) {        
+        &:not(.pfm-app) {
             position: relative;
             overflow: hidden;
             min-height: calc(~"100vh - 79px");
@@ -499,6 +499,39 @@
             font-size: 26px !important;
             font-weight: normal;
             font-family: @lato;
+        }
+    }
+
+    /deep/ .content-wrap {
+        position: relative;
+        border-radius: 6px;
+        background-color: #ffffff;
+        box-shadow: 0 10px 40px 0 rgba(23, 28, 29, 0.15);
+        box-sizing: border-box;
+        padding: 32px 48px 48px;
+    }
+
+    /deep/ button.applyButton {
+        text-align: center;
+        border-radius: 2px;
+        background-color: #EC9D1A !important;
+        box-shadow: 0 3px 10px 0 rgba(245,166,35,0.35);
+        width: 143px;
+        height: 38px;
+        -webkit-transform: skew(-20deg);
+        -moz-transform: skew(-20deg);
+        -o-transform: skew(-20deg);
+        margin-bottom: 7px;
+        span {
+            display: block;
+            -webkit-transform: skew(20deg);
+            -moz-transform: skew(20deg);
+            -o-transform: skew(20deg);
+            color: #FFFFFF;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 0.13px;
+            text-align: center;
         }
     }
 }
