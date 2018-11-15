@@ -105,8 +105,10 @@ export class PackageChooserComponent implements OnInit {
 
     getCurrentPackageAndEdition(packagesConfig: GetPackagesConfigOutput) {
         let currentEditionId = packagesConfig.currentSubscriptionInfo ? packagesConfig.currentSubscriptionInfo.editionId : undefined;
-        this.currentPackage = this.packages.find(packageConfig => packageConfig.editions.some(edition => edition.id === currentEditionId));
-        this.currentEdition = this.currentPackage ? this.currentPackage.editions[currentEditionId] : null;
+        this.currentPackage = this.packages.find(packageConfig => {
+            this.currentEdition = packageConfig.editions.find(edition => edition.id === currentEditionId);
+            return !!this.currentEdition;
+        });
     }
 
     /** Split packages to free packages and notFreePackages */
