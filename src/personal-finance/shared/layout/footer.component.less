@@ -1,10 +1,47 @@
 @import url(_settings);
 :host {
-    bottom: 0px;
-    position: fixed;
-    width: 100%;
+    &:not(.pfm-app) {
+        bottom: 0px;
+        position: fixed;
+        width: 100%;
+    }
+    &.pfm-app {
+        display: block;               
+    }
 
-    .page-footer-inner {
+    .page-footer-app {
+        background-color: #002849;
+
+        .bottom-menu {
+            height: 80px;
+            float: right;
+            max-width: 54%;
+            list-style-type: none;
+            margin: 0;
+            li {
+                display: inline-block;
+                a {
+                    display: block;
+                    color: #fff;
+                    padding: 23px 20px;
+                }
+                &:last-child {
+                    a {
+                        padding-right: 0;
+                    }
+                }
+            }
+        }
+        .separator {
+            width: 90%;
+            height: 1px;
+            border: solid 1px rgba(255, 255, 255, 0.15);
+        }
+        .description {
+        }
+    }
+
+    .page-footer-default {
         &::after {
             visibility: hidden;
             display: block;

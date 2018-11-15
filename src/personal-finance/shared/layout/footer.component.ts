@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, HostBinding, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConditionsType } from '@shared/AppEnums';
 import { MatDialog } from '@angular/material';
@@ -10,6 +10,8 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
     selector: 'footer'
 })
 export class FooterComponent extends AppComponentBase implements OnInit {
+    @HostBinding('class.pfm-app') hasPfmAppFeature: boolean = false;
+
     currentYear = new Date().getFullYear();
     conditions = ConditionsType;
     constructor(
@@ -17,6 +19,8 @@ export class FooterComponent extends AppComponentBase implements OnInit {
         private dialog: MatDialog
     ) {
         super(injector);
+
+        this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
     }
 
     ngOnInit(): void {

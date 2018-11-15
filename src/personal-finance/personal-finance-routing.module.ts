@@ -13,6 +13,7 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
         RouterModule.forChild([
             {
                 path: '',
+                component: PersonalFinanceComponent,
                 canActivate: [ CreditReportsRouteGuard ],
                 children: [
                     {
@@ -22,7 +23,6 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
                     },
                     {
                         path: 'member-area',
-                        component: PersonalFinanceComponent,
                         canActivateChild: [ CreditReportsRouteGuard ],
                         children: [
                             {

@@ -15,7 +15,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 import { LoginAttemptsModalComponent } from '@app/shared/layout/login-attempts-modal.component';
@@ -99,12 +98,11 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _userNotificationHelper: UserNotificationHelper,
         private _sessionService: SessionServiceProxy,
         private _appSessionService: AppSessionService,
-        private _featureChecker: FeatureCheckerService,
         private _permissionChecker: PermissionCheckerService
     ) {
         super(injector);
 
-        if (_featureChecker.isEnabled('CFO.Partner')) {
+        if (this.feature.isEnabled('CFO.Partner')) {
             this.memberAreaLinks.unshift(
                 {
                     name: 'accountsLink',
@@ -114,12 +112,12 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
                 });
         }
 
-        this.hasPfmAppFeature = _featureChecker.isEnabled('PFM.Application');
+        this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
 
         this.hasPlatformPermissions =
-            (this._featureChecker.isEnabled('CFO') && this._permissionChecker.isGranted('Pages.CFO')) ||
-            (this._featureChecker.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM')) ||
-            (this._featureChecker.isEnabled('Admin') && this._permissionChecker.isGranted('Pages.Administration.Users'));
+            (this.feature.isEnabled('CFO') && this._permissionChecker.isGranted('Pages.CFO')) ||
+            (this.feature.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM')) ||
+            (this.feature.isEnabled('Admin') && this._permissionChecker.isGranted('Pages.Administration.Users'));
     }
     get multiTenancySideIsTenant(): boolean {
         return this._abpSessionService.tenantId > 0;

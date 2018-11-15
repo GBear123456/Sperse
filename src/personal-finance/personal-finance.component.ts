@@ -10,6 +10,7 @@ declare const Typekit: any;
 export class PersonalFinanceComponent extends AppComponentBase implements OnInit {
 
     hasPfmAppFeature = false;
+    loggedUserId: number;
 
     private viewContainerRef: ViewContainerRef;
     public constructor(
@@ -19,7 +20,8 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
         super(injector);
         this.viewContainerRef = viewContainerRef;
         // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
-        this.hasPfmAppFeature = this.feature.isEnabled('PFM.Application');
+        this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
+        this.loggedUserId = this.appSession.userId;
     }
 
     ngOnInit(): void {

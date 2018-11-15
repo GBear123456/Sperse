@@ -1,4 +1,4 @@
-<header></header>
+<header *ngIf="loggedUserId"></header>
 
 <div class="page-content">
     <div class="wrapper" [ngClass]="{'pfm-app': hasPfmAppFeature}">
@@ -6,4 +6,4 @@
     </div>
 </div>
 
-<footer></footer>
+<footer *ngIf="loggedUserId"></footer>
