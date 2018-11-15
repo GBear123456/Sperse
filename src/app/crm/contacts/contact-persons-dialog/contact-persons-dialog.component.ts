@@ -1,4 +1,4 @@
-import { Component, Inject, Injector } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, Injector } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
@@ -8,10 +8,12 @@ import { PersonContactInfoDto, ContactInfoDto } from 'shared/service-proxies/ser
     selector: 'contact-persons-dialog',
     templateUrl: './contact-persons-dialog.component.html',
     styleUrls: ['./contact-persons-dialog.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactPersonsDialogComponent extends AppComponentBase {
 
-    contactPersonsFiltered: PersonContactInfoDto[];
+    contactPersons: PersonContactInfoDto[];
+    displayedContactPersons: PersonContactInfoDto[];
 
     constructor(
         injector: Injector,
@@ -19,7 +21,7 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
         public dialogRef: MatDialogRef<ContactPersonsDialogComponent>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.contactPersonsFiltered = this.data.contactPersons.filter(item => item.id != this.data.personContactInfo.id);
+        this.displayedContactPersons = this.contactPersons = this.data.contactPersons.filter(item => item.id != this.data.personContactInfo.id);
     }
 
     selectContactPerson(contactPerson): void {
@@ -32,18 +34,7 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
     }
 
     filterList(event) {
-        let filter, ul, li, element;
-        filter = event.target.value.toUpperCase();
-        ul = document.getElementById('related-contact-list');
-        li = ul.getElementsByTagName('li');
-
-        for (let i = 0; i < li.length; i++) {
-            element = li[i].querySelector('.full-name h1');
-            if (element.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                li[i].style.display = '';
-            } else {
-                li[i].style.display = 'none';
-            }
-        }
+        let filter = event.target.value.toUpperCase();
+        this.displayedContactPersons = this.contactPersons.filter(person => person.fullName.toUpperCase().indexOf(filter) > -1);
     }
 }

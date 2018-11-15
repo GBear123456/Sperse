@@ -9,7 +9,7 @@
 </header>
 <mat-dialog-content>
     <ul class="contact-persons-container" id="related-contact-list">
-        <li class="contact-person-info" [class.odd]="odd" *ngFor="let contactPerson of contactPersonsFiltered; let odd = odd" (click)='selectContactPerson(contactPerson)'>
+        <li class="contact-person-info" [class.odd]="odd" *ngFor="let contactPerson of displayedContactPersons; let odd = odd" (click)='selectContactPerson(contactPerson)'>
             <div class="avatar">
                 <img src="{{ getPhoto(contactPerson?.primaryPhoto?.thumbnail )}}" alt="{{l('AltPersonPhoto')}}">
             </div>
