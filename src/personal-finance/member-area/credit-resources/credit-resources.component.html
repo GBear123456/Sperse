@@ -1,16 +1,14 @@
-<div class="wrapper">
-    <div class="content-wrap" [@routerTransition]>
-        <div class="credit-resources">
-            <div class="heading">
-                <h1 class="heading-title">{{l("creditResources")}}</h1>
+<div class="content-wrap" [@routerTransition]>
+    <div class="credit-resources">
+        <div class="heading">
+            <h1 class="heading-title">{{l("creditResources")}}</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-7 col-sm-7 col-xs-12">
+                <app-identity-protection></app-identity-protection>
             </div>
-            <div class="row">
-                <div class="col-md-7 col-sm-7 col-xs-12">
-                    <app-identity-protection></app-identity-protection>
-                </div>
-                <div class="col-md-5 col-sm-5 col-xs-12">
-                    <app-privacy-protection></app-privacy-protection>
-                </div>
+            <div class="col-md-5 col-sm-5 col-xs-12">
+                <app-privacy-protection></app-privacy-protection>
             </div>
         </div>
     </div>
