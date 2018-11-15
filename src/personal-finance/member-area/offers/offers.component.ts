@@ -6,7 +6,10 @@ import {
     OnInit,
     Injector,
     OnDestroy,
-    ElementRef, ViewChild, HostListener
+    ElementRef,
+    ViewChild,
+    HostListener,
+    Renderer2
 } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -18,6 +21,7 @@ import { isEmpty, pickBy } from 'lodash';
 import { RootComponent } from '@root/root.components';
 import { CreditCard } from '@root/personal-finance/member-area/offers/models/credit-card.interface';
 import { CreditCardsService } from '@root/personal-finance/member-area/offers/credit-cards.service';
+import { MatSelect } from '@angular/material';
 
 interface FilterValues {
     [field: string]: { [filterValue: string]: string };
@@ -30,6 +34,8 @@ interface FilterValues {
 })
 export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild('creditCardsList') creditCardsListRef: ElementRef;
+    @ViewChild('filtersSideBar') filtersSideBar: ElementRef;
+    @ViewChild('sortingSelect') sortingSelect: MatSelect;
     private creditCards$: Observable<CreditCard[]>;
     displayedCreditCards$: Observable<CreditCard[]>;
     creditCardsAmount: number;
@@ -100,7 +106,8 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         applicationRef: ApplicationRef,
         public ls: AppLocalizationService,
         private router: Router,
-        private creditCardsService: CreditCardsService
+        private creditCardsService: CreditCardsService,
+        private renderer: Renderer2
     ) {
         this.rootComponent = injector.get(applicationRef.componentTypes[0]);
     }
@@ -115,6 +122,27 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         this.creditCards$.pipe(first()).subscribe(creditCards => this.creditCardsAmount = creditCards.length);
         this.createFiltersObject();
         this.activate();
+    }
+
+    activate() {
+        this.displayedCreditCards$ =
+            combineLatest(
+                this.creditCards$,
+                this.selectedFilter$,
+                this.selectedSorting$
+            ).pipe(
+                takeUntil(this.deactivate$),
+                map(([creditCards, filtersValues, sortingField]) => this.sortCards(
+                    this.filterCards(creditCards, filtersValues),
+                    sortingField
+                ))
+            );
+        this.displayedCreditCards$.pipe(takeUntil(this.deactivate$)).subscribe(displayedCreditCards => {
+            this.creditCardsService.displayedCards = displayedCreditCards;
+        });
+
+        /** Set overflow hidden to container */
+        this.rootComponent.overflowHidden(true);
     }
 
     /**
@@ -188,30 +216,19 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         this.router.navigate(['personal-finance/member-area/offer', card.id]);
     }
 
+    showFiltering(e) {
+        this.filtersSideBar.nativeElement.classList.contains('xs-hidden')
+            ? this.renderer.removeClass(this.filtersSideBar.nativeElement, 'xs-hidden')
+            : this.renderer.addClass(this.filtersSideBar.nativeElement, 'xs-hidden');
+    }
+
+    showSorting(e) {
+        this.sortingSelect.toggle();
+    }
+
     ngOnDestroy() {
         this.destroy.next();
         this.deactivate();
-    }
-
-    activate() {
-        this.displayedCreditCards$ =
-            combineLatest(
-                this.creditCards$,
-                this.selectedFilter$,
-                this.selectedSorting$
-            ).pipe(
-                takeUntil(this.deactivate$),
-                map(([creditCards, filtersValues, sortingField]) => this.sortCards(
-                    this.filterCards(creditCards, filtersValues),
-                    sortingField
-                ))
-            );
-        this.displayedCreditCards$.pipe(takeUntil(this.deactivate$)).subscribe(displayedCreditCards => {
-            this.creditCardsService.displayedCards = displayedCreditCards;
-        });
-
-        /** Set overflow hidden to container */
-        this.rootComponent.overflowHidden(true);
     }
 
     deactivate() {

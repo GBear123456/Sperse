@@ -95,7 +95,7 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
         this.selectedCardId.next(e.value);
         /** Update url with new card id */
         const newUrl = this.router.createUrlTree(['../' + e.value], { relativeTo: this.route }).toString();
-        this.location.go(newUrl);
+        this.location.replaceState(newUrl);
     }
 
     applyCard(id: number) {

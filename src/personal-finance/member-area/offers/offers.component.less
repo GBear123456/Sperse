@@ -1,3 +1,5 @@
+@mainColor: #002849;
+
 :host {
     ul {
         padding-left: 0;
@@ -21,9 +23,9 @@
         border-bottom: 1px solid #DFDFDF;
         padding-bottom: 19px;
         h1 {
-            color: #002849;
+            color: @mainColor;
             font-size: 46px;
-            font-weight: bold;
+            font-weight: 700;
             line-height: 57px;
             text-align: center;
             margin-bottom: 7px;
@@ -32,19 +34,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
             .foundCount {
-                color: #002849;
+                color: @mainColor;
                 font-size: 28px;
                 font-weight: 500;
                 letter-spacing: 0.22px;
                 line-height: 34px;
+                span {
+                    font-weight: 600;
+                }
             }
             .sortBy {
                 color: #3E4A54;
                 font-size: 14px;
                 letter-spacing: 0.16px;
                 display: flex;
-                min-width: 200px;
+                min-width: 170px;
                 /deep/ mat-select {
                     mat-option {
                         color: #171C1D;
@@ -66,61 +72,102 @@
                     margin-right: 10px;
                     white-space: nowrap;
                 }
+                @media (max-width: 768px) {
+                    min-width: 0;
+                    visibility: hidden;
+                    position: absolute;
+                    right: 0;
+                    top: 70px;
+                }
+            }
+            .mobileButtons {
+                display: flex;
+                button {
+                    border-color: aliceblue;
+                    border: 1px solid #ebedf2;
+                    width: 3.5em;
+                    height: 3.5em;
+                    padding: 10px;
+                    &.sortingButton {
+                        background: url('../../../assets/common/icons/sort-icon-down.svg') no-repeat 50%;
+                    }
+                    &.filteringButton {
+                        background: url('../../../assets/common/icons/filter.svg') no-repeat 50%;
+                    }
+                    &:not(:last-child) {
+                        margin-right: 10px;
+                    }
+                }
             }
         }
     }
 
     .main {
         padding-top: 35px;
-        .filter-side-bar .filters li {
-            &:not(:last-child) {
-                margin-bottom: 21px;
+        position: relative;
+        .filter-side-bar {
+            @media (max-width: 768px) {
+                position: fixed;
+                transform: translateX(0);
+                transition: transform 0.3s ease-in-out;
+                background: #fff;
+                z-index: 1;
+                &.xs-hidden {
+                    transform: translateX(-100%);
+                }
             }
-            .filterName {
-                color: #002849;
-                font-size: 13px;
-                font-weight: bold;
-                letter-spacing: 0.4px;
-                line-height: 16px;
-                margin-bottom: 14px;
-                text-transform: uppercase;
-            }
-            /deep/ mat-checkbox {
-                display: block;
-                .mat-checkbox-layout {
-                    margin-bottom: 10px;
-                    .mat-checkbox-inner-container {
-                        margin-right: 14px;
-                        .mat-ripple-element {
-                            display: none;
+
+            .filters li {
+                &:not(:last-child) {
+                    margin-bottom: 21px;
+                }
+                .filterName {
+                    color: @mainColor;
+                    font-size: 13px;
+                    font-weight: 700;
+                    letter-spacing: 0.4px;
+                    line-height: 16px;
+                    margin-bottom: 14px;
+                    text-transform: uppercase;
+                }
+                /deep/ mat-checkbox {
+                    display: block;
+                    .mat-checkbox-layout {
+                        margin-bottom: 10px;
+                        .mat-checkbox-inner-container {
+                            margin-right: 14px;
+                            .mat-ripple-element {
+                                display: none;
+                            }
+                            .mat-checkbox-frame {
+                                -webkit-border-radius: 50%;
+                                -moz-border-radius: 50%;
+                                border-radius: 50%;
+                                border-color: #DFDFDF;
+                            }
+                            .mat-checkbox-background {
+                                border-radius: 50%;
+                            }
                         }
-                        .mat-checkbox-frame {
-                            -webkit-border-radius: 50%;
-                            -moz-border-radius: 50%;
-                            border-radius: 50%;
-                            border-color: #DFDFDF;
+                        .mat-checkbox-label {
+                            color: #3e4a54;
+                            font-family: Montserrat;
+                            font-size: 15px;
+                            font-weight: 600;
+                            letter-spacing: 0.18px;
+                            line-height: 21px;
+                            font-weight: 500;
                         }
+                    }
+                    &.mat-checkbox-checked {
                         .mat-checkbox-background {
+                            background-color: #f5a622;
                             border-radius: 50%;
                         }
                     }
-                    .mat-checkbox-label {
-                        color: #171C1D;
-                        font-family: Montserrat;
-                        font-size: 15px;
-                        font-weight: 600;
-                        letter-spacing: 0.18px;
-                        line-height: 21px;
+                    &:last-of-type .mat-checkbox-layout {
+                        margin-bottom: 0px;
                     }
-                }
-                &.mat-checkbox-checked {
-                    .mat-checkbox-background {
-                        background-color: #f5a622;
-                        border-radius: 50%;
-                    }
-                }
-                &:last-of-type .mat-checkbox-layout {
-                    margin-bottom: 0px;
                 }
             }
         }
@@ -132,13 +179,18 @@
                 &:not(:last-child) {
                     margin-bottom: 35px;
                 }
+                .image img {
+                    max-width: 152px;
+                    max-height: 96px;
+                }
                 .description {
                     h4 {
-                        color: #002849;
+                        color: @mainColor;
                         font-size: 19px;
-                        font-weight: bold;
+                        font-weight: 700;
                         letter-spacing: 0.24px;
                         line-height: 23px;
+                        margin-bottom: 0;
                     }
                     .rating {
                         color: #1E5FEB;
@@ -146,6 +198,7 @@
                         font-weight: 600;
                         letter-spacing: 0.17px;
                         line-height: 25px;
+                        margin-bottom: 7px;
                         stars-rating {
                             margin-right: 8.39px;
                         }
@@ -156,14 +209,16 @@
                         li {
                             display: inline-block;
                             h5 {
-                                font-size: 14px;
-                                font-weight: 500;
-                                letter-spacing: 0.18px;
+                                color: @mainColor;
+                                font-size: 15px;
+                                font-weight: 700;
+                                letter-spacing: 0.2px;
                                 line-height: 21px;
                                 margin-bottom: 0px;
                                 font-weight: 600;
                             }
                             p {
+                                font-size: 14px;
                                 color: rgba(62,74,84,0.7);
                                 font-weight: 500;
                             }
@@ -172,6 +227,9 @@
                 }
                 .actions {
                     text-align: center;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
                     button {
                         &.applyButton {
                             border-radius: 2px;
@@ -190,7 +248,7 @@
                                 -o-transform: skew(20deg);
                                 color: #FFFFFF;
                                 font-size: 16px;
-                                font-weight: bold;
+                                font-weight: 700;
                                 letter-spacing: 0.13px;
                                 text-align: center;
                             }
