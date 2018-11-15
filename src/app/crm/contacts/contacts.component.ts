@@ -194,7 +194,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             });
         }
 
-        this.operationsEnabled = (result.typeId != ContactGroup.UserProfile);
+        this.operationsEnabled = (result.groupId != ContactGroup.UserProfile);
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;

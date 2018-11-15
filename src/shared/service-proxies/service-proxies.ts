@@ -32907,7 +32907,7 @@ export class ContactInfoDto implements IContactInfoDto {
     id!: number | undefined;
     statusId!: string | undefined;
     status!: string | undefined;
-    typeId!: string | undefined;
+    groupId!: string | undefined;
     assignedUserId!: number | undefined;
     creatorUserId!: number | undefined;
     starId!: number | undefined;
@@ -32936,7 +32936,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.id = data["id"];
             this.statusId = data["statusId"];
             this.status = data["status"];
-            this.typeId = data["typeId"];
+            this.groupId = data["groupId"];
             this.assignedUserId = data["assignedUserId"];
             this.creatorUserId = data["creatorUserId"];
             this.starId = data["starId"];
@@ -32977,7 +32977,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["id"] = this.id;
         data["statusId"] = this.statusId;
         data["status"] = this.status;
-        data["typeId"] = this.typeId;
+        data["groupId"] = this.groupId;
         data["assignedUserId"] = this.assignedUserId;
         data["creatorUserId"] = this.creatorUserId;
         data["starId"] = this.starId;
@@ -33011,7 +33011,7 @@ export interface IContactInfoDto {
     id: number | undefined;
     statusId: string | undefined;
     status: string | undefined;
-    typeId: string | undefined;
+    groupId: string | undefined;
     assignedUserId: number | undefined;
     creatorUserId: number | undefined;
     starId: number | undefined;

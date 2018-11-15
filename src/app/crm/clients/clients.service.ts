@@ -25,20 +25,20 @@ export class ClientService {
         this.contactServiceProxy = injector.get(ContactServiceProxy);
     }
 
-    updateContactStatuses(contactIds: number[], typeId: string, statusId: string, callback: (() => void)) {
+    updateContactStatuses(contactIds: number[], groupId: string, statusId: string, callback: (() => void)) {
         if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
             if (contactIds && contactIds.length) {
-                this.showUpdateContactStatusConfirmationDialog(contactIds, typeId, statusId, callback);
+                this.showUpdateContactStatusConfirmationDialog(contactIds, groupId, statusId, callback);
             } else {
                 this.message.warn(this.appLocalizationService.ls(this.crmLocalizationSourceName, 'NoRecordsToUpdate'));
             }
         }
     }
-    private showUpdateContactStatusConfirmationDialog(contactIds: number[], typeId: string, statusId: string, callback: (() => void)) {
-        let customerType = typeId == ContactGroup.Partner ? 'Partner' : 'Client';
+    private showUpdateContactStatusConfirmationDialog(contactIds: number[], groupId: string, statusId: string, callback: (() => void)) {
+        let contactGroup = groupId == ContactGroup.Partner ? 'Partner' : 'Client';
         this.message.confirm(
-            this.appLocalizationService.ls(this.crmLocalizationSourceName, `${customerType}sUpdateStatusWarningMessage`),
-            this.appLocalizationService.ls(this.crmLocalizationSourceName, `${customerType}StatusUpdateConfirmationTitle`),
+            this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}sUpdateStatusWarningMessage`),
+            this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}StatusUpdateConfirmationTitle`),
             isConfirmed => {
                 if (isConfirmed)
                     this.updateContactStatusesInternal(contactIds, statusId, callback);
