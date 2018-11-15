@@ -2,7 +2,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
-import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
+import { StickyModule } from 'ng2-sticky-kit/ng2-sticky-kit';
+import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module'
+
 import { MemberAreaRoutingModule } from './member-area-routing.module';
 import { CreditReportModule } from './credit-report/credit-report.module';
 import { CreditSimulatorModule } from './credit-simulator/credit-simulator.module';
@@ -28,7 +30,8 @@ import { OffersModule } from '@root/personal-finance/member-area/offers/offers.m
         CreditSimulatorModule,
         CreditResourcesModule,
         OffersModule,
-        BankAccountsCommonModule.forRoot()
+        BankAccountsCommonModule.forRoot(),
+        StickyModule
     ],
     declarations: [
         MemberAreaComponent,

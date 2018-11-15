@@ -1,23 +1,9 @@
 <header></header>
 
-<div class="clearfix">
-</div>
-<div class="page-container">
-    <div class="page-sidebar-wrapper">
-        <side-bar></side-bar>
+<div class="page-content">
+    <div class="wrapper" [ngClass]="{'pfm-app': hasPfmAppFeature}">
+        <router-outlet></router-outlet>
     </div>
-
-    <div class="page-content-wrapper">
-        <div class="page-content">
-            <router-outlet></router-outlet>
-        </div>
-    </div>
-
-    <!-- chat-bar.component here... -->
-
 </div>
 
-<div class="page-footer">
-    <footer></footer>
-</div>
-<chat-bar></chat-bar>
+<footer></footer>

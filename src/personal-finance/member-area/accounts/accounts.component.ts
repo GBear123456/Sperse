@@ -3,6 +3,7 @@ import { Component, Injector, ViewChild, OnInit, OnDestroy } from '@angular/core
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
+import { Observable, BehaviorSubject, forkJoin } from '@node_modules/rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -10,9 +11,10 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
-import { BankAccountsComponent } from '@shared/cfo/bank-accounts/bank-accounts.component';
-import { InstanceType, SyncServiceProxy, InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InstanceType, SyncServiceProxy, InstanceServiceProxy, GetProviderUITokenOutput } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors } from '@shared/AppEnums';
+
+declare const Quovo: any;
 
 @Component({
     templateUrl: './accounts.component.html',
@@ -20,10 +22,13 @@ import { AccountConnectors } from '@shared/AppEnums';
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(BankAccountsComponent) bankAccounts: BankAccountsComponent;
+    private quovoLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private tokenLoading$: Observable<GetProviderUITokenOutput>;
 
     isStartDisabled = false;
     isInstanceInfoLoaded = false;
+
+    currentSection: string;
 
     constructor(
         injector: Injector,
@@ -39,11 +44,55 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     ngOnInit() {
         this._cfoService.instanceChangeProcess(() => {
             this.isInstanceInfoLoaded = true;
-            /** To avoid waiting after clicking "GetStarted" button */
-            this._quovoService.connect();
+
+            if (this._cfoService.initialized) {
+                this.currentSection = 'summary';
+                this.loadQouvoPfm();
+            }
         });
     }
 
+    loadQouvoPfm() {
+        this.tokenLoading$ = this._syncService.createProviderUIToken(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, 'Q');
+        /** Load quovo script (jquery getScript to observable) */
+        const quovoLoading$ = new Observable(observer => {
+            jQuery.getScript('https://app.quovo.com/ui.js').done(() => {
+                observer.next();
+                observer.complete();
+            });
+        });
+
+        forkJoin(
+            this.tokenLoading$,
+            quovoLoading$
+        ).subscribe(
+            res => {
+                this._syncService.syncAllAccounts(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, false, false).subscribe();
+                let token = res[0].token.toString();
+                Quovo.embed({
+                    token: token.toString(),
+                    elementId: 'quovo-accounts-module',
+                    moduleName: this.currentSection,
+                });
+            }
+        );
+    }
+
+    refreshQuovoSection() {
+        abp.ui.setBusy();
+        this.tokenLoading$.subscribe(
+            res => {
+                $('.quovo-accounts-module').html('');
+                let token = res.token.toString();
+                Quovo.embed({
+                    token: token.toString(),
+                    elementId: 'quovo-accounts-module',
+                    moduleName: this.currentSection,
+                });
+                abp.ui.clearBusy();
+            }
+        );
+    }
     onStart(): void {
         this.isStartDisabled = true;
         if (this._cfoService.initialized)
@@ -52,12 +101,6 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType]).subscribe(data => {
                 this.addAccount();
             });
-    }
-
-    onSyncComplete() {
-        if (this.bankAccounts) {
-            this.bankAccounts.activate();
-        }
     }
 
     private addAccount() {
@@ -82,4 +125,12 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     ngOnDestroy() {
         super.ngOnDestroy();
     }
+
+    openQuovoSection(sectionName) {
+        if (this.currentSection !== sectionName) {
+            this.currentSection = sectionName;
+            this.refreshQuovoSection();
+        }
+    }
+    
 }

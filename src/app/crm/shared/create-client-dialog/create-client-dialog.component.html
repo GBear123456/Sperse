@@ -40,7 +40,7 @@
     <div class="toolbar-wraper">
         <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
     </div>   
-    <div *ngIf="similarCustomers?.length" class="similar-clients-message" (click)="showSimilarCustomers($event)">{{l('SimilarRecordsFound')}}</div>
+    <div *ngIf="similarCustomersAvailable()" class="similar-clients-message" (click)="showSimilarCustomers($event)">{{l('SimilarRecordsFound')}}</div>
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
             <div class="field">
@@ -119,7 +119,7 @@
                         <country-phone-number #countryPhoneNumber
                             [(phoneNumber)]="phone.number"
                             [required]="false"
-                            (phoneNumberChange)="onPhoneChanged(countryPhoneNumber)"
+                            (phoneNumberChange)="onPhoneChanged(countryPhoneNumber, i)"
                             (onInitialized)="onPhoneComponentInitialized($event)">
                         </country-phone-number>
                         <dx-number-box
@@ -240,7 +240,7 @@
                             [width]="'270px'"
                             [(value)]="address['city']"
                             [valueChangeEvent]="'keyup'"
-                            (onValueChanged)="checkAddressControls()">
+                            (onValueChanged)="checkAddressControls(i)">
                         </dx-text-box>
                         <dx-select-box
                             [dataSource]="states[i]"
@@ -251,7 +251,7 @@
                             [width]="'270px'"
                             [searchEnabled]="true"
                             [(value)]="address['state']"
-                            (onValueChanged)="checkAddressControls()">
+                            (onValueChanged)="checkAddressControls(i)">
                         </dx-select-box>
                     </div>
                     <div class="field addr padding-right" style="padding-bottom: 10px;">
@@ -261,7 +261,7 @@
                             [width]="'270px'"
                             [(value)]="address['zip']"
                             [valueChangeEvent]="'keyup'"
-                            (onValueChanged)="checkAddressControls()">
+                            (onValueChanged)="checkAddressControls(i)">
                         </dx-text-box>
                         <dx-select-box
                             [dataSource]="countries"

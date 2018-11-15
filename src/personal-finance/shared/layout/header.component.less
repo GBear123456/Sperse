@@ -1,136 +1,140 @@
 @import url(_settings);
 
-member-area-navigation {
-    flex-grow: 2;
-    flex-basis: unset;
-    order: 2;
-    width: calc(~"100% - 436px");
-}
+:host {
+    .page-header.navbar {
+        flex-wrap: nowrap;
 
-.page-header.navbar {
-    flex-wrap: nowrap;
+        &.pfm-app {
+            .page-logo, member-area-navigation {
+                display: none;
+            }
+        }
 
-    .page-top {
-        width: auto!important;
-        min-width: 190px;
-        clear: none!important;
-        background: none!important;
-        order: 3;
-
-        #m_header_topbar {
+        .page-top {
             width: auto!important;
-            height: auto!important;
-            margin-top: 0px!important;
-            box-shadow: none!important;
+            min-width: 190px;
+            clear: none!important;
+            background: none!important;
+            order: 3;
 
-            .m-topbar__nav.m-nav {
-                margin: 0px !important;
-                // padding-top: 6px;
+            #m_header_topbar {
+                width: auto!important;
+                height: auto!important;
+                margin-top: 0px!important;
+                box-shadow: none!important;
 
-                .m-nav__item {
-                    padding: 0 14px !important;
+                .m-topbar__nav.m-nav {
+                    margin: 0px !important;
+                    // padding-top: 6px;
 
-                    @media (max-width: 768px) {
-                        padding: 0 8px !important;
+                    .m-nav__item {
+                        padding: 0 14px !important;
+
+                        @media (max-width: 768px) {
+                            padding: 0 8px !important;
+                        }
                     }
                 }
-            }
 
-            .user-info-drop-down-arrow {
-                color: #43383b;
-            }
-
-            .m-card-user {
-                .m-card-user__details {
-                    padding: 0 15px 0 0;
+                .user-info-drop-down-arrow {
+                    color: #43383b;
                 }
 
-                .m-card-user__pic {
-                    padding: 0;
-                    vertical-align: baseline;
-                }
-            }
+                .m-card-user {
+                    .m-card-user__details {
+                        padding: 0 15px 0 0;
+                    }
 
-            .user-info {
-                color: #fff !important;
-                font-size: 1.1rem;
-                font-weight: 400;
-                display: block;
-                word-break: break-word;
-
-                &.fullName {
-                    font-weight: 600;
-                    font-size: 18px;
-                    text-transform: capitalize;
+                    .m-card-user__pic {
+                        padding: 0;
+                        vertical-align: baseline;
+                    }
                 }
 
-                &.email {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    text-align: left;
-                    height: 20px;
-                }
-            }
+                .user-info {
+                    color: #fff !important;
+                    font-size: 1.1rem;
+                    font-weight: 400;
+                    display: block;
+                    word-break: break-word;
 
-            .header-profile-picture {
-                width: 41px;
-                height: 41px;
+                    &.fullName {
+                        font-weight: 600;
+                        font-size: 18px;
+                        text-transform: capitalize;
+                    }
+
+                    &.email {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        text-align: left;
+                        height: 20px;
+                    }
+                }
+
+                .header-profile-picture {
+                    width: 41px;
+                    height: 41px;
+                }
             }
         }
-    }
 
-    &.navbar-fixed-top,
-    &.navbar-static-top {
-        z-index: 1000;
-    }
+        &.navbar-fixed-top,
+        &.navbar-static-top {
+            z-index: 1000;
+        }
 
-    .page-logo {
-        position: relative;
-        max-width: 310px;
-        min-width: 220px;
-        height: 60px;
-        order: 1;
+        .page-logo {
+            position: relative;
+            max-width: 310px;
+            min-width: 220px;
+            height: 60px;
+            order: 1;
 
-        a {
-            max-width: 200px;
+            a {
+                max-width: 200px;
+                overflow: hidden;
+                display: table;
+                position: absolute;
+                margin: auto;
+                top: 0px;
+                bottom: 0px;
+            }
+
+            &:after {
+                right: 0px;
+            }
+        }
+
+        span.username {
+            max-width: 150px;
+            white-space: nowrap;
             overflow: hidden;
-            display: table;
-            position: absolute;
-            margin: auto;
-            top: 0px;
-            bottom: 0px;
+            text-overflow: ellipsis;
+            direction: rtl;
+            text-align: left;
+            display: none !important;
         }
 
-        &:after {
-            right: 0px;
+        li.username-header {
+            color: #FFF;
+            text-align: center;
+            height: 35px;
+            padding-top: 10px;
+            font-weight: 500;
+            overflow: hidden;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            direction: rtl;
         }
-    }
 
-    span.username {
-        max-width: 150px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        direction: rtl;
-        text-align: left;
-        display: none !important;
-    }
-
-    li.username-header {
-        color: #FFF;
-        text-align: center;
-        height: 35px;
-        padding-top: 10px;
-        font-weight: 500;
-        overflow: hidden;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        direction: rtl;
-    }
-
-    .dropdown-language {
-        display: none !important;
+        member-area-navigation {
+            flex-grow: 2;
+            flex-basis: unset;
+            order: 2;
+            width: calc(~"100% - 436px");
+        }
     }
 }

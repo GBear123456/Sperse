@@ -34,7 +34,6 @@ import { MatDialog } from '@angular/material';
     templateUrl: 'header.component.html',
     styleUrls: ['header.component.less'],
     selector: 'header',
-    encapsulation: ViewEncapsulation.None,
     providers: [ImpersonationService]
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
@@ -45,6 +44,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     currentLanguage: abp.localization.ILanguageInfo;
     isImpersonatedLogin = false;
     hasPlatformPermissions = false;
+    hasPfmAppFeature = false;
 
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName?};
@@ -114,6 +114,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
                 });
         }
 
+        this.hasPfmAppFeature = _featureChecker.isEnabled('PFM.Application');
+
         this.hasPlatformPermissions =
             (this._featureChecker.isEnabled('CFO') && this._permissionChecker.isGranted('Pages.CFO')) ||
             (this._featureChecker.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM')) ||
@@ -146,22 +148,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
         abp.event.on('app.chat.connected', () => {
             this.chatConnected = true;
-        });
-    }
-
-    changeLanguage(languageName: string): void {
-        const input = new ChangeUserLanguageDto();
-        input.languageName = languageName;
-
-        this._profileServiceProxy.changeLanguage(input).subscribe(() => {
-            abp.utils.setCookieValue(
-                'Abp.Localization.CultureName',
-                languageName,
-                new Date(new Date().getTime() + 5 * 365 * 86400000), //5 year
-                abp.appPath
-            );
-
-            window.location.reload();
         });
     }
 
@@ -238,22 +224,5 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     get notificationEnabled(): boolean {
         return (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
-    }
-
-    subscriptionStatusBarVisible(): boolean {
-        return false;
-        //return this._appSessionService.tenantId > 0 && (this._appSessionService.tenant.isInTrialPeriod || this.subscriptionIsExpiringSoon());
-    }
-
-    subscriptionIsExpiringSoon(): boolean {
-        return false;
-    }
-
-    getSubscriptionExpiringDayCount(): number {
-        return 0;
-    }
-
-    getExpireNotification(localizationKey: string): string {
-        return abp.utils.formatString(this.l(localizationKey), this.getSubscriptionExpiringDayCount());
     }
 }

@@ -43,7 +43,11 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         this.loadNotifications();
         this.registerToEvents();
         this.getCurrentLoginInformations();
-        this._appService.loadModuleSubscriptionsCallback = this.getSubscriptionInfo.bind(this);
+
+        if (this._appService.moduleSubscriptions$) {
+            this._appService.subscribeModuleChange((config) => this.getSubscriptionInfo(config['name']));
+            this._appService.moduleSubscriptions$.subscribe(() => this.getSubscriptionInfo());
+        }
         this.getSubscriptionInfo();
     }
 
@@ -75,8 +79,13 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
                         + "!";
                 } else {
                     var subscription = this._appService.getModuleSubscription(module);
-                    this.subscriptionInfoText = this.l("UpgradOrChangeYourPlanAnyTime");
-                    this.subscriptionInfoTitle = this.l("YouAreUsingPlan", subscription.editionName);
+                    if (subscription) {
+                        this.subscriptionInfoText = this.l("UpgradOrChangeYourPlanAnyTime");
+                        this.subscriptionInfoTitle = this.l("YouAreUsingPlan", subscription.editionName);
+                    }
+                    else {
+                        this.subscriptionExpiringDayCount = null;
+                    }
                 }
             }
         }

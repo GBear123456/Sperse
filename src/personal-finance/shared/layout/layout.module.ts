@@ -15,17 +15,17 @@ import { FooterComponent } from './footer.component';
 import { PagesHeaderComponent } from './pages-header/pages-header.component';
 import { PagesFooterComponent } from './pages-footer/pages-footer.component';
 import { MemberAreaNavigationComponent } from './member-area-navigation/member-area-navigation.component';
-import { SideBarComponent } from './side-bar.component';
 
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
+import { AppService } from '@app/app.service';
+import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 let COMPONENTS = [
     HeaderComponent,
     FooterComponent,
     PagesHeaderComponent,
     PagesFooterComponent,
-    SideBarComponent,
     MemberAreaNavigationComponent
 ];
 
@@ -53,6 +53,9 @@ let COMPONENTS = [
     declarations: COMPONENTS,
     exports: COMPONENTS,
     providers: [
+        AppService,
+        InstanceServiceProxy,
+        TenantSubscriptionServiceProxy
     ]
 })
 export class LayoutModule { }
