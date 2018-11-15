@@ -18,6 +18,8 @@ import { MemberAreaNavigationComponent } from './member-area-navigation/member-a
 
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
+import { AppService } from '@app/app.service';
+import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 
 let COMPONENTS = [
     HeaderComponent,
@@ -51,6 +53,9 @@ let COMPONENTS = [
     declarations: COMPONENTS,
     exports: COMPONENTS,
     providers: [
+        AppService,
+        InstanceServiceProxy,
+        TenantSubscriptionServiceProxy
     ]
 })
 export class LayoutModule { }
