@@ -97,7 +97,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
         });
     }
 
-    initToolbarConfig(config = null) {        
+    initToolbarConfig(config = null) {
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
             if (config)
@@ -168,7 +168,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                         }
                     ]
                 }
-            ] : [ 
+            ] : [
                 {
                     location: 'after',
                     locateInMenu: 'auto',
@@ -188,16 +188,16 @@ export class OperationsWidgetComponent extends AppComponentBase {
                     items: [
                         {
                             visible: this.isClientCFOAvailable() || !this.isClientProspective() &&
-                                !(this._userService['data'] && this._userService['data'].userId) && 
+                                !(this._userService['data'] && this._userService['data'].userId) &&
                                 this._appService.canSendVerificationRequest(),
-                            action: () => { 
+                            action: () => {
                                 if (this.isClientCFOAvailable())
                                     this.redirectToCFO();
                                 else
                                     this.requestVerification();
                             },
                             options: {
-                                text: this.l(this.isClientCFOAvailable() ? 'CFO': 'ClientDetails_RequestVerification'),
+                                text: this.l(this.isClientCFOAvailable() ? 'CFO' : 'ClientDetails_RequestVerification'),
                                 icon: this.isClientCFOAvailable() ? 'cfo-icon' : this.toolbarComponent.getImgURI('verify-icon')
                             }
                         }

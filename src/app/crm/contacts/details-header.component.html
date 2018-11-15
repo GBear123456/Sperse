@@ -17,14 +17,12 @@
             <img src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
         </div>
 
-
         <h2 *ngIf="data && data?.primaryOrganizationContactInfo?.fullName" [ngClass]="{'shift-top': this?.contactEmploymentInfo?.id}">
             <inplace-edit [data]="getNameInplaceEditData('primaryOrganizationContactInfo')" (valueChanged)="updateCompanyField($event)" (openDialog)="showCompanyDialog($event)"></inplace-edit>
         </h2>
         <h3 *ngIf="this?.contactEmploymentInfo?.id">
             <inplace-edit [data]="getJobTitleInplaceEditData()" (valueChanged)="updateContactEmployment($event)"></inplace-edit>
         </h3>
-
 
         <div class="organization_logo">
             <img (click)="showUploadPhotoDialog($event, true)" src="{{ data?.primaryOrganizationContactInfo?.primaryPhoto ? 'data:image/png;base64,' + data.primaryOrganizationContactInfo.primaryPhoto.original : './assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
