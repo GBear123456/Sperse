@@ -36,7 +36,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     currentDate: any;
     followupDate: any;
     phone: string;
-    contact: string;
+    contactId: number;
     addedBy: string;
     type: string;
 
@@ -64,8 +64,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 this.initTypes(_notesService['types'] = result);
             });
 
+        this._contactInfo = this.data.contactInfo;
         if (this.data.contactInfo.contactPersons) {
-            this._contactInfo = this.data.contactInfo;
             let orgContact = <any>this._contactInfo.primaryOrganizationContactInfo,
                 contacts = this._contactInfo.contactPersons.length ? this._contactInfo.contactPersons : [this._contactInfo.personContactInfo];
             this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
@@ -114,7 +114,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     saveNote() {
         if (this.validator.validate().isValid)
             this._notesService.createNote(CreateNoteInput.fromJS({
-                contactId: this._contactInfo.id,
+                contactId: this.contactId || this._contactInfo.id,
                 text: this.summary,
                 contactPhoneId: this.phone || undefined,
                 typeId: this.type,
@@ -164,7 +164,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             };
         });
         this.phone = this.phones.length && this.phones[0].id;
-        this.contact = contact.id;
+        this.contactId = contact.id;
     }
 
     initValidationGroup($event) {
@@ -173,7 +173,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     showAddPhoneDialog(event) {
         let dialogData = {
-            contactId: this.contact,
+            contactId: this.contactId,
             field: 'phoneNumber',
             name: 'Phone',
             isConfirmed: false,
@@ -199,10 +199,10 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         ).subscribe(result => {
             if (result.id) {
                 data.id = result.id;
-                let contact = this.getContactById(this.contact);
+                let contact = this.getContactById(this.contactId);
                 if (contact) {
                     contact.details.phones.unshift(ContactPhoneDto.fromJS(data));
-                    this.onContactChanged({value: this.contact});
+                    this.onContactChanged({value: this.contactId});
                 }
             }
         });
