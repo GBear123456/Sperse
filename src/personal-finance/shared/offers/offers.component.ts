@@ -10,13 +10,14 @@ import {
     ElementRef,
     ViewChild,
     HostListener,
-    Renderer2
+    Renderer2,
+    ChangeDetectorRef
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, Subject, combineLatest } from 'rxjs';
-import { first, map, publishReplay, refCount, takeUntil } from 'rxjs/operators';
+import { first, finalize, map, publishReplay, refCount, takeUntil } from 'rxjs/operators';
 import { isEmpty, pickBy } from 'lodash';
 import { MatSelect } from '@angular/material';
 
@@ -25,6 +26,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { RootComponent } from '@root/root.components';
 import { CreditCard } from '@root/personal-finance/shared/offers/models/credit-card.interface';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { CampaignDto, Category, Type, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 
 interface FilterValues {
     [field: string]: { [filterValue: string]: string };
@@ -39,8 +41,8 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild('creditCardsList') creditCardsListRef: ElementRef;
     @ViewChild('filtersSideBar') filtersSideBar: ElementRef;
     @ViewChild('sortingSelect') sortingSelect: MatSelect;
-    private creditCards$: Observable<CreditCard[]>;
-    displayedCreditCards$: Observable<CreditCard[]>;
+    private creditCards$: Observable<any>;
+    displayedCreditCards$: Observable<any>;
     creditCardsAmount: number;
     sortings = [
         {
@@ -60,31 +62,31 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         {
             name: this.ls.l('Offers_Filter_Brand'),
             field: 'bankName',
-            values: [],
+            values: [ 'American Express', 'Bank of America', 'Barclaycard', 'Capital One', 'Chase' ],
             showAll: false
         },
         {
             name: this.ls.l('Offers_Filter_Type'),
             field: 'type',
-            values: [],
+            values: [ 'Small business', 'Personal' ],
             showAll: false
         },
         {
             name: this.ls.l('Offers_Filter_Category'),
             field: 'category',
-            values: [],
+            values: [ 'Best current offers', 'Flexible points', 'Hotel points', 'Airline miles', 'Cashback' ],
             showAll: false
         },
         {
             name: this.ls.l('Offers_Filter_Network'),
             field: 'network',
-            values: [],
+            values: [ 'AmEx', 'Visa', 'Master', 'Diners Club', 'Cashback' ],
             showAll: false
         },
         {
             name: this.ls.l('Offers_Filter_Rating'),
             field: 'rating',
-            values: [],
+            values: [ 5, 4, 3, 2, 1 ],
             showAll: false,
             type: 'rating'
         }
@@ -101,6 +103,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     private selectedSorting$ = this.selectedSorting.asObservable();
     scrollHeight: number;
     private rootComponent: RootComponent;
+    creditCardloaded  = false;
 
     constructor(
         injector: Injector,
@@ -109,37 +112,62 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         private router: Router,
         private offersService: OffersService,
         private renderer: Renderer2,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private offerServiceProxy: OfferServiceProxy,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         this.rootComponent = injector.get(applicationRef.componentTypes[0]);
     }
 
     ngOnInit() {
-        this.creditCards$ = this.offersService.getCreditCards().pipe(publishReplay(), refCount());
+        abp.ui.setBusy(this.creditCardsListRef.nativeElement);
+        this.creditCards$ = this.offerServiceProxy.getAll(undefined, Type.TrafficDistribution, 'US').pipe(
+            publishReplay(),
+            refCount(),
+            finalize(() => { this.creditCardloaded = true; abp.ui.clearBusy(this.creditCardsListRef.nativeElement); }),
+            /** @todo remove to avoid hardcoded data */
+            map(creditCards => creditCards.map(creditCard => {
+                return {
+                    ...creditCard,
+                    ...{
+                        'annualFee': '$45',
+                        'rewardsRate': '1.5% cashback',
+                        'rewardsBonus': '$100',
+                        'apr': '5.5%',
+                        'rating': Math.floor(Math.random() * 5) + 1,
+                        'reviewsAmount': Math.floor(Math.random() * 1000) + 1
+                    }
+                };
+            }))
+        );
         /** Insert filters values from credit cards data */
         this.creditCards$.pipe(first()).subscribe(creditCards => {
-            this.fullFillFilterValues(creditCards);
+            /** @todo uncomment in future when data will be good for filtering */
+            //this.fullFillFilterValues(creditCards);
             this.hideTooBigFilters();
         });
-        this.creditCards$.pipe(first()).subscribe(creditCards => this.creditCardsAmount = creditCards.length);
+        this.creditCards$.pipe(first()).subscribe(creditCards => {
+            this.creditCardsAmount = creditCards.length;
+            this.changeDetectorRef.detectChanges();
+        });
         this.createFiltersObject();
         this.activate();
     }
 
     activate() {
         this.displayedCreditCards$ =
-            combineLatest(
-                this.creditCards$,
-                this.selectedFilter$,
-                this.selectedSorting$
-            ).pipe(
-                takeUntil(this.deactivate$),
-                map(([creditCards, filtersValues, sortingField]) => this.sortCards(
-                    this.filterCards(creditCards, filtersValues),
-                    sortingField
-                ))
-            );
-        this.displayedCreditCards$.pipe(takeUntil(this.deactivate$)).subscribe(displayedCreditCards => {
+            //combineLatest(
+                this.creditCards$; //,
+                //this.selectedFilter$,
+                //this.selectedSorting$
+            //).pipe(
+                //takeUntil(this.deactivate$),
+                // map(([creditCards, filtersValues, sortingField]) => this.sortCards(
+                //     this.filterCards(creditCards, filtersValues),
+                //     sortingField
+                // ))
+            //);
+        this.displayedCreditCards$.pipe(takeUntil(this.deactivate$)).subscribe((displayedCreditCards: CampaignDto[]) => {
             this.offersService.displayedCards = displayedCreditCards;
         });
 
@@ -149,16 +177,16 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
 
     /**
      * Fullfill filters with credit cards values
-     * @param {CreditCard[]} creditCards
+     * @param {CampaignDto[]} CampaignDto
      */
-    private fullFillFilterValues(creditCards: CreditCard[]) {
-        creditCards.forEach(creditCard => {
-            this.filters.forEach(filter => {
-                if (creditCard[filter.field] !== undefined && filter.values.indexOf(creditCard[filter.field]) === -1) {
-                    filter.values.push(creditCard[filter.field]);
-                }
-            });
-        });
+    private fullFillFilterValues(creditCards: CampaignDto[]) {
+        // creditCards.forEach(creditCard => {
+        //     this.filters.forEach(filter => {
+        //         if (creditCard[filter.field] !== undefined && filter.values['indexOf'](creditCard[filter.field]) === -1) {
+        //             filter.values['push'](creditCard[filter.field]);
+        //         }
+        //     });
+        // });
     }
 
     private hideTooBigFilters() {
@@ -210,21 +238,17 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
-    applyCard(card: CreditCard) {
-        console.log(card);
-    }
-
-    viewCardDetails(card: CreditCard) {
+    viewCardDetails(card: CampaignDto) {
         this.router.navigate(['../offer', card.id], { relativeTo: this.route });
     }
 
-    showFiltering(e) {
+    toggleFiltering(e) {
         this.filtersSideBar.nativeElement.classList.contains('xs-hidden')
             ? this.renderer.removeClass(this.filtersSideBar.nativeElement, 'xs-hidden')
             : this.renderer.addClass(this.filtersSideBar.nativeElement, 'xs-hidden');
     }
 
-    showSorting(e) {
+    toggleSorting(e) {
         this.sortingSelect.toggle();
     }
 

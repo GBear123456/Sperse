@@ -19,7 +19,6 @@ import { InfoComponent } from '@shared/common/widgets/info/info.component';
 import { ExportService } from './export/export.service';
 import { ExportGoogleSheetService } from './export/export-google-sheets/export-google-sheets';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
-import { NoDataComponent } from './widgets/no-data/no-data.component';
 import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells-copying.service';
 import { PhoneFormatPipe } from './pipes/phone-format/phone-format.pipe';
 import { CustomNumberPipe } from './pipes/custom-number/custom-number.pipe';
@@ -32,11 +31,11 @@ import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 
 @NgModule({
     declarations: [
         CalendarComponent,
-        NoDataComponent,
         CustomNumberPipe,
         NumberToWordsPipe,
         PhoneFormatPipe,
@@ -55,7 +54,6 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
     ],
     exports: [
         CalendarComponent,
-        NoDataComponent,
         CustomNumberPipe,
         NumberToWordsPipe,
         PhoneFormatPipe,
@@ -68,10 +66,12 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
         AccountConnectorDialogComponent,
         ModalDialogComponent,
         ConditionsModalComponent,
-        DxCheckBoxModule
+        DxCheckBoxModule,
+        NoDataModule
     ],
     imports: [
         ngCommon.CommonModule,
+        NoDataModule,
         RouterModule,
         FormsModule,
         InternationalPhoneNumberModule,

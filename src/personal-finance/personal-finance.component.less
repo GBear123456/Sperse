@@ -226,7 +226,7 @@
     }
 
     &:not(.pfm-app) {
-        .wrapper {        
+        .wrapper {
             position: relative;
             overflow: hidden;
             min-height: calc(~"100vh - 79px");
@@ -517,7 +517,8 @@
         margin-bottom: 78px;
     }
 
-    /deep/ button.applyButton {
+    /deep/ button.applyButton,
+    /deep/ a.applyButton {
         text-align: center;
         border-radius: 2px;
         background-color: #EC9D1A !important;
@@ -539,6 +540,15 @@
             font-weight: bold;
             letter-spacing: 0.13px;
             text-align: center;
+        }
+    }
+
+    /deep/ a.applyButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &:hover {
+            text-decoration: none;
         }
     }
 }

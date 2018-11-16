@@ -3,10 +3,11 @@ import { Observable, of } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
 import { CreditCard } from '@root/personal-finance/shared/offers/models/credit-card.interface';
 import { CreditCardDetails } from '@root/personal-finance/shared/offers/models/credit-card-details.interface';
+import { CampaignDto } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class OffersService {
-    displayedCards: CreditCard[];
+    displayedCards: CampaignDto[];
     cardDetails = {
         '1': {
             id: 1,

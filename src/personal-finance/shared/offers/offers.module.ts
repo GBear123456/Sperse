@@ -10,6 +10,8 @@ import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
+import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 
 @NgModule({
     imports: [
@@ -19,7 +21,8 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
         MatRadioModule,
         MatCheckboxModule,
         DxScrollViewModule,
-        RoundProgressModule
+        RoundProgressModule,
+        NoDataModule
     ],
     declarations: [
         StarsRatingComponent,
@@ -30,7 +33,8 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
         OffersComponent
     ],
     providers: [
-        OffersService
+        OffersService,
+        OfferServiceProxy
     ]
 })
 export class OffersModule {

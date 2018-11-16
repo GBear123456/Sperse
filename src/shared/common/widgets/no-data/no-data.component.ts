@@ -1,5 +1,5 @@
-import {Component, OnInit, Injector, Input } from '@angular/core';
-import {AppComponentBase} from 'shared/common/app-component-base';
+import { Component, OnInit, Injector, Input } from '@angular/core';
+import { AppComponentBase } from 'shared/common/app-component-base';
 
 @Component({
     selector: 'app-no-data',

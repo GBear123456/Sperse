@@ -11,7 +11,6 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { CreditReportsRouteGuard } from './auth/auth-route-guard';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PackagesComponent } from './packages/packages.component';
-import { PackageIdService } from './packages/package-id.service';
 
 @NgModule({
     imports: [
@@ -40,6 +39,9 @@ export class PersonalFinanceCommonModule {
                 AppAuthService,
                 CreditReportsRouteGuard
             ]
-        }
+        };
+    }
+    constructor(private appLocalizationService: AppLocalizationService) {
+        this.appLocalizationService.localizationSourceName = 'PFM';
     }
 }

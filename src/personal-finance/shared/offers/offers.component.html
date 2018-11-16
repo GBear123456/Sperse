@@ -14,8 +14,8 @@
                 </mat-select>
             </div>
             <div class="mobileButtons m--hidden-tablet m--hidden-desktop">
-                <button class="btn btn-secondary sortingButton" (click)="showSorting($event)"></button>
-                <button class="btn-btn-secondary filteringButton" (click)="showFiltering($event)"></button>
+                <button class="btn btn-secondary sortingButton" (click)="toggleSorting($event)"></button>
+                <button class="btn-btn-secondary filteringButton" (click)="toggleFiltering($event)"></button>
             </div>
         </div>
     </header>
@@ -39,44 +39,35 @@
             </dx-scroll-view>
         </div>
         <div class="col-sm-12 col-md-9" #creditCardsList>
-            <dx-scroll-view [height]="scrollHeight">
+            <dx-scroll-view [height]="scrollHeight" *ngIf="creditCardsAmount">
                 <ul class="credit-cards-list">
                     <li class="row" *ngFor="let creditCardItem of displayedCreditCards$ | async">
                         <div class="image col-3 col-md-4 col-lg-3">
-                            <img [src]="'./assets/common/images/payments/card-logo/mastercard.svg'" [alt]="creditCardItem.cardName">
+                            <img [src]="creditCardItem.logoUrl" [alt]="creditCardItem.name">
                         </div>
                         <div class="description col-9 col-md-8 col-lg-6">
-                            <h4>{{ creditCardItem.bankName + ' - ' + creditCardItem.cardName }}</h4>
-                            <div class="rating">
+                            <h4><span *ngIf="creditCardItem.bankName">{{ creditCardItem.bankName }} + ' - '</span>{{creditCardItem.name }}</h4>
+                            <div class="rating" *ngIf="creditCardItem.rating">
                                 <stars-rating [currentRating]="creditCardItem.rating"></stars-rating>
                                 <span>({{ creditCardItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span>
                             </div>
                             <ul class="descriptionItems">
-                                <li>
-                                    <h5>{{ ls.l('Offers_AnnualFee') }}</h5>
-                                    <p>{{ creditCardItem.annualFee }}</p>
-                                </li>
-                                <li>
-                                    <h5>{{ ls.l('Offers_RewardsRate') }}</h5>
-                                    <p>{{ creditCardItem.rewardsRate }}</p>
-                                </li>
-                                <li>
-                                    <h5>{{ ls.l('Offers_RewardsBonus') }}</h5>
-                                    <p>{{ creditCardItem.rewardsBonus }}</p>
-                                </li>
-                                <li>
-                                    <h5>{{ ls.l('Offers_APR') }}</h5>
-                                    <p>{{ creditCardItem.apr }}</p>
-                                </li>
+                                <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'rewardsBonus', 'apr']">
+                                    <li *ngIf="creditCardItem[param]">
+                                        <h5>{{ ls.l('Offers_' + param) }}</h5>
+                                        <p>{{ creditCardItem[param] }}</p>
+                                    </li>
+                                </ng-container>
                             </ul>
                         </div>
                         <div class="actions col-sm-12 col-lg-3">
-                            <button class="applyButton" (click)="applyCard(creditCardItem)"><span>{{ ls.l('Apply') }}</span></button>
+                            <a [href]="creditCardItem.redirectUrl" class="applyButton"><span>{{ ls.l('Apply') }}</span></a>
                             <button class="viewMore" (click)="viewCardDetails(creditCardItem)">{{ ls.l('View_details') }}</button>
                         </div>
                     </li>
                 </ul>
             </dx-scroll-view>
+            <app-no-data *ngIf="creditCardloaded && !creditCardsAmount"></app-no-data>
         </div>
     </div>
 </div>

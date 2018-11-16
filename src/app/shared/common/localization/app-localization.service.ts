@@ -4,7 +4,7 @@ import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class AppLocalizationService extends LocalizationService {
-
+    localizationSourceName;
     l(key: string, source: string = AppConsts.localization.defaultLocalizationSourceName, ...args: any[]): string {
         args.unshift(key);
         args.unshift(source);
@@ -12,6 +12,8 @@ export class AppLocalizationService extends LocalizationService {
     }
 
     ls(sourcename: string, key: string, ...args: any[]): string {
+        if (this.localizationSourceName)
+            sourcename = this.localizationSourceName;
         let source = abp.localization.values[sourcename];
         if (!source || !source[key])
             sourcename = AppConsts.localization.defaultLocalizationSourceName;
