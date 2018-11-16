@@ -127,6 +127,14 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             },
             panelClass: 'slider',
             maxWidth: '830px'
+        }).afterClosed().subscribe(result => {
+            console.log(result);
+            if (result) {
+                console.log(this.data.primaryOrganizationContactInfo);
+                this.data.primaryOrganizationContactInfo.organization = result.company;
+                this.data.primaryOrganizationContactInfo.fullName = result.company.fullName;
+                this.data['primaryOrganizationContactInfo'].primaryPhoto = result.company.primaryPhoto;
+            }
         });
         if (e.stopPropagation) {
             e.stopPropagation();

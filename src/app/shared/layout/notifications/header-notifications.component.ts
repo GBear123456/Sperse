@@ -57,18 +57,19 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         if (this._appService.checkSubscriptionIsFree(module)) {
             this.subscriptionInfoTitle = this.l("YouAreUsingTheFreePlan", module);
             this.subscriptionInfoText = this.l("UpgradeToUnlockAllOurFeatures");
-        } else if (this._appService.checkModuleExpired()) {
+        }
+        else if (!this._appService.hasModuleSubscription(module)) {
             this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
             this.subscriptionInfoText = this.l("ChoosePlanToContinueService");
-        } else if (this.subscriptionInGracePeriod()) {
-            let dayCount = this._appService.getGracePeriodDayCount();
+        } else if (this._appService.subscriptionInGracePeriod(module)) {
+            let dayCount = this._appService.getGracePeriodDayCount(module);
             this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
             this.subscriptionInfoText = this.l("GracePeriodNotification", (dayCount ?
                 (this.l('PeriodDescription', dayCount,
                     this.l(dayCount === 1 ? 'Tomorrow' : 'Periods_Day_plural'))
                 ) : this.l('Today')).toLowerCase());
         } else {
-            let dayCount = this._appService.getSubscriptionExpiringDayCount();
+            let dayCount = this._appService.getSubscriptionExpiringDayCount(module);
             if (!dayCount && dayCount !== 0) {
                 this.subscriptionExpiringDayCount = null;
             } else {
@@ -154,10 +155,6 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
 
     subscriptionStatusBarVisible(): boolean {
         return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted("Pages.Administration.Tenant.SubscriptionManagement");
-    }
-
-    subscriptionInGracePeriod() {
-        return this._appService.subscriptionInGracePeriod();
     }
 
     openPaymentWizardDialog() {

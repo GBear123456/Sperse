@@ -59,7 +59,7 @@
                                 valueExpr="code"
                                 placeholder="{{l('Select')}}"
                                 [dataSource]="states"
-                                [(value)]="company.state">
+                                [(value)]="company.formedStateId">
                             </dx-select-box>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                                 valueExpr="code"
                                 name="country"
                                 [dataSource]="countries"
-                                [(value)]="company.countryCode"
+                                [(value)]="company.formedCountryId"
                                 (onValueChanged)="loadStates($event._value)">
                             </dx-select-box>
                         </div>
@@ -101,27 +101,23 @@
                             name="productsAndServices"
                             [inputAttr]="{ id: 'productsAndServices' }"
                             [height]="'140px'"
-                            [(value)]="company.productsAndServices">
+                            [(value)]="company.description">
                         </dx-text-area>
-                        <span class="{{company.productsAndServices && 'clear-contact' || 'hidden'}}" (click)="company.productsAndServices = ''"><i class="minus-icon"></i></span>
+                        <span class="{{company.productsAndServices && 'clear-contact' || 'hidden'}}" (click)="company.description = ''"><i class="minus-icon"></i></span>
                     </div>
                 </div>
                 <div class="right col-md-5">
-                    <file-drop (onFileDrop)="fileDropped($event)">
-                        <input id="custom-input" type="file" (change)="fileChangeListener($event)" multiple #fileInput>
-                        <a href="javascript:void(0);" (click)="fileInput.click()">
-                            <span *ngIf="!data?.company?.primaryPhoto?.original">+ {{l('Company_AddLogo')}}</span>
-                            <img *ngIf="data?.company?.primaryPhoto?.original" src="{{ 'data:image/png;base64,' + data.company.primaryPhoto.original }}" alt="Organization Logo">
-                        </a>
-                    </file-drop>
+                    <div class="organization_logo">
+                        <img (click)="showUploadPhotoDialog($event, true)" src="{{ company.primaryPhoto ? 'data:image/png;base64,' + company.primaryPhoto.original : './assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
+                    </div>
                     <div class="field foundedIn">
                         <label for="foundedIn">{{l('Company_FoundedIn')}}</label>
                         <dx-text-box name="foundedIn"
                                      [inputAttr]="{ id: 'foundedIn' }"
                                      [valueChangeEvent]="'keyup'"
-                                     [(value)]="company.foundedIn">
+                                     [(value)]="company.formedDate">
                         </dx-text-box>
-                        <span [class]="company.foundedIn && 'clear-contact' || 'hidden'" (click)="company.foundedIn = ''"><i class="minus-icon"></i></span>
+                        <span [class]="company.foundedIn && 'clear-contact' || 'hidden'" (click)="company.formedDate = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field ein">
                         <label for="ein">{{l('Company_EIN')}}</label>
@@ -146,9 +142,9 @@
                         <dx-text-box name="stockSymbol"
                                      [inputAttr]="{ id: 'stockSymbol' }"
                                      [valueChangeEvent]="'keyup'"
-                                     [(value)]="company.stockSymbol">
+                                     [(value)]="company.ticker">
                         </dx-text-box>
-                        <span [class]="company.stockSymbol && 'clear-contact' || 'hidden'" (click)="company.stockSymbol = ''"><i class="minus-icon"></i></span>
+                        <span [class]="company.ticker && 'clear-contact' || 'hidden'" (click)="company.ticker = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field notes">
                         <label for="notes">{{l('Company_Notes')}}</label>

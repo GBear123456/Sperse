@@ -1,23 +1,27 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, OnInit, Injector, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Injector, ViewChild, EventEmitter, Output } from '@angular/core';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
+import { MatDialog } from '@angular/material';
+import { DxSelectBoxComponent } from '@root/node_modules/devextreme-angular';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { RootStore } from '@root/store';
 import { CountriesStoreActions, CountriesStoreSelectors, OrganizationTypeStoreActions, OrganizationTypeSelectors } from '@app/store';
 import { StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountryDto, CountryStateDto, OrganizationContactInfoDto } from '@shared/service-proxies/service-proxies';
-import { DxSelectBoxComponent } from '@root/node_modules/devextreme-angular';
+import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoDto, ContactPhotoServiceProxy, CreateContactPhotoInput } from '@shared/service-proxies/service-proxies';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     selector: 'company-dialog',
     templateUrl: './company-dialog.component.html',
     styleUrls: ['./company-dialog.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    //changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ContactPhotoServiceProxy]
 })
 export class CompanyDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
@@ -39,26 +43,32 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         { id: 10, name: '10,000 or more' }
     ];
     company: any = {
+        id: null,
         fullName: '',
         shortName: '',
         companyType: null,
         companySize: this.companySizes[0].id,
         annualRevenue: '',
-        state: null,
-        countryCode: 'US',
+        formedStateId: null,
+        formedCountryId: 'US',
         industry: '',
         businessSicCode: '',
-        productsAndServices: '',
+        description: '',
         logo: '',
-        foundedIn: '',
+        formedDate: null,
         ein: '',
         duns: '',
-        stockSymbol: '',
-        notes: ''
+        ticker: '',
+        notes: '',
+        primaryPhoto: null
     };
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
+        private _organizationContactServiceProxy: OrganizationContactServiceProxy,
+        private _notesService: NotesServiceProxy,
+        private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private store$: Store<RootStore.State>
     ) {
         super(injector);
@@ -69,6 +79,8 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         const company: OrganizationContactInfoDto = this.data.company;
         this.data.title = this.company.fullName = company.fullName;
         this.company = { ...this.company, ...company.organization };
+        this.company.id = company.id;
+        this.company.primaryPhoto = company.primaryPhoto;
         this.data.editTitle = true;
         this.data.titleClearButton = true;
         this.data.placeholder = this.l('Customer.CompanyName');
@@ -83,8 +95,26 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         this.loadStates();
     }
 
-    save() {}
-
+    save() {
+        this.company.companyName = this.company.fullName = this.data.title;
+        let input = new UpdateOrganizationInfoInput(this.company);
+        this._organizationContactServiceProxy.updateOrganizationInfo(input).subscribe(() => {
+            this.notify.success(this.l('SavedSuccessfully'));
+            this.close(true, {
+                company: this.company
+            });
+        });
+        if (this.company.notes) {
+            this._notesService.createNote(CreateNoteInput.fromJS({
+                contactId: this.company.id,
+                text: this.company.notes,
+                typeId: 'C',
+            })).subscribe(() => {
+                this.notify.info(this.l('SavedSuccessfully'));
+            });
+        }
+    }
+    
     private loadCountries() {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
         this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(
@@ -104,18 +134,36 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         );
     }
 
-    loadStates(countryCode: string = this.company.countryCode) {
+    loadStates(countryCode: string = this.company.formedCountryId) {
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
         this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode })).subscribe(
             states => this.states = states
         );
     }
 
-    fileDropped(e) {
-        console.log('file droped', e);
-    }
-
-    fileChangeListener(e) {
-        console.log('file selected', e);
+    showUploadPhotoDialog(event) {
+        this.dialog.open(UploadPhotoDialogComponent, {
+            data: this.company,
+            hasBackdrop: true
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                let base64OrigImage = StringHelper.getBase64(result.origImage),
+                    base64ThumbImage = StringHelper.getBase64(result.thumImage);
+                
+                this.contactPhotoServiceProxy.createContactPhoto(
+                    CreateContactPhotoInput.fromJS({
+                        contactId: this.company.id,
+                        originalImage: base64OrigImage,
+                        thumbnail: base64ThumbImage
+                    })
+                ).subscribe(() => {
+                    this.company.primaryPhoto = ContactPhotoDto.fromJS({
+                        original: base64OrigImage,
+                        thumbnail: base64ThumbImage
+                    });
+                });
+            }
+        });
+        event.stopPropagation();
     }
 }
