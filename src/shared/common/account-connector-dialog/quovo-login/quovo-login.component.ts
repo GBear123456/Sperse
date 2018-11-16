@@ -25,8 +25,9 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit, OnD
         this.startLoading(!this.loadingContainerElement, this.loadingContainerElement);
 
         /** Open quovo popup only after instance initialization - show the spinner until that moment */
-        this.cfoService.statusActive.pipe(filter(statusActive => statusActive))
+        this.cfoService.statusActive
             .pipe(
+                filter(statusActive => statusActive),
                 switchMap(() => this.quovoService.connect().pipe(filter(loaded => loaded))),
                 first(),
                 takeUntil(this.destroy$),
