@@ -108,7 +108,7 @@
                 </div>
                 <div class="right col-md-5">
                     <div class="organization_logo">
-                        <img (click)="showUploadPhotoDialog($event, true)" src="{{ company.primaryPhoto ? 'data:image/png;base64,' + company.primaryPhoto.original : './assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
+                        <img (click)="showUploadPhotoDialog($event)" src="{{ company.primaryPhoto ? 'data:image/png;base64,' + company.primaryPhoto.original : './assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
                     </div>
                     <div class="field foundedIn">
                         <label for="foundedIn">{{l('Company_FoundedIn')}}</label>
