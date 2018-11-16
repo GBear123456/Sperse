@@ -41,7 +41,7 @@ export class FilterModelBase<T extends FilterItemModel> {
 }
 
 export class FilterModel extends FilterModelBase<FilterItemModel> {
-    public static _wordRegex = /\b(\w|')+\b/gim;
+    public static _wordRegex = /\b(\w|'|@|.|_)+\b/gim;
     public static _removeFromEnd = ['at', 'on', 'and'];
     public static _remove = ['and', 'or', 'no', 'if', 'from', 'to', 'etc', 'for', 'like at'];
     public getODataFilterObject() {
