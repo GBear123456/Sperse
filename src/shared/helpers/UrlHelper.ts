@@ -50,4 +50,8 @@ export class UrlHelper {
     static isPFMUrl(url): boolean {
         return url && url.indexOf('personal-finance') >= 0;
     }
+
+    static isPfmAppUrl(url): boolean {
+        return url && url.indexOf('land-space') >= 0;
+    }
 }

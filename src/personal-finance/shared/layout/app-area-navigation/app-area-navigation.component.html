@@ -1,0 +1,31 @@
+<ul class="app-area-navigation">
+  <li *ngFor="let item of memberAreaLinks" class="app-list-item">
+      <a [routerLink]="item.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+          {{l(item.name)}}
+      </a>
+  </li>
+</ul>
+
+<div class="dropdown" *ngIf="responsiveMemberAreaLinks.length">
+  <button class="btn btn-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <ul class="app-responsive-menu dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+    <li *ngFor="let item of responsiveMemberAreaLinks">
+      <a [routerLink]="item.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="dropdown-item">
+          {{l(item.name)}}
+      </a>
+    </li>
+  </ul>
+</div>
+
+<img class="logo" src="./assets/common/images/logos/lend-space.svg">
+
+<ul class="right-actions" *ngIf="!loggedUserId">
+    <li class="right-actions--item">
+        <a href="" class="left-menu--link">{{l('Sign in')}}</a>
+    </li>
+    <li class="right-actions--item">
+        <button class="applyButton"><span>{{l('Get started')}}</span></button>
+    </li>
+</ul>

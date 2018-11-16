@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, ViewEncapsulation, ViewChild, HostBinding } from '@angular/core';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
@@ -39,12 +39,14 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
 
+    @HostBinding('class.pfm-app') hasPfmAppFeature: boolean = false;
+
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
     isImpersonatedLogin = false;
     hasPlatformPermissions = false;
-    hasPfmAppFeature = false;
     showDefaultHeader = true;
+    loggedUserId: number;
 
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName?};
@@ -59,6 +61,25 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
 
+
+    appAreaLinks = [
+        {
+            name: 'Products',
+            routerUrl: '/personal-finance/products'
+        },
+        {
+            name: 'Features',
+            routerUrl: '/personal-finance/features'
+        },
+        {
+            name: 'About',
+            routerUrl: '/personal-finance/about-us'
+        },
+        {
+            name: 'Contact Us',
+            routerUrl: '/personal-finance/contact-us'
+        }
+    ];
     memberAreaLinks = [
         {
             name: 'creditReportLink',
@@ -113,6 +134,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
                 });
         }
 
+        this.loggedUserId = this.appSession.userId;
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
         this.showDefaultHeader = this.isMemberArea() || this.hasPfmAppFeature;
 

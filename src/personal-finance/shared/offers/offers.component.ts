@@ -144,7 +144,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         });
 
         /** Set overflow hidden to container */
-        this.rootComponent.overflowHidden(true);
+        this.rootComponent.overflowHidden(false);
     }
 
     /**

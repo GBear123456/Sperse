@@ -1,0 +1,110 @@
+@import url(../_settings);
+
+:host {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+    
+    .logo {
+        position: absolute;
+        right: calc(~"50% - 80px");
+    }
+
+    .app-area-navigation {
+        padding-left: 0;
+        list-style-type: none;
+        text-align: center;
+        margin: 10px 0 14px;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        li {
+            display: inline-block;
+            padding: 0 15px;
+            a {
+                display: block;
+                text-decoration: none;
+                text-transform: uppercase;
+                font-family: Open Sans;
+                font-size: 14px;
+                font-weight: bold;
+                color: rgba(255, 255, 255, 0.7);
+                padding: 12px 5px;
+                position: relative;
+                white-space: nowrap;
+                &.active,
+                &:hover {
+                    color: @font-color-darkGray;
+                    img {
+                        opacity: 0;
+                        &.active-img {
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .app-responsive-menu {
+        li {
+            padding: 0;
+            a {
+                display: block;
+                text-decoration: none;
+                text-transform: uppercase;
+                font-family: Open Sans;
+                font-size: 14px;
+                font-weight: bold;
+                color: @font-color-lightGray;
+                padding: 12px 5px;
+                position: relative;
+                white-space: nowrap;
+                background-color: transparent;
+                &.active,
+                &:hover {
+                    color: @font-color-darkGray;
+                    img {
+                        opacity: 0;
+                        &.active-img {
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    ul.right-actions {
+        position: absolute;
+        padding: 0px 30px;
+        right: 0px;
+
+        li {
+            display: inline-block;
+            &:last-child {
+                padding-right: 0;
+                margin-right: 10px;
+            }
+
+            + li {
+                margin-left: 10px;
+            }
+
+            a {
+                font-size: 14px;
+                padding: 10px 15px;
+                font-weight: bold;
+                letter-spacing: 0.8px;
+                color: rgba(255, 255, 255, 0.7);
+                text-transform: uppercase;
+                text-decoration: none;
+
+                &:hover {
+                    color: rgba(255, 255, 255, 1);
+                }
+            }
+        }
+    }
+}

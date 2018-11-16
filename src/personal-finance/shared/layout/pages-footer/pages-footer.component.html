@@ -1,4 +1,4 @@
-<div class="top-footer">
+<div class="top-footer" [ngStyle]="{height: hasPfmAppFeature && loggedUserId ? '175px': 'auto'}">
     <div class="top-container">
         <div class="footer-menu">
             <span class="logo" *ngIf="hasPfmAppFeature">{{appSession?.tenant?.name}}</span>
@@ -8,9 +8,9 @@
                 </li>
             </ul>
             <div class="social-links" *ngIf="hasPfmAppFeature"><span class="facebook"></span><span class="twitter"></span><span class="youtube"></span></div>
-        </div><!-- footer-menu -->
-        <div class="separator"></div>
-        <div>
+        </div><!-- footer-menu -->        
+        <div *ngIf="!hasPfmAppFeature || !loggedUserId">
+            <div class="separator"></div>
             <div class="disclosure">
                 <b>{{l("DisclosureTitle", hasPfmAppFeature ? 'PFM': 'Platform')}}</b>: {{l("DisclosureText", hasPfmAppFeature ? 'PFM': 'Platform', appSession?.tenant?.name)}}
             </div>
@@ -18,7 +18,7 @@
         </div>
     </div>
 </div>
-<div class="bottom-footer">
+<div class="bottom-footer" *ngIf="!hasPfmAppFeature || !loggedUserId">
     <div class="bottom-container">
         <span class="copyright">
             © {{appSession?.tenant?.name}} {{currentYear}}, all rights reserved

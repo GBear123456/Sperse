@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { PermissionCheckerService } from "@abp/auth/permission-checker.service";
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 import {
     CanActivate, Router,
@@ -30,6 +31,9 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
     }
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+        if (this._featureChecker.isEnabled('PFM.Applications') && UrlHelper.isPfmAppUrl(state.url))
+            return true;    
+
         if (!this._sessionService.user) {
             this._router.navigate(['/account/login']);
             return false;

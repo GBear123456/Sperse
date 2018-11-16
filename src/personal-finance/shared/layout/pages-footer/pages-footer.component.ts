@@ -22,14 +22,14 @@ export class PagesFooterComponent extends AppComponentBase {
         { url: '/personal-finance/', name: 'GetStarted' }
     ];
     footerMenuItems = [];
-
+    loggedUserId: number;
     currentYear = new Date().getFullYear();
     constructor(
         injector: Injector
     ) {
         super(injector);
 
-
+        this.loggedUserId = this.appSession.userId;
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
         this.footerMenuItems = this.hasPfmAppFeature ? this.appMenuItems: this.defaultMenuItems;
     }

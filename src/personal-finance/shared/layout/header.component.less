@@ -1,106 +1,18 @@
 @import url(_settings);
 
 :host {
+    &.pfm-app {
+        /deep/ .m-dropdown__arrow {
+            color: #AF47C0!important;
+        }
+        /deep/ .m-dropdown__header {
+            background: linear-gradient(to right, #AF47C0 60%, #3B58C1)!important;
+            box-shadow: inset 2px 5px 12px 2px #AF47C0!important;
+        }
+    }
+
     .page-header.navbar {
         flex-wrap: nowrap;
-
-        &.pfm-app {
-            .page-logo, member-area-navigation {
-                display: none;
-            }
-        }
-
-        .static-topbar {
-            .navigation-area {
-                padding-left: 0;
-                list-style-type: none;
-                text-align: center;
-                width: 100%;
-                margin: 10px 0 14px;
-                display: flex;
-                flex-wrap: nowrap;
-                justify-content: center;
-                li {
-                    display: inline-block;
-                    padding: 0 15px;
-                    a {
-                        display: block;
-                        text-decoration: none;
-                        text-transform: uppercase;
-                        font-family: Open Sans;
-                        font-size: 14px;
-                        font-weight: bold;
-                        color: @font-color-lightGray;
-                        padding: 12px 5px 12px 40px;
-                        position: relative;
-                        white-space: nowrap;
-                        &.active,
-                        &:hover {
-                            color: @font-color-darkGray;
-                            img {
-                                opacity: 0;
-                                &.active-img {
-                                    opacity: 1;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            .responsive-menu {
-                li {
-                    padding: 0;
-                    a {
-                        display: block;
-                        text-decoration: none;
-                        font-family: @lato;
-                        font-size: 18px;
-                        font-weight: bold;
-                        color: @font-color-lightGray;
-                        padding: 12px 5px 12px 40px;
-                        position: relative;
-                        white-space: nowrap;
-                        background-color: transparent;
-                        img {
-                            position: absolute;
-                            left: 10px;
-                            top: 50%;
-                            transform: translateY(-50%);
-                            transition: .2s;
-                            opacity: 1;
-                            &.active-img {
-                                opacity: 0;
-                            }
-                        }
-                        &::before {
-                            content: '';
-                            border-bottom: solid 4px @orange-color;
-                            transform: scaleX(0);
-                            transition: all 250ms ease-in-out 0s;
-                            position: absolute;
-                            left: 0;
-                            bottom: 0;
-                            width: 100%;
-                        }
-                        &.active,
-                        &:hover {
-                            color: @font-color-darkGray;
-                            img {
-                                opacity: 0;
-                                &.active-img {
-                                    opacity: 1;
-                                }
-                            }
-                            &::before {
-                                visibility: visible;
-                                transform: scaleX(1);
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         .page-top {
             width: auto!important;

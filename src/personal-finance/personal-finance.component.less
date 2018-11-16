@@ -218,8 +218,15 @@
 }
 
 :host {
-    .wrapper {
-        &:not(.pfm-app) {
+    &.pfm-app {
+        width: 100%;
+        background: url(../assets/common/images/lend-space/background.png) top left no-repeat;
+        background-size: contain;
+        display: block;
+    }
+
+    &:not(.pfm-app) {
+        .wrapper {        
             position: relative;
             overflow: hidden;
             min-height: calc(~"100vh - 79px");
@@ -239,8 +246,6 @@
                 transform: skewY(-8deg);
                 transform-origin: 100%;
             }
-        }
-        &.pfm-app {
         }
     }
 
@@ -509,6 +514,7 @@
         box-shadow: 0 10px 40px 0 rgba(23, 28, 29, 0.15);
         box-sizing: border-box;
         padding: 32px 48px 48px;
+        margin-bottom: 78px;
     }
 
     /deep/ button.applyButton {
@@ -522,6 +528,7 @@
         -moz-transform: skew(-20deg);
         -o-transform: skew(-20deg);
         margin-bottom: 7px;
+        border: none;
         span {
             display: block;
             -webkit-transform: skew(20deg);

@@ -1,4 +1,4 @@
-import { Component, ViewContainerRef, OnInit, Injector } from '@angular/core';
+import { Component, HostBinding, ViewContainerRef, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { Router, ActivationEnd } from '@angular/router';
 
@@ -9,9 +9,9 @@ declare const Typekit: any;
     styleUrls: ['./personal-finance.component.less']
 })
 export class PersonalFinanceComponent extends AppComponentBase implements OnInit {
+    @HostBinding('class.pfm-app') hasPfmAppFeature: boolean = false;
 
     wrapperEnabled = false;
-    hasPfmAppFeature = false;
     loggedUserId: number;
 
     private viewContainerRef: ViewContainerRef;
