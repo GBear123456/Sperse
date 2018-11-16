@@ -1,4 +1,5 @@
 @openSans: 'Open Sans', sans-serif;
+@montserrat: 'Montserrat', sans-serif;
 
 :host {
     // base
@@ -23,11 +24,42 @@
         list-style-type: none;
     }
 
+    .title,
+    .subtitle {
+        max-width: 860px;
+        margin: 0 auto;
+    }
+
+    .title {
+        font-family: @montserrat;
+        font-size: 40px;
+        font-weight: bold;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.25;
+        letter-spacing: normal;
+        text-align: center;
+        color: #002849;
+        margin-bottom: 25px;
+    }
+
+    .subtitle {
+        font-family: @openSans;
+        font-size: 20px;
+        font-weight: normal;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.5;
+        letter-spacing: normal;
+        text-align: center;
+        color: rgba(62, 74, 84, 0.69);
+    }
+
     .block {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 35px 0;
+        padding: 45px 0;
 
         .column {
             width: 49%;
@@ -35,6 +67,7 @@
     }
 
     .orange-btn {
+        font-family: @montserrat;
         background-color: #f5a623;
         display: block;
         color: #fff !important;
@@ -134,6 +167,7 @@
     // hero
     .hero {
         h1 {
+            font-family: @montserrat;
             margin-top: 33px;
             margin-bottom: 0;
             font-size: 53px;
@@ -155,75 +189,103 @@
             color: #ffffff;
             margin-top: 12px;
         }
+    }
 
-        .services {
-            padding: 14px 18px;
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 22px 81px 0 rgba(37, 41, 66, 0.17);
-            max-width: 1280px;
-            margin: 55px auto;
-            position: relative;
+    .services {
+        padding: 14px 18px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 22px 81px 0 rgba(37, 41, 66, 0.17);
+        max-width: 1280px;
+        margin: 70px auto;
+        position: relative;
 
-            &--list {
-                display: flex;
-                justify-content: space-between;
+        &--list {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .orange-btn {
+            padding: 22px 20px;
+            max-width: 290px;
+            font-family: @montserrat;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0 auto -38px;
+
+            img {
+                margin-left: 20px;
             }
 
-            .orange-btn {
-                padding: 22px 20px;
-                max-width: 290px;
-                font-family: Montserrat;
-                font-size: 22px;
-                font-weight: bold;
-                margin: 0 auto -38px;
+            &::after, &::before {
+                border-width: 77px 15px 0 0;
+            }
 
-                img {
-                    margin-left: 12px;
-                }
+            &::before {
+                left: -15px;
+            }
 
-                &::after, &::before {
-                    border-width: 77px 15px 0 0;
-                }
-
-                &::before {
-                    left: -15px;
-                }
-
-                &::after {
-                    right: -15px;
-                }
+            &::after {
+                right: -15px;
             }
         }
     }
 
     .personal-finance {
         margin-top: 120px;
+    }
 
-        h2 {
-            font-family: Montserrat;
-            font-size: 40px;
-            font-weight: bold;
-            font-style: normal;
-            font-stretch: normal;
-            line-height: 1.25;
-            letter-spacing: normal;
-            text-align: center;
-            color: #002849;
-            max-width: 870px;
-            margin: 0 auto 20px;
-        }
+    .pf-list {
+        .pf-item {
+            padding-left: 120px;
+            background: url(../../../assets/common/images/lend-space/refund.svg) 40px 50% no-repeat;
 
-        .subtitle {
-            font-family: @openSans;
-            font-size: 20px;
-            font-weight: 400;
-            font-style: normal;
-            font-stretch: normal;
-            line-height: 1.5;
-            letter-spacing: normal;
-            text-align: center;
-            color: rgba(62, 74, 84, 0.69);
+            + .pf-item {
+                margin-top: 54px;
+            }
+
+            p {
+                max-width: 510px;
+            }
+
+            h3 {
+                font-family: @montserrat;
+                font-size: 22px;
+                font-weight: bold;
+                line-height: normal;
+                letter-spacing: normal;
+                color: #002849;
+                margin-bottom: 10px;
+            }
+
+            p {
+                font-family: @openSans;
+                font-size: 16px;
+                font-weight: normal;
+                line-height: 1.5;
+                letter-spacing: normal;
+                color: rgba(62, 74, 84, 0.69);
+            }
+
+            &.search {
+                background-image: url(../../../assets/common/images/lend-space/search-tick.svg);
+            }
+            &.dashboard {
+                background-image: url(../../../assets/common/images/lend-space/dashboard.svg);
+            }
+            &.security {
+                background-image: url(../../../assets/common/images/lend-space/security-guard.svg);
+            }
+            &.cog {
+                background-image: url(../../../assets/common/images/lend-space/cog.svg);
+            }
+            &.calculator {
+                background-image: url(../../../assets/common/images/lend-space/calculator.svg);
+            }
         }
+    }
+
+    .family {
+        margin-top: 90px;
     }
 }
