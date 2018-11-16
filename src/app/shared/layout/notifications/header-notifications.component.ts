@@ -56,8 +56,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         if (this._appService.checkSubscriptionIsFree(module)) {
             this.subscriptionInfoTitle = this.l("YouAreUsingTheFreePlan", module);
             this.subscriptionInfoText = this.l("UpgradeToUnlockAllOurFeatures");
-        }
-        else if (!this._appService.hasModuleSubscription(module)) {
+        } else if (!this._appService.hasModuleSubscription(module)) {
             this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
             this.subscriptionInfoText = this.l("ChoosePlanToContinueService");
         } else if (this._appService.subscriptionInGracePeriod(module)) {
@@ -155,7 +154,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     subscriptionStatusBarVisible(): boolean {
         return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted("Pages.Administration.Tenant.SubscriptionManagement");
     }
-    
+
     openPaymentWizardDialog() {
         this._dialog.open(PaymentWizardComponent, {
             height: '655px',
