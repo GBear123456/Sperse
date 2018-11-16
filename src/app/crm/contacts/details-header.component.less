@@ -155,18 +155,23 @@
         }
 
         h3 {
+            /deep/ inplace-edit {
+                vertical-align: middle;
+            }
             top: 45px;
+            margin-bottom: 0px;
             position: absolute;
             padding-left: 45px;
             font-size: 12px;
             font-weight: 400;
             color: #677380;
+            height: 35px;
         }
 
         h2 {
             &.shift-top {
                 position: relative;
-                bottom: 5px;
+                bottom: 10px;
             }
             padding-left: 15px;
             display: inline-block;
@@ -175,12 +180,15 @@
             font-weight: 500;
             letter-spacing: 0.3px;
             margin: 0px !important;
-            vertical-align: text-bottom;
+            vertical-align: middle;
             padding-right: 70px;
         }
 
         h2, h3 {
             /deep/ inplace-edit {
+                .inplace-edit-view-mode {
+                    height: auto;
+                }
                 i.dx-icon {
                     font-size: 14px!important;
                 }
@@ -189,7 +197,6 @@
                 }
                 span {
                     display: inline-block;
-                    vertical-align: -webkit-baseline-middle;
                 }
                 input {
                     font-size: 16px!important;
