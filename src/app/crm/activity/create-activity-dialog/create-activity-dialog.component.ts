@@ -26,7 +26,7 @@ import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.compon
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
     styleUrls: ['create-activity-dialog.component.less'],
-    providers: [ ActivityServiceProxy, DialogService ]
+    providers: [ActivityServiceProxy, DialogService]
 })
 export class CreateActivityDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
@@ -40,7 +40,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     @ViewChild('endDateRef') endDateComponent: DxDateBoxComponent;
 
     private readonly LOOKUP_RECORDS_COUNT = 20;
-    private readonly SAVE_OPTION_DEFAULT   = 1;
+    private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
     private lookupTimeout: any;
     private latestSearchPhrase = '';
@@ -82,25 +82,22 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.saveContextMenuItems = [
-            {text: this.l('SaveAndAddNew'), selected: false},
-            {text: this.l('SaveAndClose'), selected: false}
+            { text: this.l('SaveAndAddNew'), selected: false },
+            { text: this.l('SaveAndClose'), selected: false }
         ];
 
         if (this.data.appointment.Id) {
-            if (this.data.appointment.StartDate)
-                this.startDate = this.getDateWithTimezone(this.data.appointment.StartDate);
-            if (this.data.appointment.EndDate)
-                this.endDate = this.getDateWithTimezone(this.data.appointment.EndDate);
-
-            let start = moment.utc(this.data.appointment.StartDate),
-                end = moment.utc(this.data.appointment.EndDate);
-
-            this.isAllDay = !end.hour() && !end.minute() && !end.second()
-                && !start.hour() && !start.minute() && !start.second()
-
             this._activityProxy.get(this.data.appointment.Id).subscribe((res) => {
+
                 this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
+                this.isAllDay = Boolean(res.allDay);
+
+                if (res.startDate)
+                    this.startDate = this.getDateWithTimezone(res.startDate);
+                if (res.endDate)
+                    this.endDate = this.getDateWithTimezone(res.endDate);
             });
+            
         } else {
             let dateNow = new Date(moment().format('YYYY-MM-DD HH:mm:ss'));
             if (this.data.appointment.StartDate) {
@@ -308,8 +305,9 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             title: this.data.appointment.Title,
             description: this.data.appointment.Description,
             assignedUserIds: this.data.appointment.AssignedUserIds || [this.appSession.userId],
-            startDate: this.getDateWithoutTimezone(this.startDate),
-            endDate: this.getDateWithoutTimezone(this.endDate),
+            startDate: this.getDateWithoutTimezone(this.startDate).startOf('day'),
+            endDate: this.getDateWithoutTimezone(this.endDate).endOf('day'),
+            allDay: this.isAllDay,
             stageId: this.data.appointment.StageId,
             leadId: this.data.appointment.LeadId,
             orderId: this.data.appointment.OrderId,
@@ -330,12 +328,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     getDateWithoutTimezone(date) {
-        if (this.isAllDay)
-            return moment.utc(date).startOf('day');
-        else {
-            date.setTime(date.getTime() - ((date.getTimezoneOffset() + moment().utcOffset()) * 60 * 1000));
-            return moment.utc(date);
-        }
+        date.setTime(date.getTime() - ((date.getTimezoneOffset() + moment().utcOffset()) * 60 * 1000));
+        return moment.utc(date);
     }
 
     getDateWithTimezone(date) {
