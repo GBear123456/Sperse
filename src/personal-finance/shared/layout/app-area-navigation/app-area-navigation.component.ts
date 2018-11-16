@@ -10,10 +10,14 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 export class AppAreaNavigationComponent extends AppComponentBase implements AfterViewInit {
     @Input() memberAreaLinks: any[];
     responsiveMemberAreaLinks = [];
+    inlineMemberAreaLinks = [];
+    resizeTimeout: any;
     loggedUserId: number;
 
     @HostListener('window:resize') onResize() {
-        this.checkMenuWidth();
+        clearTimeout(this.resizeTimeout);
+        this.resizeTimeout = setTimeout(
+            () => this.checkMenuWidth());
     }
 
     constructor(injector: Injector) {
@@ -27,20 +31,21 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
     }
 
     checkMenuWidth() {
-        let menuItemsLength = 55,
+        const itemWidth = 150;
+        let menuItemsLength = itemWidth,
             maxItemWidth = 0;
-        let menuSpace = document.getElementById('header-app-menu').clientWidth;
-        let menuItems = Array.from(document.getElementsByClassName('app-list-item'));
+        let menuSpace = Math.round(innerWidth / 2  - itemWidth);
 
-        menuItems.forEach(item => {
-          menuItemsLength += item.clientWidth;
-          if (maxItemWidth < item.clientWidth) maxItemWidth = item.clientWidth;
+        this.responsiveMemberAreaLinks = [];
+        this.inlineMemberAreaLinks = [];
+
+        this.memberAreaLinks.forEach((item, index) => {
+            if (menuItemsLength > menuSpace)
+                this.responsiveMemberAreaLinks.push(this.memberAreaLinks[index]);
+            else {
+              menuItemsLength += itemWidth;
+              this.inlineMemberAreaLinks.push(this.memberAreaLinks[index]);
+            }
         });
-
-        if (menuItemsLength > menuSpace && this.memberAreaLinks.length) {
-          this.responsiveMemberAreaLinks.push(this.memberAreaLinks.pop());
-        } else if (menuSpace - menuItemsLength > maxItemWidth && this.responsiveMemberAreaLinks.length) {
-          this.memberAreaLinks.push(this.responsiveMemberAreaLinks.pop());
-        }
     }
 }

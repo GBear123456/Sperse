@@ -1,5 +1,5 @@
 <ul class="app-area-navigation">
-  <li *ngFor="let item of memberAreaLinks" class="app-list-item">
+  <li *ngFor="let item of inlineMemberAreaLinks" class="app-list-item">
       <a [routerLink]="item.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
           {{l(item.name)}}
       </a>
