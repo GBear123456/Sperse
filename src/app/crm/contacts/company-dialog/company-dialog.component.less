@@ -48,10 +48,13 @@
         flex-direction: column;
         height: calc(~"100vh - 90px");
 
+        .dx-scrollable-container {
+            overflow: visible;
+        }
+
         .drop-down-box-wrapper {
             width: 130px;
             height: 34px;
-            margin-left: 30px;
             overflow: hidden;
             display: inline-block;
 
@@ -80,7 +83,7 @@
             margin-bottom: 19px;
             display: flex;
             align-items: flex-end;
-
+            position: relative;
             &.addr {
                 margin-bottom: 0px;
 
@@ -125,6 +128,7 @@
 
                 dx-text-area {
                     flex-basis: 100% !important;
+                    margin-left: 0;
                 }
             }
 
@@ -146,21 +150,20 @@
                 }
 
                 &.clear-contact {
-                    color: red;
                     margin: 0px !important;
-                    display: inline-block;
-                    left: 30px;
                     width: 8px;
                     height: 8px;
+                    position: absolute;
+                    right: -20px;
+                    top: 10px;
 
                     .minus-icon {
                         width: 16px;
                         height: 16px;
-                        display: inline-block;
+                        display: block;
                         border-radius: 50%;
                         background: #F9E6E6;
-                        position: absolute;
-                        top: 10px;
+                        position: relative;
                         cursor: pointer;
 
                         &:before {
@@ -169,18 +172,18 @@
                             height: 2px;
                             background: #e7326a;
                             position: absolute;
-                            left: 50%;
-                            top: 50%;
-                            -webkit-transform: translate(-50%, -50%);
-                            transform: translate(-50%, -50%);
+                            left: 0;
+                            top: 0;
+                            margin: auto;
+                            right: 0;
+                            bottom: 0;
                         }
                     }
                 }
             }
 
-            dx-text-box, dx-number-box, dx-text-area, dx-select-box, dx-drop-down-box {
+            dx-text-box, dx-date-box, dx-number-box, dx-text-area, dx-select-box, dx-drop-down-box {
                 display: inline-block;
-                margin-left: 30px;
 
                 &.dx-invalid {
                     input {
@@ -201,6 +204,18 @@
                     letter-spacing: 0.3px;
                     color: #424c56;
                     padding: 0px;
+                }
+            }
+
+            dx-date-box {
+                &.dx-dropdowneditor-active {
+                    box-shadow: initial;
+                }
+                &.dx-invalid.dx-dropdowneditor .dx-texteditor-container:after {
+                    right: 32px;
+                }
+                .dx-texteditor-input {
+                    padding-right: 50px !important;
                 }
             }
 
