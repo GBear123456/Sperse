@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 //import { LoanComponent } from './loans/loans.component';
 //import { CreditCardsComponent } from './credit-cards/credit-cards.component';
 import { CreditReportComponent } from './credit-report/credit-report.component';
+import { LendSpaceComponent } from './lend-space/lend-space.component'
 import { CreditWizardPageComponent } from './credit-report/wizard-form/wizard-page/wizard-page.component';
 import { LandingComponent } from './landing.component';
 import { OffersComponent } from '@root/personal-finance/shared/offers/offers.component';
@@ -19,7 +20,8 @@ import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offe
                     { path: '', component: CreditReportComponent },
                     { path: 'signup', component: CreditWizardPageComponent},
                     { path: 'offers', component: OffersComponent },
-                    { path: 'offer/:id', component: OfferDetailsComponent }
+                    { path: 'offer/:id', component: OfferDetailsComponent },
+                    { path: 'lend-space', component: LendSpaceComponent },
                     // { path: 'credit-cards', component: CreditCardsComponent },
                     // { path: 'loans', component: LoanComponent }
                 ]

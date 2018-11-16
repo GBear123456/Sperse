@@ -40,6 +40,7 @@ import {  DxSelectBoxModule,
           DxValidationSummaryModule } from 'devextreme-angular';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { OffersModule } from '@root/personal-finance/shared/offers/offers.module';
+import { LendSpaceComponent } from './lend-space/lend-space.component';
 
 @NgModule({
     imports: [
@@ -86,7 +87,8 @@ import { OffersModule } from '@root/personal-finance/shared/offers/offers.module
         MainNavComponent,
         PartnersComponent,
         SubscriptionComponent,
-        HowItWorkComponent
+        HowItWorkComponent,
+        LendSpaceComponent
     ],
     bootstrap: [
         LandingComponent
