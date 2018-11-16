@@ -36,8 +36,8 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
             maxItemWidth = 0;
         let menuSpace = Math.round(innerWidth / 2  - itemWidth);
 
-        this.responsiveMemberAreaLinks = [];
-        this.inlineMemberAreaLinks = [];
+        this.responsiveMemberAreaLinks.length = 0;
+        this.inlineMemberAreaLinks.length = 0;
 
         this.memberAreaLinks.forEach((item, index) => {
             if (menuItemsLength > menuSpace)
