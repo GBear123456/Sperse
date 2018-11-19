@@ -172,6 +172,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         if (this.fileUrlFormControl.valid) {
             let image = new Image();
             image.src = this.fileUrlFormControl.value;
+            image.crossOrigin = 'Anonymous';
             image.onload = () => {
                 this.cropper.setImage(image);
                 this.changeDetectorRef.detectChanges();
