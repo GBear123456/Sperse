@@ -3,7 +3,7 @@
     const AbpLocalizationCultureName = 'Abp.Localization.CultureName';
     const EncryptedAuthToken = 'enc_auth_token';
 
-    var remoteServiceUrl = '', loginInformations;
+    var remoteServiceUrl = '';
     var pathParts = location.pathname.split('/').filter(Boolean);
     var cookie = queryString(document.cookie, ';');
     var params = queryString(document.location.search.substr(1), '&');
@@ -60,11 +60,18 @@
                 "Accept": "application/json"
             }
         ).then(function(response) {
-            loginInformations = response && response.result;
+            var loginInformations = response && response.result,
+                tenant = loginInformations && loginInformations.tenant,
+                tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse';
+
+            Array.prototype.forEach.call(document.getElementsByClassName('tenantName'), function(elm) {
+                elm.innerHTML = tenantName;
+            });
+
             if (window['logoImage']) {
                 logoImage.setAttribute('src',
-                    loginInformations && loginInformations.tenant && loginInformations.tenant.logoId ?
-                    remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + response.tenant.logoId: 
+                    tenant && loginInformations.tenant.logoId ?
+                    remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId:
                     getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
                 );
                 logoImage.style.display = 'block';

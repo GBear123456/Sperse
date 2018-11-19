@@ -5,6 +5,7 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
@@ -13,6 +14,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { SessionServiceProxy, UpdateUserSignInTokenOutput } from '@shared/service-proxies/service-proxies';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ExternalLoginProvider, LoginService } from './login.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     templateUrl: './login.component.html',
@@ -22,6 +24,7 @@ import { ExternalLoginProvider, LoginService } from './login.service';
     animations: [accountModuleAnimation()]
 })
 export class LoginComponent extends AppComponentBase implements OnInit {
+    tenantName = AppConsts.defaultTenantName;
     submitting = false;
     isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
     conditions = ConditionsType;
@@ -30,6 +33,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
         public loginService: LoginService,
         private _sessionService: AbpSessionService,
         private _sessionAppService: SessionServiceProxy,
+        private _appSession: AppSessionService,
         private dialog: MatDialog
     ) {
         super(injector);
@@ -56,6 +60,9 @@ export class LoginComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
+        let tenant = this._appSession.tenant;
+        if (tenant)
+            this.tenantName = tenant.name || tenant.tenancyName;
         if (this._sessionService.userId > 0 && UrlHelper.getReturnUrl() && UrlHelper.getSingleSignIn()) {
             this._sessionAppService.updateUserSignInToken()
                 .subscribe((result: UpdateUserSignInTokenOutput) => {

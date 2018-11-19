@@ -70,7 +70,7 @@ export class RootComponent implements AfterViewInit {
     }
 
     public setTitle(tenantName: string, moduleName: string) {
-        let newTitle = (tenantName === '' ? 'Sperse' : tenantName) + ': ' + moduleName;
+        let newTitle = (tenantName === '' ? AppConsts.defaultTenantName : tenantName) + ': ' + moduleName;
         this.title.setTitle(newTitle);
     }
 
@@ -96,7 +96,7 @@ export class AppRootComponent implements OnInit {
 
         //tenant specific custom css
         if (this.SS.tenant && this.SS.tenant.customCssId) {
-            this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId);
+            this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId + '&tenantId=' + this.SS.tenant.id);
         }
     }
 }

@@ -4,6 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { LoginService } from './login/login.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     templateUrl: './account.component.html',
@@ -16,6 +17,7 @@ export class AccountComponent extends AppComponentBase implements OnInit {
 
     private viewContainerRef: ViewContainerRef;
 
+    tenantName: string = AppConsts.defaultTenantName;
     currentYear: number = moment().year();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     tenantChangeDisabledRoutes: string[] = ['select-edition', 'buy', 'upgrade', 'extend', 'register-tenant'];
@@ -23,6 +25,7 @@ export class AccountComponent extends AppComponentBase implements OnInit {
     public constructor(
         injector: Injector,
         private _loginService: LoginService,
+        private _appSession: AppSessionService,
         viewContainerRef: ViewContainerRef
     ) {
         super(injector);
@@ -46,6 +49,10 @@ export class AccountComponent extends AppComponentBase implements OnInit {
     ngOnInit(): void {
         this._loginService.init();
         this.setTitle('Login');
+
+        let tenant = this._appSession.tenant;
+        if (tenant)
+            this.tenantName = tenant.name || tenant.tenancyName;
     }
 
     goToHome(): void {
