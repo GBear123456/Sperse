@@ -15865,6 +15865,60 @@ export class OrderSubscriptionServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @trackingCode (optional) 
+     * @isCaptured (optional) 
+     * @return Success
+     */
+    completeManualSubscriptionPayment(trackingCode: string | null | undefined, isCaptured: boolean | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/CompleteManualSubscriptionPayment?";
+        if (trackingCode !== undefined)
+            url_ += "trackingCode=" + encodeURIComponent("" + trackingCode) + "&"; 
+        if (isCaptured !== undefined)
+            url_ += "isCaptured=" + encodeURIComponent("" + isCaptured) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCompleteManualSubscriptionPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCompleteManualSubscriptionPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCompleteManualSubscriptionPayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -17315,60 +17369,6 @@ export class PaymentServiceProxy {
             }));
         }
         return _observableOf<PaymentMethodInfo[]>(<any>null);
-    }
-
-    /**
-     * @trackingCode (optional) 
-     * @isCaptured (optional) 
-     * @return Success
-     */
-    completeManualSubscriptionPayment(trackingCode: string | null | undefined, isCaptured: boolean | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Payment/CompleteManualSubscriptionPayment?";
-        if (trackingCode !== undefined)
-            url_ += "trackingCode=" + encodeURIComponent("" + trackingCode) + "&"; 
-        if (isCaptured !== undefined)
-            url_ += "isCaptured=" + encodeURIComponent("" + isCaptured) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCompleteManualSubscriptionPayment(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCompleteManualSubscriptionPayment(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCompleteManualSubscriptionPayment(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -32907,7 +32907,7 @@ export class ContactInfoDto implements IContactInfoDto {
     id!: number | undefined;
     statusId!: string | undefined;
     status!: string | undefined;
-    typeId!: string | undefined;
+    groupId!: string | undefined;
     assignedUserId!: number | undefined;
     creatorUserId!: number | undefined;
     starId!: number | undefined;
@@ -32936,7 +32936,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.id = data["id"];
             this.statusId = data["statusId"];
             this.status = data["status"];
-            this.typeId = data["typeId"];
+            this.groupId = data["groupId"];
             this.assignedUserId = data["assignedUserId"];
             this.creatorUserId = data["creatorUserId"];
             this.starId = data["starId"];
@@ -32977,7 +32977,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["id"] = this.id;
         data["statusId"] = this.statusId;
         data["status"] = this.status;
-        data["typeId"] = this.typeId;
+        data["groupId"] = this.groupId;
         data["assignedUserId"] = this.assignedUserId;
         data["creatorUserId"] = this.creatorUserId;
         data["starId"] = this.starId;
@@ -33011,7 +33011,7 @@ export interface IContactInfoDto {
     id: number | undefined;
     statusId: string | undefined;
     status: string | undefined;
-    typeId: string | undefined;
+    groupId: string | undefined;
     assignedUserId: number | undefined;
     creatorUserId: number | undefined;
     starId: number | undefined;
@@ -47926,7 +47926,7 @@ export interface IPackageEditionConfigDto {
 }
 
 export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeatureDto {
-    feature!: PricingTableFeature | undefined;
+    definition!: PricingTableFeatureDefinition | undefined;
     value!: string | undefined;
 
     constructor(data?: IPackageEditionConfigFeatureDto) {
@@ -47940,7 +47940,7 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     init(data?: any) {
         if (data) {
-            this.feature = data["feature"] ? PricingTableFeature.fromJS(data["feature"]) : <any>undefined;
+            this.definition = data["definition"] ? PricingTableFeatureDefinition.fromJS(data["definition"]) : <any>undefined;
             this.value = data["value"];
         }
     }
@@ -47954,27 +47954,27 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["feature"] = this.feature ? this.feature.toJSON() : <any>undefined;
+        data["definition"] = this.definition ? this.definition.toJSON() : <any>undefined;
         data["value"] = this.value;
         return data; 
     }
 }
 
 export interface IPackageEditionConfigFeatureDto {
-    feature: PricingTableFeature | undefined;
+    definition: PricingTableFeatureDefinition | undefined;
     value: string | undefined;
 }
 
-export class PricingTableFeature implements IPricingTableFeature {
+export class PricingTableFeatureDefinition implements IPricingTableFeatureDefinition {
     name!: string | undefined;
     displayName!: any | undefined;
     isVariable!: boolean | undefined;
     sortOrder!: number | undefined;
     isStatic!: boolean | undefined;
-    measurementUnit!: PricingTableFeatureMeasurementUnit | undefined;
+    measurementUnit!: PricingTableFeatureDefinitionMeasurementUnit | undefined;
     isCommon!: boolean | undefined;
 
-    constructor(data?: IPricingTableFeature) {
+    constructor(data?: IPricingTableFeatureDefinition) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48001,9 +48001,9 @@ export class PricingTableFeature implements IPricingTableFeature {
         }
     }
 
-    static fromJS(data: any): PricingTableFeature {
+    static fromJS(data: any): PricingTableFeatureDefinition {
         data = typeof data === 'object' ? data : {};
-        let result = new PricingTableFeature();
+        let result = new PricingTableFeatureDefinition();
         result.init(data);
         return result;
     }
@@ -48027,13 +48027,13 @@ export class PricingTableFeature implements IPricingTableFeature {
     }
 }
 
-export interface IPricingTableFeature {
+export interface IPricingTableFeatureDefinition {
     name: string | undefined;
     displayName: any | undefined;
     isVariable: boolean | undefined;
     sortOrder: number | undefined;
     isStatic: boolean | undefined;
-    measurementUnit: PricingTableFeatureMeasurementUnit | undefined;
+    measurementUnit: PricingTableFeatureDefinitionMeasurementUnit | undefined;
     isCommon: boolean | undefined;
 }
 
@@ -56435,7 +56435,7 @@ export enum PackageConfigDtoModule {
     HUB = "HUB", 
 }
 
-export enum PricingTableFeatureMeasurementUnit {
+export enum PricingTableFeatureDefinitionMeasurementUnit {
     GB = "GB", 
 }
 
