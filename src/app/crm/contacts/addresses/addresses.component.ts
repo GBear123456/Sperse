@@ -22,6 +22,7 @@ import {
     ContactAddressDto, UpdateContactAddressInput, CreateContactAddressInput, ContactInfoDetailsDto,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
+import { PersonOrgRelationType } from '@root/shared/AppEnums';
 
 @Component({
     selector: 'addresses',
@@ -153,7 +154,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
             relatedContactId: this._contactInfo.id,
-            companyName: companyName
+            companyName: companyName,
+            relationTypeId: PersonOrgRelationType.Employee
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
             dialogData.contactId = response.id;

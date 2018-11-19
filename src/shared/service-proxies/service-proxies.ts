@@ -15865,6 +15865,60 @@ export class OrderSubscriptionServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @trackingCode (optional) 
+     * @isCaptured (optional) 
+     * @return Success
+     */
+    completeManualSubscriptionPayment(trackingCode: string | null | undefined, isCaptured: boolean | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/CompleteManualSubscriptionPayment?";
+        if (trackingCode !== undefined)
+            url_ += "trackingCode=" + encodeURIComponent("" + trackingCode) + "&"; 
+        if (isCaptured !== undefined)
+            url_ += "isCaptured=" + encodeURIComponent("" + isCaptured) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCompleteManualSubscriptionPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCompleteManualSubscriptionPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCompleteManualSubscriptionPayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -17315,60 +17369,6 @@ export class PaymentServiceProxy {
             }));
         }
         return _observableOf<PaymentMethodInfo[]>(<any>null);
-    }
-
-    /**
-     * @trackingCode (optional) 
-     * @isCaptured (optional) 
-     * @return Success
-     */
-    completeManualSubscriptionPayment(trackingCode: string | null | undefined, isCaptured: boolean | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Payment/CompleteManualSubscriptionPayment?";
-        if (trackingCode !== undefined)
-            url_ += "trackingCode=" + encodeURIComponent("" + trackingCode) + "&"; 
-        if (isCaptured !== undefined)
-            url_ += "isCaptured=" + encodeURIComponent("" + isCaptured) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCompleteManualSubscriptionPayment(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCompleteManualSubscriptionPayment(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCompleteManualSubscriptionPayment(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -26796,8 +26796,7 @@ export class ActivityDto implements IActivityDto {
     allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
-    orderId!: number | undefined;
-    customerId!: number | undefined;
+    contactId!: number | undefined;
 
     constructor(data?: IActivityDto) {
         if (data) {
@@ -26825,8 +26824,7 @@ export class ActivityDto implements IActivityDto {
             this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
-            this.orderId = data["orderId"];
-            this.customerId = data["customerId"];
+            this.contactId = data["contactId"];
         }
     }
 
@@ -26854,8 +26852,7 @@ export class ActivityDto implements IActivityDto {
         data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
-        data["orderId"] = this.orderId;
-        data["customerId"] = this.customerId;
+        data["contactId"] = this.contactId;
         return data; 
     }
 }
@@ -26872,8 +26869,7 @@ export interface IActivityDto {
     allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
-    orderId: number | undefined;
-    customerId: number | undefined;
+    contactId: number | undefined;
 }
 
 export class CreateActivityDto implements ICreateActivityDto {
@@ -26886,8 +26882,7 @@ export class CreateActivityDto implements ICreateActivityDto {
     allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
-    orderId!: number | undefined;
-    customerId!: number | undefined;
+    contactId!: number | undefined;
 
     constructor(data?: ICreateActivityDto) {
         if (data) {
@@ -26913,8 +26908,7 @@ export class CreateActivityDto implements ICreateActivityDto {
             this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
-            this.orderId = data["orderId"];
-            this.customerId = data["customerId"];
+            this.contactId = data["contactId"];
         }
     }
 
@@ -26940,8 +26934,7 @@ export class CreateActivityDto implements ICreateActivityDto {
         data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
-        data["orderId"] = this.orderId;
-        data["customerId"] = this.customerId;
+        data["contactId"] = this.contactId;
         return data; 
     }
 }
@@ -26956,8 +26949,7 @@ export interface ICreateActivityDto {
     allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
-    orderId: number | undefined;
-    customerId: number | undefined;
+    contactId: number | undefined;
 }
 
 export class UpdateActivityDto implements IUpdateActivityDto {
@@ -26971,8 +26963,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
     allDay!: boolean | undefined;
     stageId!: number | undefined;
     leadId!: number | undefined;
-    orderId!: number | undefined;
-    customerId!: number | undefined;
+    contactId!: number | undefined;
 
     constructor(data?: IUpdateActivityDto) {
         if (data) {
@@ -26999,8 +26990,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
             this.allDay = data["allDay"];
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
-            this.orderId = data["orderId"];
-            this.customerId = data["customerId"];
+            this.contactId = data["contactId"];
         }
     }
 
@@ -27027,8 +27017,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
         data["allDay"] = this.allDay;
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
-        data["orderId"] = this.orderId;
-        data["customerId"] = this.customerId;
+        data["contactId"] = this.contactId;
         return data; 
     }
 }
@@ -27044,8 +27033,7 @@ export interface IUpdateActivityDto {
     allDay: boolean | undefined;
     stageId: number | undefined;
     leadId: number | undefined;
-    orderId: number | undefined;
-    customerId: number | undefined;
+    contactId: number | undefined;
 }
 
 export class MoveActivityDto implements IMoveActivityDto {
@@ -32907,7 +32895,7 @@ export class ContactInfoDto implements IContactInfoDto {
     id!: number | undefined;
     statusId!: string | undefined;
     status!: string | undefined;
-    typeId!: string | undefined;
+    groupId!: string | undefined;
     assignedUserId!: number | undefined;
     creatorUserId!: number | undefined;
     starId!: number | undefined;
@@ -32936,7 +32924,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.id = data["id"];
             this.statusId = data["statusId"];
             this.status = data["status"];
-            this.typeId = data["typeId"];
+            this.groupId = data["groupId"];
             this.assignedUserId = data["assignedUserId"];
             this.creatorUserId = data["creatorUserId"];
             this.starId = data["starId"];
@@ -32977,7 +32965,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["id"] = this.id;
         data["statusId"] = this.statusId;
         data["status"] = this.status;
-        data["typeId"] = this.typeId;
+        data["groupId"] = this.groupId;
         data["assignedUserId"] = this.assignedUserId;
         data["creatorUserId"] = this.creatorUserId;
         data["starId"] = this.starId;
@@ -33011,7 +32999,7 @@ export interface IContactInfoDto {
     id: number | undefined;
     statusId: string | undefined;
     status: string | undefined;
-    typeId: string | undefined;
+    groupId: string | undefined;
     assignedUserId: number | undefined;
     creatorUserId: number | undefined;
     starId: number | undefined;
@@ -34561,7 +34549,6 @@ export interface ICreateContactOutput {
 
 export class SimilarContactOutput implements ISimilarContactOutput {
     id!: number | undefined;
-    contactId!: number | undefined;
     name!: string | undefined;
     photo!: string | undefined;
     companyName!: string | undefined;
@@ -34581,7 +34568,6 @@ export class SimilarContactOutput implements ISimilarContactOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.contactId = data["contactId"];
             this.name = data["name"];
             this.photo = data["photo"];
             this.companyName = data["companyName"];
@@ -34601,7 +34587,6 @@ export class SimilarContactOutput implements ISimilarContactOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["contactId"] = this.contactId;
         data["name"] = this.name;
         data["photo"] = this.photo;
         data["companyName"] = this.companyName;
@@ -34614,7 +34599,6 @@ export class SimilarContactOutput implements ISimilarContactOutput {
 
 export interface ISimilarContactOutput {
     id: number | undefined;
-    contactId: number | undefined;
     name: string | undefined;
     photo: string | undefined;
     companyName: string | undefined;
@@ -35134,6 +35118,8 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
     id!: number | undefined;
     orgId!: number;
     relationTypeId!: string;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
     comment!: string | undefined;
@@ -35152,6 +35138,8 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
             this.id = data["id"];
             this.orgId = data["orgId"];
             this.relationTypeId = data["relationTypeId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
@@ -35170,6 +35158,8 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
         data["id"] = this.id;
         data["orgId"] = this.orgId;
         data["relationTypeId"] = this.relationTypeId;
+        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
@@ -35181,6 +35171,8 @@ export interface IContactBusinessInfo {
     id: number | undefined;
     orgId: number;
     relationTypeId: string;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
     isActive: boolean;
     isConfirmed: boolean;
     comment: string | undefined;
@@ -35761,6 +35753,8 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
     personId!: number;
     orgId!: number;
     relationTypeId!: string;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
     comment!: string | undefined;
@@ -35779,6 +35773,8 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
             this.personId = data["personId"];
             this.orgId = data["orgId"];
             this.relationTypeId = data["relationTypeId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
@@ -35797,6 +35793,8 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
         data["personId"] = this.personId;
         data["orgId"] = this.orgId;
         data["relationTypeId"] = this.relationTypeId;
+        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
@@ -35808,6 +35806,8 @@ export interface IContactBusinessCreateInfo {
     personId: number;
     orgId: number;
     relationTypeId: string;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
     isActive: boolean;
     isConfirmed: boolean;
     comment: string | undefined;
@@ -35851,7 +35851,7 @@ export interface ICreateContactBusinessOutput {
 
 export class UpdateContactBusinessInput implements IUpdateContactBusinessInput {
     id!: number;
-    contactBusinessEditInfo!: ContactBusinessEditInfo;
+    contactBusinessEditInfo!: PersonOrgRelationEditInfo;
 
     constructor(data?: IUpdateContactBusinessInput) {
         if (data) {
@@ -35861,14 +35861,14 @@ export class UpdateContactBusinessInput implements IUpdateContactBusinessInput {
             }
         }
         if (!data) {
-            this.contactBusinessEditInfo = new ContactBusinessEditInfo();
+            this.contactBusinessEditInfo = new PersonOrgRelationEditInfo();
         }
     }
 
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.contactBusinessEditInfo = data["contactBusinessEditInfo"] ? ContactBusinessEditInfo.fromJS(data["contactBusinessEditInfo"]) : new ContactBusinessEditInfo();
+            this.contactBusinessEditInfo = data["contactBusinessEditInfo"] ? PersonOrgRelationEditInfo.fromJS(data["contactBusinessEditInfo"]) : new PersonOrgRelationEditInfo();
         }
     }
 
@@ -35889,17 +35889,19 @@ export class UpdateContactBusinessInput implements IUpdateContactBusinessInput {
 
 export interface IUpdateContactBusinessInput {
     id: number;
-    contactBusinessEditInfo: ContactBusinessEditInfo;
+    contactBusinessEditInfo: PersonOrgRelationEditInfo;
 }
 
-export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
+export class PersonOrgRelationEditInfo implements IPersonOrgRelationEditInfo {
     orgId!: number;
     relationTypeId!: string;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
     isActive!: boolean;
     isConfirmed!: boolean;
     comment!: string | undefined;
 
-    constructor(data?: IContactBusinessEditInfo) {
+    constructor(data?: IPersonOrgRelationEditInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -35912,15 +35914,17 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
         if (data) {
             this.orgId = data["orgId"];
             this.relationTypeId = data["relationTypeId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
         }
     }
 
-    static fromJS(data: any): ContactBusinessEditInfo {
+    static fromJS(data: any): PersonOrgRelationEditInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new ContactBusinessEditInfo();
+        let result = new PersonOrgRelationEditInfo();
         result.init(data);
         return result;
     }
@@ -35929,6 +35933,8 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
         data = typeof data === 'object' ? data : {};
         data["orgId"] = this.orgId;
         data["relationTypeId"] = this.relationTypeId;
+        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
         data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
@@ -35936,9 +35942,11 @@ export class ContactBusinessEditInfo implements IContactBusinessEditInfo {
     }
 }
 
-export interface IContactBusinessEditInfo {
+export interface IPersonOrgRelationEditInfo {
     orgId: number;
     relationTypeId: string;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
     isActive: boolean;
     isConfirmed: boolean;
     comment: string | undefined;
@@ -46863,6 +46871,7 @@ export interface IOrganizationShortInfo {
 
 export class CreateOrganizationInput implements ICreateOrganizationInput {
     relatedContactId!: number;
+    relationTypeId!: string;
     companyName!: string;
     shortName!: string | undefined;
     industry!: string | undefined;
@@ -46894,6 +46903,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
     init(data?: any) {
         if (data) {
             this.relatedContactId = data["relatedContactId"];
+            this.relationTypeId = data["relationTypeId"];
             this.companyName = data["companyName"];
             this.shortName = data["shortName"];
             this.industry = data["industry"];
@@ -46925,6 +46935,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["relatedContactId"] = this.relatedContactId;
+        data["relationTypeId"] = this.relationTypeId;
         data["companyName"] = this.companyName;
         data["shortName"] = this.shortName;
         data["industry"] = this.industry;
@@ -46949,6 +46960,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
 
 export interface ICreateOrganizationInput {
     relatedContactId: number;
+    relationTypeId: string;
     companyName: string;
     shortName: string | undefined;
     industry: string | undefined;
@@ -47926,7 +47938,7 @@ export interface IPackageEditionConfigDto {
 }
 
 export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeatureDto {
-    feature!: PricingTableFeature | undefined;
+    definition!: PricingTableFeatureDefinition | undefined;
     value!: string | undefined;
 
     constructor(data?: IPackageEditionConfigFeatureDto) {
@@ -47940,7 +47952,7 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     init(data?: any) {
         if (data) {
-            this.feature = data["feature"] ? PricingTableFeature.fromJS(data["feature"]) : <any>undefined;
+            this.definition = data["definition"] ? PricingTableFeatureDefinition.fromJS(data["definition"]) : <any>undefined;
             this.value = data["value"];
         }
     }
@@ -47954,27 +47966,27 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["feature"] = this.feature ? this.feature.toJSON() : <any>undefined;
+        data["definition"] = this.definition ? this.definition.toJSON() : <any>undefined;
         data["value"] = this.value;
         return data; 
     }
 }
 
 export interface IPackageEditionConfigFeatureDto {
-    feature: PricingTableFeature | undefined;
+    definition: PricingTableFeatureDefinition | undefined;
     value: string | undefined;
 }
 
-export class PricingTableFeature implements IPricingTableFeature {
+export class PricingTableFeatureDefinition implements IPricingTableFeatureDefinition {
     name!: string | undefined;
     displayName!: any | undefined;
     isVariable!: boolean | undefined;
     sortOrder!: number | undefined;
     isStatic!: boolean | undefined;
-    measurementUnit!: PricingTableFeatureMeasurementUnit | undefined;
+    measurementUnit!: PricingTableFeatureDefinitionMeasurementUnit | undefined;
     isCommon!: boolean | undefined;
 
-    constructor(data?: IPricingTableFeature) {
+    constructor(data?: IPricingTableFeatureDefinition) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48001,9 +48013,9 @@ export class PricingTableFeature implements IPricingTableFeature {
         }
     }
 
-    static fromJS(data: any): PricingTableFeature {
+    static fromJS(data: any): PricingTableFeatureDefinition {
         data = typeof data === 'object' ? data : {};
-        let result = new PricingTableFeature();
+        let result = new PricingTableFeatureDefinition();
         result.init(data);
         return result;
     }
@@ -48027,13 +48039,13 @@ export class PricingTableFeature implements IPricingTableFeature {
     }
 }
 
-export interface IPricingTableFeature {
+export interface IPricingTableFeatureDefinition {
     name: string | undefined;
     displayName: any | undefined;
     isVariable: boolean | undefined;
     sortOrder: number | undefined;
     isStatic: boolean | undefined;
-    measurementUnit: PricingTableFeatureMeasurementUnit | undefined;
+    measurementUnit: PricingTableFeatureDefinitionMeasurementUnit | undefined;
     isCommon: boolean | undefined;
 }
 
@@ -56435,7 +56447,7 @@ export enum PackageConfigDtoModule {
     HUB = "HUB", 
 }
 
-export enum PricingTableFeatureMeasurementUnit {
+export enum PricingTableFeatureDefinitionMeasurementUnit {
     GB = "GB", 
 }
 

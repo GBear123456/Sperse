@@ -19,9 +19,9 @@
     <ul>
         <li *ngFor="let feature of features">
             <img [src]="baseUrl + 'assets/common/icons/feature-enabled.svg'">
-            {{ localizationService.ls(feature.feature.displayName.sourceName, feature.feature.displayName.name) }}
+            {{ localizationService.ls(feature.definition.displayName.sourceName, feature.definition.displayName.name) }}
             {{ getFeatureValue(feature) }}
-            {{ feature.feature.measurementUnit ? ' ' + feature.feature.measurementUnit : '' }}
+            {{ feature.definition.measurementUnit ? ' ' + feature.definition.measurementUnit : '' }}
         </li>
     </ul>
 </div>
