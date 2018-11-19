@@ -17,6 +17,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
 import { ContactsService } from '../contacts.service';
+import { PersonOrgRelationType } from '@root/shared/AppEnums';
 
 @Component({
     selector: 'contacts-area',
@@ -124,7 +125,8 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
             relatedContactId: this._contactInfo.id,
-            companyName: companyName
+            companyName: companyName,
+            relationTypeId: PersonOrgRelationType.Employee
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
             dialogData.contactId = response.id;

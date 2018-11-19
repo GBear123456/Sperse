@@ -107,6 +107,13 @@ export class ContactGroup {
     static UserProfile = 'U';
 }
 
+export class PersonOrgRelationType {
+    static Owner = 'O';
+    static CoOwner = 'C';
+    static Shareholder = 'S';
+    static Employee = 'E';
+}
+
 export class ODataSearchStrategy {
     static Contains = 'contains';
     static StartsWith = 'startswith';
