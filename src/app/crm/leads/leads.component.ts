@@ -199,10 +199,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     invalidate(quiet = false, stageId = undefined) {
         setTimeout(() => {
-            this.pipelineComponent.refresh(quiet, stageId);
-            this.dataGrid.instance.refresh().then(() => {
-                this.setGridDataLoaded();
-            });
+            this.processFilterInternal(false);
+            this.processFilterInternal(true);
             (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
         });
     }
@@ -620,7 +618,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    processFilterInternal() {
+    processFilterInternal(showPipeline?: boolean) {
+        showPipeline = typeof(showPipeline) == 'undefined' ? this.showPipeline: showPipeline;
         if (this.showPipeline) {
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
