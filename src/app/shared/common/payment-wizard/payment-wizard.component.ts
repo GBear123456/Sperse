@@ -27,6 +27,7 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     plan$: Observable<PackageOptions>;
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;
+    refreshAfterClose = false;
     module: Module;
     constructor(private injector: Injector,
                 private appService: AppService,
@@ -62,6 +63,8 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     }
 
     close() {
-        this.dialogRef.close();
+        this.refreshAfterClose
+            ? window.location.reload()
+            : this.dialogRef.close();
     }
 }
