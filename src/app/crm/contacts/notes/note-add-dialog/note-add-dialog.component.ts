@@ -172,12 +172,14 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     showAddPhoneDialog(event) {
+        let contact = this.getContactById(this.contactId);
         let dialogData = {
             contactId: this.contactId,
             field: 'phoneNumber',
             name: 'Phone',
             isConfirmed: false,
-            isActive: false
+            isActive: false,
+            isCompany: contact.hasOwnProperty('organization')
         }, shift = '50px';
         this._dialog.open(EditContactDialog, {
             data: dialogData,
