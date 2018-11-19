@@ -59,12 +59,50 @@ export class AppService extends AppServiceBase {
             injector,
             'Admin',
             [
-                'Admin',
-                'API',
-                'CFO',
-                'CRM',
-                'PFM',
-                'Cloud'
+                {
+                    name: 'Admin',
+                    showDescription: true
+                },
+                {
+                    name: 'API',
+                    showDescription: true
+                },
+                {
+                    name: 'CFO',
+                    showDescription: true
+                },
+                {
+                    name: 'CRM',
+                    showDescription: true
+                },
+                {
+                    name: 'PFM',
+                    showDescription: true
+                },
+                {
+                    name: 'Cloud',
+                    showDescription: true
+                },
+                {
+                    name: 'Forms',
+                    showDescription: false
+                },
+                {
+                    name: 'HR',
+                    showDescription: false
+                },
+                {
+                    name: 'HUB',
+                    showDescription: false
+                },
+                {
+                    name: 'Slice',
+                    showDescription: false
+                },
+                {
+                    name: 'Store',
+                    showDescription: false
+                }
             ],
             {
                 admin: require('./admin/module.config.json'),
