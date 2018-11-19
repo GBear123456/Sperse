@@ -47938,7 +47938,7 @@ export interface IPackageEditionConfigDto {
 }
 
 export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeatureDto {
-    feature!: PricingTableFeature | undefined;
+    definition!: PricingTableFeatureDefinition | undefined;
     value!: string | undefined;
 
     constructor(data?: IPackageEditionConfigFeatureDto) {
@@ -47952,7 +47952,7 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     init(data?: any) {
         if (data) {
-            this.feature = data["feature"] ? PricingTableFeature.fromJS(data["feature"]) : <any>undefined;
+            this.definition = data["definition"] ? PricingTableFeatureDefinition.fromJS(data["definition"]) : <any>undefined;
             this.value = data["value"];
         }
     }
@@ -47966,27 +47966,27 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["feature"] = this.feature ? this.feature.toJSON() : <any>undefined;
+        data["definition"] = this.definition ? this.definition.toJSON() : <any>undefined;
         data["value"] = this.value;
         return data; 
     }
 }
 
 export interface IPackageEditionConfigFeatureDto {
-    feature: PricingTableFeature | undefined;
+    definition: PricingTableFeatureDefinition | undefined;
     value: string | undefined;
 }
 
-export class PricingTableFeature implements IPricingTableFeature {
+export class PricingTableFeatureDefinition implements IPricingTableFeatureDefinition {
     name!: string | undefined;
     displayName!: any | undefined;
     isVariable!: boolean | undefined;
     sortOrder!: number | undefined;
     isStatic!: boolean | undefined;
-    measurementUnit!: PricingTableFeatureMeasurementUnit | undefined;
+    measurementUnit!: PricingTableFeatureDefinitionMeasurementUnit | undefined;
     isCommon!: boolean | undefined;
 
-    constructor(data?: IPricingTableFeature) {
+    constructor(data?: IPricingTableFeatureDefinition) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48013,9 +48013,9 @@ export class PricingTableFeature implements IPricingTableFeature {
         }
     }
 
-    static fromJS(data: any): PricingTableFeature {
+    static fromJS(data: any): PricingTableFeatureDefinition {
         data = typeof data === 'object' ? data : {};
-        let result = new PricingTableFeature();
+        let result = new PricingTableFeatureDefinition();
         result.init(data);
         return result;
     }
@@ -48039,13 +48039,13 @@ export class PricingTableFeature implements IPricingTableFeature {
     }
 }
 
-export interface IPricingTableFeature {
+export interface IPricingTableFeatureDefinition {
     name: string | undefined;
     displayName: any | undefined;
     isVariable: boolean | undefined;
     sortOrder: number | undefined;
     isStatic: boolean | undefined;
-    measurementUnit: PricingTableFeatureMeasurementUnit | undefined;
+    measurementUnit: PricingTableFeatureDefinitionMeasurementUnit | undefined;
     isCommon: boolean | undefined;
 }
 
@@ -56447,7 +56447,7 @@ export enum PackageConfigDtoModule {
     HUB = "HUB", 
 }
 
-export enum PricingTableFeatureMeasurementUnit {
+export enum PricingTableFeatureDefinitionMeasurementUnit {
     GB = "GB", 
 }
 
