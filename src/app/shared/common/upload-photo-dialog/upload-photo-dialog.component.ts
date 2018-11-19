@@ -1,5 +1,14 @@
 import { AppConsts } from '@shared/AppConsts';
-import { ChangeDetectionStrategy, Component, Inject, Injector, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    Inject,
+    Injector,
+    ViewChild,
+    AfterViewInit,
+    ElementRef,
+    ChangeDetectorRef
+} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ImageCropperComponent, CropperSettings, Bounds } from 'ng2-img-cropper';
@@ -32,7 +41,8 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     constructor(
         injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        public dialogRef: MatDialogRef<UploadPhotoDialogComponent>
+        public dialogRef: MatDialogRef<UploadPhotoDialogComponent>,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.cropperSettings = this.getCropperSetting();
@@ -161,22 +171,16 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         /** Load file into the croop */
         if (this.fileUrlFormControl.valid) {
             let image = new Image();
-            let request = new XMLHttpRequest();
-            request.addEventListener('load', (result: any) => {
-                if (result.target.status == 200) {
-                    image.src = this.fileUrlFormControl.value;
-                    image.onload = () => {
-                        this.cropper.setImage(image);
-                    };
-                /** Do not show error message if user just paste the link - he may want to modify it before loading */
-                } else if (!paste) {
-                    this.notify.error(result.target.statusText);
+            image.src = this.fileUrlFormControl.value;
+            image.onload = () => {
+                this.cropper.setImage(image);
+                this.changeDetectorRef.detectChanges();
+            };
+            image.onerror = () => {
+                if (!paste) {
+                    this.notify.error(this.l('PhotoIsNotReachable'));
                 }
-            });
-            request.open('GET', this.fileUrlFormControl.value, true);
-            request.setRequestHeader('Accept', '*/*');
-            request.setRequestHeader('Content-Type', 'application/*');
-            request.send();
+            };
         }
     }
 }

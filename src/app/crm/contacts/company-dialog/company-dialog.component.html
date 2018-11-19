@@ -41,11 +41,12 @@
                     </div>
                     <div class="field annualRevenue">
                         <label for="annualRevenue">{{l('Company_AnnualRevenue')}}</label>
-                        <dx-text-box name="annualRevenue"
+                        <dx-number-box name="annualRevenue"
+                                     format="currency"
                                      [inputAttr]="{ id: 'annualRevenue' }"
                                      [valueChangeEvent]="'keyup'"
                                      [(value)]="company.annualRevenue">
-                        </dx-text-box>
+                        </dx-number-box>
                         <span [class]="company.annualRevenue && 'clear-contact' || 'hidden'" (click)="company.annualRevenue = ''"><i class="minus-icon"></i></span>
                     </div>
 
@@ -88,11 +89,12 @@
                     </div>
                     <div class="field sicCode">
                         <label for="sicCode">{{l('Company_sicCode')}}</label>
-                        <dx-text-box name="industry"
+                        <dx-number-box name="sicCode"
+                                     (onInput)="checkMaxLength($event, 4)"
                                      [inputAttr]="{ id: 'sicCode' }"
                                      [valueChangeEvent]="'keyup'"
                                      [(value)]="company.businessSicCode">
-                        </dx-text-box>
+                        </dx-number-box>
                         <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field productsAndServices">
@@ -101,9 +103,9 @@
                             name="productsAndServices"
                             [inputAttr]="{ id: 'productsAndServices' }"
                             [height]="'140px'"
-                            [(value)]="company.description">
+                            [(value)]="company.productsAndServices">
                         </dx-text-area>
-                        <span class="{{company.productsAndServices && 'clear-contact' || 'hidden'}}" (click)="company.description = ''"><i class="minus-icon"></i></span>
+                        <span class="{{company.productsAndServices && 'clear-contact' || 'hidden'}}" (click)="company.productsAndServices = ''"><i class="minus-icon"></i></span>
                     </div>
                 </div>
                 <div class="right col-md-5">
@@ -112,29 +114,32 @@
                     </div>
                     <div class="field foundedIn">
                         <label for="foundedIn">{{l('Company_FoundedIn')}}</label>
-                        <dx-text-box name="foundedIn"
-                                     [inputAttr]="{ id: 'foundedIn' }"
-                                     [valueChangeEvent]="'keyup'"
-                                     [(value)]="company.formedDate">
-                        </dx-text-box>
-                        <span [class]="company.foundedIn && 'clear-contact' || 'hidden'" (click)="company.formedDate = ''"><i class="minus-icon"></i></span>
+                        <dx-date-box
+                            name="foundedIn"
+                            [(value)]="company.formedDate"
+                            type="date">
+                        </dx-date-box>
+                        <span [class]="company.formedDate && 'clear-contact' || 'hidden'" (click)="company.formedDate = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field ein">
                         <label for="ein">{{l('Company_EIN')}}</label>
                         <dx-text-box name="ein"
                                      [inputAttr]="{ id: 'ein' }"
                                      [valueChangeEvent]="'keyup'"
-                                     [(value)]="company.ein">
+                                     [(value)]="company.ein"
+                                     (onInput)="checkMaxLength($event, 10)"
+                                     (onKeyDown)="onEinKeyDown($event)">
                         </dx-text-box>
                         <span [class]="company.ein && 'clear-contact' || 'hidden'" (click)="company.ein = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field duns">
                         <label for="dusn">{{l('Company_DUNS')}}</label>
-                        <dx-text-box name="duns"
+                        <dx-number-box name="duns"
                                      [inputAttr]="{ id: 'dusn' }"
                                      [valueChangeEvent]="'keyup'"
-                                     [(value)]="company.duns">
-                        </dx-text-box>
+                                     [(value)]="company.duns"
+                                     (onInput)="checkMaxLength($event, 9)">
+                        </dx-number-box>
                         <span [class]="company.duns && 'clear-contact' || 'hidden'" (click)="company.duns = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field stockSymbol">
@@ -142,7 +147,8 @@
                         <dx-text-box name="stockSymbol"
                                      [inputAttr]="{ id: 'stockSymbol' }"
                                      [valueChangeEvent]="'keyup'"
-                                     [(value)]="company.ticker">
+                                     [(value)]="company.ticker"
+                                     (onInput)="checkMaxLength($event, 15)">
                         </dx-text-box>
                         <span [class]="company.ticker && 'clear-contact' || 'hidden'" (click)="company.ticker = ''"><i class="minus-icon"></i></span>
                     </div>

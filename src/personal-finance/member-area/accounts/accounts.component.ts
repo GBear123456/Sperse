@@ -28,7 +28,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     isStartDisabled = false;
     isInstanceInfoLoaded = false;
 
-    currentSection: string;
+    currentSection: string = 'summary';
 
     constructor(
         injector: Injector,
@@ -44,38 +44,38 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     ngOnInit() {
         this._cfoService.instanceChangeProcess(() => {
             this.isInstanceInfoLoaded = true;
-
-            if (this._cfoService.initialized) {
-                this.currentSection = 'summary';
-                this.loadQouvoPfm();
-            }
+            this.loadQouvoPfm();
         });
     }
 
     loadQouvoPfm() {
-        this.tokenLoading$ = this._syncService.createProviderUIToken(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, 'Q');
-        /** Load quovo script (jquery getScript to observable) */
-        const quovoLoading$ = new Observable(observer => {
-            jQuery.getScript('https://app.quovo.com/ui.js').done(() => {
-                observer.next();
-                observer.complete();
-            });
-        });
-
-        forkJoin(
-            this.tokenLoading$,
-            quovoLoading$
-        ).subscribe(
-            res => {
-                this._syncService.syncAllAccounts(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, false, false).subscribe();
-                let token = res[0].token.toString();
-                Quovo.embed({
-                    token: token.toString(),
-                    elementId: 'quovo-accounts-module',
-                    moduleName: this.currentSection,
+        if (this._cfoService.initialized) {
+            abp.ui.setBusy();
+            this.tokenLoading$ = this._syncService.createProviderUIToken(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, 'Q');
+            /** Load quovo script (jquery getScript to observable) */
+            const quovoLoading$ = new Observable(observer => {
+                jQuery.getScript('https://app.quovo.com/ui.js').done(() => {
+                    observer.next();
+                    observer.complete();
                 });
-            }
-        );
+            });
+
+            forkJoin(
+                this.tokenLoading$,
+                quovoLoading$
+            ).subscribe(
+                res => {
+                    this._syncService.syncAllAccounts(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, false, false).subscribe();
+                    let token = res[0].token.toString();
+                    Quovo.embed({
+                        token: token.toString(),
+                        elementId: 'quovo-accounts-module',
+                        moduleName: this.currentSection,
+                    });
+                    abp.ui.clearBusy();
+                }
+            );
+        }
     }
 
     refreshQuovoSection() {
@@ -99,6 +99,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             this.addAccount();
         else
             this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType]).subscribe(data => {
+                this._cfoService.instanceChangeProcess();
                 this.addAccount();
             });
     }
@@ -120,6 +121,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
 
     private onQuovoClose(e) {
         this.isStartDisabled = false;
+        this.loadQouvoPfm();
     }
 
     ngOnDestroy() {

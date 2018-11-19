@@ -114,7 +114,7 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
             });
         }
     }
-    
+
     private loadCountries() {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
         this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(
@@ -123,7 +123,7 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
     }
 
     loadOrganizationTypes() {
-        this.store$.dispatch(new OrganizationTypeStoreActions.LoadRequestAction(true));
+        this.store$.dispatch(new OrganizationTypeStoreActions.LoadRequestAction(false));
         this.store$.pipe(select(OrganizationTypeSelectors.getOrganizationTypes)).subscribe(
             companyTypes => {
                 this.companyTypes = companyTypes;
@@ -135,10 +135,12 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
     }
 
     loadStates(countryCode: string = this.company.formedCountryId) {
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
-        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode })).subscribe(
-            states => this.states = states
-        );
+        if (countryCode) {
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+            this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode })).subscribe(
+                states => this.states = states
+            );
+        }
     }
 
     showUploadPhotoDialog(event) {
@@ -149,7 +151,6 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
             if (result) {
                 let base64OrigImage = StringHelper.getBase64(result.origImage),
                     base64ThumbImage = StringHelper.getBase64(result.thumImage);
-                
                 this.contactPhotoServiceProxy.createContactPhoto(
                     CreateContactPhotoInput.fromJS({
                         contactId: this.company.id,
@@ -165,5 +166,18 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
             }
         });
         event.stopPropagation();
+    }
+
+    checkMaxLength(e, maxLength: number) {
+        const inputElement = e.event.target;
+        if (inputElement.value.length > maxLength)
+            inputElement.value = inputElement.value.slice(0, maxLength);
+    }
+
+    onEinKeyDown(e) {
+        const inputElement = e.event.target;
+        if (inputElement.value.length >= 2 && inputElement.value.indexOf('-') === -1 && e.event.keyCode != 8) {
+            inputElement.value = inputElement.value.slice(0, 2) + '-' + inputElement.value.slice(2, inputElement.value.length);
+        }
     }
 }

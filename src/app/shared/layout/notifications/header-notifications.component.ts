@@ -57,8 +57,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         if (this._appService.checkSubscriptionIsFree(module)) {
             this.subscriptionInfoTitle = this.l("YouAreUsingTheFreePlan", module);
             this.subscriptionInfoText = this.l("UpgradeToUnlockAllOurFeatures");
-        }
-        else if (!this._appService.hasModuleSubscription(module)) {
+        } else if (!this._appService.hasModuleSubscription(module)) {
             this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
             this.subscriptionInfoText = this.l("ChoosePlanToContinueService");
         } else if (this._appService.subscriptionInGracePeriod(module)) {
