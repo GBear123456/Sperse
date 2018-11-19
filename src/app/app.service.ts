@@ -53,7 +53,7 @@ export class AppService extends AppServiceBase {
     private _tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
     private _subscriptionBarsClosed = {};
     private _subscriptionBarVisible: Boolean;
-    
+
     constructor(injector: Injector) {
         super(
             injector,
@@ -64,12 +64,7 @@ export class AppService extends AppServiceBase {
                 'CFO',
                 'CRM',
                 'PFM',
-                'Cloud',
-                'Forms',
-                'HR',
-                'HUB',
-                'Slice',
-                'Store'
+                'Cloud'
             ],
             {
                 admin: require('./admin/module.config.json'),
@@ -102,11 +97,11 @@ export class AppService extends AppServiceBase {
             this.checkModuleExpired();
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
-            map(subscriptions => this.checkSubscriptionIsFree(undefined, subscriptions))
+            map(() => this.checkSubscriptionIsFree())
         );
     }
 
-    getModuleSubscription(name = undefined, moduleSubscriptions = this.moduleSubscriptions) {
+    getModuleSubscription(name?: string, moduleSubscriptions = this.moduleSubscriptions) {
         let module = (name || this.getModule()).toUpperCase();
         if (moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
             return _.find(moduleSubscriptions, {module: module})
@@ -130,12 +125,7 @@ export class AppService extends AppServiceBase {
         return this._subscriptionBarsClosed[module] || !this._subscriptionBarVisible;
     }
 
-    hideSubscriptionStatusBar() {
-        Object.defineProperty(this._subscriptionBarsClosed, this.getModule(), { value: true });
-        this.hideSubscriptionCallback && this.hideSubscriptionCallback();
-    }
-
-    subscriptionIsExpiringSoon(name = undefined): boolean {
+    subscriptionIsExpiringSoon(name?: string): boolean {
         let sub = this.getModuleSubscription(name);
         if (this.hasRecurringBilling(sub))
             return false;
@@ -147,12 +137,12 @@ export class AppService extends AppServiceBase {
         return false;
     }
 
-    checkSubscriptionIsFree(name = undefined, subscriptions = this.moduleSubscriptions): boolean {
+    checkSubscriptionIsFree(name?: string): boolean {
         let sub = this.getModuleSubscription(name);
         return sub && !sub.endDate;
     }
 
-    subscriptionInGracePeriod(name = undefined): boolean {
+    subscriptionInGracePeriod(name?: string): boolean {
         let sub = this.getModuleSubscription(name);
         if (this.hasRecurringBilling(sub))
             return false;
@@ -164,13 +154,13 @@ export class AppService extends AppServiceBase {
         return false;
     }
 
-    getSubscriptionExpiringDayCount(name = undefined): number {
+    getSubscriptionExpiringDayCount(name?: string): number {
         let sub = this.getModuleSubscription(name);
         return sub && sub.endDate && Math.round(moment(
             sub.endDate).diff(moment().utc(), 'days', true));
     }
 
-    getGracePeriodDayCount(name = undefined) {
+    getGracePeriodDayCount(name?: string) {
         let sub = this.getModuleSubscription(name);
         return sub && sub.endDate && Math.round(moment(sub.endDate)
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
@@ -180,7 +170,7 @@ export class AppService extends AppServiceBase {
         return abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT;
     }
 
-    hasModuleSubscription(name = undefined) {
+    hasModuleSubscription(name?: string) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
         return !this.isNotHostTenant() || !module || !module.endDate ||
@@ -192,7 +182,7 @@ export class AppService extends AppServiceBase {
             AppConsts.subscriptionRecurringBillingPeriod, 'days') > moment().utc());
     }
 
-    checkModuleExpired(name = undefined) {
+    checkModuleExpired(name?: string) {
         name = name || this.getModule();
         let expired = !this.hasModuleSubscription(name);
         if (expired)
@@ -241,7 +231,7 @@ export class AppService extends AppServiceBase {
                     request.tenantHostType = <any>TenantHostType.PlatformApp;
                     this.userServiceProxy.activateUserForContact(request).subscribe(result => {
                         let setupInput = new SetupInput({ userId: result.userId });
-                        this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(result => {
+                        this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(() => {
                             abp.notify.info('User was activated and email sent successfully');
                         });
                     });
