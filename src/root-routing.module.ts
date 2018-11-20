@@ -90,8 +90,7 @@ const routes: Routes = [{
                 path: 'desktop',
                 loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
                 data: { preload: true }
-            },
-            { path: 'not-found', component: NotFoundComponent }
+            }
         ]
     }
 ];
@@ -101,6 +100,9 @@ const routes: Routes = [{
         RouterModule.forRoot(routes)
     ],
     declarations: [
+        NotFoundComponent
+    ],
+    entryComponents: [
         NotFoundComponent
     ],
     exports: [
@@ -136,7 +138,7 @@ export class RootRoutingModule implements AfterViewInit {
                data: { preload: true }
            },
            { path: '', redirectTo: 'app', pathMatch: 'full' },
-           { path: '**', redirectTo: 'not-found' }
+           { path: '**', component: NotFoundComponent }
         );
         _router.resetConfig(_router.config);
     }

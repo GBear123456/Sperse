@@ -96,7 +96,7 @@ export class AppRootComponent implements OnInit {
 
         //tenant specific custom css
         if (this.SS.tenant && this.SS.tenant.customCssId) {
-            this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss?id=' + this.SS.tenant.customCssId + '&tenantId=' + this.SS.tenant.id);
+            this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + this.SS.tenant.customCssId + '/' + this.SS.tenant.id);
         }
     }
 }
