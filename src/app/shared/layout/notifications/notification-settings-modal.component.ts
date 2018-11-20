@@ -19,7 +19,7 @@ export class NotificationSettingsModalComponent extends ModalDialogComponent imp
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
+        private dialog: MatDialog,
         private _notificationService: NotificationServiceProxy
     ) {
         super(injector);

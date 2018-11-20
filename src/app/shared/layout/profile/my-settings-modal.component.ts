@@ -47,12 +47,12 @@ export class MySettingsModalComponent extends ModalDialogComponent implements Af
 
     ngOnInit() {
         super.ngOnInit();
-        
-        this.data.title = this.l("MySettings");
+
+        this.data.title = this.l('MySettings');
         this.data.editTitle = false;
         this.data.titleClearButton = false;
         this.data.placeholder = this.l('MySettings');
-        
+
         this.data.buttons = [{
             title: this.l('Save'),
             class: 'primary menu',
@@ -69,7 +69,7 @@ export class MySettingsModalComponent extends ModalDialogComponent implements Af
             this.isPhoneNumberEmpty = result.phoneNumber === '';
         });
     }
-    
+
     updateQrCodeSetupImageUrl(): void {
         this._profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
             this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
@@ -87,7 +87,7 @@ export class MySettingsModalComponent extends ModalDialogComponent implements Af
     changePhoneNumberToVerified(): void {
         this.isPhoneNumberConfirmed = true;
     }
-    
+
     save(): void {
         this.saving = true;
         this._profileService.updateCurrentUserProfile(this.user)
