@@ -4,6 +4,7 @@ import { Component, Injector, ViewChild, OnInit, OnDestroy } from '@angular/core
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { Observable, BehaviorSubject, forkJoin } from '@node_modules/rxjs';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -18,7 +19,7 @@ declare const Quovo: any;
 
 @Component({
     templateUrl: './accounts.component.html',
-    providers: [ ],
+    providers: [],
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent extends AppComponentBase implements OnInit, OnDestroy {
@@ -29,6 +30,16 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     isInstanceInfoLoaded = false;
 
     currentSection: string = 'summary';
+
+    menuItems = [
+        { name: 'Summary', sectionName: 'summary' },
+        { name: 'Goals', sectionName: 'goals' },
+        { name: 'Allocation', sectionName: 'allocation' },
+        { name: 'SpendingAndBudgeting', sectionName: 'spending' },
+        { name: 'Accounts', sectionName: 'accounts' },
+        { name: 'Transactions', sectionName: 'transactions' },
+        { name: 'Holdings', sectionName: 'holdings' }
+    ];
 
     constructor(
         injector: Injector,
@@ -50,7 +61,8 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
 
     loadQouvoPfm() {
         if (this._cfoService.initialized) {
-            abp.ui.setBusy();
+            const element = this.getElementRef().nativeElement.querySelector('.p-content');
+            abp.ui.setBusy(element);
             this.tokenLoading$ = this._syncService.createProviderUIToken(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, 'Q');
             /** Load quovo script (jquery getScript to observable) */
             const quovoLoading$ = new Observable(observer => {
@@ -63,35 +75,37 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             forkJoin(
                 this.tokenLoading$,
                 quovoLoading$
-            ).subscribe(
-                res => {
-                    this._syncService.syncAllAccounts(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, false, false).subscribe();
-                    let token = res[0].token.toString();
-                    Quovo.embed({
-                        token: token.toString(),
-                        elementId: 'quovo-accounts-module',
-                        moduleName: this.currentSection,
-                    });
-                    abp.ui.clearBusy();
-                }
-            );
+            ).pipe(finalize(() => abp.ui.clearBusy(element)))
+                .subscribe(
+                    res => {
+                        this._syncService.syncAllAccounts(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, false, false).subscribe();
+                        let token = res[0].token.toString();
+                        this.loadQuovo(token);
+                    }
+                );
         }
     }
 
+    loadQuovo(token) {
+        Quovo.embed({
+            token: token.toString(),
+            elementId: 'quovo-accounts-module',
+            moduleName: this.currentSection,
+        });
+    }
+
     refreshQuovoSection() {
-        abp.ui.setBusy();
-        this.tokenLoading$.subscribe(
-            res => {
-                $('.quovo-accounts-module').html('');
-                let token = res.token.toString();
-                Quovo.embed({
-                    token: token.toString(),
-                    elementId: 'quovo-accounts-module',
-                    moduleName: this.currentSection,
-                });
-                abp.ui.clearBusy();
-            }
-        );
+        const element = this.getElementRef().nativeElement.querySelector('.p-content');
+        abp.ui.setBusy(element);
+        this.tokenLoading$
+            .pipe(finalize(() => abp.ui.clearBusy(element)))
+            .subscribe(
+                res => {
+                    $('.quovo-accounts-module').html('');
+                    let token = res.token.toString();
+                    this.loadQuovo(token);
+                }
+            );
     }
     onStart(): void {
         this.isStartDisabled = true;
@@ -109,7 +123,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             ...AccountConnectorDialogComponent.defaultConfig,
             ...{
                 data: {
-                    disabledConnectors: [ AccountConnectors.Xero ]
+                    disabledConnectors: [AccountConnectors.Xero]
                 }
             }
         };
@@ -134,5 +148,5 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             this.refreshQuovoSection();
         }
     }
-    
+
 }
