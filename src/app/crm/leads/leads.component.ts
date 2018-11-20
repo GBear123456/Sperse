@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material';
 import { RouteReuseStrategy } from '@angular/router';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { Store, select } from '@ngrx/store';
+import { first } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -52,11 +53,12 @@ import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '../shared/static-list/static-list.component';
 import { CustomReuseStrategy } from '@root/root-routing.module';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [LeadServiceProxy],
+    providers: [ LeadServiceProxy, LifecycleSubjectsService ],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -85,7 +87,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     stages = [];
-    firstRefresh = false;
     pipelineDataSource: any;
     collection: any;
     showPipeline = true;
@@ -111,7 +112,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     public headlineConfig = {
         names: [this.l('Leads')],
         onRefresh: () => {
-            this.invalidate();
+            this.refresh();
         },
         icon: 'basket',
         buttons: [
@@ -130,7 +131,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _filtersService: FiltersService,
         private _appService: AppService,
         private store$: Store<AppStore.State>,
-        private _reuseService: RouteReuseStrategy
+        private _reuseService: RouteReuseStrategy,
+        private lifeCycleSubjectsService: LifecycleSubjectsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -183,7 +185,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 if ('addNew' == params['action'])
                     setTimeout(() => this.createLead());
                 if (params['refresh'])
-                    this.invalidate();
+                    this.refresh();
             });
     }
 
@@ -197,10 +199,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    invalidate(quiet = false, stageId = undefined) {
+    refresh(invalidateDashboard = true) {
         setTimeout(() => {
             this.processFilterInternal();
+        });
+        if (invalidateDashboard) {
             (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
+        }
+    }
+
+    invalidate(quiet = false, stageId?: number) {
+        this.lifeCycleSubjectsService.activate$.pipe(first()).subscribe(() => {
+            this.refresh(false);
         });
     }
 
@@ -658,8 +668,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                refreshParent: (quite, stageId) => {
-                    this.invalidate(quite, stageId);
+                refreshParent: () => {
+                    this.refresh();
                 },
                 isInLeadMode: true,
                 customerType: ContactGroup.Client
@@ -693,7 +703,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
             if (this.selectedLeads.length)
                 setTimeout(() => { //!!VP temporary solution for grid refresh
-                    this.invalidate();
+                    this.refresh();
                     if (this.dataGrid && this.dataGrid.instance) {
                         this.dataGrid.instance.clearSelection();
                     }
@@ -759,7 +769,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadService.deleteLeads(selectedIds).subscribe(() => {
             this.dataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
-            this.invalidate();
+            this.refresh();
         });
     }
 
