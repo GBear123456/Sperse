@@ -23,13 +23,12 @@ declare const Quovo: any;
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    private quovoLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private tokenLoading$: Observable<GetProviderUITokenOutput>;
 
     isStartDisabled = false;
     isInstanceInfoLoaded = false;
 
-    currentSection: string = 'summary';
+    currentSection: 'summary';
 
     menuItems = [
         { name: 'Summary', sectionName: 'summary' },
