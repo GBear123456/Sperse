@@ -44,7 +44,7 @@ export class ChangePasswordModalComponent extends ModalDialogComponent implement
             class: 'primary menu',
             action: this.save.bind(this)
         }];
-        
+
         this.currentPassword = '';
         this.password = '';
         this.confirmPassword = '';
