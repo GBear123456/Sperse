@@ -1,5 +1,4 @@
 import { Component, Injector, ViewChild, OnInit } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { GetNotificationSettingsOutput, NotificationServiceProxy, NotificationSubscriptionDto, UpdateNotificationSettingsInput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
@@ -30,7 +29,7 @@ export class NotificationSettingsModalComponent extends ModalDialogComponent imp
     ngOnInit() {
         super.ngOnInit();
 
-        this.data.title = this.l("NotificationSettings");
+        this.data.title = this.l('NotificationSettings');
         this.data.editTitle = false;
         this.data.titleClearButton = false;
         this.data.placeholder = this.l('NotificationSettings');
