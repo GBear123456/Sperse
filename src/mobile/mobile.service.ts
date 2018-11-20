@@ -9,7 +9,12 @@ export class AppService extends AppServiceBase {
         super(
             injector,
             'CFO',
-            ['CFO'],
+            [
+                {
+                    name: 'CFO',
+                    showDescription: true
+                }
+            ],
             {
                 cfo: require('./cfo/module.config.json')
             }

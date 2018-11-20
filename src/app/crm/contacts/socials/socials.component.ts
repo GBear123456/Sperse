@@ -22,7 +22,7 @@ import {
     ContactLinkTypesStoreActions,
     ContactLinkTypesStoreSelectors
 } from '@app/store';
-
+import { PersonOrgRelationType } from '@root/shared/AppEnums';
 
 import * as _ from 'underscore';
 
@@ -132,7 +132,8 @@ export class SocialsComponent extends AppComponentBase {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
             relatedContactId: this._contactInfo.id,
-            companyName: companyName
+            companyName: companyName,
+            relationTypeId: PersonOrgRelationType.Employee
         })).subscribe(response => {
             this.initializeOrganizationInfo(companyName, response.id);
             dialogData.contactId = response.id;

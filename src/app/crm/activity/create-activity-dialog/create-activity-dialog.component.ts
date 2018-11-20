@@ -310,8 +310,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             allDay: this.isAllDay,
             stageId: this.data.appointment.StageId,
             leadId: this.data.appointment.LeadId,
-            orderId: this.data.appointment.OrderId,
-            customerId: this.data.appointment.ContactId
+            contactId: this.data.appointment.ContactId
         };
     }
 
