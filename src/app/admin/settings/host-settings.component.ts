@@ -7,7 +7,7 @@ import {
     ComboboxItemDto, CommonLookupServiceProxy, DefaultTimezoneScope, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
     BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings
 } from '@shared/service-proxies/service-proxies';
-import { Observable, forkJoin } from 'rxjs';
+import { forkJoin } from 'rxjs';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -103,7 +103,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         const self = this;
         const input = new SendTestEmailInput();
         input.emailAddress = self.testEmailAddress;
-        self._hostSettingService.sendTestEmail(input).subscribe(result => {
+        self._hostSettingService.sendTestEmail(input).subscribe(() => {
             self.notify.info(self.l('TestEmailSentSuccessfully'));
         });
     }
@@ -115,7 +115,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             this._tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this._tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
             this._tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings)
-        ).subscribe(result => {
+        ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
 
             if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.hostSettings.general.timezone) {

@@ -59,6 +59,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     @Output() onChangeStep: EventEmitter<number> = new EventEmitter<number>();
     @Output() onClose: EventEmitter<null> = new EventEmitter();
     @Output() onStatusChange: EventEmitter<StatusInfo> = new EventEmitter();
+    @Output() refreshAfterClose: EventEmitter<null> = new EventEmitter();
 
     private paymentMethodsConfig = {
         [PaymentMethods.BankTransfer]: {
@@ -68,7 +69,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         [PaymentMethods.Free]: {
             successStatus: this.l('PaymentStatus_payment-free-confirmed')
         }
-    }
+    };
 
     readonly GATEWAY_ECHECK = 0;
     readonly GATEWAY_C_CARD = 1;
@@ -192,6 +193,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             .pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
             .subscribe(
                 res => {
+                    this.refreshAfterClose.emit();
                     this.onStatusChange.emit({
                         status: this.getPaymentStatus(paymentMethod, res),
                         icon: PaymentStatusEnum.Confirmed,

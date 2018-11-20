@@ -61,7 +61,8 @@ export class SynchProgressService {
 
     public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false) {
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.runSyncAll(forcedSync, newOnly).subscribe(() => {
+        this.runSyncAll(forcedSync, newOnly)
+            .subscribe(() => {
                 this.tryCount = 0;
                 this.hasFailedAccounts = false;
                 if (forcedSync || (!this.getSyncProgressSubscription && (!this.timeoutsIds || !this.timeoutsIds.length))) {
@@ -84,7 +85,16 @@ export class SynchProgressService {
             this.cfoService.instanceId,
             forcedSync,
             newOnly
-        ).pipe(finalize(() => this.appHttpConfiguration.avoidErrorHandling = false));
+        ).pipe(finalize(() => {
+            this.appHttpConfiguration.avoidErrorHandling = false;
+            this.runGetStatus();
+        }));
+    }
+
+    private runGetStatus() {
+        if (!this.cfoService.hasTransactions) {
+            this.cfoService.instanceChangeProcess();
+        }
     }
 
     private runSynchProgress() {

@@ -4,7 +4,7 @@ import { Component, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angul
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Store } from '@ngrx/store';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, first, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -21,12 +21,15 @@ import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-cli
 import { TotalsByPeriodComponent } from '@shared/crm/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
+import { CustomReuseStrategy } from '@root/root-routing.module';
+import { RouteReuseStrategy } from '@angular/router';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     templateUrl: './dashboard.component.html',
     animations: [appModuleAnimation()],
     styleUrls: ['./dashboard.component.less'],
-    providers: [ DashboardWidgetsService ]
+    providers: [ DashboardWidgetsService, LifecycleSubjectsService ]
 })
 export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     @ViewChild(RecentClientsComponent) recentClientsComponent: RecentClientsComponent;
@@ -54,15 +57,22 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private zendeskService: ZendeskService,
         public dialog: MatDialog,
         private store$: Store<RootStore.State>,
+        private reuseService: RouteReuseStrategy,
+        private lifeCycleSubject: LifecycleSubjectsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
     }
 
-    refresh() {
+    refresh(refreshLeadsAndClients = true) {
         this.startLoading(false, this.loadingContainer);
         this.periodChanged(this.selectedPeriod);
         this.recentClientsComponent.refresh();
+        if (refreshLeadsAndClients) {
+            /** Invalidate leads and clients */
+            (this.reuseService as CustomReuseStrategy).invalidate('leads');
+            (this.reuseService as CustomReuseStrategy).invalidate('clients');
+        }
     }
 
     checkDataEmpty(data) {
@@ -132,6 +142,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     activate() {
         super.activate();
+        this.lifeCycleSubject.activate.next();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
@@ -149,7 +160,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
                 takeUntil(this.deactivate$),
                 filter(params => !!params['refresh'])
             )
-            .subscribe(() => this.invalidate() );
+            .subscribe(() => this.refresh() );
     }
 
     renderWidgets() {
@@ -160,7 +171,9 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     invalidate() {
-        this.refresh();
+        this.lifeCycleSubject.activate$.pipe(first()).subscribe(() => {
+            this.refresh(false);
+        });
     }
 
     deactivate() {

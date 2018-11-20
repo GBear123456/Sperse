@@ -25,20 +25,17 @@ export class PlatformSelectComponent extends AppComponentBase {
         super(injector);
 
         _appService.getModules().forEach((module) => {
-            let config = _appService.getModuleConfig(module);
-            if (module === 'CFO') {
+            let config = _appService.getModuleConfig(module.name);
+            let moduleConfig = {
+                code: config ? config.code : module.name,
+                name: module.name,
+                showDescription: module.showDescription
+            };
+            if (module.name === 'CFO') {
                 let cfoPersonalEnable = (!abp.session.tenantId || this.feature.isEnabled('CFO.Partner')) && !this.permission.isGranted('Pages.CFO.MainInstanceAccess');
-                this.modules.push({
-                    code: config ? config.code : module,
-                    name: 'CFO',
-                    uri: cfoPersonalEnable ? 'user' : 'main',
-                });
-            } else {
-                this.modules.push({
-                    code: config ? config.code : module,
-                    name: module
-                });
+                moduleConfig['uri'] = cfoPersonalEnable ? 'user' : 'main';
             }
+            this.modules.push(moduleConfig);
         });
         _appService.subscribeModuleChange((config) => {
             this.module = config['name'];

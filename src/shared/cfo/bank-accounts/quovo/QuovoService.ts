@@ -16,6 +16,11 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 
 declare const Quovo: any;
 
+enum QuovoOperation {
+    'Add',
+    'Update'
+}
+
 @Injectable()
 export class QuovoService {
     private cfoService: CFOService;
@@ -28,6 +33,7 @@ export class QuovoService {
     public quovoClosed$: Subject<any> = new Subject<boolean>();
     public quovoSynced$: Subject<any> = new Subject<boolean>();
     private tokenLoading$: Observable<GetProviderUITokenOutput>;
+    private quovoOperation: QuovoOperation;
 
     constructor(
         injector: Injector,
@@ -127,12 +133,13 @@ export class QuovoService {
     }
 
     open(accountId: number = null) {
+        this.quovoOperation = !!accountId ? QuovoOperation.Update : QuovoOperation.Add;
         this.quovoLoaded$.pipe(
             filter(loaded => loaded),
             first(),
             switchMap(() => this.getQuovoOpenObservable(accountId))
         ).subscribe(
-            x => {},
+            () => {},
             /** Close quovo in a case of failed connection */
             () => {
                 this.onQuovoClose();
@@ -183,6 +190,6 @@ export class QuovoService {
 
     private onQuovoSync() {
         this.quovoSynced$.next();
-        this.syncProgressService.startSynchronization(true, true);
+        this.syncProgressService.startSynchronization(true, this.quovoOperation === QuovoOperation.Add);
     }
 }

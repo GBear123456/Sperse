@@ -43,20 +43,7 @@ export class SetupStepComponent extends CFOComponentBase {
         else if (index == this.SelectedStepIndex) return 'current';
         else return '';
     }
-
-    showPaymentWizard() {
-        this.dialog.open(PaymentWizardComponent, {
-            height: '655px',
-            width: '980px',
-            id: 'payment-wizard',
-            panelClass: ['payment-wizard', 'setup'],
-            data: {
-                module: Module.CFO,
-                title: this.ls('Platform', 'UpgradeYourSubscription', Module.CFO)
-            }
-        });
-    }
-
+    
     showIntro() {
         this.dialogConfig.height = '655px';
         this.dialogConfig.width = '880px';

@@ -13,6 +13,10 @@ import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
 UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
+import { Store, select } from '@ngrx/store';
+import { AppStore, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors } from '@app/store';
+import { ContactGroup } from '@shared/AppEnums';
+import { retry } from 'rxjs/operators';
 
 @Component({
     templateUrl: './note-add-dialog.component.html',
@@ -54,7 +58,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private _phoneFormatPipe: PhoneFormatPipe,
         private _notesService: NotesServiceProxy,
         private _userService: UserServiceProxy,
-        private _contactPhoneService: ContactPhoneServiceProxy
+        private _contactPhoneService: ContactPhoneServiceProxy,
+        private store$: Store<AppStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         if (_notesService['types'])
@@ -77,6 +82,14 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 top: '157px',
                 right: '-100vw'
             });
+        });
+
+        let assignedUsersSelector = this._contactInfo.groupId == ContactGroup.Client ?
+            CustomerAssignedUsersStoreSelectors.getAssignedUsers :
+            PartnerAssignedUsersStoreSelectors.getAssignedUsers; 
+        
+        this.store$.pipe(select(assignedUsersSelector)).subscribe((result) => {
+            this.users = result;
         });
     }
 
@@ -172,12 +185,14 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     showAddPhoneDialog(event) {
+        let contact = this.getContactById(this.contactId);
         let dialogData = {
             contactId: this.contactId,
             field: 'phoneNumber',
             name: 'Phone',
             isConfirmed: false,
-            isActive: false
+            isActive: false,
+            isCompany: contact.hasOwnProperty('organization')
         }, shift = '50px';
         this._dialog.open(EditContactDialog, {
             data: dialogData,

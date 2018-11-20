@@ -17,7 +17,8 @@
                         [plan]="plan"
                         (onChangeStep)="stepper.selectedIndex = $event"
                         (onClose)="close()"
-                        (onStatusChange)="changeStatus($event)">
+                        (onStatusChange)="changeStatus($event)"
+                        (refreshAfterClose)="refreshAfterClose = true">
                     </payment-options>
                 </ng-container>
             </mat-step>

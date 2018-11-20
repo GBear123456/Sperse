@@ -20,7 +20,7 @@ export class CFOService extends CFOServiceBase {
     ) {
         super();
         this.statusActive = new BehaviorSubject<boolean>(false);
-        _appService.subscribeModuleChange((config) => {
+        _appService.subscribeModuleChange(config => {
             if (config['name'] == 'CFO') {
                 if (this.initialized === undefined) {
                     this._appService.topMenu.items

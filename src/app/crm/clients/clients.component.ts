@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
+import { first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -21,7 +22,6 @@ import { CustomerAssignedUsersStoreSelectors,
     RatingsStoreSelectors
 } from '@app/store';
 import { ClientService } from '@app/crm/clients/clients.service';
-import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
@@ -46,12 +46,13 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { CustomerServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService ]
+    providers: [ ClientService, LifecycleSubjectsService ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -82,7 +83,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     public headlineConfig = {
         names: [this.l('Customers')],
         icon: 'people',
-        onRefresh: this.invalidate.bind(this),
+        onRefresh: this.refresh.bind(this),
         buttons: [
             {
                 enabled: true,
@@ -100,7 +101,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _filtersService: FiltersService,
         private _clientService: ClientService,
         private store$: Store<AppStore.State>,
-        private _reuseService: RouteReuseStrategy
+        private _reuseService: RouteReuseStrategy,
+        private lifeCycleSubjectsService: LifecycleSubjectsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -143,7 +145,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createClient());
                     if (params['refresh'])
-                        this.invalidate();
+                        this.refresh();
             });
     }
 
@@ -164,11 +166,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.initToolbarConfig();
     }
 
-    invalidate() {
+    refresh(refreshDashboard = true) {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
         super.invalidate();
-        (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
+        if (refreshDashboard) {
+            (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
+        }
+    }
+
+    invalidate() {
+        this.lifeCycleSubjectsService.activate$.pipe(first()).subscribe(() => {
+            this.refresh(false);
+        });
     }
 
     showCompactRowsHeight() {
@@ -185,7 +195,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 refreshParent: this.invalidate.bind(this),
                 customerType: ContactGroup.Client
             }
-        }).afterClosed().subscribe(() => this.invalidate());
+        }).afterClosed().subscribe(() => this.refresh());
     }
 
     isClientCFOAvailable(userId) {
@@ -583,7 +593,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             ContactGroup.Client,
             status.id,
             () => {
-                this.invalidate();
+                this.refresh();
                 this.dataGrid.instance.clearSelection();
             }
         );
@@ -613,6 +623,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
+        this.lifeCycleSubjectsService.activate.next();
         this._filtersService.localizationSourceName =
             this.localizationSourceName;
 
@@ -624,7 +635,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.rootComponent.overflowHidden(true);
 
         if (this.dependencyChanged)
-            this.invalidate();
+            this.refresh();
 
         this.showHostElement();
     }
