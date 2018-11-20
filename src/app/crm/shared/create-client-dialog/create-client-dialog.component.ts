@@ -764,6 +764,11 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         });
     }
 
+    onPhoneKeyUp(event) {
+        if (event.keyCode == 8/*Backspace*/)
+            this.addButtonVisible['phones'] = false;
+    }
+
     onCompanyKeyUp($event) {
         this.company = this.getInputElementValue($event);
         this.checkSimilarCustomers();
