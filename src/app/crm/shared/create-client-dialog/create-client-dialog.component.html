@@ -119,6 +119,7 @@
                         <country-phone-number #countryPhoneNumber
                             [(phoneNumber)]="phone.number"
                             [required]="false"
+                            (onKeyUp)="onPhoneKeyUp($event)"
                             (phoneNumberChange)="onPhoneChanged(countryPhoneNumber, i)"
                             (onInitialized)="onPhoneComponentInitialized($event)">
                         </country-phone-number>
