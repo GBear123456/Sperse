@@ -1,7 +1,5 @@
 import { Component, ElementRef, Injector, ViewChild, OnInit } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { ChangePasswordInput, PasswordComplexitySetting, ProfileServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -36,7 +34,7 @@ export class ChangePasswordModalComponent extends ModalDialogComponent implement
     ngOnInit() {
         super.ngOnInit();
 
-        this.data.title = this.l("ChangePassword");
+        this.data.title = this.l('ChangePassword');
         this.data.editTitle = false;
         this.data.titleClearButton = false;
         this.data.placeholder = this.l('ChangePassword');
