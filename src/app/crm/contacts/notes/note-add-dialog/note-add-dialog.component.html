@@ -68,12 +68,9 @@
                         <dx-select-box
                             width="355px"
                             [placeholder]="l('EditValuePlaceholder')"
-                            [acceptCustomValue]="true"
                             [dataSource]="users"
-                            [valueChangeEvent]="'keyup'"
-                            [displayExpr]="'fullName'"
+                            [displayExpr]="'name'"
                             [valueExpr]="'id'"
-                            (onCustomItemCreating)="onUserSearch($event)"
                             [(value)]="addedBy">
                         </dx-select-box>
                     </div>
