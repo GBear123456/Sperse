@@ -16,7 +16,6 @@ import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog
 import { Store, select } from '@ngrx/store';
 import { AppStore, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors } from '@app/store';
 import { ContactGroup } from '@shared/AppEnums';
-import { retry } from 'rxjs/operators';
 
 @Component({
     templateUrl: './note-add-dialog.component.html',
