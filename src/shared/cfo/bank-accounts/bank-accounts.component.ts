@@ -4,7 +4,7 @@ import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, filter, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
@@ -41,17 +41,16 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     }
 
     subscribeToObservables() {
-        this.syncCompletedSubscription = this._synchProgress.syncCompleted$.subscribe(() => {
+        this.syncCompletedSubscription = this._synchProgress.syncCompleted$.pipe(
+            takeUntil(this.deactivate$),
+            filter(completed => !!completed)
+        ).subscribe(() => {
             this.refresh();
         });
-        this.refreshSubscription = this._bankAccountsGeneralService.refresh$.subscribe( () => {
-            this.refresh();
-        });
-    }
-
-    unsubscribeSubscriptions() {
-        this.syncCompletedSubscription.unsubscribe();
-        this.refreshSubscription.unsubscribe();
+        this.refreshSubscription = this._bankAccountsGeneralService.refresh$.pipe(takeUntil(this.deactivate$))
+            .subscribe( () => {
+                this.refresh();
+            });
     }
 
     ngOnInit() {
@@ -60,10 +59,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         this._quovoService.quovoSynced$.subscribe(() => {
             this.bankAccountsService.load();
         });
-    }
-
-    ngOnDestroy() {
-        this.deactivate();
     }
 
     refresh() {
@@ -111,6 +106,10 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     }
 
     deactivate() {
-        this.unsubscribeSubscriptions();
+        super.deactivate();
+    }
+
+    ngOnDestroy() {
+        this.deactivate();
     }
 }
