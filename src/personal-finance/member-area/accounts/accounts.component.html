@@ -3,46 +3,11 @@
         <aside class="sidebar">
             <sticky [sticky-offset-top]="20">
                 <ul class="left-navigation">
-                    <li class="left-navigation-item" (click)="openQuovoSection('summary')" [class.active]="currentSection=='summary'">
+                    <li class="left-navigation-item" *ngFor="let item of menuItems; let i = index;" (click)="openQuovoSection(item.sectionName)">
                         <a pageScroll class="left-navigation-link">
-                            <span class="menu-icon"></span> {{ l("Summary") }}
+                            <span class="menu-icon"></span> {{ l(item.name) }}
                         </a>
                     </li>
-                    <li class="left-navigation-item" (click)="openQuovoSection('goals')" [class.active]="currentSection=='goals'">
-                        <a pageScroll class="left-navigation-link">
-                            <span class="menu-icon"></span> {{ l("Goals") }}
-                        </a>
-                    </li>
-                    <li class="left-navigation-item" (click)="openQuovoSection('allocation')" [class.active]="currentSection=='allocation'">
-                        <a pageScroll class="left-navigation-link">
-                            <span class="menu-icon"></span> {{ l("Allocation") }}
-                        </a>
-                    </li>
-                    <li class="left-navigation-item" (click)="openQuovoSection('spending')" [class.active]="currentSection=='spending'">
-                        <a pageScroll class="left-navigation-link">
-                            <span class="menu-icon"></span> {{ l("Spending & Budgeting") }}
-                        </a>
-                    </li>
-                    <li class="left-navigation-item" (click)="openQuovoSection('accounts')" [class.active]="currentSection=='accounts'">
-                        <a pageScroll class="left-navigation-link">
-                            <span class="menu-icon"></span> {{ l("Accounts") }}
-                        </a>
-                    </li>
-                    <li class="left-navigation-item" (click)="openQuovoSection('transactions')" [class.active]="currentSection=='transactions'">
-                        <a pageScroll class="left-navigation-link">
-                            <span class="menu-icon"></span> {{ l("Transactions") }}
-                        </a>
-                    </li>
-                    <li class="left-navigation-item" (click)="openQuovoSection('holdings')" [class.active]="currentSection=='holdings'">
-                        <a pageScroll class="left-navigation-link">
-                            <span class="menu-icon"></span> {{ l("Holdings") }}
-                        </a>
-                    </li>
-                    <!--<li class="left-navigation-item" (click)="openQuovoSection('account-details')" [class.active]="currentSection=='account-details'">
-                       <a pageScroll class="left-navigation-link">
-                           <span class="menu-icon"></span> {{ l("AccountDetails") }}
-                       </a>
-                   </li>-->
                 </ul>
             </sticky>
         </aside>

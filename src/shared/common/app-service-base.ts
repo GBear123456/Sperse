@@ -5,12 +5,17 @@ import * as _ from 'underscore';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
+class Module {
+    name: string;
+    showDescription: boolean;
+}
+
 export abstract class AppServiceBase {
     private readonly MODULE_DEFAULT: string;
 
     private _config: Subject<Object>;
     private _subscribers: Array<Subscription> = [];
-    private _modules: Array<string>;
+    private _modules: Array<Module>;
     private _configs: { [id: string]: any; };
     _featureChecker: FeatureCheckerService;
     _permissionChecker: PermissionCheckerService;
@@ -20,14 +25,14 @@ export abstract class AppServiceBase {
     constructor(
         private _injector: Injector,
         defaultModuleName: string,
-        moduleNames: Array<string>,
+        modules: Array<Module>,
         configs: { [id: string]: any; }
     ) {
         this._featureChecker = _injector.get(FeatureCheckerService);
         this._permissionChecker = _injector.get(PermissionCheckerService);
         this._config = new Subject<Object>();
         this.MODULE_DEFAULT = defaultModuleName;
-        this._modules = moduleNames;
+        this._modules = modules;
         this._configs = configs;
     }
 
