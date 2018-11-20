@@ -4,7 +4,7 @@
             <aside class="sidebar">
                 <sticky [sticky-offset-top]="20">
                     <ul class="left-navigation">
-                        <li class="left-navigation-item" *ngFor="let item of menuItems; let i = index;" (click)="openQuovoSection(item.sectionName)">
+                        <li class="left-navigation-item" *ngFor="let item of menuItems; let i = index;" (click)="openQuovoSection(item.sectionName)" [class.active]="currentSection==item.sectionName">
                             <a pageScroll class="left-navigation-link">
                                 <span class="menu-icon"></span> {{ l(item.name) }}
                             </a>

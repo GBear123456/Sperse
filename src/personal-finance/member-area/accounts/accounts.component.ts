@@ -28,7 +28,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     isStartDisabled = false;
     isInstanceInfoLoaded = false;
 
-    currentSection: 'summary';
+    currentSection = 'summary';
 
     menuItems = [
         { name: 'Summary', sectionName: 'summary' },
