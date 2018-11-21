@@ -52,7 +52,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
+        private dialog: MatDialog,
         private _abpSessionService: AbpSessionService,
         private _profileServiceProxy: ProfileServiceProxy,
         private _userLinkServiceProxy: UserLinkServiceProxy,

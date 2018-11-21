@@ -22,7 +22,7 @@ export interface IFormattedUserNotification {
 export class UserNotificationHelper extends AppComponentBase {
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
+        private dialog: MatDialog,
         private _notificationService: NotificationServiceProxy
     ) {
         super(injector);

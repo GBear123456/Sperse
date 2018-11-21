@@ -103,9 +103,9 @@
                             name="productsAndServices"
                             [inputAttr]="{ id: 'productsAndServices' }"
                             [height]="'140px'"
-                            [(value)]="company.productsAndServices">
+                            [(value)]="company.description">
                         </dx-text-area>
-                        <span class="{{company.productsAndServices && 'clear-contact' || 'hidden'}}" (click)="company.productsAndServices = ''"><i class="minus-icon"></i></span>
+                        <span class="{{company.description && 'clear-contact' || 'hidden'}}" (click)="company.description = ''"><i class="minus-icon"></i></span>
                     </div>
                 </div>
                 <div class="right col-md-5">

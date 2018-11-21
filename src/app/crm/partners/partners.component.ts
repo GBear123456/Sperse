@@ -179,7 +179,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     invalidate() {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
-        super.invalidate();
+        this.processFilterInternal();
     }
 
     showCompactRowsHeight() {
