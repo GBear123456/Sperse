@@ -167,7 +167,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     invalidate() {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
-        super.invalidate();
+        this.processFilterInternal();
         (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
     }
 
