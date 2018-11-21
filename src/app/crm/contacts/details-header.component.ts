@@ -18,7 +18,7 @@ import { CreateClientDialogComponent } from '../shared/create-client-dialog/crea
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { ContactInfoDto, CreateContactPhotoInput, ContactEmploymentServiceProxy,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdateContactEmploymentInput,
-    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy } from '@shared/service-proxies/service-proxies';
+    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy, OrganizationInfoDto } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { AppService } from '@app/app.service';
@@ -128,10 +128,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             panelClass: 'slider',
             maxWidth: '830px'
         }).afterClosed().subscribe(result => {
-            console.log(result);
             if (result) {
-                console.log(this.data.primaryOrganizationContactInfo);
-                this.data.primaryOrganizationContactInfo.organization = result.company;
+                this.data.primaryOrganizationContactInfo.organization = new OrganizationInfoDto(result.company);
                 this.data.primaryOrganizationContactInfo.fullName = result.company.fullName;
                 this.data['primaryOrganizationContactInfo'].primaryPhoto = result.company.primaryPhoto;
             }
