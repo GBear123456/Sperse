@@ -16,8 +16,8 @@ import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dial
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
-import { ContactInfoDto, CreateContactPhotoInput, ContactEmploymentServiceProxy,
-    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdateContactEmploymentInput,
+import { ContactInfoDto, CreateContactPhotoInput, PersonOrgRelationServiceProxy,
+    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdatePersonOrgRelationInput,
     PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy, OrganizationInfoDto } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
@@ -57,12 +57,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     isAdminModule;
     addContextMenuItems = [];
     addButtonTitle = '';
-    contactEmploymentInfo: any = {};
+    personOrgRelationInfo: any = {};
 
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _contactEmploymentService: ContactEmploymentServiceProxy,
+        private _personOrgRelationService: PersonOrgRelationServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
@@ -84,21 +84,22 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        this.initializeEmploymentInfo();
+        this.initializePersonOrgRelationInfo();
     }
 
-    initializeEmploymentInfo() {
+    initializePersonOrgRelationInfo() {
         this._contactInfoBehaviorSubject.subscribe(data => {
-            let contactId = data && data.id;
-            if (contactId) {
-                if (this._contactEmploymentService['data'] && this._contactEmploymentService['data'].id == contactId) {
-                    this.contactEmploymentInfo = this._contactEmploymentService['data'].contactEmploymentInfo;
+            let contactId = data && data.id,
+                orgId = data && data.primaryOrganizationContactInfo && data.primaryOrganizationContactInfo.id;
+            if (contactId && orgId) {
+                if (this._personOrgRelationService['data'] && this._personOrgRelationService['data'].id == contactId) {
+                    this.personOrgRelationInfo = this._personOrgRelationService['data'].personOrgRelationInfo;
                 } else {
-                    this._contactEmploymentService.get(contactId)
+                    this._personOrgRelationService.get(contactId, orgId)
                         .subscribe(response => {
-                            this._contactEmploymentService['data'] = {
+                            this._personOrgRelationService['data'] = {
                                 id: contactId,
-                                contactEmploymentInfo: this.contactEmploymentInfo = response.contactEmploymentInfo || {}
+                                personOrgRelationInfo: this.personOrgRelationInfo = response || {}
                             };
                         }
                     );
@@ -107,11 +108,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    updateContactEmployment(value) {
-        this.contactEmploymentInfo.jobTitle = value;
-        this._contactEmploymentService.update(UpdateContactEmploymentInput.fromJS({
-            id: this.contactEmploymentInfo.id,
-            contactEmploymentEditInfo: this.contactEmploymentInfo
+    updatePersonOrgRelation(value) {
+        this.personOrgRelationInfo.jobTitle = value;
+        this._personOrgRelationService.update(UpdatePersonOrgRelationInput.fromJS({
+            id: this.personOrgRelationInfo.id,
+            jobTitle: this.personOrgRelationInfo.jobTitle
         })).subscribe(response => {});
     }
 
@@ -183,12 +184,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getJobTitleInplaceEditData() {
-        if (this.contactEmploymentInfo)
+        if (this.personOrgRelationInfo)
             return {
-                id: this.contactEmploymentInfo.id,
-                value: (this.contactEmploymentInfo.jobTitle || '').trim(),
+                id: this.personOrgRelationInfo.id,
+                value: (this.personOrgRelationInfo.jobTitle || '').trim(),
                 lEntityName: 'JobTitle',
-                lEditPlaceholder: this.l('JobTitlePlaceholder')
+                lEditPlaceholder: this.l('JobTitle')
             };
     }
 
