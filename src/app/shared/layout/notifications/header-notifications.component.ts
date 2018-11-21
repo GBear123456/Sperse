@@ -55,17 +55,17 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         this.subscriptionExpiringDayCount = -1;
         module = module || this._appService.getModule().toUpperCase();
         if (this._appService.checkSubscriptionIsFree(module)) {
-            this.subscriptionInfoTitle = this.l("YouAreUsingTheFreePlan", module);
-            this.subscriptionInfoText = this.l("UpgradeToUnlockAllOurFeatures");
+            this.subscriptionInfoTitle = this.l('YouAreUsingTheFreePlan', module);
+            this.subscriptionInfoText = this.l('UpgradeToUnlockAllOurFeatures');
         } else if (!this._appService.hasModuleSubscription(module)) {
-            this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
-            this.subscriptionInfoText = this.l("ChoosePlanToContinueService");
+            this.subscriptionInfoTitle = this.l('YourTrialHasExpired', module);
+            this.subscriptionInfoText = this.l('ChoosePlanToContinueService');
         } else if (this._appService.subscriptionInGracePeriod(module)) {
             let dayCount = this._appService.getGracePeriodDayCount(module);
-            this.subscriptionInfoTitle = this.l("YourTrialHasExpired", module);
-            this.subscriptionInfoText = this.l("GracePeriodNotification", (dayCount ?
+            this.subscriptionInfoTitle = this.l('YourTrialHasExpired', module);
+            this.subscriptionInfoText = this.l('GracePeriodNotification', (dayCount ?
                 (this.l('PeriodDescription', dayCount,
-                    this.l(dayCount === 1 ? 'Tomorrow' : 'Periods_Day_plural'))
+                        this.l(dayCount === 1 ? 'Tomorrow' : 'Periods_Day_plural'))
                 ) : this.l('Today')).toLowerCase());
         } else {
             let dayCount = this._appService.getSubscriptionExpiringDayCount(module);
@@ -73,21 +73,23 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
                 this.subscriptionExpiringDayCount = null;
             } else {
                 if (dayCount >= 0 && dayCount <= 15) {
-                    this.subscriptionInfoText = this.l("ChoosePlanThatsRightForYou");
-                    this.subscriptionInfoTitle = this.l("YourTrialWillExpire", module) + " "
-                        + (!dayCount ? this.l("Today") : (dayCount === 1 ? this.l("Tomorrow") : ("in " + dayCount.toString() + " " + this.l("Periods_Day_plural")))).toLowerCase()
-                        + "!";
+                    this.subscriptionInfoText = this.l('ChoosePlanThatsRightForYou');
+                    this.subscriptionInfoTitle = this.l('YourTrialWillExpire', module) + ' '
+                        + (!dayCount ? this.l('Today') : (dayCount === 1 ? this.l('Tomorrow') : ('in ' + dayCount.toString() + ' ' + this.l('Periods_Day_plural')))).toLowerCase()
+                        + '!';
                 } else {
-                    var subscription = this._appService.getModuleSubscription(module);
+                    const subscription = this._appService.getModuleSubscription(module);
                     if (subscription) {
-                        this.subscriptionInfoText = this.l("UpgradOrChangeYourPlanAnyTime");
-                        this.subscriptionInfoTitle = this.l("YouAreUsingPlan", subscription.editionName);
-                    }
-                    else {
+                        this.subscriptionInfoText = this.l('UpgradOrChangeYourPlanAnyTime');
+                        this.subscriptionInfoTitle = this.l('YouAreUsingPlan', subscription.editionName);
+                    } else {
                         this.subscriptionExpiringDayCount = null;
                     }
                 }
             }
+        }
+        if (this._appService.subscriptionIsLocked(module)) {
+            this.subscriptionInfoText = this.l('SubscriptionWillBeRenewed');
         }
         return this.subscriptionInfoTitle;
     }
@@ -153,7 +155,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted("Pages.Administration.Tenant.SubscriptionManagement");
+        return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement');
     }
 
     openPaymentWizardDialog() {

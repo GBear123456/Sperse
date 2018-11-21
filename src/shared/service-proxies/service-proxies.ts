@@ -1388,14 +1388,11 @@ export class ApplicationServiceProxy {
 
     /**
      * @request (optional) 
-     * @createUser (optional) 
      * @sendWelcomeEmail (optional) 
      * @return Success
      */
-    registerApplication(request: RegisterApplicationRequest | null | undefined, createUser: boolean | null | undefined, sendWelcomeEmail: boolean | null | undefined): Observable<RegisterApplicationResponse> {
-        let url_ = this.baseUrl + "/api/services/PFM/Application/RegisterApplication?";
-        if (createUser !== undefined)
-            url_ += "createUser=" + encodeURIComponent("" + createUser) + "&"; 
+    registerApplicant(request: ApplicationInfo | null | undefined, sendWelcomeEmail: boolean | null | undefined): Observable<RegisterApplicationResponse> {
+        let url_ = this.baseUrl + "/api/services/PFM/Application/RegisterApplicant?";
         if (sendWelcomeEmail !== undefined)
             url_ += "sendWelcomeEmail=" + encodeURIComponent("" + sendWelcomeEmail) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -1413,11 +1410,11 @@ export class ApplicationServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRegisterApplication(response_);
+            return this.processRegisterApplicant(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processRegisterApplication(<any>response_);
+                    return this.processRegisterApplicant(<any>response_);
                 } catch (e) {
                     return <Observable<RegisterApplicationResponse>><any>_observableThrow(e);
                 }
@@ -1426,7 +1423,7 @@ export class ApplicationServiceProxy {
         }));
     }
 
-    protected processRegisterApplication(response: HttpResponseBase): Observable<RegisterApplicationResponse> {
+    protected processRegisterApplicant(response: HttpResponseBase): Observable<RegisterApplicationResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -7979,234 +7976,6 @@ export class ContactEmailServiceProxy {
             }));
         }
         return _observableOf<ListResultDtoOfEmailUsageTypeDto>(<any>null);
-    }
-}
-
-@Injectable()
-export class ContactEmploymentServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    get(personId: number): Observable<GetContactEmploymentOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Get?";
-        if (personId === undefined || personId === null)
-            throw new Error("The parameter 'personId' must be defined and cannot be null.");
-        else
-            url_ += "PersonId=" + encodeURIComponent("" + personId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGet(<any>response_);
-                } catch (e) {
-                    return <Observable<GetContactEmploymentOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetContactEmploymentOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGet(response: HttpResponseBase): Observable<GetContactEmploymentOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetContactEmploymentOutput.fromJS(resultData200) : new GetContactEmploymentOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetContactEmploymentOutput>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    create(input: CreateContactEmploymentInput | null | undefined): Observable<CreateContactEmploymentOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreate(<any>response_);
-                } catch (e) {
-                    return <Observable<CreateContactEmploymentOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CreateContactEmploymentOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreate(response: HttpResponseBase): Observable<CreateContactEmploymentOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateContactEmploymentOutput.fromJS(resultData200) : new CreateContactEmploymentOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CreateContactEmploymentOutput>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    update(input: UpdateContactEmploymentInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Update";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdate(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdate(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    delete(id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactEmployment/Delete?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined and cannot be null.");
-        else
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDelete(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDelete(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDelete(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 }
 
@@ -17935,6 +17704,130 @@ export class PersonContactServiceProxy {
 }
 
 @Injectable()
+export class PersonOrgRelationServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    get(personId: number, orgId: number): Observable<PersonOrgRelationInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Get?";
+        if (personId === undefined || personId === null)
+            throw new Error("The parameter 'personId' must be defined and cannot be null.");
+        else
+            url_ += "PersonId=" + encodeURIComponent("" + personId) + "&"; 
+        if (orgId === undefined || orgId === null)
+            throw new Error("The parameter 'orgId' must be defined and cannot be null.");
+        else
+            url_ += "OrgId=" + encodeURIComponent("" + orgId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(<any>response_);
+                } catch (e) {
+                    return <Observable<PersonOrgRelationInfo>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PersonOrgRelationInfo>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<PersonOrgRelationInfo> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PersonOrgRelationInfo.fromJS(resultData200) : new PersonOrgRelationInfo();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PersonOrgRelationInfo>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    update(input: UpdatePersonOrgRelationInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class PipelineServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -27530,22 +27423,13 @@ export interface IUserInfoDto {
     profileThumbnailId: string | undefined;
 }
 
-export class RegisterApplicationRequest implements IRegisterApplicationRequest {
+export class ApplicationInfo implements IApplicationInfo {
     systemType!: string;
-    affiliateId!: number;
-    capaignId!: number;
-    trackingInfo!: string | undefined;
-    apiKey!: string;
+    campaignId!: number;
     testMode!: boolean | undefined;
-    applicantID!: string;
-    applicationID!: string;
-    signupDateTimeStamp!: moment.Moment | undefined;
-    signupSourceCode!: string | undefined;
-    vertical!: RegisterApplicationRequestVertical;
-    ipAddress!: string | undefined;
-    userAgent!: string;
-    siteId!: string | undefined;
-    siteUrl!: string;
+    applicantId!: string;
+    applicationId!: string;
+    trackingInformation!: TrackingInformation | undefined;
     personalInformation!: PersonalInformation | undefined;
     debtInformation!: DebtInformation | undefined;
     loanInformation!: LoanInformation | undefined;
@@ -27553,7 +27437,7 @@ export class RegisterApplicationRequest implements IRegisterApplicationRequest {
     bankInformation!: BankInformation | undefined;
     legalInformation!: LegalInformation | undefined;
 
-    constructor(data?: IRegisterApplicationRequest) {
+    constructor(data?: IApplicationInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -27565,20 +27449,11 @@ export class RegisterApplicationRequest implements IRegisterApplicationRequest {
     init(data?: any) {
         if (data) {
             this.systemType = data["systemType"];
-            this.affiliateId = data["affiliateId"];
-            this.capaignId = data["capaignId"];
-            this.trackingInfo = data["trackingInfo"];
-            this.apiKey = data["apiKey"];
+            this.campaignId = data["campaignId"];
             this.testMode = data["testMode"];
-            this.applicantID = data["applicantID"];
-            this.applicationID = data["applicationID"];
-            this.signupDateTimeStamp = data["signupDateTimeStamp"] ? moment(data["signupDateTimeStamp"].toString()) : <any>undefined;
-            this.signupSourceCode = data["signupSourceCode"];
-            this.vertical = data["vertical"];
-            this.ipAddress = data["ipAddress"];
-            this.userAgent = data["userAgent"];
-            this.siteId = data["siteId"];
-            this.siteUrl = data["siteUrl"];
+            this.applicantId = data["applicantId"];
+            this.applicationId = data["applicationId"];
+            this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
             this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
             this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
             this.loanInformation = data["loanInformation"] ? LoanInformation.fromJS(data["loanInformation"]) : <any>undefined;
@@ -27588,9 +27463,9 @@ export class RegisterApplicationRequest implements IRegisterApplicationRequest {
         }
     }
 
-    static fromJS(data: any): RegisterApplicationRequest {
+    static fromJS(data: any): ApplicationInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new RegisterApplicationRequest();
+        let result = new ApplicationInfo();
         result.init(data);
         return result;
     }
@@ -27598,20 +27473,11 @@ export class RegisterApplicationRequest implements IRegisterApplicationRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
-        data["affiliateId"] = this.affiliateId;
-        data["capaignId"] = this.capaignId;
-        data["trackingInfo"] = this.trackingInfo;
-        data["apiKey"] = this.apiKey;
+        data["campaignId"] = this.campaignId;
         data["testMode"] = this.testMode;
-        data["applicantID"] = this.applicantID;
-        data["applicationID"] = this.applicationID;
-        data["signupDateTimeStamp"] = this.signupDateTimeStamp ? this.signupDateTimeStamp.toISOString() : <any>undefined;
-        data["signupSourceCode"] = this.signupSourceCode;
-        data["vertical"] = this.vertical;
-        data["ipAddress"] = this.ipAddress;
-        data["userAgent"] = this.userAgent;
-        data["siteId"] = this.siteId;
-        data["siteUrl"] = this.siteUrl;
+        data["applicantId"] = this.applicantId;
+        data["applicationId"] = this.applicationId;
+        data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
         data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
         data["loanInformation"] = this.loanInformation ? this.loanInformation.toJSON() : <any>undefined;
@@ -27622,22 +27488,13 @@ export class RegisterApplicationRequest implements IRegisterApplicationRequest {
     }
 }
 
-export interface IRegisterApplicationRequest {
+export interface IApplicationInfo {
     systemType: string;
-    affiliateId: number;
-    capaignId: number;
-    trackingInfo: string | undefined;
-    apiKey: string;
+    campaignId: number;
     testMode: boolean | undefined;
-    applicantID: string;
-    applicationID: string;
-    signupDateTimeStamp: moment.Moment | undefined;
-    signupSourceCode: string | undefined;
-    vertical: RegisterApplicationRequestVertical;
-    ipAddress: string | undefined;
-    userAgent: string;
-    siteId: string | undefined;
-    siteUrl: string;
+    applicantId: string;
+    applicationId: string;
+    trackingInformation: TrackingInformation | undefined;
     personalInformation: PersonalInformation | undefined;
     debtInformation: DebtInformation | undefined;
     loanInformation: LoanInformation | undefined;
@@ -27646,20 +27503,81 @@ export interface IRegisterApplicationRequest {
     legalInformation: LegalInformation | undefined;
 }
 
+export class TrackingInformation implements ITrackingInformation {
+    signupDateTimeStamp!: moment.Moment | undefined;
+    subId!: string | undefined;
+    affiliateId!: number;
+    vertical!: TrackingInformationVertical;
+    ipAddress!: string;
+    userAgent!: string;
+    siteId!: string | undefined;
+    siteUrl!: string;
+
+    constructor(data?: ITrackingInformation) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.signupDateTimeStamp = data["signupDateTimeStamp"] ? moment(data["signupDateTimeStamp"].toString()) : <any>undefined;
+            this.subId = data["subId"];
+            this.affiliateId = data["affiliateId"];
+            this.vertical = data["vertical"];
+            this.ipAddress = data["ipAddress"];
+            this.userAgent = data["userAgent"];
+            this.siteId = data["siteId"];
+            this.siteUrl = data["siteUrl"];
+        }
+    }
+
+    static fromJS(data: any): TrackingInformation {
+        data = typeof data === 'object' ? data : {};
+        let result = new TrackingInformation();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["signupDateTimeStamp"] = this.signupDateTimeStamp ? this.signupDateTimeStamp.toISOString() : <any>undefined;
+        data["subId"] = this.subId;
+        data["affiliateId"] = this.affiliateId;
+        data["vertical"] = this.vertical;
+        data["ipAddress"] = this.ipAddress;
+        data["userAgent"] = this.userAgent;
+        data["siteId"] = this.siteId;
+        data["siteUrl"] = this.siteUrl;
+        return data; 
+    }
+}
+
+export interface ITrackingInformation {
+    signupDateTimeStamp: moment.Moment | undefined;
+    subId: string | undefined;
+    affiliateId: number;
+    vertical: TrackingInformationVertical;
+    ipAddress: string;
+    userAgent: string;
+    siteId: string | undefined;
+    siteUrl: string;
+}
+
 export class PersonalInformation implements IPersonalInformation {
     firstName!: string;
     lastName!: string;
     middleName!: string | undefined;
-    fullName!: string | undefined;
     email!: string;
     alternateEmail!: string | undefined;
     doB!: moment.Moment;
     ssn!: string;
-    last4SSN!: string | undefined;
     licenseNumber!: string | undefined;
-    last4LicenseNumber!: string | undefined;
     licenseState!: string | undefined;
-    activeMilitary!: boolean;
+    isActiveMilitary!: boolean;
     phone!: string;
     phoneMobile!: string | undefined;
     prefferedContactTOD!: PersonalInformationPrefferedContactTOD;
@@ -27669,7 +27587,7 @@ export class PersonalInformation implements IPersonalInformation {
     stateCode!: string;
     postalCode!: string;
     countryCode!: string | undefined;
-    homeOwner!: boolean;
+    isHomeOwner!: boolean;
     monthsAtAddress!: number;
     creditScoreRating!: PersonalInformationCreditScoreRating | undefined;
     gender!: string | undefined;
@@ -27688,16 +27606,13 @@ export class PersonalInformation implements IPersonalInformation {
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.middleName = data["middleName"];
-            this.fullName = data["fullName"];
             this.email = data["email"];
             this.alternateEmail = data["alternateEmail"];
             this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
             this.ssn = data["ssn"];
-            this.last4SSN = data["last4SSN"];
             this.licenseNumber = data["licenseNumber"];
-            this.last4LicenseNumber = data["last4LicenseNumber"];
             this.licenseState = data["licenseState"];
-            this.activeMilitary = data["activeMilitary"];
+            this.isActiveMilitary = data["isActiveMilitary"];
             this.phone = data["phone"];
             this.phoneMobile = data["phoneMobile"];
             this.prefferedContactTOD = data["prefferedContactTOD"];
@@ -27707,7 +27622,7 @@ export class PersonalInformation implements IPersonalInformation {
             this.stateCode = data["stateCode"];
             this.postalCode = data["postalCode"];
             this.countryCode = data["countryCode"];
-            this.homeOwner = data["homeOwner"];
+            this.isHomeOwner = data["isHomeOwner"];
             this.monthsAtAddress = data["monthsAtAddress"];
             this.creditScoreRating = data["creditScoreRating"];
             this.gender = data["gender"];
@@ -27726,16 +27641,13 @@ export class PersonalInformation implements IPersonalInformation {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["middleName"] = this.middleName;
-        data["fullName"] = this.fullName;
         data["email"] = this.email;
         data["alternateEmail"] = this.alternateEmail;
         data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
         data["ssn"] = this.ssn;
-        data["last4SSN"] = this.last4SSN;
         data["licenseNumber"] = this.licenseNumber;
-        data["last4LicenseNumber"] = this.last4LicenseNumber;
         data["licenseState"] = this.licenseState;
-        data["activeMilitary"] = this.activeMilitary;
+        data["isActiveMilitary"] = this.isActiveMilitary;
         data["phone"] = this.phone;
         data["phoneMobile"] = this.phoneMobile;
         data["prefferedContactTOD"] = this.prefferedContactTOD;
@@ -27745,7 +27657,7 @@ export class PersonalInformation implements IPersonalInformation {
         data["stateCode"] = this.stateCode;
         data["postalCode"] = this.postalCode;
         data["countryCode"] = this.countryCode;
-        data["homeOwner"] = this.homeOwner;
+        data["isHomeOwner"] = this.isHomeOwner;
         data["monthsAtAddress"] = this.monthsAtAddress;
         data["creditScoreRating"] = this.creditScoreRating;
         data["gender"] = this.gender;
@@ -27757,16 +27669,13 @@ export interface IPersonalInformation {
     firstName: string;
     lastName: string;
     middleName: string | undefined;
-    fullName: string | undefined;
     email: string;
     alternateEmail: string | undefined;
     doB: moment.Moment;
     ssn: string;
-    last4SSN: string | undefined;
     licenseNumber: string | undefined;
-    last4LicenseNumber: string | undefined;
     licenseState: string | undefined;
-    activeMilitary: boolean;
+    isActiveMilitary: boolean;
     phone: string;
     phoneMobile: string | undefined;
     prefferedContactTOD: PersonalInformationPrefferedContactTOD;
@@ -27776,7 +27685,7 @@ export interface IPersonalInformation {
     stateCode: string;
     postalCode: string;
     countryCode: string | undefined;
-    homeOwner: boolean;
+    isHomeOwner: boolean;
     monthsAtAddress: number;
     creditScoreRating: PersonalInformationCreditScoreRating | undefined;
     gender: string | undefined;
@@ -27962,10 +27871,9 @@ export class BankInformation implements IBankInformation {
     bankAccountType!: BankInformationBankAccountType;
     bankName!: string;
     bankAccountNumber!: string;
-    last4BankAccountNumber!: string | undefined;
     bankABA!: string;
     bankPhone!: string | undefined;
-    directDeposit!: boolean;
+    isDirectDeposit!: boolean;
     monthsAtBank!: number | undefined;
 
     constructor(data?: IBankInformation) {
@@ -27982,10 +27890,9 @@ export class BankInformation implements IBankInformation {
             this.bankAccountType = data["bankAccountType"];
             this.bankName = data["bankName"];
             this.bankAccountNumber = data["bankAccountNumber"];
-            this.last4BankAccountNumber = data["last4BankAccountNumber"];
             this.bankABA = data["bankABA"];
             this.bankPhone = data["bankPhone"];
-            this.directDeposit = data["directDeposit"];
+            this.isDirectDeposit = data["isDirectDeposit"];
             this.monthsAtBank = data["monthsAtBank"];
         }
     }
@@ -28002,10 +27909,9 @@ export class BankInformation implements IBankInformation {
         data["bankAccountType"] = this.bankAccountType;
         data["bankName"] = this.bankName;
         data["bankAccountNumber"] = this.bankAccountNumber;
-        data["last4BankAccountNumber"] = this.last4BankAccountNumber;
         data["bankABA"] = this.bankABA;
         data["bankPhone"] = this.bankPhone;
-        data["directDeposit"] = this.directDeposit;
+        data["isDirectDeposit"] = this.isDirectDeposit;
         data["monthsAtBank"] = this.monthsAtBank;
         return data; 
     }
@@ -28015,15 +27921,14 @@ export interface IBankInformation {
     bankAccountType: BankInformationBankAccountType;
     bankName: string;
     bankAccountNumber: string;
-    last4BankAccountNumber: string | undefined;
     bankABA: string;
     bankPhone: string | undefined;
-    directDeposit: boolean;
+    isDirectDeposit: boolean;
     monthsAtBank: number | undefined;
 }
 
 export class LegalInformation implements ILegalInformation {
-    tcpaChecked!: boolean | undefined;
+    isTCPAChecked!: boolean | undefined;
 
     constructor(data?: ILegalInformation) {
         if (data) {
@@ -28036,7 +27941,7 @@ export class LegalInformation implements ILegalInformation {
 
     init(data?: any) {
         if (data) {
-            this.tcpaChecked = data["tcpaChecked"];
+            this.isTCPAChecked = data["isTCPAChecked"];
         }
     }
 
@@ -28049,13 +27954,13 @@ export class LegalInformation implements ILegalInformation {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["tcpaChecked"] = this.tcpaChecked;
+        data["isTCPAChecked"] = this.isTCPAChecked;
         return data; 
     }
 }
 
 export interface ILegalInformation {
-    tcpaChecked: boolean | undefined;
+    isTCPAChecked: boolean | undefined;
 }
 
 export class RegisterApplicationResponse implements IRegisterApplicationResponse {
@@ -37028,544 +36933,6 @@ export interface IEmailUsageTypeDto {
     id: string | undefined;
     name: string | undefined;
     isCompany: boolean | undefined;
-}
-
-export class GetContactEmploymentOutput implements IGetContactEmploymentOutput {
-    contactEmploymentInfo!: ContactEmploymentInfo | undefined;
-    organizationBusinessInfo!: OrganizationBusinessInfo | undefined;
-
-    constructor(data?: IGetContactEmploymentOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactEmploymentInfo = data["contactEmploymentInfo"] ? ContactEmploymentInfo.fromJS(data["contactEmploymentInfo"]) : <any>undefined;
-            this.organizationBusinessInfo = data["organizationBusinessInfo"] ? OrganizationBusinessInfo.fromJS(data["organizationBusinessInfo"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): GetContactEmploymentOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetContactEmploymentOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactEmploymentInfo"] = this.contactEmploymentInfo ? this.contactEmploymentInfo.toJSON() : <any>undefined;
-        data["organizationBusinessInfo"] = this.organizationBusinessInfo ? this.organizationBusinessInfo.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IGetContactEmploymentOutput {
-    contactEmploymentInfo: ContactEmploymentInfo | undefined;
-    organizationBusinessInfo: OrganizationBusinessInfo | undefined;
-}
-
-export class ContactEmploymentInfo implements IContactEmploymentInfo {
-    id!: number | undefined;
-    orgName!: string;
-    orgId!: number | undefined;
-    country!: string | undefined;
-    countryId!: string | undefined;
-    state!: string | undefined;
-    stateId!: string | undefined;
-    city!: string | undefined;
-    streetAddress!: string | undefined;
-    zip!: string | undefined;
-    phoneNumber!: string | undefined;
-    phoneExtension!: string | undefined;
-    mobilePhoneNumber!: string | undefined;
-    jobTitle!: string;
-    supervisorName!: string | undefined;
-    seniorManager!: string | undefined;
-    workEmail!: string | undefined;
-    websiteUrl!: string | undefined;
-    monthlyIncome!: number | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
-    comment!: string | undefined;
-
-    constructor(data?: IContactEmploymentInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.orgName = data["orgName"];
-            this.orgId = data["orgId"];
-            this.country = data["country"];
-            this.countryId = data["countryId"];
-            this.state = data["state"];
-            this.stateId = data["stateId"];
-            this.city = data["city"];
-            this.streetAddress = data["streetAddress"];
-            this.zip = data["zip"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.mobilePhoneNumber = data["mobilePhoneNumber"];
-            this.jobTitle = data["jobTitle"];
-            this.supervisorName = data["supervisorName"];
-            this.seniorManager = data["seniorManager"];
-            this.workEmail = data["workEmail"];
-            this.websiteUrl = data["websiteUrl"];
-            this.monthlyIncome = data["monthlyIncome"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactEmploymentInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactEmploymentInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["orgName"] = this.orgName;
-        data["orgId"] = this.orgId;
-        data["country"] = this.country;
-        data["countryId"] = this.countryId;
-        data["state"] = this.state;
-        data["stateId"] = this.stateId;
-        data["city"] = this.city;
-        data["streetAddress"] = this.streetAddress;
-        data["zip"] = this.zip;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["mobilePhoneNumber"] = this.mobilePhoneNumber;
-        data["jobTitle"] = this.jobTitle;
-        data["supervisorName"] = this.supervisorName;
-        data["seniorManager"] = this.seniorManager;
-        data["workEmail"] = this.workEmail;
-        data["websiteUrl"] = this.websiteUrl;
-        data["monthlyIncome"] = this.monthlyIncome;
-        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactEmploymentInfo {
-    id: number | undefined;
-    orgName: string;
-    orgId: number | undefined;
-    country: string | undefined;
-    countryId: string | undefined;
-    state: string | undefined;
-    stateId: string | undefined;
-    city: string | undefined;
-    streetAddress: string | undefined;
-    zip: string | undefined;
-    phoneNumber: string | undefined;
-    phoneExtension: string | undefined;
-    mobilePhoneNumber: string | undefined;
-    jobTitle: string;
-    supervisorName: string | undefined;
-    seniorManager: string | undefined;
-    workEmail: string | undefined;
-    websiteUrl: string | undefined;
-    monthlyIncome: number | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
-    comment: string | undefined;
-}
-
-export class CreateContactEmploymentInput implements ICreateContactEmploymentInput {
-    contactEmploymentCreateInfo!: ContactEmploymentCreateInfo;
-
-    constructor(data?: ICreateContactEmploymentInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.contactEmploymentCreateInfo = new ContactEmploymentCreateInfo();
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactEmploymentCreateInfo = data["contactEmploymentCreateInfo"] ? ContactEmploymentCreateInfo.fromJS(data["contactEmploymentCreateInfo"]) : new ContactEmploymentCreateInfo();
-        }
-    }
-
-    static fromJS(data: any): CreateContactEmploymentInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactEmploymentInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactEmploymentCreateInfo"] = this.contactEmploymentCreateInfo ? this.contactEmploymentCreateInfo.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ICreateContactEmploymentInput {
-    contactEmploymentCreateInfo: ContactEmploymentCreateInfo;
-}
-
-export class ContactEmploymentCreateInfo implements IContactEmploymentCreateInfo {
-    personId!: number;
-    orgName!: string;
-    orgId!: number | undefined;
-    country!: string | undefined;
-    countryId!: string | undefined;
-    state!: string | undefined;
-    stateId!: string | undefined;
-    city!: string | undefined;
-    streetAddress!: string | undefined;
-    zip!: string | undefined;
-    phoneNumber!: string | undefined;
-    phoneExtension!: string | undefined;
-    mobilePhoneNumber!: string | undefined;
-    jobTitle!: string;
-    supervisorName!: string | undefined;
-    seniorManager!: string | undefined;
-    workEmail!: string | undefined;
-    websiteUrl!: string | undefined;
-    monthlyIncome!: number | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
-    comment!: string | undefined;
-
-    constructor(data?: IContactEmploymentCreateInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.personId = data["personId"];
-            this.orgName = data["orgName"];
-            this.orgId = data["orgId"];
-            this.country = data["country"];
-            this.countryId = data["countryId"];
-            this.state = data["state"];
-            this.stateId = data["stateId"];
-            this.city = data["city"];
-            this.streetAddress = data["streetAddress"];
-            this.zip = data["zip"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.mobilePhoneNumber = data["mobilePhoneNumber"];
-            this.jobTitle = data["jobTitle"];
-            this.supervisorName = data["supervisorName"];
-            this.seniorManager = data["seniorManager"];
-            this.workEmail = data["workEmail"];
-            this.websiteUrl = data["websiteUrl"];
-            this.monthlyIncome = data["monthlyIncome"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactEmploymentCreateInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactEmploymentCreateInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["personId"] = this.personId;
-        data["orgName"] = this.orgName;
-        data["orgId"] = this.orgId;
-        data["country"] = this.country;
-        data["countryId"] = this.countryId;
-        data["state"] = this.state;
-        data["stateId"] = this.stateId;
-        data["city"] = this.city;
-        data["streetAddress"] = this.streetAddress;
-        data["zip"] = this.zip;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["mobilePhoneNumber"] = this.mobilePhoneNumber;
-        data["jobTitle"] = this.jobTitle;
-        data["supervisorName"] = this.supervisorName;
-        data["seniorManager"] = this.seniorManager;
-        data["workEmail"] = this.workEmail;
-        data["websiteUrl"] = this.websiteUrl;
-        data["monthlyIncome"] = this.monthlyIncome;
-        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactEmploymentCreateInfo {
-    personId: number;
-    orgName: string;
-    orgId: number | undefined;
-    country: string | undefined;
-    countryId: string | undefined;
-    state: string | undefined;
-    stateId: string | undefined;
-    city: string | undefined;
-    streetAddress: string | undefined;
-    zip: string | undefined;
-    phoneNumber: string | undefined;
-    phoneExtension: string | undefined;
-    mobilePhoneNumber: string | undefined;
-    jobTitle: string;
-    supervisorName: string | undefined;
-    seniorManager: string | undefined;
-    workEmail: string | undefined;
-    websiteUrl: string | undefined;
-    monthlyIncome: number | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
-    comment: string | undefined;
-}
-
-export class CreateContactEmploymentOutput implements ICreateContactEmploymentOutput {
-    id!: number | undefined;
-
-    constructor(data?: ICreateContactEmploymentOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactEmploymentOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactEmploymentOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ICreateContactEmploymentOutput {
-    id: number | undefined;
-}
-
-export class UpdateContactEmploymentInput implements IUpdateContactEmploymentInput {
-    id!: number;
-    contactEmploymentEditInfo!: ContactEmploymentEditInfo;
-
-    constructor(data?: IUpdateContactEmploymentInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.contactEmploymentEditInfo = new ContactEmploymentEditInfo();
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.contactEmploymentEditInfo = data["contactEmploymentEditInfo"] ? ContactEmploymentEditInfo.fromJS(data["contactEmploymentEditInfo"]) : new ContactEmploymentEditInfo();
-        }
-    }
-
-    static fromJS(data: any): UpdateContactEmploymentInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateContactEmploymentInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["contactEmploymentEditInfo"] = this.contactEmploymentEditInfo ? this.contactEmploymentEditInfo.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IUpdateContactEmploymentInput {
-    id: number;
-    contactEmploymentEditInfo: ContactEmploymentEditInfo;
-}
-
-export class ContactEmploymentEditInfo implements IContactEmploymentEditInfo {
-    orgName!: string;
-    orgId!: number | undefined;
-    country!: string | undefined;
-    countryId!: string | undefined;
-    state!: string | undefined;
-    stateId!: string | undefined;
-    city!: string | undefined;
-    streetAddress!: string | undefined;
-    zip!: string | undefined;
-    phoneNumber!: string | undefined;
-    phoneExtension!: string | undefined;
-    mobilePhoneNumber!: string | undefined;
-    jobTitle!: string;
-    supervisorName!: string | undefined;
-    seniorManager!: string | undefined;
-    workEmail!: string | undefined;
-    websiteUrl!: string | undefined;
-    monthlyIncome!: number | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    isActive!: boolean;
-    isConfirmed!: boolean;
-    comment!: string | undefined;
-
-    constructor(data?: IContactEmploymentEditInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.orgName = data["orgName"];
-            this.orgId = data["orgId"];
-            this.country = data["country"];
-            this.countryId = data["countryId"];
-            this.state = data["state"];
-            this.stateId = data["stateId"];
-            this.city = data["city"];
-            this.streetAddress = data["streetAddress"];
-            this.zip = data["zip"];
-            this.phoneNumber = data["phoneNumber"];
-            this.phoneExtension = data["phoneExtension"];
-            this.mobilePhoneNumber = data["mobilePhoneNumber"];
-            this.jobTitle = data["jobTitle"];
-            this.supervisorName = data["supervisorName"];
-            this.seniorManager = data["seniorManager"];
-            this.workEmail = data["workEmail"];
-            this.websiteUrl = data["websiteUrl"];
-            this.monthlyIncome = data["monthlyIncome"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactEmploymentEditInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactEmploymentEditInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["orgName"] = this.orgName;
-        data["orgId"] = this.orgId;
-        data["country"] = this.country;
-        data["countryId"] = this.countryId;
-        data["state"] = this.state;
-        data["stateId"] = this.stateId;
-        data["city"] = this.city;
-        data["streetAddress"] = this.streetAddress;
-        data["zip"] = this.zip;
-        data["phoneNumber"] = this.phoneNumber;
-        data["phoneExtension"] = this.phoneExtension;
-        data["mobilePhoneNumber"] = this.mobilePhoneNumber;
-        data["jobTitle"] = this.jobTitle;
-        data["supervisorName"] = this.supervisorName;
-        data["seniorManager"] = this.seniorManager;
-        data["workEmail"] = this.workEmail;
-        data["websiteUrl"] = this.websiteUrl;
-        data["monthlyIncome"] = this.monthlyIncome;
-        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactEmploymentEditInfo {
-    orgName: string;
-    orgId: number | undefined;
-    country: string | undefined;
-    countryId: string | undefined;
-    state: string | undefined;
-    stateId: string | undefined;
-    city: string | undefined;
-    streetAddress: string | undefined;
-    zip: string | undefined;
-    phoneNumber: string | undefined;
-    phoneExtension: string | undefined;
-    mobilePhoneNumber: string | undefined;
-    jobTitle: string;
-    supervisorName: string | undefined;
-    seniorManager: string | undefined;
-    workEmail: string | undefined;
-    websiteUrl: string | undefined;
-    monthlyIncome: number | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    isActive: boolean;
-    isConfirmed: boolean;
-    comment: string | undefined;
 }
 
 export class CreateContactLinkOutput implements ICreateContactLinkOutput {
@@ -47464,6 +46831,7 @@ export interface INotificationSubscriptionDto {
 }
 
 export class CampaignDto implements ICampaignDto {
+    systemType!: CampaignDtoSystemType | undefined;
     id!: number | undefined;
     status!: CampaignDtoStatus | undefined;
     type!: CampaignDtoType | undefined;
@@ -47489,6 +46857,7 @@ export class CampaignDto implements ICampaignDto {
 
     init(data?: any) {
         if (data) {
+            this.systemType = data["systemType"];
             this.id = data["id"];
             this.status = data["status"];
             this.type = data["type"];
@@ -47522,6 +46891,7 @@ export class CampaignDto implements ICampaignDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["systemType"] = this.systemType;
         data["id"] = this.id;
         data["status"] = this.status;
         data["type"] = this.type;
@@ -47548,6 +46918,7 @@ export class CampaignDto implements ICampaignDto {
 }
 
 export interface ICampaignDto {
+    systemType: CampaignDtoSystemType | undefined;
     id: number | undefined;
     status: CampaignDtoStatus | undefined;
     type: CampaignDtoType | undefined;
@@ -47567,6 +46938,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     description!: string | undefined;
     termsOfService!: string | undefined;
     updated!: moment.Moment | undefined;
+    systemType!: CampaignDetailsDtoSystemType | undefined;
     id!: number | undefined;
     status!: CampaignDetailsDtoStatus | undefined;
     type!: CampaignDetailsDtoType | undefined;
@@ -47595,6 +46967,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
             this.description = data["description"];
             this.termsOfService = data["termsOfService"];
             this.updated = data["updated"] ? moment(data["updated"].toString()) : <any>undefined;
+            this.systemType = data["systemType"];
             this.id = data["id"];
             this.status = data["status"];
             this.type = data["type"];
@@ -47631,6 +47004,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
         data["description"] = this.description;
         data["termsOfService"] = this.termsOfService;
         data["updated"] = this.updated ? this.updated.toISOString() : <any>undefined;
+        data["systemType"] = this.systemType;
         data["id"] = this.id;
         data["status"] = this.status;
         data["type"] = this.type;
@@ -47660,6 +47034,7 @@ export interface ICampaignDetailsDto {
     description: string | undefined;
     termsOfService: string | undefined;
     updated: moment.Moment | undefined;
+    systemType: CampaignDetailsDtoSystemType | undefined;
     id: number | undefined;
     status: CampaignDetailsDtoStatus | undefined;
     type: CampaignDetailsDtoType | undefined;
@@ -47679,6 +47054,7 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
     systemType!: string;
     campaignId!: number;
     applicationId!: string | undefined;
+    testMode!: boolean | undefined;
 
     constructor(data?: ISubmitApplicationInput) {
         if (data) {
@@ -47694,6 +47070,7 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
             this.applicationId = data["applicationId"];
+            this.testMode = data["testMode"];
         }
     }
 
@@ -47709,6 +47086,7 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
         data["applicationId"] = this.applicationId;
+        data["testMode"] = this.testMode;
         return data; 
     }
 }
@@ -47717,6 +47095,7 @@ export interface ISubmitApplicationInput {
     systemType: string;
     campaignId: number;
     applicationId: string | undefined;
+    testMode: boolean | undefined;
 }
 
 export class SubmitApplicationOutput implements ISubmitApplicationOutput {
@@ -49939,6 +49318,86 @@ export interface ICreateUserForContactInput {
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     assignedRoleNames: string[];
+}
+
+export class PersonOrgRelationInfo implements IPersonOrgRelationInfo {
+    id!: number | undefined;
+    jobTitle!: string | undefined;
+
+    constructor(data?: IPersonOrgRelationInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.jobTitle = data["jobTitle"];
+        }
+    }
+
+    static fromJS(data: any): PersonOrgRelationInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonOrgRelationInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["jobTitle"] = this.jobTitle;
+        return data; 
+    }
+}
+
+export interface IPersonOrgRelationInfo {
+    id: number | undefined;
+    jobTitle: string | undefined;
+}
+
+export class UpdatePersonOrgRelationInput implements IUpdatePersonOrgRelationInput {
+    id!: number;
+    jobTitle!: string;
+
+    constructor(data?: IUpdatePersonOrgRelationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.jobTitle = data["jobTitle"];
+        }
+    }
+
+    static fromJS(data: any): UpdatePersonOrgRelationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdatePersonOrgRelationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["jobTitle"] = this.jobTitle;
+        return data; 
+    }
+}
+
+export interface IUpdatePersonOrgRelationInput {
+    id: number;
+    jobTitle: string;
 }
 
 export class PipelineDto implements IPipelineDto {
@@ -57353,7 +56812,7 @@ export enum UpdateActivityDtoType {
     Event = "Event", 
 }
 
-export enum RegisterApplicationRequestVertical {
+export enum TrackingInformationVertical {
     HybridLoans = "HybridLoans", 
 }
 
@@ -57669,6 +57128,10 @@ export enum TenantNotificationSeverity {
     _4 = 4, 
 }
 
+export enum CampaignDtoSystemType {
+    ECPVIP = "ECPVIP", 
+}
+
 export enum CampaignDtoStatus {
     PendingReview = "PendingReview", 
     Active = "Active", 
@@ -57703,6 +57166,10 @@ export enum CampaignDtoTraficSource {
     PPC_Decline = "PPC_Decline", 
     PPC_Reject = "PPC_Reject", 
     PPC_Display = "PPC_Display", 
+}
+
+export enum CampaignDetailsDtoSystemType {
+    ECPVIP = "ECPVIP", 
 }
 
 export enum CampaignDetailsDtoStatus {

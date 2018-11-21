@@ -31,6 +31,7 @@ import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'payment-options',
@@ -64,7 +65,8 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     private paymentMethodsConfig = {
         [PaymentMethods.BankTransfer]: {
             successStatus: res => this.l('pendingBankTransferIntentRecorded', res),
-            showBack: false
+            showBack: false,
+            skipRefreshAfterClose: true
         },
         [PaymentMethods.Free]: {
             successStatus: this.l('PaymentStatus_payment-free-confirmed')
@@ -83,6 +85,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     constructor(
         private injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
+        private appService: AppService,
         private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy
     ) {
         super(injector);
@@ -174,26 +177,29 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                 break;
         }
         /** Start submitting data and change status in a case of error or success */
-        let method = paymentMethod == PaymentMethods.PayPal ?
-            this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo) :
-            paymentMethod === PaymentMethods.BankTransfer ?
-                this.tenantSubscriptionServiceProxy.requestPayment(
-                    new RequestPaymentDto({
-                        subscriptionInfo: ModuleSubscriptionInfo.fromJS({
-                            editionId: paymentInfo.subscriptionInfo.editionId,
-                            maxUserCount: paymentInfo.subscriptionInfo.maxUserCount,
-                            frequency: paymentInfo.subscriptionInfo.frequency
-                        }),
-                        requestType: RequestPaymentDtoRequestType.ManualBankTransfer
-                    })
-                ) :
-                this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
+        let method = paymentMethod == PaymentMethods.PayPal
+            ? this.tenantSubscriptionServiceProxy.completeSubscriptionPayment(paymentInfo.billingInfo)
+            : paymentMethod === PaymentMethods.BankTransfer
+                ? this.tenantSubscriptionServiceProxy.requestPayment(
+                      new RequestPaymentDto({
+                          subscriptionInfo: ModuleSubscriptionInfo.fromJS({
+                              editionId: paymentInfo.subscriptionInfo.editionId,
+                              maxUserCount: paymentInfo.subscriptionInfo.maxUserCount,
+                              frequency: paymentInfo.subscriptionInfo.frequency
+                          }),
+                          requestType: RequestPaymentDtoRequestType.ManualBankTransfer
+                      })
+                  )
+                : this.tenantSubscriptionServiceProxy.setupSubscription(paymentInfo);
 
         method
             .pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
             .subscribe(
                 res => {
-                    this.refreshAfterClose.emit();
+                    if (!this.paymentMethodsConfig[paymentMethod].skipRefreshAfterClose) {
+                        this.refreshAfterClose.emit();
+                    }
+                    this.appService.loadModeuleSubscriptions();
                     this.onStatusChange.emit({
                         status: this.getPaymentStatus(paymentMethod, res),
                         icon: PaymentStatusEnum.Confirmed,

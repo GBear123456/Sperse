@@ -34,7 +34,6 @@ import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.com
 import { SocialsComponent } from './socials/socials.component';
 import { ContactsAreaComponent } from './contacts-area/contacts-area.component';
 import { AddressesComponent } from './addresses/addresses.component';
-import { EmploymentComponent } from './employment/employment.component';
 import { ClientScoresComponent } from './client-scores/client-scores.component';
 import { TotalApprovedComponent } from './total-approved/total-approved.component';
 import { CreditLinesComponent } from './credit-lines/credit-lines.component';
@@ -62,7 +61,7 @@ import { OrganizationUnitsTreeComponent } from './organization-units-tree/organi
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
 import { ContactServiceProxy, MemberServiceProxy, OrganizationContactServiceProxy, DocumentServiceProxy,
-    ContactEmploymentServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy,
+    PersonOrgRelationServiceProxy, PersonContactServiceProxy, DocumentTypeServiceProxy,
     PartnerServiceProxy, PartnerTypeServiceProxy, NotesServiceProxy, OrderSubscriptionServiceProxy, CustomerServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
@@ -81,7 +80,6 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     SocialsComponent,
     ContactsAreaComponent,
     AddressesComponent,
-    EmploymentComponent,
     ClientScoresComponent,
     TotalApprovedComponent,
     CreditLinesComponent,
@@ -173,7 +171,7 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     CustomerServiceProxy,
     PartnerServiceProxy,
     PartnerTypeServiceProxy,
-    ContactEmploymentServiceProxy,
+    PersonOrgRelationServiceProxy,
     MemberServiceProxy,
     OrganizationContactServiceProxy,
     PersonContactServiceProxy,
