@@ -52,6 +52,10 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit() {
+        this.checkInstanceChangeProcess();
+    }
+
+    checkInstanceChangeProcess() {
         this._cfoService.instanceChangeProcess(() => {
             this.isInstanceInfoLoaded = true;
             this.loadQouvoPfm();
@@ -112,7 +116,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             this.addAccount();
         else
             this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType]).subscribe(data => {
-                this._cfoService.instanceChangeProcess();
+                this.checkInstanceChangeProcess();
                 this.addAccount();
             });
     }
@@ -134,7 +138,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
 
     private onQuovoClose(e) {
         this.isStartDisabled = false;
-        this.loadQouvoPfm();
+        this.checkInstanceChangeProcess();
     }
 
     ngOnDestroy() {
