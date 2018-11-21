@@ -147,7 +147,8 @@ export class AppService extends AppServiceBase {
     }
 
     subscriptionIsLocked(name?: string) {
-        return this.getModuleSubscription(name).isLocked;
+        const subscription = this.getModuleSubscription(name);
+        return subscription && subscription.isLocked;
     }
 
     checkModuleSubscriptionEnabled() {
