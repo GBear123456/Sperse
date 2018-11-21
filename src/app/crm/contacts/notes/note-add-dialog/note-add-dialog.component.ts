@@ -15,7 +15,7 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { AppStore, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors } from '@app/store';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, NoteType } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
@@ -41,7 +41,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     followupDate: any;
     phone: string;
     contactId: number;
+    primaryOrgId: number;
     addedBy: string;
+    defaultType: string;
     type: string;
 
     types = [];
@@ -74,6 +76,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         if (this.data.contactInfo.contactPersons) {
             let orgContact = <any>this._contactInfo.primaryOrganizationContactInfo,
                 contacts = this._contactInfo.contactPersons.length ? this._contactInfo.contactPersons : [this._contactInfo.personContactInfo];
+            this.primaryOrgId = orgContact && orgContact.id;
             this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
             this.onContactChanged({value: this.contacts[0].id});
         }
@@ -120,7 +123,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     initTypes(types) {
         if (types.length) {
-            this.type = types[0].id;
+            this.defaultType = types[0].id;
+            this.type = this.defaultType;
             this.types = types;
         }
     }
@@ -180,6 +184,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
         this.phone = this.phones.length && this.phones[0].id;
         this.contactId = contact.id;
+        this.type = this.contactId == this.primaryOrgId ?
+            NoteType.CompanyNote :
+            this.defaultType;
     }
 
     initValidationGroup($event) {
