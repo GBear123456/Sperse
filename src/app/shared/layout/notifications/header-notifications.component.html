@@ -74,7 +74,7 @@
                         <div *ngIf="notifications.length" class="m-nav__separator m-nav__separator--fit"></div>
                         <div *ngIf="notifications.length" class="external notifications-footer">
                             <div class="text-left">
-                                <a (click)="openNotificationSettingsModal()" href="javascript:;">{{l("Preferences")}}</a>
+                                <a (click)="openNotificationSettingsModal($event)" href="javascript:;">{{l("Preferences")}}</a>
                             </div>
                         </div>
                     </div>

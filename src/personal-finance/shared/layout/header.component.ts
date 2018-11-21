@@ -181,39 +181,48 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    showLoginAttempts(): void {
+    showLoginAttempts(e): void {
         this.dialog.open(LoginAttemptsModalComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {}
         });
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
     }
 
     showLinkedAccounts(): void {
         this.linkedAccountsModal.show();
     }
 
-    changePassword(): void {
+    changePassword(e): void {
         this.dialog.open(ChangePasswordModalComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {}
         });
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
     }
 
     changeProfilePicture(): void {
         this.changeProfilePictureModal.show();
     }
 
-    changeMySettings(): void {
+    changeMySettings(e): void {
         this.dialog.open(MySettingsModalComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {}
         });
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
     }
 
     logout(): void {

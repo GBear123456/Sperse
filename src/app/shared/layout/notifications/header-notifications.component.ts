@@ -137,8 +137,8 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         this._userNotificationHelper.setAllAsRead();
     }
 
-    openNotificationSettingsModal(): void {
-        this._userNotificationHelper.openSettingsModal();
+    openNotificationSettingsModal(e): void {
+        this._userNotificationHelper.openSettingsModal(e);
     }
 
     setNotificationAsRead(userNotification: IFormattedUserNotification): void {
