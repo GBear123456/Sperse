@@ -12,7 +12,7 @@
         <div *ngIf="!hasPfmAppFeature || !loggedUserId">
             <div class="separator"></div>
             <div class="disclosure">
-                <b>{{l("DisclosureTitle", hasPfmAppFeature ? 'PFM': 'Platform')}}</b>: {{l("DisclosureText", hasPfmAppFeature ? 'PFM': 'Platform', appSession?.tenant?.name)}}
+                <b>{{ls(hasPfmAppFeature ? 'PFM': 'Platform', "DisclosureTitle")}}</b>: {{ls(hasPfmAppFeature ? 'PFM': 'Platform', "DisclosureText", appSession?.tenant?.name)}}
             </div>
             <div class="score" *ngIf="hasPfmAppFeature">The Credit Score data on Lendspace is the VantageScore® 3.0 by TransUnion®.</div>
         </div>

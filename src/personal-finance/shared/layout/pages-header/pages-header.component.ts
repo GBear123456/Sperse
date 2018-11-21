@@ -1,5 +1,6 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { Router, NavigationEnd } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -7,7 +8,9 @@ import { AppConsts } from '@shared/AppConsts';
     templateUrl: './pages-header.component.html',
     styleUrls: ['./pages-header.component.less']
 })
-export class PagesHeaderComponent extends AppComponentBase implements OnInit {
+export class PagesHeaderComponent extends AppComponentBase {
+    signUpWizard = false;
+
     menuItems = [
         { url: '/personal-finance/about-us', title: 'About us' },
         { url: '/personal-finance/contact-us', title: 'Contact us' },
@@ -15,10 +18,14 @@ export class PagesHeaderComponent extends AppComponentBase implements OnInit {
     ];
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector,
+        public router: Router
+    ) {
         super(injector);
-    }
 
-    ngOnInit() {
+        router.events.subscribe(event => {
+            if (event instanceof NavigationEnd)
+                this.signUpWizard = location.pathname.includes('signup');
+        });
     }
 }

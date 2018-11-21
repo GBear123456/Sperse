@@ -15,6 +15,7 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
                 path: '',
                 component: PersonalFinanceComponent,
                 canActivate: [ CreditReportsRouteGuard ],
+                canActivateChild: [ CreditReportsRouteGuard ],
                 children: [
                     {
                         path: '',
@@ -23,7 +24,6 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
                     },
                     {
                         path: 'member-area',
-                        canActivateChild: [ CreditReportsRouteGuard ],
                         children: [
                             {
                                 path: '',

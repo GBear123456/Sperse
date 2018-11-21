@@ -26,7 +26,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
         this.loggedUserId = this.appSession.userId;
 
-        this.router.events.subscribe(event => {
+        router.events.subscribe(event => {
             if (event instanceof ActivationEnd && this.isLastSnapshot(event.snapshot))
                 this.wrapperEnabled = !event.snapshot.data.wrapperDisabled;
         });

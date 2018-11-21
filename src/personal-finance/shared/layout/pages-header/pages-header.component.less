@@ -3,44 +3,58 @@
     margin: 0 auto;
     padding: 12px 0;
     .logo {
-      display: inline-block;
+        display: inline-block;
     }
     &-list {
-      padding-left: 0;
-      margin: 0;
-      float: right;
-      padding: 3px 0;
+        padding-left: 0;
+        margin: 0;
+        float: right;
+        padding: 3px 0;
     }
     &-item {
-      display: inline-block;
+        display: inline-block;
     }
     &-link {
-      display: block;
-      font-family: "lato", sans-serif;
-      font-size: 16px;
-      font-weight: 500;
-      letter-spacing: 0.3px;
-      text-align: center;
-      color: rgb(23, 28, 29);
-      padding: 7px 20px;
-      box-sizing: border-box;
-      transition: .2s;
-      text-decoration: none;
-      &:hover {
-        color: rgb(245, 128, 35);
-      }
-      &.button {
-        margin-left: 20px;
-        border-radius: 4px;
-        color: rgb(245, 128, 35);
-        height: auto;
-        padding: 7px 30px;
-        border: solid 2px rgb(245, 128, 35);
+        display: block;
+        font-family: "lato", sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        text-align: center;
+        color: rgb(23, 28, 29);
+        padding: 7px 20px;
+        box-sizing: border-box;
+        transition: .2s;
+        text-decoration: none;
         &:hover {
-          color: #fff;
-          background: rgb(245, 128, 35);
+            color: rgb(245, 128, 35);
         }
-      }
+        &.button {
+            margin-left: 20px;
+            border-radius: 4px;
+            color: rgb(245, 128, 35);
+            height: auto;
+            padding: 7px 30px;
+            border: solid 2px rgb(245, 128, 35);
+            &:hover {
+                color: #fff;
+                background: rgb(245, 128, 35);
+            }
+        }
     }
-  }
-  
+    & > p {
+        float: right;
+        font-family: "lato", sans-serif !important;
+        font-size: 16px;
+        letter-spacing: 0.3px;
+        text-align: center;
+        line-height: 44px;
+        margin: 0;
+        font-weight: 500;
+        color: rgb(23, 28, 29);
+        a {
+            color: rgb(50, 158, 207);
+            font-weight: 600;
+        }
+    }
+}  

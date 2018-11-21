@@ -145,7 +145,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     isMemberArea() {
-        return location.pathname.includes('member-area');
+        return Boolean(this.loggedUserId);
     }
 
     get multiTenancySideIsTenant(): boolean {

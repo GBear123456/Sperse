@@ -10,7 +10,7 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
     selector: 'footer'
 })
 export class FooterComponent extends AppComponentBase {
-    @HostBinding('class.default') showDefaultHeader: boolean = true;
+    @HostBinding('class.default') showDefaultFooter: boolean = true;
 
     hasPfmAppFeature = false;
     currentYear = new Date().getFullYear();
@@ -22,11 +22,11 @@ export class FooterComponent extends AppComponentBase {
         super(injector);
 
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
-        this.showDefaultHeader = this.isMemberArea() && !this.hasPfmAppFeature;
+        this.showDefaultFooter = this.isMemberArea() && !this.hasPfmAppFeature;
     }
 
     isMemberArea() {
-        return location.pathname.includes('member-area');
+        return Boolean(this.appSession.userId);
     }
 
     openConditionsDialog(type: ConditionsType) {
