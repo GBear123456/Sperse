@@ -16,12 +16,27 @@
     
     .jumbotron {
         margin-bottom: 0;
+        @media all and (max-width: 600px) {
+            padding-bottom: 0;
+            
+            .container {
+                padding: 0 !important;
+                align-self: unset !important;
+                display: flex;
+                flex-direction: column;
+            }
+        }
         
         &.top {
             min-height: 540px;
-            background: url(../../../assets/common/images/lend-space-dark/bg.jpg) 50% 50% no-repeat;
+            //background: url(../../../assets/common/images/lend-space-dark/bg.jpg) no-repeat fixed 50% 50%;
+            background: url(../../../assets/common/images/lend-space-dark/bg.jpg) no-repeat 50% 50%;
             background-size: cover;
             
+            @media all and (max-width: 600px) {
+                min-height: 881px;
+            }
+    
             .title {
                 max-width: 610px;
                 margin: 0 auto;
@@ -30,6 +45,39 @@
                 font-weight: bold;
                 color: #fff;
                 text-align: center;
+                position: relative;
+                
+                @media all and (max-width: 768px) {
+                    max-width: 76%;
+                }
+                @media all and (max-width: 600px) {
+                    margin-top: 60px;
+                }
+                
+                &::before,
+                &::after {
+                    content: '';
+                    width: 72px;
+                    height: 5px;
+                    background-color: #ffffff;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+                
+                &::before {
+                    left: -80px;
+                    @media all and (max-width: 600px) {
+                        left: -40px;
+                    }
+                }
+                
+                &::after {
+                    right: -80px;
+                    @media all and (max-width: 600px) {
+                        right: -40px;
+                    }
+                }
             }
             
             .buttons-group {
@@ -65,14 +113,55 @@
                         }
                     }
                 }
+    
+                @media all and (max-width: 600px) {
+                    width: 100%;
+                    max-width: 100%;
+                    padding: 0;
+                    flex-direction: column;
+                    margin-top: auto;
+    
+                    .btn-custom {
+                        width: 100%;
+                        margin: 0 !important;
+                        background-color: #ffcc00;
+                        border: 0;
+                        border-bottom: 5px solid #000;
+                        padding: 30px 0;
+                        
+                        span {
+                            color: #333333 !important;
+                            font-size: 29px;
+                            font-weight: 300;
+                            letter-spacing: -0.6px;
+                            
+                            + span {
+                                font-size: 43px;
+                                font-weight: 500;
+                                letter-spacing: -1.07px;
+                            }
+                        }
+    
+                        &:hover,
+                        &:focus,
+                        &:active {
+                            background-color: #000;
+                            border-color: #000;
+                            span {
+                                color: #ccc;
+                            }
+                        }
+                    }
+                }
             }
         }
     
         &.credit-score-safe {
             min-height: 475px;
-            background: url(../../../assets/common/images/lend-space-dark/bg-credit-score.png) 50% 50% no-repeat;
+            //background: url(../../../assets/common/images/lend-space-dark/bg-credit-score.png) no-repeat fixed 50% 50%;
+            background: url(../../../assets/common/images/lend-space-dark/bg-credit-score.png) no-repeat 50% 0;
             background-size: cover;
-            
+    
             .title,
             p {
                 color: #1b1b1b;
@@ -158,6 +247,11 @@
         
         h2 {
             margin-bottom: 14px;
+            
+            @media all and (max-width: 768px) {
+                max-width: 80%;
+                margin: 0 auto;
+            }
         }
         
         .description {
@@ -171,7 +265,11 @@
         .why-list {
             margin-top: 30px;
             padding: 0 80px;
-            justify-content: space-between;
+            justify-content: space-around;
+            
+            @media all and (max-width: 1024px) {
+                padding: 0;
+            }
             
             .why-item {
                 padding: 45px 25px 35px;
@@ -183,8 +281,6 @@
                 * {
                     transition: .2s;
                 }
-        
-                img {}
                 
                 h3 {
                     color: @yellowColor;
@@ -240,6 +336,29 @@
         height: 441px;
         background: #fec80d url(../../../assets/common/images/lend-space-dark/get-free-bg.png) 23% 50% no-repeat;
         background-size: contain;
+        
+        @media all and (max-width: 1440px) {
+            background-position: 0 50%;
+        }
+        
+        @media all and (max-width: 1280px) {
+            background-position: -15% 50%;
+        }
+        
+        @media all and (max-width: 1024px) {
+            background-position: -125px 50%;
+        }
+    
+        @media all and (max-width: 768px) {
+            height: auto;
+            padding-bottom: 460px;
+            background: #fec80d url(../../../assets/common/images/lend-space-dark/get-free-mobile-bg.png) 100% 100% no-repeat;
+            
+            h2 {
+                padding-left: 0 !important;
+                margin-top: 30px;
+            }
+        }
         
         h2 {
             text-align: left;
