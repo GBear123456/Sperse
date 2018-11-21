@@ -22,7 +22,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
     ) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        if (!this._featureChecker.isEnabled('PFM.CreditReport')) {
+        if (!this._featureChecker.isEnabled('PFM')) {
             this._router.navigate(['/']);
             return false;
         }
@@ -31,27 +31,37 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
     }
 
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        if (this._featureChecker.isEnabled('PFM.Applications') && UrlHelper.isPfmAppUrl(state.url))
-            return true;    
-
-        if (!this._sessionService.user) {
-            this._router.navigate(['/account/login']);
-            return false;
-        }
-
-        if (!route.data || !route.data["permission"]) {
+        if (UrlHelper.isPfmAppUrl(state.url)) {
+            if (this._featureChecker.isEnabled('PFM.Applications'))
+                return true;
+        } else if (UrlHelper.isPfmMemberAreaUrl(state.url)) {
+            if (this._sessionService.user) {
+                if (!route.data || !route.data["permission"] 
+                    || this._permissionChecker.isGranted(route.data["permission"])
+                )
+                    return true;
+                else {
+                    this._router.navigate(['/app/access-denied']);
+                    return false;
+                }
+            } else {
+                this._router.navigate(['/account/login']);
+                return false;
+            }
+        } else 
             return true;
-        }
-
-        if (this._permissionChecker.isGranted(route.data["permission"])) {
-            return true;
-        }
 
         this._router.navigate([this.selectBestRoute()]);
         return false;
     }
 
     selectBestRoute(): string {
-        return '/personal-finance';
+        if (this._featureChecker.isEnabled('PFM.Applications'))
+            return '/personal-finance/lend-space';
+
+        if (this._featureChecker.isEnabled('PFM.CreditReport'))
+            return '/personal-finance';
+
+        return '/';
     }
 }

@@ -13,15 +13,15 @@
     </div>
     <div *ngIf="data?.primaryOrganizationContactInfo" class="organization_info">
         <div class="delimiter"></div>
-        <div class="info-icon" (click)="showCompanyDialog($event)" [ngClass]="{'shift-top': this?.contactEmploymentInfo?.id}">
+        <div class="info-icon" (click)="showCompanyDialog($event)" [ngClass]="{'shift-top': this?.personOrgRelationInfo?.id}">
             <img src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
         </div>
 
-        <h2 *ngIf="data && data?.primaryOrganizationContactInfo?.fullName" [ngClass]="{'shift-top': this?.contactEmploymentInfo?.id}">
+        <h2 *ngIf="data && data?.primaryOrganizationContactInfo?.fullName" [ngClass]="{'shift-top': this?.personOrgRelationInfo?.id}">
             <inplace-edit [data]="getNameInplaceEditData('primaryOrganizationContactInfo')" (valueChanged)="updateCompanyField($event)" (openDialog)="showCompanyDialog($event)"></inplace-edit>
         </h2>
-        <h3 *ngIf="this?.contactEmploymentInfo?.id">
-            <inplace-edit [data]="getJobTitleInplaceEditData()" (valueChanged)="updateContactEmployment($event)"></inplace-edit>
+        <h3 *ngIf="this?.personOrgRelationInfo?.id">
+            <inplace-edit [data]="getJobTitleInplaceEditData()" (valueChanged)="updatePersonOrgRelation($event)"></inplace-edit>
         </h3>
 
         <div class="organization_logo">

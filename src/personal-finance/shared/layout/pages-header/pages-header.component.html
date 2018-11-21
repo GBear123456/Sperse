@@ -4,8 +4,9 @@
       <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="assets/common/images/sperse-logo.png" alt="logo" width="200" />
       <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" width="200" />
     </a>
-</div>
-  <ul class="main-nav-list">
+  </div>
+  <p *ngIf="signUpWizard">Need help? <a href="/contact-us">Let us know</a></p>
+  <ul class="main-nav-list" *ngIf="!signUpWizard">
     <li *ngFor="let menuItem of menuItems; let last = last" class="main-nav-item">
       <a [routerLink]="[menuItem.url]" class="main-nav-link{{menuItem.class}}" [class.button]="last">{{l(menuItem.title)}}</a>
     </li>
