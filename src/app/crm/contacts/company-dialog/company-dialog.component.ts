@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, OnInit, Injector, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 /** Third party imports */
@@ -7,6 +7,7 @@ import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material';
 import * as _ from 'underscore';
 import { DxSelectBoxComponent } from '@root/node_modules/devextreme-angular';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -101,6 +102,8 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
     save() {
         this.company.companyName = this.company.fullName = this.data.title;
         let input = new UpdateOrganizationInfoInput(this.company);
+        input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
+        input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
         let size = _.find(this.companySizes, (item) => { return item.id === this.company.companySize });
         input.sizeFrom = size.from;
         input.sizeTo = size.to;
@@ -117,6 +120,10 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
                 typeId: 'C',
             })).subscribe(() => {});
         }
+    }
+
+    private getMomentFromDateWithoutTime(date: Date): moment.Moment {
+        return moment.utc(date.getFullYear() + '-' + ( date.getMonth() + 1 ) + '-' + date.getDate());
     }
 
     private loadCountries() {
