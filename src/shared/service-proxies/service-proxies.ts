@@ -21515,6 +21515,122 @@ export class TenantIntegrationsSettingsServiceProxy {
 }
 
 @Injectable()
+export class TenantOfferProviderSettingsServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getEPCVIPOfferProviderSettings(): Observable<EPCVIPOfferProviderSettings> {
+        let url_ = this.baseUrl + "/api/services/PFM/TenantOfferProviderSettings/GetEPCVIPOfferProviderSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEPCVIPOfferProviderSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEPCVIPOfferProviderSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<EPCVIPOfferProviderSettings>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EPCVIPOfferProviderSettings>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetEPCVIPOfferProviderSettings(response: HttpResponseBase): Observable<EPCVIPOfferProviderSettings> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EPCVIPOfferProviderSettings.fromJS(resultData200) : new EPCVIPOfferProviderSettings();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EPCVIPOfferProviderSettings>(<any>null);
+    }
+
+    /**
+     * @settings (optional) 
+     * @return Success
+     */
+    updateEPCVIPOfferProviderSettings(settings: EPCVIPOfferProviderSettings | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/TenantOfferProviderSettings/UpdateEPCVIPOfferProviderSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(settings);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateEPCVIPOfferProviderSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateEPCVIPOfferProviderSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateEPCVIPOfferProviderSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class TenantPaymentSettingsServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -22239,6 +22355,102 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processClearCustomCss(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    clearCustomPrivacyPolicyDocument(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/ClearCustomPrivacyPolicyDocument";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processClearCustomPrivacyPolicyDocument(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processClearCustomPrivacyPolicyDocument(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processClearCustomPrivacyPolicyDocument(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    clearCustomToSDocument(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/ClearCustomToSDocument";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processClearCustomToSDocument(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processClearCustomToSDocument(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processClearCustomToSDocument(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -27424,7 +27636,7 @@ export interface IUserInfoDto {
 }
 
 export class ApplicationInfo implements IApplicationInfo {
-    systemType!: string;
+    systemType!: ApplicationInfoSystemType;
     campaignId!: number;
     testMode!: boolean | undefined;
     applicantId!: string;
@@ -27489,7 +27701,7 @@ export class ApplicationInfo implements IApplicationInfo {
 }
 
 export interface IApplicationInfo {
-    systemType: string;
+    systemType: ApplicationInfoSystemType;
     campaignId: number;
     testMode: boolean | undefined;
     applicantId: string;
@@ -34673,6 +34885,7 @@ export interface IContactShortInfo {
 export class ContactPhotoInfo implements IContactPhotoInfo {
     original!: string | undefined;
     thumbnail!: string | undefined;
+    source!: string | undefined;
     photoSourceId!: string | undefined;
 
     constructor(data?: IContactPhotoInfo) {
@@ -34688,6 +34901,7 @@ export class ContactPhotoInfo implements IContactPhotoInfo {
         if (data) {
             this.original = data["original"];
             this.thumbnail = data["thumbnail"];
+            this.source = data["source"];
             this.photoSourceId = data["photoSourceId"];
         }
     }
@@ -34703,6 +34917,7 @@ export class ContactPhotoInfo implements IContactPhotoInfo {
         data = typeof data === 'object' ? data : {};
         data["original"] = this.original;
         data["thumbnail"] = this.thumbnail;
+        data["source"] = this.source;
         data["photoSourceId"] = this.photoSourceId;
         return data; 
     }
@@ -34711,6 +34926,7 @@ export class ContactPhotoInfo implements IContactPhotoInfo {
 export interface IContactPhotoInfo {
     original: string | undefined;
     thumbnail: string | undefined;
+    source: string | undefined;
     photoSourceId: string | undefined;
 }
 
@@ -47051,9 +47267,8 @@ export interface ICampaignDetailsDto {
 }
 
 export class SubmitApplicationInput implements ISubmitApplicationInput {
-    systemType!: string;
+    systemType!: SubmitApplicationInputSystemType;
     campaignId!: number;
-    applicationId!: string | undefined;
     testMode!: boolean | undefined;
 
     constructor(data?: ISubmitApplicationInput) {
@@ -47069,7 +47284,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         if (data) {
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
-            this.applicationId = data["applicationId"];
             this.testMode = data["testMode"];
         }
     }
@@ -47085,16 +47299,14 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
-        data["applicationId"] = this.applicationId;
         data["testMode"] = this.testMode;
         return data; 
     }
 }
 
 export interface ISubmitApplicationInput {
-    systemType: string;
+    systemType: SubmitApplicationInputSystemType;
     campaignId: number;
-    applicationId: string | undefined;
     testMode: boolean | undefined;
 }
 
@@ -50239,6 +50451,7 @@ export interface IListResultDtoOfRoleListDto {
 export class RoleListDto implements IRoleListDto {
     name!: string | undefined;
     displayName!: string | undefined;
+    moduleId!: RoleListDtoModuleId | undefined;
     isStatic!: boolean | undefined;
     isDefault!: boolean | undefined;
     creationTime!: moment.Moment | undefined;
@@ -50257,6 +50470,7 @@ export class RoleListDto implements IRoleListDto {
         if (data) {
             this.name = data["name"];
             this.displayName = data["displayName"];
+            this.moduleId = data["moduleId"];
             this.isStatic = data["isStatic"];
             this.isDefault = data["isDefault"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
@@ -50275,6 +50489,7 @@ export class RoleListDto implements IRoleListDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["displayName"] = this.displayName;
+        data["moduleId"] = this.moduleId;
         data["isStatic"] = this.isStatic;
         data["isDefault"] = this.isDefault;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
@@ -50286,6 +50501,7 @@ export class RoleListDto implements IRoleListDto {
 export interface IRoleListDto {
     name: string | undefined;
     displayName: string | undefined;
+    moduleId: RoleListDtoModuleId | undefined;
     isStatic: boolean | undefined;
     isDefault: boolean | undefined;
     creationTime: moment.Moment | undefined;
@@ -50727,7 +50943,7 @@ export interface ITenantLoginInfoDto {
 export class ApplicationInfoDto implements IApplicationInfoDto {
     version!: string | undefined;
     releaseDate!: moment.Moment | undefined;
-    features!: { [key: string] : boolean; } | undefined;
+    features!: { [key: string] : AbpStringValueDto; } | undefined;
 
     constructor(data?: IApplicationInfoDto) {
         if (data) {
@@ -50746,7 +50962,7 @@ export class ApplicationInfoDto implements IApplicationInfoDto {
                 this.features = {};
                 for (let key in data["features"]) {
                     if (data["features"].hasOwnProperty(key))
-                        this.features[key] = data["features"][key];
+                        this.features[key] = data["features"][key] ? AbpStringValueDto.fromJS(data["features"][key]) : new AbpStringValueDto();
                 }
             }
         }
@@ -50777,7 +50993,7 @@ export class ApplicationInfoDto implements IApplicationInfoDto {
 export interface IApplicationInfoDto {
     version: string | undefined;
     releaseDate: moment.Moment | undefined;
-    features: { [key: string] : boolean; } | undefined;
+    features: { [key: string] : AbpStringValueDto; } | undefined;
 }
 
 export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
@@ -50826,6 +51042,42 @@ export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
 export interface ITenantCustomizationInfoDto {
     favicons: FaviconDto[] | undefined;
     siteTitle: string | undefined;
+}
+
+export class AbpStringValueDto implements IAbpStringValueDto {
+    value!: string | undefined;
+
+    constructor(data?: IAbpStringValueDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.value = data["value"];
+        }
+    }
+
+    static fromJS(data: any): AbpStringValueDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AbpStringValueDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["value"] = this.value;
+        return data; 
+    }
+}
+
+export interface IAbpStringValueDto {
+    value: string | undefined;
 }
 
 export class FaviconDto implements IFaviconDto {
@@ -52169,6 +52421,50 @@ export class IntegrationsSettings implements IIntegrationsSettings {
 
 export interface IIntegrationsSettings {
     googleMapsJavascriptApiKey: string;
+}
+
+export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
+    apiKey!: string | undefined;
+    apiBaseUrl!: string | undefined;
+    testMode!: boolean | undefined;
+
+    constructor(data?: IEPCVIPOfferProviderSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.apiKey = data["apiKey"];
+            this.apiBaseUrl = data["apiBaseUrl"];
+            this.testMode = data["testMode"];
+        }
+    }
+
+    static fromJS(data: any): EPCVIPOfferProviderSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new EPCVIPOfferProviderSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["apiKey"] = this.apiKey;
+        data["apiBaseUrl"] = this.apiBaseUrl;
+        data["testMode"] = this.testMode;
+        return data; 
+    }
+}
+
+export interface IEPCVIPOfferProviderSettings {
+    apiKey: string | undefined;
+    apiBaseUrl: string | undefined;
+    testMode: boolean | undefined;
 }
 
 export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {
@@ -56812,6 +57108,10 @@ export enum UpdateActivityDtoType {
     Event = "Event", 
 }
 
+export enum ApplicationInfoSystemType {
+    EPCVIP = "EPCVIP", 
+}
+
 export enum TrackingInformationVertical {
     HybridLoans = "HybridLoans", 
 }
@@ -57129,7 +57429,7 @@ export enum TenantNotificationSeverity {
 }
 
 export enum CampaignDtoSystemType {
-    ECPVIP = "ECPVIP", 
+    EPCVIP = "EPCVIP", 
 }
 
 export enum CampaignDtoStatus {
@@ -57169,7 +57469,7 @@ export enum CampaignDtoTraficSource {
 }
 
 export enum CampaignDetailsDtoSystemType {
-    ECPVIP = "ECPVIP", 
+    EPCVIP = "EPCVIP", 
 }
 
 export enum CampaignDetailsDtoStatus {
@@ -57208,6 +57508,10 @@ export enum CampaignDetailsDtoTraficSource {
     PPC_Display = "PPC_Display", 
 }
 
+export enum SubmitApplicationInputSystemType {
+    EPCVIP = "EPCVIP", 
+}
+
 export enum ModuleSubscriptionInfoFrequency {
     _30 = 30, 
     _365 = 365, 
@@ -57236,6 +57540,12 @@ export enum ACHCustomerShortInfoCustomerAcctType {
 
 export enum QuestionDtoType {
     QuestionWithOptions = "QuestionWithOptions", 
+}
+
+export enum RoleListDtoModuleId {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    HUB = "HUB", 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {
