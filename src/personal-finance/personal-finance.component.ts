@@ -9,13 +9,13 @@ declare const Typekit: any;
     styleUrls: ['./personal-finance.component.less']
 })
 export class PersonalFinanceComponent extends AppComponentBase implements OnInit {
-    @HostBinding('class.pfm-app') hasPfmAppFeature: boolean = false;
+    @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
     wrapperEnabled = false;
     loggedUserId: number;
 
     private viewContainerRef: ViewContainerRef;
-    public constructor(      
+    public constructor(
         injector: Injector,
         viewContainerRef: ViewContainerRef,
         private router: Router
@@ -32,7 +32,7 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
         });
     }
 
-    isLastSnapshot(snapshot) { 
+    isLastSnapshot(snapshot) {
         return snapshot['_routerState'].url.split('/').pop() == snapshot.routeConfig.path;
     }
 
