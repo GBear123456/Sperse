@@ -11,32 +11,32 @@
                     </div>
                     <div class="m-alert__text">
                         <div class="row" *ngIf="userLoginAttempt.clientIpAddress">
-                            <label class="control-label col-sm-3 text-right">{{l("IpAddress")}}</label>
-                            <div class="col-sm-9">
+                            <label class="control-label col-sm-2 text-right">{{l("IpAddress")}}</label>
+                            <div class="col-sm-10">
                                 <p class="form-control-static">
                                     {{userLoginAttempt.clientIpAddress}}
                                 </p>
                             </div>
                         </div>
                         <div class="row" *ngIf="userLoginAttempt.clientName">
-                            <label class="control-label col-sm-3 text-right">{{l("Client")}}</label>
-                            <div class="col-sm-9">
+                            <label class="control-label col-sm-2 text-right">{{l("Client")}}</label>
+                            <div class="col-sm-10">
                                 <p class="form-control-static">
                                     {{userLoginAttempt.clientName}}
                                 </p>
                             </div>
                         </div>
                         <div class="row" *ngIf="userLoginAttempt.browserInfo">
-                            <label class="control-label col-sm-3 text-right">{{l("Browser")}}</label>
-                            <div class="col-sm-9">
+                            <label class="control-label col-sm-2 text-right">{{l("Browser")}}</label>
+                            <div class="col-sm-10">
                                 <p class="form-control-static">
                                     {{userLoginAttempt.browserInfo}}
                                 </p>
                             </div>
                         </div>
                         <div class="row">
-                            <label class="control-label col-sm-3 text-right">{{l("Time")}}</label>
-                            <div class="col-sm-9">
+                            <label class="control-label col-sm-2 text-right">{{l("Time")}}</label>
+                            <div class="col-sm-10">
                                 <p class="form-control-static login-attempt-date">
                                     {{getLoginAttemptTime(userLoginAttempt)}}
                                 </p>
