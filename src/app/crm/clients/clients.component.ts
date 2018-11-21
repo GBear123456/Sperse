@@ -618,7 +618,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     requestVerification(contactId: number) {
-        this._appService.requestVerification(contactId);
+        this._appService.requestVerification(contactId).subscribe();
     }
 
     activate() {

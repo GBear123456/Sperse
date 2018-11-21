@@ -669,7 +669,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     requestVerification(contactId: number) {
-        this._appService.requestVerification(contactId);
+        this._appService.requestVerification(contactId).subscribe();
     }
 
     activate() {

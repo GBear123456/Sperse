@@ -16,6 +16,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'operations-widget',
@@ -278,7 +279,15 @@ export class OperationsWidgetComponent extends AppComponentBase {
     }
 
     requestVerification() {
-        this._appService.requestVerification(this.contactInfo.personContactInfo.id);
+        this._appService.requestVerification(this.contactInfo.personContactInfo.id)
+            .pipe(
+                takeUntil(this.deactivate$)
+            )
+            .subscribe(result => {
+                if (this.contactInfo && this.contactInfo.personContactInfo)
+                    this.contactInfo.personContactInfo.userId = result;
+                this.initToolbarConfig();
+            });
     }
 
     redirectToCFO() {

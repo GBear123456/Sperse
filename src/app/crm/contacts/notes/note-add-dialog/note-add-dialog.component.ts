@@ -60,7 +60,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private _userService: UserServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
-        private clientService: ContactsService,
+        private clientService: ContactsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         if (_notesService['types'])
