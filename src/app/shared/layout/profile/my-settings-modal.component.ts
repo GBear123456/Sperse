@@ -1,10 +1,8 @@
 import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, ViewChild, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CurrentUserProfileEditDto, DefaultTimezoneScope, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
-import { ModalDirective } from 'ngx-bootstrap';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { finalize } from 'rxjs/operators';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
@@ -19,7 +17,7 @@ export class MySettingsModalComponent extends ModalDialogComponent implements Af
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
-    
+
     public saving = false;
     public isGoogleAuthenticatorEnabled = false;
     public isPhoneNumberConfirmed: boolean;
@@ -33,7 +31,7 @@ export class MySettingsModalComponent extends ModalDialogComponent implements Af
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog,
+        private dialog: MatDialog,
         private _profileService: ProfileServiceProxy,
         private _appSessionService: AppSessionService
     ) {
@@ -49,12 +47,12 @@ export class MySettingsModalComponent extends ModalDialogComponent implements Af
 
     ngOnInit() {
         super.ngOnInit();
-        
-        this.data.title = this.l("MySettings");
+
+        this.data.title = this.l('MySettings');
         this.data.editTitle = false;
         this.data.titleClearButton = false;
         this.data.placeholder = this.l('MySettings');
-        
+
         this.data.buttons = [{
             title: this.l('Save'),
             class: 'primary menu',
@@ -71,7 +69,7 @@ export class MySettingsModalComponent extends ModalDialogComponent implements Af
             this.isPhoneNumberEmpty = result.phoneNumber === '';
         });
     }
-    
+
     updateQrCodeSetupImageUrl(): void {
         this._profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
             this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
@@ -89,7 +87,7 @@ export class MySettingsModalComponent extends ModalDialogComponent implements Af
     changePhoneNumberToVerified(): void {
         this.isPhoneNumberConfirmed = true;
     }
-    
+
     save(): void {
         this.saving = true;
         this._profileService.updateCurrentUserProfile(this.user)

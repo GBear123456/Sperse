@@ -1,6 +1,6 @@
 <modal-dialog>
     <dx-scroll-view showScrollbar="onHover">
-        <div>
+        <div class="content">
             <div *ngFor="let userLoginAttempt of userLoginAttempts">
                 <div class="m-alert m-alert--icon m-alert--icon-solid m-alert--outline alert" [ngClass]="userLoginAttempt.result == 'Success' ? 'alert-success' : 'alert-danger'" role="alert">
                     <div class="m-alert__icon">
