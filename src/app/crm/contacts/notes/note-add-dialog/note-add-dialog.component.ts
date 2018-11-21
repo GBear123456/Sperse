@@ -16,7 +16,7 @@ import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog
 import { Store, select } from '@ngrx/store';
 import { AppStore, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors } from '@app/store';
 import { ContactGroup } from '@shared/AppEnums';
-import { retry } from 'rxjs/operators';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './note-add-dialog.component.html',
@@ -59,7 +59,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private _notesService: NotesServiceProxy,
         private _userService: UserServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
-        private store$: Store<AppStore.State>
+        private store$: Store<AppStore.State>,
+        private clientService: ContactsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         if (_notesService['types'])
@@ -86,8 +87,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
         let assignedUsersSelector = this._contactInfo.groupId == ContactGroup.Client ?
             CustomerAssignedUsersStoreSelectors.getAssignedUsers :
-            PartnerAssignedUsersStoreSelectors.getAssignedUsers; 
-        
+            PartnerAssignedUsersStoreSelectors.getAssignedUsers;
+
         this.store$.pipe(select(assignedUsersSelector)).subscribe((result) => {
             this.users = result;
         });
@@ -139,6 +140,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 this.resetFields();
                 this.validator.reset();
                 this.notify.info(this.l('SavedSuccessfully'));
+                this.clientService.invalidate('notes');
             });
     }
 

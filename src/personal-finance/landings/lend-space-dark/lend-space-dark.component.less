@@ -1,0 +1,104 @@
+@mainFont: 'Poppins', sans-serif;
+@yellowColor: #f0d500;
+@darkGrayColor: #262626;
+
+:host {
+    // base
+    * {
+        font-family: @mainFont;
+    }
+    
+    .yellow-title {
+        font-size: 50px;
+        font-weight: 500;
+        color: @yellowColor !important;
+    }
+    
+    .jumbotron {
+        margin-bottom: 0;
+        
+        &.top {
+            min-height: 540px;
+            background: url(../../../assets/common/images/lend-space-dark/bg.jpg) 50% 50% no-repeat;
+            background-size: cover;
+            
+            .title {
+                max-width: 610px;
+                margin: 0 auto;
+                
+                font-size: 50px;
+                font-weight: bold;
+                color: #fff;
+                text-align: center;
+            }
+            
+            .buttons-group {
+                max-width: 600px;
+                margin: 75px auto 0;
+                padding: 0 22px;
+                
+                .btn-custom {
+                    text-align: center;
+                    width: 31%;
+                    border-radius: 0;
+    
+                    background-color: #000;
+                    border-color: #666;
+                    
+                    &:hover,
+                    &:focus,
+                    &:active {
+                        background-color: #333;
+                        border-color: #333;
+                    }
+                    
+                    span {
+                        font-size: 12px;
+                        font-weight: 300;
+                        display: block;
+                        color: #fff;
+                        
+                        + span {
+                            font-size: 18px;
+                            font-weight: 400;
+                            color: @yellowColor;
+                        }
+                    }
+                }
+            }
+        }
+    
+        &.credit-score-safe {
+            min-height: 475px;
+            background: url(../../../assets/common/images/lend-space-dark/bg-credit-score.png) 50% 50% no-repeat;
+            background-size: cover;
+        }
+    }
+    
+    .why-us {
+        background-color: @darkGrayColor;
+        padding: 50px 0;
+        
+        * {
+            color: #ccc;
+        }
+        
+        h2 {
+            margin-bottom: 14px;
+        }
+        
+        .description {
+            max-width: 820px;
+            margin: 0 auto;
+            
+            font-size: 14px;
+            font-weight: 400;
+        }
+    }
+    
+    .get-free {
+        min-height: 441px;
+        background: #ffcc00 url(../../../assets/common/images/lend-space-dark/bg-get-free-score.jpg) 33% 50% no-repeat;
+        background-size: cover;
+    }
+}

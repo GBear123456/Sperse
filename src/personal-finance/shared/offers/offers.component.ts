@@ -26,7 +26,14 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { RootComponent } from '@root/root.components';
 import { CreditCard } from '@root/personal-finance/shared/offers/models/credit-card.interface';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { CampaignDto, Category, Type, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    CampaignDto,
+    Category,
+    Type,
+    OfferServiceProxy,
+    SubmitApplicationInput,
+    SubmitApplicationOutput
+} from '@shared/service-proxies/service-proxies';
 
 interface FilterValues {
     [field: string]: { [filterValue: string]: string };
@@ -250,6 +257,24 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
 
     toggleSorting(e) {
         this.sortingSelect.toggle();
+    }
+
+    applyOffer(offer: CampaignDto) {
+        const submitApplicationInput = SubmitApplicationInput.fromJS({
+            campaignId: offer.id,
+            systemType: 'EPCVIP'
+        });
+        abp.ui.setBusy(this.creditCardsListRef.nativeElement);
+        this.offerServiceProxy.submitApplication(submitApplicationInput)
+                              .pipe(finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement)))
+                              .subscribe((output: SubmitApplicationOutput) => {
+                                 if (!offer.redirectUrl) {
+                                     window.open(output.redirectUrl, '_blank');
+                                 }
+                              });
+        if (offer.redirectUrl) {
+            window.open(offer.redirectUrl, '_blank');
+        }
     }
 
     ngOnDestroy() {

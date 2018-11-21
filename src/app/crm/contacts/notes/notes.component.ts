@@ -34,8 +34,8 @@ export class NotesComponent extends AppComponentBase implements OnInit {
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         _clientService.invalidateSubscribe((area) => {
-            if (area == 'notes') 
-                this.loadData(); 
+            if (area == 'notes')
+                this.loadData();
         });
     }
 
@@ -58,7 +58,7 @@ export class NotesComponent extends AppComponentBase implements OnInit {
             this._notesService['data'] = {
                 contactId: contactId,
                 source: this.dataSource = result
-            };            
+            };
         });
     }
 

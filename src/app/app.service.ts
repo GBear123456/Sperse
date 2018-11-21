@@ -2,7 +2,7 @@
 import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, observable } from 'rxjs';
 import { publishReplay, refCount, map } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore' ;
@@ -259,23 +259,30 @@ export class AppService extends AppServiceBase {
             this.permission.isGranted('Pages.CFO.ClientActivation');
     }
 
-    requestVerification(contactId: number) {
-        abp.message.confirm(
-            'Please confirm user activation',
-            (isConfirmed) => {
-                if (isConfirmed) {
-                    let request = new ActivateUserForContactInput();
-                    request.contactId = contactId;
-                    request.tenantHostType = <any>TenantHostType.PlatformApp;
-                    this.userServiceProxy.activateUserForContact(request).subscribe(result => {
-                        let setupInput = new SetupInput({ userId: result.userId });
-                        this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(() => {
-                            abp.notify.info('User was activated and email sent successfully');
-                        });
-                    });
+    requestVerification(contactId: number): Observable<number> {
+        const observable = new Observable<number>((observer) => {
+            abp.message.confirm(
+                'Please confirm user activation',
+                (isConfirmed) => {
+                    if (isConfirmed) {
+                        let request = new ActivateUserForContactInput();
+                        request.contactId = contactId;
+                        request.tenantHostType = <any>TenantHostType.PlatformApp;
+                        this.userServiceProxy.activateUserForContact(request).subscribe(result => {
+                            let setupInput = new SetupInput({ userId: result.userId });
+                            this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(() => {
+                                abp.notify.info('User was activated and email sent successfully');
+                                observer.next(result.userId);
+                            }, () => { }, observer.complete);
+                        }, () => observer.complete());
+                    }
+                    else
+                        observer.complete();
                 }
-            }
-        );
+            );
+        });
+
+        return observable;
     }
 
     redirectToCFO(userId) {

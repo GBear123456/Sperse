@@ -61,7 +61,7 @@
                             </ul>
                         </div>
                         <div class="actions col-sm-12 col-lg-3">
-                            <a [href]="creditCardItem.redirectUrl" class="applyButton"><span>{{ ls.l('Apply') }}</span></a>
+                            <button class="applyButton" (click)="applyOffer(creditCardItem)"><span>{{ ls.l('Apply') }}</span></button>
                             <button class="viewMore" (click)="viewCardDetails(creditCardItem)">{{ ls.l('View_details') }}</button>
                         </div>
                     </li>
