@@ -65,8 +65,7 @@ export class CfoActivateService implements CanActivate {
                         path: '',
                         children: [
                             { path: 'notifications', component: NotificationsComponent }
-                        ],
-                        data: { permission: 'Pages.Detect.Route' }
+                        ]
                     },
                     {
                         path: 'admin',

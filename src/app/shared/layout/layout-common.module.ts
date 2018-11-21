@@ -9,9 +9,8 @@ import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-boots
 import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, PaginatorModule } from 'primeng/primeng';
 import { TableModule } from 'primeng/table';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
-import {
-    DxScrollViewModule
-} from 'devextreme-angular';
+import { DxScrollViewModule } from 'devextreme-angular';
+
 /** Application imports */
 import { SmsVerificationModalComponent } from '@app/shared/layout/profile/sms-verification-modal.component';
 import { HeaderNotificationsComponent } from './notifications/header-notifications.component';

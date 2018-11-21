@@ -169,7 +169,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     refresh(refreshDashboard = true) {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
-        super.invalidate();
+        this.processFilterInternal();
         if (refreshDashboard) {
             (this._reuseService as CustomReuseStrategy).invalidate('dashboard');
         }
