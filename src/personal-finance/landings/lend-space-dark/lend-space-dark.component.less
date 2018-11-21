@@ -72,6 +72,79 @@
             min-height: 475px;
             background: url(../../../assets/common/images/lend-space-dark/bg-credit-score.png) 50% 50% no-repeat;
             background-size: cover;
+            
+            .title,
+            p {
+                color: #1b1b1b;
+                text-align: center;
+            }
+            .title {
+                font-size: 50px;
+                font-weight: 700;
+                letter-spacing: -2.5px;
+                margin: 0;
+            }
+            p {
+                max-width: 530px;
+                margin: 0 auto;
+                font-size: 24px;
+                font-weight: 400;
+                letter-spacing: -1.2px;
+            }
+        }
+    }
+    
+    #accordion {
+        margin-top: 8px;
+        
+        .card,
+        .card-header,
+        .card-body {
+            background: transparent;
+            border: 0;
+            padding: 0;
+        }
+        
+        .card {
+            + .card {
+                margin-top: 30px;
+            }
+        }
+        
+        .card-header {
+            button {
+                color: @yellowColor;
+                font-size: 14px;
+                font-weight: 400;
+                padding: 0;
+                line-height: 20px;
+                text-decoration: none;
+                white-space: normal;
+                text-align: left;
+                
+                &::before {
+                    content: '-';
+                    width: 10px;
+                    display: inline-block;
+                    font-size: 18px;
+                    font-weight: 500;
+                }
+                
+                &.collapsed {
+                    &::before {
+                        content: '+';
+                    }
+                }
+                
+                &:hover {
+                    color: lighten(@yellowColor, 8%);
+                }
+            }
+        }
+        
+        .card-body {
+            padding-left: 17px;
+            padding-top: 10px;
         }
     }
     
@@ -94,11 +167,119 @@
             font-size: 14px;
             font-weight: 400;
         }
+        
+        .why-list {
+            margin-top: 30px;
+            padding: 0 80px;
+            justify-content: space-between;
+            
+            .why-item {
+                padding: 45px 25px 35px;
+                border: 1px solid #666;
+                width: 285px;
+                margin-bottom: 30px;
+                transition: .2s;
+                
+                * {
+                    transition: .2s;
+                }
+        
+                img {}
+                
+                h3 {
+                    color: @yellowColor;
+                    font-size: 18px;
+                    font-weight: 500;
+                    margin: 14px 0;
+                }
+                
+                p {
+                    color: #999;
+                    font-size: 12px;
+                    font-weight: 400;
+                }
+                
+                &.hover,
+                &:hover {
+                    background-color: #f0d500;
+                    
+                    h3,
+                    p {
+                        font-weight: 500;
+                        color: #000 !important;
+                    }
+                }
+                
+                // todo: change icons on svg, update some styles, add black icons on hover
+                
+            }
+        }
+        
+    }
+    
+    .faq {
+        padding: 80px 0 40px;
+        background: #000;
+        
+        .yellow-title {
+            text-align: left;
+            margin-bottom: 15px;
+            line-height: 45px;
+            font-size: 48px;
+        }
+        
+        p {
+            color: #cccccc;
+            font-size: 12px;
+            font-weight: 400;
+            margin-bottom: 13px;
+        }
     }
     
     .get-free {
-        min-height: 441px;
-        background: #ffcc00 url(../../../assets/common/images/lend-space-dark/bg-get-free-score.jpg) 33% 50% no-repeat;
-        background-size: cover;
+        height: 441px;
+        background: #fec80d url(../../../assets/common/images/lend-space-dark/get-free-bg.png) 23% 50% no-repeat;
+        background-size: contain;
+        
+        h2 {
+            text-align: left;
+            color: #000;
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 45px;
+            letter-spacing: -0.68px;
+            padding-left: 34px;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            color: #333;
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 500;
+            
+            .and {
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            
+        }
+        
+        button {
+            padding: 10px 26px;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 35.35px;
+            text-transform: uppercase;
+            letter-spacing: -1.07px;
+            color: #333;
+            border: 2px solid #333;
+            border-radius: 0;
+            
+            &:hover {
+                background: #333;
+                color: #ccc;
+            }
+        }
     }
 }
