@@ -560,9 +560,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]);
     }
 
-    exportToCSV() {
+    exportToCSV(option) {
         if (this.dataGrid && !this.dataGrid.instance.getDataSource()) this.setDataGridInstance();
-        super.exportToCSV('all');
+        super.exportToCSV(option);
     }
 
     showCompactRowsHeight() {
