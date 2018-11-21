@@ -2,7 +2,7 @@
 import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
-import { Subject, Observable, observable } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { publishReplay, refCount, map } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore' ;
@@ -135,7 +135,7 @@ export class AppService extends AppServiceBase {
             this.checkModuleExpired();
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
-            map(() => this.checkSubscriptionIsFree())
+            map(subscriptions => this.checkSubscriptionIsFree(null, subscriptions))
         );
     }
 
@@ -144,6 +144,10 @@ export class AppService extends AppServiceBase {
         if (moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
             return _.find(moduleSubscriptions, {module: module})
                 || {module: module, endDate: moment(new Date(0))};
+    }
+
+    subscriptionIsLocked(name?: string) {
+        return this.getModuleSubscription(name).isLocked;
     }
 
     checkModuleSubscriptionEnabled() {
@@ -175,8 +179,8 @@ export class AppService extends AppServiceBase {
         return false;
     }
 
-    checkSubscriptionIsFree(name?: string): boolean {
-        let sub = this.getModuleSubscription(name);
+    checkSubscriptionIsFree(name?: string, moduleSubscriptions = this.moduleSubscriptions): boolean {
+        let sub = this.getModuleSubscription(name, moduleSubscriptions);
         return sub && !sub.endDate;
     }
 
@@ -275,8 +279,7 @@ export class AppService extends AppServiceBase {
                                 observer.next(result.userId);
                             }, () => { }, observer.complete);
                         }, () => observer.complete());
-                    }
-                    else
+                    } else
                         observer.complete();
                 }
             );
