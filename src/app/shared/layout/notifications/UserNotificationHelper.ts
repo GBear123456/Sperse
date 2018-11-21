@@ -124,12 +124,15 @@ export class UserNotificationHelper extends AppComponentBase {
         });
     }
 
-    openSettingsModal(): void {
+    openSettingsModal(e): void {
         this.dialog.open(NotificationSettingsModalComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {}
         });
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
     }
 }

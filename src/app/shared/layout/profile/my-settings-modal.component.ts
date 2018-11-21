@@ -54,7 +54,7 @@ export class MySettingsModalComponent extends ModalDialogComponent implements Af
         this.data.placeholder = this.l('MySettings');
 
         this.data.buttons = [{
-            title: this.l('Save'),
+            title: this.l('SaveAndClose'),
             class: 'primary menu',
             action: this.save.bind(this)
         }];
