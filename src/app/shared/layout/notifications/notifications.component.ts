@@ -97,8 +97,8 @@ export class NotificationsComponent extends AppComponentBase {
         });
     }
 
-    openNotificationSettingsModal(): void {
-        this._userNotificationHelper.openSettingsModal();
+    openNotificationSettingsModal(e): void {
+        this._userNotificationHelper.openSettingsModal(e);
     }
 
     setNotificationAsRead(userNotification: UserNotification, callback: () => void): void {
