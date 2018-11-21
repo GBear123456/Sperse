@@ -1,11 +1,12 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, OnInit, Injector, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material';
 import { DxSelectBoxComponent } from '@root/node_modules/devextreme-angular';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -98,6 +99,7 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
     save() {
         this.company.companyName = this.company.fullName = this.data.title;
         let input = new UpdateOrganizationInfoInput(this.company);
+        input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
         this._organizationContactServiceProxy.updateOrganizationInfo(input).subscribe(() => {
             this.notify.success(this.l('SavedSuccessfully'));
             this.close(true, {
@@ -113,6 +115,10 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
                 this.notify.info(this.l('SavedSuccessfully'));
             });
         }
+    }
+
+    private getMomentFromDateWithoutTime(date: Date): moment.Moment {
+        return moment.utc(date.getFullYear() + '-' + ( date.getMonth() + 1 ) + '-' + date.getDate());
     }
 
     private loadCountries() {
