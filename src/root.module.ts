@@ -22,7 +22,7 @@ import { RouteGuard } from '@shared/common/auth/route-guard';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
+import { API_BASE_URL, FaviconDto } from '@shared/service-proxies/service-proxies';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { AppPreBootstrap } from './AppPreBootstrap';
 import { RootComponent, AppRootComponent } from './root.components';
@@ -60,6 +60,10 @@ export function appInitializerFactory(
                             $('meta[property=og\\:image]').attr('content', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + appSessionService.tenant.logoId);
                         }
 
+                        let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
+                        if (customizations && customizations.favicons && customizations.favicons.length)
+                             updateFavicons(customizations.favicons, customizations['faviconBaseUrl']);
+
                         if (shouldLoadLocale()) {
                             let angularLocale = convertAbpLocaleToAngularLocale(abp.localization.currentLanguage.name);
                             import(`@angular/common/locales/${angularLocale}.js`)
@@ -78,6 +82,23 @@ export function appInitializerFactory(
             }, resolve, reject);
         });
     };
+}
+
+function updateFavicons(favicons: FaviconDto[], faviconBaseUrl: string) {
+    let head = document.head;
+    Array.prototype.forEach.call(head.getElementsByTagName('LINK'), (item) => {
+        if (item.rel.includes('icon'))
+            item.remove();
+    });
+
+    favicons.forEach((item) => {
+        let link = document.createElement('link');
+        link.rel = item['rel'];
+        link.type = item['type'];
+        link['sizes'] = item['sizes'];
+        link.href = faviconBaseUrl + item.faviconUri;
+        head.appendChild(link);
+    });
 }
 
 function getDocumentOrigin() {
