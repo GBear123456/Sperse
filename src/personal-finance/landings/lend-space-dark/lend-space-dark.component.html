@@ -2,17 +2,9 @@
     <div class="container align-self-center">
         <h1 class="title">It Never Hurts to Check Your Score</h1>
         <div class="buttons-group d-flex justify-content-between">
-            <button class="btn btn-dark btn-custom">
-                <span>I want to get my</span>
-                <span>Credit Card</span>
-            </button>
-            <button class="btn btn-dark btn-custom">
-                <span>I want to apply for a</span>
-                <span>Personal Loan</span>
-            </button>
-            <button class="btn btn-dark btn-custom">
-                <span>I want to get my free</span>
-                <span>Credit Score</span>
+            <button class="btn btn-dark btn-custom" *ngFor="let item of buttons">
+                <span>{{item.description}}</span>
+                <span>{{item.title}}</span>
             </button>
         </div>
     </div>
@@ -23,35 +15,11 @@
         <h2 class="yellow-title">Why You Should Choose Us?</h2>
         <p class="description text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel facilisis.</p>
         <ul class="list-unstyled d-flex flex-wrap why-list">
-            <li class="why-item">
-                <img src="./assets/common/images/lend-space-dark/credit-score.png" alt="Credit Score">
-                <h3>Credit Scores</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.</p>
-            </li>
-            <li class="why-item hover">
-                <img src="./assets/common/images/lend-space-dark/credit-cards.png" alt="Credit Score">
-                <h3>Credit Cards</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.</p>
-            </li>
-            <li class="why-item">
-                <img src="./assets/common/images/lend-space-dark/retirement-planning.png" alt="Credit Score">
-                <h3>Retirement Planning</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.</p>
-            </li>
-            <li class="why-item">
-                <img src="./assets/common/images/lend-space-dark/personal-loans.png" alt="Credit Score">
-                <h3>Personal Loans</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.</p>
-            </li>
-            <li class="why-item">
-                <img src="./assets/common/images/lend-space-dark/business-loans.png" alt="Credit Score">
-                <h3>Business Loans</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.</p>
-            </li>
-            <li class="why-item">
-                <img src="./assets/common/images/lend-space-dark/get-debt-free.png" alt="Credit Score">
-                <h3>Get Debt Free</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.</p>
+            <li class="why-item" *ngFor="let item of features; let i = index" [ngClass]="{'hover' : i == 1}">
+                <!-- class hover is temp solution while I haven't vector icons -->
+                <img [src]="item.imgSrc" alt="Credit Score">
+                <h3>{{item.title}}</h3>
+                <p>{{item.text}}</p>
             </li>
         </ul>
     </div>
