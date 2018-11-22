@@ -39,10 +39,10 @@ export class ExportService {
             dataSource.paginate(false);
             dataSource.load().done((res) => {
                 callback(res);
-            }).fail((e) => { 
+            }).fail((e) => {
                 callback([]);
             });
-        } else 
+        } else
             callback(dataGrid.instance.getSelectedRowsData());
     }
 
@@ -54,8 +54,8 @@ export class ExportService {
                     _headers = Object.keys(data[0]);
 
                 new Angular5Csv(data, this.getFileName(), { headers: _headers, replaceNulls: true });
-            });      
-        }        
+            });
+        }
     }
 
     exportToCSV(dataGrid: DxDataGridComponent, exportAllData: boolean) {
@@ -113,7 +113,7 @@ export class ExportService {
                 dataStore._beforeSend = initialBeforeSend;
                 resolve();
             });
-      
+
             instance.exportToExcel(!exportAllData);
         });
     }

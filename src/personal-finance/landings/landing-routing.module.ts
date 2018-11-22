@@ -23,7 +23,7 @@ import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offe
                     { path: 'offers', component: OffersComponent },
                     { path: 'offer/:id', component: OfferDetailsComponent },
                     { path: 'lend-space', component: LendSpaceComponent },
-                    { path: 'lend-space-dark', component: LendSpaceDarkComponent },
+                    { path: 'lend-space-dark', component: LendSpaceDarkComponent, data: { wrapperDisabled: true } },
                     // { path: 'credit-cards', component: CreditCardsComponent },
                     // { path: 'loans', component: LoanComponent }
                 ]
