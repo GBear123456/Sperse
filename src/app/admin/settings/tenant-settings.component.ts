@@ -8,17 +8,22 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     DefaultTimezoneScope, SendTestEmailInput, TenantSettingsEditDto, TenantSettingsServiceProxy,
-    IdcsSettings, BaseCommercePaymentSettings, PayPalSettings, TenantSettingsCreditReportServiceProxy, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings
-} from '@shared/service-proxies/service-proxies';
+    IdcsSettings, BaseCommercePaymentSettings, PayPalSettings, TenantSettingsCreditReportServiceProxy, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings,
+    EPCVIPOfferProviderSettings, TenantOfferProviderSettingsServiceProxy} from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { request } from 'https';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()],
     styleUrls: ['./tenant-settings.component.less'],
-    providers: [TenantSettingsCreditReportServiceProxy, TenantPaymentSettingsServiceProxy]
+    providers: [
+        TenantSettingsCreditReportServiceProxy,
+        TenantPaymentSettingsServiceProxy,
+        TenantOfferProviderSettingsServiceProxy
+    ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
 
@@ -37,6 +42,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
+    isPFMEnabled: boolean = abp.features.isEnabled('PFM');
+    epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
 
     logoUploader: FileUploader;
     customCssUploader: FileUploader;
@@ -53,7 +60,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private _tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
         private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private _appSessionService: AppSessionService,
-        private _tokenService: TokenService
+        private _tokenService: TokenService,
+        private _tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -84,13 +92,16 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this._tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
             this._tenantPaymentSettingsService.getPayPalSettings(),
             this._tenantPaymentSettingsService.getACHWorksSettings(),
-            this._tenantPaymentSettingsService.getRecurlyPaymentSettings()
+            this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
         ];
 
         if (this.isCreditReportFeatureEnabled)
             requests.push(this._tenantSettingsCreditReportService.getIdcsSettings());
 
-        forkJoin(requests)
+        if (this.isPFMEnabled)
+            requests.push(this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings());
+
+            forkJoin(requests)
             .pipe(finalize(() => { this.loading = false; }))
             .subscribe((result) => {
                 this.settings = result[0];
@@ -104,8 +115,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.achWorksSettings = result[3];
                 this.recurlySettings = result[4];
 
-                if (this.isCreditReportFeatureEnabled)
-                    this.idcsSettings = result[5];
+                let currentIndex = 5;
+                if (this.isCreditReportFeatureEnabled) {
+                    this.idcsSettings = result[currentIndex++];
+                }
+
+                if (this.isPFMEnabled) {
+                    this.epcvipSettings = result[currentIndex++];
+                }
             });
     }
 
@@ -188,6 +205,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         ];
         if (this.isCreditReportFeatureEnabled)
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
+        if (this.isPFMEnabled)
+            requests.push(this._tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
 
         forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
