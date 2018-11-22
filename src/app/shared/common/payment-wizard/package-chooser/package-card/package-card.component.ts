@@ -29,18 +29,12 @@ export class PackageCardComponent implements OnChanges {
     @HostBinding('class.isActive') public isActive: boolean;
     @HostBinding('class.bestValue') @Input() bestValue = false;
     baseUrl = AppConsts.appBaseHref;
-    lastActiveSelectedEditionUsersAmount: number;
-    lastActiveFeatures: any[];
-    lastActivePricePerMonth: number;
-    lastActiveEditionPricePerMonth: number;
-    lastActiveDisplayedUsersAmount: number;
-    lastActiveMonthlyPricePerYear: number;
-    lastActiveTotalPrice: number;
-    lastActivePricePerUserPerMonth: number;
+    selectedEdition: PackageEditionConfigDto;
 
     constructor(public localizationService: AppLocalizationService) {}
 
-    ngOnChanges() {
+    ngOnChanges(changes) {
+        this.selectedEdition = this.getSelectedEdition();
         this.isActive = this.editions && !!this.selectedEdition;
     }
 
@@ -48,76 +42,54 @@ export class PackageCardComponent implements OnChanges {
         return this.localizationService.l(key, 'CRM', ...args);
     }
 
-    get selectedEdition(): PackageEditionConfigDto {
-        return this.editions.find(edition => {
-            return this.usersAmount <= edition.maxUserCount;
-        });
+    getSelectedEdition(): PackageEditionConfigDto {
+        return this.editions.find(edition => this.usersAmount <= edition.maxUserCount);
+    }
+
+    get selectedOrLastEdition(): PackageEditionConfigDto {
+        return this.selectedEdition || this.editions[this.editions.length - 1];
     }
 
     get selectedEditionUsersAmount(): number {
-        if (this.isActive) {
-            this.lastActiveSelectedEditionUsersAmount = +this.selectedEdition.maxUserCount;
-        }
-        return this.lastActiveSelectedEditionUsersAmount;
+        return +this.selectedOrLastEdition.maxUserCount;
     }
 
     get displayedUsersAmount(): number {
-        if (this.isActive) {
-            this.lastActiveDisplayedUsersAmount = this.usersAmount;
-        }
-        return this.lastActiveDisplayedUsersAmount;
+        return this.isActive ? this.usersAmount : this.selectedOrLastEdition.maxUserCount;
     }
 
     get features(): PackageEditionConfigFeatureDto[] {
-        if (this.isActive) {
-            this.lastActiveFeatures = this.selectedEdition.features;
-        }
-        return this.lastActiveFeatures;
+        return this.selectedOrLastEdition.features;
     }
 
     get pricePerMonth(): number {
-        if (this.isActive) {
-            this.lastActivePricePerMonth = this.billingPeriod === BillingPeriod.Monthly ?
-                +(this.selectedEdition.monthlyPrice / this.usersCoefficient).toFixed(2) :
-                +(this.selectedEdition.annualPrice / 12 / this.usersCoefficient).toFixed(2);
-        }
-        return this.lastActivePricePerMonth;
+        return this.billingPeriod === BillingPeriod.Monthly ?
+                +(this.selectedOrLastEdition.monthlyPrice / this.usersCoefficient).toFixed(2) :
+                +(this.selectedOrLastEdition.annualPrice / 12 / this.usersCoefficient).toFixed(2);
     }
 
     get editionPricePerMonth(): number {
-        if (this.isActive) {
-            this.lastActiveEditionPricePerMonth = this.billingPeriod === BillingPeriod.Monthly ?
-                this.selectedEdition.monthlyPrice :
-                +(this.selectedEdition.annualPrice / 12).toFixed(2);
-        }
-        return this.lastActiveEditionPricePerMonth;
+        return this.billingPeriod === BillingPeriod.Monthly ?
+                this.selectedOrLastEdition.monthlyPrice :
+                +(this.selectedOrLastEdition.annualPrice / 12).toFixed(2);
     }
 
     get monthlyPricePerYear(): number {
-        if (this.isActive) {
-            this.lastActiveMonthlyPricePerYear = this.selectedEdition.monthlyPrice * 12 / this.usersCoefficient;
-        }
-        return this.lastActiveMonthlyPricePerYear;
+        return this.selectedOrLastEdition.monthlyPrice * 12 / this.usersCoefficient;
     }
 
     get totalPrice(): number {
-        if (this.isActive) {
-            this.lastActiveTotalPrice = this.billingPeriod === BillingPeriod.Monthly
-                ? this.selectedEdition.monthlyPrice / this.usersCoefficient
-                : this.selectedEdition.annualPrice / this.usersCoefficient;
-        }
-        return this.lastActiveTotalPrice;
+        return this.billingPeriod === BillingPeriod.Monthly
+            ? this.selectedOrLastEdition.monthlyPrice / this.usersCoefficient
+            : this.selectedOrLastEdition.annualPrice / this.usersCoefficient;
     }
 
     get pricePerUserPerMonth(): number {
-        if (this.isActive) {
-            this.lastActivePricePerUserPerMonth = (+(this.editionPricePerMonth / this.selectedEditionUsersAmount).toFixed(2));
-        }
-        return this.lastActivePricePerUserPerMonth;
+        return (+(this.editionPricePerMonth / this.selectedEditionUsersAmount).toFixed(2));
     }
 
     get usersCoefficient() {
-        return this.selectedEditionUsersAmount / this.usersAmount;
+        return this.selectedEditionUsersAmount / this.displayedUsersAmount;
     }
 
     getFeatureValue(feature: PackageEditionConfigFeatureDto): string {

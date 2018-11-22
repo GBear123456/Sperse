@@ -1,8 +1,9 @@
-<div id="paymentWizardComponent">
+<div id="paymentWizardComponent" #wizard>
     <mat-dialog-content>
         <mat-horizontal-stepper #stepper>
             <mat-step>
                 <package-chooser
+                    *ngIf="!subscriptionIsLocked"
                     [title]="data?.title"
                     [module]="module"
                     [showBackground]="true"
@@ -10,6 +11,10 @@
                     (onPlanChosen)="changePlan($event)"
                     (moveToNextStep)="moveToPaymentOptionsStep()">
                 </package-chooser>
+                <div *ngIf="subscriptionIsLocked" class="rejectSubscriptionBlock">
+                    <h2 class="title">{{ l('ManualBankTransferIsNotConfirmed') }}</h2>
+                    <button (click)="rejectPendingPayment()" class="btn btn-layout">{{ l('ManualSubscriptionReject') }}</button>
+                </div>
             </mat-step>
             <mat-step>
                 <ng-container *ngIf="(plan$ | async) as plan">

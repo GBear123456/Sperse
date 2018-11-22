@@ -391,6 +391,25 @@
                             <input id="taxVatNo" type="text" name="taxVatNo" class="form-control" [ngClass]="{'edited':settings.billing.taxVatNo}" [(ngModel)]="settings.billing.taxVatNo" maxlength="32">
                         </div>
                     </tab>
+                    <tab heading="{{l('EPCVIP Link')}}" *ngIf="isPFMEnabled" customClass="m-tabs__item">
+                        <div>
+                            <div class="form-group">
+                                <label for="EPCVIPApiKey">{{l("EPCVIPApiKey")}}</label>
+                                <input id="EPCVIPApiKey" type="text" name="EPCVIPApiKey" class="form-control" [(ngModel)]="epcvipSettings.apiKey" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="EPCVIPApiBaseUrl">{{l("EPCVIPApiBaseUrl")}}</label>
+                                <input id="EPCVIPApiBaseUrl" type="text" name="EPCVIPApiBaseUrl" class="form-control" [(ngModel)]="epcvipSettings.apiBaseUrl" maxlength="128" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="EPCVIPTestMode" class="m-checkbox">
+                                    <input id="EPCVIPTestMode" class="m-check" type="checkbox" name="EPCVIPTestMode" [(ngModel)]="epcvipSettings.testMode" disabled>
+                                    {{l("EPCVIPTestMode")}}
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </tab>
                 </tabset>
             </div>
         </div>

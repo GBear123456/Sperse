@@ -17,6 +17,7 @@ import { StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoDto, ContactPhotoServiceProxy, CreateContactPhotoInput } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { NoteType } from '@root/shared/AppEnums';
 
 @Component({
     selector: 'company-dialog',
@@ -116,7 +117,7 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
             this._notesService.createNote(CreateNoteInput.fromJS({
                 contactId: this.company.id,
                 text: this.company.notes,
-                typeId: 'C',
+                typeId: NoteType.CompanyNote,
             })).subscribe(() => {});
         }
     }

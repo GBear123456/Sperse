@@ -60,13 +60,12 @@ export class CfoActivateService implements CanActivate {
                 path: '',
                 component: AppComponent,
                 children: [
-                    { path: 'access-denied', component: AccessDeniedComponent },
                     {
                         path: '',
-                        children: [
-                            { path: 'notifications', component: NotificationsComponent }
-                        ]
+                        data: { permission: 'Pages.Detect.Route' }
                     },
+                    { path: 'access-denied', component: AccessDeniedComponent },
+                    { path: 'notifications', component: NotificationsComponent },
                     {
                         path: 'admin',
                         loadChildren: 'app/admin/admin.module#AdminModule', //Lazy load admin module
