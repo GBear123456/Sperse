@@ -20880,130 +20880,6 @@ export class TenantServiceProxy {
 }
 
 @Injectable()
-export class TenantCustomizationServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getTenantCustomization(customizationGroupName: string, customizationName: string): Observable<TenantCustomizationDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/GetTenantCustomization?";
-        if (customizationGroupName === undefined || customizationGroupName === null)
-            throw new Error("The parameter 'customizationGroupName' must be defined and cannot be null.");
-        else
-            url_ += "CustomizationGroupName=" + encodeURIComponent("" + customizationGroupName) + "&"; 
-        if (customizationName === undefined || customizationName === null)
-            throw new Error("The parameter 'customizationName' must be defined and cannot be null.");
-        else
-            url_ += "CustomizationName=" + encodeURIComponent("" + customizationName) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetTenantCustomization(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetTenantCustomization(<any>response_);
-                } catch (e) {
-                    return <Observable<TenantCustomizationDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<TenantCustomizationDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetTenantCustomization(response: HttpResponseBase): Observable<TenantCustomizationDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? TenantCustomizationDto.fromJS(resultData200) : new TenantCustomizationDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<TenantCustomizationDto>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    addTenantCustomization(input: TenantCustomizationDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/AddTenantCustomization";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAddTenantCustomization(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAddTenantCustomization(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processAddTenantCustomization(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class TenantHostServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -51005,8 +50881,9 @@ export interface IApplicationInfoDto {
 }
 
 export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
-    favicons!: FaviconDto[] | undefined;
     siteTitle!: string | undefined;
+    faviconBaseUrl!: string | undefined;
+    favicons!: FaviconDto[] | undefined;
 
     constructor(data?: ITenantCustomizationInfoDto) {
         if (data) {
@@ -51019,12 +50896,13 @@ export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.siteTitle = data["siteTitle"];
+            this.faviconBaseUrl = data["faviconBaseUrl"];
             if (data["favicons"] && data["favicons"].constructor === Array) {
                 this.favicons = [];
                 for (let item of data["favicons"])
                     this.favicons.push(FaviconDto.fromJS(item));
             }
-            this.siteTitle = data["siteTitle"];
         }
     }
 
@@ -51037,19 +50915,21 @@ export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["siteTitle"] = this.siteTitle;
+        data["faviconBaseUrl"] = this.faviconBaseUrl;
         if (this.favicons && this.favicons.constructor === Array) {
             data["favicons"] = [];
             for (let item of this.favicons)
                 data["favicons"].push(item.toJSON());
         }
-        data["siteTitle"] = this.siteTitle;
         return data; 
     }
 }
 
 export interface ITenantCustomizationInfoDto {
-    favicons: FaviconDto[] | undefined;
     siteTitle: string | undefined;
+    faviconBaseUrl: string | undefined;
+    favicons: FaviconDto[] | undefined;
 }
 
 export class AbpStringValueDto implements IAbpStringValueDto {
@@ -51089,8 +50969,10 @@ export interface IAbpStringValueDto {
 }
 
 export class FaviconDto implements IFaviconDto {
-    faviconName!: string | undefined;
-    faviconUri!: string | undefined;
+    name!: string | undefined;
+    type!: string | undefined;
+    relationship!: string | undefined;
+    size!: string | undefined;
 
     constructor(data?: IFaviconDto) {
         if (data) {
@@ -51103,8 +50985,10 @@ export class FaviconDto implements IFaviconDto {
 
     init(data?: any) {
         if (data) {
-            this.faviconName = data["faviconName"];
-            this.faviconUri = data["faviconUri"];
+            this.name = data["name"];
+            this.type = data["type"];
+            this.relationship = data["relationship"];
+            this.size = data["size"];
         }
     }
 
@@ -51117,15 +51001,19 @@ export class FaviconDto implements IFaviconDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["faviconName"] = this.faviconName;
-        data["faviconUri"] = this.faviconUri;
+        data["name"] = this.name;
+        data["type"] = this.type;
+        data["relationship"] = this.relationship;
+        data["size"] = this.size;
         return data; 
     }
 }
 
 export interface IFaviconDto {
-    faviconName: string | undefined;
-    faviconUri: string | undefined;
+    name: string | undefined;
+    type: string | undefined;
+    relationship: string | undefined;
+    size: string | undefined;
 }
 
 export class UpdateUserSignInTokenOutput implements IUpdateUserSignInTokenOutput {
@@ -52053,50 +51941,6 @@ export class EntityDto implements IEntityDto {
 
 export interface IEntityDto {
     id: number | undefined;
-}
-
-export class TenantCustomizationDto implements ITenantCustomizationDto {
-    customizationGroupName!: string;
-    customizationName!: string;
-    value!: string | undefined;
-
-    constructor(data?: ITenantCustomizationDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.customizationGroupName = data["customizationGroupName"];
-            this.customizationName = data["customizationName"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): TenantCustomizationDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TenantCustomizationDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["customizationGroupName"] = this.customizationGroupName;
-        data["customizationName"] = this.customizationName;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface ITenantCustomizationDto {
-    customizationGroupName: string;
-    customizationName: string;
-    value: string | undefined;
 }
 
 export class TenantAppHostOutput implements ITenantAppHostOutput {
