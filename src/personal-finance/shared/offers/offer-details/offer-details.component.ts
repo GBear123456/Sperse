@@ -106,7 +106,7 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
                             max: 650,
                             name: 'Good'
                         },
-                        rewardRate: '16%',
+                        rewardsRate: '16%',
                         annualFee: '$0 first year, $59 after',
                         introApr: 'N/A'
                     }
