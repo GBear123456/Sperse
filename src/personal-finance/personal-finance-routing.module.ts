@@ -7,6 +7,7 @@ import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-servi
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
 import { KbaResultComponent } from './member-area/kba-result/kba-result.component';
+import { NotificationsComponent } from '@app/shared/layout/notifications/notifications.component';
 
 @NgModule({
     imports: [
@@ -22,6 +23,7 @@ import { KbaResultComponent } from './member-area/kba-result/kba-result.componen
                         loadChildren: 'personal-finance/landings/landing.module#LandingModule',
                         data: { preload: true }
                     },
+                    { path: 'notifications', component: NotificationsComponent },
                     {
                         path: 'member-area',
                         children: [
