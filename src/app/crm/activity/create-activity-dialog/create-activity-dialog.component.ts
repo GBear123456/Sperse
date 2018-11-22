@@ -97,9 +97,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                 if (res.endDate)
                     this.endDate = this.getDateWithTimezone(res.endDate);
             });
-            
         } else {
-            let dateNow = new Date(moment().format('YYYY-MM-DD HH:mm:ss'));
+            let dateNow = new Date(moment().format('YYYY/MM/DD HH:mm:ss'));
             if (this.data.appointment.StartDate) {
                 this.startDate = new Date(this.data.appointment.StartDate);
                 this.startDate.setHours(dateNow.getHours());
@@ -332,7 +331,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
     }
 
     getDateWithTimezone(date) {
-        return new Date(moment(date).format('YYYY-MM-DD HH:mm:ss'));
+        return new Date(moment(date).format('YYYY/MM/DD HH:mm:ss'));
     }
 
     private afterSave(): void {
