@@ -50874,6 +50874,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     logoId!: string | undefined;
     logoFileType!: string | undefined;
     customCssId!: string | undefined;
+    customToSDocumentId!: string | undefined;
+    customPrivacyPolicyDocumentId!: string | undefined;
     creationTime!: moment.Moment | undefined;
     paymentPeriodType!: TenantLoginInfoDtoPaymentPeriodType | undefined;
     creationTimeString!: string | undefined;
@@ -50896,6 +50898,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.logoId = data["logoId"];
             this.logoFileType = data["logoFileType"];
             this.customCssId = data["customCssId"];
+            this.customToSDocumentId = data["customToSDocumentId"];
+            this.customPrivacyPolicyDocumentId = data["customPrivacyPolicyDocumentId"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.paymentPeriodType = data["paymentPeriodType"];
             this.creationTimeString = data["creationTimeString"];
@@ -50918,6 +50922,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
         data["customCssId"] = this.customCssId;
+        data["customToSDocumentId"] = this.customToSDocumentId;
+        data["customPrivacyPolicyDocumentId"] = this.customPrivacyPolicyDocumentId;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["creationTimeString"] = this.creationTimeString;
@@ -50933,6 +50939,8 @@ export interface ITenantLoginInfoDto {
     logoId: string | undefined;
     logoFileType: string | undefined;
     customCssId: string | undefined;
+    customToSDocumentId: string | undefined;
+    customPrivacyPolicyDocumentId: string | undefined;
     creationTime: moment.Moment | undefined;
     paymentPeriodType: TenantLoginInfoDtoPaymentPeriodType | undefined;
     creationTimeString: string | undefined;
