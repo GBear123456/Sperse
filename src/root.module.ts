@@ -62,7 +62,7 @@ export function appInitializerFactory(
 
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
                         if (customizations && customizations.favicons && customizations.favicons.length)
-                             updateFavicons(customizations.favicons, customizations['faviconBaseUrl']);
+                             updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
 
                         if (shouldLoadLocale()) {
                             let angularLocale = convertAbpLocaleToAngularLocale(abp.localization.currentLanguage.name);
@@ -93,10 +93,10 @@ function updateFavicons(favicons: FaviconDto[], faviconBaseUrl: string) {
 
     favicons.forEach((item) => {
         let link = document.createElement('link');
-        link.rel = item['rel'];
-        link.type = item['type'];
-        link['sizes'] = item['sizes'];
-        link.href = faviconBaseUrl + item.faviconUri;
+        link.rel = item.relationship;
+        link.type = item.type;
+        link['sizes'] = item.size;
+        link.href = faviconBaseUrl + item.name;
         head.appendChild(link);
     });
 }
