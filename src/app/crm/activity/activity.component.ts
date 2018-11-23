@@ -119,8 +119,16 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     let customize = ['DELETE', 'PATCH'].indexOf(request.method);
                     if (customize >= 0) {
-                        if (customize)
+                        if (customize) {
                             request.method = 'POST';
+                            if (request.payload.AllDay) {
+                                let startDate = request.payload.StartDate.substring(0, 19) + 'Z';
+                                request.payload.StartDate = startDate;
+
+                                let endDate = request.payload.EndDate.substring(0, 19) + 'Z';
+                                request.payload.EndDate = endDate;
+                            }
+                        }
                         let endpoint = this.parseODataURL(request.url);
                         request.url = endpoint.url + 'api/services/CRM/Activity/'
                             + (customize ? 'Move' : 'Delete?Id=' + endpoint.id);
@@ -142,7 +150,18 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 deserializeDates: false,
                 onLoaded: (res) => {
                     res.forEach((record) => {
-                        record.fieldTimeZone = 'Etc/UTC';
+                        if (record.AllDay) {
+                            record.fieldTimeZone = this.timezone;
+                            
+                            let startDate = moment(record.StartDate.substring(0, 19)).format();
+                            record.StartDate = startDate;
+
+                            let endDate = moment(record.EndDate.substring(0, 19)).format();
+                            record.EndDate = endDate;
+                        }
+                        else {
+                            record.fieldTimeZone = 'Etc/UTC';
+                        }
                     });
                 },
                 paginate: false
@@ -342,6 +361,14 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     onAppointmentFormCreated(event) {
         event.component.hideAppointmentPopup(false);
+
+        let startDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
+        event.appointmentData.StartDate = startDate;
+
+        let endDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
+        event.appointmentData.EndDate = endDate;
+        event.appointmentData.AllDay = true;
+
         this.showActivityDialog(event.appointmentData);
     }
 

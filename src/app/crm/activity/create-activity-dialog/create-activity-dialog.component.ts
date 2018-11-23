@@ -87,32 +87,38 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         ];
 
         if (this.data.appointment.Id) {
+            this.isAllDay = Boolean(this.data.appointment.AllDay);
+            if (this.data.appointment.StartDate)
+                this.startDate = this.getDateWithTimezone(this.data.appointment.StartDate);
+            if (this.data.appointment.EndDate)
+                this.endDate = this.getDateWithTimezone(this.data.appointment.EndDate);
+
             this._activityProxy.get(this.data.appointment.Id).subscribe((res) => {
-
                 this.data.appointment.AssignedUserIds = res.assignedUserIds || [];
-                this.isAllDay = Boolean(res.allDay);
-
-                if (res.startDate)
-                    this.startDate = this.getDateWithTimezone(res.startDate);
-                if (res.endDate)
-                    this.endDate = this.getDateWithTimezone(res.endDate);
             });
         } else {
             let dateNow = new Date(moment().format('YYYY/MM/DD HH:mm:ss'));
+            if (this.data.appointment.AllDay)
+                this.isAllDay = true;
+
             if (this.data.appointment.StartDate) {
                 this.startDate = new Date(this.data.appointment.StartDate);
-                this.startDate.setHours(dateNow.getHours());
-                this.startDate.setMinutes(dateNow.getMinutes());
-                this.startDate.setSeconds(dateNow.getSeconds());
+                if (!this.isAllDay) {
+                    this.startDate.setHours(dateNow.getHours());
+                    this.startDate.setMinutes(dateNow.getMinutes());
+                    this.startDate.setSeconds(dateNow.getSeconds());
+                }
             } else {
                 this.startDate = new Date(dateNow);
             }
 
             if (this.data.appointment.EndDate) {
                 this.endDate = new Date(this.data.appointment.EndDate);
-                this.endDate.setHours(dateNow.getHours());
-                this.endDate.setMinutes(dateNow.getMinutes());
-                this.endDate.setSeconds(dateNow.getSeconds());
+                if (!this.isAllDay) {
+                    this.endDate.setHours(dateNow.getHours());
+                    this.endDate.setMinutes(dateNow.getMinutes());
+                    this.endDate.setSeconds(dateNow.getSeconds());
+                }
             } else {
                 this.endDate = new Date(dateNow);
             }
@@ -304,8 +310,8 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             title: this.data.appointment.Title,
             description: this.data.appointment.Description,
             assignedUserIds: this.data.appointment.AssignedUserIds || [this.appSession.userId],
-            startDate: this.isAllDay ? this.getDateWithoutTimezone(this.startDate).startOf('day') : this.getDateWithoutTimezone(this.startDate),
-            endDate: this.isAllDay ? this.getDateWithoutTimezone(this.endDate).endOf('day') : this.getDateWithoutTimezone(this.endDate),
+            startDate: this.getDateWithoutTimezone(this.startDate, 'startDate'),
+            endDate: this.getDateWithoutTimezone(this.endDate, 'endDate'),
             allDay: this.isAllDay,
             stageId: this.data.appointment.StageId,
             leadId: this.data.appointment.LeadId,
@@ -325,9 +331,22 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
         );
     }
 
-    getDateWithoutTimezone(date) {
-        date.setTime(date.getTime() - ((date.getTimezoneOffset() + moment().utcOffset()) * 60 * 1000));
-        return moment.utc(date);
+    getDateWithoutTimezone(date, propertyName = null) {
+        if (this.isAllDay) {
+            date = date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate();
+            date = moment.utc(date);
+
+            if (propertyName === 'startDate')
+                date = date.startOf('day');
+            if (propertyName === 'endDate')
+                date = date.endOf('day');
+            
+            return date;
+        }
+        else {
+            date.setTime(date.getTime() - ((date.getTimezoneOffset() + moment().utcOffset()) * 60 * 1000));
+            return moment.utc(date);
+        }
     }
 
     getDateWithTimezone(date) {
