@@ -111,7 +111,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     scrollHeight: number;
     private rootComponent: RootComponent;
     creditCardloaded = false;
-    category$: Observable<string>;
+    category$: Observable<Category>;
     categoryDisplayName$: Observable<string>;
     defaultCategoryDisplayName: string = this.ls.l('Offers_CreditCards');
 
