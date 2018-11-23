@@ -15,8 +15,10 @@ if (environment.production) {
 const bootstrap = () => {
     let loginPageHandler = window['loginPageHandler'];
     if (loginPageHandler)
-        loginPageHandler(environment.appConfig);
-    else
+        loginPageHandler(() => {
+            return platformBrowserDynamic().bootstrapModule(RootModule);
+        });
+    else 
         return platformBrowserDynamic().bootstrapModule(RootModule);
 };
 

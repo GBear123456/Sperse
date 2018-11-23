@@ -193,5 +193,5 @@
         [memberAreaLinks]="memberAreaLinks">
     </member-area-navigation>
 </div>
-<linkedAccountsModal #linkedAccountsModal (modalClose)="getRecentlyLinkedUsers()"></linkedAccountsModal>
+<linkedAccountsModal *ngIf="loggedUserId" #linkedAccountsModal (modalClose)="getRecentlyLinkedUsers()"></linkedAccountsModal>
 <changeProfilePictureModal #changeProfilePictureModal></changeProfilePictureModal>

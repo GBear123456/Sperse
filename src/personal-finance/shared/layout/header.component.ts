@@ -181,7 +181,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     getCurrentLoginInformations(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
         this.tenant = this.appSession.tenant;
-        this.profileThumbnailId = this.appSession.user.profileThumbnailId;
+        this.profileThumbnailId = this.appSession.user && 
+            this.appSession.user.profileThumbnailId;
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {
@@ -189,9 +190,10 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getRecentlyLinkedUsers(): void {
-        this._userLinkServiceProxy.getRecentlyUsedLinkedUsers().subscribe(result => {
-            this.recentlyLinkedUsers = result.items;
-        });
+        if (this.loggedUserId)        
+            this._userLinkServiceProxy.getRecentlyUsedLinkedUsers().subscribe(result => {
+                this.recentlyLinkedUsers = result.items;
+            });
     }
 
     showLoginAttempts(e): void {

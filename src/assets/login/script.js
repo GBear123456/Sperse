@@ -3,6 +3,7 @@
     const AbpLocalizationCultureName = 'Abp.Localization.CultureName';
     const EncryptedAuthToken = 'enc_auth_token';
 
+    var appBootstrap;
     var remoteServiceUrl = '';
     var pathParts = location.pathname.split('/').filter(Boolean);
     var cookie = queryString(document.cookie, ';');
@@ -13,10 +14,10 @@
             (pathParts.pop() == 'login')
         )
     ) {
-        window.loginPageHandler = function(appConfig) {}
+        window.loginPageHandler = function(bootMethod) { 
+            appBootstrap = bootMethod;
+        };
 
-        document.getElementById('loginPage').style.display = 'block';
-        document.getElementById('loadSpinner').style.display = 'none';
         document.getElementById('forget-password').href = location.origin + '/account/forgot-password';
         window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
 
@@ -62,19 +63,28 @@
         ).then(function(response) {
             var loginInformations = response && response.result,
                 tenant = loginInformations && loginInformations.tenant,
-                tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse';
+                tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse',
+                features = loginInformations.application.features;
 
-            Array.prototype.forEach.call(document.getElementsByClassName('tenantName'), function(elm) {
-                elm.innerHTML = tenantName;
-            });
+            if (features && features['PFM'] && JSON.parse(features['PFM'].value)) {
+                window.loginPageHandler = undefined;
+                appBootstrap && appBootstrap();
+            } else {
+                document.getElementById('loginPage').style.display = 'block';
+                document.getElementById('loadSpinner').style.display = 'none';
 
-            if (window['logoImage']) {
-                logoImage.setAttribute('src',
-                    tenant && loginInformations.tenant.logoId ?
-                    remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId:
-                    getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
-                );
-                logoImage.style.display = 'block';
+                Array.prototype.forEach.call(document.getElementsByClassName('tenantName'), function(elm) {
+                    elm.innerHTML = tenantName;
+                });
+
+                if (window['logoImage']) {
+                    logoImage.setAttribute('src',
+                        tenant && loginInformations.tenant.logoId ?
+                        remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId:
+                        getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
+                    );
+                    logoImage.style.display = 'block';
+                }
             }
         });
     }

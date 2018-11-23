@@ -6,7 +6,7 @@
             <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
 
                 <div class="form-group clearfix">
-                    <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off" placeholder="{{getLoginPlaceholder()}}" name="userNameOrEmailAddress" required tabindex="1" />
+                    <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off" placeholder="{{l('Username')}}" name="userNameOrEmailAddress" required tabindex="1" />
                 </div>
 
                 <div class="form-group clearfix">
