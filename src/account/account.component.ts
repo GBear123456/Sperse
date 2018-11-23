@@ -1,10 +1,18 @@
-import { Component, Injector, OnInit, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+import { Directive, Component, Injector, ViewContainerRef, ViewEncapsulation,
+    ComponentFactoryResolver, ViewChild, Type, OnInit } from '@angular/core';
+
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import * as _ from 'lodash';
-import * as moment from 'moment';
-import { LoginService } from './login/login.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { HostLayoutComponent } from './layouts/host/host-layout.component';
+import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
+
+@Directive({
+    selector: '[ad-account-host]'
+})
+export class AdLayoutHostDirective {
+    constructor(public viewContainerRef: ViewContainerRef) { }
+}
 
 @Component({
     templateUrl: './account.component.html',
@@ -14,18 +22,13 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     encapsulation: ViewEncapsulation.None
 })
 export class AccountComponent extends AppComponentBase implements OnInit {
-
+    @ViewChild(AdLayoutHostDirective) adLayoutHost: AdLayoutHostDirective;
     private viewContainerRef: ViewContainerRef;
 
-    tenantName: string = AppConsts.defaultTenantName;
-    currentYear: number = moment().year();
-    remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-    tenantChangeDisabledRoutes: string[] = ['select-edition', 'buy', 'upgrade', 'extend', 'register-tenant'];
-
-    public constructor(
+    constructor(
         injector: Injector,
-        private _loginService: LoginService,
         private _appSession: AppSessionService,
+        private _componentFactoryResolver: ComponentFactoryResolver,
         viewContainerRef: ViewContainerRef
     ) {
         super(injector);
@@ -34,36 +37,15 @@ export class AccountComponent extends AppComponentBase implements OnInit {
         this.viewContainerRef = viewContainerRef;
     }
 
-    showTenantChange(): boolean {
-        if (!this._router.url) {
-            return false;
-        }
-
-        if (_.filter(this.tenantChangeDisabledRoutes, route => this._router.url.indexOf('/account/' + route) >= 0).length) {
-            return false;
-        }
-
-        return false;
-    }
-
-    ngOnInit(): void {
-        this._loginService.init();
-        this.setTitle('Login');
-
+    ngOnInit(): void {        
         let tenant = this._appSession.tenant;
-        if (tenant)
-            this.tenantName = tenant.name || tenant.tenancyName;
+        this.loadLayoutComponent(this.feature.isEnabled('PFM.Applications')  //!!VP should be used corresponding tenant option
+            ? LendSpaceLayoutComponent: HostLayoutComponent);
     }
 
-    goToHome(): void {
-        (window as any).location.href = '/';
-    }
-
-    getBgUrl(): string {
-        return 'url(./assets/metronic/dist/html/' + this.ui.getTheme() + '/assets/demo/' + this.ui.getTheme() +'/media/img/bg/bg-4.jpg)';
-    }
-
-    private supportsTenancyNameInUrl() {
-        return (AppConsts.appBaseUrlFormat && AppConsts.appBaseUrlFormat.indexOf(AppConsts.tenancyNamePlaceHolderInUrl) >= 0);
+    private loadLayoutComponent(component: Type<AppComponentBase>) {
+        this.adLayoutHost.viewContainerRef.createComponent(
+            this._componentFactoryResolver.resolveComponentFactory(component)
+        );
     }
 }

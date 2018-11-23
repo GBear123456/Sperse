@@ -9,11 +9,11 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { RecaptchaModule } from 'ng-recaptcha';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AccountRoutingModule } from './account-routing.module';
-import { AccountComponent } from './account.component';
+import { AccountComponent, AdLayoutHostDirective } from './account.component';
 import { ConfirmEmailComponent } from './email-activation/confirm-email.component';
 import { EmailActivationComponent } from './email-activation/email-activation.component';
 import { LanguageSwitchComponent } from './language-switch.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent, AdLoginHostDirective } from './login/login.component';
 import { LoginService } from './login/login.service';
 import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.component';
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
@@ -24,6 +24,11 @@ import { TenantChangeComponent } from './shared/tenant-change.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
 import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration.component';
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
+import { HostLoginComponent } from './login/layouts/host/host-login.component';
+import { LendSpaceLoginComponent } from './login/layouts/lend-space/lend-space-login.component';
+import { HostLayoutComponent } from './layouts/host/host-layout.component';
+import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
+import { LayoutModule } from '../personal-finance/shared/layout/layout.module';
 
 @NgModule({
     imports: [
@@ -38,6 +43,7 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
 
         CommonModule,
 
+        LayoutModule,
         UtilsModule,
         PaymentInfoModule,
         ServiceProxyModule,
@@ -45,9 +51,15 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
     ],
     declarations: [
         AccountComponent,
+        AdLayoutHostDirective,
+        HostLayoutComponent,
+        LendSpaceLayoutComponent,
         TenantChangeComponent,
         TenantChangeModalComponent,
         LoginComponent,
+        HostLoginComponent,
+        LendSpaceLoginComponent,
+        AdLoginHostDirective,
         ForgotPasswordComponent,
         ResetPasswordComponent,
         EmailActivationComponent,
@@ -57,6 +69,12 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
         SelectTenantComponent,
         LanguageSwitchComponent,
         CompleteTenantRegistrationComponent
+    ],
+    entryComponents: [
+        HostLayoutComponent,
+        HostLoginComponent,
+        LendSpaceLoginComponent,
+        LendSpaceLayoutComponent
     ],
     providers: [
         LoginService
