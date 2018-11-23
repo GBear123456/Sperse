@@ -70,9 +70,8 @@
         <h2 class="yellow-title">Why You Should Choose Us?</h2>
         <p class="description text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel facilisis.</p>
         <ul class="list-unstyled d-flex flex-wrap why-list">
-            <li class="why-item" *ngFor="let item of features; let i = index" [ngClass]="{'hover' : i == 1}">
-                <!-- class hover is temp solution while I haven't vector icons -->
-                <img [src]="item.imgSrc" alt="Credit Score">
+            <li class="why-item" *ngFor="let item of features">
+                <div class="img-wrapper {{item.imgClass}}"></div>
                 <h3>{{item.title}}</h3>
                 <p>{{item.text}}</p>
             </li>
