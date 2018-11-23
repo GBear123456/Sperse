@@ -1,9 +1,9 @@
 <div class="container wrapper content-wrap">
     <header>
-        <h1>{{ ls.l('Offers_CreditCards') }}</h1>
-        <div class="subHeader">
+        <h1>{{ categoryDisplayName$ | async }}</h1>
+        <div class="subHeader" [hidden]="creditCardsAmount === undefined">
             <div class="foundCount">
-                {{ ls.l('Offers_WeFound') }} <span>{{ creditCardsAmount }}</span> {{ ls.l('Offers_FoundCreditCards') }}
+                {{ ls.l('Offers_WeFound') }} <span>{{ creditCardsAmount }}</span> {{ categoryDisplayName$ | async }}
             </div>
             <div class="sortBy">
                 <span class="m--hidden-mobile">{{ ls.l('Offers_SortBy') }}</span>
@@ -42,10 +42,10 @@
             <dx-scroll-view [height]="scrollHeight" *ngIf="creditCardsAmount">
                 <ul class="credit-cards-list">
                     <li class="row" *ngFor="let creditCardItem of displayedCreditCards$ | async">
-                        <div class="image col-3 col-md-4 col-lg-3">
+                        <div class="image col-12 col-md-4 col-lg-3">
                             <img [src]="creditCardItem.logoUrl" [alt]="creditCardItem.name">
                         </div>
-                        <div class="description col-9 col-md-8 col-lg-6">
+                        <div class="description col-12 col-md-8 col-lg-6">
                             <h4><span *ngIf="creditCardItem.bankName">{{ creditCardItem.bankName }} + ' - '</span>{{creditCardItem.name }}</h4>
                             <div class="rating" *ngIf="creditCardItem.rating">
                                 <stars-rating [currentRating]="creditCardItem.rating"></stars-rating>
@@ -60,14 +60,14 @@
                                 </ng-container>
                             </ul>
                         </div>
-                        <div class="actions col-sm-12 col-lg-3">
+                        <div class="actions col-12 col-lg-3">
                             <button class="applyButton" (click)="applyOffer(creditCardItem)"><span>{{ ls.l('Apply') }}</span></button>
                             <button class="viewMore" (click)="viewCardDetails(creditCardItem)">{{ ls.l('View_details') }}</button>
                         </div>
                     </li>
                 </ul>
             </dx-scroll-view>
-            <app-no-data *ngIf="creditCardloaded && !creditCardsAmount"></app-no-data>
+            <app-no-data *ngIf="creditCardloaded && creditCardsAmount === 0"></app-no-data>
         </div>
     </div>
 </div>

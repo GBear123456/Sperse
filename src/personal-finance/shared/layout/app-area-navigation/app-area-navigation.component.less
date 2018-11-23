@@ -5,7 +5,7 @@
     align-items: center;
     justify-content: start;
     width: 100%;
-    
+
     .logo {
         position: absolute;
         right: calc(~"50% - 80px");
@@ -23,26 +23,9 @@
             display: inline-block;
             padding: 0 15px;
             a {
-                display: block;
-                text-decoration: none;
-                text-transform: uppercase;
-                font-family: Open Sans;
-                font-size: 14px;
-                font-weight: bold;
                 color: rgba(255, 255, 255, 0.7);
                 padding: 12px 10px;
-                position: relative;
                 white-space: nowrap;
-                &.active,
-                &:hover {
-                    color: @font-color-darkGray;
-                    img {
-                        opacity: 0;
-                        &.active-img {
-                            opacity: 1;
-                        }
-                    }
-                }
             }
         }
     }
@@ -51,6 +34,25 @@
         right: unset!important;
         li {
             padding: 0;
+            position: relative;
+            a {
+                color: @font-color-lightGray;
+                padding: 10px;
+                background-color: transparent;
+            }
+            ul.responsive-sublinks {
+                padding-left: 30px;
+                li a {
+                    padding: 5px;
+                }
+            }
+        }
+    }
+
+    .app-area-navigation,
+    .app-responsive-menu {
+        li {
+            position: relative;
             a {
                 display: block;
                 text-decoration: none;
@@ -58,22 +60,44 @@
                 font-family: Open Sans;
                 font-size: 14px;
                 font-weight: bold;
-                color: @font-color-lightGray;
-                padding: 10px;
                 position: relative;
                 white-space: nowrap;
-                background-color: transparent;
-                &.active,
-                &:hover {
-                    color: @font-color-darkGray;
-                    img {
-                        opacity: 0;
-                        &.active-img {
-                            opacity: 1;
-                        }
+            }
+            a.active,
+            a:hover,
+            &.active > a {
+                color: @font-color-darkGray;
+                img {
+                    opacity: 0;
+                    &.active-img {
+                        opacity: 1;
                     }
                 }
             }
+        }
+    }
+
+    .sublinks {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 45px;
+        padding-left: 0;
+        text-align: left;
+        border-radius: 10px;
+        box-shadow: 7px 11px 27px 0 rgba(0, 0, 0, 0.05);
+        background-color: #fff;
+        li {
+            display: block;
+            a {
+                color: #002849;
+                &.active {
+                    color: @light-blue;
+                }
+            }
+        }
+        &.opened {
+            display: block;
         }
     }
 

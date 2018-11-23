@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 /** Third party imports */
 import { MatRadioChange } from '@angular/material/radio';
 import { Observable, Subject, ReplaySubject, of } from 'rxjs';
-import { finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { finalize, map, switchMap, takeUntil, pluck, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -62,7 +62,7 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
     activate() {
         this.route.params.pipe(
             takeUntil(this.deactivate$),
-            map((params: any) => params.id)
+            pluck('id')
         ).subscribe(id => this.selectedCardId.next(+id));
         this.creditCards$ = this.getCreditCards();
         this.creditCards$.subscribe(creditCards => this.cardsAmount = creditCards.length);
