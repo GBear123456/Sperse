@@ -3,8 +3,8 @@
     const AbpLocalizationCultureName = 'Abp.Localization.CultureName';
     const EncryptedAuthToken = 'enc_auth_token';
 
-    var appBootstrap;
     var remoteServiceUrl = '';
+    var appContext, appBootstrap;
     var pathParts = location.pathname.split('/').filter(Boolean);
     var cookie = queryString(document.cookie, ';');
     var params = queryString(document.location.search.substr(1), '&');
@@ -14,8 +14,9 @@
             (pathParts.pop() == 'login')
         )
     ) {
-        window.loginPageHandler = function(bootMethod) { 
-            appBootstrap = bootMethod;
+        window.loginPageHandler = function(context, boot) { 
+            appContext = context;
+            appBootstrap = boot;
         };
 
         document.getElementById('forget-password').href = location.origin + '/account/forgot-password';
@@ -64,11 +65,11 @@
             var loginInformations = response && response.result,
                 tenant = loginInformations && loginInformations.tenant,
                 tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse',
-                features = loginInformations.application.features;
+                features = loginInformations && loginInformations.application.features;
 
             if (features && features['PFM'] && JSON.parse(features['PFM'].value)) {
                 window.loginPageHandler = undefined;
-                appBootstrap && appBootstrap();
+                ppBootstrap && appBootstrap.call(appContext);
             } else {
                 document.getElementById('loginPage').style.display = 'block';
                 document.getElementById('loadSpinner').style.display = 'none';

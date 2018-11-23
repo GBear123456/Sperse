@@ -18,7 +18,8 @@ import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offe
                 path: '',
                 component: LandingComponent,
                 children: [
-                    { path: '', component: CreditReportComponent },
+                    { path: '', component: LendSpaceDarkComponent, data: { wrapperDisabled: true } },
+                    { path: 'credit-report', component: CreditReportComponent },
                     { path: 'signup', component: CreditWizardPageComponent},
                     { path: 'offers', component: OffersComponent },
                     { path: 'offers/:category', component: OffersComponent },
