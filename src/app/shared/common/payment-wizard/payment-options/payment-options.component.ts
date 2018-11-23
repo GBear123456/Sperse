@@ -196,7 +196,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
             .pipe(finalize(() => { this.appHttpConfiguration.avoidErrorHandling = false; }))
             .subscribe(
                 res => {
-                    if (!this.paymentMethodsConfig[paymentMethod].skipRefreshAfterClose) {
+                    if (!this.paymentMethodsConfig[paymentMethod] || !this.paymentMethodsConfig[paymentMethod].skipRefreshAfterClose) {
                         this.refreshAfterClose.emit();
                     }
                     this.appService.loadModeuleSubscriptions();

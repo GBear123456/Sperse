@@ -50,20 +50,6 @@
                         <span [class]="company.annualRevenue && 'clear-contact' || 'hidden'" (click)="company.annualRevenue = ''"><i class="minus-icon"></i></span>
                     </div>
 
-                    <div class="field state">
-                        <label for="state">{{ l('State') }}</label>
-                        <div class="drop-down-box-wrapper">
-                            <dx-select-box
-                                [inputAttr]="{ id: 'state' }"
-                                name="state"
-                                displayExpr="name"
-                                valueExpr="code"
-                                placeholder="{{l('Select')}}"
-                                [dataSource]="states"
-                                [(value)]="company.formedStateId">
-                            </dx-select-box>
-                        </div>
-                    </div>
                     <div class="field country">
                         <label for="country">{{ l('Country') }}</label>
                         <div class="drop-down-box-wrapper">
@@ -75,6 +61,20 @@
                                 [dataSource]="countries"
                                 [(value)]="company.formedCountryId"
                                 (onValueChanged)="loadStates($event._value)">
+                            </dx-select-box>
+                        </div>
+                    </div>
+                    <div class="field state">
+                        <label for="state">{{ l('State') }}</label>
+                        <div class="drop-down-box-wrapper">
+                            <dx-select-box
+                                [inputAttr]="{ id: 'state' }"
+                                name="state"
+                                displayExpr="name"
+                                valueExpr="code"
+                                placeholder="{{l('Select')}}"
+                                [dataSource]="states"
+                                [(value)]="company.formedStateId">
                             </dx-select-box>
                         </div>
                     </div>

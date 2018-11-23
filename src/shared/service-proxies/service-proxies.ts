@@ -1388,13 +1388,10 @@ export class ApplicationServiceProxy {
 
     /**
      * @request (optional) 
-     * @sendWelcomeEmail (optional) 
      * @return Success
      */
-    registerApplicant(request: ApplicationInfo | null | undefined, sendWelcomeEmail: boolean | null | undefined): Observable<RegisterApplicationResponse> {
-        let url_ = this.baseUrl + "/api/services/PFM/Application/RegisterApplicant?";
-        if (sendWelcomeEmail !== undefined)
-            url_ += "sendWelcomeEmail=" + encodeURIComponent("" + sendWelcomeEmail) + "&"; 
+    registerApplicant(request: RegisterApplicantRequest | null | undefined): Observable<RegisterApplicantResponse> {
+        let url_ = this.baseUrl + "/api/services/PFM/Application/RegisterApplicant";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(request);
@@ -1416,14 +1413,14 @@ export class ApplicationServiceProxy {
                 try {
                     return this.processRegisterApplicant(<any>response_);
                 } catch (e) {
-                    return <Observable<RegisterApplicationResponse>><any>_observableThrow(e);
+                    return <Observable<RegisterApplicantResponse>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<RegisterApplicationResponse>><any>_observableThrow(response_);
+                return <Observable<RegisterApplicantResponse>><any>_observableThrow(response_);
         }));
     }
 
-    protected processRegisterApplicant(response: HttpResponseBase): Observable<RegisterApplicationResponse> {
+    protected processRegisterApplicant(response: HttpResponseBase): Observable<RegisterApplicantResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1434,7 +1431,7 @@ export class ApplicationServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? RegisterApplicationResponse.fromJS(resultData200) : new RegisterApplicationResponse();
+            result200 = resultData200 ? RegisterApplicantResponse.fromJS(resultData200) : new RegisterApplicantResponse();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1442,7 +1439,7 @@ export class ApplicationServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<RegisterApplicationResponse>(<any>null);
+        return _observableOf<RegisterApplicantResponse>(<any>null);
     }
 }
 
@@ -20880,130 +20877,6 @@ export class TenantServiceProxy {
 }
 
 @Injectable()
-export class TenantCustomizationServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getTenantCustomization(customizationGroupName: string, customizationName: string): Observable<TenantCustomizationDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/GetTenantCustomization?";
-        if (customizationGroupName === undefined || customizationGroupName === null)
-            throw new Error("The parameter 'customizationGroupName' must be defined and cannot be null.");
-        else
-            url_ += "CustomizationGroupName=" + encodeURIComponent("" + customizationGroupName) + "&"; 
-        if (customizationName === undefined || customizationName === null)
-            throw new Error("The parameter 'customizationName' must be defined and cannot be null.");
-        else
-            url_ += "CustomizationName=" + encodeURIComponent("" + customizationName) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetTenantCustomization(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetTenantCustomization(<any>response_);
-                } catch (e) {
-                    return <Observable<TenantCustomizationDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<TenantCustomizationDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetTenantCustomization(response: HttpResponseBase): Observable<TenantCustomizationDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? TenantCustomizationDto.fromJS(resultData200) : new TenantCustomizationDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<TenantCustomizationDto>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    addTenantCustomization(input: TenantCustomizationDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/AddTenantCustomization";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAddTenantCustomization(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAddTenantCustomization(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processAddTenantCustomization(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class TenantHostServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -27635,12 +27508,10 @@ export interface IUserInfoDto {
     profileThumbnailId: string | undefined;
 }
 
-export class ApplicationInfo implements IApplicationInfo {
-    systemType!: ApplicationInfoSystemType;
-    campaignId!: number;
+export class RegisterApplicantRequest implements IRegisterApplicantRequest {
+    systemType!: RegisterApplicantRequestSystemType;
     testMode!: boolean | undefined;
-    applicantId!: string;
-    applicationId!: string;
+    sendWelcomeEmail!: boolean | undefined;
     trackingInformation!: TrackingInformation | undefined;
     personalInformation!: PersonalInformation | undefined;
     debtInformation!: DebtInformation | undefined;
@@ -27649,7 +27520,7 @@ export class ApplicationInfo implements IApplicationInfo {
     bankInformation!: BankInformation | undefined;
     legalInformation!: LegalInformation | undefined;
 
-    constructor(data?: IApplicationInfo) {
+    constructor(data?: IRegisterApplicantRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -27661,10 +27532,8 @@ export class ApplicationInfo implements IApplicationInfo {
     init(data?: any) {
         if (data) {
             this.systemType = data["systemType"];
-            this.campaignId = data["campaignId"];
             this.testMode = data["testMode"];
-            this.applicantId = data["applicantId"];
-            this.applicationId = data["applicationId"];
+            this.sendWelcomeEmail = data["sendWelcomeEmail"];
             this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
             this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
             this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
@@ -27675,9 +27544,9 @@ export class ApplicationInfo implements IApplicationInfo {
         }
     }
 
-    static fromJS(data: any): ApplicationInfo {
+    static fromJS(data: any): RegisterApplicantRequest {
         data = typeof data === 'object' ? data : {};
-        let result = new ApplicationInfo();
+        let result = new RegisterApplicantRequest();
         result.init(data);
         return result;
     }
@@ -27685,10 +27554,8 @@ export class ApplicationInfo implements IApplicationInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
-        data["campaignId"] = this.campaignId;
         data["testMode"] = this.testMode;
-        data["applicantId"] = this.applicantId;
-        data["applicationId"] = this.applicationId;
+        data["sendWelcomeEmail"] = this.sendWelcomeEmail;
         data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
         data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
@@ -27700,12 +27567,10 @@ export class ApplicationInfo implements IApplicationInfo {
     }
 }
 
-export interface IApplicationInfo {
-    systemType: ApplicationInfoSystemType;
-    campaignId: number;
+export interface IRegisterApplicantRequest {
+    systemType: RegisterApplicantRequestSystemType;
     testMode: boolean | undefined;
-    applicantId: string;
-    applicationId: string;
+    sendWelcomeEmail: boolean | undefined;
     trackingInformation: TrackingInformation | undefined;
     personalInformation: PersonalInformation | undefined;
     debtInformation: DebtInformation | undefined;
@@ -27716,7 +27581,10 @@ export interface IApplicationInfo {
 }
 
 export class TrackingInformation implements ITrackingInformation {
-    signupDateTimeStamp!: moment.Moment | undefined;
+    campaignId!: number;
+    applicantId!: string;
+    applicationId!: string;
+    applicationDate!: moment.Moment | undefined;
     subId!: string | undefined;
     affiliateId!: number;
     vertical!: TrackingInformationVertical;
@@ -27736,7 +27604,10 @@ export class TrackingInformation implements ITrackingInformation {
 
     init(data?: any) {
         if (data) {
-            this.signupDateTimeStamp = data["signupDateTimeStamp"] ? moment(data["signupDateTimeStamp"].toString()) : <any>undefined;
+            this.campaignId = data["campaignId"];
+            this.applicantId = data["applicantId"];
+            this.applicationId = data["applicationId"];
+            this.applicationDate = data["applicationDate"] ? moment(data["applicationDate"].toString()) : <any>undefined;
             this.subId = data["subId"];
             this.affiliateId = data["affiliateId"];
             this.vertical = data["vertical"];
@@ -27756,7 +27627,10 @@ export class TrackingInformation implements ITrackingInformation {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["signupDateTimeStamp"] = this.signupDateTimeStamp ? this.signupDateTimeStamp.toISOString() : <any>undefined;
+        data["campaignId"] = this.campaignId;
+        data["applicantId"] = this.applicantId;
+        data["applicationId"] = this.applicationId;
+        data["applicationDate"] = this.applicationDate ? this.applicationDate.toISOString() : <any>undefined;
         data["subId"] = this.subId;
         data["affiliateId"] = this.affiliateId;
         data["vertical"] = this.vertical;
@@ -27769,7 +27643,10 @@ export class TrackingInformation implements ITrackingInformation {
 }
 
 export interface ITrackingInformation {
-    signupDateTimeStamp: moment.Moment | undefined;
+    campaignId: number;
+    applicantId: string;
+    applicationId: string;
+    applicationDate: moment.Moment | undefined;
     subId: string | undefined;
     affiliateId: number;
     vertical: TrackingInformationVertical;
@@ -27792,7 +27669,7 @@ export class PersonalInformation implements IPersonalInformation {
     isActiveMilitary!: boolean;
     phone!: string;
     phoneMobile!: string | undefined;
-    prefferedContactTOD!: PersonalInformationPrefferedContactTOD;
+    preferredContactTOD!: PersonalInformationPreferredContactTOD;
     address1!: string;
     address2!: string | undefined;
     city!: string;
@@ -27827,7 +27704,7 @@ export class PersonalInformation implements IPersonalInformation {
             this.isActiveMilitary = data["isActiveMilitary"];
             this.phone = data["phone"];
             this.phoneMobile = data["phoneMobile"];
-            this.prefferedContactTOD = data["prefferedContactTOD"];
+            this.preferredContactTOD = data["preferredContactTOD"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
             this.city = data["city"];
@@ -27862,7 +27739,7 @@ export class PersonalInformation implements IPersonalInformation {
         data["isActiveMilitary"] = this.isActiveMilitary;
         data["phone"] = this.phone;
         data["phoneMobile"] = this.phoneMobile;
-        data["prefferedContactTOD"] = this.prefferedContactTOD;
+        data["preferredContactTOD"] = this.preferredContactTOD;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
         data["city"] = this.city;
@@ -27890,7 +27767,7 @@ export interface IPersonalInformation {
     isActiveMilitary: boolean;
     phone: string;
     phoneMobile: string | undefined;
-    prefferedContactTOD: PersonalInformationPrefferedContactTOD;
+    preferredContactTOD: PersonalInformationPreferredContactTOD;
     address1: string;
     address2: string | undefined;
     city: string;
@@ -28175,14 +28052,11 @@ export interface ILegalInformation {
     isTCPAChecked: boolean | undefined;
 }
 
-export class RegisterApplicationResponse implements IRegisterApplicationResponse {
-    contactId!: number | undefined;
-    username!: string | undefined;
-    password!: string | undefined;
-    loginUrl!: string | undefined;
-    userAlreadyExists!: boolean | undefined;
+export class RegisterApplicantResponse implements IRegisterApplicantResponse {
+    applicantUserId!: number | undefined;
+    newUserInfo!: UserInfo | undefined;
 
-    constructor(data?: IRegisterApplicationResponse) {
+    constructor(data?: IRegisterApplicantResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -28193,38 +28067,73 @@ export class RegisterApplicationResponse implements IRegisterApplicationResponse
 
     init(data?: any) {
         if (data) {
-            this.contactId = data["contactId"];
-            this.username = data["username"];
-            this.password = data["password"];
-            this.loginUrl = data["loginUrl"];
-            this.userAlreadyExists = data["userAlreadyExists"];
+            this.applicantUserId = data["applicantUserId"];
+            this.newUserInfo = data["newUserInfo"] ? UserInfo.fromJS(data["newUserInfo"]) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): RegisterApplicationResponse {
+    static fromJS(data: any): RegisterApplicantResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new RegisterApplicationResponse();
+        let result = new RegisterApplicantResponse();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["username"] = this.username;
-        data["password"] = this.password;
-        data["loginUrl"] = this.loginUrl;
-        data["userAlreadyExists"] = this.userAlreadyExists;
+        data["applicantUserId"] = this.applicantUserId;
+        data["newUserInfo"] = this.newUserInfo ? this.newUserInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
-export interface IRegisterApplicationResponse {
-    contactId: number | undefined;
-    username: string | undefined;
+export interface IRegisterApplicantResponse {
+    applicantUserId: number | undefined;
+    newUserInfo: UserInfo | undefined;
+}
+
+export class UserInfo implements IUserInfo {
+    userName!: string | undefined;
+    password!: string | undefined;
+    loginUrl!: string | undefined;
+
+    constructor(data?: IUserInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userName = data["userName"];
+            this.password = data["password"];
+            this.loginUrl = data["loginUrl"];
+        }
+    }
+
+    static fromJS(data: any): UserInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        data["loginUrl"] = this.loginUrl;
+        return data; 
+    }
+}
+
+export interface IUserInfo {
+    userName: string | undefined;
     password: string | undefined;
     loginUrl: string | undefined;
-    userAlreadyExists: boolean | undefined;
 }
 
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
@@ -47269,7 +47178,6 @@ export interface ICampaignDetailsDto {
 export class SubmitApplicationInput implements ISubmitApplicationInput {
     systemType!: SubmitApplicationInputSystemType;
     campaignId!: number;
-    testMode!: boolean | undefined;
 
     constructor(data?: ISubmitApplicationInput) {
         if (data) {
@@ -47284,7 +47192,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         if (data) {
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
-            this.testMode = data["testMode"];
         }
     }
 
@@ -47299,7 +47206,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
-        data["testMode"] = this.testMode;
         return data; 
     }
 }
@@ -47307,7 +47213,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
 export interface ISubmitApplicationInput {
     systemType: SubmitApplicationInputSystemType;
     campaignId: number;
-    testMode: boolean | undefined;
 }
 
 export class SubmitApplicationOutput implements ISubmitApplicationOutput {
@@ -50874,6 +50779,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     logoId!: string | undefined;
     logoFileType!: string | undefined;
     customCssId!: string | undefined;
+    customToSDocumentId!: string | undefined;
+    customPrivacyPolicyDocumentId!: string | undefined;
     creationTime!: moment.Moment | undefined;
     paymentPeriodType!: TenantLoginInfoDtoPaymentPeriodType | undefined;
     creationTimeString!: string | undefined;
@@ -50896,6 +50803,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.logoId = data["logoId"];
             this.logoFileType = data["logoFileType"];
             this.customCssId = data["customCssId"];
+            this.customToSDocumentId = data["customToSDocumentId"];
+            this.customPrivacyPolicyDocumentId = data["customPrivacyPolicyDocumentId"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.paymentPeriodType = data["paymentPeriodType"];
             this.creationTimeString = data["creationTimeString"];
@@ -50918,6 +50827,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
         data["customCssId"] = this.customCssId;
+        data["customToSDocumentId"] = this.customToSDocumentId;
+        data["customPrivacyPolicyDocumentId"] = this.customPrivacyPolicyDocumentId;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["creationTimeString"] = this.creationTimeString;
@@ -50933,6 +50844,8 @@ export interface ITenantLoginInfoDto {
     logoId: string | undefined;
     logoFileType: string | undefined;
     customCssId: string | undefined;
+    customToSDocumentId: string | undefined;
+    customPrivacyPolicyDocumentId: string | undefined;
     creationTime: moment.Moment | undefined;
     paymentPeriodType: TenantLoginInfoDtoPaymentPeriodType | undefined;
     creationTimeString: string | undefined;
@@ -50997,8 +50910,9 @@ export interface IApplicationInfoDto {
 }
 
 export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
-    favicons!: FaviconDto[] | undefined;
     siteTitle!: string | undefined;
+    faviconBaseUrl!: string | undefined;
+    favicons!: FaviconDto[] | undefined;
 
     constructor(data?: ITenantCustomizationInfoDto) {
         if (data) {
@@ -51011,12 +50925,13 @@ export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
 
     init(data?: any) {
         if (data) {
+            this.siteTitle = data["siteTitle"];
+            this.faviconBaseUrl = data["faviconBaseUrl"];
             if (data["favicons"] && data["favicons"].constructor === Array) {
                 this.favicons = [];
                 for (let item of data["favicons"])
                     this.favicons.push(FaviconDto.fromJS(item));
             }
-            this.siteTitle = data["siteTitle"];
         }
     }
 
@@ -51029,19 +50944,21 @@ export class TenantCustomizationInfoDto implements ITenantCustomizationInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["siteTitle"] = this.siteTitle;
+        data["faviconBaseUrl"] = this.faviconBaseUrl;
         if (this.favicons && this.favicons.constructor === Array) {
             data["favicons"] = [];
             for (let item of this.favicons)
                 data["favicons"].push(item.toJSON());
         }
-        data["siteTitle"] = this.siteTitle;
         return data; 
     }
 }
 
 export interface ITenantCustomizationInfoDto {
-    favicons: FaviconDto[] | undefined;
     siteTitle: string | undefined;
+    faviconBaseUrl: string | undefined;
+    favicons: FaviconDto[] | undefined;
 }
 
 export class AbpStringValueDto implements IAbpStringValueDto {
@@ -51081,8 +50998,10 @@ export interface IAbpStringValueDto {
 }
 
 export class FaviconDto implements IFaviconDto {
-    faviconName!: string | undefined;
-    faviconUri!: string | undefined;
+    name!: string | undefined;
+    type!: string | undefined;
+    relationship!: string | undefined;
+    size!: string | undefined;
 
     constructor(data?: IFaviconDto) {
         if (data) {
@@ -51095,8 +51014,10 @@ export class FaviconDto implements IFaviconDto {
 
     init(data?: any) {
         if (data) {
-            this.faviconName = data["faviconName"];
-            this.faviconUri = data["faviconUri"];
+            this.name = data["name"];
+            this.type = data["type"];
+            this.relationship = data["relationship"];
+            this.size = data["size"];
         }
     }
 
@@ -51109,15 +51030,19 @@ export class FaviconDto implements IFaviconDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["faviconName"] = this.faviconName;
-        data["faviconUri"] = this.faviconUri;
+        data["name"] = this.name;
+        data["type"] = this.type;
+        data["relationship"] = this.relationship;
+        data["size"] = this.size;
         return data; 
     }
 }
 
 export interface IFaviconDto {
-    faviconName: string | undefined;
-    faviconUri: string | undefined;
+    name: string | undefined;
+    type: string | undefined;
+    relationship: string | undefined;
+    size: string | undefined;
 }
 
 export class UpdateUserSignInTokenOutput implements IUpdateUserSignInTokenOutput {
@@ -52047,50 +51972,6 @@ export interface IEntityDto {
     id: number | undefined;
 }
 
-export class TenantCustomizationDto implements ITenantCustomizationDto {
-    customizationGroupName!: string;
-    customizationName!: string;
-    value!: string | undefined;
-
-    constructor(data?: ITenantCustomizationDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.customizationGroupName = data["customizationGroupName"];
-            this.customizationName = data["customizationName"];
-            this.value = data["value"];
-        }
-    }
-
-    static fromJS(data: any): TenantCustomizationDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TenantCustomizationDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["customizationGroupName"] = this.customizationGroupName;
-        data["customizationName"] = this.customizationName;
-        data["value"] = this.value;
-        return data; 
-    }
-}
-
-export interface ITenantCustomizationDto {
-    customizationGroupName: string;
-    customizationName: string;
-    value: string | undefined;
-}
-
 export class TenantAppHostOutput implements ITenantAppHostOutput {
     appHostName!: string | undefined;
 
@@ -52426,6 +52307,7 @@ export interface IIntegrationsSettings {
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
     apiBaseUrl!: string | undefined;
+    publicSiteUrl!: string | undefined;
     testMode!: boolean | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
@@ -52441,6 +52323,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
         if (data) {
             this.apiKey = data["apiKey"];
             this.apiBaseUrl = data["apiBaseUrl"];
+            this.publicSiteUrl = data["publicSiteUrl"];
             this.testMode = data["testMode"];
         }
     }
@@ -52456,6 +52339,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
         data["apiBaseUrl"] = this.apiBaseUrl;
+        data["publicSiteUrl"] = this.publicSiteUrl;
         data["testMode"] = this.testMode;
         return data; 
     }
@@ -52464,6 +52348,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
     apiBaseUrl: string | undefined;
+    publicSiteUrl: string | undefined;
     testMode: boolean | undefined;
 }
 
@@ -53400,6 +53285,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
     isLocked!: boolean | undefined;
+    trackingCode!: string | undefined;
     hasRecurringBilling!: boolean | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
@@ -53417,6 +53303,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.editionName = data["editionName"];
             this.isLocked = data["isLocked"];
+            this.trackingCode = data["trackingCode"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
         }
     }
@@ -53434,6 +53321,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
         data["isLocked"] = this.isLocked;
+        data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         return data; 
     }
@@ -53444,6 +53332,7 @@ export interface IModuleSubscriptionInfoDto {
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
     isLocked: boolean | undefined;
+    trackingCode: string | undefined;
     hasRecurringBilling: boolean | undefined;
 }
 
@@ -57108,7 +56997,7 @@ export enum UpdateActivityDtoType {
     Event = "Event", 
 }
 
-export enum ApplicationInfoSystemType {
+export enum RegisterApplicantRequestSystemType {
     EPCVIP = "EPCVIP", 
 }
 
@@ -57116,7 +57005,7 @@ export enum TrackingInformationVertical {
     HybridLoans = "HybridLoans", 
 }
 
-export enum PersonalInformationPrefferedContactTOD {
+export enum PersonalInformationPreferredContactTOD {
     Morning = "Morning", 
     Afternoon = "Afternoon", 
     Evening = "Evening", 

@@ -18,12 +18,14 @@ import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offe
                 path: '',
                 component: LandingComponent,
                 children: [
-                    { path: '', component: CreditReportComponent },
+                    { path: '', component: LendSpaceDarkComponent, data: { wrapperDisabled: true } },
+                    { path: 'credit-report', component: CreditReportComponent },
                     { path: 'signup', component: CreditWizardPageComponent},
                     { path: 'offers', component: OffersComponent },
+                    { path: 'offers/:category', component: OffersComponent },
                     { path: 'offer/:id', component: OfferDetailsComponent },
                     { path: 'lend-space', component: LendSpaceComponent },
-                    { path: 'lend-space-dark', component: LendSpaceDarkComponent },
+                    { path: 'lend-space-dark', component: LendSpaceDarkComponent, data: { wrapperDisabled: true } },
                     // { path: 'credit-cards', component: CreditCardsComponent },
                     // { path: 'loans', component: LoanComponent }
                 ]

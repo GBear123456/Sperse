@@ -25,18 +25,29 @@
     }
 
     .social {
+        max-width: 660px;
+
+        @media all and (max-width: 1440px) {
+            max-width: 445px;
+        }
+
+        @media all and (max-width: 1366px) {
+            max-width: 395px;
+        }
+
         ul {
             margin-bottom: 0;
 
             li {
-              margin: 0px;
+              margin: 0;
               white-space: nowrap;
             }
+
             a {        
                 width: 35px;
                 display: inline-block;
                 font-size: 25px;
-                vertical-align: top;
+
                 img {
                   vertical-align: top;
                 }
@@ -86,7 +97,7 @@
         vertical-align: top;        
 
         .inplace-edit-view-mode {
-            width: 80%;
+            width: 94%;
             cursor: pointer;
             display: inline-block;
             &:hover {

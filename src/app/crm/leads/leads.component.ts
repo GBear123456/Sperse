@@ -11,6 +11,7 @@ import {
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { RouteReuseStrategy } from '@angular/router';
+import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { Store, select } from '@ngrx/store';
 import { first } from 'rxjs/operators';
@@ -101,6 +102,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     filterModelStar: FilterModel;
 
     private rootComponent: any;
+    private exportCallback: Function;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Lead';
     private filters: FilterModel[];
@@ -191,12 +193,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onContentReady(event) {
         this.finishLoading();
-        if (this.dataLayoutType == DataLayoutType.Grid)
-            this.setGridDataLoaded();
-        event.component.columnOption('command:edit', {
-            visibleIndex: -1,
-            width: 40
-        });
+        if (this.exportCallback)
+            this.exportCallback();
+        else {
+            if (this.dataLayoutType == DataLayoutType.Grid)
+                this.setGridDataLoaded();
+            event.component.columnOption('command:edit', {
+                visibleIndex: -1,
+                width: 40
+            });
+        }
     }
 
     refresh(invalidateDashboard = true) {
@@ -504,15 +510,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 text: this.l('Save as PDF'),
                                 icon: 'pdf',
                             }, {
-                                action: this.exportToXLS.bind(this),
+                                action: this.exportData.bind(this, options => {
+                                    return this.exportToXLS(options);
+                                }),
                                 text: this.l('Export to Excel'),
                                 icon: 'xls',
                             }, {
-                                action: this.exportToCSV.bind(this),
+                                action: this.exportData.bind(this, options => {
+                                    return this.exportToCSV(options);
+                                }),
                                 text: this.l('Export to CSV'),
                                 icon: 'sheet'
                             }, {
-                                action: this.exportToGoogleSheet.bind(this),
+                                action: this.exportData.bind(this, options => {
+                                    return this.exportToGoogleSheet(options);
+                                }),
                                 text: this.l('Export to Google Sheets'),
                                 icon: 'sheet'
                             }, { type: 'downloadOptions' }]
@@ -570,9 +582,44 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         ]);
     }
 
-    exportToCSV(option) {
-        if (this.dataGrid && !this.dataGrid.instance.getDataSource()) this.setDataGridInstance();
-        super.exportToCSV(option);
+    exportPipelineSelectedItemsFilter(dataSource) {
+        let selectedLeads = this.pipelineComponent.getSelectedLeads();
+        if (selectedLeads.length) {
+            dataSource.filter(selectedLeads.map((lead) => {
+                return ['Id', '=', lead.Id];
+            }).reduce((r, a) => r.concat([a, 'or']), []));
+        }
+        return selectedLeads.length;
+    }
+
+    exportData(callback, options) {
+        if (this.showPipeline) {
+            let importOption = 'all',
+                instance = this.dataGrid.instance,
+                dataSource = instance.option('dataSource'),
+                checkExportOption = (dataSource, ignoreFilter = false) => {
+                    if (options == importOption)
+                        ignoreFilter || this.processFilterInternal(this);
+                    else if (!this.exportPipelineSelectedItemsFilter(dataSource))
+                        importOption = options;
+                };
+
+            if (dataSource) {
+                checkExportOption(dataSource, true);
+                callback(importOption).then(
+                    () => dataSource.filter(null));
+            } else {
+                instance.option('dataSource',
+                    dataSource = new DataSource(this.dataSource));
+                checkExportOption(dataSource);
+                this.exportCallback = () => {
+                    this.exportCallback = null;
+                    callback(importOption).then(
+                        () => dataSource.filter(null));
+                };
+            }
+        } else
+            callback(options);
     }
 
     showCompactRowsHeight() {
@@ -627,13 +674,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    processFilterInternal() {
+    processFilterInternal(cxt = undefined) {
         if (this.showPipeline) {
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
         }
 
-        let context = this.showPipeline ? this.pipelineComponent: this;
+        let context = cxt || (this.showPipeline ? this.pipelineComponent : this);
         context.processODataFilter.call(context,
             this.dataGrid.instance, this.dataSourceURI,
                 this.filters, (filter) => {

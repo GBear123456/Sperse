@@ -17,8 +17,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, Subject, combineLatest } from 'rxjs';
-import { first, finalize, map, publishReplay, refCount, takeUntil } from 'rxjs/operators';
-import { isEmpty, pickBy } from 'lodash';
+import { first, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap } from 'rxjs/operators';
+import { camelCase, isEmpty, pickBy, lowerCase, upperFirst } from 'lodash';
 import { MatSelect } from '@angular/material';
 
 /** Third party improrts */
@@ -110,7 +110,10 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     private selectedSorting$ = this.selectedSorting.asObservable();
     scrollHeight: number;
     private rootComponent: RootComponent;
-    creditCardloaded  = false;
+    creditCardloaded = false;
+    category$: Observable<Category>;
+    categoryDisplayName$: Observable<string>;
+    defaultCategoryDisplayName: string = this.ls.l('Offers_CreditCards');
 
     constructor(
         injector: Injector,
@@ -127,41 +130,53 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        abp.ui.setBusy(this.creditCardsListRef.nativeElement);
-        this.creditCards$ = this.offerServiceProxy.getAll(undefined, Type.TrafficDistribution, 'US').pipe(
-            publishReplay(),
-            refCount(),
-            finalize(() => { this.creditCardloaded = true; abp.ui.clearBusy(this.creditCardsListRef.nativeElement); }),
-            /** @todo remove to avoid hardcoded data */
-            map(creditCards => creditCards.map(creditCard => {
-                return {
-                    ...creditCard,
-                    ...{
-                        'annualFee': '$45',
-                        'rewardsRate': '1.5% cashback',
-                        'rewardsBonus': '$100',
-                        'apr': '5.5%',
-                        'rating': Math.floor(Math.random() * 5) + 1,
-                        'reviewsAmount': Math.floor(Math.random() * 1000) + 1
-                    }
-                };
-            }))
-        );
-        /** Insert filters values from credit cards data */
-        this.creditCards$.pipe(first()).subscribe(creditCards => {
-            /** @todo uncomment in future when data will be good for filtering */
-            //this.fullFillFilterValues(creditCards);
-            this.hideTooBigFilters();
-        });
-        this.creditCards$.pipe(first()).subscribe(creditCards => {
-            this.creditCardsAmount = creditCards.length;
-            this.changeDetectorRef.detectChanges();
-        });
-        this.createFiltersObject();
         this.activate();
     }
 
     activate() {
+        this.category$ = this.route.params.pipe(
+            pluck('category'),
+            map((category: string) => Category[upperFirst(camelCase(category))])
+        );
+        this.categoryDisplayName$ = this.category$.pipe(map(category => category ? lowerCase(category) : this.defaultCategoryDisplayName));
+        this.creditCards$ = this.category$.pipe(
+            tap(() => { abp.ui.setBusy(this.creditCardsListRef.nativeElement); this.creditCardsAmount = undefined; }),
+            switchMap(category => this.offerServiceProxy.getAll(category, Type.TrafficDistribution, 'US').pipe(
+                finalize(() => {
+                    this.creditCardloaded = true;
+                    abp.ui.clearBusy(this.creditCardsListRef.nativeElement);
+                    this.changeDetectorRef.detectChanges();
+                })
+            )),
+            tap(creditCards => {
+                this.creditCardsAmount = creditCards.length;
+                this.changeDetectorRef.detectChanges();
+            }),
+            publishReplay(),
+            refCount(),
+            /** @todo remove to avoid hardcoded data */
+            map(creditCards => creditCards.map(creditCard => {
+                    return {
+                        ...creditCard,
+                        ...{
+                            'annualFee': '$45',
+                            'rewardsRate': '1.5% cashback',
+                            'rewardsBonus': '$100',
+                            'apr': '5.5%',
+                            'rating': Math.floor(Math.random() * 5) + 1,
+                            'reviewsAmount': Math.floor(Math.random() * 1000) + 1
+                        }
+                    };
+                }))
+        );
+
+        /** Insert filters values from credit cards data */
+        this.creditCards$.pipe(takeUntil(this.deactivate$)).subscribe(creditCards => {
+            /** @todo uncomment in future when data will be good for filtering */
+            //this.fullFillFilterValues(creditCards);
+            this.hideTooBigFilters();
+        });
+        this.createFiltersObject();
         this.displayedCreditCards$ =
             //combineLatest(
                 this.creditCards$; //,
@@ -246,7 +261,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     viewCardDetails(card: CampaignDto) {
-        this.router.navigate(['../offer', card.id], { relativeTo: this.route });
+        this.router.navigate(['/personal-finance/offer', card.id], { relativeTo: this.route });
     }
 
     toggleFiltering(e) {

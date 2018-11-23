@@ -47,6 +47,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     logoUploader: FileUploader;
     customCssUploader: FileUploader;
+    customToSUploader: FileUploader;
+    customPrivacyPolicyUploader: FileUploader;
 
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
 
@@ -143,6 +145,20 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss?id=' + this.appSession.tenant.customCssId + '" rel="stylesheet"/>');
             }
         );
+
+        this.customToSUploader = this.createUploader(
+            '/api/TenantCustomization/UploadCustomToSDocument',
+            result => {
+                this.appSession.tenant.customToSDocumentId = result.id;
+            }
+        );
+
+        this.customPrivacyPolicyUploader = this.createUploader(
+            '/api/TenantCustomization/UploadCustomPrivacyPolicyDocument',
+            result => {
+                this.appSession.tenant.customPrivacyPolicyDocumentId = result.id;
+            }
+        );
     }
 
     createUploader(url: string, success?: (result: any) => void): FileUploader {
@@ -179,6 +195,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.customCssUploader.uploadAll();
     }
 
+    uploadCustomPrivacyPolicy(): void {
+        this.customPrivacyPolicyUploader.uploadAll();
+    }
+
+    uploadCustomToS(): void {
+        this.customToSUploader.uploadAll();
+    }
+
     clearLogo(): void {
         this._tenantSettingsService.clearLogo().subscribe(() => {
             this._appSessionService.tenant.logoFileType = null;
@@ -191,6 +215,20 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this._tenantSettingsService.clearCustomCss().subscribe(() => {
             this.appSession.tenant.customCssId = null;
             $('#TenantCustomCss').remove();
+            this.notify.info(this.l('ClearedSuccessfully'));
+        });
+    }
+
+    clearCustomPrivacyPolicy(): void {
+        this._tenantSettingsService.clearCustomPrivacyPolicyDocument().subscribe(() => {
+            this.appSession.tenant.customPrivacyPolicyDocumentId = null;
+            this.notify.info(this.l('ClearedSuccessfully'));
+        });
+    }
+
+    clearCustomToS(): void {
+        this._tenantSettingsService.clearCustomToSDocument().subscribe(() => {
+            this.appSession.tenant.customToSDocumentId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
         });
     }

@@ -1,0 +1,71 @@
+:host {
+    .wraper {
+        height: 100vh;
+        width: 100%;
+        position: relative;
+        text-align: center;
+        .content  {
+            max-width: 600px;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            bottom: 0px;
+            right: 0px;
+            margin: auto;
+        }
+    }
+    
+    div.header {
+        z-index: 1;
+        position: fixed;
+        top: 0px;
+        width: 100%;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        div.logo {
+            display: inline-block;
+            height: 22px;
+        }
+        /deep/ app-area-navigation {
+            a {
+                color: #000!important;
+            }
+        }
+    }
+
+    div.footer {
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        height: 80px;
+        width: 100%;
+        background: #000;
+        position: fixed;
+        bottom: 0px;
+        /deep/ app-area-navigation {
+            a {
+                color: #FFF!important;
+            }
+        }
+    }
+
+    /deep/ app-area-navigation {
+        .right-actions, .logo {
+            display: none!important;
+        }
+
+        a {
+            font-family: Poppins!important;
+            font-size: 14px!important;
+            font-weight: 600!important;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: normal;
+            letter-spacing: normal;
+        }
+    }
+}

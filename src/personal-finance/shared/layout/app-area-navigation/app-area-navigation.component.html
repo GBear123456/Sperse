@@ -1,22 +1,38 @@
-<ul class="app-area-navigation">
-  <li *ngFor="let item of inlineMemberAreaLinks" class="app-list-item">
-      <a [routerLink]="item.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
-          {{l(item.name)}}
-      </a>
-  </li>
+<ul class="app-area-navigation" *ngIf="inlineMemberAreaLinks.length">
+    <li *ngFor="let item of inlineMemberAreaLinks" class="app-list-item" routerLinkActive="active">
+        <a (click)="navigationItemClick($event, item)" routerLinkActive="active" [class.active]="currentUrl === item.routerUrl" [routerLinkActiveOptions]="{exact:true}">
+            {{l(item.name)}}
+        </a>
+        <ul *ngIf="item.sublinks && item.sublinks.length" class="sublinks" #sublinks>
+            <li *ngFor="let sublink of item.sublinks">
+                <a [routerLink]="sublink.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" #simlink>
+                    {{l(sublink.name)}}
+                </a>
+            </li>
+        </ul>
+    </li>
 </ul>
 
 <div class="dropdown" *ngIf="responsiveMemberAreaLinks.length">
-  <button class="btn btn-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <ul class="app-responsive-menu dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-    <li *ngFor="let item of responsiveMemberAreaLinks">
-      <a [routerLink]="item.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="dropdown-item">
-          {{l(item.name)}}
-      </a>
-    </li>
-  </ul>
+    <button class="btn btn-secondary" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <ul class="app-responsive-menu dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+        <li *ngFor="let item of responsiveMemberAreaLinks" routerLinkActive="active">
+            <a (click)="navigationItemClick($event, item)" routerLinkActive="active" [class.active]="currentUrl === item.routerUrl" [routerLinkActiveOptions]="{exact:true}"
+               class="dropdown-item">
+                {{l(item.name)}}
+            </a>
+            <ul *ngIf="item.sublinks && item.sublinks.length" class="responsive-sublinks">
+                <li *ngFor="let sublink of item.sublinks">
+                    <a [routerLink]="sublink.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+                        {{l(sublink.name)}}
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </div>
 
 <img class="logo" src="./assets/common/images/logos/lend-space.svg">

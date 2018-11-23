@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, ViewEncapsulation, ViewChild, HostBinding } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild, HostBinding } from '@angular/core';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
@@ -9,7 +9,6 @@ import {
     UserLinkServiceProxy,
     UserServiceProxy,
     LinkedUserDto,
-    ChangeUserLanguageDto,
     TenantLoginInfoDto,
     SessionServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -39,7 +38,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
 
-    @HostBinding('class.pfm-app') hasPfmAppFeature: boolean = false;
+    @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
@@ -64,20 +63,59 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     appAreaLinks = [
         {
-            name: 'Products',
-            routerUrl: '/personal-finance/products'
+            name: 'Loans',
+            sublinks: [
+                {
+                    name: 'Personal Loans',
+                    routerUrl: '/personal-finance/offers/personal-loans'
+                },
+                {
+                    name: 'Payday Loans',
+                    routerUrl: '/personal-finance/offers/payday-loans'
+                },
+                {
+                    name: 'Installment Loans',
+                    routerUrl: '/personal-finance/offers/installment-loans'
+                },
+                {
+                    name: 'Business Loans',
+                    routerUrl: '/personal-finance/offers/business-loans'
+                },
+                {
+                    name: 'Auto Loans',
+                    routerUrl: '/personal-finance/offers/auto-loans'
+                }
+            ]
         },
         {
-            name: 'Features',
-            routerUrl: '/personal-finance/features'
+            name: 'Credit Cards',
+            routerUrl: '/personal-finance/offers/credit-cards'
         },
         {
-            name: 'About',
-            routerUrl: '/personal-finance/about-us'
+            name: 'Credit Score',
+            sublinks: [
+                {
+                    name: 'Credit Score',
+                    routerUrl: '/personal-finance/offers/credit-score'
+                },
+                {
+                    name: 'Credit Repair',
+                    routerUrl: '/personal-finance/offers/credit-repair'
+                },
+                {
+                    name: 'Credit Monitoring',
+                    routerUrl: '/personal-finance/offers/credit-monitoring'
+                },
+                {
+                    name: 'Debt Consolidation',
+                    routerUrl: '/personal-finance/offers/debt-consolidation'
+                }
+            ]
         },
         {
-            name: 'Contact Us',
-            routerUrl: '/personal-finance/contact-us'
+            name: 'My Finances',
+            routerUrl: '/personal-finance/member-area/my-finances',
+            disabled: !this.feature.isEnabled('Pages.CFO') || !this._appSessionService.userId
         }
     ];
     memberAreaLinks = [
@@ -181,7 +219,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     getCurrentLoginInformations(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
         this.tenant = this.appSession.tenant;
-        this.profileThumbnailId = this.appSession.user.profileThumbnailId;
+        this.profileThumbnailId = this.appSession.user && 
+            this.appSession.user.profileThumbnailId;
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {
@@ -189,9 +228,10 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getRecentlyLinkedUsers(): void {
-        this._userLinkServiceProxy.getRecentlyUsedLinkedUsers().subscribe(result => {
-            this.recentlyLinkedUsers = result.items;
-        });
+        if (this.loggedUserId)        
+            this._userLinkServiceProxy.getRecentlyUsedLinkedUsers().subscribe(result => {
+                this.recentlyLinkedUsers = result.items;
+            });
     }
 
     showLoginAttempts(e): void {

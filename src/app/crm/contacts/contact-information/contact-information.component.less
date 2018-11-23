@@ -4,7 +4,7 @@
 
     .table-wrapper {
         width: 100%;
-        padding: 0px 100px 25px 25px;
+        padding: 0px 30px 25px 25px;
         table { 
             height: 100%;
             min-height: 500px;
@@ -57,4 +57,14 @@
             }
         }
     }
+}
+
+/deep/ .right-side-opened .socials {
+    .social {
+        max-width: 490px !important;
+
+        @media all and (max-width: 1440px) {
+            max-width: 275px !important;
+        }
+    }   
 }

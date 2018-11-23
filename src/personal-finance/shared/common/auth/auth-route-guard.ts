@@ -57,10 +57,10 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
 
     selectBestRoute(): string {
         if (this._featureChecker.isEnabled('PFM.Applications'))
-            return '/personal-finance/lend-space';
+            return '/personal-finance';
 
         if (this._featureChecker.isEnabled('PFM.CreditReport'))
-            return '/personal-finance';
+            return '/personal-finance/credit-report';
 
         return '/';
     }

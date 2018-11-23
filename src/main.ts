@@ -13,11 +13,7 @@ if (environment.production) {
 }
 
 const bootstrap = () => {
-    let loginPageHandler = window['loginPageHandler'];
-    if (loginPageHandler)
-        loginPageHandler(environment.appConfig);
-    else
-        return platformBrowserDynamic().bootstrapModule(RootModule);
+    return platformBrowserDynamic().bootstrapModule(RootModule);
 };
 
 /* "Hot Module Replacement" is enabled as described on
@@ -32,5 +28,9 @@ if (environment.hmr) {
         console.log('Are you using the --hmr flag for ng serve?');
     }
 } else {
-    bootstrap(); //Regular bootstrap
+    let loginPageHandler = window['loginPageHandler'];       
+    if (loginPageHandler) {
+        loginPageHandler(this, bootstrap);
+    } else 
+        bootstrap(); //Regular bootstrap
 }

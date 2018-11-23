@@ -2,6 +2,11 @@
 @yellowColor: #f0d500;
 @darkGrayColor: #262626;
 
+/deep/ header,
+/deep/ footer {
+    display: none !important;
+}
+
 :host {
     // base
     * {
@@ -16,22 +21,24 @@
     
     .jumbotron {
         margin-bottom: 0;
-        @media all and (max-width: 600px) {
-            padding-bottom: 0;
-            
-            .container {
-                padding: 0 !important;
-                align-self: unset !important;
-                display: flex;
-                flex-direction: column;
-            }
-        }
         
         &.top {
             min-height: 540px;
             //background: url(../../../assets/common/images/lend-space-dark/bg.jpg) no-repeat fixed 50% 50%;
             background: url(../../../assets/common/images/lend-space-dark/bg.jpg) no-repeat 50% 50%;
             background-size: cover;
+            
+            @media all and (max-width: 600px) {
+                padding-bottom: 0;
+                background: #000 url(../../../assets/common/images/lend-space-dark/bg-mobile.jpg) no-repeat 50% 0;
+                
+                .container {
+                    padding: 0 !important;
+                    align-self: unset !important;
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
             
             @media all and (max-width: 600px) {
                 min-height: 881px;
@@ -68,6 +75,7 @@
                 &::before {
                     left: -80px;
                     @media all and (max-width: 600px) {
+                        width: 50px;
                         left: -40px;
                     }
                 }
@@ -75,6 +83,7 @@
                 &::after {
                     right: -80px;
                     @media all and (max-width: 600px) {
+                        width: 50px;
                         right: -40px;
                     }
                 }
@@ -161,6 +170,10 @@
             //background: url(../../../assets/common/images/lend-space-dark/bg-credit-score.png) no-repeat fixed 50% 50%;
             background: url(../../../assets/common/images/lend-space-dark/bg-credit-score.png) no-repeat 50% 0;
             background-size: cover;
+            
+            @media all and (max-width: 600px) {
+                background: url(../../../assets/common/images/lend-space-dark/bg-credit-score-mobile.png) no-repeat 50% 50%;
+            }
     
             .title,
             p {
@@ -252,6 +265,12 @@
                 max-width: 80%;
                 margin: 0 auto;
             }
+            
+            @media all and (max-width: 600px) {
+                max-width: 100%;
+                font-size: 46px;
+                margin-bottom: 15px;
+            }
         }
         
         .description {
@@ -295,6 +314,33 @@
                     font-weight: 400;
                 }
                 
+                .img-wrapper {
+                    width: 70px;
+                    height: 55px;
+                    transition: .2s;
+                    
+                    &.credit-score {
+                        background: transparent url(../../../assets/common/images/lend-space-dark/icon_meter-y.png) no-repeat 0 0;
+                    }
+                    &.credit-cards {
+                        background: transparent url(../../../assets/common/images/lend-space-dark/icon_creditcards-y.png) no-repeat 0 0;
+                    }
+                    &.retirement-planning {
+                        background: transparent url(../../../assets/common/images/lend-space-dark/icon_retirement-y.png) no-repeat 0 0;
+                    }
+                    &.personal-loans {
+                        background: transparent url(../../../assets/common/images/lend-space-dark/icon_personalLoans-y.png) no-repeat 0 0;
+                    }
+                    &.business-loans {
+                        background: transparent url(../../../assets/common/images/lend-space-dark/icon_bizLoan-y.png) no-repeat 0 0;
+                    }
+                    &.get-debt-free {
+                        background: transparent url(../../../assets/common/images/lend-space-dark/icon_debtFree-y.png) no-repeat 0 0;
+                    }
+                    
+                    background-size: contain !important;
+                }
+                
                 &.hover,
                 &:hover {
                     background-color: #f0d500;
@@ -304,10 +350,53 @@
                         font-weight: 500;
                         color: #000 !important;
                     }
+    
+                    .img-wrapper {
+        
+                        &.credit-score {
+                            background: transparent url(../../../assets/common/images/lend-space-dark/icon_meter.png) no-repeat 0 0;
+                        }
+                        &.credit-cards {
+                            background: transparent url(../../../assets/common/images/lend-space-dark/icon_creditcards.png) no-repeat 0 0;
+                        }
+                        &.retirement-planning {
+                            background: transparent url(../../../assets/common/images/lend-space-dark/icon_retirement.png) no-repeat 0 0;
+                        }
+                        &.personal-loans {
+                            background: transparent url(../../../assets/common/images/lend-space-dark/icon_personalLoans.png) no-repeat 0 0;
+                        }
+                        &.business-loans {
+                            background: transparent url(../../../assets/common/images/lend-space-dark/icon_bizLoan.png) no-repeat 0 0;
+                        }
+                        &.get-debt-free {
+                            background: transparent url(../../../assets/common/images/lend-space-dark/icon_debtFree.png) no-repeat 0 0;
+                        }
+                    }
                 }
                 
                 // todo: change icons on svg, update some styles, add black icons on hover
-                
+                @media all and (max-width: 600px) {
+                    padding: 28px 20px 28px 114px;
+                    width: 100%;
+                    position: relative;
+                    margin-bottom: 10px;
+                    
+                    img {
+                        position: absolute;
+                        left: 24px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+                    
+                    h3,
+                    p {
+                        margin: 0;
+                    }
+                    
+                    h3 {
+                        margin-bottom: 5px;
+                    }
+                }
             }
         }
         
@@ -330,35 +419,16 @@
             font-weight: 400;
             margin-bottom: 13px;
         }
+        
+        @media all and (max-width: 600px) {
+            padding: 80px 20px 40px;
+        }
     }
     
     .get-free {
         height: 441px;
         background: #fec80d url(../../../assets/common/images/lend-space-dark/get-free-bg.png) 23% 50% no-repeat;
         background-size: contain;
-        
-        @media all and (max-width: 1440px) {
-            background-position: 0 50%;
-        }
-        
-        @media all and (max-width: 1280px) {
-            background-position: -15% 50%;
-        }
-        
-        @media all and (max-width: 1024px) {
-            background-position: -125px 50%;
-        }
-    
-        @media all and (max-width: 768px) {
-            height: auto;
-            padding-bottom: 460px;
-            background: #fec80d url(../../../assets/common/images/lend-space-dark/get-free-mobile-bg.png) 100% 100% no-repeat;
-            
-            h2 {
-                padding-left: 0 !important;
-                margin-top: 30px;
-            }
-        }
         
         h2 {
             text-align: left;
@@ -399,6 +469,173 @@
                 background: #333;
                 color: #ccc;
             }
+        }
+    
+        @media all and (max-width: 1440px) {
+            background-position: 0 50%;
+        }
+    
+        @media all and (max-width: 1280px) {
+            background-position: -15% 50%;
+        }
+    
+        @media all and (max-width: 1024px) {
+            background-position: -125px 50%;
+        }
+    
+        @media all and (max-width: 768px) {
+            height: auto;
+            padding-bottom: 460px;
+            background: #fec80d url(../../../assets/common/images/lend-space-dark/get-free-mobile-bg.png) 100% 100% no-repeat;
+        
+            h2 {
+                padding-left: 0 !important;
+                margin-top: 30px;
+            }
+        }
+        
+        @media all and (max-width: 600px) {
+            background-position: 50% 100%;
+            padding-bottom: 330px;
+            background-size: contain;
+            text-align: center;
+            
+            h2 {
+                text-align: center;
+            }
+        }
+    }
+    
+    .lend-space-header {
+        .top-headline {
+            padding: 10px 0;
+            background-color: #000;
+            border-bottom: 2px solid #4c4c4c;
+            
+            .url,
+            .date {
+                font-size: 9px;
+                font-weight: 400;
+                margin-bottom: 0;
+            }
+            
+            .url {
+                color: #999;
+                text-decoration: none;
+                
+                &:hover {
+                    color: lighten(#999, 10%);
+                }
+            }
+            
+            .get-free-score {
+                color: @yellowColor;
+                font-size: 12px;
+                font-weight: 400;
+                margin-bottom: 0;
+            }
+            
+            .date {
+                color: #ccc;
+            }
+        }
+        .main-headline {
+            background-color: #f0d500;
+            padding: 20px 0;
+            
+            .navbar {
+                padding: 0;
+                
+                &.navbar-light {
+                    .navbar-nav {
+                        .nav-link {
+                            color: #333;
+                            font-size: 12px;
+                            font-weight: 600;
+                            letter-spacing: -0.3px;
+                            
+                            &:hover {
+                                opacity: .8;
+                            }
+                            
+                            &.active {
+                                color: #000;
+                                font-weight: 700;
+                            }
+                            
+                            &.disabled {
+                                pointer-events: none;
+                                opacity: .6 !important;
+                                color: #333;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            .sign-in,
+            .member-login {
+                color: #000;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            
+            .member-login {
+                color: #fff;
+                background-color: #ff9933;
+                
+                &:hover {
+                    color: #fff !important;
+                    background-color: darken(#ff9933, 5%);
+                }
+            }
+        }
+    }
+    .lend-space-footer {
+        background: #262626;
+        padding: 38px 0 90px;
+        
+        * {
+            color: #ccc;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 18px;
+        }
+        
+        h4 {
+            font-size: 16px;
+            font-weight: 700;
+            
+            + p {
+                text-align: justify;
+            }
+        }
+        
+        .logos-wrap {
+            padding: 25px 0;
+            ul {
+                margin: 0 auto;
+                
+                li {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    transition: .2s;
+                    
+                    &:hover {
+                        opacity: .8;
+                    }
+                }
+            }
+        }
+        
+        .terms {
+            color: #f0d500;
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+        
+        .copy {
+            margin-bottom: 0;
         }
     }
 }
