@@ -94,7 +94,7 @@ export class PackageCardComponent implements OnChanges {
 
     getFeatureValue(feature: PackageEditionConfigFeatureDto): string {
         let featureValue = '';
-        if (feature.value !== undefined) {
+        if (feature.value) {
             featureValue += ': ';
             if (feature.definition.isVariable && feature.value !== '-1') {
                 featureValue += +feature.value / this.usersCoefficient;
