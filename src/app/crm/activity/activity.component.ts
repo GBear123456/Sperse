@@ -119,8 +119,16 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     let customize = ['DELETE', 'PATCH'].indexOf(request.method);
                     if (customize >= 0) {
-                        if (customize)
+                        if (customize) {
                             request.method = 'POST';
+                            if (request.payload.AllDay) {
+                                let startDate = request.payload.StartDate.substring(0, 19) + 'Z';
+                                request.payload.StartDate = startDate;
+
+                                let endDate = request.payload.EndDate.substring(0, 19) + 'Z';
+                                request.payload.EndDate = endDate;
+                            }
+                        }
                         let endpoint = this.parseODataURL(request.url);
                         request.url = endpoint.url + 'api/services/CRM/Activity/'
                             + (customize ? 'Move' : 'Delete?Id=' + endpoint.id);
