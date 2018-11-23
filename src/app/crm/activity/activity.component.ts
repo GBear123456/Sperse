@@ -361,6 +361,14 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     onAppointmentFormCreated(event) {
         event.component.hideAppointmentPopup(false);
+
+        let startDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
+        event.appointmentData.StartDate = startDate;
+
+        let endDate = event.appointmentData.StartDate.substring(0, 11) + '00:00:00Z';
+        event.appointmentData.EndDate = endDate;
+        event.appointmentData.AllDay = true;
+
         this.showActivityDialog(event.appointmentData);
     }
 

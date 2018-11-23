@@ -98,20 +98,27 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
             });
         } else {
             let dateNow = new Date(moment().format('YYYY/MM/DD HH:mm:ss'));
+            if (this.data.appointment.AllDay)
+                this.isAllDay = true;
+
             if (this.data.appointment.StartDate) {
                 this.startDate = new Date(this.data.appointment.StartDate);
-                this.startDate.setHours(dateNow.getHours());
-                this.startDate.setMinutes(dateNow.getMinutes());
-                this.startDate.setSeconds(dateNow.getSeconds());
+                if (!this.isAllDay) {
+                    this.startDate.setHours(dateNow.getHours());
+                    this.startDate.setMinutes(dateNow.getMinutes());
+                    this.startDate.setSeconds(dateNow.getSeconds());
+                }
             } else {
                 this.startDate = new Date(dateNow);
             }
 
             if (this.data.appointment.EndDate) {
                 this.endDate = new Date(this.data.appointment.EndDate);
-                this.endDate.setHours(dateNow.getHours());
-                this.endDate.setMinutes(dateNow.getMinutes());
-                this.endDate.setSeconds(dateNow.getSeconds());
+                if (!this.isAllDay) {
+                    this.endDate.setHours(dateNow.getHours());
+                    this.endDate.setMinutes(dateNow.getMinutes());
+                    this.endDate.setSeconds(dateNow.getSeconds());
+                }
             } else {
                 this.endDate = new Date(dateNow);
             }
