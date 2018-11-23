@@ -142,7 +142,18 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 deserializeDates: false,
                 onLoaded: (res) => {
                     res.forEach((record) => {
-                        record.fieldTimeZone = 'Etc/UTC';
+                        if (record.AllDay) {
+                            record.fieldTimeZone = this.timezone;
+                            
+                            let startDate = moment(record.StartDate.substring(0, 19)).format();
+                            record.StartDate = startDate;
+
+                            let endDate = moment(record.EndDate.substring(0, 19)).format();
+                            record.EndDate = endDate;
+                        }
+                        else {
+                            record.fieldTimeZone = 'Etc/UTC';
+                        }
                     });
                 },
                 paginate: false
