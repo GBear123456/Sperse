@@ -19,7 +19,7 @@ import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offe
                     { path: '', component: CreditReportComponent },
                     { path: 'credit-simulator', component: CreditSimulatorComponent },
                     { path: 'credit-resources', component: CreditResourcesComponent },
-                    { path: 'accounts', component: AccountsComponent },
+                    { path: 'my-finances', component: AccountsComponent },
                     { path: 'offers', component: OffersComponent, data: { permission: '', reuse: true } },
                     { path: 'offer/:id', component: OfferDetailsComponent, data: { permission: '', reuse: true } }
                 ]

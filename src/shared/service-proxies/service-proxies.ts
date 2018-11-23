@@ -1388,13 +1388,10 @@ export class ApplicationServiceProxy {
 
     /**
      * @request (optional) 
-     * @sendWelcomeEmail (optional) 
      * @return Success
      */
-    registerApplicant(request: ApplicationInfo | null | undefined, sendWelcomeEmail: boolean | null | undefined): Observable<RegisterApplicationResponse> {
-        let url_ = this.baseUrl + "/api/services/PFM/Application/RegisterApplicant?";
-        if (sendWelcomeEmail !== undefined)
-            url_ += "sendWelcomeEmail=" + encodeURIComponent("" + sendWelcomeEmail) + "&"; 
+    registerApplicant(request: RegisterApplicantRequest | null | undefined): Observable<RegisterApplicantResponse> {
+        let url_ = this.baseUrl + "/api/services/PFM/Application/RegisterApplicant";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(request);
@@ -1416,14 +1413,14 @@ export class ApplicationServiceProxy {
                 try {
                     return this.processRegisterApplicant(<any>response_);
                 } catch (e) {
-                    return <Observable<RegisterApplicationResponse>><any>_observableThrow(e);
+                    return <Observable<RegisterApplicantResponse>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<RegisterApplicationResponse>><any>_observableThrow(response_);
+                return <Observable<RegisterApplicantResponse>><any>_observableThrow(response_);
         }));
     }
 
-    protected processRegisterApplicant(response: HttpResponseBase): Observable<RegisterApplicationResponse> {
+    protected processRegisterApplicant(response: HttpResponseBase): Observable<RegisterApplicantResponse> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1434,7 +1431,7 @@ export class ApplicationServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? RegisterApplicationResponse.fromJS(resultData200) : new RegisterApplicationResponse();
+            result200 = resultData200 ? RegisterApplicantResponse.fromJS(resultData200) : new RegisterApplicantResponse();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1442,7 +1439,7 @@ export class ApplicationServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<RegisterApplicationResponse>(<any>null);
+        return _observableOf<RegisterApplicantResponse>(<any>null);
     }
 }
 
@@ -27511,12 +27508,10 @@ export interface IUserInfoDto {
     profileThumbnailId: string | undefined;
 }
 
-export class ApplicationInfo implements IApplicationInfo {
-    systemType!: ApplicationInfoSystemType;
-    campaignId!: number;
+export class RegisterApplicantRequest implements IRegisterApplicantRequest {
+    systemType!: RegisterApplicantRequestSystemType;
     testMode!: boolean | undefined;
-    applicantId!: string;
-    applicationId!: string;
+    sendWelcomeEmail!: boolean | undefined;
     trackingInformation!: TrackingInformation | undefined;
     personalInformation!: PersonalInformation | undefined;
     debtInformation!: DebtInformation | undefined;
@@ -27525,7 +27520,7 @@ export class ApplicationInfo implements IApplicationInfo {
     bankInformation!: BankInformation | undefined;
     legalInformation!: LegalInformation | undefined;
 
-    constructor(data?: IApplicationInfo) {
+    constructor(data?: IRegisterApplicantRequest) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -27537,10 +27532,8 @@ export class ApplicationInfo implements IApplicationInfo {
     init(data?: any) {
         if (data) {
             this.systemType = data["systemType"];
-            this.campaignId = data["campaignId"];
             this.testMode = data["testMode"];
-            this.applicantId = data["applicantId"];
-            this.applicationId = data["applicationId"];
+            this.sendWelcomeEmail = data["sendWelcomeEmail"];
             this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
             this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
             this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
@@ -27551,9 +27544,9 @@ export class ApplicationInfo implements IApplicationInfo {
         }
     }
 
-    static fromJS(data: any): ApplicationInfo {
+    static fromJS(data: any): RegisterApplicantRequest {
         data = typeof data === 'object' ? data : {};
-        let result = new ApplicationInfo();
+        let result = new RegisterApplicantRequest();
         result.init(data);
         return result;
     }
@@ -27561,10 +27554,8 @@ export class ApplicationInfo implements IApplicationInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
-        data["campaignId"] = this.campaignId;
         data["testMode"] = this.testMode;
-        data["applicantId"] = this.applicantId;
-        data["applicationId"] = this.applicationId;
+        data["sendWelcomeEmail"] = this.sendWelcomeEmail;
         data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
         data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
@@ -27576,12 +27567,10 @@ export class ApplicationInfo implements IApplicationInfo {
     }
 }
 
-export interface IApplicationInfo {
-    systemType: ApplicationInfoSystemType;
-    campaignId: number;
+export interface IRegisterApplicantRequest {
+    systemType: RegisterApplicantRequestSystemType;
     testMode: boolean | undefined;
-    applicantId: string;
-    applicationId: string;
+    sendWelcomeEmail: boolean | undefined;
     trackingInformation: TrackingInformation | undefined;
     personalInformation: PersonalInformation | undefined;
     debtInformation: DebtInformation | undefined;
@@ -27592,7 +27581,10 @@ export interface IApplicationInfo {
 }
 
 export class TrackingInformation implements ITrackingInformation {
-    signupDateTimeStamp!: moment.Moment | undefined;
+    campaignId!: number;
+    applicantId!: string;
+    applicationId!: string;
+    applicationDate!: moment.Moment | undefined;
     subId!: string | undefined;
     affiliateId!: number;
     vertical!: TrackingInformationVertical;
@@ -27612,7 +27604,10 @@ export class TrackingInformation implements ITrackingInformation {
 
     init(data?: any) {
         if (data) {
-            this.signupDateTimeStamp = data["signupDateTimeStamp"] ? moment(data["signupDateTimeStamp"].toString()) : <any>undefined;
+            this.campaignId = data["campaignId"];
+            this.applicantId = data["applicantId"];
+            this.applicationId = data["applicationId"];
+            this.applicationDate = data["applicationDate"] ? moment(data["applicationDate"].toString()) : <any>undefined;
             this.subId = data["subId"];
             this.affiliateId = data["affiliateId"];
             this.vertical = data["vertical"];
@@ -27632,7 +27627,10 @@ export class TrackingInformation implements ITrackingInformation {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["signupDateTimeStamp"] = this.signupDateTimeStamp ? this.signupDateTimeStamp.toISOString() : <any>undefined;
+        data["campaignId"] = this.campaignId;
+        data["applicantId"] = this.applicantId;
+        data["applicationId"] = this.applicationId;
+        data["applicationDate"] = this.applicationDate ? this.applicationDate.toISOString() : <any>undefined;
         data["subId"] = this.subId;
         data["affiliateId"] = this.affiliateId;
         data["vertical"] = this.vertical;
@@ -27645,7 +27643,10 @@ export class TrackingInformation implements ITrackingInformation {
 }
 
 export interface ITrackingInformation {
-    signupDateTimeStamp: moment.Moment | undefined;
+    campaignId: number;
+    applicantId: string;
+    applicationId: string;
+    applicationDate: moment.Moment | undefined;
     subId: string | undefined;
     affiliateId: number;
     vertical: TrackingInformationVertical;
@@ -27668,7 +27669,7 @@ export class PersonalInformation implements IPersonalInformation {
     isActiveMilitary!: boolean;
     phone!: string;
     phoneMobile!: string | undefined;
-    prefferedContactTOD!: PersonalInformationPrefferedContactTOD;
+    preferredContactTOD!: PersonalInformationPreferredContactTOD;
     address1!: string;
     address2!: string | undefined;
     city!: string;
@@ -27703,7 +27704,7 @@ export class PersonalInformation implements IPersonalInformation {
             this.isActiveMilitary = data["isActiveMilitary"];
             this.phone = data["phone"];
             this.phoneMobile = data["phoneMobile"];
-            this.prefferedContactTOD = data["prefferedContactTOD"];
+            this.preferredContactTOD = data["preferredContactTOD"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
             this.city = data["city"];
@@ -27738,7 +27739,7 @@ export class PersonalInformation implements IPersonalInformation {
         data["isActiveMilitary"] = this.isActiveMilitary;
         data["phone"] = this.phone;
         data["phoneMobile"] = this.phoneMobile;
-        data["prefferedContactTOD"] = this.prefferedContactTOD;
+        data["preferredContactTOD"] = this.preferredContactTOD;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
         data["city"] = this.city;
@@ -27766,7 +27767,7 @@ export interface IPersonalInformation {
     isActiveMilitary: boolean;
     phone: string;
     phoneMobile: string | undefined;
-    prefferedContactTOD: PersonalInformationPrefferedContactTOD;
+    preferredContactTOD: PersonalInformationPreferredContactTOD;
     address1: string;
     address2: string | undefined;
     city: string;
@@ -28051,14 +28052,11 @@ export interface ILegalInformation {
     isTCPAChecked: boolean | undefined;
 }
 
-export class RegisterApplicationResponse implements IRegisterApplicationResponse {
-    contactId!: number | undefined;
-    username!: string | undefined;
-    password!: string | undefined;
-    loginUrl!: string | undefined;
-    userAlreadyExists!: boolean | undefined;
+export class RegisterApplicantResponse implements IRegisterApplicantResponse {
+    applicantUserId!: number | undefined;
+    newUserInfo!: UserInfo | undefined;
 
-    constructor(data?: IRegisterApplicationResponse) {
+    constructor(data?: IRegisterApplicantResponse) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -28069,38 +28067,73 @@ export class RegisterApplicationResponse implements IRegisterApplicationResponse
 
     init(data?: any) {
         if (data) {
-            this.contactId = data["contactId"];
-            this.username = data["username"];
-            this.password = data["password"];
-            this.loginUrl = data["loginUrl"];
-            this.userAlreadyExists = data["userAlreadyExists"];
+            this.applicantUserId = data["applicantUserId"];
+            this.newUserInfo = data["newUserInfo"] ? UserInfo.fromJS(data["newUserInfo"]) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): RegisterApplicationResponse {
+    static fromJS(data: any): RegisterApplicantResponse {
         data = typeof data === 'object' ? data : {};
-        let result = new RegisterApplicationResponse();
+        let result = new RegisterApplicantResponse();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        data["username"] = this.username;
-        data["password"] = this.password;
-        data["loginUrl"] = this.loginUrl;
-        data["userAlreadyExists"] = this.userAlreadyExists;
+        data["applicantUserId"] = this.applicantUserId;
+        data["newUserInfo"] = this.newUserInfo ? this.newUserInfo.toJSON() : <any>undefined;
         return data; 
     }
 }
 
-export interface IRegisterApplicationResponse {
-    contactId: number | undefined;
-    username: string | undefined;
+export interface IRegisterApplicantResponse {
+    applicantUserId: number | undefined;
+    newUserInfo: UserInfo | undefined;
+}
+
+export class UserInfo implements IUserInfo {
+    userName!: string | undefined;
+    password!: string | undefined;
+    loginUrl!: string | undefined;
+
+    constructor(data?: IUserInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userName = data["userName"];
+            this.password = data["password"];
+            this.loginUrl = data["loginUrl"];
+        }
+    }
+
+    static fromJS(data: any): UserInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        data["loginUrl"] = this.loginUrl;
+        return data; 
+    }
+}
+
+export interface IUserInfo {
+    userName: string | undefined;
     password: string | undefined;
     loginUrl: string | undefined;
-    userAlreadyExists: boolean | undefined;
 }
 
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
@@ -47145,7 +47178,6 @@ export interface ICampaignDetailsDto {
 export class SubmitApplicationInput implements ISubmitApplicationInput {
     systemType!: SubmitApplicationInputSystemType;
     campaignId!: number;
-    testMode!: boolean | undefined;
 
     constructor(data?: ISubmitApplicationInput) {
         if (data) {
@@ -47160,7 +47192,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         if (data) {
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
-            this.testMode = data["testMode"];
         }
     }
 
@@ -47175,7 +47206,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
-        data["testMode"] = this.testMode;
         return data; 
     }
 }
@@ -47183,7 +47213,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
 export interface ISubmitApplicationInput {
     systemType: SubmitApplicationInputSystemType;
     campaignId: number;
-    testMode: boolean | undefined;
 }
 
 export class SubmitApplicationOutput implements ISubmitApplicationOutput {
@@ -52278,6 +52307,7 @@ export interface IIntegrationsSettings {
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
     apiBaseUrl!: string | undefined;
+    publicSiteUrl!: string | undefined;
     testMode!: boolean | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
@@ -52293,6 +52323,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
         if (data) {
             this.apiKey = data["apiKey"];
             this.apiBaseUrl = data["apiBaseUrl"];
+            this.publicSiteUrl = data["publicSiteUrl"];
             this.testMode = data["testMode"];
         }
     }
@@ -52308,6 +52339,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
         data["apiBaseUrl"] = this.apiBaseUrl;
+        data["publicSiteUrl"] = this.publicSiteUrl;
         data["testMode"] = this.testMode;
         return data; 
     }
@@ -52316,6 +52348,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
     apiBaseUrl: string | undefined;
+    publicSiteUrl: string | undefined;
     testMode: boolean | undefined;
 }
 
@@ -53252,6 +53285,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
     isLocked!: boolean | undefined;
+    trackingCode!: string | undefined;
     hasRecurringBilling!: boolean | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
@@ -53269,6 +53303,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.editionName = data["editionName"];
             this.isLocked = data["isLocked"];
+            this.trackingCode = data["trackingCode"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
         }
     }
@@ -53286,6 +53321,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
         data["isLocked"] = this.isLocked;
+        data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         return data; 
     }
@@ -53296,6 +53332,7 @@ export interface IModuleSubscriptionInfoDto {
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
     isLocked: boolean | undefined;
+    trackingCode: string | undefined;
     hasRecurringBilling: boolean | undefined;
 }
 
@@ -56960,7 +56997,7 @@ export enum UpdateActivityDtoType {
     Event = "Event", 
 }
 
-export enum ApplicationInfoSystemType {
+export enum RegisterApplicantRequestSystemType {
     EPCVIP = "EPCVIP", 
 }
 
@@ -56968,7 +57005,7 @@ export enum TrackingInformationVertical {
     HybridLoans = "HybridLoans", 
 }
 
-export enum PersonalInformationPrefferedContactTOD {
+export enum PersonalInformationPreferredContactTOD {
     Morning = "Morning", 
     Afternoon = "Afternoon", 
     Evening = "Evening", 
