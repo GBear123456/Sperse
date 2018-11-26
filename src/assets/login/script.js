@@ -64,14 +64,10 @@
             }
         ).then(function(response) {
             var loginInformations = response && response.result,
-                tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse',
-                features = loginInformations && loginInformations.application.features;
-            tenant = loginInformations && loginInformations.tenant;
-
-            if (features && features['PFM'] && JSON.parse(features['PFM'].value)) {
-                window.loginPageHandler = undefined;
-                appBootstrap && appBootstrap.call(appContext);
-            } else {
+                tenant = loginInformations && loginInformations.tenant,
+                tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse';
+                         
+            if (!tenant || tenant.layoutType == 'Default') {
                 document.getElementById('loginPage').style.display = 'block';
                 document.getElementById('loadSpinner').style.display = 'none';
 
@@ -87,6 +83,9 @@
                     );
                     logoImage.style.display = 'block';
                 }
+            } else {
+                window.loginPageHandler = undefined;
+                appBootstrap && appBootstrap.call(appContext);
             }
         });
     }
