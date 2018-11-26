@@ -31,6 +31,13 @@ import { RootStoreModule } from '@root/store';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
 import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
 
+const DEFAULT_FAVICONS: FaviconDto[] = [
+    FaviconDto.fromJS({relationship: "icon", type: "image/x-icon", name: "favicon.ico", size: "32x32"}),
+    FaviconDto.fromJS({relationship: "icon", type: "image/png", name: "favicon-32x32.png", size: "32x32"}),
+    FaviconDto.fromJS({relationship: "icon", type: "image/png", name: "favicon-16x16.png", size: "16x16"}),
+    FaviconDto.fromJS({relationship: "apple-touch-icon", type: "image/png", name: "apple-touch-icon.png", size: "180x180"})
+];
+
 export function appInitializerFactory(
     injector: Injector,
     platformLocation: PlatformLocation) {
@@ -63,6 +70,8 @@ export function appInitializerFactory(
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
                         if (customizations && customizations.favicons && customizations.favicons.length)
                              updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
+                        else
+                             updateFavicons(DEFAULT_FAVICONS, AppConsts.appBaseHref);
 
                         if (shouldLoadLocale()) {
                             let angularLocale = convertAbpLocaleToAngularLocale(abp.localization.currentLanguage.name);
@@ -86,11 +95,6 @@ export function appInitializerFactory(
 
 function updateFavicons(favicons: FaviconDto[], faviconBaseUrl: string) {
     let head = document.head;
-    Array.prototype.forEach.call(head.getElementsByTagName('LINK'), (item) => {
-        if (item.rel.includes('icon'))
-            item.remove();
-    });
-
     favicons.forEach((item) => {
         let link = document.createElement('link');
         link.rel = item.relationship;

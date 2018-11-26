@@ -2,10 +2,16 @@
     const TwoFactorRememberClientToken = 'TwoFactorRememberClientToken';
     const AbpLocalizationCultureName = 'Abp.Localization.CultureName';
     const EncryptedAuthToken = 'enc_auth_token';
+    const DEFAULT_FAVICONS = [
+        {relationship: "icon", type: "image/x-icon", name: "favicon.ico", size: "32x32"},
+        {relationship: "icon", type: "image/png", name: "favicon-32x32.png", size: "32x32"},
+        {relationship: "icon", type: "image/png", name: "favicon-16x16.png", size: "16x16"},
+        {relationship: "apple-touch-icon", type: "image/png", name: "apple-touch-icon.png", size: "180x180"}
+    ];
 
+    var tenant;
     var remoteServiceUrl = '';
     var appContext, appBootstrap
-    var tenant;
     var pathParts = location.pathname.split('/').filter(Boolean);
     var cookie = queryString(document.cookie, ';');
     var params = queryString(document.location.search.substr(1), '&');
@@ -63,13 +69,19 @@
                 "Accept": "application/json"
             }
         ).then(function(response) {
-            var loginInformations = response && response.result,
-                tenant = loginInformations && loginInformations.tenant,
+            var loginInformations = response && response.result,                
                 tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse';
                          
+            tenant = loginInformations && loginInformations.tenant;
             if (!tenant || tenant.layoutType == 'Default') {
                 document.getElementById('loginPage').style.display = 'block';
                 document.getElementById('loadSpinner').style.display = 'none';
+
+                let customizations = tenant && tenant.tenantCustomizations;
+                if (customizations && customizations.favicons && customizations.favicons.length)
+                    updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
+                else
+                    updateFavicons(DEFAULT_FAVICONS, './');
 
                 Array.prototype.forEach.call(document.getElementsByClassName('tenantName'), function(elm) {
                     elm.innerHTML = tenantName;
@@ -87,6 +99,18 @@
                 window.loginPageHandler = undefined;
                 appBootstrap && appBootstrap.call(appContext);
             }
+        });
+    }
+
+    function updateFavicons(favicons, faviconBaseUrl) {
+        var head = document.head;
+        favicons.forEach((item) => {
+            var link = document.createElement('link');
+            link.rel = item.relationship;
+            link.type = item.type;
+            link['sizes'] = item.size;
+            link.href = faviconBaseUrl + item.name;
+            head.appendChild(link);
         });
     }
 
