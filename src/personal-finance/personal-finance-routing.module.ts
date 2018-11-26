@@ -27,7 +27,6 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                         component: LendSpaceDarkComponent,
                         data: {
                             wrapperDisabled: true,
-                            hideHeader: true,
                             hideFooter: true
                         }
                     },

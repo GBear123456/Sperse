@@ -59,6 +59,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     chatConnected = false;
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
+    currentDate = new Date();
 
 
     appAreaLinks = [
