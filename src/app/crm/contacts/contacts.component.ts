@@ -157,9 +157,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             {label: 'Contact Information', route: 'contact-information'},
             {
                 label: contact.userId ? 'User Information' : 'Invite User',
-                hidden: !(this.permission.isGranted(contact.userId ?
-                    'Pages.Administration.Users' : 'Pages.Administration.Users.Create') &&
-                    (contact.userId || this.contactInfo.statusId != ContactStatus.Prospective)),
+                hidden: !this.permission.isGranted(contact.userId ?
+                    'Pages.Administration.Users' : 'Pages.Administration.Users.Create'),
                 route: 'user-information'
             },
             {label: 'Documents', route: 'documents'},
