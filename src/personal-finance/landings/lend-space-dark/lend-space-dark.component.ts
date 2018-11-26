@@ -23,7 +23,7 @@ export class LendSpaceDarkComponent implements OnInit {
     ];
     features = [
         {
-            imgSrc: './assets/common/images/lend-space-dark/credit-score.png', 
+            imgSrc: './assets/common/images/lend-space-dark/credit-score.png',
             title: 'Credit Scores',
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.'
         },

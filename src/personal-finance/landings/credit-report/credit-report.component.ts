@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({
@@ -14,9 +14,9 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
         super(injector);
 
         if (abp.session.userId) {
-            this._router.navigate(['personal-finance/member-area']);
+            this._router.navigate(['personal-finance']);
         }
     }
 
-    ngOnInit() {    }
+    ngOnInit() {}
 }

@@ -51,11 +51,7 @@ export class UrlHelper {
         return url && url.indexOf('personal-finance') >= 0;
     }
 
-    static isPfmMemberAreaUrl(url): boolean {
-        return url && url.indexOf('member-area') >= 0;
-    }
-
     static isPfmAppUrl(url): boolean {
-        return url && url.indexOf('lend-space') >= 0;
+        return url && /.?personal\-finance\/{0,1}$/.test(url);
     }
 }
