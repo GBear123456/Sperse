@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { PersonalFinanceComponent } from './personal-finance.component';
 import { CreditReportsRouteGuard } from './shared/common/auth/auth-route-guard';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';

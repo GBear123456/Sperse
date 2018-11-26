@@ -7,7 +7,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
     styleUrls: ['./pages-footer.component.less']
 })
 export class PagesFooterComponent extends AppComponentBase {
-    @HostBinding('class.pfm-app') hasPfmAppFeature: boolean = false;
+    @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
     appMenuItems = [
         { url: '/personal-finance/products', name: 'Products' },
@@ -31,6 +31,6 @@ export class PagesFooterComponent extends AppComponentBase {
 
         this.loggedUserId = this.appSession.userId;
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
-        this.footerMenuItems = this.hasPfmAppFeature ? this.appMenuItems: this.defaultMenuItems;
+        this.footerMenuItems = this.hasPfmAppFeature ? this.appMenuItems : this.defaultMenuItems;
     }
 }
