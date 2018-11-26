@@ -13,6 +13,7 @@
                 </package-chooser>
                 <div *ngIf="subscriptionIsLocked" class="rejectSubscriptionBlock">
                     <h2 class="title">{{ l('ManualBankTransferIsNotConfirmed') }}</h2>
+                    <h3 *ngIf="trackingCode">{{ l('YourTrackingCodeIs') }}: {{ trackingCode }}</h3>
                     <button (click)="rejectPendingPayment()" class="btn btn-layout">{{ l('ManualSubscriptionReject') }}</button>
                 </div>
             </mat-step>
