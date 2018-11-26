@@ -6,6 +6,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
+import { TenantLoginInfoDtoLayoutType } from '@shared/service-proxies/service-proxies';
 
 @Directive({
     selector: '[ad-account-host]'
@@ -39,7 +40,7 @@ export class AccountComponent extends AppComponentBase implements OnInit {
 
     ngOnInit(): void {        
         let tenant = this._appSession.tenant;
-        this.loadLayoutComponent(this.feature.isEnabled('PFM.Applications')  //!!VP should be used corresponding tenant option
+        this.loadLayoutComponent(tenant.layoutType == TenantLoginInfoDtoLayoutType.LendSpace
             ? LendSpaceLayoutComponent: HostLayoutComponent);
     }
 

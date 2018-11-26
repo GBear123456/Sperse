@@ -66,11 +66,8 @@
                 tenant = loginInformations && loginInformations.tenant,
                 tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse',
                 features = loginInformations && loginInformations.application.features;
-
-            if (features && features['PFM'] && JSON.parse(features['PFM'].value)) {
-                window.loginPageHandler = undefined;
-                appBootstrap && appBootstrap.call(appContext);
-            } else {
+                         
+            if (!tenant || tenant.layoutType == 'Default') {
                 document.getElementById('loginPage').style.display = 'block';
                 document.getElementById('loadSpinner').style.display = 'none';
 
@@ -86,6 +83,9 @@
                     );
                     logoImage.style.display = 'block';
                 }
+            } else {
+                window.loginPageHandler = undefined;
+                appBootstrap && appBootstrap.call(appContext);
             }
         });
     }
