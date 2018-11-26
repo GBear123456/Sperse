@@ -26,12 +26,16 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
         [ConditionsType.Terms]: {
             title: this.l('SperseTermsOfService'),
             bodyLink: 'terms.html',
-            downloadLink: 'SpersePrivacyPolicy.pdf'
+            downloadLink: 'DownloadPrivacyPolicyPdf',
+            tenantProperty: 'customToSDocumentId',
+            defaultLink: 'SperseTermsOfService.pdf'
         },
         [ConditionsType.Policies]: {
             title: this.l('SpersePrivacyPolicy'),
             bodyLink: 'privacy.html',
-            downloadLink: 'SperseTermsOfService.pdf'
+            downloadLink: 'DownloadTermsOfServicePdf',
+            tenantProperty: 'customPrivacyPolicyDocumentId',
+            defaultLink: 'SpersePrivacyPolicy.pdf'
         }
     };
 
@@ -68,7 +72,10 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
     }
 
     download() {
-        window.open(AppConsts.appBaseHref + 'assets/documents/' + this.conditionsOptions[this.data.type].downloadLink, '_blank');
+        if (this.appSession.tenant[this.conditionsOptions[this.data.type].tenantProperty])
+            window.open(AppConsts.appBaseHref + '/api/TenantCustomization/' + this.conditionsOptions[this.data.type].downloadLink + '?tenantId=' + abp.session.tenantId, '_blank');
+        else
+            window.open(AppConsts.appBaseHref + 'assets/documents/' + this.conditionsOptions[this.data.type].defaultLink, '_blank');
     }
 
     printContent() {
