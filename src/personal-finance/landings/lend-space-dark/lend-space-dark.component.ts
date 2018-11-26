@@ -8,6 +8,7 @@ import {AppComponentBase} from '@shared/common/app-component-base';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LendSpaceDarkComponent extends AppComponentBase implements AfterViewInit {
+    currentDate = new Date();
     faq = [
         {title: 'How quickly will my loan be approved?', text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'},
         {title: 'How will I get a response from the lenders?', text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'},
@@ -54,35 +55,11 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.'
         }
     ];
-    headerLinks = [
-        {
-            name: 'Home',
-            routerUrl: '/'
-        },
-        {
-            name: 'Products',
-            routerUrl: '/personal-finance/products'
-        },
-        {
-            name: 'Features',
-            routerUrl: '/personal-finance/features'
-        },
-        {
-            name: 'About',
-            routerUrl: '/personal-finance/about-us'
-        },
-        {
-            name: 'Contact Us',
-            routerUrl: '/personal-finance/contact-us'
-        }
-    ];
-    loggedUserId: number;
 
     constructor(
-        injector: Injector
+        injector: Injector,
     ) {
         super(injector);
-        this.loggedUserId = this.appSession.userId;
     }
 
     ngAfterViewInit(): void {

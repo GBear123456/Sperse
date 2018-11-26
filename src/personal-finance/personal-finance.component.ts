@@ -12,6 +12,8 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
     wrapperEnabled = false;
+    hideHeader = false;
+    hideFooter = false;
     loggedUserId: number;
 
     private viewContainerRef: ViewContainerRef;
@@ -25,16 +27,18 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
         // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
         this.loggedUserId = this.appSession.userId;
-
         router.events.subscribe(event => {
-            if (event instanceof ActivationEnd && this.isLastSnapshot(event.snapshot))
+            if (event instanceof ActivationEnd && !event.snapshot.children.length) {
                 this.wrapperEnabled = !event.snapshot.data.wrapperDisabled;
+                this.hideHeader = event.snapshot.data.hideHeader;
+                this.hideFooter = event.snapshot.data.hideFooter;
+            }
         });
     }
-
-    isLastSnapshot(snapshot) {
-        return snapshot['_routerState'].url.split('/').pop() == snapshot.routeConfig.path;
-    }
+    //
+    // isLastSnapshot(snapshot) {
+    //     return snapshot['_routerState'].url.split('/').pop() == snapshot.routeConfig.path;
+    // }
 
     ngOnInit(): void {
         this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {

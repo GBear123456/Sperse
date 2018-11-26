@@ -3,13 +3,13 @@
         <div class="container d-flex justify-content-between align-items-center">
             <a href="lendspace.com" class="url">www.lendspace.com</a>
             <p class="get-free-score">Get Your Free Credit Score with Lend Space</p>
-            <p class="date">January 18, 2019</p>
+            <p class="date">{{currentDate | date:'longDate'}}</p>
         </div>
     </div>
     <div class="main-headline">
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" routerLinkActive="active" routerLink="/personal-finance">
                     <img src="./assets/common/images/lend-space-dark/logo.png" alt="Lend Space">
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,10 +19,10 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link" routerLinkActive="active" routerLink="/personal-finance/lend-space-dark">{{l('Home')}}</a>
+                            <a class="nav-link" routerLinkActive="active" routerLink="/personal-finance">{{l('Home')}}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" routerLinkActive="active" routerLink="/personal-finance/offers/credit-cards">{{l('Products')}}</a>
+                            <a class="nav-link" routerLinkActive="active" routerLink="/personal-finance/offers">{{l('Products')}}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link disabled" href="#">{{l('Features')}}</a>
@@ -43,7 +43,7 @@
                             </div>
                         </li>
                     </ul>
-                    <div class="my-2 my-lg-0" *ngIf="!loggedUserId">
+                    <div class="my-2 my-lg-0" *ngIf="!appSession.userId">
                         <button class="btn btn-light btn-sm my-2 my-sm-0 sign-in" routerLinkActive="active" routerLink="/account/login">{{l('Sign In')}}</button>
                         <button class="btn btn-warning btn-sm my-2 my-sm-0 member-login" routerLinkActive="active" routerLink="/account/login">{{l('Member Login')}}</button>
                     </div>
