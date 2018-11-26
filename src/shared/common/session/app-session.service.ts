@@ -53,8 +53,8 @@ export class AppSessionService {
 
     getShownLoginInfo(): { fullName, email, tenantName?} {
         let info: { fullName, email, tenantName? } = {
-            fullName: this._user.name + ' ' + this._user.surname,
-            email: this._user.emailAddress
+            fullName: this._user && (this._user.name + ' ' + this._user.surname),
+            email: this._user && this._user.emailAddress
         };
 
         if (this._abpMultiTenancyService.isEnabled) {
