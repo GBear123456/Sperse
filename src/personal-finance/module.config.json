@@ -3,7 +3,7 @@
   "name": "PersonalFinance",
   "search": false,
   "requiredFeature": "PFM",
-  "defaultPath": "/personal-finance/member-area",
+  "defaultPath": "/personal-finance",
   "hostDisabled": true,
   "navigation": [
   ]

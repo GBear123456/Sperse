@@ -1,25 +1,21 @@
 <div class="top-footer">
-    <div class="top-container">
+    <div class="top-container container">
         <div class="footer-menu">
-            <span class="logo" *ngIf="hasPfmAppFeature">{{appSession?.tenant?.name}}</span>
+            <img *ngIf="hasPfmAppFeature"
+                 src="./assets/common/images/logos/lend-space.png"
+                 srcset="./assets/common/images/logos/lend-space@2x.png 2x,
+                         ./assets/common/images/logos/lend-space@3x.png 3x"
+                 alt="Lend Space">
             <ul class="footer-menu-list">
                 <li class="footer-menu-item" *ngFor="let item of footerMenuItems">
                     <a class="footer-menu-link" [routerLink]="[item.url]">{{l(item.name)}}</a>
                 </li>
             </ul>
-            <div class="social-links" *ngIf="hasPfmAppFeature"><span class="facebook"></span><span class="twitter"></span><span class="youtube"></span></div>
-        </div><!-- footer-menu -->        
-        <div *ngIf="!hasPfmAppFeature || !loggedUserId">
-            <div class="separator"></div>
-            <div class="disclosure">
-                <b>{{ls(hasPfmAppFeature ? 'PFM': 'Platform', "DisclosureTitle")}}</b>: {{ls(hasPfmAppFeature ? 'PFM': 'Platform', "DisclosureText", appSession?.tenant?.name)}}
-            </div>
-            <div class="score" *ngIf="hasPfmAppFeature">The Credit Score data on Lendspace is the VantageScore® 3.0 by TransUnion®.</div>
         </div>
     </div>
 </div>
 <div class="bottom-footer" *ngIf="!hasPfmAppFeature || !loggedUserId">
-    <div class="bottom-container">
+    <div class="bottom-container container">
         <span class="copyright">
             © {{appSession?.tenant?.name}} {{currentYear}}, all rights reserved
         </span>

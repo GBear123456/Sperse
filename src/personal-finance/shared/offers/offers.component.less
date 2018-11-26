@@ -108,13 +108,13 @@
         position: relative;
         .filter-side-bar {
             @media (max-width: 768px) {
-                position: fixed;
+                position: absolute;
                 transform: translateX(0);
                 transition: transform 0.3s ease-in-out;
                 background: #fff;
                 z-index: 1;
                 &.xs-hidden {
-                    transform: translateX(-100%);
+                    transform: translateX(-200%);
                 }
             }
 

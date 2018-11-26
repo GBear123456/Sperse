@@ -6,8 +6,7 @@ import { CreditReportComponent } from './credit-report/credit-report.component';
 import { CreditSimulatorComponent } from './credit-simulator/credit-simulator.component';
 import { CreditResourcesComponent } from './credit-resources/credit-resources.component';
 import { AccountsComponent } from './accounts/accounts.component';
-import { OffersComponent } from '@root/personal-finance/shared/offers/offers.component';
-import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
+import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/auth/logged-in-credit-report-guard';
 
 @NgModule({
     imports: [
@@ -16,18 +15,21 @@ import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offe
                 path: '',
                 component: MemberAreaComponent,
                 children: [
-                    { path: '', component: CreditReportComponent },
+                    {
+                        path: 'credit-report',
+                        canActivate: [ LoggedInCreditReportGuard ],
+                        component: CreditReportComponent
+                    },
                     { path: 'credit-simulator', component: CreditSimulatorComponent },
                     { path: 'credit-resources', component: CreditResourcesComponent },
-                    { path: 'my-finances', component: AccountsComponent },
-                    { path: 'offers', component: OffersComponent, data: { permission: '', reuse: true } },
-                    { path: 'offer/:id', component: OfferDetailsComponent, data: { permission: '', reuse: true } }
+                    { path: 'my-finances', component: AccountsComponent }
                 ]
             }
         ])
     ],
     exports: [
         RouterModule
-    ]
+    ],
+    providers: [ LoggedInCreditReportGuard ]
 })
 export class MemberAreaRoutingModule { }

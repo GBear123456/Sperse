@@ -10,7 +10,7 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
     selector: 'footer'
 })
 export class FooterComponent extends AppComponentBase {
-    @HostBinding('class.default') showDefaultFooter: boolean = true;
+    @HostBinding('class.default') showDefaultFooter = true;
 
     hasPfmAppFeature = false;
     currentYear = new Date().getFullYear();

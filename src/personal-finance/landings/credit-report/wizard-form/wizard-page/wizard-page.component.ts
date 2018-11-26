@@ -304,9 +304,9 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                 if (!this.isExistingUser) {
                     this.loginService.authenticateModel.userNameOrEmailAddress = this.model.email;
                     this.loginService.authenticateModel.password = this.model.password;
-                    this.loginService.authenticate(() => this.finalizeRegistering(), AppConsts.appBaseUrl + '/personal-finance/member-area');
+                    this.loginService.authenticate(() => this.finalizeRegistering(), AppConsts.appBaseUrl + '/personal-finance');
                 } else {
-                    this._router.navigate(['personal-finance/member-area']);
+                    this._router.navigate(['personal-finance']);
                 }
             }, () => {
                 if (this.isExistingUser)

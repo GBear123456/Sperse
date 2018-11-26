@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: start;
-    width: 100%;
+    margin-left: auto;
 
     .logo {
         position: absolute;
@@ -56,12 +56,12 @@
             a {
                 display: block;
                 text-decoration: none;
-                text-transform: uppercase;
-                font-family: Open Sans;
+                font-family: Poppins;
                 font-size: 14px;
-                font-weight: bold;
+                font-weight: 600;
                 position: relative;
                 white-space: nowrap;
+                color: #000;
             }
             a.active,
             a:hover,
@@ -102,10 +102,8 @@
     }
 
     ul.right-actions {
-        position: absolute;
-        padding: 0px 30px;
-        right: 0px;
-
+        padding-left: 0;
+        margin: 10px 0 14px;
         li {
             display: inline-block;
             &:last-child {
@@ -119,16 +117,10 @@
 
             a {
                 font-size: 14px;
-                padding: 10px 15px;
+                padding: 12px 10px;
                 font-weight: bold;
                 letter-spacing: 0.8px;
-                color: rgba(255, 255, 255, 0.7);
-                text-transform: uppercase;
                 text-decoration: none;
-
-                &:hover {
-                    color: rgba(255, 255, 255, 1);
-                }
             }
         }
     }

@@ -151,6 +151,11 @@ export class AppService extends AppServiceBase {
         return subscription && subscription.isLocked;
     }
 
+    getSubscriptionTrackingCode(name?: string) {
+        const subscription = this.getModuleSubscription(name);
+        return subscription && subscription.trackingCode;
+    }
+
     checkModuleSubscriptionEnabled() {
         let module = this.getModule();
         return Boolean(ModuleSubscriptionInfoDtoModule[module.toUpperCase()]);

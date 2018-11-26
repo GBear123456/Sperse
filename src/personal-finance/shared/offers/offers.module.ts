@@ -12,6 +12,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
+import { OffersRoutingModule } from '@root/personal-finance/shared/offers/offers-routing.module';
 
 @NgModule({
     imports: [
@@ -22,15 +23,13 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
         MatCheckboxModule,
         DxScrollViewModule,
         RoundProgressModule,
-        NoDataModule
+        NoDataModule,
+        OffersRoutingModule
     ],
     declarations: [
         StarsRatingComponent,
         OffersComponent,
         OfferDetailsComponent
-    ],
-    bootstrap: [
-        OffersComponent
     ],
     providers: [
         OffersService,

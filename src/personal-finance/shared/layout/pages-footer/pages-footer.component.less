@@ -9,7 +9,7 @@
     }
     &.pfm-app {
         .top-footer {
-            background-color: #002849;
+            background-color: #000;
         }
         .bottom-footer {
             background-color: #052941;
@@ -21,7 +21,7 @@
     }
 
     .top-footer {
-        padding: 59px 0;
+        padding: 14px 0;
         text-align: center;
     }
     .footer-social {
@@ -62,10 +62,10 @@
         flex-wrap: wrap;
         padding-left: 0;
         list-style-type: none;
-        margin: 0px 55px;
         justify-content: space-between;
+        align-items: center;
         @media (max-width: 730px) {
-            justify-content: space-around;  
+            justify-content: space-around;
             .footer-menu-list {
                 margin: 30px 0px;
             }
@@ -91,82 +91,7 @@
                 color: rgba(255, 255, 255, .6);
             }
         }
-
-        .logo {
-            float: left;
-            font-family: Calluna;
-            font-size: 25px;
-            font-weight: 600;
-            font-style: normal;
-            font-stretch: normal;
-            line-height: normal;
-            letter-spacing: normal;
-            color: #ffffff;
-            margin-top: 14px;
-            padding-left: 40px;
-            background: url(/assets/common/icons/social/telegram.svg) no-repeat;
-            background-position: 0px 0px;
-            background-size: 30px 25px;
-        }
-
-        .social-links {            
-            display: inline-block;
-            padding-top: 14px;
-            float: right;
-            span {
-                display: inline-block;
-            }
-            .facebook {    
-                width: 10px;
-                height: 20px;
-                background: url(/assets/common/icons/facebook-icon.svg) no-repeat;
-            }
-            .twitter {
-                width: 18px;
-                height: 16px;
-                margin: 0px 32px;
-                background: url(/assets/common/icons/twitter-icon.svg) no-repeat;
-            }
-            .youtube {
-                width: 21px;
-                height: 16px;
-                background: url(/assets/common/icons/youtube-icon.svg) no-repeat;
-            }
-        }
     }
-
-    .separator {
-        height: 1px;
-        margin: 55px 50px 36px 50px;
-        background-color: rgba(255, 255, 255, 0.15);
-    }
-
-    .disclosure {
-        margin: 0px 50px;
-        text-align: left;
-        font-family: Open Sans;
-        font-size: 14px;
-        font-weight: normal;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: normal;
-        color: #ffffff;
-    }
-
-    .score {
-        text-align: left;
-        margin: 16px 50px 0px 50px;
-        font-family: Open Sans;
-        font-size: 14px;
-        font-weight: bold;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: normal;
-        color: #ffffff;        
-    }
-
     .copyright {
         float: left;
         font-family: Open Sans;
@@ -187,7 +112,6 @@
         text-align: center;
         color: rgba(255, 255, 255, 0.5);
         .bottom-container {
-            padding: 10px 50px;
             @media (max-width: 638px) {
                 display: flex;
                 justify-content: space-around;
@@ -228,5 +152,5 @@
                 }
             }
         }
-    }  
+    }
 }

@@ -8,10 +8,8 @@ import {
     RouterStateSnapshot,
     CanActivateChild
 } from '@angular/router';
-import { AppConsts } from 'shared/AppConsts';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { CacheService } from 'ng2-cache-service';
-import { CacheStoragesEnum } from 'ng2-cache-service/dist/src/enums/cache-storages.enum';
 
 @Injectable()
 export class RouteGuard implements CanActivate, CanActivateChild {
@@ -31,7 +29,9 @@ export class RouteGuard implements CanActivate, CanActivateChild {
 
         if (!this._sessionService.user) {
             if (this._feature.isEnabled('PFM.Applications'))
-                this._router.navigate(['/personal-finance/lend-space']);
+                this._router.navigate(['/personal-finance']);
+            else if (this._feature.isEnabled('PFM.CreditReport'))
+                this._router.navigate(['/personal-finance/credit-report']);
             else
                 this._router.navigate(['/account/login']);
             return false;
