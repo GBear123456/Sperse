@@ -37,7 +37,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
         this.setTitle('Login');
 
         let tenant = this._appSession.tenant;
-        this.loadLayoutComponent(tenant.layoutType == TenantLoginInfoDtoLayoutType.LendSpace
+        this.loadLayoutComponent(tenant && (tenant.layoutType == TenantLoginInfoDtoLayoutType.LendSpace)
             ? LendSpaceLoginComponent: HostLoginComponent);
     }
 
