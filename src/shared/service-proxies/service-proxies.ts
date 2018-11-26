@@ -22391,6 +22391,58 @@ export class TenantSettingsServiceProxy {
     }
 
     /**
+     * @layoutType (optional) 
+     * @return Success
+     */
+    setCustomLayout(layoutType: LayoutType | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/SetCustomLayout";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(layoutType);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetCustomLayout(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetCustomLayout(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetCustomLayout(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -50781,6 +50833,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     customCssId!: string | undefined;
     customToSDocumentId!: string | undefined;
     customPrivacyPolicyDocumentId!: string | undefined;
+    layoutType!: TenantLoginInfoDtoLayoutType | undefined;
     creationTime!: moment.Moment | undefined;
     paymentPeriodType!: TenantLoginInfoDtoPaymentPeriodType | undefined;
     creationTimeString!: string | undefined;
@@ -50805,6 +50858,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.customCssId = data["customCssId"];
             this.customToSDocumentId = data["customToSDocumentId"];
             this.customPrivacyPolicyDocumentId = data["customPrivacyPolicyDocumentId"];
+            this.layoutType = data["layoutType"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.paymentPeriodType = data["paymentPeriodType"];
             this.creationTimeString = data["creationTimeString"];
@@ -50829,6 +50883,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["customCssId"] = this.customCssId;
         data["customToSDocumentId"] = this.customToSDocumentId;
         data["customPrivacyPolicyDocumentId"] = this.customPrivacyPolicyDocumentId;
+        data["layoutType"] = this.layoutType;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["creationTimeString"] = this.creationTimeString;
@@ -50846,6 +50901,7 @@ export interface ITenantLoginInfoDto {
     customCssId: string | undefined;
     customToSDocumentId: string | undefined;
     customPrivacyPolicyDocumentId: string | undefined;
+    layoutType: TenantLoginInfoDtoLayoutType | undefined;
     creationTime: moment.Moment | undefined;
     paymentPeriodType: TenantLoginInfoDtoPaymentPeriodType | undefined;
     creationTimeString: string | undefined;
@@ -56927,6 +56983,11 @@ export enum TenantHostType {
     FundingUi = "FundingUi", 
 }
 
+export enum LayoutType {
+    Default = "Default", 
+    LendSpace = "LendSpace", 
+}
+
 export enum Module2 {
     CFO = "CFO", 
     CRM = "CRM", 
@@ -57435,6 +57496,11 @@ export enum RoleListDtoModuleId {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+}
+
+export enum TenantLoginInfoDtoLayoutType {
+    Default = "Default", 
+    LendSpace = "LendSpace", 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {
