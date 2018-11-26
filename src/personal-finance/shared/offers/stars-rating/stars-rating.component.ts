@@ -10,6 +10,7 @@ import { range } from 'lodash';
 export class StarsRatingComponent implements OnInit {
     @Input() maxRating = 5;
     @Input() currentRating = 0;
+    @Input() color = '#6D97F2';
     ratings: number[];
     ngOnInit() {
         this.ratings = range(this.maxRating);
