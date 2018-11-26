@@ -13,7 +13,6 @@ import {
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { request } from 'https';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -42,7 +41,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
-    isPFMEnabled: boolean = abp.features.isEnabled('PFM');
+    isPFMEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
 
     logoUploader: FileUploader;
@@ -117,13 +116,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.achWorksSettings = result[3];
                 this.recurlySettings = result[4];
 
-                let currentIndex = 5;
                 if (this.isCreditReportFeatureEnabled) {
-                    this.idcsSettings = result[currentIndex++];
+                    this.idcsSettings = result[5];
                 }
 
                 if (this.isPFMEnabled) {
-                    this.epcvipSettings = result[currentIndex++];
+                    this.epcvipSettings = result[this.isCreditReportFeatureEnabled ? 6 : 5];
                 }
             });
     }
