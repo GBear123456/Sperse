@@ -42,6 +42,8 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     refreshAfterClose = false;
     module: Module;
     subscriptionIsLocked: boolean;
+    trackingCode: string;
+
     constructor(private injector: Injector,
                 private appService: AppService,
                 private dialogRef: MatDialogRef<PaymentWizardComponent>,
@@ -57,6 +59,9 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     ngOnInit() {
         this.plan$ = this.paymentService.plan$;
         this.subscriptionIsLocked = this.appService.subscriptionIsLocked(this.module);
+        if (this.subscriptionIsLocked) {
+            this.trackingCode = this.appService.getSubscriptionTrackingCode(this.module);
+        }
     }
 
     moveToPaymentOptionsStep() {
