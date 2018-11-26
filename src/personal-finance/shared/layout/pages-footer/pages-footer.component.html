@@ -11,13 +11,6 @@
                     <a class="footer-menu-link" [routerLink]="[item.url]">{{l(item.name)}}</a>
                 </li>
             </ul>
-        </div><!-- footer-menu -->
-        <div *ngIf="!hasPfmAppFeature || !loggedUserId">
-            <div class="separator"></div>
-            <div class="disclosure">
-                <b>{{ls(hasPfmAppFeature ? 'PFM': 'Platform', "DisclosureTitle")}}</b>: {{ls(hasPfmAppFeature ? 'PFM': 'Platform', "DisclosureText", appSession?.tenant?.name)}}
-            </div>
-            <div class="score" *ngIf="hasPfmAppFeature">The Credit Score data on Lendspace is the VantageScore® 3.0 by TransUnion®.</div>
         </div>
     </div>
 </div>
