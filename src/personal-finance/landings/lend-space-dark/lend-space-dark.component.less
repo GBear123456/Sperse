@@ -2,11 +2,6 @@
 @yellowColor: #f0d500;
 @darkGrayColor: #262626;
 
-/deep/ header,
-/deep/ footer {
-    display: none !important;
-}
-
 :host {
     // base
     * {
@@ -157,7 +152,7 @@
                             background-color: #000;
                             border-color: #000;
                             span {
-                                color: #ccc;
+                                color: @yellowColor !important;
                             }
                         }
                     }

@@ -4,7 +4,8 @@
     const EncryptedAuthToken = 'enc_auth_token';
 
     var remoteServiceUrl = '';
-    var appContext, appBootstrap;
+    var appContext, appBootstrap
+    var tenant;
     var pathParts = location.pathname.split('/').filter(Boolean);
     var cookie = queryString(document.cookie, ';');
     var params = queryString(document.location.search.substr(1), '&');
@@ -63,9 +64,9 @@
             }
         ).then(function(response) {
             var loginInformations = response && response.result,
-                tenant = loginInformations && loginInformations.tenant,
                 tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse',
                 features = loginInformations && loginInformations.application.features;
+            tenant = loginInformations && loginInformations.tenant;
 
             if (features && features['PFM'] && JSON.parse(features['PFM'].value)) {
                 window.loginPageHandler = undefined;
@@ -242,7 +243,14 @@
         }
 
         window.addEventListener('load', function() {
-            $( document ).ready( function() {
+            $(document).ready(function () {
+                if (tenant) {
+                    if (tenant.customPrivacyPolicyDocumentId)
+                        $('#privacy .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadPrivacyPolicyPdf?tenantId=' + tenant.Id);
+
+                    if (tenant.customToSDocumentId)
+                        $('#terms .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadTermsOfServicePdf?tenantId=' + tenant.Id);
+                }
                 $('.agree-rights').show();
 
                 var privacy = $('#privacy');
