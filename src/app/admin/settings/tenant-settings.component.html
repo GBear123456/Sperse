@@ -430,17 +430,6 @@
                             <div>
                                 <span class="help-block text-danger" *ngIf="!epcvipPublicSiteUrl.valid && !epcvipPublicSiteUrl.pristine">{{l("Invalid_EPCVIPPublicSiteUrl")}}</span>
                             </div>
-                            <div class="form-group">
-                                <label for="EPCVIPApiBaseUrl">{{l("EPCVIPApiBaseUrl")}}</label>
-                                <input id="EPCVIPApiBaseUrl" type="text" name="EPCVIPApiBaseUrl" class="form-control" [(ngModel)]="epcvipSettings.apiBaseUrl" maxlength="128" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label for="EPCVIPTestMode" class="m-checkbox">
-                                    <input id="EPCVIPTestMode" class="m-check" type="checkbox" name="EPCVIPTestMode" [(ngModel)]="epcvipSettings.testMode" disabled>
-                                    {{l("EPCVIPTestMode")}}
-                                    <span></span>
-                                </label>
-                            </div>
                         </div>
                     </tab>
                 </tabset>
