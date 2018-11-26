@@ -24,32 +24,32 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
     ];
     features = [
         {
-            imgSrc: './assets/common/images/lend-space-dark/credit-score.png',
+            imgClass: 'credit-score',
             title: 'Credit Scores',
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.'
         },
         {
-            imgSrc: './assets/common/images/lend-space-dark/credit-cards.png',
+            imgClass: 'credit-cards',
             title: 'Credit Cards',
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.'
         },
         {
-            imgSrc: './assets/common/images/lend-space-dark/retirement-planning.png',
+            imgClass: 'retirement-planning',
             title: 'Retirement Planning',
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.'
         },
         {
-            imgSrc: './assets/common/images/lend-space-dark/personal-loans.png',
+            imgClass: 'personal-loans',
             title: 'Personal Loans',
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.'
         },
         {
-            imgSrc: './assets/common/images/lend-space-dark/business-loans.png',
+            imgClass: 'business-loans',
             title: 'Business Loans',
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.'
         },
         {
-            imgSrc: './assets/common/images/lend-space-dark/get-debt-free.png',
+            imgClass: 'get-debt-free',
             title: 'Get Debt Free',
             text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse.'
         }

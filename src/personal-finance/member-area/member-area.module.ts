@@ -18,7 +18,6 @@ import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/ba
 import { CFOService } from '@shared/cfo/cfo.service';
 import { UserOnlyCFOService } from '../shared/common/user-only.cfo.service';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
-import { OffersModule } from '@root/personal-finance/shared/offers/offers.module';
 
 @NgModule({
     imports: [
@@ -29,7 +28,6 @@ import { OffersModule } from '@root/personal-finance/shared/offers/offers.module
         MemberAreaRoutingModule,
         CreditSimulatorModule,
         CreditResourcesModule,
-        OffersModule,
         BankAccountsCommonModule.forRoot(),
         StickyModule
     ],

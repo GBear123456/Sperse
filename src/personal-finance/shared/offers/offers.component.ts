@@ -261,7 +261,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     viewCardDetails(card: CampaignDto) {
-        this.router.navigate(['/personal-finance/offer', card.id], { relativeTo: this.route });
+        this.router.navigate(['/personal-finance/offers/details', card.id], { relativeTo: this.route });
     }
 
     toggleFiltering(e) {

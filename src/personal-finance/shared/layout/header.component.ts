@@ -114,7 +114,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         },
         {
             name: 'My Finances',
-            routerUrl: '/personal-finance/member-area/my-finances',
+            routerUrl: '/personal-finance/my-finances',
             disabled: !this.feature.isEnabled('Pages.CFO') || !this._appSessionService.userId
         }
     ];
@@ -123,19 +123,19 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             name: 'creditReportLink',
             imgUrl: 'assets/images/icons/credit-report-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
-            routerUrl: '/personal-finance/member-area'
+            routerUrl: '/personal-finance'
         },
         {
             name: 'creditSimulatorLink',
             imgUrl: 'assets/images/icons/credit-simulator-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-simulator-active-icon.svg',
-            routerUrl: '/personal-finance/member-area/credit-simulator'
+            routerUrl: '/personal-finance/credit-simulator'
         },
         {
             name: 'creditResources',
             imgUrl: 'assets/images/icons/credit-resources-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-resources-active-icon.svg',
-            routerUrl: '/personal-finance/member-area/credit-resources'
+            routerUrl: '/personal-finance/credit-resources'
         }
     ];
     imgList = [
@@ -168,7 +168,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
                     name: 'accountsLink',
                     imgUrl: 'assets/images/icons/credit-report-icon.svg',
                     activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
-                    routerUrl: '/personal-finance/member-area/accounts'
+                    routerUrl: '/personal-finance/my-finance'
                 });
         }
 
