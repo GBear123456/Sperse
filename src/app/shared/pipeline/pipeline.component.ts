@@ -102,7 +102,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     });
                     this.selectedLeads = [];
                 } else
-                    this.updateEntityStage(leadId, newStage.name, 
+                    this.updateEntityStage(leadId, newStage.name,
                         this.getStageByElement(value[3]).name);
             }
         }));
@@ -135,9 +135,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     });
                     return stage;
                 });
-                              
-                this.firstStage = this.lockMarginalEntities ? this.stages[0]: {};
-                this.lastStage = this.lockMarginalEntities ? this.stages[this.stages.length - 1]: {};
+
+                this.firstStage = this.lockMarginalEntities ? this.stages[0] : {};
+                this.lastStage = this.lockMarginalEntities ? this.stages[this.stages.length - 1] : {};
 
                 this.loadStagesLeads(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
 
@@ -193,7 +193,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     }
 
-    refresh(quiet = false, stageId = undefined, skipAlreadyLoadedChecking = false) {
+    refresh(quiet = false, stageId?: number, skipAlreadyLoadedChecking = false) {
         this.selectedLeads = [];
         this.quiet = quiet;
         this.stageId = stageId;
@@ -227,20 +227,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return elm && elm.getAttribute('accessKey');
     }
 
-    checkFilterExcludeCondition(stageId) { 
-        return this.filterModelStages && this.filterModelStages.isSelected 
+    checkFilterExcludeCondition(stageId) {
+        return this.filterModelStages && this.filterModelStages.isSelected
             && !this.filterModelStages.items.element.value.some((item) => {
                 return item.split(':').pop() == stageId;
             });
     }
 
-    loadStagesLeads(page = 0, stageIndex = undefined, oneStageOnly = false) {
+    loadStagesLeads(page = 0, stageIndex?: number, oneStageOnly = false) {
         let index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
             dataSource = this._dataSources[stage.name],
             filter = {StageId: stage.id};
 
-        if (this.checkFilterExcludeCondition(stage.id)) 
+        if (this.checkFilterExcludeCondition(stage.id))
             stage['leads'] = [];
         else {
             if (!dataSource)
@@ -255,17 +255,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
             dataSource.pageSize(this.STAGE_PAGE_COUNT);
             dataSource['_store']['_url'] =
-                this.getODataUrl(this._dataSource.uri, 
+                this.getODataUrl(this._dataSource.uri,
                     this.queryWithSearch.concat({and: [
                         _.extend(filter, this._dataSource.customFilter)
                     ]})
             );
             dataSource.sort({getter: 'Id', desc: true});
-            dataSource.load().done((leads) => {              
+            dataSource.load().done((leads) => {
                 if (leads.length) {
                     stage['leads'] = (page && oneStageOnly ? _.uniqBy(
                         (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads).map((lead) => {
-                            stage['lastLeadId'] = Math.min((page ? stage['lastLeadId']: undefined) || Infinity, lead['Id']);
+                            stage['lastLeadId'] = Math.min((page ? stage['lastLeadId'] : undefined) || Infinity, lead['Id']);
                             return lead;
                         });
                     if (!this.totalsURI)
@@ -277,20 +277,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     stage['total'] = stage['leads'].length;
                     stage['full'] = true;
                 }
-          
+
                 let allStagesLoaded = this.isAllStagesLoaded();
                 if (oneStageOnly || allStagesLoaded)
                     setTimeout(() => this.finishLoading(), 1000);
-                if (this.totalsURI && allStagesLoaded) 
+                if (this.totalsURI && allStagesLoaded)
                     this.processTotalsRequest(this.queryWithSearch);
             });
         }
-            
+
         if (!oneStageOnly && stages[index + 1])
             this.loadStagesLeads(page, index + 1);
     }
 
-    processTotalsRequest(filter = undefined) {
+    processTotalsRequest(filter?: any) {
         (new DataSource({
             requireTotalCount: false,
             store: {
@@ -365,7 +365,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     getDateWithTimezone(utcDateTime) {
         if (utcDateTime)
-            return new Date(moment(utcDateTime).format('YYYY-MM-DD HH:mm:ss'));
+            return new Date(moment(utcDateTime).format('YYYY/MM/DD HH:mm:ss'));
     }
 
     hideStageHighlighting() {
@@ -420,7 +420,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 endCard = stored;
             }
 
-            while(startCard != endCard) {
+            while (startCard != endCard) {
                 if (startCard.nodeType == Node.ELEMENT_NODE)
                     this.setCardSelection(startCard, checked);
                 startCard = startCard.nextSibling;
@@ -432,7 +432,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     deselectAllCards() {
         let elements = this.getSelectedCards();
-        while (elements.length){
+        while (elements.length) {
             this.setCardSelection(elements[0], false);
         }
     }
