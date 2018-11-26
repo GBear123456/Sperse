@@ -69,7 +69,7 @@
 
             if (features && features['PFM'] && JSON.parse(features['PFM'].value)) {
                 window.loginPageHandler = undefined;
-                ppBootstrap && appBootstrap.call(appContext);
+                appBootstrap && appBootstrap.call(appContext);
             } else {
                 document.getElementById('loginPage').style.display = 'block';
                 document.getElementById('loadSpinner').style.display = 'none';
