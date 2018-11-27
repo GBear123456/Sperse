@@ -133,6 +133,23 @@
                     height: 41px;
                 }
             }
+    
+            @media all and (max-width: 529px) {
+                order: 2;
+                margin-left: auto;
+                
+                .m-topbar {
+                    &__nav {
+                        li {
+                            display: none;
+                    
+                            &:last-child {
+                                display: inline-block;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         &.navbar-fixed-top,
@@ -189,6 +206,13 @@
             order: 2;
             width: calc(~"100% - 436px");
         }
+    
+        app-area-navigation {
+            @media all and (max-width: 529px) {
+                order: 3;
+                margin-left: 12px;
+            }
+        }
     }
 }
 
@@ -213,11 +237,18 @@
             .page-logo {
                 min-width: 210px !important;
             }
+    
+            app-area-navigation {
+                @media all and (max-width: 529px) {
+                    margin-left: auto !important;
+                }
+            }
             
             #header-app-menu {
                 width: 100%;
     
                 .app-area-navigation {
+                    
                     > li {
                         padding: 0;
                         
