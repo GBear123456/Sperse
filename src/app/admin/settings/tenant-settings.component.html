@@ -31,7 +31,7 @@
                         <div class="row m-form">
                             <div class="col-md-6">
                                 <h5>{{l("PrivacyPolicy")}}</h5>
-                                <!--<p *ngIf="appSession.tenant.customPrivacyPolicyDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomPrivacyPolicyDocument'" target="_blank">{{l('Download')}}</a></p>-->
+                                <p *ngIf="appSession.tenant.customPrivacyPolicyDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
                                 <form #privacyPolicyUploadForm>
                                     <div class="form-group">
                                         <input type="file" ng2FileSelect [uploader]="customPrivacyPolicyUploader" class="col-lg-12" required accept=".html" />
@@ -43,7 +43,7 @@
                             </div>
                             <div class="col-md-6">
                                 <h5>{{l("TermsOfService")}}</h5>
-                                <!--<p *ngIf="appSession.tenant.customToSDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument'" target="_blank">{{l('Download')}}</a></p>-->
+                                <p *ngIf="appSession.tenant.customToSDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/DownloadTermsOfServicePdf?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
                                 <form #toSUploadForm>
                                     <div class="form-group">
                                         <input type="file" ng2FileSelect [uploader]="customToSUploader" class="col-lg-12" required accept=".html" />
