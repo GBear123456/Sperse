@@ -38,10 +38,10 @@ export class AccountComponent extends AppComponentBase implements OnInit {
         this.viewContainerRef = viewContainerRef;
     }
 
-    ngOnInit(): void {        
+    ngOnInit(): void {
         let tenant = this._appSession.tenant;
         this.loadLayoutComponent(tenant && (tenant.layoutType == TenantLoginInfoDtoLayoutType.LendSpace)
-            ? LendSpaceLayoutComponent: HostLayoutComponent);
+            ? LendSpaceLayoutComponent : HostLayoutComponent);
     }
 
     private loadLayoutComponent(component: Type<AppComponentBase>) {
