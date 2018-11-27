@@ -21,7 +21,7 @@
     <ul class="app-responsive-menu dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
         <li *ngFor="let item of responsiveMemberAreaLinks" routerLinkActive="active">
             <a (click)="navigationItemClick($event, item)" routerLinkActive="active" [class.active]="currentUrl === item.routerUrl" [routerLinkActiveOptions]="{exact:true}"
-               class="dropdown-item">
+               class="dropdown-item" [ngClass]="item.class">
                 {{l(item.name)}}
             </a>
             <ul *ngIf="item.sublinks && item.sublinks.length" class="responsive-sublinks">
@@ -37,6 +37,8 @@
 
 <ul class="right-actions" *ngIf="!loggedUserId">
     <li class="right-actions--item">
-        <a routerLink="/account/login" class="left-menu--link member-login">{{l('Member Login')}}</a>
+        <a routerLink="/account/login" class="left-menu--link member-login">
+            <span>{{l('Member Login')}}</span>
+        </a>
     </li>
 </ul>

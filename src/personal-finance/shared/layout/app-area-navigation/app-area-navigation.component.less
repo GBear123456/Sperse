@@ -5,6 +5,10 @@
     align-items: center;
     justify-content: start;
     margin-left: auto;
+    
+    @media all and (max-width: 529px) {
+        width: auto !important;
+    }
 
     .logo {
         position: absolute;
@@ -32,6 +36,10 @@
 
     .app-responsive-menu {
         right: unset!important;
+        @media all and (max-width: 767px) {
+            right: 0 !important;
+        }
+        
         li {
             padding: 0;
             position: relative;
@@ -62,6 +70,16 @@
                 position: relative;
                 white-space: nowrap;
                 color: #000;
+                
+                &.member-login {
+                    color: #fff !important;
+                    background-color: #ff9933;
+                    transition: .2s;
+                    
+                    &:hover {
+                        background-color: lighten(#ff9933, 6%);
+                    }
+                }
             }
             a.active,
             a:hover,
@@ -103,7 +121,7 @@
 
     .right-actions {
         padding-left: 0;
-        margin: 10px 0 14px;
+        margin: 12px 0 14px 12px;
         li {
             display: inline-block;
             &:last-child {
@@ -133,7 +151,11 @@
              line-height: 18px;
              border-radius: .2rem;
              letter-spacing: normal;
+             white-space: nowrap;
              
+             @media all and (max-width: 529px) {
+                 display: none !important;
+             }
 
              &:hover {
                  color: #fff !important;

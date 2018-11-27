@@ -16,13 +16,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 /** Third party imports */
 import { MatRadioChange } from '@angular/material/radio';
 import { Observable, Subject, ReplaySubject, of } from 'rxjs';
-import { finalize, map, switchMap, takeUntil, pluck, tap } from 'rxjs/operators';
+import { finalize, first, map, switchMap, takeUntil, pluck, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootComponent } from '@root/root.components';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { Type, OfferServiceProxy, CampaignDto } from '@shared/service-proxies/service-proxies';
+import { Category, Type, OfferServiceProxy, CampaignDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'offer-details.component.html',
@@ -35,9 +35,11 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
     creditCards$: Observable<CampaignDto[]>;
     cardsAmount: number;
     scrollHeight: number;
-    selectedCardId: ReplaySubject<number> = new ReplaySubject<number>();
+    selectedCardId: ReplaySubject<number> = new ReplaySubject<number>(1);
     selectedCardId$: Observable<number> = this.selectedCardId.asObservable();
     selectedCardDetails$: Observable<any>;
+    category$: Observable<Category>;
+    categoryDisplayName$: Observable<string>;
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
     private rootComponent: RootComponent;
@@ -60,12 +62,14 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     activate() {
+        this.category$ = this.offersService.getCategoryFromRoute(this.route.params).pipe(first());
+        this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.route.params.pipe(
             takeUntil(this.deactivate$),
-            pluck('id')
+            pluck('id'),
         ).subscribe(id => this.selectedCardId.next(+id));
         this.creditCards$ = this.getCreditCards();
-        this.creditCards$.subscribe(creditCards => this.cardsAmount = creditCards.length);
+        this.creditCards$.pipe(takeUntil(this.deactivate$)).subscribe(creditCards => this.cardsAmount = creditCards.length);
         this.selectedCardDetails$ = this.selectedCardId$.pipe(
             takeUntil(this.deactivate$),
             switchMap((cardId: number) => this.getCardDetails(cardId))
@@ -119,10 +123,13 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
     private getCreditCards() {
         abp.ui.setBusy(this.creditCardsListRef.nativeElement);
         return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
-            of(this.offersService.displayedCards) :
-            this.offerServiceProxy.getAll(undefined, undefined, 'US')).pipe(
-            finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))
-        );
+                    of(this.offersService.displayedCards) :
+                    this.category$.pipe(
+                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US'))
+                    )
+                ).pipe(
+                    finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))
+                );
     }
 
     @HostListener('window:resize', ['$event']) onResize() {

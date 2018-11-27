@@ -1,15 +1,15 @@
 <div class="container">
     <div class="row">
         <div class="col-md-4 leftBlock">
-            <h1>{{ ls.l('Offers_CreditCards') }}</h1>
-            <h3 #availableCards>{{ ls.l('Offers_AvailableCreditCards') }} ({{ cardsAmount }})</h3>
+            <h1>{{ categoryDisplayName$ | async }}</h1>
+            <h3 #availableCards><ng-container *ngIf="cardsAmount">{{ ls.l('Offers_AvailableCreditCards') }} ({{ cardsAmount }})</ng-container></h3>
             <div class="creditCardsList" #creditCardsList>
                 <dx-scroll-view [height]="scrollHeight">
                     <mat-radio-group (change)="creditCardChanged($event)" [value]="selectedCardId$ | async">
                         <mat-radio-button *ngFor="let creditCard of creditCards$ | async" [value]="creditCard.id">
                             <img [src]="creditCard.logoUrl" [alt]="creditCard.name">
                             <div class="cardInfo">
-                                <h4 *ngIf="cardDetails?.bankName">{{ creditCard.bankName }}</h4>
+                                <h4>{{ categoryDisplayName$ | async }}</h4>
                                 <h5>{{ creditCard.name }}</h5>
                             </div>
                         </mat-radio-button>
@@ -23,12 +23,12 @@
                     <div class="bankDetails col-md-8">
                         <img [src]="cardDetails.logoUrl" [alt]="cardDetails.name">
                         <div class="cardInfo">
-                            <h4>{{ cardDetails.name }}</h4>
-                            <h5>{{ cardDetails.description }}</h5>
+                            <h4>{{ categoryDisplayName$ | async }}</h4>
+                            <h5>{{ cardDetails.name }}</h5>
                         </div>
                     </div>
                     <div class="actions col-md-4">
-                        <a [href]="cardDetails.redirectUrl" class="applyButton pull-right"><span>{{ ls.l('Apply') }}</span></a>
+                        <a [href]="cardDetails.redirectUrl" class="applyButton withArrow pull-right"><span>{{ ls.l('Apply') }}</span></a>
                     </div>
                 </div>
                 <hr>

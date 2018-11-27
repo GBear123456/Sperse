@@ -113,7 +113,6 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     creditCardloaded = false;
     category$: Observable<Category>;
     categoryDisplayName$: Observable<string>;
-    defaultCategoryDisplayName: string = this.ls.l('Offers_CreditCards');
 
     constructor(
         injector: Injector,
@@ -134,11 +133,8 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     activate() {
-        this.category$ = this.route.params.pipe(
-            pluck('category'),
-            map((category: string) => Category[upperFirst(camelCase(category))])
-        );
-        this.categoryDisplayName$ = this.category$.pipe(map(category => category ? lowerCase(category) : this.defaultCategoryDisplayName));
+        this.category$ = this.offersService.getCategoryFromRoute(this.route.params);
+        this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.creditCards$ = this.category$.pipe(
             tap(() => { abp.ui.setBusy(this.creditCardsListRef.nativeElement); this.creditCardsAmount = undefined; }),
             switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US').pipe(
@@ -261,7 +257,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     viewCardDetails(card: CampaignDto) {
-        this.router.navigate(['/personal-finance/offers/details', card.id], { relativeTo: this.route });
+        this.router.navigate(['./', card.id], { relativeTo: this.route });
     }
 
     toggleFiltering(e) {
