@@ -103,6 +103,7 @@ export class AppPreBootstrap {
             callback();
         }).fail(() => {
             abp.multiTenancy.setTenantIdCookie();
+            abp.auth.clearToken();
             location.href = AppConsts.appBaseUrl;
         });
     }

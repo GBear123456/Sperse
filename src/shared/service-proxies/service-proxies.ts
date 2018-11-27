@@ -41873,6 +41873,7 @@ export interface IHostSettingsEditDto {
 export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
     timezone!: string | undefined;
     timezoneForComparison!: string | undefined;
+    zendeskAccountUrl!: string | undefined;
 
     constructor(data?: IGeneralSettingsEditDto) {
         if (data) {
@@ -41887,6 +41888,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
         if (data) {
             this.timezone = data["timezone"];
             this.timezoneForComparison = data["timezoneForComparison"];
+            this.zendeskAccountUrl = data["zendeskAccountUrl"];
         }
     }
 
@@ -41901,6 +41903,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
         data = typeof data === 'object' ? data : {};
         data["timezone"] = this.timezone;
         data["timezoneForComparison"] = this.timezoneForComparison;
+        data["zendeskAccountUrl"] = this.zendeskAccountUrl;
         return data; 
     }
 }
@@ -41908,6 +41911,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
 export interface IGeneralSettingsEditDto {
     timezone: string | undefined;
     timezoneForComparison: string | undefined;
+    zendeskAccountUrl: string | undefined;
 }
 
 export class HostUserManagementSettingsEditDto implements IHostUserManagementSettingsEditDto {
@@ -50833,7 +50837,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     customCssId!: string | undefined;
     customToSDocumentId!: string | undefined;
     customPrivacyPolicyDocumentId!: string | undefined;
-    layoutType!: TenantLoginInfoDtoLayoutType | undefined;
+    customLayoutType!: TenantLoginInfoDtoCustomLayoutType | undefined;
     creationTime!: moment.Moment | undefined;
     paymentPeriodType!: TenantLoginInfoDtoPaymentPeriodType | undefined;
     creationTimeString!: string | undefined;
@@ -50858,7 +50862,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.customCssId = data["customCssId"];
             this.customToSDocumentId = data["customToSDocumentId"];
             this.customPrivacyPolicyDocumentId = data["customPrivacyPolicyDocumentId"];
-            this.layoutType = data["layoutType"];
+            this.customLayoutType = data["customLayoutType"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.paymentPeriodType = data["paymentPeriodType"];
             this.creationTimeString = data["creationTimeString"];
@@ -50883,7 +50887,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["customCssId"] = this.customCssId;
         data["customToSDocumentId"] = this.customToSDocumentId;
         data["customPrivacyPolicyDocumentId"] = this.customPrivacyPolicyDocumentId;
-        data["layoutType"] = this.layoutType;
+        data["customLayoutType"] = this.customLayoutType;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["creationTimeString"] = this.creationTimeString;
@@ -50901,7 +50905,7 @@ export interface ITenantLoginInfoDto {
     customCssId: string | undefined;
     customToSDocumentId: string | undefined;
     customPrivacyPolicyDocumentId: string | undefined;
-    layoutType: TenantLoginInfoDtoLayoutType | undefined;
+    customLayoutType: TenantLoginInfoDtoCustomLayoutType | undefined;
     creationTime: moment.Moment | undefined;
     paymentPeriodType: TenantLoginInfoDtoPaymentPeriodType | undefined;
     creationTimeString: string | undefined;
@@ -52362,9 +52366,7 @@ export interface IIntegrationsSettings {
 
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
-    apiBaseUrl!: string | undefined;
     publicSiteUrl!: string | undefined;
-    testMode!: boolean | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
         if (data) {
@@ -52378,9 +52380,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     init(data?: any) {
         if (data) {
             this.apiKey = data["apiKey"];
-            this.apiBaseUrl = data["apiBaseUrl"];
             this.publicSiteUrl = data["publicSiteUrl"];
-            this.testMode = data["testMode"];
         }
     }
 
@@ -52394,18 +52394,14 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
-        data["apiBaseUrl"] = this.apiBaseUrl;
         data["publicSiteUrl"] = this.publicSiteUrl;
-        data["testMode"] = this.testMode;
         return data; 
     }
 }
 
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
-    apiBaseUrl: string | undefined;
     publicSiteUrl: string | undefined;
-    testMode: boolean | undefined;
 }
 
 export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {
@@ -57498,7 +57494,7 @@ export enum RoleListDtoModuleId {
     HUB = "HUB", 
 }
 
-export enum TenantLoginInfoDtoLayoutType {
+export enum TenantLoginInfoDtoCustomLayoutType {
     Default = "Default", 
     LendSpace = "LendSpace", 
 }

@@ -116,7 +116,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         {
             name: 'My Finances',
             routerUrl: '/personal-finance/my-finances',
-            disabled: !this.feature.isEnabled('Pages.CFO') || !this._appSessionService.userId
+            hidden: !this.feature.isEnabled('CFO.Partner')
         }
     ];
     memberAreaLinks = [
@@ -169,7 +169,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
                     name: 'accountsLink',
                     imgUrl: 'assets/images/icons/credit-report-icon.svg',
                     activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
-                    routerUrl: '/personal-finance/my-finance'
+                    routerUrl: '/personal-finance/my-finances'
                 });
         }
 
@@ -220,7 +220,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     getCurrentLoginInformations(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
         this.tenant = this.appSession.tenant;
-        this.profileThumbnailId = this.appSession.user && 
+        this.profileThumbnailId = this.appSession.user &&
             this.appSession.user.profileThumbnailId;
     }
 
@@ -229,7 +229,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getRecentlyLinkedUsers(): void {
-        if (this.loggedUserId)        
+        if (this.loggedUserId)
             this._userLinkServiceProxy.getRecentlyUsedLinkedUsers().subscribe(result => {
                 this.recentlyLinkedUsers = result.items;
             });

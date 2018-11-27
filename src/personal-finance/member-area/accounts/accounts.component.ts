@@ -1,9 +1,10 @@
 /** Core imports  */
-import { Component, Injector, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { Observable, BehaviorSubject, forkJoin } from '@node_modules/rxjs';
+
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -14,12 +15,12 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { InstanceType, SyncServiceProxy, InstanceServiceProxy, GetProviderUITokenOutput } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors } from '@shared/AppEnums';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 declare const Quovo: any;
 
 @Component({
     templateUrl: './accounts.component.html',
-    providers: [],
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent extends AppComponentBase implements OnInit, OnDestroy {
@@ -46,13 +47,14 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         private _quovoService: QuovoService,
         private _syncService: SyncServiceProxy,
         private _instanceServiceProxy: InstanceServiceProxy,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        public featureCheckerService: FeatureCheckerService
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
     }
 
     ngOnInit() {
-        this.checkInstanceChangeProcess();
+        if (this.appSession.userId) this.checkInstanceChangeProcess();
     }
 
     checkInstanceChangeProcess() {

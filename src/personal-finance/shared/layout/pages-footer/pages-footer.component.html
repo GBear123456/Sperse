@@ -14,7 +14,7 @@
         </div>
     </div>
 </div>
-<div class="bottom-footer" *ngIf="!hasPfmAppFeature || !loggedUserId">
+<div class="bottom-footer d-flex align-items-center" *ngIf="!hasPfmAppFeature || !loggedUserId">
     <div class="bottom-container container">
         <span class="copyright">
             © {{appSession?.tenant?.name}} {{currentYear}}, all rights reserved

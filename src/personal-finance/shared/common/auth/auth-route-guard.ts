@@ -34,7 +34,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         if (UrlHelper.isPfmAppUrl(state.url)) {
             if (this._featureChecker.isEnabled('PFM.Applications')) {
                 if (this._sessionService.user) {
-                    this._router.navigate(['/personal-finance/offers']);
+                    this._router.navigate(['/personal-finance/offers/credit-cards']);
                     return false;
                 } else {
                     return true;
