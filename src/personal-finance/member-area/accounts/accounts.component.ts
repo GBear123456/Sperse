@@ -19,8 +19,8 @@ declare const Quovo: any;
 
 @Component({
     templateUrl: './accounts.component.html',
-    providers: [],
-    styleUrls: ['./accounts.component.less']
+    styleUrls: ['./accounts.component.less'],
+    providers: []
 })
 export class AccountsComponent extends AppComponentBase implements OnInit, OnDestroy {
     private tokenLoading$: Observable<GetProviderUITokenOutput>;
@@ -52,7 +52,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit() {
-        this.checkInstanceChangeProcess();
+        if (this.appSession.userId) this.checkInstanceChangeProcess();
     }
 
     checkInstanceChangeProcess() {

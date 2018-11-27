@@ -19,7 +19,7 @@ import { PackagesComponent } from './packages/packages.component';
         ModalModule.forRoot(),
         UtilsModule,
         AbpModule,
-        CommonModule,
+        CommonModule
     ],
     declarations: [
         PackagesComponent

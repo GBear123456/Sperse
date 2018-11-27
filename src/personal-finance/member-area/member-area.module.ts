@@ -3,7 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { StickyModule } from 'ng2-sticky-kit/ng2-sticky-kit';
-import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module'
+import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
 
 import { MemberAreaRoutingModule } from './member-area-routing.module';
 import { CreditReportModule } from './credit-report/credit-report.module';
@@ -11,6 +11,7 @@ import { CreditSimulatorModule } from './credit-simulator/credit-simulator.modul
 import { CreditResourcesModule } from './credit-resources/credit-resources.module';
 
 import { AccountsComponent } from './accounts/accounts.component';
+import { FinancePageComponent } from './accounts/finance-page/finance-page.component';
 import { MemberAreaComponent } from './member-area.component';
 
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
@@ -33,7 +34,8 @@ import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
     ],
     declarations: [
         MemberAreaComponent,
-        AccountsComponent
+        AccountsComponent,
+        FinancePageComponent
     ],
     providers: [
         {

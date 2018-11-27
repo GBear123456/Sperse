@@ -1,5 +1,5 @@
 <ul class="app-area-navigation" *ngIf="inlineMemberAreaLinks.length">
-    <li *ngFor="let item of inlineMemberAreaLinks" class="app-list-item" routerLinkActive="active">
+    <li *ngFor="let item of inlineMemberAreaLinks" class="app-list-item" routerLinkActive="active" [hidden]="item.hidden">
         <a (click)="navigationItemClick($event, item)" routerLinkActive="active" [class.active]="currentUrl === item.routerUrl" [routerLinkActiveOptions]="{exact:true}">
             {{l(item.name)}}
         </a>
