@@ -1,12 +1,18 @@
 import { Injectable, Inject } from '@angular/core';
 import { FaviconDto } from '@shared/service-proxies/service-proxies';
 import { DOCUMENT } from '@angular/common';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class FaviconService {
     constructor(@Inject(DOCUMENT) private document) {}
-    private defaultFavicons;
-    private defaultManifest;
+
+    static DEFAULT_FAVICONS: FaviconDto[] = [
+        FaviconDto.fromJS({relationship: 'icon', type: 'image/x-icon', name: 'favicon.ico', size: '32x32'}),
+        FaviconDto.fromJS({relationship: 'icon', type: 'image/png', name: 'favicon-32x32.png', size: '32x32'}),
+        FaviconDto.fromJS({relationship: 'icon', type: 'image/png', name: 'favicon-16x16.png', size: '16x16'}),
+        FaviconDto.fromJS({relationship: 'apple-touch-icon', type: 'image/png', name: 'apple-touch-icon.png', size: '180x180'})
+    ];
 
     updateFavicons(favicons: FaviconDto[], faviconBaseUrl: string) {
         const oldFaviconsLinks = this.document.head.querySelectorAll('link[rel*="icon"]');
@@ -24,19 +30,9 @@ export class FaviconService {
         Array.prototype.forEach.call(oldFaviconsLinks, link => link.remove());
     }
 
-    saveDefaultFavicons() {
-        this.defaultFavicons = this.document.head.querySelectorAll('link[rel*="icon"]');
-        this.defaultManifest = this.document.head.querySelector('link[rel="manifest"]');
-    }
-
     resetFavicons() {
         const newFavicons = this.document.head.querySelectorAll('link[rel*="icon"]');
         Array.prototype.forEach.call(newFavicons, link => link.remove());
-        this.defaultFavicons.forEach(item => {
-            this.document.head.appendChild(item);
-        });
-        if (this.defaultManifest) {
-            this.document.head.appendChild(this.defaultManifest);
-        }
+        this.updateFavicons(FaviconService.DEFAULT_FAVICONS, AppConsts.appBaseHref);
     }
 }
