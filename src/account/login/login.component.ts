@@ -1,5 +1,5 @@
 /** Core imports */
-import { Directive, Component, Injector, ViewContainerRef, 
+import { Directive, Component, Injector, ViewContainerRef,
     ComponentFactoryResolver, ViewChild, Type, OnInit } from '@angular/core';
 
 /** Application imports */
@@ -38,7 +38,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
         let tenant = this._appSession.tenant;
         this.loadLayoutComponent(tenant && (tenant.layoutType == TenantLoginInfoDtoLayoutType.LendSpace)
-            ? LendSpaceLoginComponent: HostLoginComponent);
+            ? LendSpaceLoginComponent : HostLoginComponent);
     }
 
     private loadLayoutComponent(component: Type<HostLoginComponent>) {

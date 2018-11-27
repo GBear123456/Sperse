@@ -141,7 +141,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         this.categoryDisplayName$ = this.category$.pipe(map(category => category ? lowerCase(category) : this.defaultCategoryDisplayName));
         this.creditCards$ = this.category$.pipe(
             tap(() => { abp.ui.setBusy(this.creditCardsListRef.nativeElement); this.creditCardsAmount = undefined; }),
-            switchMap(category => this.offerServiceProxy.getAll(category, Type.TrafficDistribution, 'US').pipe(
+            switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US').pipe(
                 finalize(() => {
                     this.creditCardloaded = true;
                     abp.ui.clearBusy(this.creditCardsListRef.nativeElement);

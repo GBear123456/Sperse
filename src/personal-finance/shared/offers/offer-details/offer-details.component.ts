@@ -120,7 +120,7 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
         abp.ui.setBusy(this.creditCardsListRef.nativeElement);
         return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
             of(this.offersService.displayedCards) :
-            this.offerServiceProxy.getAll(undefined, Type.TrafficDistribution, 'US')).pipe(
+            this.offerServiceProxy.getAll(undefined, undefined, 'US')).pipe(
             finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))
         );
     }
