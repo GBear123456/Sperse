@@ -27,7 +27,6 @@
         };
 
         document.getElementById('forget-password').href = location.origin + '/account/forgot-password';
-        window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
 
         getAppConfig();
     }
@@ -74,6 +73,8 @@
                          
             tenant = loginInformations && loginInformations.tenant;
             if (!tenant || tenant.layoutType == 'Default') {
+                window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
+
                 document.getElementById('loginPage').style.display = 'block';
                 document.getElementById('loadSpinner').style.display = 'none';
 
