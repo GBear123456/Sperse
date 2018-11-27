@@ -1,13 +1,12 @@
+@main-font-color: #000;
+@additional-font-color: #4a4a4a;
 @border-color: #DFDFDF;
 @main-padding: 40px;
 
 :host {
-    @media (min-width: 1200px) {
-        .container {
-            max-width: 1350px;
-            padding-left: @main-padding;
-            padding-right: @main-padding;
-        }
+    * {
+        font-family: Poppins;
+        color: @main-font-color;
     }
     .content-wrap {
         padding-top: 0;
@@ -36,7 +35,7 @@
         text-transform: uppercase;
         margin-bottom: 10px;
         text-align: left;
-        font-family: Montserrat;
+        font-weight: 700;
     }
 
     .row {
@@ -51,40 +50,32 @@
 
     .leftBlock,
     .rightBlock {
-        padding-top: 50px;
+        padding-top: 10px;
         padding-bottom: 58px;
     }
 
     .leftBlock {
         border-right: 2px solid #dfdfdf;
         h1 {
-            color: #002849;
             font-size: 46px;
             font-weight: bold;
             line-height: 57px;
-            text-align: center;
-            margin-bottom: 24px;
+            text-align: left;
+            margin-bottom: 45px;
+            text-transform: capitalize;
         }
         h3 {
-            color: #002849;
             font-size: 20px;
             font-weight: bold;
             letter-spacing: 0.2px;
             line-height: 24px;
-            margin-bottom: 18px;
+            margin-bottom: 25px;
         }
         .creditCardsList {
             font-size: 16px;
             font-weight: 500;
             letter-spacing: 0.3px;
             line-height: 20px;
-            .cardInfo {
-                h5 {
-                    font-weight: bold;
-                    font-size: 18px;
-                    color: #002849;
-                }
-            }
             /deep/ mat-radio-button {
                 display: block;
                 margin-bottom: 32px;
@@ -105,24 +96,37 @@
                     align-items: center;
                     .cardInfo {
                         margin-left: 16px;
+                        font-size: 18px;
+                        line-height: 1.25;
+                        letter-spacing: 0.3px;
+                        h4 {
+                            font-size: 13px;
+                            font-weight: 500;
+                            margin-bottom: 0;
+                            color: @additional-font-color;
+                            text-transform: capitalize;
+                        }
                         h5 {
+                            font-weight: 600;
                             margin-bottom: 0;
                         }
                     }
-
+                    img {
+                        border: 3px solid transparent;
+                        border-radius: 4px;
+                    }
                 }
                 &.mat-radio-checked {
                     img {
-                        //border: 3px solid #F5A623;
-                        //border-radius: 4px;
+                        border: 3px solid #ffcc00;
                     }
                     .mat-radio-container {
                         .mat-radio-outer-circle {
-                            border-color: #ffcc00;
+                            border-color: #fc0;
                         }
                         .mat-radio-inner-circle {
                             transform: scale(1);
-                            background-color: #ffcc00;
+                            background-color: #fc0;
                         }
                         &:before {
                             content: '\f00c';
@@ -136,8 +140,15 @@
                             font-size: 11px;
                             bottom: 0;
                             top: 0;
-                            color: #fff;
+                            color: #000;
                             z-index: 1;
+                        }
+                    }
+                    .mat-radio-label-content {
+                        .cardInfo {
+                            h5 {
+                                font-weight: 700;
+                            }
                         }
                     }
                 }
@@ -158,23 +169,38 @@
                     margin-right: 16px;
                 }
                 .cardInfo {
+                    letter-spacing: 0.2px;
+                    h4 {
+                        font-size: 15px;
+                        font-weight: 500;
+                        color: @additional-font-color;
+                        text-transform: capitalize;
+                    }
                     h5 {
                         font-size: 28px;
-                        color: #002849;
-                        letter-spacing: 0.22px;
                         font-weight: bold;
+                        margin-bottom: 0;
                     }
                 }
             }
             .actions {
                 text-align: center;
+                .applyButton {
+                    width: 100%;
+                }
             }
         }
         .cardDetails {
             margin-top: 28px;
             .detailsListBlock {
+                h4 {
+                    margin-bottom: 0;
+                    font-size: 15px;
+                    font-weight: 500;
+                }
                 h5.title {
                     margin-bottom: 18px;
+                    font-weight: 700;
                 }
                 ul.detailsList {
                     li {
@@ -210,7 +236,6 @@
                         font-weight: 500;
                     }
                     p {
-                        color: #002849;
                         font-weight: 600;
                     }
                 }
@@ -229,12 +254,21 @@
                             font-size: 16px;
                             letter-spacing: 0.2px;
                             color: #3e4a54;
+                            padding-left: 23px;
                         }
-                        &.prop li:before {
-
+                        &.pros li:before,
+                        &.cons li:before {
+                            width: 12px;
+                            height: 12px;
+                            display: block;
+                            position: absolute;
+                            left: 0;
+                        }
+                        &.pros li:before {
+                            content: url('../../../../assets/common/icons/like.svg');
                         }
                         &.cons li:before {
-
+                            content: url('../../../../assets/common/icons/dislike.svg');
                         }
                     }
                 }
@@ -255,7 +289,6 @@
                             font-weight: bold;
                             letter-spacing: 0.2px;
                             text-align: center;
-                            color: #002849;
                         }
                         .scoreName {
                             font-size: 11px;

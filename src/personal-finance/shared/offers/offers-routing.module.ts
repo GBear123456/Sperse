@@ -7,19 +7,18 @@ import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offe
     imports: [
         RouterModule.forChild([
             {
-                path: '',
-                component: OffersComponent,
+                path: ':category/:id',
+                component: OfferDetailsComponent,
                 data: { reuse: true }
             },
             {
                 path: ':category',
                 component: OffersComponent,
-                data: { reuse: true }
+                data: { reuse: true },
             },
             {
-                path: 'details/:id',
-                component: OfferDetailsComponent,
-                data: { reuse: true }
+                path: '',
+                redirectTo: 'credit-cards'
             }
         ])
     ],

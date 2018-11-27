@@ -526,19 +526,30 @@
         text-align: center;
         border-radius: 2px;
         background-color: #ffcc00 !important;
-        box-shadow: 0 3px 10px 0 rgba(245,166,35,0.35);
         width: 143px;
-        height: 38px;
         margin-bottom: 7px;
         border: none;
+        padding: 7px 0;
         span {
             display: block;
             color: #1f1700;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
             letter-spacing: 0.13px;
             text-align: center;
             text-transform: uppercase;
+            font-family: Poppins;
+        }
+        &.withArrow {
+            padding: 7px 50px;
+            position: relative;
+            &:after {
+                content: url('../assets/common/icons/right-arrow-black.svg');
+                display: block;
+                height: 18px;
+                width: 17px;
+                right: 26px;
+            }
         }
     }
 
