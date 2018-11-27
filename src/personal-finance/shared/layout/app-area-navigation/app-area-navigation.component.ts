@@ -66,6 +66,12 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
                 this.inlineMemberAreaLinks.push(this.memberAreaLinks[index]);
             }
         });
+
+        if (window.innerWidth < 530 && !this.appSession.userId) {
+            this.responsiveMemberAreaLinks.push({ name: 'Member Login', routerUrl: '/account/login', class: 'member-login'});
+        } else {
+            this.responsiveMemberAreaLinks.pop();
+        }
     }
 
     navigationItemClick(e, link) {

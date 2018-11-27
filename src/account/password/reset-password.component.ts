@@ -8,7 +8,7 @@ import {
     ProfileServiceProxy,
     ResetPasswordOutput,
     ResolveTenantIdInput,
-    TenantLoginInfoDtoLayoutType
+    TenantLoginInfoDtoCustomLayoutType
 } from '@shared/service-proxies/service-proxies';
 import { LoginService } from '../login/login.service';
 import { ResetPasswordModel } from './reset-password.model';
@@ -21,7 +21,7 @@ import { isEqual } from 'lodash';
     animations: [accountModuleAnimation()]
 })
 export class ResetPasswordComponent extends AppComponentBase implements OnInit {
-    @HostBinding('class.lend-space') lendSpaceWrapper = this._appSessionService.tenant && this._appSessionService.tenant.layoutType === TenantLoginInfoDtoLayoutType.LendSpace;
+    @HostBinding('class.lend-space') lendSpaceWrapper = this._appSessionService.tenant && this._appSessionService.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace;
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     saving = false;

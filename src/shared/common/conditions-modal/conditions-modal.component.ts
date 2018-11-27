@@ -26,6 +26,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
         [ConditionsType.Terms]: {
             title: this.l('SperseTermsOfService'),
             bodyLink: 'terms.html',
+            apiBodyLink: 'GetTermsOfServiceDocument',
             downloadLink: 'DownloadPrivacyPolicyPdf',
             tenantProperty: 'customToSDocumentId',
             defaultLink: 'SperseTermsOfService.pdf'
@@ -33,6 +34,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
         [ConditionsType.Policies]: {
             title: this.l('SpersePrivacyPolicy'),
             bodyLink: 'privacy.html',
+            apiBodyLink: 'GetPrivacyPolicyDocument',
             downloadLink: 'DownloadTermsOfServicePdf',
             tenantProperty: 'customPrivacyPolicyDocumentId',
             defaultLink: 'SpersePrivacyPolicy.pdf'
@@ -63,19 +65,34 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
                 action: this.printContent.bind(this)
             }
         ];
-        this.conditionBody$ = from($.ajax({
-            url: AppConsts.appBaseHref + 'assets/documents/' + this.conditionsOptions[this.data.type].bodyLink,
-            method: 'GET'
-        })).pipe(
+        this.conditionBody$ = from(
+            $.ajax({
+                url: this.isTenantDocumentAvailable() ?
+                    this.getApiLink('apiBodyLink') :
+                    this.getDefaultLink('bodyLink'),
+                method: 'GET'
+            })
+        ).pipe(
             map(html => this.sanitizer.bypassSecurityTrustHtml(html))
         );
     }
 
     download() {
-        if (this.appSession.tenant[this.conditionsOptions[this.data.type].tenantProperty])
-            window.open(AppConsts.appBaseHref + '/api/TenantCustomization/' + this.conditionsOptions[this.data.type].downloadLink + '?tenantId=' + abp.session.tenantId, '_blank');
-        else
-            window.open(AppConsts.appBaseHref + 'assets/documents/' + this.conditionsOptions[this.data.type].defaultLink, '_blank');
+        window.open(this.isTenantDocumentAvailable() ? 
+            this.getApiLink('downloadLink') :
+            this.getDefaultLink('defaultLink'), '_blank');
+    }
+
+    getApiLink(link) {
+        return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/' + this.conditionsOptions[this.data.type][link] + '?tenantId=' + this.appSession.tenant.id;
+    }
+
+    getDefaultLink(link) {
+        return AppConsts.appBaseHref + 'assets/documents/' + this.conditionsOptions[this.data.type][link];
+    }
+
+    isTenantDocumentAvailable() {
+        return this.appSession.tenant[this.conditionsOptions[this.data.type].tenantProperty];
     }
 
     printContent() {

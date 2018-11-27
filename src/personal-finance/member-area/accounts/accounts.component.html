@@ -1,27 +1,33 @@
-<div [class.content-wrap]="!featureCheckerService.isEnabled('PFM.Applications')" class="container" *ngIf="isInstanceInfoLoaded">
-    <div class="row">
-        <ng-container *ngIf="_cfoService.initialized; else notInitialized">
-            <aside class="sidebar col-3">
-                <sticky [sticky-offset-top]="20">
-                    <ul class="left-navigation">
-                        <li class="left-navigation-item" *ngFor="let item of menuItems; let i = index;" (click)="openQuovoSection(item.sectionName)" [class.active]="currentSection==item.sectionName">
-                            <a pageScroll class="left-navigation-link">
-                                <span class="menu-icon"></span> {{ l(item.name) }}
-                            </a>
-                        </li>
-                    </ul>
-                </sticky>
-            </aside>
-            <div class="p-content col-9">
-                <div id="quovo-accounts-module" class="quovo-accounts-module"></div>
-            </div>
-        </ng-container>
-        <ng-template #notInitialized>
-            <div class="not-initialized-content col-12">
-                <p class="welcome-text">{{ l('Accounts_Welcome') }}</p>
-                <p class="body-text">{{ l('Accounts_BodyText') }}</p>
-                <button (click)="onStart()" class="btn btn-layout" [disabled]="isStartDisabled">{{ l('GetStarted') }}</button>
-            </div>
-        </ng-template>
+<ng-container *ngIf="appSession.userId; else pfmFinancePage">
+    <div [class.content-wrap]="!featureCheckerService.isEnabled('PFM.Applications')" class="container" *ngIf="isInstanceInfoLoaded">
+        <div class="row">
+            <ng-container *ngIf="_cfoService.initialized; else notInitialized">
+                <aside class="sidebar col-3">
+                    <sticky [sticky-offset-top]="20">
+                        <ul class="left-navigation">
+                            <li class="left-navigation-item" *ngFor="let item of menuItems; let i = index;" (click)="openQuovoSection(item.sectionName)" [class.active]="currentSection==item.sectionName">
+                                <a pageScroll class="left-navigation-link">
+                                    <span class="menu-icon"></span> {{ l(item.name) }}
+                                </a>
+                            </li>
+                        </ul>
+                    </sticky>
+                </aside>
+                <div class="p-content col-9">
+                    <div id="quovo-accounts-module" class="quovo-accounts-module"></div>
+                </div>
+            </ng-container>
+            <ng-template #notInitialized>
+                <div class="not-initialized-content col-12">
+                    <p class="welcome-text">{{ l('Accounts_Welcome') }}</p>
+                    <p class="body-text">{{ l('Accounts_BodyText') }}</p>
+                    <button (click)="onStart()" class="btn btn-layout" [disabled]="isStartDisabled">{{ l('GetStarted') }}</button>
+                </div>
+            </ng-template>
+        </div>
     </div>
-</div>
+</ng-container>
+
+<ng-template #pfmFinancePage>
+    <pfm-finance-page></pfm-finance-page>
+</ng-template>

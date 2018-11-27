@@ -1,6 +1,6 @@
 import { Component, HostBinding, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { SendPasswordResetCodeInput, TenantLoginInfoDtoLayoutType } from '@shared/service-proxies/service-proxies';
+import { SendPasswordResetCodeInput, TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { LoginService } from 'account/login/login.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -11,7 +11,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     animations: [accountModuleAnimation()]
 })
 export class ForgotPasswordComponent extends AppComponentBase {
-    @HostBinding('class.lend-space') lendSpaceWrapper = this._appSession.tenant && this._appSession.tenant.layoutType === TenantLoginInfoDtoLayoutType.LendSpace;
+    @HostBinding('class.lend-space') lendSpaceWrapper = this._appSession.tenant && this._appSession.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace;
     model: SendPasswordResetCodeInput = new SendPasswordResetCodeInput();
 
     saving = false;

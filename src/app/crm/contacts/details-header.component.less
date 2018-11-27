@@ -135,6 +135,8 @@
     }
 
     .organization_info {
+        white-space: nowrap;
+
         .delimiter {
             display: inline-block;
             width: 1px;
@@ -145,7 +147,7 @@
 
         .organization_logo {
             display: inline-block;
-            margin: 20px 20px;
+            margin: 20px 0px;
             cursor: pointer;
             img {
                 max-width: 100%;
@@ -181,10 +183,10 @@
             letter-spacing: 0.3px;
             margin: 0px !important;
             vertical-align: middle;
-            padding-right: 70px;
         }
 
         h2, h3 {
+            width: 320px;
             /deep/ inplace-edit {
                 .inplace-edit-view-mode {
                     height: auto;
@@ -197,6 +199,8 @@
                 }
                 span {
                     display: inline-block;
+                    white-space: nowrap;
+                    max-width: 260px;
                 }
                 input {
                     font-size: 16px!important;

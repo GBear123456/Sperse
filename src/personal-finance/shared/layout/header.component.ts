@@ -116,7 +116,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         {
             name: 'My Finances',
             routerUrl: '/personal-finance/my-finances',
-            disabled: !this.feature.isEnabled('Pages.CFO') || !this._appSessionService.userId
+            hidden: !this.feature.isEnabled('CFO.Partner')
         }
     ];
     memberAreaLinks = [

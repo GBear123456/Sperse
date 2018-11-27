@@ -22,7 +22,7 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                     },
                     { path: 'credit-simulator', component: CreditSimulatorComponent },
                     { path: 'credit-resources', component: CreditResourcesComponent },
-                    { path: 'my-finances', component: AccountsComponent }
+                    { path: 'my-finances', component: AccountsComponent, data: { wrapperDisabled: true }}
                 ]
             }
         ])

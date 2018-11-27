@@ -3,7 +3,8 @@ import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, BehaviorSubject, forkJoin } from '@node_modules/rxjs';
+
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
@@ -53,7 +54,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit() {
-        this.checkInstanceChangeProcess();
+        if (this.appSession.userId) this.checkInstanceChangeProcess();
     }
 
     checkInstanceChangeProcess() {
