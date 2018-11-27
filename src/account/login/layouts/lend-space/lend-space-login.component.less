@@ -1,40 +1,14 @@
 :host {
-    .sign-in {
-        font-family: Poppins;
-        font-size: 46px;
-        font-weight: bold;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: normal;
-        letter-spacing: normal;
-        text-align: center;
-        color: #000000;
-    }
-
-    .login-form {
-        max-width: 428px;
-        input {
-            border: 1px solid #dfdfdf;
-            border-radius: 4px;
-            height: 56px;
-            width: 428px;
-            font-family: Poppins;
-            font-size: 17px;
-            font-weight: 500;
-            font-style: normal;
-            font-stretch: normal;
-            line-height: normal;
-            letter-spacing: normal;
-            color: #4a4a4a;
+    .container-fluid {
+        height: 100%;
+        .row {
+            height: 100%;
+            align-items: center;
         }
-
-        button {
-            height: 56px;
-            border-radius: 2px;
-            background-color: #ffcc00;
-            width: 428px;
+        .sign-in {
+            margin-top: 0px;
             font-family: Poppins;
-            font-size: 18px;
+            font-size: 46px;
             font-weight: bold;
             font-style: normal;
             font-stretch: normal;
@@ -44,40 +18,74 @@
             color: #000000;
         }
 
-        .options {
-            &>div:first-child {
-                float: left;
-            }
-            &>div:last-child {
-                float: right;
-            }
-            .forget-password {
+        .login-form {
+            max-width: 428px;
+            input {
+                border: 1px solid #dfdfdf;
+                border-radius: 4px;
+                height: 56px;
+                width: 428px;
                 font-family: Poppins;
-                font-size: 13px;
+                font-size: 17px;
                 font-weight: 500;
                 font-style: normal;
                 font-stretch: normal;
-                line-height: 1.92;
-                letter-spacing: 0.2px;
-                text-align: right;
-                color: #3463ae;
+                line-height: normal;
+                letter-spacing: normal;
+                color: #4a4a4a;
             }
-            .mt-checkbox-list.pull-right {
-                padding-top: 10px;  
-                .mt-checkbox.mt-checkbox-outline > input:checked ~ span {
-                    border-color: #ffcc00;
-                    background-color: #ffcc00;
+
+            button {
+                height: 56px;
+                border-radius: 2px;
+                background-color: #ffcc00;
+                width: 428px;
+                font-family: Poppins;
+                font-size: 18px;
+                font-weight: bold;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: normal;
+                letter-spacing: normal;
+                text-align: center;
+                color: #000000;
+            }
+
+            .options {
+                &>div:first-child {
+                    float: left;
                 }
-                label {
-                    cursor: pointer;
+                &>div:last-child {
+                    float: right;
+                }
+                .forget-password {
                     font-family: Poppins;
-                    font-size: 14px;
+                    font-size: 13px;
                     font-weight: 500;
                     font-style: normal;
                     font-stretch: normal;
-                    line-height: normal;
+                    line-height: 1.92;
                     letter-spacing: 0.2px;
-                    color: #000000;
+                    text-align: right;
+                    color: #3463ae;
+                }
+                .mt-checkbox-list.pull-right {
+                    padding-top: 10px;  
+                    .mt-checkbox.mt-checkbox-outline > input:checked ~ span {
+                        border-color: #ffcc00;
+                        background-color: #ffcc00;
+                    }
+                    label {
+                        cursor: pointer;
+                        font-family: Poppins;
+                        font-size: 14px;
+                        font-weight: 500;
+                        font-style: normal;
+                        font-stretch: normal;
+                        line-height: normal;
+                        letter-spacing: 0.2px;
+                        color: #000000;
+                    }
                 }
             }
         }

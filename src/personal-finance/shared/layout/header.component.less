@@ -45,6 +45,16 @@
         .date {
             color: #ccc;
         }
+        
+        @media all and (max-width: 600px) {
+            .container {
+                flex-direction: column;
+                
+                .url {
+                    display: none;
+                }
+            }
+        }
     }
     .dark-lend-space-logo {
         display: none;
@@ -232,28 +242,7 @@
                 }
                 
                 .right-actions {
-                    margin-left: auto;
-                    
-                    &--item:last-child {
-                        margin-right: 0 !important;
-                    }
-    
-                    .member-login {
-                        font-size: 12px;
-                        font-weight: 600;
-                        color: #fff;
-                        background-color: #ff9933;
-                        padding: 7px 10px;
-                        line-height: 18px;
-                        border-radius: .2rem;
-                        letter-spacing: normal;
-                        
-        
-                        &:hover {
-                            color: #fff !important;
-                            background-color: darken(#ff9933, 5%);
-                        }
-                    }
+                    margin-left: auto;                        
                 }
             }
         }

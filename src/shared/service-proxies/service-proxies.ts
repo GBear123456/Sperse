@@ -41873,6 +41873,7 @@ export interface IHostSettingsEditDto {
 export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
     timezone!: string | undefined;
     timezoneForComparison!: string | undefined;
+    zendeskAccountUrl!: string | undefined;
 
     constructor(data?: IGeneralSettingsEditDto) {
         if (data) {
@@ -41887,6 +41888,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
         if (data) {
             this.timezone = data["timezone"];
             this.timezoneForComparison = data["timezoneForComparison"];
+            this.zendeskAccountUrl = data["zendeskAccountUrl"];
         }
     }
 
@@ -41901,6 +41903,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
         data = typeof data === 'object' ? data : {};
         data["timezone"] = this.timezone;
         data["timezoneForComparison"] = this.timezoneForComparison;
+        data["zendeskAccountUrl"] = this.zendeskAccountUrl;
         return data; 
     }
 }
@@ -41908,6 +41911,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
 export interface IGeneralSettingsEditDto {
     timezone: string | undefined;
     timezoneForComparison: string | undefined;
+    zendeskAccountUrl: string | undefined;
 }
 
 export class HostUserManagementSettingsEditDto implements IHostUserManagementSettingsEditDto {
@@ -52362,9 +52366,7 @@ export interface IIntegrationsSettings {
 
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
-    apiBaseUrl!: string | undefined;
     publicSiteUrl!: string | undefined;
-    testMode!: boolean | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
         if (data) {
@@ -52378,9 +52380,7 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     init(data?: any) {
         if (data) {
             this.apiKey = data["apiKey"];
-            this.apiBaseUrl = data["apiBaseUrl"];
             this.publicSiteUrl = data["publicSiteUrl"];
-            this.testMode = data["testMode"];
         }
     }
 
@@ -52394,18 +52394,14 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
-        data["apiBaseUrl"] = this.apiBaseUrl;
         data["publicSiteUrl"] = this.publicSiteUrl;
-        data["testMode"] = this.testMode;
         return data; 
     }
 }
 
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
-    apiBaseUrl: string | undefined;
     publicSiteUrl: string | undefined;
-    testMode: boolean | undefined;
 }
 
 export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {

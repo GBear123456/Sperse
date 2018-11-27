@@ -12,11 +12,11 @@ export class PagesFooterComponent extends AppComponentBase {
     appMenuItems = [
         { url: '/personal-finance/products', name: 'Products' },
         { url: '/personal-finance/features', name: 'Features' },
-        { url: '/account/about-us', name: 'About' },
+        { url: '/account/about', name: 'About' },
         { url: '/personal-finance/contact-us', name: 'Contact us' }
     ];
     defaultMenuItems = [
-        { url: '/personal-finance/about-us', name: 'AboutUs' },
+        { url: '/personal-finance/about', name: 'AboutUs' },
         { url: '/personal-finance/contact-us', name: 'ContactUs' },
         { url: '/account/login', name: 'LoginBtn' },
         { url: '/personal-finance/', name: 'GetStarted' }

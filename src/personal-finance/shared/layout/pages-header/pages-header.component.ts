@@ -12,7 +12,7 @@ export class PagesHeaderComponent extends AppComponentBase {
     signUpWizard = false;
 
     menuItems = [
-        { url: '/personal-finance/about-us', title: 'About us' },
+        { url: '/personal-finance/about', title: 'About us' },
         { url: '/personal-finance/contact-us', title: 'Contact us' },
         { url: '/account/login', title: 'Login' }
     ];

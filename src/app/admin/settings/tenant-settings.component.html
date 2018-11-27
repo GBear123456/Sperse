@@ -24,6 +24,10 @@
                             <label for="Timezone">{{l("Timezone")}}</label>
                             <timezone-combo id="Timezone" [(selectedTimeZone)]="settings.general.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
                         </div>
+                        <div class="form-group" >
+                            <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
+                            <input id="ZendeskAccountUrl" type="text" name="ZendeskAccountUrl" class="form-control" [(ngModel)]="settings.general.zendeskAccountUrl" maxlength="128">
+                        </div>
                         <div class="row m-form">
                             <div class="col-md-6">
                                 <h5>{{l("PrivacyPolicy")}}</h5>
