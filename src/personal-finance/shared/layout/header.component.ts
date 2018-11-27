@@ -169,7 +169,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
                     name: 'accountsLink',
                     imgUrl: 'assets/images/icons/credit-report-icon.svg',
                     activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
-                    routerUrl: '/personal-finance/my-finance'
+                    routerUrl: '/personal-finance/my-finances'
                 });
         }
 

@@ -7,7 +7,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostLoginComponent } from './layouts/host/host-login.component';
 import { LendSpaceLoginComponent } from './layouts/lend-space/lend-space-login.component';
-import { TenantLoginInfoDtoLayoutType } from '@shared/service-proxies/service-proxies';
+import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 
 @Directive({
     selector: '[ad-login-host]'
@@ -37,7 +37,7 @@ export class LoginComponent extends AppComponentBase implements OnInit {
         this.setTitle('Login');
 
         let tenant = this._appSession.tenant;
-        this.loadLayoutComponent(tenant && (tenant.layoutType == TenantLoginInfoDtoLayoutType.LendSpace)
+        this.loadLayoutComponent(tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
             ? LendSpaceLoginComponent : HostLoginComponent);
     }
 
