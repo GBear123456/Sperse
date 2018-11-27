@@ -72,7 +72,10 @@
                 tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse';
                          
             tenant = loginInformations && loginInformations.tenant;
-            if (!tenant || tenant.layoutType == 'Default') {
+            if (tenant && tenant.customLayoutType == 'LendSpace') {
+                window.loginPageHandler = undefined;
+                appBootstrap && appBootstrap.call(appContext);
+            } else {
                 window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
 
                 document.getElementById('loginPage').style.display = 'block';
@@ -96,9 +99,6 @@
                     );
                     logoImage.style.display = 'block';
                 }
-            } else {
-                window.loginPageHandler = undefined;
-                appBootstrap && appBootstrap.call(appContext);
             }
         });
     }
@@ -283,10 +283,12 @@
                         .addClass('modal-scrollfix')
                         .find('.modal-body')
                         .html('loading...')
-                        .load('./assets/documents/privacy.html', function() {
-                            privacy
-                                .removeClass('modal-scrollfix')
-                                .modal('handleUpdate');
+                        .load(tenant && tenant.customToSDocumentId ? 
+                            remoteServiceUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + tenant.Id: 
+                            './assets/documents/terms.html', function() {
+                                privacy
+                                    .removeClass('modal-scrollfix')
+                                    .modal('handleUpdate');
                         });
                 });
 
@@ -296,10 +298,12 @@
                         .addClass('modal-scrollfix')
                         .find('.modal-body')
                         .html('loading...')
-                        .load('./assets/documents/terms.html', function() {
-                            terms
-                                .removeClass('modal-scrollfix')
-                                .modal('handleUpdate');
+                        .load(tenant && tenant.customPrivacyPolicyDocumentId ? 
+                            remoteServiceUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + tenant.Id: 
+                            './assets/documents/privacy.html', function() {
+                                terms
+                                    .removeClass('modal-scrollfix')
+                                    .modal('handleUpdate');
                         });
                 });
 
