@@ -163,7 +163,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             '/api/TenantCustomization/UploadFavicons',
             (result: TenantCustomizationInfoDto) => {
                 if (result && result.faviconBaseUrl && result.favicons && result.favicons.length) {
-                    this.appSession.tenant.tenantCustomizations = { ...this.appSession.tenant.tenantCustomizations, result } as TenantCustomizationInfoDto;
+                    this.appSession.tenant.tenantCustomizations = <any>{ ...this.appSession.tenant.tenantCustomizations, result } as TenantCustomizationInfoDto;
                     this._faviconsService.updateFavicons(this.appSession.tenant.tenantCustomizations.favicons, this.appSession.tenant.tenantCustomizations.faviconBaseUrl);
                 }
             }

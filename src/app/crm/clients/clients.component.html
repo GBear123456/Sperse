@@ -18,7 +18,7 @@
     <crm-user-assignment-list [selectedKeys]="selectedClientKeys"
                               [bulkUpdateMode]="true"
                               [filterModel]="filterModelAssignment"
-                              [proxyService]="customerService" 
+                              [proxyService]="customerService"
                               [permissionKey]="'Pages.CRM.Customers.ManageAssignments'"
                               [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
     </crm-user-assignment-list>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
                         <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'"
+                        <dxi-column [visible]="!featureService.isEnabled('PFM')" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
                             <ng-container [ngSwitch]="isClientCFOAvailable(data.data.UserId)">

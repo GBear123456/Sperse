@@ -47,6 +47,7 @@ import { CustomerServiceProxy, ContactStatusDto } from '@shared/service-proxies/
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -102,7 +103,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _clientService: ClientService,
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy,
-        private lifeCycleSubjectsService: LifecycleSubjectsService
+        private lifeCycleSubjectsService: LifecycleSubjectsService,
+        public featureService: FeatureCheckerService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
