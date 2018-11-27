@@ -24,13 +24,20 @@ import { RouteGuard } from '@shared/common/auth/route-guard';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
+import { API_BASE_URL, FaviconDto } from '@shared/service-proxies/service-proxies';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { AppPreBootstrap } from './AppPreBootstrap';
 import { RootComponent, AppRootComponent } from './root.components';
 import { RootRoutingModule, CustomReuseStrategy } from './root-routing.module';
 import { RootStoreModule } from '@root/store';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
+
+const DEFAULT_FAVICONS: FaviconDto[] = [
+    FaviconDto.fromJS({relationship: "icon", type: "image/x-icon", name: "favicon.ico", size: "32x32"}),
+    FaviconDto.fromJS({relationship: "icon", type: "image/png", name: "favicon-32x32.png", size: "32x32"}),
+    FaviconDto.fromJS({relationship: "icon", type: "image/png", name: "favicon-16x16.png", size: "16x16"}),
+    FaviconDto.fromJS({relationship: "apple-touch-icon", type: "image/png", name: "apple-touch-icon.png", size: "180x180"})
+];
 
 export function appInitializerFactory(
     injector: Injector,
@@ -64,10 +71,10 @@ export function appInitializerFactory(
                         }
 
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
-                        if (customizations && customizations.favicons && customizations.favicons.length) {
-                            faviconService.saveDefaultFavicons();
+                        if (customizations && customizations.favicons && customizations.favicons.length)
                             faviconService.updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
-                        }
+                        else
+                            faviconService.updateFavicons(DEFAULT_FAVICONS, AppConsts.appBaseHref);
 
                         if (shouldLoadLocale()) {
                             let angularLocale = convertAbpLocaleToAngularLocale(abp.localization.currentLanguage.name);

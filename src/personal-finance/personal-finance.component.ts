@@ -12,7 +12,6 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
     wrapperEnabled = false;
-    hideHeader = false;
     hideFooter = false;
     loggedUserId: number;
 
@@ -30,7 +29,6 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
         router.events.subscribe(event => {
             if (event instanceof ActivationEnd && !event.snapshot.children.length) {
                 this.wrapperEnabled = !event.snapshot.data.wrapperDisabled;
-                this.hideHeader = event.snapshot.data.hideHeader;
                 this.hideFooter = event.snapshot.data.hideFooter;
             }
         });

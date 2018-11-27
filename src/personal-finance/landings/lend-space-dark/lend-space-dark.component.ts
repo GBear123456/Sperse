@@ -1,4 +1,4 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, Injector} from '@angular/core';
+import {Component, ChangeDetectionStrategy, AfterViewInit, Injector, Renderer2, OnDestroy} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
 
 @Component({
@@ -7,8 +7,7 @@ import {AppComponentBase} from '@shared/common/app-component-base';
     styleUrls: ['./lend-space-dark.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LendSpaceDarkComponent extends AppComponentBase implements AfterViewInit {
-    currentDate = new Date();
+export class LendSpaceDarkComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     faq = [
         {title: 'How quickly will my loan be approved?', text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'},
         {title: 'How will I get a response from the lenders?', text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'},
@@ -58,10 +57,16 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
 
     constructor(
         injector: Injector,
+        private renderer: Renderer2
     ) {
         super(injector);
+        this.renderer.addClass(document.body, 'lend-space-landing');
     }
 
     ngAfterViewInit(): void {
+    }
+
+    ngOnDestroy() {
+        this.renderer.removeClass(document.body, 'lend-space-landing');
     }
 }

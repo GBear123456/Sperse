@@ -12,6 +12,43 @@
             box-shadow: inset 2px 5px 12px 2px #AF47C0!important;
         }
     }
+    
+    .top-headline {
+        display: none;
+        padding: 10px 0;
+        background-color: #000;
+        border-bottom: 2px solid #4c4c4c;
+        
+        .url,
+        .date {
+            font-size: 9px;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+        
+        .url {
+            color: #999;
+            text-decoration: none;
+            
+            &:hover {
+                color: lighten(#999, 10%);
+            }
+        }
+        
+        .get-free-score {
+            color: #f0d500;
+            font-size: 12px;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+        
+        .date {
+            color: #ccc;
+        }
+    }
+    .dark-lend-space-logo {
+        display: none;
+    }
 
     .page-header.navbar {
         flex-wrap: nowrap;
@@ -132,7 +169,6 @@
             font-weight: 500;
             overflow: hidden;
             white-space: nowrap;
-            overflow: hidden;
             text-overflow: ellipsis;
             direction: rtl;
         }
@@ -142,6 +178,84 @@
             flex-basis: unset;
             order: 2;
             width: calc(~"100% - 436px");
+        }
+    }
+}
+
+/deep/ .lend-space-landing {
+    .top-headline {
+        display: block !important;
+    }
+    .logo-default {
+        display: none !important;
+    }
+    .dark-lend-space-logo {
+        display: inline-block !important;
+    }
+    
+    header {
+        background: #f0d500;
+        
+        .page-header {
+            padding: 0 10px;
+            justify-content: unset;
+            
+            .page-logo {
+                min-width: 210px !important;
+            }
+            
+            #header-app-menu {
+                width: 100%;
+    
+                .app-area-navigation {
+                    > li {
+                        padding: 0;
+                        
+                        a {
+                            color: #333;
+                            font-size: 12px;
+                            font-weight: 600;
+                            letter-spacing: -0.3px;
+                            padding: 7px;
+    
+                            &:hover {
+                                opacity: .8;
+                            }
+                        }
+                        
+                        &:first-child {
+                            > a {
+                                padding-left: 0;
+                            }
+                        }
+                    }
+                }
+                
+                .right-actions {
+                    margin-left: auto;
+                    
+                    &--item:last-child {
+                        margin-right: 0 !important;
+                    }
+    
+                    .member-login {
+                        font-size: 12px;
+                        font-weight: 600;
+                        color: #fff;
+                        background-color: #ff9933;
+                        padding: 7px 10px;
+                        line-height: 18px;
+                        border-radius: .2rem;
+                        letter-spacing: normal;
+                        
+        
+                        &:hover {
+                            color: #fff !important;
+                            background-color: darken(#ff9933, 5%);
+                        }
+                    }
+                }
+            }
         }
     }
 }
