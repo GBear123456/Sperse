@@ -4,6 +4,7 @@ import { OnInit, AfterViewInit, Component, Inject, Injector, ViewChild, ElementR
 /** Third party imports */
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { DxDateBoxComponent } from 'devextreme-angular';
+import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -13,7 +14,6 @@ import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
 UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
-import { Store, select } from '@ngrx/store';
 import { AppStore, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors } from '@app/store';
 import { ContactGroup, NoteType } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
