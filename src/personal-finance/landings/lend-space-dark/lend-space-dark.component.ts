@@ -60,10 +60,10 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
         private renderer: Renderer2
     ) {
         super(injector);
-        this.renderer.addClass(document.body, 'lend-space-landing');
     }
 
     ngAfterViewInit(): void {
+        setTimeout(() => this.renderer.addClass(document.body, 'lend-space-landing'));
     }
 
     ngOnDestroy() {
