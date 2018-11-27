@@ -1,8 +1,15 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, HostBinding, Injector, OnInit } from '@angular/core';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { AccountServiceProxy, PasswordComplexitySetting, ProfileServiceProxy, ResetPasswordOutput, ResolveTenantIdInput } from '@shared/service-proxies/service-proxies';
+import {
+    AccountServiceProxy,
+    PasswordComplexitySetting,
+    ProfileServiceProxy,
+    ResetPasswordOutput,
+    ResolveTenantIdInput,
+    TenantLoginInfoDtoLayoutType
+} from '@shared/service-proxies/service-proxies';
 import { LoginService } from '../login/login.service';
 import { ResetPasswordModel } from './reset-password.model';
 import { finalize } from 'rxjs/operators';
@@ -10,10 +17,11 @@ import { isEqual } from 'lodash';
 
 @Component({
     templateUrl: './reset-password.component.html',
+    styleUrls: [ './lend-space-password.less' ],
     animations: [accountModuleAnimation()]
 })
 export class ResetPasswordComponent extends AppComponentBase implements OnInit {
-
+    @HostBinding('class.lend-space') lendSpaceWrapper = this._appSessionService.tenant && this._appSessionService.tenant.layoutType === TenantLoginInfoDtoLayoutType.LendSpace;
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     saving = false;
@@ -23,7 +31,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
         private _accountService: AccountServiceProxy,
         private _loginService: LoginService,
         private _appSessionService: AppSessionService,
-        private _profileService: ProfileServiceProxy
+        private _profileService: ProfileServiceProxy,
     ) {
         super(injector);
     }
