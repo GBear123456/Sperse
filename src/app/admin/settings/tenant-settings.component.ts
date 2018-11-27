@@ -7,12 +7,25 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
-    DefaultTimezoneScope, SendTestEmailInput, TenantSettingsEditDto, TenantSettingsServiceProxy,
-    IdcsSettings, BaseCommercePaymentSettings, PayPalSettings, TenantSettingsCreditReportServiceProxy, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings,
-    EPCVIPOfferProviderSettings, TenantOfferProviderSettingsServiceProxy} from '@shared/service-proxies/service-proxies';
+    DefaultTimezoneScope,
+    SendTestEmailInput,
+    TenantSettingsEditDto,
+    TenantSettingsServiceProxy,
+    IdcsSettings,
+    BaseCommercePaymentSettings,
+    PayPalSettings,
+    TenantSettingsCreditReportServiceProxy,
+    TenantPaymentSettingsServiceProxy,
+    ACHWorksSettings,
+    RecurlyPaymentSettings,
+    EPCVIPOfferProviderSettings,
+    TenantOfferProviderSettingsServiceProxy,
+    TenantCustomizationInfoDto
+} from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -45,6 +58,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
 
     logoUploader: FileUploader;
+    faviconsUploader: FileUploader;
     customCssUploader: FileUploader;
     customToSUploader: FileUploader;
     customPrivacyPolicyUploader: FileUploader;
@@ -62,7 +76,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private _appSessionService: AppSessionService,
         private _tokenService: TokenService,
-        private _tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy
+        private _tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
+        private _faviconsService: FaviconService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -144,6 +159,16 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             }
         );
 
+        this.faviconsUploader = this.createUploader(
+            '/api/TenantCustomization/UploadFavicons',
+            (result: TenantCustomizationInfoDto) => {
+                if (result && result.faviconBaseUrl && result.favicons && result.favicons.length) {
+                    this.appSession.tenant.tenantCustomizations = { ...this.appSession.tenant.tenantCustomizations, result } as TenantCustomizationInfoDto;
+                    this._faviconsService.updateFavicons(this.appSession.tenant.tenantCustomizations.favicons, this.appSession.tenant.tenantCustomizations.faviconBaseUrl);
+                }
+            }
+        );
+
         this.customToSUploader = this.createUploader(
             '/api/TenantCustomization/UploadCustomToSDocument',
             result => {
@@ -189,6 +214,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.logoUploader.uploadAll();
     }
 
+    uploadFavicons(): void {
+        this.faviconsUploader.uploadAll();
+    }
+
     uploadCustomCss(): void {
         this.customCssUploader.uploadAll();
     }
@@ -205,6 +234,13 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this._tenantSettingsService.clearLogo().subscribe(() => {
             this._appSessionService.tenant.logoFileType = null;
             this._appSessionService.tenant.logoId = null;
+            this.notify.info(this.l('ClearedSuccessfully'));
+        });
+    }
+
+    clearFavicons(): void {
+        this._tenantSettingsService.clearFavicons().subscribe(() => {
+            this._faviconsService.resetFavicons();
             this.notify.info(this.l('ClearedSuccessfully'));
         });
     }

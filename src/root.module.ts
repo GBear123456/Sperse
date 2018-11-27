@@ -10,6 +10,8 @@ import { RouteReuseStrategy } from '@angular/router';
 import { AbpModule } from '@abp/abp.module';
 import { GestureConfig } from '@angular/material';
 import { CacheService } from 'ng2-cache-service';
+import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
+import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
 import { filter } from 'lodash';
 
 /** Application imports */
@@ -22,18 +24,19 @@ import { RouteGuard } from '@shared/common/auth/route-guard';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { API_BASE_URL, FaviconDto } from '@shared/service-proxies/service-proxies';
+import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { AppPreBootstrap } from './AppPreBootstrap';
 import { RootComponent, AppRootComponent } from './root.components';
 import { RootRoutingModule, CustomReuseStrategy } from './root-routing.module';
 import { RootStoreModule } from '@root/store';
-import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
-import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
+import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 
 export function appInitializerFactory(
     injector: Injector,
-    platformLocation: PlatformLocation) {
+    platformLocation: PlatformLocation,
+    faviconService: FaviconService
+) {
     return () => {
         handleLogoutRequest(injector.get(AppAuthService));
 
@@ -61,8 +64,10 @@ export function appInitializerFactory(
                         }
 
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
-                        if (customizations && customizations.favicons && customizations.favicons.length)
-                             updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
+                        if (customizations && customizations.favicons && customizations.favicons.length) {
+                            faviconService.saveDefaultFavicons();
+                            faviconService.updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
+                        }
 
                         if (shouldLoadLocale()) {
                             let angularLocale = convertAbpLocaleToAngularLocale(abp.localization.currentLanguage.name);
@@ -82,23 +87,6 @@ export function appInitializerFactory(
             }, resolve, reject);
         });
     };
-}
-
-function updateFavicons(favicons: FaviconDto[], faviconBaseUrl: string) {
-    let head = document.head;
-    Array.prototype.forEach.call(head.getElementsByTagName('LINK'), (item) => {
-        if (item.rel.includes('icon'))
-            item.remove();
-    });
-
-    favicons.forEach((item) => {
-        let link = document.createElement('link');
-        link.rel = item.relationship;
-        link.type = item.type;
-        link['sizes'] = item.size;
-        link.href = faviconBaseUrl + item.name;
-        head.appendChild(link);
-    });
 }
 
 function getDocumentOrigin() {
@@ -171,6 +159,7 @@ function handleLogoutRequest(authService: AppAuthService) {
             provide: CacheStorageAbstract,
             useClass: CacheLocalStorage
         },
+        FaviconService,
         CacheService,
         { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteServiceBaseUrl },
@@ -178,7 +167,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: APP_INITIALIZER,
             useFactory: appInitializerFactory,
-            deps: [ Injector, PlatformLocation ],
+            deps: [ Injector, PlatformLocation, FaviconService ],
             multi: true
         },
         {
