@@ -13,42 +13,65 @@
             right: 0px;
             margin: auto;
         }
+        .top-headline {
+            padding: 10px 0;
+            background-color: #000;
+            border-bottom: 2px solid #4c4c4c;
+            
+            .container {
+                max-width: 100%;
+            }      
+      
+            .url,
+            .date {
+                font-size: 9px;
+                font-weight: 400;
+                margin-bottom: 0;
+            }
+            
+            .url {
+                color: #999;
+                text-decoration: none;
+                
+                &:hover {
+                    color: lighten(#999, 10%);
+                }
+            }
+            
+            .get-free-score {
+                color: #f0d500;
+                font-size: 12px;
+                font-weight: 400;
+                margin-bottom: 0;
+            }
+            
+            .date {
+                color: #ccc;
+            }
+        }
     }
     
-    div.header {
-        z-index: 1;
-        position: fixed;
-        top: 0px;
-        width: 100%;
-        height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        div.logo {
-            display: inline-block;
-            height: 22px;
-        }
-        /deep/ app-area-navigation {
-            a {
-                color: #000!important;
-            }
+    /deep/ header {
+        app-area-navigation {
+            display: none;
         }
     }
 
     div.footer {
-        z-index: 1;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-
-        height: 80px;
         width: 100%;
         background: #000;
         position: fixed;
         bottom: 0px;
-        /deep/ app-area-navigation {
-            a {
-                color: #FFF!important;
+    
+        div.container {
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /deep/ app-area-navigation {
+                a {
+                    color: #FFF!important;
+                }
             }
         }
     }

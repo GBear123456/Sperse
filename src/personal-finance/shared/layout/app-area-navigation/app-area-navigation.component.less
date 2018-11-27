@@ -101,14 +101,14 @@
         }
     }
 
-    ul.right-actions {
+    .right-actions {
         padding-left: 0;
         margin: 10px 0 14px;
         li {
             display: inline-block;
             &:last-child {
                 padding-right: 0;
-                margin-right: 10px;
+                margin-right: 0px;
             }
 
             + li {
@@ -123,5 +123,22 @@
                 text-decoration: none;
             }
         }
+
+         .member-login {
+             font-size: 12px!important;
+             font-weight: 600;
+             color: #fff;
+             background-color: #ff9933;
+             padding: 7px 10px!important;
+             line-height: 18px;
+             border-radius: .2rem;
+             letter-spacing: normal;
+             
+
+             &:hover {
+                 color: #fff !important;
+                 background-color: darken(#ff9933, 5%);
+             }
+         }
     }
 }

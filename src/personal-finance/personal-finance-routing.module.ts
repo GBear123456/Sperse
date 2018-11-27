@@ -54,7 +54,7 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                         data: { wrapperDisabled: true }
                     },
                     {
-                        path: 'about-us',
+                        path: 'about',
                         component: AboutUsComponent,
                         data: { wrapperDisabled: true }
                     },
