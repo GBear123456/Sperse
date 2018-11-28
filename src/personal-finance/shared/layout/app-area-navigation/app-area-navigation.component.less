@@ -5,7 +5,7 @@
     align-items: center;
     justify-content: space-around;
     margin-left: auto;
-    
+
     @media all and (max-width: 529px) {
         width: auto !important;
     }
@@ -30,6 +30,7 @@
                 padding: 12px 25px;
                 white-space: nowrap;
             }
+
             span.dropdown-mark {
                 transform: rotate(45deg);
                 -webkit-transform: rotate(45deg);
@@ -40,6 +41,19 @@
                 width: 0px;
                 height: 0px;
                 margin: 3px;
+            }
+            &:hover, &.active {
+                span.dropdown-mark {
+                    transform: rotate(45deg);
+                    -webkit-transform: rotate(45deg);
+                    border: solid white;
+                    border-width: 0 1px 1px 0;
+                    display: inline-block;
+                    padding: 2px;
+                    width: 0px;
+                    height: 0px;
+                    margin: 3px;
+                }
             }
         }
     }
@@ -80,12 +94,12 @@
                 position: relative;
                 white-space: nowrap;
                 color: #000;
-                
+
                 &.member-login {
                     color: #fff !important;
                     background-color: #ff9933;
                     transition: .2s;
-                    
+
                     &:hover {
                         background-color: lighten(#ff9933, 6%);
                     }
@@ -94,13 +108,17 @@
             a.active,
             a:hover,
             &.active > a {
-                color: @font-color-darkGray;
+                color: #FFF;
+                background: none;
                 img {
                     opacity: 0;
                     &.active-img {
                         opacity: 1;
                     }
                 }
+            }
+            &.opened ul {
+                display: block;
             }
         }
     }
@@ -122,15 +140,28 @@
         display: none;
         position: absolute;
         left: 0;
-        top: 45px;
         padding-left: 0;
         text-align: left;
         border-radius: 10px;
         box-shadow: 7px 11px 27px 0 rgba(0, 0, 0, 0.05);
         background-color: #000;
+    }
+
+    .app-responsive-menu,
+    .sublinks {
+        background-color: #000;
+        border-radius: 8px;
+        padding: 21px 27px 17px;
+        top: 60px;
+
         li {
             display: block;
+            padding: 0;
+            &:not(:last-child) {
+                margin-bottom: 9px;
+            }
             a {
+
                 color: #FFF;
                 &.active {
                     color: @light-blue;
@@ -140,8 +171,54 @@
                 }
             }
         }
-        &.opened {
-            display: block;
+    }
+
+    .app-area-navigation li,
+    .dropdown {
+        &.opened,
+        &.show {
+            &:before {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 0 12px 15px 12px;
+                border-color: transparent transparent #000000 transparent;
+                top: 45px;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+        }
+    }
+
+    .app-responsive-menu {
+        right: unset!important;
+        @media all and (max-width: 767px) {
+            right: 0 !important;
+        }
+
+        li {
+            ul.responsive-sublinks {
+                padding-left: 0;
+                margin-top: 9px;
+                li {
+                    padding-left: 15px;
+                    &:before {
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        width: 5px;
+                        height: 5px;
+                        background: @yellow-color;
+                        border-radius: 50%;
+                        top: 0;
+                        bottom: 0;
+                        margin: auto;
+                    }
+                }
+            }
         }
     }
 

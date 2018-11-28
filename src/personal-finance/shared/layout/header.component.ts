@@ -55,9 +55,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     helpLink: string = AppConsts.helpLink;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-
-    chatConnected = false;
-
+    
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
     currentDate = new Date();
 
@@ -206,14 +204,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     registerToEvents() {
         abp.event.on('profilePictureChanged', (thumbnailId) => {
             this.profileThumbnailId = thumbnailId;
-        });
-
-        abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
-            this.unreadChatMessageCount = messageCount;
-        });
-
-        abp.event.on('app.chat.connected', () => {
-            this.chatConnected = true;
         });
     }
 
