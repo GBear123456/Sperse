@@ -44,14 +44,14 @@
         padding-top: 35px;
         position: relative;
         .filter-side-bar {
-            @media (max-width: 768px) {
+            @media (max-width: 991px) {
                 position: absolute;
                 transform: translateX(0);
                 transition: transform 0.3s ease-in-out;
                 background: #fff;
                 z-index: 1;
                 margin-top: 80px;
-                &.xs-hidden {
+                &.md-hidden {
                     transform: translateX(-200%);
                 }
             }
@@ -139,6 +139,11 @@
                 letter-spacing: 0.16px;
                 display: flex;
                 min-width: 170px;
+                label {
+                    @media (max-width: 991px) {
+                        display: none;
+                    }
+                }
                 /deep/ mat-select {
                     mat-option {
                         color: #171C1D;
@@ -161,7 +166,7 @@
                     white-space: nowrap;
                     color: #4a4a4a;
                 }
-                @media (max-width: 768px) {
+                @media (max-width: 991px) {
                     min-width: 0;
                     visibility: hidden;
                     position: absolute;
@@ -171,6 +176,9 @@
             }
             .mobileButtons {
                 display: flex;
+                @media (min-width: 992px) {
+                    display: none;
+                }
                 button {
                     border-color: aliceblue;
                     border: 1px solid #ebedf2;

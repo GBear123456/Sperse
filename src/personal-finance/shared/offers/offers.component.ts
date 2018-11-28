@@ -260,9 +260,9 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     toggleFiltering(e) {
-        this.filtersSideBar.nativeElement.classList.contains('xs-hidden')
-            ? this.renderer.removeClass(this.filtersSideBar.nativeElement, 'xs-hidden')
-            : this.renderer.addClass(this.filtersSideBar.nativeElement, 'xs-hidden');
+        this.filtersSideBar.nativeElement.classList.contains('md-hidden')
+            ? this.renderer.removeClass(this.filtersSideBar.nativeElement, 'md-hidden')
+            : this.renderer.addClass(this.filtersSideBar.nativeElement, 'md-hidden');
     }
 
     toggleSorting(e) {

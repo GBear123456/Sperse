@@ -79,14 +79,11 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
             this._router.navigate([link.routerUrl]);
         } else {
             this.closeAllOpenedMenuItems();
-            const currentSublinksElement = e.target.parentElement.querySelector('.sublinks');
-            if (currentSublinksElement) {
-                setTimeout(() => this.renderer.addClass(currentSublinksElement, 'opened'));
-            }
+            setTimeout(() => this.renderer.addClass(e.target.parentElement, 'opened'));
         }
     }
 
     private closeAllOpenedMenuItems() {
-        this.sublinksRefs.toArray().forEach(sublinkRef => this.renderer.removeClass(sublinkRef.nativeElement, 'opened'));
+        this.sublinksRefs.toArray().forEach(sublinkRef => this.renderer.removeClass(sublinkRef.nativeElement.parentElement, 'opened'));
     }
 }

@@ -3,7 +3,7 @@
         <h1>{{ categoryDisplayName$ | async }}</h1>
     </header>
     <div class="row main">
-        <div class="filter-side-bar xs-hidden col-md-3" #filtersSideBar>
+        <div class="filter-side-bar md-hidden col-lg-3" #filtersSideBar>
             <dx-scroll-view [height]="scrollHeight">
                 <ul class="filters">
                     <ng-container *ngFor="let filter of filters">
@@ -21,20 +21,20 @@
                 </ul>
             </dx-scroll-view>
         </div>
-        <div class="col-sm-12 col-md-9" #creditCardsList>
+        <div class="col-sm-12 col-lg-9" #creditCardsList>
             <div class="subHeader" [hidden]="creditCardsAmount === undefined">
                 <div class="foundCount">
                     {{ ls.l('Offers_WeFound') }} <span>{{ creditCardsAmount }}</span> {{ categoryDisplayName$ | async }}
                 </div>
                 <div class="sortBy">
-                    <span class="m--hidden-mobile">{{ ls.l('Offers_SortBy') }}</span>
+                    <span class="label">{{ ls.l('Offers_SortBy') }}</span>
                     <mat-select (selectionChange)="selectedSorting.next($event.value);" [value]="sortings[0].field" #sortingSelect>
                         <mat-option *ngFor="let sorting of sortings" [value]="sorting.field">
                             {{ sorting.name }}
                         </mat-option>
                     </mat-select>
                 </div>
-                <div class="mobileButtons m--hidden-tablet m--hidden-desktop">
+                <div class="mobileButtons">
                     <button class="btn btn-secondary sortingButton" (click)="toggleSorting($event)"></button>
                     <button class="btn-btn-secondary filteringButton" (click)="toggleFiltering($event)"></button>
                 </div>
