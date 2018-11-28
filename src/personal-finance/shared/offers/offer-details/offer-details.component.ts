@@ -8,7 +8,8 @@ import {
     OnInit,
     OnDestroy,
     ViewChild,
-    Injector
+    Injector,
+    Renderer2
 } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -32,6 +33,7 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild('availableCards') availableCardsRef: ElementRef;
     @ViewChild('creditCardsList') creditCardsListRef: ElementRef;
     @ViewChild('detailsContainer') detailsContainerRef: ElementRef;
+    @ViewChild('offersList') offersListRef: ElementRef;
     creditCards$: Observable<CampaignDto[]>;
     cardsAmount: number;
     scrollHeight: number;
@@ -52,7 +54,8 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
         private router: Router,
         private location: Location,
         private offersService: OffersService,
-        private offerServiceProxy: OfferServiceProxy
+        private offerServiceProxy: OfferServiceProxy,
+        private renderer: Renderer2
     ) {
         this.rootComponent = injector.get(applicationRef.componentTypes[0]);
     }
@@ -140,6 +143,12 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
         /** Update url with new card id */
         const newUrl = this.router.createUrlTree(['../' + e.value], { relativeTo: this.route }).toString();
         this.location.replaceState(newUrl);
+    }
+
+    toggleOffersList() {
+        this.offersListRef.nativeElement.classList.contains('sm-hidden')
+            ? this.renderer.removeClass(this.offersListRef.nativeElement, 'sm-hidden')
+            : this.renderer.addClass(this.offersListRef.nativeElement, 'sm-hidden');
     }
 
     ngOnDestroy() {
