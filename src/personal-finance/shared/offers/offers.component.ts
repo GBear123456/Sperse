@@ -24,7 +24,6 @@ import { MatSelect } from '@angular/material';
 /** Third party improrts */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootComponent } from '@root/root.components';
-import { CreditCard } from '@root/personal-finance/shared/offers/models/credit-card.interface';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import {
     CampaignDto,
@@ -234,7 +233,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         this.scrollHeight = window.innerHeight - this.creditCardsListRef.nativeElement.getBoundingClientRect().top - footerHeight;
     }
 
-    filterCards(creditCards: CreditCard[], filtersValues: FilterValues): CreditCard[] {
+    filterCards(creditCards: any[], filtersValues: FilterValues): any[] {
         return creditCards.filter( creditCard => {
             for (let field in filtersValues) {
                 const cardFieldValue = creditCard[field];
@@ -249,7 +248,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
-    sortCards(creditCards: CreditCard[], field: string): CreditCard[]  {
+    sortCards(creditCards: any[], field: string): any[]  {
         return creditCards.sort((cardA, cardB) => {
             /** If values are numbers - sort in another order */
             return (cardA[field] > cardB[field] ? 1 : -1) * (!isNaN(cardA[field]) ? -1 : 1);

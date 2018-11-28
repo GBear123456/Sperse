@@ -7,7 +7,9 @@
                 <dx-scroll-view [height]="scrollHeight">
                     <mat-radio-group (change)="creditCardChanged($event)" [value]="selectedCardId$ | async">
                         <mat-radio-button *ngFor="let creditCard of creditCards$ | async" [value]="creditCard.id">
-                            <img [src]="creditCard.logoUrl" [alt]="creditCard.name">
+                            <div class="imageContainer">
+                                <img [src]="creditCard.logoUrl" [alt]="creditCard.name">
+                            </div>
                             <div class="cardInfo">
                                 <h4>{{ categoryDisplayName$ | async }}</h4>
                                 <h5>{{ creditCard.name }}</h5>
@@ -33,27 +35,25 @@
                 </div>
                 <hr>
                 <div class="cardDetails row">
-                    <div class="col-md-7">
-                        <div class="detailsListBlock" *ngIf="cardDetails.details">
+                    <div class="col-md-7 left-details">
+                        <div class="detailsBlock">
                             <h5 class="title">{{ ls.l('Offers_CardDetails') }}</h5>
-                            <ul class="detailsList">
-                                <li *ngFor="let detail of cardDetails.details">{{ detail }}</li>
-                            </ul>
+                            <p class="details">{{ cardDetails.description }}</p>
                         </div>
                         <hr>
                         <div class="aprVariable">
                             <h5 class="title">{{ ls.l('Offers_APR_Variable') }}</h5>
-                            <ul>
+                            <ul class="row">
                                 <ng-container>
-                                    <li *ngFor="let prop of ['apr', 'penaltyApr', 'advancedApr']">
+                                    <li class="col-4" *ngFor="let prop of ['apr', 'penaltyApr', 'advancedApr']">
                                         <h5>{{ ls.l('Offers_' + prop) }}</h5>
-                                        <p>{{ cardDetails[prop] }}</p>
+                                        <p>{{ cardDetails[prop] }}, {{ ls.l('Offers_variable') }}</p>
                                     </li>
                                 </ng-container>
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-5 right-details">
                         <div class="rightSideBar">
                             <div class="prosAndCons">
                                 <h5 class="title">{{ ls.l('Offers_Pros') }}</h5>
@@ -68,11 +68,12 @@
                                     [max]="850"
                                     [current]="cardDetails.recommendedCreditScore.max"
                                     [radius]="65"
+                                    color="#24c26c"
                                     [semicircle]="true"
                                     [stroke]="5">
                                 </round-progress>
                                 <div class="details">
-                                    <div class="score">{{ cardDetails.recommendedCreditScore.min }} - {{ cardDetails.recommendedCreditScore.max }}</div>
+                                    <div class="score">{{ cardDetails.recommendedCreditScore.min }}-{{ cardDetails.recommendedCreditScore.max }}</div>
                                     <div class="scoreName">{{ cardDetails.recommendedCreditScore.name }}</div>
                                 </div>
                             </div>

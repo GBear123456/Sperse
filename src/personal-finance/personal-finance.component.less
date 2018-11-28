@@ -530,18 +530,19 @@
         margin-bottom: 7px;
         border: none;
         padding: 7px 0;
+        margin-bottom: 0;
         span {
             display: block;
             color: #1f1700;
             font-size: 16px;
             font-weight: 700;
-            letter-spacing: 0.13px;
+            letter-spacing: 0.1px;
             text-align: center;
             text-transform: uppercase;
             font-family: Poppins;
         }
         &.withArrow {
-            padding: 7px 50px;
+            padding: 7px 50px 7px 25px;
             position: relative;
             &:after {
                 content: url('../assets/common/icons/right-arrow-black.svg');
@@ -549,6 +550,7 @@
                 height: 18px;
                 width: 17px;
                 right: 26px;
+                position: absolute;
             }
         }
     }

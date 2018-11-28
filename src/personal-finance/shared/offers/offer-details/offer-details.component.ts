@@ -22,7 +22,7 @@ import { finalize, first, map, switchMap, takeUntil, pluck, tap } from 'rxjs/ope
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootComponent } from '@root/root.components';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { Category, Type, OfferServiceProxy, CampaignDto } from '@shared/service-proxies/service-proxies';
+import { Category, Type, OfferServiceProxy, CampaignDto, CampaignDetailsDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'offer-details.component.html',
@@ -37,7 +37,7 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
     scrollHeight: number;
     selectedCardId: ReplaySubject<number> = new ReplaySubject<number>(1);
     selectedCardId$: Observable<number> = this.selectedCardId.asObservable();
-    selectedCardDetails$: Observable<any>;
+    selectedCardDetails$: Observable<CampaignDetailsDto>;
     category$: Observable<Category>;
     categoryDisplayName$: Observable<string>;
     private deactivateSubject: Subject<null> = new Subject<null>();
@@ -80,7 +80,7 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
         this.calcScrollHeight();
     }
 
-    private getCardDetails(cardId: number) {
+    private getCardDetails(cardId: number): any {
         abp.ui.setBusy(this.detailsContainerRef.nativeElement);
         return this.offerServiceProxy.getDetails(cardId).pipe(
             /** @todo remove in future */
@@ -88,13 +88,6 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
                 return {
                     ...details,
                     ...{
-                        details: [
-                            'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi.',
-                            'Sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.',
-                            'Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus',
-                            'Omnis voluptas assumenda est, omnis dolor repellendus.',
-                            'Sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.'
-                        ],
                         apr: '17.49%',
                         penaltyApr: '19.20%',
                         advancedApr: '23.49%',
