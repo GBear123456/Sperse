@@ -15895,13 +15895,14 @@ export class OrderSubscriptionServiceProxy {
     }
 
     /**
-     * @trackingCode (optional) 
      * @isCaptured (optional) 
      * @return Success
      */
-    completeManualSubscriptionPayment(trackingCode: string | null | undefined, isCaptured: boolean | null | undefined): Observable<void> {
+    completeManualSubscriptionPayment(trackingCode: string, isCaptured: boolean | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/CompleteManualSubscriptionPayment?";
-        if (trackingCode !== undefined)
+        if (trackingCode === undefined || trackingCode === null)
+            throw new Error("The parameter 'trackingCode' must be defined and cannot be null.");
+        else
             url_ += "trackingCode=" + encodeURIComponent("" + trackingCode) + "&"; 
         if (isCaptured !== undefined)
             url_ += "isCaptured=" + encodeURIComponent("" + isCaptured) + "&"; 
@@ -19609,6 +19610,122 @@ export class SessionServiceProxy {
             }));
         }
         return _observableOf<GetUserInformationOutput>(<any>null);
+    }
+}
+
+@Injectable()
+export class StageServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    create(input: CreateStageInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    rename(input: RenameStageInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/Rename";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRename(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRename(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processRename(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -51187,6 +51304,90 @@ export class GetUserInformationOutput implements IGetUserInformationOutput {
 export interface IGetUserInformationOutput {
     tenancyName: string | undefined;
     userName: string | undefined;
+}
+
+export class CreateStageInput implements ICreateStageInput {
+    pipelineId!: number;
+    name!: string;
+    sortOrder!: number;
+
+    constructor(data?: ICreateStageInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.pipelineId = data["pipelineId"];
+            this.name = data["name"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): CreateStageInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateStageInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pipelineId"] = this.pipelineId;
+        data["name"] = this.name;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface ICreateStageInput {
+    pipelineId: number;
+    name: string;
+    sortOrder: number;
+}
+
+export class RenameStageInput implements IRenameStageInput {
+    id!: number;
+    name!: string;
+
+    constructor(data?: IRenameStageInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): RenameStageInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RenameStageInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IRenameStageInput {
+    id: number;
+    name: string;
 }
 
 export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
