@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, AfterViewInit, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, Injector, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -12,7 +12,7 @@ import * as moment from 'moment';
         './lend-space-layout.component.less'
     ]
 })
-export class LendSpaceLayoutComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
+export class LendSpaceLayoutComponent extends AppComponentBase {
     currentDate = new Date();
     currentYear: number = moment().year();
 
@@ -38,17 +38,8 @@ export class LendSpaceLayoutComponent extends AppComponentBase implements AfterV
     ];
 
     constructor(
-        injector: Injector,
-        private renderer: Renderer2
+        injector: Injector
     ) {
         super(injector);
-    }
-
-    ngAfterViewInit(): void {
-        setTimeout(() => this.renderer.addClass(document.body, 'lend-space-landing'));
-    }
-
-    ngOnDestroy() {
-        this.renderer.removeClass(document.body, 'lend-space-landing');
     }
 }

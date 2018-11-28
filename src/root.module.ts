@@ -47,15 +47,6 @@ export function appInitializerFactory(
                 let ui: AppUiCustomizationService = injector.get(AppUiCustomizationService);
                 appSessionService.init().then(
                     (result) => {
-
-                        //Css classes based on the layout
-                        let appUiCustomizationService: AppUiCustomizationService = injector.get(AppUiCustomizationService);
-                        if (abp.session.userId) {
-                            $('body').attr('class', appUiCustomizationService.getAppModuleBodyClass());
-                        } else {
-                            $('body').attr('class', appUiCustomizationService.getAccountModuleBodyClass());
-                        }
-
                         //set og share image meta tag
                         if (!appSessionService.tenant || !appSessionService.tenant.logoId) {
                             $('meta[property=og\\:image]').attr('content', window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png');

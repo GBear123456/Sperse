@@ -10,10 +10,11 @@ export class PagesFooterComponent extends AppComponentBase {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
     appMenuItems = [
-        { url: '/personal-finance/products', name: 'Products' },
-        { url: '/personal-finance/features', name: 'Features' },
-        { url: '/account/about', name: 'About' },
-        { url: '/personal-finance/contact-us', name: 'Contact us' }
+        { url: '/personal-finance/about', name: 'About Us' },
+        { url: '/personal-finance/privacy-policy', name: 'Privacy Policy' },
+        { url: '/account/terms', name: 'Terms of Use' },
+        { url: '/personal-finance/trademarks', name: 'Trademarks' },
+        { url: '/personal-finance/disclaimers', name: 'Disclaimers' }
     ];
     defaultMenuItems = [
         { url: '/personal-finance/about', name: 'AboutUs' },

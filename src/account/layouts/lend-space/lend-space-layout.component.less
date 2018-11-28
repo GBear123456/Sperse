@@ -13,38 +13,14 @@
             right: 0px;
             margin: auto;
         }
-    }
-    
-    /deep/ header {
-        app-area-navigation {
-            display: none;
+        footer {
+            position: fixed;
+            bottom: 0px;
+            width: 100%;
         }
     }
-
-    div.footer {
-        width: 100%;
-        background: #000;
-        position: fixed;
-        bottom: 0px;
     
-        div.container {
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            /deep/ app-area-navigation {
-                a {
-                    color: #FFF!important;
-                }
-            }
-        }
-    }
-
     /deep/ app-area-navigation {
-        .right-actions, .logo {
-            display: none!important;
-        }
-
         a {
             font-family: Poppins!important;
             font-size: 14px!important;
