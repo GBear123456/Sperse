@@ -1,7 +1,7 @@
 export class AppConsts {
     static readonly tenancyNamePlaceHolderInUrl = '{TENANCY_NAME}';
     static readonly defaultTenantName = 'Sperse';
-    static readonly tenantHostType = 1;    
+    static readonly tenantHostType = 1;
 
     static readonly googleMapsApiUrl = 'https://maps.googleapis.com/maps/api/js?key={KEY}&libraries=places&language=en';
     static readonly helpLink = 'https://support.sperse.com';
