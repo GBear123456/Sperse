@@ -45615,6 +45615,12 @@ export class LeadInfoDto implements ILeadInfoDto {
     affiliateCode!: string | undefined;
     channelCode!: string | undefined;
     comments!: string | undefined;
+    clientIp!: string | undefined;
+    userAgent!: string | undefined;
+    applicantId!: string | undefined;
+    applicationId!: string | undefined;
+    siteId!: string | undefined;
+    siteUrl!: string | undefined;
 
     constructor(data?: ILeadInfoDto) {
         if (data) {
@@ -45637,6 +45643,12 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.affiliateCode = data["affiliateCode"];
             this.channelCode = data["channelCode"];
             this.comments = data["comments"];
+            this.clientIp = data["clientIp"];
+            this.userAgent = data["userAgent"];
+            this.applicantId = data["applicantId"];
+            this.applicationId = data["applicationId"];
+            this.siteId = data["siteId"];
+            this.siteUrl = data["siteUrl"];
         }
     }
 
@@ -45659,6 +45671,12 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["affiliateCode"] = this.affiliateCode;
         data["channelCode"] = this.channelCode;
         data["comments"] = this.comments;
+        data["clientIp"] = this.clientIp;
+        data["userAgent"] = this.userAgent;
+        data["applicantId"] = this.applicantId;
+        data["applicationId"] = this.applicationId;
+        data["siteId"] = this.siteId;
+        data["siteUrl"] = this.siteUrl;
         return data; 
     }
 }
@@ -45674,6 +45692,12 @@ export interface ILeadInfoDto {
     affiliateCode: string | undefined;
     channelCode: string | undefined;
     comments: string | undefined;
+    clientIp: string | undefined;
+    userAgent: string | undefined;
+    applicantId: string | undefined;
+    applicationId: string | undefined;
+    siteId: string | undefined;
+    siteUrl: string | undefined;
 }
 
 export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
