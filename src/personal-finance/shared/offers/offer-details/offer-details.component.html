@@ -1,6 +1,9 @@
 <div class="container">
+    <div class="mobileButtons" *ngIf="creditCards$ | async">
+        <button class="btn btn-secondary" (click)="toggleOffersList($event)">{{ ls.l('Offers_OpenOffersList') }}</button>
+    </div>
     <div class="row">
-        <div class="col-md-4 leftBlock">
+        <div class="col-md-7 col-lg-4 leftBlock sm-hidden" #offersList>
             <h1>{{ categoryDisplayName$ | async }}</h1>
             <h3 #availableCards><ng-container *ngIf="cardsAmount">{{ ls.l('Offers_AvailableCreditCards') }} ({{ cardsAmount }})</ng-container></h3>
             <div class="creditCardsList" #creditCardsList>
@@ -19,7 +22,7 @@
                 </dx-scroll-view>
             </div>
         </div>
-        <div class="col-md-8 rightBlock" #detailsContainer>
+        <div class="col-lg-8 rightBlock" #detailsContainer>
             <ng-container *ngIf="(selectedCardDetails$ | async) as cardDetails">
                 <div class="bankHeader row">
                     <div class="bankDetails col-md-8">
@@ -29,13 +32,13 @@
                             <h5>{{ cardDetails.name }}</h5>
                         </div>
                     </div>
-                    <div class="actions col-md-4">
+                    <div class="actions col-6 offset-3 offset-md-0 col-md-4">
                         <a [href]="cardDetails.redirectUrl" class="applyButton withArrow pull-right"><span>{{ ls.l('Apply') }}</span></a>
                     </div>
                 </div>
                 <hr>
                 <div class="cardDetails row">
-                    <div class="col-md-7 left-details">
+                    <div class="col-sm-5 col-xl-7 left-details">
                         <div class="detailsBlock">
                             <h5 class="title">{{ ls.l('Offers_CardDetails') }}</h5>
                             <p class="details">{{ cardDetails.description }}</p>
@@ -45,7 +48,7 @@
                             <h5 class="title">{{ ls.l('Offers_APR_Variable') }}</h5>
                             <ul class="row">
                                 <ng-container>
-                                    <li class="col-4" *ngFor="let prop of ['apr', 'penaltyApr', 'advancedApr']">
+                                    <li class="col-xl-4" *ngFor="let prop of ['apr', 'penaltyApr', 'advancedApr']">
                                         <h5>{{ ls.l('Offers_' + prop) }}</h5>
                                         <p>{{ cardDetails[prop] }}, {{ ls.l('Offers_variable') }}</p>
                                     </li>
@@ -53,7 +56,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-5 right-details">
+                    <div class="col-sm-7 col-xl-5 right-details">
                         <div class="rightSideBar">
                             <div class="prosAndCons">
                                 <h5 class="title">{{ ls.l('Offers_Pros') }}</h5>
