@@ -24,22 +24,6 @@
         <div id="m_header_topbar" class="m-topbar m-stack m-stack--ver m-stack--general">
             <div class="m-stack__item m-topbar__nav-wrapper">
                 <ul class="m-topbar__nav m-nav m-nav--inline">
-                    <li *ngIf="notificationEnabled" headerNotifications class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-right m-dropdown--mobile-full-width" data-dropdown-toggle="click" data-dropdown-persistent="true" id="header_notification_bar"></li>
-                    <li *ngIf="chatEnabled && !chatConnected" class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
-                        <a href="javascript:;" class="m-nav__link">
-                            <span class="m-nav__link-icon">
-                                <img *ngIf="!chatConnected" src="./assets/common/images/loading.gif" style="width: 23px;" tooltip="{{l('ChatIsConnecting')}}" placement="left" />
-                            </span>
-                        </a>
-                    </li>
-                    <li [hidden]="!chatEnabled || !chatConnected" id="m_quick_sidebar_toggle" class="m-nav__item m-topbar__notifications m-topbar__notifications--img m-dropdown m-dropdown--large m-dropdown--header-bg-fill m-dropdown--arrow m-dropdown--align-center 	m-dropdown--mobile-full-width">
-                        <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
-                            <span class="m-nav__link-icon">
-                                <img src="./assets/common/icons/feedback.svg">
-                            </span>
-                            <span class="m-badge m-badge--danger" [ngClass]="{'d-none': !unreadChatMessageCount}" id="UnreadChatMessageCount">{{unreadChatMessageCount}}</span>
-                        </a>
-                    </li>
                     <li class="m-nav__item m-topbar__user-profile m-topbar__user-profile--img  m-dropdown m-dropdown--medium m-dropdown--arrow m-dropdown--header-bg-fill m-dropdown--align-right m-dropdown--mobile-full-width m-dropdown--skin-light" data-dropdown-toggle="click">
                         <a href="javascript:;" class="m-nav__link m-dropdown__toggle">
                             <span class="m-topbar__userpic">
