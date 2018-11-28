@@ -1,17 +1,18 @@
 :host {
-    .wraper {
+    .wrapper {
         height: 100vh;
         width: 100%;
-        position: relative;
-        text-align: center;
-        .content  {
-            max-width: 600px;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            bottom: 0px;
-            right: 0px;
-            margin: auto;
+        //position: relative;
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+    
+        main {
+            flex: 1;
+        }
+        
+        &.dark-layout {
+            background: #262626;
         }
     }
     
@@ -24,8 +25,8 @@
     div.footer {
         width: 100%;
         background: #000;
-        position: fixed;
-        bottom: 0px;
+        //position: fixed;
+        //bottom: 0;
     
         div.container {
             z-index: 1;
@@ -34,7 +35,7 @@
             justify-content: space-between;
             /deep/ app-area-navigation {
                 a {
-                    color: #FFF!important;
+                    color: #FFF !important;
                 }
             }
         }
@@ -42,13 +43,13 @@
 
     /deep/ app-area-navigation {
         .right-actions, .logo {
-            display: none!important;
+            display: none !important;
         }
 
         a {
-            font-family: Poppins!important;
-            font-size: 14px!important;
-            font-weight: 600!important;
+            font-family: Poppins !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
             font-style: normal;
             font-stretch: normal;
             line-height: normal;

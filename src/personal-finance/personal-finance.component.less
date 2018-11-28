@@ -28,6 +28,39 @@
     }
 }
 
+/deep/ .pfm.lend-space .swal-modal {
+    background: #FDC84D;    
+    .swal-icon.swal-icon { 
+        &--error, &--warning, &--info {
+            background: #FFF;
+            border: 10px solid #FFD564;
+            box-shadow: none;
+        }
+        &--warning {
+            &:before {
+                content: "\2713";
+            }
+        }
+    }
+    .swal-title {
+        color: #000;
+        font-size: 26px;
+        font-weight: bold;
+        white-space: pre-line;
+    }
+    .swal-button {
+        background-color: #FFF;
+        font-size: 18px;
+        font-weight: 600;
+        color: #000;
+        cursor: pointer;
+        &:hover {
+            color: #FFF;
+            background-color: #000;
+        }
+    }
+}
+
 /deep/ * {
     .form-control[disabled] {
         opacity: .7;

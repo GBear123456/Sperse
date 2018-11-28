@@ -1,4 +1,4 @@
-import { Component, HostBinding, ViewContainerRef, OnInit, Injector } from '@angular/core';
+import { Component, HostBinding, ViewContainerRef, OnInit, OnDestroy, Injector, Renderer2 } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { Router, ActivationEnd } from '@angular/router';
 
@@ -8,7 +8,7 @@ declare const Typekit: any;
     templateUrl: './personal-finance.component.html',
     styleUrls: ['./personal-finance.component.less']
 })
-export class PersonalFinanceComponent extends AppComponentBase implements OnInit {
+export class PersonalFinanceComponent extends AppComponentBase implements OnInit, OnDestroy {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
     wrapperEnabled = false;
@@ -19,14 +19,14 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     public constructor(
         injector: Injector,
         viewContainerRef: ViewContainerRef,
-        private router: Router
+        private _render: Renderer2
     ) {
         super(injector);
         this.viewContainerRef = viewContainerRef;
         // You need this small hack in order to catch application root view container ref (required by ng2 bootstrap modal)
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
         this.loggedUserId = this.appSession.userId;
-        router.events.subscribe(event => {
+        this._router.events.subscribe(event => {
             if (event instanceof ActivationEnd && !event.snapshot.children.length) {
                 this.wrapperEnabled = !event.snapshot.data.wrapperDisabled;
                 this.hideFooter = event.snapshot.data.hideFooter;
@@ -39,8 +39,13 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     // }
 
     ngOnInit(): void {
+        this._render.addClass(document.body, 'pfm');
         this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
             try { Typekit.load({ async: true }); } catch (e) { }
         });
+    }
+
+    ngOnDestroy() {
+        this._render.removeClass(document.body, 'pfm');
     }
 }
