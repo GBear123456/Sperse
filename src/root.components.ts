@@ -4,6 +4,7 @@ import { DOCUMENT, Title } from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 
 import * as _ from 'underscore';
 
@@ -95,8 +96,13 @@ export class AppRootComponent implements OnInit {
             this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
 
         //tenant specific custom css
-        if (this.SS.tenant && this.SS.tenant.customCssId) {
-            this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + this.SS.tenant.customCssId + '/' + this.SS.tenant.id);
+        let tenant = this.SS.tenant;
+        if (tenant) {
+            if (tenant.customCssId)
+                this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id);
+              
+            if (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
+                this.parent.hostElement.nativeElement.classList.add('lend-space');
         }
     }
 }
