@@ -1,13 +1,24 @@
 /** Core imports */
-import { Component, OnInit, Injector, ViewChild } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    OnInit,
+    Injector,
+    ViewChild,
+    ViewChildren,
+    QueryList
+} from '@angular/core';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material';
-import * as _ from 'underscore';
-import { DxSelectBoxComponent } from '@root/node_modules/devextreme-angular';
+import { Store, select } from '@ngrx/store';
+import { MaskPipe } from 'ngx-mask';
+import { DxSelectBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
 import * as moment from 'moment';
+import { Observable } from 'rxjs';
+import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -23,15 +34,15 @@ import { NoteType } from '@root/shared/AppEnums';
     selector: 'company-dialog',
     templateUrl: './company-dialog.component.html',
     styleUrls: ['./company-dialog.component.less'],
-    //changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ContactPhotoServiceProxy]
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ ContactPhotoServiceProxy, MaskPipe ]
 })
 export class CompanyDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
-
-    states: CountryStateDto[];
-    countries: CountryDto[];
-    companyTypes: any[];
+    @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
+    states$: Observable<CountryStateDto[]>;
+    countries$: Observable<CountryDto[]>;
+    companyTypes$: Observable<any[]>;
     companySizes: any = [
         { id: 0, name: '1 to 9', from: 1, to: 9 },
         { id: 1, name: '10 to 19', from: 10, to: 19 },
@@ -50,7 +61,7 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         fullName: '',
         shortName: '',
         companyType: null,
-        companySize: this.companySizes[0].id,
+        companySize: null,
         annualRevenue: '',
         formedStateId: null,
         formedCountryId: 'US',
@@ -65,6 +76,8 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         notes: '',
         primaryPhoto: null
     };
+    dunsRegex = AppConsts.regexPatterns.duns;
+    einRegex = AppConsts.regexPatterns.ein;
 
     constructor(
         injector: Injector,
@@ -72,7 +85,9 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         private _organizationContactServiceProxy: OrganizationContactServiceProxy,
         private _notesService: NotesServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
-        private store$: Store<RootStore.State>
+        private store$: Store<RootStore.State>,
+        private changeDetectorRef: ChangeDetectorRef,
+        private maskPipe: MaskPipe
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -83,8 +98,8 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         this.data.title = this.company.fullName = company.fullName;
         this.company = { ...this.company, ...company.organization };
         this.company.id = company.id;
-        let size = _.find(this.companySizes, (size) => { return size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom });
-        this.company.companySize = size ? size.id : this.companySizes[0].id;
+        let size = _.find(this.companySizes, size => size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom);
+        this.company.companySize = size ? size.id : null;
         this.company.primaryPhoto = company.primaryPhoto;
         this.data.editTitle = true;
         this.data.titleClearButton = true;
@@ -101,12 +116,18 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
     }
 
     save() {
+        if (this.validators.toArray().some(validator => !validator.instance.validate().isValid)) {
+            return false;
+        }
+
         this.company.companyName = this.company.fullName = this.data.title;
         let input = new UpdateOrganizationInfoInput(this.company);
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
         let size = _.find(this.companySizes, item => item.id === this.company.companySize );
-        input.sizeFrom = size.from;
-        input.sizeTo = size.to;
+        if (size) {
+            input.sizeFrom = size.from;
+            input.sizeTo = size.to;
+        }
         this._organizationContactServiceProxy.updateOrganizationInfo(input).subscribe(() => {
             this.notify.success(this.l('SavedSuccessfully'));
             this.close(true, {
@@ -122,36 +143,25 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         }
     }
 
-    private getMomentFromDateWithoutTime(date: Date): moment.Moment {
-        return moment.utc(date.getFullYear() + '-' + ( date.getMonth() + 1 ) + '-' + date.getDate());
+    private getMomentFromDateWithoutTime(date: any): moment.Moment {
+        return date.getFullYear
+                    ? moment.utc(date.getFullYear() + '-' + ( date.getMonth() + 1 ) + '-' + date.getDate())
+                    : moment.utc(date.format('YYYY-MM-DD'));
     }
 
     private loadCountries() {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(
-            countries => this.countries = countries
-        );
+        this.countries$ = this.store$.pipe(select(CountriesStoreSelectors.getCountries));
     }
 
     loadOrganizationTypes() {
         this.store$.dispatch(new OrganizationTypeStoreActions.LoadRequestAction(false));
-        this.store$.pipe(select(OrganizationTypeSelectors.getOrganizationTypes)).subscribe(
-            companyTypes => {
-                this.companyTypes = companyTypes;
-                if (!this.company.companyType) {
-                    this.company.companyType = this.companyTypes[0].id;
-                }
-            }
-        );
+        this.companyTypes$ = this.store$.pipe(select(OrganizationTypeSelectors.getOrganizationTypes));
     }
 
     loadStates(countryCode: string = this.company.formedCountryId) {
-        if (countryCode) {
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
-            this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode })).subscribe(
-                states => this.states = states
-            );
-        }
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
+        this.states$ = this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }));
     }
 
     showUploadPhotoDialog(event) {
@@ -173,22 +183,18 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
                         original: base64OrigImage,
                         thumbnail: base64ThumbImage
                     });
+                    this.changeDetectorRef.detectChanges();
                 });
             }
         });
         event.stopPropagation();
     }
 
-    checkMaxLength(e, maxLength: number) {
+    onInput(e, maxLength: number, mask?: string) {
         const inputElement = e.event.target;
         if (inputElement.value.length > maxLength)
             inputElement.value = inputElement.value.slice(0, maxLength);
-    }
-
-    onEinKeyDown(e) {
-        const inputElement = e.event.target;
-        if (inputElement.value.length >= 2 && inputElement.value.indexOf('-') === -1 && e.event.keyCode != 8) {
-            inputElement.value = inputElement.value.slice(0, 2) + '-' + inputElement.value.slice(2, inputElement.value.length);
-        }
+        if (mask)
+            inputElement.value = this.maskPipe.transform(inputElement.value, mask);
     }
 }

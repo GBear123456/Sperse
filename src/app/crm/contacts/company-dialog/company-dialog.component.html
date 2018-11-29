@@ -20,7 +20,8 @@
                                 name="companyType"
                                 displayExpr="name"
                                 valueExpr="id"
-                                [dataSource]="companyTypes"
+                                placeholder="{{l('Select')}}"
+                                [dataSource]="companyTypes$ | async"
                                 [(value)]="company.companyType">
                             </dx-select-box>
                         </div>
@@ -58,7 +59,7 @@
                                 displayExpr="name"
                                 valueExpr="code"
                                 name="country"
-                                [dataSource]="countries"
+                                [dataSource]="countries$ | async"
                                 [(value)]="company.formedCountryId"
                                 (onValueChanged)="loadStates($event._value)">
                             </dx-select-box>
@@ -73,7 +74,7 @@
                                 displayExpr="name"
                                 valueExpr="code"
                                 placeholder="{{l('Select')}}"
-                                [dataSource]="states"
+                                [dataSource]="states$ | async"
                                 [(value)]="company.formedStateId">
                             </dx-select-box>
                         </div>
@@ -90,7 +91,7 @@
                     <div class="field sicCode">
                         <label for="sicCode">{{l('Company_sicCode')}}</label>
                         <dx-number-box name="sicCode"
-                                     (onInput)="checkMaxLength($event, 4)"
+                                     (onInput)="onInput($event, 4)"
                                      [inputAttr]="{ id: 'sicCode' }"
                                      [valueChangeEvent]="'keyup'"
                                      [(value)]="company.businessSicCode">
@@ -127,19 +128,24 @@
                                      [inputAttr]="{ id: 'ein' }"
                                      [valueChangeEvent]="'keyup'"
                                      [(value)]="company.ein"
-                                     (onInput)="checkMaxLength($event, 10)"
-                                     (onKeyDown)="onEinKeyDown($event)">
+                                     (onInput)="onInput($event, 10, '00-0000000')">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern" [pattern]="einRegex" message="{{l('EinIsNotValid')}}."></dxi-validation-rule>
+                            </dx-validator>
                         </dx-text-box>
                         <span [class]="company.ein && 'clear-contact' || 'hidden'" (click)="company.ein = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field duns">
                         <label for="dusn">{{l('Company_DUNS')}}</label>
-                        <dx-number-box name="duns"
+                        <dx-text-box name="duns"
                                      [inputAttr]="{ id: 'dusn' }"
                                      [valueChangeEvent]="'keyup'"
                                      [(value)]="company.duns"
-                                     (onInput)="checkMaxLength($event, 9)">
-                        </dx-number-box>
+                                     (onInput)="onInput($event, 11, '00-000-0000')">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern" [pattern]="dunsRegex" message="{{l('DunsIsNotValid')}}."></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
                         <span [class]="company.duns && 'clear-contact' || 'hidden'" (click)="company.duns = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field stockSymbol">
@@ -148,7 +154,7 @@
                                      [inputAttr]="{ id: 'stockSymbol' }"
                                      [valueChangeEvent]="'keyup'"
                                      [(value)]="company.ticker"
-                                     (onInput)="checkMaxLength($event, 15)">
+                                     (onInput)="onInput($event, 15)">
                         </dx-text-box>
                         <span [class]="company.ticker && 'clear-contact' || 'hidden'" (click)="company.ticker = ''"><i class="minus-icon"></i></span>
                     </div>
