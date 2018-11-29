@@ -49,31 +49,4 @@ import { CompleteTenantRegistrationComponent } from './register/complete-tenant-
         RouterModule
     ]
 })
-export class AccountRoutingModule {
-    constructor(
-        private router: Router,
-        private _uiCustomizationService: AppUiCustomizationService
-    ) {
-        router.events.subscribe((event: NavigationEnd) => {
-            setTimeout(() => {
-                //this will reinitialize metronic App, when navigated to admin module
-                mApp.initialized = false;
-
-                this.toggleBodyCssClass(event.url);
-            }, 0);
-        });
-    }
-
-    toggleBodyCssClass(url: string): void {
-        if (!url) {
-            $('body').attr('class', this._uiCustomizationService.getAccountModuleBodyClass());
-            return;
-        }
-
-        if (url.indexOf('/account/') >= 0) {
-            $('body').attr('class', this._uiCustomizationService.getAccountModuleBodyClass());
-        } else {
-            $('body').attr('class', this._uiCustomizationService.getAppModuleBodyClass());
-        }
-    }
-}
+export class AccountRoutingModule { }

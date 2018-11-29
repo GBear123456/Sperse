@@ -15,37 +15,14 @@
             background: #262626;
         }
     }
-    
-    /deep/ header {
-        app-area-navigation {
-            display: none;
-        }
-    }
 
-    div.footer {
+    /deep/ footer {
+        position: fixed;
+        bottom: 0px;
         width: 100%;
-        background: #000;
-        //position: fixed;
-        //bottom: 0;
-    
-        div.container {
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            /deep/ app-area-navigation {
-                a {
-                    color: #FFF !important;
-                }
-            }
-        }
     }
-
+    
     /deep/ app-area-navigation {
-        .right-actions, .logo {
-            display: none !important;
-        }
-
         a {
             font-family: Poppins !important;
             font-size: 14px !important;

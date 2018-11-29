@@ -100,7 +100,7 @@ export class AppRootComponent implements OnInit {
         if (tenant) {
             if (tenant.customCssId)
                 this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id);
-              
+
             if (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
                 this.parent.hostElement.nativeElement.classList.add('lend-space');
         }

@@ -18,7 +18,7 @@ import { takeUntil } from 'rxjs/operators';
     templateUrl: './app-area-navigation.component.html',
     styleUrls: ['./app-area-navigation.component.less']
 })
-export class AppAreaNavigationComponent extends AppComponentBase implements AfterViewInit {
+export class AppAreaNavigationComponent extends AppComponentBase implements AfterViewInit {    
     @Input() memberAreaLinks: any[];
     @ViewChildren('sublinks') sublinksRefs: QueryList<ElementRef>;
     responsiveMemberAreaLinks = [];
@@ -26,6 +26,7 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
     resizeTimeout: any;
     loggedUserId: number;
     currentUrl = this._router.url;
+
     @HostListener('window:click') onClick() {
         this.closeAllOpenedMenuItems();
     }
