@@ -11,6 +11,7 @@ import {
     SendTestEmailInput,
     TenantSettingsEditDto,
     TenantSettingsServiceProxy,
+    TenantCustomizationServiceProxy,
     IdcsSettings,
     BaseCommercePaymentSettings,
     PayPalSettings,
@@ -72,6 +73,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     constructor(
         injector: Injector,
         private _tenantSettingsService: TenantSettingsServiceProxy,
+        private _tenantCustomizationService: TenantCustomizationServiceProxy,
         private _tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
         private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private _appSessionService: AppSessionService,
@@ -231,7 +233,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     clearLogo(): void {
-        this._tenantSettingsService.clearLogo().subscribe(() => {
+        this._tenantCustomizationService.clearLogo().subscribe(() => {
             this._appSessionService.tenant.logoFileType = null;
             this._appSessionService.tenant.logoId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
@@ -239,14 +241,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     clearFavicons(): void {
-        this._tenantSettingsService.clearFavicons().subscribe(() => {
+        this._tenantCustomizationService.clearFavicons().subscribe(() => {
             this._faviconsService.resetFavicons();
             this.notify.info(this.l('ClearedSuccessfully'));
         });
     }
 
     clearCustomCss(): void {
-        this._tenantSettingsService.clearCustomCss().subscribe(() => {
+        this._tenantCustomizationService.clearCustomCss().subscribe(() => {
             this.appSession.tenant.customCssId = null;
             $('#TenantCustomCss').remove();
             this.notify.info(this.l('ClearedSuccessfully'));
@@ -254,14 +256,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     clearCustomPrivacyPolicy(): void {
-        this._tenantSettingsService.clearCustomPrivacyPolicyDocument().subscribe(() => {
+        this._tenantCustomizationService.clearCustomPrivacyPolicyDocument().subscribe(() => {
             this.appSession.tenant.customPrivacyPolicyDocumentId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
         });
     }
 
     clearCustomToS(): void {
-        this._tenantSettingsService.clearCustomToSDocument().subscribe(() => {
+        this._tenantCustomizationService.clearCustomToSDocument().subscribe(() => {
             this.appSession.tenant.customToSDocumentId = null;
             this.notify.info(this.l('ClearedSuccessfully'));
         });
