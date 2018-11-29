@@ -32,7 +32,10 @@ export class LendSpaceLayoutComponent extends AppComponentBase {
             this._appSession.tenant &&
             (this._appSession.tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
         ) {
-            this.previousUrl = this.router.url.substring(0, this.router.url.indexOf('?')).split('/').pop();
+            (this.router.url.indexOf('?') != -1) ?
+                this.previousUrl = this.router.url.split('/').pop() :
+                this.previousUrl = this.router.url.substring(0, this.router.url.indexOf('?')).split('/').pop();
+
             this.renderer.addClass(
                 document.body,
                 this.previousUrl
