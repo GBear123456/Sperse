@@ -53,7 +53,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
 
-    helpLink: string = AppConsts.helpLink;
+    helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();

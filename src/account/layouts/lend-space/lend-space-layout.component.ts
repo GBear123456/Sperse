@@ -46,8 +46,8 @@ export class LendSpaceLayoutComponent extends AppComponentBase {
                     }
                     let currentUrlSlug;
                     (event.url.indexOf('?') != -1) ?
-                        currentUrlSlug = this.router.url.substring(0, this.router.url.indexOf('?')).split('/').pop() :
-                        currentUrlSlug = this.router.url.split('/').pop();
+                        currentUrlSlug = event.url.substring(0, event.url.indexOf('?')).split('/').pop() :
+                        currentUrlSlug = event.url.split('/').pop();
 
                     if (currentUrlSlug) {
                         this.renderer.addClass(document.body, currentUrlSlug);

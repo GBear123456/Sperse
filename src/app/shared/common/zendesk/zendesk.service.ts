@@ -5,14 +5,17 @@ import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class ZendeskService {
+    private accountUrl: string;
 
-    constructor(private zendeskWidgetService: ngxZendeskWebwidgetService) {}
+    constructor(private zendeskWidgetService: ngxZendeskWebwidgetService) {
+        this.accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
+    }
 
     private isZendeskWebwidgetSetuped = false;
     private showZendeskWebwidgetTimeout: any;
 
     private setup() {
-        if (this.isZendeskWebwidgetSetuped) {
+        if (!this.accountUrl || this.isZendeskWebwidgetSetuped) {
             return;
         }
 
@@ -38,7 +41,7 @@ export class ZendeskService {
 
     showWidget() {
         try {
-            if (environment.zenDeskEnabled) {
+            if (this.accountUrl && environment.zenDeskEnabled) {
                 this.setup();
                 this.showZendeskWebwidgetTimeout = setTimeout(() => {
                     this.zendeskWidgetService.show();
@@ -49,7 +52,7 @@ export class ZendeskService {
 
     hideWidget() {
         try {
-            if (environment.zenDeskEnabled) {
+            if (this.accountUrl && environment.zenDeskEnabled) {
                 clearTimeout(this.showZendeskWebwidgetTimeout);
                 this.zendeskWidgetService.hide();
             }
