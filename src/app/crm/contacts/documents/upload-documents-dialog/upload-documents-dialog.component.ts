@@ -2,11 +2,9 @@
 import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FileSystemFileEntry } from 'ngx-file-drop';
-import { filter, finalize } from 'rxjs/operators';
-import * as _ from 'underscore';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { DocumentServiceProxy, UploadDocumentInput } from '@shared/service-proxies/service-proxies';
@@ -25,7 +23,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
     private uploadSubscribers = [];
 
     uploadedCount = 0;
-    totalCount    = 0; 
+    totalCount    = 0;
 
     constructor(injector: Injector,
         private _clientService: ContactsService,
@@ -82,7 +80,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
             });
         });
     }
-  
+
     close() {
         this.dialogRef.close();
     }
@@ -105,7 +103,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
             fileReader.onloadend = (loadEvent: any) => {
                 this.files.push({
                     type: this.getFileTypeByExt(file.name),
-                    name: file.name, 
+                    name: file.name,
                     progress: 0
                 });
                 this.uploadFile({
@@ -140,13 +138,13 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
                 size: input.size,
                 fileBase64: input.fileBase64
             })).pipe(finalize(() => {
-                this.uploadedCount++;            
+                this.uploadedCount++;
                 clearInterval(progressInterval);
                 this.finishUploadProgress(index);
                 if (this.uploadedCount >= this.totalCount) {
                     this.totalCount = 0;
                     this.uploadedCount = 0;
-                }                
+                }
             })).subscribe(() => {
                 this._clientService.invalidate('documents');
             })

@@ -13,8 +13,10 @@
         <mat-tab [label]="l('FromUrl').toUpperCase()">
             <div class="file-loading link-loading">
                 <mat-form-field>
-                    <input matInput [placeholder]="l('EnterTheUrl')" [formControl]="fileUrlFormControl" (paste)="onPaste()">
-                    <mat-error *ngIf="fileUrlFormControl && fileUrlFormControl.hasError('pattern') && !fileUrlFormControl.hasError('required')">
+                    <input matInput [placeholder]="l('EnterTheUrl')" [formControl]="fileUrlFormControl"
+                           (paste)="onPaste()">
+                    <mat-error
+                        *ngIf="fileUrlFormControl && fileUrlFormControl.hasError('pattern') && !fileUrlFormControl.hasError('required')">
                         Please enter a valid url
                     </mat-error>
                 </mat-form-field>
@@ -27,6 +29,11 @@
     </file-drop>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{ l('Save') }}</button>
+    <div>
+        <button mat-button class="button-layout button-default" (click)="clearPhoto()">{{ l('Clear') }}</button>
+    </div>
+    <div>
+        <button mat-button mat-dialog-close class="button-layout button-default">{{ l('Cancel') }}</button>
+        <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{ l('Save') }}</button>
+    </div>
 </mat-dialog-actions>

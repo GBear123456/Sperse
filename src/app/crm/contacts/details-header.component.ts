@@ -16,9 +16,11 @@ import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dial
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
-import { ContactInfoDto, CreateContactPhotoInput, PersonOrgRelationServiceProxy,
+import {
+    ContactInfoDto, CreateContactPhotoInput, PersonOrgRelationServiceProxy,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdatePersonOrgRelationInput,
-    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy, OrganizationInfoDto } from '@shared/service-proxies/service-proxies';
+    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy, OrganizationInfoDto, UserServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { AppService } from '@app/app.service';
@@ -113,7 +115,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this._personOrgRelationService.update(UpdatePersonOrgRelationInput.fromJS({
             id: this.personOrgRelationInfo.id,
             jobTitle: this.personOrgRelationInfo.jobTitle
-        })).subscribe(response => {});
+        })).subscribe(() => {});
     }
 
     getDialogPossition(event, shiftX) {
@@ -140,31 +142,43 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    showUploadPhotoDialog(event, isCompany = undefined) {
+    showUploadPhotoDialog(event, isCompany?: boolean) {
         this.dialog.closeAll();
+        let data = { ...this.data, ...this.getPhotoSrc(this.data, isCompany) };
         this.dialog.open(UploadPhotoDialogComponent, {
-            data: this.data,
+            data: data,
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
             if (result) {
                 let base64OrigImage = StringHelper.getBase64(result.origImage),
                     base64ThumbImage = StringHelper.getBase64(result.thumImage),
                     dataField = (isCompany ? 'primaryOrganization' : 'person') + 'ContactInfo';
-                this.data[dataField].primaryPhoto = ContactPhotoDto.fromJS({
-                    original: base64OrigImage,
-                    thumbnail: base64ThumbImage
-                });
+                this.data[dataField].primaryPhoto = base64OrigImage
+                                                    ? ContactPhotoDto.fromJS({
+                                                        original: base64OrigImage,
+                                                        thumbnail: base64ThumbImage
+                                                    }) :
+                                                    undefined;
                 this.contactPhotoServiceProxy.createContactPhoto(
                     CreateContactPhotoInput.fromJS({
                         contactId: this.data[dataField].id,
                         originalImage: base64OrigImage,
                         thumbnail: base64ThumbImage
                     })
-                ).subscribe(() => {
-                });
+                ).subscribe(() => {});
             }
         });
         event.stopPropagation();
+    }
+
+    private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
+        let photoBase64;
+        if (isCompany && data.primaryOrganizationContactInfo.primaryPhoto) {
+            photoBase64 = data.primaryOrganizationContactInfo.primaryPhoto.original;
+        } else if (!isCompany && data.personContactInfo.primaryPhoto) {
+            photoBase64 = data.personContactInfo.primaryPhoto.original;
+        }
+        return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
     }
 
     getNameInplaceEditData(field = 'personContactInfo') {
@@ -209,7 +223,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.organizationContactService.updateOrganizationInfo(
             UpdateOrganizationInfoInput.fromJS(
                 _.extend({id: data.id}, data.organization))
-        ).subscribe(result => {
+        ).subscribe(() => {
             data.fullName = value;
         });
     }
@@ -227,7 +241,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.personContactServiceProxy.updatePersonInfo(
             UpdatePersonInfoInput.fromJS(
                 _.extend({id:  person.contactId},  person))
-        ).subscribe(result => {});
+        ).subscribe(() => {});
     }
 
     addOptionsInit() {
@@ -261,7 +275,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             return this.addContextComponent
                 .instance.option('visible', true);
 
-        let dialogClass;
         if (this.addContextMenuItems[this.ADD_CONTACT_OPTION].selected)
             setTimeout(() => {
                 this.dialog.open(CreateClientDialogComponent, {

@@ -30,9 +30,9 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
         window.addEventListener('message', this.onSwaggerLoaded);
         this.link = this._sanitizer
             .bypassSecurityTrustResourceUrl(
-            AppConsts.remoteServiceBaseUrl +
-            '/api/index.html?tokenAuth=' + abp.auth.getToken()
-        );
+                AppConsts.remoteServiceBaseUrl +
+                '/api/index.html?tokenAuth=' + abp.auth.getToken()
+            );
         abp.ui.setBusy();
     }
 

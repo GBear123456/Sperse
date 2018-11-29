@@ -1,13 +1,13 @@
 import { AppConsts } from '@shared/AppConsts';
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     Inject,
     Injector,
     ViewChild,
     AfterViewInit,
-    ElementRef,
-    ChangeDetectorRef
+    ElementRef
 } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -165,6 +165,13 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     onPaste() {
         /** Load file only after validation */
         setTimeout(() => this.loadFile(true));
+    }
+
+    clearPhoto() {
+        this.dialogRef.close({
+            origImage: '',
+            thumImage: ''
+        });
     }
 
     loadFile(paste = false) {

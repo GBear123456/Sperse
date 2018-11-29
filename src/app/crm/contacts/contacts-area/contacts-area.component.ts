@@ -29,9 +29,9 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
     @Input() set contactInfo(value: ContactInfoDto) {
         if (this._contactInfo = value)
-            this.contactInfoData = this.isCompany ? 
-                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details: 
-                value.personContactInfo && value.personContactInfo.details;
+            this.contactInfoData = this.isCompany
+                ? value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details
+                : value.personContactInfo && value.personContactInfo.details;
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -41,7 +41,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
 
     isEditAllowed = false;
 
-    private masks = AppConsts.masks;   
+    private masks = AppConsts.masks;
     private _clickTimeout;
     private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
@@ -108,7 +108,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
             data: dialogData,
             hasBackdrop: false,
             position: this.getDialogPossition(event)
-        }).afterClosed().subscribe(result => {  
+        }).afterClosed().subscribe(result => {
             scrollTo(0, 0);
             if (result) {
                 if (dialogData.contactId) {
@@ -182,7 +182,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
             dataItem[field] = dataItem.original;
         });
     }
-    
+
     inPlaceEdit(field, item, event, index) {
         this._clickCounter++;
         clearTimeout(this._clickTimeout);

@@ -262,9 +262,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     loadDataForClient(customerId: number, leadId: number, partnerId: number) {
         if (customerId) {
             this.startLoading(true);
-            let contactInfo$ = this._contactService
-                .getContactInfo(customerId);
-
+            let contactInfo$ = this._contactService.getContactInfo(customerId);
             if (leadId)
                 this.loadLeadsStages();
 
