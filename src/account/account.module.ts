@@ -17,8 +17,8 @@ import { LoginComponent, AdLoginHostDirective } from './login/login.component';
 import { LoginService } from './login/login.service';
 import { SendTwoFactorCodeComponent } from './login/send-two-factor-code.component';
 import { ValidateTwoFactorCodeComponent } from './login/validate-two-factor-code.component';
-import { ForgotPasswordComponent } from './password/forgot-password.component';
-import { ResetPasswordComponent } from './password/reset-password.component';
+import { ForgotPasswordComponent, AdForgotPasswordHostDirective } from './password/forgot-password.component';
+import { ResetPasswordComponent, AdResetPasswordHostDirective } from './password/reset-password.component';
 import { TenantChangeModalComponent } from './shared/tenant-change-modal.component';
 import { TenantChangeComponent } from './shared/tenant-change.component';
 import { SelectTenantComponent } from './login/select-tenant.component';
@@ -29,6 +29,10 @@ import { LendSpaceLoginComponent } from './login/layouts/lend-space/lend-space-l
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
 import { LayoutModule } from '../personal-finance/shared/layout/layout.module';
+import { HostForgotPasswordComponent } from './password/layouts/host/host-forgot-password.component';
+import { LendSpaceForgotPasswordComponent } from './password/layouts/lend-space/lend-space-forgot-password.component';
+import { HostResetPasswordComponent } from './password/layouts/host/host-reset-password.component';
+import { LendSpaceResetPasswordComponent } from './password/layouts/lend-space/lend-space-reset-password.component';
 
 @NgModule({
     imports: [
@@ -60,6 +64,8 @@ import { LayoutModule } from '../personal-finance/shared/layout/layout.module';
         HostLoginComponent,
         LendSpaceLoginComponent,
         AdLoginHostDirective,
+        AdResetPasswordHostDirective,
+        AdForgotPasswordHostDirective,
         ForgotPasswordComponent,
         ResetPasswordComponent,
         EmailActivationComponent,
@@ -68,13 +74,21 @@ import { LayoutModule } from '../personal-finance/shared/layout/layout.module';
         ValidateTwoFactorCodeComponent,
         SelectTenantComponent,
         LanguageSwitchComponent,
-        CompleteTenantRegistrationComponent
+        CompleteTenantRegistrationComponent,
+        HostForgotPasswordComponent,
+        LendSpaceForgotPasswordComponent,
+        HostResetPasswordComponent,
+        LendSpaceResetPasswordComponent
     ],
     entryComponents: [
         HostLayoutComponent,
         HostLoginComponent,
         LendSpaceLoginComponent,
-        LendSpaceLayoutComponent
+        LendSpaceLayoutComponent,
+        HostForgotPasswordComponent,
+        LendSpaceForgotPasswordComponent,
+        HostResetPasswordComponent,
+        LendSpaceResetPasswordComponent
     ],
     providers: [
         LoginService

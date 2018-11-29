@@ -1,4 +1,14 @@
-import { Component, HostBinding, Injector, OnInit } from '@angular/core';
+import {
+    Component,
+    ComponentFactoryResolver,
+    Directive,
+    HostBinding,
+    Injector,
+    OnInit,
+    Type,
+    ViewChild,
+    ViewContainerRef
+} from '@angular/core';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -6,14 +16,19 @@ import {
     AccountServiceProxy,
     PasswordComplexitySetting,
     ProfileServiceProxy,
-    ResetPasswordOutput,
-    ResolveTenantIdInput,
     TenantLoginInfoDtoCustomLayoutType
 } from '@shared/service-proxies/service-proxies';
 import { LoginService } from '../login/login.service';
 import { ResetPasswordModel } from './reset-password.model';
-import { finalize } from 'rxjs/operators';
-import { isEqual } from 'lodash';
+import {LendSpaceResetPasswordComponent} from '@root/account/password/layouts/lend-space/lend-space-reset-password.component';
+import {HostResetPasswordComponent} from '@root/account/password/layouts/host/host-reset-password.component';
+
+@Directive({
+    selector: '[ad-reset-password-host]'
+})
+export class AdResetPasswordHostDirective {
+    constructor(public viewContainerRef: ViewContainerRef) { }
+}
 
 @Component({
     templateUrl: './reset-password.component.html',
@@ -21,6 +36,8 @@ import { isEqual } from 'lodash';
     animations: [accountModuleAnimation()]
 })
 export class ResetPasswordComponent extends AppComponentBase implements OnInit {
+    @ViewChild(AdResetPasswordHostDirective) adResetPasswordHost: AdResetPasswordHostDirective;
+
     @HostBinding('class.lend-space') lendSpaceWrapper = this._appSessionService.tenant && this._appSessionService.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace;
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
@@ -32,63 +49,21 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
         private _loginService: LoginService,
         private _appSessionService: AppSessionService,
         private _profileService: ProfileServiceProxy,
+        private _componentFactoryResolver: ComponentFactoryResolver
     ) {
         super(injector);
     }
 
     ngOnInit(): void {
-        if (this._activatedRoute.snapshot.queryParams['c']) {
-            this.model.c = this._activatedRoute.snapshot.queryParams['c'];
 
-            this._accountService.resolveTenantId(new ResolveTenantIdInput({ c: this.model.c })).subscribe((tenantId) => {
-                if (isEqual(tenantId, {})) tenantId = null; // hack for host tenant
-
-                this._appSessionService.changeTenantIfNeeded(
-                    tenantId
-                );
-
-                this._profileService.getPasswordComplexitySetting().subscribe(result => {
-                    this.passwordComplexitySetting = result.setting;
-                });
-            });
-        } else {
-            this.model.userId = this._activatedRoute.snapshot.queryParams['userId'];
-            this.model.resetCode = this._activatedRoute.snapshot.queryParams['resetCode'];
-
-            this._appSessionService.changeTenantIfNeeded(
-                this.parseTenantId(
-                    this._activatedRoute.snapshot.queryParams['tenantId']
-                ), false
-            );
-        }
+        let tenant = this._appSessionService.tenant;
+        this.loadLayoutComponent(tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
+            ? LendSpaceResetPasswordComponent : HostResetPasswordComponent);
     }
 
-    save(): void {
-        this.saving = true;
-        this._accountService.resetPassword(this.model)
-            .pipe(finalize(() => { this.saving = false; }))
-            .subscribe((result: ResetPasswordOutput) => {
-                if (!result.canLogin) {
-                    this._router.navigate(['account/login']);
-                    return;
-                }
-
-                // Autheticate
-                this.saving = true;
-                this._loginService.authenticateModel.userNameOrEmailAddress = result.userName;
-                this._loginService.authenticateModel.password = this.model.password;
-                this._loginService.authenticate(() => {
-                    this.saving = false;
-                }, undefined, !this.model.resetCode);
-            });
-    }
-
-    parseTenantId(tenantIdAsStr?: string): number {
-        let tenantId = !tenantIdAsStr ? undefined : parseInt(tenantIdAsStr);
-        if (tenantId === NaN) {
-            tenantId = undefined;
-        }
-
-        return tenantId;
+    private loadLayoutComponent(component: Type<HostResetPasswordComponent>) {
+        this.adResetPasswordHost.viewContainerRef.createComponent(
+            this._componentFactoryResolver.resolveComponentFactory(component)
+        );
     }
 }
