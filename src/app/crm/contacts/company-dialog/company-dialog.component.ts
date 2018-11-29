@@ -166,7 +166,7 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
 
     showUploadPhotoDialog(event) {
         this.dialog.open(UploadPhotoDialogComponent, {
-            data: this.company,
+            data: { ...this.company, ...this.getCompanyPhoto(this.company) },
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
             if (result) {
@@ -179,15 +179,21 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
                         thumbnail: base64ThumbImage
                     })
                 ).subscribe(() => {
-                    this.company.primaryPhoto = ContactPhotoDto.fromJS({
-                        original: base64OrigImage,
-                        thumbnail: base64ThumbImage
-                    });
+                    this.company.primaryPhoto = base64OrigImage
+                                                ? ContactPhotoDto.fromJS({
+                                                    original: base64OrigImage,
+                                                    thumbnail: base64ThumbImage
+                                                })
+                                                : null;
                     this.changeDetectorRef.detectChanges();
                 });
             }
         });
         event.stopPropagation();
+    }
+
+    private getCompanyPhoto(company): { source?: string } {
+        return company.primaryPhoto ? { source: 'data:image/jpeg;base64,' + this.company.primaryPhoto.original } : {};
     }
 
     onInput(e, maxLength: number, mask?: string) {

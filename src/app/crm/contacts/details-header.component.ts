@@ -153,19 +153,20 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                 let base64OrigImage = StringHelper.getBase64(result.origImage),
                     base64ThumbImage = StringHelper.getBase64(result.thumImage),
                     dataField = (isCompany ? 'primaryOrganization' : 'person') + 'ContactInfo';
-                this.data[dataField].primaryPhoto = base64OrigImage
-                                                    ? ContactPhotoDto.fromJS({
-                                                        original: base64OrigImage,
-                                                        thumbnail: base64ThumbImage
-                                                    }) :
-                                                    undefined;
                 this.contactPhotoServiceProxy.createContactPhoto(
                     CreateContactPhotoInput.fromJS({
                         contactId: this.data[dataField].id,
                         originalImage: base64OrigImage,
                         thumbnail: base64ThumbImage
                     })
-                ).subscribe(() => {});
+                ).subscribe(() => {
+                    this.data[dataField].primaryPhoto = base64OrigImage
+                        ? ContactPhotoDto.fromJS({
+                            original: base64OrigImage,
+                            thumbnail: base64ThumbImage
+                        }) :
+                        undefined;
+                });
             }
         });
         event.stopPropagation();
