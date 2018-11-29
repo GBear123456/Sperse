@@ -4,52 +4,45 @@
     z-index: 1;
     &.pfm-app {
         box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.08);
-        /deep/ .m-dropdown__arrow {
-            color: #AF47C0!important;
-        }
-        /deep/ .m-dropdown__header {
-            background: linear-gradient(to right, #AF47C0 60%, #3B58C1)!important;
-            box-shadow: inset 2px 5px 12px 2px #AF47C0!important;
-        }
     }
-    
+
     .top-headline {
         display: none;
         padding: 10px 0;
         background-color: #f0d500;
         border-bottom: 2px solid #4c4c4c;
-        
+
         .url,
         .date {
             font-size: 9px;
             font-weight: 400;
             margin-bottom: 0;
         }
-        
+
         .url {
             color: #000;
             text-decoration: none;
-            
+
             &:hover {
                 color: lighten(#999, 10%);
             }
         }
-        
+
         .get-free-score {
             color: #000;
             font-size: 12px;
             font-weight: 400;
             margin-bottom: 0;
         }
-        
+
         .date {
             color: #000;
         }
-        
+
         @media all and (max-width: 600px) {
             .container {
                 flex-direction: column;
-                
+
                 .url {
                     display: none;
                 }
@@ -105,9 +98,17 @@
                         vertical-align: baseline;
                     }
                 }
+                .m-dropdown__arrow {
+                    color: #AF47C0;
+                }
+                .m-dropdown__header {
+                    padding: 30px 25px 26px;
+                    background: linear-gradient(to right, #AF47C0 60%, #3B58C1);
+                    box-shadow: inset 2px 5px 12px 2px #AF47C0;
+                }
 
                 .user-info {
-                    color: #fff !important;
+                    color: #fff;
                     font-size: 1.1rem;
                     font-weight: 400;
                     display: block;
@@ -115,8 +116,9 @@
 
                     &.fullName {
                         font-weight: 600;
-                        font-size: 18px;
                         text-transform: capitalize;
+                        font-size: 22px;
+                        line-height: 26px;
                     }
 
                     &.email {
@@ -126,6 +128,13 @@
                         text-align: left;
                         height: 20px;
                     }
+
+                    &.tenantName {
+                        text-align: left;
+                        margin-top: 15px;
+                        font-size: 22px;
+                        font-weight: 600;
+                    }
                 }
 
                 .header-profile-picture {
@@ -133,16 +142,16 @@
                     height: 41px;
                 }
             }
-    
+
             @media all and (max-width: 529px) {
                 order: 2;
                 margin-left: auto;
-                
+
                 .m-topbar {
                     &__nav {
                         li {
                             display: none;
-                    
+
                             &:last-child {
                                 display: inline-block;
                             }
@@ -206,7 +215,7 @@
             order: 2;
             width: calc(~"100% - 436px");
         }
-    
+
         app-area-navigation {
             @media all and (max-width: 529px) {
                 order: 3;
@@ -216,9 +225,9 @@
     }
 }
 
-/deep/ body.lend-space {    
+/deep/ body.lend-space {
     &.lending-page {
-        .top-headline { 
+        .top-headline {
             display: block!important;
         }
 
@@ -231,11 +240,11 @@
     }
     header.pfm-app {
         background: #000;
-        
+
         .page-header {
             padding: 0 10px;
             justify-content: unset;
-            
+
             .page-logo {
                 min-width: 210px !important;
             }
@@ -246,31 +255,48 @@
                     background: url('../../../assets/common/images/lend-space-dark/notification.svg') no-repeat;
                     width: 17px;
                     height: 20px;
-                    &:before {  
+                    &:before {
                         display: none;
                     }
                 }
             }
-    
+
             #header-app-menu {
                 width: 100%;
 
                 @media all and (max-width: 529px) {
                     margin-left: auto !important;
                 }
-    
+
                 .app-area-navigation {
-                    
+
                     > li {
                         padding: 0;
-                                               
+
                         &:first-child {
                             > a {
                                 padding-left: 0;
                             }
                         }
                     }
-                }                
+                }
+            }
+        }
+    }
+
+    .m-dropdown__arrow {
+        color: #252525 !important;
+    }
+
+    .page-header.navbar .page-top #m_header_topbar .m-dropdown__header {
+        box-shadow: none !important;
+        background: #252525 !important;
+        .user-info {
+            &.fullName {
+                color: #f0d500 !important;
+            }
+            &.email {
+                color: #f1f1f0 !important;
             }
         }
     }
