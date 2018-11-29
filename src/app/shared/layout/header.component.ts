@@ -35,7 +35,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName? };
-    helpLink = abp.setting.values['Integrations:Zendesk:AccountUrl'];
+    helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
 
     shownLoginName = '';
     tenancyName = '';
