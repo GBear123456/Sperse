@@ -52,20 +52,19 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
     }
 
     checkMenuWidth() {
-        const itemWidth = 150;
-        let menuItemsLength = itemWidth;
-        let menuSpace = Math.round(innerWidth / 2 - itemWidth);
+        const itemWidth = 10, maxInnerWidth = 1140, logoAndMenuWidth = 400;
+        let menuSpace = Math.round(Math.min(innerWidth, maxInnerWidth) - logoAndMenuWidth);
+        let menuItemsLength = 0;
 
         this.responsiveMemberAreaLinks.length = 0;
         this.inlineMemberAreaLinks.length = 0;
-
+        
         this.memberAreaLinks.forEach((item, index) => {
+            menuItemsLength += (itemWidth * this.memberAreaLinks[index].name.length + 50);
             if (menuItemsLength > menuSpace)
                 this.responsiveMemberAreaLinks.push(this.memberAreaLinks[index]);
-            else {
-                menuItemsLength += itemWidth;
+            else 
                 this.inlineMemberAreaLinks.push(this.memberAreaLinks[index]);
-            }
         });
 
         if (window.innerWidth < 530 && !this.appSession.userId) {
