@@ -55,7 +55,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     helpLink: string = AppConsts.helpLink;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-    
+
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
     currentDate = new Date();
 

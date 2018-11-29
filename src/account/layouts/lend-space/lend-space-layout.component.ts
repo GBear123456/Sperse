@@ -1,10 +1,12 @@
 /** Core imports */
-import { Component, Injector, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Injector, Renderer2 } from '@angular/core';
+import { Router, NavigationStart } from '@angular/router';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import * as moment from 'moment';
+import {TenantLoginInfoDtoCustomLayoutType} from '@shared/service-proxies/service-proxies';
+import {AppSessionService} from '@shared/common/session/app-session.service';
 
 @Component({
     templateUrl: './lend-space-layout.component.html',
@@ -15,31 +17,43 @@ import * as moment from 'moment';
 export class LendSpaceLayoutComponent extends AppComponentBase {
     currentDate = new Date();
     currentYear: number = moment().year();
-
-    appAreaLinks = [
-/*
-        {
-            name: 'Products',
-            routerUrl: '/personal-finance/products'
-        },
-        {
-            name: 'Features',
-            routerUrl: '/personal-finance/features'
-        },
-*/
-        {
-            name: 'About',
-            routerUrl: '/personal-finance/about'
-        },
-        {
-            name: 'Contact Us',
-            routerUrl: '/personal-finance/contact-us'
-        }
-    ];
+    previousUrl: string;
 
     constructor(
-        injector: Injector
+        injector: Injector,
+        private router: Router,
+        private _appSession: AppSessionService,
+        private renderer: Renderer2
     ) {
         super(injector);
+
+        if (
+            !this.previousUrl &&
+            this._appSession.tenant &&
+            (this._appSession.tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
+        ) {
+            (this.router.url.indexOf('?') != -1) ?
+                this.previousUrl = this.router.url.split('/').pop() :
+                this.previousUrl = this.router.url.substring(0, this.router.url.indexOf('?')).split('/').pop();
+
+            this.renderer.addClass(
+                document.body,
+                this.previousUrl
+            );
+        }
+
+        this.router.events
+            .subscribe((event) => {
+                if (event instanceof NavigationStart) {
+                    if (this.previousUrl) {
+                        this.renderer.removeClass(document.body, this.previousUrl);
+                    }
+                    let currentUrlSlug = event.url.split('/').pop();
+                    if (currentUrlSlug) {
+                        this.renderer.addClass(document.body, currentUrlSlug);
+                    }
+                    this.previousUrl = currentUrlSlug;
+                }
+            });
     }
 }
