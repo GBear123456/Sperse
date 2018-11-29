@@ -37,13 +37,13 @@
 
 <ul class="right-actions" *ngIf="!loggedUserId">
     <li class="right-actions--item">
-        <a routerLink="/account/login" class="left-menu--link member-login">
-            <span>{{l('Member Login')}}</span>
+        <a class="left-menu--link member-signup">
+            <span>{{l('SIGN UP')}}</span>
         </a>
     </li>
     <li class="right-actions--item">
-        <a routerLink="/account/singup" class="left-menu--link member-signup">
-            <span>{{l('SIGN UP')}}</span>
+        <a routerLink="/account/login" class="left-menu--link member-login">
+            <span>{{l('Member Login')}}</span>
         </a>
     </li>
 </ul>

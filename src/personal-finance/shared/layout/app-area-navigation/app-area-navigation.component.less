@@ -29,13 +29,13 @@
             a {
                 padding: 12px 25px;
                 white-space: nowrap;
-                color: #000;
+                color: #FFF;
             }
 
             span.dropdown-mark {
                 transform: rotate(45deg);
                 -webkit-transform: rotate(45deg);
-                border: solid black;
+                border: solid #FFF;
                 border-width: 0 1px 1px 0;
                 display: inline-block;
                 padding: 2px;
@@ -47,7 +47,7 @@
                 span.dropdown-mark {
                     transform: rotate(45deg);
                     -webkit-transform: rotate(45deg);
-                    border: solid white;
+                    border: solid #ffcc00;
                     border-width: 0 1px 1px 0;
                     display: inline-block;
                     padding: 2px;
@@ -102,7 +102,7 @@
             a.active,
             a:hover,
             &.active > a {
-                color: #fff;
+                color: #ffcc00;
                 background: none;
                 img {
                     opacity: 0;
@@ -222,6 +222,7 @@
                 &.member-login {
                     display: none;
                     color: #fff;
+                    font-size: 12px!important;
                     background-color: #ff9933;
                     &:hover {
                         background-color: darken(#ff9933, 5%);
@@ -229,7 +230,6 @@
                 }
 
                 &.member-signup, &.member-login {
-                    font-size: 12px!important;
                     font-weight: 600;
                     padding: 7px 10px!important;
                     line-height: 18px;

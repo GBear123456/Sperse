@@ -24,6 +24,7 @@ import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customizatio
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
+import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 
 declare let require: any;
 
@@ -195,8 +196,9 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
-        if (!id)
-            return defaultUrl;
+        let tenant = this.appSession.tenant;
+        if (!id)               
+            return tenant && tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace ? AppConsts.imageUrls.profileLendSpace: defaultUrl;
 
         let tenantId = this.appSession.tenantId;
         return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId || 0) + '/' + id;
