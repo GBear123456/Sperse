@@ -23,7 +23,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
-    accountUrl = 'sperse.zendesk.com';
+    accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
     beforePageLoad(zE) {
         zE.setLocale('en');
 //        zE.hide();
