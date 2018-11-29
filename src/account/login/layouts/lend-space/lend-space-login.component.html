@@ -1,46 +1,41 @@
-<div class="row" [@routerTransition]>
-    <div class="col text-center">
-        <h1 class="sign-in">{{l("Sign in")}}</h1>
+<div [@routerTransition]>
+    <h1 class="sign-in">{{l("Sign in")}}</h1>
 
-        <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
+    <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
 
-            <div class="form-group clearfix">
-                <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
-                       class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off"
-                       placeholder="{{l('Username')}}" name="userNameOrEmailAddress" required tabindex="1"/>
-            </div>
+        <div class="form-group clearfix">
+            <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
+                   class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off"
+                   placeholder="{{l('Username')}}" name="userNameOrEmailAddress" required tabindex="1"/>
+        </div>
 
-            <div class="form-group clearfix">
-                <input [(ngModel)]="loginService.authenticateModel.password"
-                       class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off"
-                       placeholder="{{l('Password')}}" name="password" required maxlength="32" tabindex="2"/>
-            </div>
+        <div class="form-group clearfix">
+            <input [(ngModel)]="loginService.authenticateModel.password"
+                   class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off"
+                   placeholder="{{l('Password')}}" name="password" required maxlength="32" tabindex="2"/>
+        </div>
 
-            <div class="form-group clearfix options row">
-                <div class="col">
-                    <div class="mt-checkbox-list">
-                        <label class="mt-checkbox mt-checkbox-outline">
-                            <input class="form-control" [(ngModel)]="loginService.rememberMe" type="checkbox" name="rememberMe"
-                                   value="true"/>{{l("RememberMe")}}
-                            <span></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="col">
-                    <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">{{l(
-                        "ForgotPassword")}}</a>
+        <div class="form-group clearfix options row">
+            <div class="col">
+                <div class="mt-checkbox-list">
+                    <label class="mt-checkbox mt-checkbox-outline">
+                        <input class="form-control" [(ngModel)]="loginService.rememberMe" type="checkbox" name="rememberMe"
+                               value="true"/>{{l("RememberMe")}}
+                        <span></span>
+                    </label>
                 </div>
             </div>
-
-            <div class="form-actions">
-                <button type="submit" class="submit" [disabled]="!loginForm.form.valid">
-                    {{l("SIGNIN")}}
-                    <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
-                </button>
+            <div class="col">
+                <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">{{l(
+                    "ForgotPassword")}}</a>
             </div>
+        </div>
 
-        </form>
-    </div>
-
-    <div class="col h-100 d-none d-lg-block right-side"></div>
+        <div class="form-actions">
+            <button type="submit" class="submit" [disabled]="!loginForm.form.valid">
+                {{l("SIGNIN")}}
+                <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
+            </button>
+        </div>
+    </form>
 </div>

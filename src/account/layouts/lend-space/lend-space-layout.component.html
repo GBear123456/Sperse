@@ -1,9 +1,15 @@
-<header></header>
+<div class="wrapper dark-layout">
+    <header></header>
 
-<div class="wraper">  
-    <div class="content">
-        <router-outlet></router-outlet>
-    </div>
+    <main class="container-fluid" id="main">
+        <div class="row">
+            <div class="col text-center left-side">
+                <router-outlet></router-outlet>
+            </div>
+
+            <div class="col h-100 d-none d-lg-block right-side"></div>
+        </div>
+    </main>
+
+    <footer></footer>
 </div>
-
-<footer></footer>
