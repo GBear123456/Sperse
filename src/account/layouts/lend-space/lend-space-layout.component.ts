@@ -27,14 +27,10 @@ export class LendSpaceLayoutComponent extends AppComponentBase {
     ) {
         super(injector);
 
-        if (
-            !this.previousUrl &&
-            this._appSession.tenant &&
-            (this._appSession.tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
-        ) {
+        if (!this.previousUrl) {
             (this.router.url.indexOf('?') != -1) ?
-                this.previousUrl = this.router.url.split('/').pop() :
-                this.previousUrl = this.router.url.substring(0, this.router.url.indexOf('?')).split('/').pop();
+                this.previousUrl = this.router.url.substring(0, this.router.url.indexOf('?')).split('/').pop() :
+                this.previousUrl = this.router.url.split('/').pop();
 
             this.renderer.addClass(
                 document.body,
