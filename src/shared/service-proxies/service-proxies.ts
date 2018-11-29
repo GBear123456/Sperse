@@ -19727,6 +19727,58 @@ export class StageServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    mergeLeadStages(input: MergeLeadStagesInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/MergeLeadStages";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMergeLeadStages(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMergeLeadStages(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMergeLeadStages(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -28098,6 +28150,7 @@ export interface ILoanInformation {
 }
 
 export class EmploymentInformation implements IEmploymentInformation {
+    isEmployed!: boolean | undefined;
     employerName!: string | undefined;
     jobTitle!: string | undefined;
     monthsAtEmployer!: number | undefined;
@@ -28125,6 +28178,7 @@ export class EmploymentInformation implements IEmploymentInformation {
 
     init(data?: any) {
         if (data) {
+            this.isEmployed = data["isEmployed"];
             this.employerName = data["employerName"];
             this.jobTitle = data["jobTitle"];
             this.monthsAtEmployer = data["monthsAtEmployer"];
@@ -28152,6 +28206,7 @@ export class EmploymentInformation implements IEmploymentInformation {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["isEmployed"] = this.isEmployed;
         data["employerName"] = this.employerName;
         data["jobTitle"] = this.jobTitle;
         data["monthsAtEmployer"] = this.monthsAtEmployer;
@@ -28172,6 +28227,7 @@ export class EmploymentInformation implements IEmploymentInformation {
 }
 
 export interface IEmploymentInformation {
+    isEmployed: boolean | undefined;
     employerName: string | undefined;
     jobTitle: string | undefined;
     monthsAtEmployer: number | undefined;
@@ -36223,6 +36279,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
     id!: number | undefined;
     orgId!: number;
     relationTypeId!: string;
+    jobTitle!: string;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     isActive!: boolean;
@@ -36243,6 +36300,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
             this.id = data["id"];
             this.orgId = data["orgId"];
             this.relationTypeId = data["relationTypeId"];
+            this.jobTitle = data["jobTitle"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
@@ -36263,6 +36321,7 @@ export class ContactBusinessInfo implements IContactBusinessInfo {
         data["id"] = this.id;
         data["orgId"] = this.orgId;
         data["relationTypeId"] = this.relationTypeId;
+        data["jobTitle"] = this.jobTitle;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
@@ -36276,6 +36335,7 @@ export interface IContactBusinessInfo {
     id: number | undefined;
     orgId: number;
     relationTypeId: string;
+    jobTitle: string;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     isActive: boolean;
@@ -36866,6 +36926,7 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
     personId!: number;
     orgId!: number;
     relationTypeId!: string;
+    jobTitle!: string;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     isActive!: boolean;
@@ -36886,6 +36947,7 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
             this.personId = data["personId"];
             this.orgId = data["orgId"];
             this.relationTypeId = data["relationTypeId"];
+            this.jobTitle = data["jobTitle"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
@@ -36906,6 +36968,7 @@ export class ContactBusinessCreateInfo implements IContactBusinessCreateInfo {
         data["personId"] = this.personId;
         data["orgId"] = this.orgId;
         data["relationTypeId"] = this.relationTypeId;
+        data["jobTitle"] = this.jobTitle;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
@@ -36919,6 +36982,7 @@ export interface IContactBusinessCreateInfo {
     personId: number;
     orgId: number;
     relationTypeId: string;
+    jobTitle: string;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     isActive: boolean;
@@ -37008,6 +37072,7 @@ export interface IUpdateContactBusinessInput {
 export class PersonOrgRelationEditInfo implements IPersonOrgRelationEditInfo {
     orgId!: number;
     relationTypeId!: string;
+    jobTitle!: string;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     isActive!: boolean;
@@ -37027,6 +37092,7 @@ export class PersonOrgRelationEditInfo implements IPersonOrgRelationEditInfo {
         if (data) {
             this.orgId = data["orgId"];
             this.relationTypeId = data["relationTypeId"];
+            this.jobTitle = data["jobTitle"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
@@ -37046,6 +37112,7 @@ export class PersonOrgRelationEditInfo implements IPersonOrgRelationEditInfo {
         data = typeof data === 'object' ? data : {};
         data["orgId"] = this.orgId;
         data["relationTypeId"] = this.relationTypeId;
+        data["jobTitle"] = this.jobTitle;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
@@ -37058,6 +37125,7 @@ export class PersonOrgRelationEditInfo implements IPersonOrgRelationEditInfo {
 export interface IPersonOrgRelationEditInfo {
     orgId: number;
     relationTypeId: string;
+    jobTitle: string;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     isActive: boolean;
@@ -51476,6 +51544,50 @@ export class RenameStageInput implements IRenameStageInput {
 export interface IRenameStageInput {
     id: number;
     name: string;
+}
+
+export class MergeLeadStagesInput implements IMergeLeadStagesInput {
+    pipelineId!: number;
+    sourceStageId!: number;
+    destinationStageId!: number | undefined;
+
+    constructor(data?: IMergeLeadStagesInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.pipelineId = data["pipelineId"];
+            this.sourceStageId = data["sourceStageId"];
+            this.destinationStageId = data["destinationStageId"];
+        }
+    }
+
+    static fromJS(data: any): MergeLeadStagesInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MergeLeadStagesInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pipelineId"] = this.pipelineId;
+        data["sourceStageId"] = this.sourceStageId;
+        data["destinationStageId"] = this.destinationStageId;
+        return data; 
+    }
+}
+
+export interface IMergeLeadStagesInput {
+    pipelineId: number;
+    sourceStageId: number;
+    destinationStageId: number | undefined;
 }
 
 export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
