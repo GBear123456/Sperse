@@ -132,6 +132,7 @@
     "ngrx-store-localstorage": "^5.0.1",
     "ngx-bootstrap": "^3.0.0",
     "ngx-file-drop": "4.0.0",
+    "ngx-mask": "^7.0.1",
     "ngx-page-scroll": "^5.0.0",
     "ngx-papaparse": "3.0.0-beta.0",
     "ngx-zendesk-webwidget": "^0.1.3",
