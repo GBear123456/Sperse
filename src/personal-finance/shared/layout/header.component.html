@@ -16,7 +16,8 @@
 
     <app-area-navigation *ngIf="hasPfmAppFeature"
         id="header-app-menu"
-        [memberAreaLinks]="appAreaLinks">
+        [memberAreaLinks]="appAreaLinks"
+        [actionsButtons]="actionsButtons">
     </app-area-navigation>
 
     <div class="page-top" *ngIf="loggedUserId">

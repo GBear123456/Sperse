@@ -18,8 +18,9 @@ import { takeUntil } from 'rxjs/operators';
     templateUrl: './app-area-navigation.component.html',
     styleUrls: ['./app-area-navigation.component.less']
 })
-export class AppAreaNavigationComponent extends AppComponentBase implements AfterViewInit {    
+export class AppAreaNavigationComponent extends AppComponentBase implements AfterViewInit {
     @Input() memberAreaLinks: any[];
+    @Input() actionsButtons: any[];
     @ViewChildren('sublinks') sublinksRefs: QueryList<ElementRef>;
     responsiveMemberAreaLinks = [];
     inlineMemberAreaLinks = [];
@@ -58,19 +59,17 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
 
         this.responsiveMemberAreaLinks.length = 0;
         this.inlineMemberAreaLinks.length = 0;
-        
+
         this.memberAreaLinks.forEach((item, index) => {
             menuItemsLength += (itemWidth * this.memberAreaLinks[index].name.length + 50);
             if (menuItemsLength > menuSpace)
                 this.responsiveMemberAreaLinks.push(this.memberAreaLinks[index]);
-            else 
+            else
                 this.inlineMemberAreaLinks.push(this.memberAreaLinks[index]);
         });
 
-        if (window.innerWidth < 530 && !this.appSession.userId) {
-            this.responsiveMemberAreaLinks.push({ name: 'Member Login', routerUrl: '/account/login', class: 'member-login'});
-        } else {
-            this.responsiveMemberAreaLinks.pop();
+        if (window.innerWidth < 530) {
+            this.responsiveMemberAreaLinks.push(...this.actionsButtons);
         }
     }
 

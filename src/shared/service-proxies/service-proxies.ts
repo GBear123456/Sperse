@@ -19628,8 +19628,8 @@ export class StageServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    create(input: CreateStageInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Stage/Create";
+    createLeadStage(input: CreateStageInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/CreateLeadStage";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -19644,11 +19644,11 @@ export class StageServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
+            return this.processCreateLeadStage(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreate(<any>response_);
+                    return this.processCreateLeadStage(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -19657,7 +19657,7 @@ export class StageServiceProxy {
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<void> {
+    protected processCreateLeadStage(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 

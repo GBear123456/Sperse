@@ -95,7 +95,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         Quovo.embed({
             token: token.toString(),
             elementId: 'quovo-accounts-module',
-            moduleName: this.currentSection,
+            moduleName: this.currentSection
         });
     }
 

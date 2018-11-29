@@ -21,7 +21,7 @@
     <ul class="app-responsive-menu dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
         <li *ngFor="let item of responsiveMemberAreaLinks" routerLinkActive="active">
             <a (click)="navigationItemClick($event, item)" routerLinkActive="active" [class.active]="currentUrl === item.routerUrl" [routerLinkActiveOptions]="{exact:true}"
-               class="dropdown-item" [ngClass]="item.class">
+               class="dropdown-item" [ngClass]="item.class" [class.disable]="item.disabled">
                 {{l(item.name)}}
             </a>
             <ul *ngIf="item.sublinks && item.sublinks.length" class="responsive-sublinks">
@@ -36,14 +36,11 @@
 </div>
 
 <ul class="right-actions" *ngIf="!loggedUserId">
-    <li class="right-actions--item">
-        <a class="left-menu--link member-signup">
-            <span>{{l('SIGN UP')}}</span>
-        </a>
-    </li>
-    <li class="right-actions--item">
-        <a routerLink="/account/login" class="left-menu--link member-login">
-            <span>{{l('Member Login')}}</span>
+    <li class="right-actions--item" *ngFor="let link of actionsButtons">
+        <a [routerLink]="link.routerUrl" class="left-menu--link member-signup"
+           [ngClass]="link.class"
+           [class.disable]="link.disabled">
+            <span>{{l(link.name)}}</span>
         </a>
     </li>
 </ul>
