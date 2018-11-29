@@ -12,7 +12,7 @@ export class PagesFooterComponent extends AppComponentBase {
     appMenuItems = [
         { url: '/personal-finance/about', name: 'About Us' },
         { url: '/personal-finance/privacy-policy', name: 'Privacy Policy' },
-        { url: '/account/terms', name: 'Terms of Use' },
+        { url: '/personal-finance/terms', name: 'Terms of Use' },
         { url: '/personal-finance/trademarks', name: 'Trademarks' },
         { url: '/personal-finance/disclaimers', name: 'Disclaimers' }
     ];

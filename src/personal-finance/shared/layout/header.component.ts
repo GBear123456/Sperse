@@ -137,6 +137,10 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             routerUrl: '/personal-finance/credit-resources'
         }
     ];
+    actionsButtons = [
+        {name: 'SIGN UP', class: 'member-signup', routerUrl: '', disabled: true},
+        {name: 'Member Login', class: 'member-login', routerUrl: '/account/login', disabled: false}
+    ];
     imgList = [
         {img: 'daily-reports-icon.svg', text: 'CreditMonitorAlerts'},
         {img: 'interactive-tools-icon.svg', text: 'EducationalResources'},

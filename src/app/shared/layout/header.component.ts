@@ -6,7 +6,8 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDto, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType,
+    TenantLoginInfoDto, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { UserHelper } from '../helpers/UserHelper';
 import { MatDialog } from '@angular/material';
@@ -27,6 +28,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
 
+    customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
     isImpersonatedLogin = false;
@@ -74,6 +76,10 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         this.currentLanguage = this.localization.currentLanguage;
         this.isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;
 
+
+        let tenant = this.appSession.tenant;
+        if (tenant && tenant.customLayoutType && tenant.customLayoutType != TenantLoginInfoDtoCustomLayoutType.Default)
+            this.customLayoutType = _.kebabCase(tenant.customLayoutType);
         this.shownLoginNameTitle = this.isImpersonatedLogin ? this.l('YouCanBackToYourAccount') : '';
         this.getCurrentLoginInformations();
         this.getRecentlyLinkedUsers();
