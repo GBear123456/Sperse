@@ -4,7 +4,7 @@ import { Pipe, PipeTransform } from '@angular/core';
     name: 'numberAbbr'
 })
 /**
- * Converts numbers to abbreviations like 1000 -> 1K, 4000000 -> 4M
+ * Converts numbers to abbreviations like 1000 -> 1k, 4000000 -> 4m
  */
 export class NumberAbbrPipe implements PipeTransform {
     transform(value: number): string {

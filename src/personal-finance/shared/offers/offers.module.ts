@@ -28,13 +28,13 @@ import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pip
         DxScrollViewModule,
         RoundProgressModule,
         NoDataModule,
-        OffersRoutingModule,
-        NumberAbbrPipe
+        OffersRoutingModule
     ],
     declarations: [
         StarsRatingComponent,
         OffersComponent,
-        OfferDetailsComponent
+        OfferDetailsComponent,
+        NumberAbbrPipe
     ],
     providers: [
         OffersService,
