@@ -129,11 +129,6 @@ export class ChangeProfilePictureModalComponent extends AppComponentBase {
         const heightRatio = originalHeight / containerHeight;
 
         const input = new UpdateProfilePictureInput();
-        input.fileName = self.temporaryPictureFileName;
-        input.x = Math.floor(resizeParams.x * widthRatio);
-        input.y = Math.floor(resizeParams.y * heightRatio);
-        input.width = Math.floor(resizeParams.w * widthRatio);
-        input.height = Math.floor(resizeParams.h * heightRatio);
 
         this.saving = true;
         self._profileService.updateProfilePicture(input)
