@@ -80,7 +80,8 @@ export class AppConsts {
         url: /(http:\/\/|https:\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?/,
         fullName: /^[^\d]+$/,
         ein: /^\d{2}\-?\d{7}$/,
-        duns: /^\d{2}\-?\d{3}-?\d{4}$/
+        duns: /^\d{2}\-?\d{3}-?\d{4}$/,
+        siteUrl: /^(http:\/\/| https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/
     };
 
     static readonly imageUrls = {
