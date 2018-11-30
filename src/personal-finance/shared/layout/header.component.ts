@@ -274,7 +274,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     logout(): void {
-        this._authService.logout();
+        this._authService.logout(true, this.feature.isEnabled('PFM.Applications') ? 'personal-finance': undefined);
     }
 
     onMySettingsModalSaved(): void {
