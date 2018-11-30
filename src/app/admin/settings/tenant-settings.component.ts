@@ -65,6 +65,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     customPrivacyPolicyUploader: FileUploader;
 
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
+    siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
 
     defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.Tenant;
 

@@ -1,17 +1,19 @@
 <div class="top-footer" *ngIf="hasPfmAppFeature">
     <div class="top-container container">
         <div class="footer-menu">
+            <img class="small-logo" src="./assets/common/images/lend-space-dark/logo-lend-space.svg">
+
             <span class="copyright">
                 Copyright © {{appSession?.tenant?.name}}. All Rights Reserved.
             </span>
 
             <ul class="footer-menu-list">
-                <li class="footer-menu-item" *ngFor="let item of footerMenuItems">
-                    <a class="footer-menu-link" [routerLink]="[item.url]">{{l(item.name)}}</a>
+                <li class="footer-menu-item {{item.class}}" *ngFor="let item of footerMenuItems">
+                    <a class="footer-menu-link" [routerLink]="item.url ? [item.url]: undefined" (click)="item.action && item.action()">{{l(item.name)}}</a>
                 </li>
             </ul>
 
-            <img src="./assets/common/images/lend-space-dark/secure.svg">
+            <img class="secure-logo" src="./assets/common/images/lend-space-dark/secure.svg">
         </div>
     </div>
 </div>

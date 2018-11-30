@@ -1,9 +1,37 @@
+:host-context(body.lend-space) {
+    background: #262626;
+    
+    .content {
+        display: none;
+    }
+    
+    .lend-space-img {
+        display: block;
+        max-width: 550px;
+        margin-bottom: 30px;
+    }
+    
+    .btn {
+        background: #ffcc00;
+        color: #000;
+        font-weight: bold !important;
+        border-radius: 4px !important;
+        
+        &:hover {
+            background: lighten(#ffcc00, 15%);
+        }
+    }
+}
 :host {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100%;
+    
+    .lend-space-img {
+        display: none;
+    }
 
     h1 {
         font-size: 180px;

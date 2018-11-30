@@ -8,20 +8,21 @@
 
     .top-headline {
         display: none;
-        padding: 10px 0;
+        padding: 0px;
         background-color: #f0d500;
         border-bottom: 2px solid #4c4c4c;
 
         .url,
         .date {
             font-size: 9px;
-            font-weight: 400;
+            font-weight: 500;
             margin-bottom: 0;
         }
 
         .url {
             color: #000;
             text-decoration: none;
+            font-weight: 500;
 
             &:hover {
                 color: lighten(#999, 10%);
@@ -31,7 +32,7 @@
         .get-free-score {
             color: #000;
             font-size: 12px;
-            font-weight: 400;
+            font-weight: 500;
             margin-bottom: 0;
         }
 
@@ -43,7 +44,7 @@
             .container {
                 flex-direction: column;
 
-                .url {
+                .get-free-score, .date {
                     display: none;
                 }
             }
@@ -225,13 +226,6 @@
     &.lending-page {
         .top-headline {
             display: block!important;
-        }
-
-        /deep/ app-area-navigation {
-            justify-content: space-between;
-            ul a {
-                padding: 12px 10px!important;
-            }
         }
     }
     header.pfm-app {
