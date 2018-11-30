@@ -9,7 +9,7 @@
 
             <ul class="footer-menu-list">
                 <li class="footer-menu-item {{item.class}}" *ngFor="let item of footerMenuItems">
-                    <a class="footer-menu-link" [routerLink]="[item.url]" (click)="item.action && item.action()">{{l(item.name)}}</a>
+                    <a class="footer-menu-link" [routerLink]="item.url ? [item.url]: undefined" (click)="item.action && item.action()">{{l(item.name)}}</a>
                 </li>
             </ul>
 
