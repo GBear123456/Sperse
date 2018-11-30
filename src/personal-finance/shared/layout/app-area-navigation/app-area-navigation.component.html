@@ -1,6 +1,6 @@
 <ul class="app-area-navigation" *ngIf="inlineMemberAreaLinks.length">
     <li *ngFor="let item of inlineMemberAreaLinks" class="app-list-item" routerLinkActive="active" [hidden]="item.hidden">
-        <a (click)="navigationItemClick($event, item)" routerLinkActive="active" [class.active]="currentUrl === item.routerUrl" [routerLinkActiveOptions]="{exact:true}">
+        <a (click)="navigationItemClick($event, item)" routerLinkActive="active" [ngClass]="{active: currentUrl === item.routerUrl, disabled: !item.routerUrl && (!item.sublinks || !item.sublinks.length)}" [routerLinkActiveOptions]="{exact:true}">
             {{l(item.name)}} <span *ngIf="item.sublinks && item.sublinks.length" class="dropdown-mark"></span>
         </a>
         <ul *ngIf="item.sublinks && item.sublinks.length" class="sublinks" #sublinks>

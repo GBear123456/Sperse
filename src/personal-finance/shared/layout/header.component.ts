@@ -113,7 +113,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         },
         {
             name: 'My Finances',
-            routerUrl: '/personal-finance/my-finances',
+            routerUrl: '', //'/personal-finance/my-finances',
             hidden: !this.feature.isEnabled('CFO.Partner')
         }
     ];

@@ -74,6 +74,9 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
     }
 
     navigationItemClick(e, link) {
+        if (!link.routerUrl && (!link.sublinks || !link.sublinks.length))
+            return;
+
         if (link.routerUrl) {
             this._router.navigate([link.routerUrl]);
         } else {

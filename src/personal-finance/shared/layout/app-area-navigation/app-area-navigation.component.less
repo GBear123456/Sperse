@@ -3,7 +3,7 @@
 :host {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-left: auto;
 
     @media all and (max-width: 529px) {
@@ -16,6 +16,7 @@
     }
 
     .app-area-navigation {
+        width: 100%;
         padding-left: 0;
         list-style-type: none;
         text-align: center;
@@ -89,6 +90,9 @@
                 font-weight: 600;
                 white-space: nowrap;
 
+                &.disabled {
+                    color: #535354 !important;
+                }
                 &.member-login {
                     color: #fff !important;
                     background-color: #ff9933;
@@ -195,6 +199,7 @@
     }
 
     .right-actions {
+        white-space: nowrap;
         padding-left: 0;
         margin: 12px 0 14px 12px;
         li {
