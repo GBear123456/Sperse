@@ -6,6 +6,13 @@
         box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.08);
     }
 
+    /deep/ a.disabled {
+        pointer-events: none!important;
+        i, span {
+            color: #ddd!important;
+        }
+    }
+
     .top-headline {
         display: none;
         padding: 0px;
