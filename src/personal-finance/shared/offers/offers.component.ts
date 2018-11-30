@@ -93,7 +93,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     private creditScores = {
         'bad': {
             min: 0,
-            max: 550
+            max: 549
         },
         'poor': {
             min: 550,
@@ -109,7 +109,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         },
         'excellent': {
             min: 750,
-            max: 1000
+            max: 850
         }
     };
 
