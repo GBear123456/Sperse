@@ -111,7 +111,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
             min: 750,
             max: 1000
         }
-    }
+    };
 
     filtersSettings: { [filterGroup: string]: Filter[] } = {
         'loans': [
