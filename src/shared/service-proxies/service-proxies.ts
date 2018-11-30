@@ -17715,7 +17715,7 @@ export class PersonOrgRelationServiceProxy {
     /**
      * @return Success
      */
-    get(personId: number, orgId: number): Observable<PersonOrgRelationInfo> {
+    get(personId: number, orgId: number): Observable<PersonOrgRelationInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Get?";
         if (personId === undefined || personId === null)
             throw new Error("The parameter 'personId' must be defined and cannot be null.");
@@ -17743,14 +17743,14 @@ export class PersonOrgRelationServiceProxy {
                 try {
                     return this.processGet(<any>response_);
                 } catch (e) {
-                    return <Observable<PersonOrgRelationInfo>><any>_observableThrow(e);
+                    return <Observable<PersonOrgRelationInfoDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<PersonOrgRelationInfo>><any>_observableThrow(response_);
+                return <Observable<PersonOrgRelationInfoDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGet(response: HttpResponseBase): Observable<PersonOrgRelationInfo> {
+    protected processGet(response: HttpResponseBase): Observable<PersonOrgRelationInfoDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -17761,7 +17761,7 @@ export class PersonOrgRelationServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PersonOrgRelationInfo.fromJS(resultData200) : new PersonOrgRelationInfo();
+            result200 = resultData200 ? PersonOrgRelationInfoDto.fromJS(resultData200) : new PersonOrgRelationInfoDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -17769,7 +17769,7 @@ export class PersonOrgRelationServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<PersonOrgRelationInfo>(<any>null);
+        return _observableOf<PersonOrgRelationInfoDto>(<any>null);
     }
 
     /**
@@ -37028,7 +37028,7 @@ export interface ICreateContactBusinessOutput {
 
 export class UpdateContactBusinessInput implements IUpdateContactBusinessInput {
     id!: number;
-    contactBusinessEditInfo!: PersonOrgRelationEditInfo;
+    contactBusinessEditInfo!: PersonOrgRelationInfo;
 
     constructor(data?: IUpdateContactBusinessInput) {
         if (data) {
@@ -37038,14 +37038,14 @@ export class UpdateContactBusinessInput implements IUpdateContactBusinessInput {
             }
         }
         if (!data) {
-            this.contactBusinessEditInfo = new PersonOrgRelationEditInfo();
+            this.contactBusinessEditInfo = new PersonOrgRelationInfo();
         }
     }
 
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.contactBusinessEditInfo = data["contactBusinessEditInfo"] ? PersonOrgRelationEditInfo.fromJS(data["contactBusinessEditInfo"]) : new PersonOrgRelationEditInfo();
+            this.contactBusinessEditInfo = data["contactBusinessEditInfo"] ? PersonOrgRelationInfo.fromJS(data["contactBusinessEditInfo"]) : new PersonOrgRelationInfo();
         }
     }
 
@@ -37066,10 +37066,10 @@ export class UpdateContactBusinessInput implements IUpdateContactBusinessInput {
 
 export interface IUpdateContactBusinessInput {
     id: number;
-    contactBusinessEditInfo: PersonOrgRelationEditInfo;
+    contactBusinessEditInfo: PersonOrgRelationInfo;
 }
 
-export class PersonOrgRelationEditInfo implements IPersonOrgRelationEditInfo {
+export class PersonOrgRelationInfo implements IPersonOrgRelationInfo {
     orgId!: number;
     relationTypeId!: string;
     jobTitle!: string;
@@ -37079,7 +37079,7 @@ export class PersonOrgRelationEditInfo implements IPersonOrgRelationEditInfo {
     isConfirmed!: boolean;
     comment!: string | undefined;
 
-    constructor(data?: IPersonOrgRelationEditInfo) {
+    constructor(data?: IPersonOrgRelationInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -37101,9 +37101,9 @@ export class PersonOrgRelationEditInfo implements IPersonOrgRelationEditInfo {
         }
     }
 
-    static fromJS(data: any): PersonOrgRelationEditInfo {
+    static fromJS(data: any): PersonOrgRelationInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new PersonOrgRelationEditInfo();
+        let result = new PersonOrgRelationInfo();
         result.init(data);
         return result;
     }
@@ -37122,7 +37122,7 @@ export class PersonOrgRelationEditInfo implements IPersonOrgRelationEditInfo {
     }
 }
 
-export interface IPersonOrgRelationEditInfo {
+export interface IPersonOrgRelationInfo {
     orgId: number;
     relationTypeId: string;
     jobTitle: string;
@@ -42728,8 +42728,14 @@ export class ImportItemInput implements IImportItemInput {
     affiliateId!: string | undefined;
     campaignId!: string | undefined;
     channelId!: string | undefined;
-    referrerURL!: string | undefined;
     gclId!: string | undefined;
+    referrerURL!: string | undefined;
+    applicantId!: string | undefined;
+    applicationId!: string | undefined;
+    ipAddress!: string | undefined;
+    userAgent!: string | undefined;
+    siteId!: string | undefined;
+    siteUrl!: string | undefined;
     utmSource!: string | undefined;
     utmMedium!: string | undefined;
     utmCampaign!: string | undefined;
@@ -42758,8 +42764,14 @@ export class ImportItemInput implements IImportItemInput {
             this.affiliateId = data["affiliateId"];
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
-            this.referrerURL = data["referrerURL"];
             this.gclId = data["gclId"];
+            this.referrerURL = data["referrerURL"];
+            this.applicantId = data["applicantId"];
+            this.applicationId = data["applicationId"];
+            this.ipAddress = data["ipAddress"];
+            this.userAgent = data["userAgent"];
+            this.siteId = data["siteId"];
+            this.siteUrl = data["siteUrl"];
             this.utmSource = data["utmSource"];
             this.utmMedium = data["utmMedium"];
             this.utmCampaign = data["utmCampaign"];
@@ -42788,8 +42800,14 @@ export class ImportItemInput implements IImportItemInput {
         data["affiliateId"] = this.affiliateId;
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
-        data["referrerURL"] = this.referrerURL;
         data["gclId"] = this.gclId;
+        data["referrerURL"] = this.referrerURL;
+        data["applicantId"] = this.applicantId;
+        data["applicationId"] = this.applicationId;
+        data["ipAddress"] = this.ipAddress;
+        data["userAgent"] = this.userAgent;
+        data["siteId"] = this.siteId;
+        data["siteUrl"] = this.siteUrl;
         data["utmSource"] = this.utmSource;
         data["utmMedium"] = this.utmMedium;
         data["utmCampaign"] = this.utmCampaign;
@@ -42811,8 +42829,14 @@ export interface IImportItemInput {
     affiliateId: string | undefined;
     campaignId: string | undefined;
     channelId: string | undefined;
-    referrerURL: string | undefined;
     gclId: string | undefined;
+    referrerURL: string | undefined;
+    applicantId: string | undefined;
+    applicationId: string | undefined;
+    ipAddress: string | undefined;
+    userAgent: string | undefined;
+    siteId: string | undefined;
+    siteUrl: string | undefined;
     utmSource: string | undefined;
     utmMedium: string | undefined;
     utmCampaign: string | undefined;
@@ -42870,9 +42894,16 @@ export class ImportPersonalInput implements IImportPersonalInput {
     mobilePhoneExt!: string | undefined;
     homePhone!: string | undefined;
     homePhoneExt!: string | undefined;
+    preferredToD!: ImportPersonalInputPreferredToD | undefined;
+    ssn!: string | undefined;
     email1!: string | undefined;
     email2!: string | undefined;
     email3!: string | undefined;
+    drivingLicense!: string | undefined;
+    drivingLicenseState!: string | undefined;
+    isActiveMilitaryDuty!: boolean | undefined;
+    creditScoreRating!: ImportPersonalInputCreditScoreRating | undefined;
+    gender!: string | undefined;
     fullAddress!: ImportAddressInput | undefined;
     webSiteUrl!: string | undefined;
     facebookUrl!: string | undefined;
@@ -42900,9 +42931,16 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.mobilePhoneExt = data["mobilePhoneExt"];
             this.homePhone = data["homePhone"];
             this.homePhoneExt = data["homePhoneExt"];
+            this.preferredToD = data["preferredToD"];
+            this.ssn = data["ssn"];
             this.email1 = data["email1"];
             this.email2 = data["email2"];
             this.email3 = data["email3"];
+            this.drivingLicense = data["drivingLicense"];
+            this.drivingLicenseState = data["drivingLicenseState"];
+            this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
+            this.creditScoreRating = data["creditScoreRating"];
+            this.gender = data["gender"];
             this.fullAddress = data["fullAddress"] ? ImportAddressInput.fromJS(data["fullAddress"]) : <any>undefined;
             this.webSiteUrl = data["webSiteUrl"];
             this.facebookUrl = data["facebookUrl"];
@@ -42930,9 +42968,16 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["mobilePhoneExt"] = this.mobilePhoneExt;
         data["homePhone"] = this.homePhone;
         data["homePhoneExt"] = this.homePhoneExt;
+        data["preferredToD"] = this.preferredToD;
+        data["ssn"] = this.ssn;
         data["email1"] = this.email1;
         data["email2"] = this.email2;
         data["email3"] = this.email3;
+        data["drivingLicense"] = this.drivingLicense;
+        data["drivingLicenseState"] = this.drivingLicenseState;
+        data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
+        data["creditScoreRating"] = this.creditScoreRating;
+        data["gender"] = this.gender;
         data["fullAddress"] = this.fullAddress ? this.fullAddress.toJSON() : <any>undefined;
         data["webSiteUrl"] = this.webSiteUrl;
         data["facebookUrl"] = this.facebookUrl;
@@ -42953,9 +42998,16 @@ export interface IImportPersonalInput {
     mobilePhoneExt: string | undefined;
     homePhone: string | undefined;
     homePhoneExt: string | undefined;
+    preferredToD: ImportPersonalInputPreferredToD | undefined;
+    ssn: string | undefined;
     email1: string | undefined;
     email2: string | undefined;
     email3: string | undefined;
+    drivingLicense: string | undefined;
+    drivingLicenseState: string | undefined;
+    isActiveMilitaryDuty: boolean | undefined;
+    creditScoreRating: ImportPersonalInputCreditScoreRating | undefined;
+    gender: string | undefined;
     fullAddress: ImportAddressInput | undefined;
     webSiteUrl: string | undefined;
     facebookUrl: string | undefined;
@@ -42971,6 +43023,8 @@ export class ImportBusinessInput implements IImportBusinessInput {
     companyName!: string | undefined;
     organizationType!: string | undefined;
     jobTitle!: string | undefined;
+    isEmployed!: boolean | undefined;
+    employmentStartDate!: moment.Moment | undefined;
     employeeCount!: number | undefined;
     dateFounded!: moment.Moment | undefined;
     ein!: string | undefined;
@@ -43013,6 +43067,8 @@ export class ImportBusinessInput implements IImportBusinessInput {
             this.companyName = data["companyName"];
             this.organizationType = data["organizationType"];
             this.jobTitle = data["jobTitle"];
+            this.isEmployed = data["isEmployed"];
+            this.employmentStartDate = data["employmentStartDate"] ? moment(data["employmentStartDate"].toString()) : <any>undefined;
             this.employeeCount = data["employeeCount"];
             this.dateFounded = data["dateFounded"] ? moment(data["dateFounded"].toString()) : <any>undefined;
             this.ein = data["ein"];
@@ -43055,6 +43111,8 @@ export class ImportBusinessInput implements IImportBusinessInput {
         data["companyName"] = this.companyName;
         data["organizationType"] = this.organizationType;
         data["jobTitle"] = this.jobTitle;
+        data["isEmployed"] = this.isEmployed;
+        data["employmentStartDate"] = this.employmentStartDate ? this.employmentStartDate.toISOString() : <any>undefined;
         data["employeeCount"] = this.employeeCount;
         data["dateFounded"] = this.dateFounded ? this.dateFounded.toISOString() : <any>undefined;
         data["ein"] = this.ein;
@@ -43090,6 +43148,8 @@ export interface IImportBusinessInput {
     companyName: string | undefined;
     organizationType: string | undefined;
     jobTitle: string | undefined;
+    isEmployed: boolean | undefined;
+    employmentStartDate: moment.Moment | undefined;
     employeeCount: number | undefined;
     dateFounded: moment.Moment | undefined;
     ein: string | undefined;
@@ -43351,8 +43411,14 @@ export class ImportContactInput implements IImportContactInput {
     affiliateId!: string | undefined;
     campaignId!: string | undefined;
     channelId!: string | undefined;
-    referrerURL!: string | undefined;
     gclId!: string | undefined;
+    referrerURL!: string | undefined;
+    applicantId!: string | undefined;
+    applicationId!: string | undefined;
+    ipAddress!: string | undefined;
+    userAgent!: string | undefined;
+    siteId!: string | undefined;
+    siteUrl!: string | undefined;
     utmSource!: string | undefined;
     utmMedium!: string | undefined;
     utmCampaign!: string | undefined;
@@ -43403,8 +43469,14 @@ export class ImportContactInput implements IImportContactInput {
             this.affiliateId = data["affiliateId"];
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
-            this.referrerURL = data["referrerURL"];
             this.gclId = data["gclId"];
+            this.referrerURL = data["referrerURL"];
+            this.applicantId = data["applicantId"];
+            this.applicationId = data["applicationId"];
+            this.ipAddress = data["ipAddress"];
+            this.userAgent = data["userAgent"];
+            this.siteId = data["siteId"];
+            this.siteUrl = data["siteUrl"];
             this.utmSource = data["utmSource"];
             this.utmMedium = data["utmMedium"];
             this.utmCampaign = data["utmCampaign"];
@@ -43452,8 +43524,14 @@ export class ImportContactInput implements IImportContactInput {
         data["affiliateId"] = this.affiliateId;
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
-        data["referrerURL"] = this.referrerURL;
         data["gclId"] = this.gclId;
+        data["referrerURL"] = this.referrerURL;
+        data["applicantId"] = this.applicantId;
+        data["applicationId"] = this.applicationId;
+        data["ipAddress"] = this.ipAddress;
+        data["userAgent"] = this.userAgent;
+        data["siteId"] = this.siteId;
+        data["siteUrl"] = this.siteUrl;
         data["utmSource"] = this.utmSource;
         data["utmMedium"] = this.utmMedium;
         data["utmCampaign"] = this.utmCampaign;
@@ -43486,8 +43564,14 @@ export interface IImportContactInput {
     affiliateId: string | undefined;
     campaignId: string | undefined;
     channelId: string | undefined;
-    referrerURL: string | undefined;
     gclId: string | undefined;
+    referrerURL: string | undefined;
+    applicantId: string | undefined;
+    applicationId: string | undefined;
+    ipAddress: string | undefined;
+    userAgent: string | undefined;
+    siteId: string | undefined;
+    siteUrl: string | undefined;
     utmSource: string | undefined;
     utmMedium: string | undefined;
     utmCampaign: string | undefined;
@@ -49766,11 +49850,11 @@ export interface ICreateUserForContactInput {
     assignedRoleNames: string[];
 }
 
-export class PersonOrgRelationInfo implements IPersonOrgRelationInfo {
+export class PersonOrgRelationInfoDto implements IPersonOrgRelationInfoDto {
     id!: number | undefined;
     jobTitle!: string | undefined;
 
-    constructor(data?: IPersonOrgRelationInfo) {
+    constructor(data?: IPersonOrgRelationInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -49786,9 +49870,9 @@ export class PersonOrgRelationInfo implements IPersonOrgRelationInfo {
         }
     }
 
-    static fromJS(data: any): PersonOrgRelationInfo {
+    static fromJS(data: any): PersonOrgRelationInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new PersonOrgRelationInfo();
+        let result = new PersonOrgRelationInfoDto();
         result.init(data);
         return result;
     }
@@ -49801,7 +49885,7 @@ export class PersonOrgRelationInfo implements IPersonOrgRelationInfo {
     }
 }
 
-export interface IPersonOrgRelationInfo {
+export interface IPersonOrgRelationInfoDto {
     id: number | undefined;
     jobTitle: string | undefined;
 }
@@ -50187,11 +50271,8 @@ export interface IChangePasswordInput {
 }
 
 export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
-    fileName!: string;
-    x!: number | undefined;
-    y!: number | undefined;
-    width!: number | undefined;
-    height!: number | undefined;
+    originalImage!: string;
+    thumbnail!: string;
 
     constructor(data?: IUpdateProfilePictureInput) {
         if (data) {
@@ -50204,11 +50285,8 @@ export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
 
     init(data?: any) {
         if (data) {
-            this.fileName = data["fileName"];
-            this.x = data["x"];
-            this.y = data["y"];
-            this.width = data["width"];
-            this.height = data["height"];
+            this.originalImage = data["originalImage"];
+            this.thumbnail = data["thumbnail"];
         }
     }
 
@@ -50221,21 +50299,15 @@ export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["fileName"] = this.fileName;
-        data["x"] = this.x;
-        data["y"] = this.y;
-        data["width"] = this.width;
-        data["height"] = this.height;
+        data["originalImage"] = this.originalImage;
+        data["thumbnail"] = this.thumbnail;
         return data; 
     }
 }
 
 export interface IUpdateProfilePictureInput {
-    fileName: string;
-    x: number | undefined;
-    y: number | undefined;
-    width: number | undefined;
-    height: number | undefined;
+    originalImage: string;
+    thumbnail: string;
 }
 
 export class GetPasswordComplexitySettingOutput implements IGetPasswordComplexitySettingOutput {
@@ -57710,6 +57782,21 @@ export enum ImportInputImportType {
     Client = "Client", 
     Partner = "Partner", 
     Order = "Order", 
+}
+
+export enum ImportPersonalInputPreferredToD {
+    Morning = "Morning", 
+    Afternoon = "Afternoon", 
+    Evening = "Evening", 
+    Anytime = "Anytime", 
+}
+
+export enum ImportPersonalInputCreditScoreRating {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
 }
 
 export enum ImportContactInputImportType {
