@@ -8,8 +8,8 @@
             </span>
 
             <ul class="footer-menu-list">
-                <li class="footer-menu-item" *ngFor="let item of footerMenuItems">
-                    <a class="footer-menu-link" [routerLink]="[item.url]">{{l(item.name)}}</a>
+                <li class="footer-menu-item {{item.class}}" *ngFor="let item of footerMenuItems">
+                    <a class="footer-menu-link" [routerLink]="[item.url]" (click)="item.action && item.action()">{{l(item.name)}}</a>
                 </li>
             </ul>
 

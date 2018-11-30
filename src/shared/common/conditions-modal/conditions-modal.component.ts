@@ -24,7 +24,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
 
     private conditionsOptions = {
         [ConditionsType.Terms]: {
-            title: this.l('SperseTermsOfService'),
+            title: this.l('TermsOfService'),
             bodyLink: 'terms.html',
             apiBodyLink: 'GetTermsOfServiceDocument',
             downloadLink: 'DownloadPrivacyPolicyPdf',
@@ -32,7 +32,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
             defaultLink: 'SperseTermsOfService.pdf'
         },
         [ConditionsType.Policies]: {
-            title: this.l('SpersePrivacyPolicy'),
+            title: this.l('PrivacyPolicy'),
             bodyLink: 'privacy.html',
             apiBodyLink: 'GetPrivacyPolicyDocument',
             downloadLink: 'DownloadTermsOfServicePdf',
@@ -50,14 +50,9 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
     }
 
     ngOnInit() {
-        this.data.title = this.conditionsOptions[this.data.type].title;
+        if (!this.data.title)
+            this.data.title = this.conditionsOptions[this.data.type].title;
         this.data.buttons = [
-            {
-                id: 'download',
-                iconName: 'download-icon.svg',
-                class: 'icon',
-                action: this.download.bind(this)
-            },
             {
                 id: 'print',
                 iconName: 'print-icon.svg',
@@ -65,11 +60,20 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
                 action: this.printContent.bind(this)
             }
         ];
+        if (!this.data.downloadDisabled)
+            this.data.buttons.unshift({
+                id: 'download',
+                iconName: 'download-icon.svg',
+                class: 'icon',
+                action: this.download.bind(this)
+            });
+        if (!this.data.bodyUrl)
+            this.data.bodyUrl = this.isTenantDocumentAvailable() ?
+                this.getApiLink('apiBodyLink') : this.getDefaultLink('bodyLink');
+
         this.conditionBody$ = from(
             $.ajax({
-                url: this.isTenantDocumentAvailable() ?
-                    this.getApiLink('apiBodyLink') :
-                    this.getDefaultLink('bodyLink'),
+                url: this.data.bodyUrl,
                 method: 'GET'
             })
         ).pipe(
