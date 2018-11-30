@@ -53,7 +53,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
                 return false;
             }
         } else {
-            sessionStorage.setItem('redirectUrl', state.url);
+            sessionStorage.setItem('redirectUrl', location.origin + state.url);
             this._router.navigate(['/account/login']);
             return false;
         }
