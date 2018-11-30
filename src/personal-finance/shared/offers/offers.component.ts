@@ -116,7 +116,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     filtersSettings: { [filterGroup: string]: Filter[] } = {
         'loans': [
             {
-                name: this.ls.l('Offers_FIlter_Amount'),
+                name: this.ls.l('Offers_Filter_Amount'),
                 field: 'amount',
                 type: FilterType.Range,
                 min: 10000,
