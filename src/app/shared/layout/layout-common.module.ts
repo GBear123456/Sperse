@@ -80,6 +80,7 @@ let COMPONENTS = [
         MySettingsModalComponent,
         ChangePasswordModalComponent,
         NotificationSettingsModalComponent,
+        NotificationsComponent,
         LoginAttemptsModalComponent
     ]
 })

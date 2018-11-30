@@ -5,6 +5,7 @@ import { IFormattedUserNotification, UserNotificationHelper } from './UserNotifi
 import { PaymentWizardComponent } from '../../common/payment-wizard/payment-wizard.component';
 import { AppService } from '@app/app.service';
 import { MatDialog } from '@angular/material';
+import { NotificationsComponent } from '@app/shared/layout/notifications/notifications.component';
 
 @Component({
     templateUrl: './header-notifications.component.html',
@@ -166,5 +167,17 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
             panelClass: ['payment-wizard', 'setup'],
             data: { module: this._appService.getModule().toUpperCase() }
         }).afterClosed().subscribe(result => { });
+    }
+
+    openAllNotifications(e): void {
+        this._dialog.open(NotificationsComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
     }
 }
