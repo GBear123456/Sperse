@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
@@ -23,7 +23,6 @@ import { DxTreeListComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 
 import * as _ from 'underscore';
-import * as moment from 'moment';
 
 @Component({
     templateUrl: './rules.component.html',
@@ -63,12 +62,12 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                 items: [
                     {
                         name: 'filters',
-                        action: (event) => {
+                        action: () => {
                             setTimeout(() => {
                                 this.treeList.instance.repaint();
                             }, 1000);
                             this.filtersService.fixed =
-                                !this.filtersService.fixed;                                                       
+                                !this.filtersService.fixed;
                         },
                         options: {
                             checkPressed: () => {
@@ -222,8 +221,8 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                 enabled: true,
                 action: this.showEditDialog.bind(this),
                 lable: this.l('+ Add New')
-            })
-        };
+            });
+        }
 
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
