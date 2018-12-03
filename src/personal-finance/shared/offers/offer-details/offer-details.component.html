@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md-7 col-lg-4 leftBlock sm-hidden" #offersList>
             <h1>{{ categoryDisplayName$ | async }}</h1>
-            <h3 #availableCards><ng-container *ngIf="cardsAmount">{{ ls.l('Offers_AvailableCreditCards') }} ({{ cardsAmount }})</ng-container></h3>
+            <h3 #availableCards><ng-container *ngIf="cardsAmount">{{ ls.l('Offers_Available') }} {{ categoryDisplayName$ | async }} ({{ cardsAmount }})</ng-container></h3>
             <div class="creditCardsList" #creditCardsList>
                 <dx-scroll-view [height]="scrollHeight">
                     <mat-radio-group (change)="creditCardChanged($event)" [value]="selectedCardId$ | async">
@@ -40,7 +40,7 @@
                 <div class="cardDetails row">
                     <div class="col-sm-5 col-xl-7 left-details">
                         <div class="detailsBlock">
-                            <h5 class="title">{{ ls.l('Offers_CardDetails') }}</h5>
+                            <h5 class="title">{{ ls.l('Offers_Details') }}</h5>
                             <p class="details">{{ cardDetails.description }}</p>
                         </div>
                         <hr>
