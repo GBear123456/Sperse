@@ -4,6 +4,7 @@ import { DOCUMENT, Title } from '@angular/platform-browser';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
+import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 
 import { kebabCase } from 'lodash';
 import * as _ from 'underscore';
@@ -106,6 +107,19 @@ export class AppRootComponent implements OnInit {
 
             if (tenant.customLayoutType)
                 this.parent.hostElement.nativeElement.classList.add(kebabCase(tenant.customLayoutType));
+
+            this.checkSetGoogleAnalyticsCode(tenant);
+        }
+    }
+
+    checkSetGoogleAnalyticsCode(tenant) {
+        if (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace) {
+            let tenantGACode = 'UA-129828500-1'; //!!VP should be used some tenant property
+            this.parent.addScriptLink("https://www.googletagmanager.com/gtag/js?id=" + tenantGACode, '', () => {
+                let dataLayer = window['dataLayer'] = window['dataLayer'] || [];
+                dataLayer.push(['js', new Date()]);
+                dataLayer.push(['config', tenantGACode]);
+            });
         }
     }
 }
