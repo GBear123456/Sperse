@@ -52,8 +52,11 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
                 this._router.navigate(['/app/access-denied']);
                 return false;
             }
-        } else
-            return true;
+        } else {
+            sessionStorage.setItem('redirectUrl', location.origin + state.url);
+            this._router.navigate(['/account/login']);
+            return false;
+        }
     }
 
     selectBestRoute(): string {

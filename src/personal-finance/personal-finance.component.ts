@@ -1,6 +1,7 @@
 import { Component, HostBinding, ViewContainerRef, OnInit, OnDestroy, Injector, Renderer2 } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { Router, ActivationEnd } from '@angular/router';
+import { humanize } from 'underscore.string';
 
 declare const Typekit: any;
 
@@ -30,13 +31,18 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
             if (event instanceof ActivationEnd && !event.snapshot.children.length) {
                 this.wrapperEnabled = !event.snapshot.data.wrapperDisabled;
                 this.hideFooter = event.snapshot.data.hideFooter;
+                setTimeout(() => {
+                    let url = event.snapshot.url[0];
+                    this.setTitle(humanize(url && url.path || event.snapshot['_routerState']
+                        .url.split('?').shift().split('/').pop()).replace(/\w\S*/g,
+                            (txt) => {
+                                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                            }
+                    ));
+                });
             }
         });
     }
-    //
-    // isLastSnapshot(snapshot) {
-    //     return snapshot['_routerState'].url.split('/').pop() == snapshot.routeConfig.path;
-    // }
 
     ngOnInit(): void {
         this._render.addClass(document.body, 'pfm');

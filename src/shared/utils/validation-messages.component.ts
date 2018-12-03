@@ -9,7 +9,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
                             {{getErrorDefinitionMessage(errorDef)}}
                         </div>
                     </div>
-               </div>`
+               </div>`,
+    styles: [ '.form-control-feedback { font-size: 14px }' ]
 })
 export class ValidationMessagesComponent implements AfterViewInit {
 

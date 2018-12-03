@@ -24,9 +24,7 @@
         window.loginPageHandler = function(context, boot) { 
             appContext = context;
             appBootstrap = boot;
-        };
-
-        document.getElementById('forget-password').href = location.origin + '/account/forgot-password';
+        };        
 
         getAppConfig();
     }
@@ -35,7 +33,7 @@
         return document.head.getElementsByTagName('base')[0].href;
     }
 
-    function ajax(url, headers) {
+    function ajax(url, headers, raw) {
         return new Promise(function(resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url);
@@ -45,7 +43,7 @@
 
             xhr.onload = function() {
                 if (xhr.status === 200)
-                    resolve(JSON.parse(xhr.responseText));
+                    resolve(raw ? xhr.responseText: JSON.parse(xhr.responseText));
                 else
                     reject(xhr);
             };
@@ -68,37 +66,26 @@
                 "Accept": "application/json"
             }
         ).then(function(response) {
-            var loginInformations = response && response.result,                
-                tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse';
-                         
+            var loginInformations = response && response.result;                         
             tenant = loginInformations && loginInformations.tenant;
             if (tenant && tenant.customLayoutType == 'LendSpace') {
                 window.loginPageHandler = undefined;
                 appBootstrap && appBootstrap.call(appContext);
-            } else {
+            } else {                
                 window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
 
-                document.getElementById('loginPage').style.display = 'block';
-                document.getElementById('loadSpinner').style.display = 'none';
+                loadLoginStylesheet();
+                updateTenantMetadata();
+                ajax('./assets/login/login.html', undefined, true).then(function(loginBody) {
+                    document.body.innerHTML = loginBody;
+                    setTimeout(loginPageAfterInit);
+                });
 
                 let customizations = tenant && tenant.tenantCustomizations;
                 if (customizations && customizations.favicons && customizations.favicons.length)
                     updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
                 else
                     updateFavicons(DEFAULT_FAVICONS, './');
-
-                Array.prototype.forEach.call(document.getElementsByClassName('tenantName'), function(elm) {
-                    elm.innerHTML = tenantName;
-                });
-
-                if (window['logoImage']) {
-                    logoImage.setAttribute('src',
-                        tenant && loginInformations.tenant.logoId ?
-                        remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId:
-                        getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
-                    );
-                    logoImage.style.display = 'block';
-                }
             }
         });
     }
@@ -200,7 +187,56 @@
         }
     }
 
-    if (window['loginForm']) {
+    function createStylesheet(href) {
+        var link = document.createElement('link');
+        link.rel = "stylesheet";
+        link.type = "text/css";
+        link.href = href;
+
+        document.head.appendChild(link);
+    }
+
+    function loadLoginStylesheet() {
+        createStylesheet("./assets/login/style.css");
+        createStylesheet("./assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.css");
+    }
+
+    function createMetatag(name, content) {
+        let meta = document.createElement('meta');
+        meta.setAttribute('property', name);
+        meta.setAttribute('content', content);
+
+        document.head.appendChild(meta);
+    }
+
+    function updateTenantMetadata() {
+        document.title = tenant && (tenant.name || tenant.tenancyName) || 'Sperse: Login';
+        createMetatag("og:title", document.title);
+        createMetatag("og:description", tenant && tenant.customLayoutType && tenant.customLayoutType != 'Default'
+            ? '': "Business management platform, enhanced with AI");
+        createMetatag("og:url", location.origin);
+        createMetatag("og:image", !tenant || !tenant.logoId ? 
+            window.location.origin + '/assets/common/images/app-logo-on-light.png' :
+            AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
+    }
+
+    function loginPageAfterInit() {
+        var tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse';
+        document.getElementById('forget-password').href = location.origin + '/account/forgot-password';
+        Array.prototype.forEach.call(document.getElementsByClassName('tenantName'), function(elm) {
+            elm.innerHTML = tenantName;
+        });
+
+        if (window['logoImage']) {
+            logoImage.setAttribute('src',
+                tenant && loginInformations.tenant.logoId ?
+                remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId:
+                getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
+            );
+            logoImage.style.display = 'block';
+        }
+
+
         var form = window['loginForm'];
         form.elements['userNameOrEmailAddress'].onkeyup = 
             form.elements['password'].onkeyup = checkIsValid;
@@ -245,19 +281,6 @@
             }
 
             return false;
-        }
-
-        function checkIsValid() {
-            var login = form.elements['userNameOrEmailAddress'];
-            var password = form.elements['password'];
-            var button = form.elements['submit'];
-            var result = login.value && password.value;
-            if (result)
-                button.removeAttribute('disabled');
-            else
-                button.setAttribute('disabled', '');
-
-            return result;
         }
 
         var inputCheckTimeout;
@@ -325,5 +348,18 @@
                 window.print();
             }
         });
+
+        function checkIsValid() {
+            var login = form.elements['userNameOrEmailAddress'];
+            var password = form.elements['password'];
+            var button = form.elements['submit'];
+            var result = login.value && password.value;
+            if (result)
+                button.removeAttribute('disabled');
+            else
+                button.setAttribute('disabled', '');
+
+            return result;
+        }
     }
 })();

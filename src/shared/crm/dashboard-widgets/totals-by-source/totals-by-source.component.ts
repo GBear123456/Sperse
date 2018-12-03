@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Injector, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
@@ -12,7 +12,7 @@ import { finalize } from 'rxjs/operators';
     styleUrls: ['./totals-by-source.component.less'],
     providers: []
 })
-export class TotalsBySourceComponent extends AppComponentBase {
+export class TotalsBySourceComponent extends AppComponentBase implements AfterViewInit {
     @ViewChild(DxPieChartComponent) chartComponent: DxPieChartComponent;
     totalsData: any;
     totalCount = 0;
@@ -30,7 +30,7 @@ export class TotalsBySourceComponent extends AppComponentBase {
     rangeName: string;
     rangeColor: string;
     totalNumbersTop: string;
-
+    renderInterval;
     constructor(
         injector: Injector,
         private _dashboardWidgetsService: DashboardWidgetsService,
@@ -59,6 +59,10 @@ export class TotalsBySourceComponent extends AppComponentBase {
         });
     }
 
+    ngAfterViewInit() {
+        this.render();
+    }
+
     customizePoint = (data) => {
         return {
             color: this.rangeColors[data.index]
@@ -74,8 +78,12 @@ export class TotalsBySourceComponent extends AppComponentBase {
     }
 
     render() {
-        if (this.chartComponent)
-            this.chartComponent.instance.render();
+        this.renderInterval = setInterval(() => {
+            if (this.chartComponent) {
+                this.chartComponent.instance.render();
+                clearInterval(this.renderInterval);
+            }
+        }, 100);
     }
 
     onDrawn(e) {

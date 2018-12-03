@@ -1,5 +1,6 @@
 import {Component, ChangeDetectionStrategy, AfterViewInit, Injector, Renderer2, OnDestroy} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'app-lend-space-dark',
@@ -54,11 +55,13 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
         }
     ];
 
+    currentYear = new Date().getFullYear();
+
     constructor(
         injector: Injector,
         private renderer: Renderer2
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.PFMLocalizationSourceName);
     }
 
     ngAfterViewInit(): void {

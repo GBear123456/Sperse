@@ -35,7 +35,6 @@ import { MatDialog } from '@angular/material';
     providers: [ImpersonationService]
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
-    @ViewChild('linkedAccountsModal') linkedAccountsModal: LinkedAccountsModalComponent;
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
 
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
@@ -241,8 +240,16 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    showLinkedAccounts(): void {
-        this.linkedAccountsModal.show();
+    showLinkedAccounts(e): void {
+        this.dialog.open(LinkedAccountsModalComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {}
+        });
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
     }
 
     changePassword(e): void {
@@ -274,7 +281,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     logout(): void {
-        this._authService.logout();
+        this._authService.logout(true, this.feature.isEnabled('PFM.Applications') ? location.origin + '/personal-finance': undefined);
     }
 
     onMySettingsModalSaved(): void {

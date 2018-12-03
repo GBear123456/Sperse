@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
 import { AppUserNotificationState } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -8,6 +8,8 @@ import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: './notifications.component.html',
@@ -15,29 +17,68 @@ import { IFormattedUserNotification, UserNotificationHelper } from './UserNotifi
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class NotificationsComponent extends AppComponentBase {
+export class NotificationsComponent extends ModalDialogComponent implements OnInit {
 
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
+
+    notifications: IFormattedUserNotification[] = [];
+    unreadNotificationCount = 0;
 
     readStateFilter = 'ALL';
     loading = false;
 
     constructor(
         injector: Injector,
+        private dialog: MatDialog,
         private _notificationService: NotificationServiceProxy,
         private _userNotificationHelper: UserNotificationHelper
     ) {
         super(injector);
+        this.loadNotifications();
+        this.registerToEvents();
     }
 
-    reloadPage(): void {
-        this.paginator.changePage(this.paginator.getPage());
+    ngOnInit() {
+        super.ngOnInit();
+
+        this.data.title = this.l('Notifications');
+        this.data.editTitle = false;
+        this.data.titleClearButton = false;
+        this.data.placeholder = this.l('Notifications');
+
+        this.data.buttons = [];
+        
     }
 
-    setAsRead(record: any): void {
-        this.setNotificationAsRead(record, () => {
-            this.reloadPage();
+    loadNotifications(): void {
+        this._notificationService.getUserNotifications(undefined, 3, 0).subscribe(result => {
+            this.unreadNotificationCount = result.unreadCount;
+            this.notifications = [];
+            $.each(result.items, (index, item: UserNotification) => {
+                this.notifications.push(this._userNotificationHelper.format(<any>item, false));
+            });
+        });
+    }
+
+    registerToEvents() {
+        abp.event.on('abp.notifications.received', userNotification => {
+            this._userNotificationHelper.show(userNotification);
+            this.loadNotifications();
+        });
+
+        abp.event.on('app.notifications.refresh', () => {
+            this.loadNotifications();
+        });
+
+        abp.event.on('app.notifications.read', userNotificationId => {
+            for (let i = 0; i < this.notifications.length; i++) {
+                if (this.notifications[i].userNotificationId === userNotificationId) {
+                    this.notifications[i].state = 'READ';
+                }
+            }
+
+            this.unreadNotificationCount -= 1;
         });
     }
 
@@ -45,71 +86,24 @@ export class NotificationsComponent extends AppComponentBase {
         return record.formattedNotification.state === 'READ';
     }
 
-    fromNow(date: moment.Moment): string {
-        return moment(date).fromNow();
-    }
-
-    formatRecord(record: any): IFormattedUserNotification {
-        return this._userNotificationHelper.format(record, false);
-    }
-
-    formatNotification(record: any): string {
-        const formattedRecord = this.formatRecord(record);
-        return abp.utils.truncateStringWithPostfix(formattedRecord.text, 120);
-    }
-
-    formatNotifications(records: any[]): any[] {
-        const formattedRecords = [];
-        for (const record of records) {
-            record.formattedNotification = this.formatRecord(record);
-            formattedRecords.push(record);
-        }
-        return formattedRecords;
-    }
-
-    truncateString(text: any, length: number): string {
-        return abp.utils.truncateStringWithPostfix(text, length);
-    }
-
-    getNotifications(event?: LazyLoadEvent): void {
-        if (this.primengTableHelper.shouldResetPaging(event)) {
-            this.paginator.changePage(0);
-
-            return;
-        }
-
-        this.primengTableHelper.showLoadingIndicator();
-
-        this._notificationService.getUserNotifications(
-            this.readStateFilter === 'ALL' ? undefined : AppUserNotificationState.Unread,
-            this.primengTableHelper.getMaxResultCount(this.paginator, event),
-            this.primengTableHelper.getSkipCount(this.paginator, event)
-        ).subscribe((result) => {
-            this.primengTableHelper.totalRecordsCount = result.totalCount;
-            this.primengTableHelper.records = this.formatNotifications(result.items);
-            this.primengTableHelper.hideLoadingIndicator();
-        });
-    }
-
     setAllNotificationsAsRead(): void {
-        this._userNotificationHelper.setAllAsRead(() => {
-            this.getNotifications();
-        });
+        this._userNotificationHelper.setAllAsRead();
     }
 
     openNotificationSettingsModal(e): void {
+        this.dialog.closeAll();
         this._userNotificationHelper.openSettingsModal(e);
     }
 
-    setNotificationAsRead(userNotification: UserNotification, callback: () => void): void {
-        this._userNotificationHelper
-            .setAsRead(userNotification.id, () => {
-                if (callback) {
-                    callback();
-                }
-            });
+    setNotificationAsRead(userNotification: IFormattedUserNotification): void {
+        this._userNotificationHelper.setAsRead(userNotification.userNotificationId);
     }
 
+    
+    truncateString(text: any, length: number): string {
+        return abp.utils.truncateStringWithPostfix(text, length);
+    }
+    
     public getRowClass(formattedRecord: IFormattedUserNotification): string {
         return formattedRecord.state === 'READ' ? 'notification-read' : '';
     }
