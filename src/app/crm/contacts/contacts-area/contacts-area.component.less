@@ -30,12 +30,12 @@
     dx-text-box, dx-button, international-phone-number {
       display: inline-block;
     }
-    
+
     dx-text-box, international-phone-number {
       min-width: 230px;
       width: 70%;
     }
-    
+
     dx-button {
       /deep/ &.update i {
         color: #00aeef;
@@ -47,7 +47,7 @@
       border: none;
       position: relative;
     }
-    
+
     dx-validation-group {
       /deep/ dx-button {
         top: -14px;
@@ -85,19 +85,19 @@
     .actions  {
       position: absolute;
       display: none;
-      right: 50px;
-      top: 4px;
+      right: 0px;
+      top: 2px;
 
       i {
         font-size: 18px;
-        padding: 7px;
+        padding: 7px 5px;
         cursor: pointer;
       }
 
       i.edit {
         color: #00aeef;
       }
-    
+
       i.delete {
         color: #f44336;
       }
@@ -120,9 +120,9 @@
   }
 
   li {
-    margin-right: 35px;
     cursor: pointer;
     padding: 5px;
+    padding-right: 35px;
     font-size: 15px;
     font-weight: 300;
     line-height: 1.67;
