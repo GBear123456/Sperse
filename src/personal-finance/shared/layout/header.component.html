@@ -79,7 +79,7 @@
                                             </li>
                                             <li *ngIf="hasPlatformPermissions || isImpersonatedLogin" class="m-nav__separator m-nav__separator--fit"></li>
                                             <li *ngIf="isImpersonatedLogin" class="m-nav__item">
-                                                <a href="javascript:;" class="m-nav__link" (click)="showLinkedAccounts()">
+                                                <a href="javascript:;" class="m-nav__link" (click)="showLinkedAccounts($event)">
                                                     <i class="m-nav__link-icon flaticon-user-settings"></i>
                                                     <span class="m-nav__link-title">
                                                         <span class="m-nav__link-wrap">
@@ -184,5 +184,4 @@
         [memberAreaLinks]="memberAreaLinks">
     </member-area-navigation>
 </div>
-<linkedAccountsModal *ngIf="loggedUserId" #linkedAccountsModal (modalClose)="getRecentlyLinkedUsers()"></linkedAccountsModal>
 <changeProfilePictureModal #changeProfilePictureModal></changeProfilePictureModal>

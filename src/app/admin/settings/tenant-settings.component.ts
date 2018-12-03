@@ -24,7 +24,7 @@ import {
     TenantCustomizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 
@@ -55,7 +55,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
-    isPFMEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
+    isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
 
     logoUploader: FileUploader;
@@ -112,34 +112,30 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this._tenantPaymentSettingsService.getPayPalSettings(),
             this._tenantPaymentSettingsService.getACHWorksSettings(),
             this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
+            this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
+            this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null)
+        ];
+        let settingNames: string[] = [
+            'settings',
+            'baseCommercePaymentSettings',
+            'payPalPaymentSettings',
+            'achWorksSettings',
+            'recurlySettings',
+            'idcsSettings',
+            'epcvipSettings'
         ];
 
-        if (this.isCreditReportFeatureEnabled)
-            requests.push(this._tenantSettingsCreditReportService.getIdcsSettings());
-
-        if (this.isPFMEnabled)
-            requests.push(this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings());
-
-            forkJoin(requests)
+        forkJoin(requests)
             .pipe(finalize(() => { this.loading = false; }))
-            .subscribe((result) => {
-                this.settings = result[0];
+            .subscribe((results) => {
+
+                for (let i = 0; i < results.length; i++) {
+                    this[settingNames[i]] = results[i];
+                }
+
                 if (this.settings.general) {
                     this.initialTimeZone = this.settings.general.timezone;
                     this.usingDefaultTimeZone = this.settings.general.timezoneForComparison === abp.setting.values['Abp.Timing.TimeZone'];
-                }
-
-                this.baseCommercePaymentSettings = result[1];
-                this.payPalPaymentSettings = result[2];
-                this.achWorksSettings = result[3];
-                this.recurlySettings = result[4];
-
-                if (this.isCreditReportFeatureEnabled) {
-                    this.idcsSettings = result[5];
-                }
-
-                if (this.isPFMEnabled) {
-                    this.epcvipSettings = result[this.isCreditReportFeatureEnabled ? 6 : 5];
                 }
             });
     }
@@ -280,7 +276,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         ];
         if (this.isCreditReportFeatureEnabled)
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
-        if (this.isPFMEnabled)
+        if (this.isPFMApplicationsFeatureEnabled)
             requests.push(this._tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
 
         forkJoin(requests).subscribe(() => {

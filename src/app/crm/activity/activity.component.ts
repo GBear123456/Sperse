@@ -17,6 +17,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivityServiceProxy, CreateActivityDtoType } from '@shared/service-proxies/service-proxies';
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
+import { FiltersService } from '@shared/filters/filters.service';
 
 @Component({
     templateUrl: './activity.component.html',
@@ -33,7 +34,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     private dataSourceURI = 'Activity';
     private stages: any;
 
-    public timezone: string = 'Etc/UTC';
+    public timezone = 'Etc/UTC';
     public showPipeline = false;
     public pipelineDataSource: any;
     public pipelinePurposeId =
@@ -46,13 +47,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public scheduleDate = new Date(this.currentDate);
     private pipelineDate = new Date(this.currentDate);
     private calendarCaption: string;
-    public calendarInitialized: boolean = false;
+    public calendarInitialized = false;
 
     private currentView = 'month';
     private pipelineView = this.currentView;
     public scheduleView = this.currentView;
 
-    public popoverCalendarVisible: boolean = false;
+    public popoverCalendarVisible = false;
     public resources: any[] = [
         {
             fieldExpr: 'Type',
@@ -84,12 +85,14 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             }
         ]
     };
+    public searchValue: string;
 
     constructor(
         injector: Injector,
         public dialog: MatDialog,
         private _pipelineService: PipelineService,
-        private _appService: AppService
+        private _appService: AppService,
+        private _filtersService: FiltersService
     ) {
         super(injector);
 
@@ -152,14 +155,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     res.forEach((record) => {
                         if (record.AllDay) {
                             record.fieldTimeZone = this.timezone;
-                            
+
                             let startDate = moment(record.StartDate.substring(0, 19)).format();
                             record.StartDate = startDate;
 
                             let endDate = moment(record.EndDate.substring(0, 19)).format();
                             record.EndDate = endDate;
-                        }
-                        else {
+                        } else {
                             record.fieldTimeZone = 'Etc/UTC';
                         }
                     });
@@ -194,19 +196,65 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     getStartDate() {
         let period = <any>this.getPeriodType();
         return this.getCurrentDate().startOf(period)
-            .add(period == 'month' ? -10: 0, 'days').toDate();
+            .add(period == 'month' ? -10 : 0, 'days').toDate();
     }
 
     getEndDate() {
         let period = <any>this.getPeriodType();
         return this.getCurrentDate().endOf(period)
-            .add(period == 'month' ? 10: 0, 'days').toDate();
+            .add(period == 'month' ? 10 : 0, 'days').toDate();
     }
 
     initToolbarConfig() {
         this._appService.updateToolbar([
             {
                 location: 'before',
+                items: [
+                    {
+                        name: 'filters',
+                        action: () => {
+                            this._filtersService.fixed = !this._filtersService.fixed;
+                        },
+                        options: {
+                            visible: false,
+                            checkPressed: () => {
+                                return this._filtersService.fixed;
+                            },
+                            mouseover: event => {
+                                this._filtersService.enable();
+                            },
+                            mouseout: event => {
+                                if (!this._filtersService.fixed)
+                                    this._filtersService.disable();
+                            }
+                        },
+                        attr: {
+                            'filter-selected': this._filtersService.hasFilterSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',
+                        widget: 'dxTextBox',
+                        options: {
+                            visible: false,
+                            value: this.searchValue,
+                            width: '279',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' ' + this.l('Tasks').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'center',
                 areItemsDependent: true,
                 items: [
                     {
@@ -217,6 +265,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         },
                         action: () => {
                             this.updateCurrentDate(-1);
+                        },
+                        attr: {
+                            'class': 'bold'
                         }
                     },
                     {
@@ -229,7 +280,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                             this.popoverCalendarVisible = true;
                         },
                         attr: {
-                            'id': 'calendar-navigator-body'
+                            'id': 'calendar-navigator-body',
+                            'class': 'bold'
                         }
                     },
                     {
@@ -240,6 +292,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         },
                         action: () => {
                             this.updateCurrentDate(1);
+                        },
+                        attr: {
+                            'class': 'bold'
                         }
                     },
                 ]
@@ -333,8 +388,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     {
                         name: 'fullscreen',
                         action: () => {
-                            this.toggleFullscreen(document.documentElement);                          
-                            !this.showPipeline && setTimeout(() => {                                  
+                            this.toggleFullscreen(document.documentElement);
+                            !this.showPipeline && setTimeout(() => {
                                 this.schedulerComponent.instance.repaint();
                             }, 100);
                         }
@@ -342,6 +397,10 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 ]
             }
         ]);
+    }
+
+    searchValueChange(e) {
+
     }
 
     onContentReady($event) {
@@ -383,21 +442,19 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                     this.pipelineDate = new Date(this.currentDate);
                     this.setPipelineDataSource(!!this.pipelineDataSource);
                 }
-            }
-            else {
+            } else {
                 this.schedulerComponent.instance.option('dataSource', null);
                 if (!this.currentView) {
                     this.scheduleView = this.currentView = 'month';
                     this.updateCalendarCaption();
-                }
-                else if (this.scheduleView != this.currentView)
+                } else if (this.scheduleView != this.currentView)
                     this.scheduleView = this.currentView;
 
                 if (this.scheduleDate != this.currentDate)
                     this.scheduleDate = new Date(this.currentDate);
 
                 //this is done to prevent double data retrieving after settings scheduleView and scheduleDate
-                setTimeout(() => this.schedulerComponent.instance.option('dataSource', this.dataSource))
+                setTimeout(() => this.schedulerComponent.instance.option('dataSource', this.dataSource));
             }
 
             this.initToolbarConfig();
@@ -421,7 +478,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             }
         };
         if (this.pipelineView)
-            dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] }
+            dataSource['customFilter'] = { and: [{ StartDate: { le: this.getEndDate() } }, { EndDate: { ge: this.getStartDate() } }] };
 
         this.pipelineDataSource = dataSource;
 
@@ -454,7 +511,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     repaint() {
         let instance = this.schedulerComponent.instance,
             initialHeight = instance.option('height');
-    
+
         instance.option('height', '0px');
         setTimeout(() => instance.option('height', initialHeight));
     }
@@ -509,7 +566,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     getDateWithTimezone(value) {
         return new Date(moment(value).format('YYYY-MM-DD HH:mm:ss'));
-    }    
+    }
 
     onAppointmentUpdating(event) {
         let period = <any>this.getPeriodType();
@@ -517,12 +574,12 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             const delimiter = 'T';
             let diff = moment(event.newData.StartDate).diff(event.oldData.StartDate, 'days'),
                 newDateParts = event.newData.StartDate.split(delimiter),
-                oldDateParts = event.oldData.StartDate.split(delimiter); 
+                oldDateParts = event.oldData.StartDate.split(delimiter);
             event.newData.StartDate = newDateParts.shift() + delimiter + oldDateParts.pop();
 
             let endDate = moment(event.oldData.EndDate).add(diff, 'days').format('YYYY-MM-DDTHH:mm:ss');
             newDateParts = endDate.split(delimiter);
-            oldDateParts = event.oldData.EndDate.split(delimiter); 
+            oldDateParts = event.oldData.EndDate.split(delimiter);
             event.newData.EndDate = newDateParts.shift() + delimiter + oldDateParts.pop();
         }
     }
@@ -536,8 +593,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         if (this.showPipeline) {
             this.pipelineView = this.currentView;
             this.setPipelineDataSource();
-        }
-        else {
+        } else {
             this.scheduleView = this.currentView;
         }
 
@@ -550,8 +606,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             this.pipelineDate = new Date(this.currentDate);
             if (this.pipelineView)
                 this.setPipelineDataSource();
-        }
-        else {
+        } else {
             this.scheduleDate = new Date(this.currentDate);
         }
 
@@ -584,21 +639,20 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         switch (this.currentView) {
             case 'agenda':
             case 'day':
-                this.calendarCaption = moment(this.currentDate).format("D MMMM YYYY");
+                this.calendarCaption = moment(this.currentDate).format('D MMMM YYYY');
                 break;
             case 'week':
                 let momentDate = moment(this.currentDate);
-                let weekStart = moment(this.currentDate).startOf("week");
-                let weekEnd = moment(this.currentDate).endOf("week");
+                let weekStart = moment(this.currentDate).startOf('week');
+                let weekEnd = moment(this.currentDate).endOf('week');
                 if (weekStart.month() == momentDate.month() && weekEnd.month() == momentDate.month()) {
-                    this.calendarCaption = `${weekStart.date()} - ${weekEnd.date()} ${momentDate.format("MMMM YYYY")}`;
-                }
-                else {
-                    this.calendarCaption = `${weekStart.date()} ${weekStart.format("MMM")} - ${weekEnd.date()} ${weekEnd.format("MMM")} ${weekEnd.year()}`
+                    this.calendarCaption = `${weekStart.date()} - ${weekEnd.date()} ${momentDate.format('MMMM YYYY')}`;
+                } else {
+                    this.calendarCaption = `${weekStart.date()} ${weekStart.format('MMM')} - ${weekEnd.date()} ${weekEnd.format('MMM')} ${weekEnd.year()}`;
                 }
                 break;
             case 'month':
-                this.calendarCaption = moment(this.currentDate).format("MMMM YYYY");
+                this.calendarCaption = moment(this.currentDate).format('MMMM YYYY');
                 break;
             default:
                 this.calendarCaption = 'All period';
