@@ -222,4 +222,52 @@
             }
         }
     }
+
+    @media all and (max-width: 600px) {
+        .cdk-overlay-pane.slider {
+            max-width: 100vw !important;
+        }
+
+        mat-dialog-container {
+            position: relative !important;
+
+            modal-dialog {
+                position: static !important;
+            }
+        }
+
+        .mat-dialog-header {
+            flex-direction: column;
+            height: 110px !important;
+
+            dx-text-box {
+                max-width: 100%;
+                order: 2;
+
+                input {
+                    text-align: center;
+                }
+            }
+
+            .mat-dialog-actions {
+                justify-content: flex-end;
+                padding: 0;
+
+                .mat-dialog-buttons {
+                    margin-right: 28px;
+                }
+            }
+        }
+
+        .close-dialog {
+            left: auto !important;
+            right: 0 !important;
+            top: 21px !important;
+            background-color: transparent !important;
+
+            &:before, &:after {
+                background: #FFF!important;
+            }
+        }
+    }
 }
