@@ -47,12 +47,8 @@ export function appInitializerFactory(
                 let ui: AppUiCustomizationService = injector.get(AppUiCustomizationService);
                 appSessionService.init().then(
                     (result) => {
-                        //set og share image meta tag
-                        if (!appSessionService.tenant || !appSessionService.tenant.logoId) {
-                            $('meta[property=og\\:image]').attr('content', window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png');
-                        } else {
-                            $('meta[property=og\\:image]').attr('content', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + appSessionService.tenant.logoId);
-                        }
+                        //set og meta tags
+                        updateMetadata(appSessionService.tenant, ui);
 
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
                         if (customizations && customizations.favicons && customizations.favicons.length)
@@ -78,6 +74,28 @@ export function appInitializerFactory(
             }, resolve, reject);
         });
     };
+}
+
+function createMetatag(name, content) {
+    let meta = document.head.querySelector('meta[property="' + name + '"]');
+    if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', name);
+        document.head.appendChild(meta);
+    }
+
+    meta.setAttribute('content', content);    
+}
+
+function updateMetadata(tenant, ui) {    
+    createMetatag("og:title", document.title);
+    createMetatag("og:description", tenant && 
+        tenant.customLayoutType && tenant.customLayoutType != 'Default' 
+        ? '': "Business management platform, enhanced with AI");
+    createMetatag("og:url", location.origin);
+    createMetatag("og:image",!tenant || !tenant.logoId ? 
+        window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png' :
+        AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
 }
 
 function getDocumentOrigin() {
