@@ -59,12 +59,22 @@
     }
     .footer-menu {
         display: flex;
-        flex-wrap: nowrap;
         padding-left: 0;
         list-style-type: none;
         justify-content: space-between;
         align-items: center;
-        white-space: nowrap;
+        & > * {
+            width: 100%;
+        }
+        @media (min-width: 992px) {
+            flex-wrap: nowrap;
+            & > * {
+                width: auto;
+            }
+        }
+        @media (min-width: 1200px) {
+            white-space: nowrap;
+        }
         img.secure-logo {
             margin-left: 30px;
         }
@@ -85,7 +95,7 @@
         @media (max-width: 730px) {
             justify-content: space-around;
             .footer-menu-list {
-                margin: 30px 0px;
+                //margin: 30px 0px;
             }
         }
 
@@ -96,7 +106,7 @@
         &-item {
             display: inline-block;
             padding: 14px 15px 0 15px;
-            
+
              &:last-child {
                 padding-right: 0;
             }
@@ -119,7 +129,7 @@
         }
     }
     .copyright {
-        float: left;
+        //float: left;
         font-family: Open Sans;
         font-size: 14px;
         font-weight: normal;
