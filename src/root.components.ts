@@ -71,7 +71,10 @@ export class RootComponent implements AfterViewInit {
     }
 
     public setTitle(tenantName: string, moduleName: string) {
-        let newTitle = (tenantName === '' ? AppConsts.defaultTenantName : tenantName) + ': ' + moduleName;
+        let newTitle = (tenantName === '' ? AppConsts.defaultTenantName : tenantName) + ': ' + moduleName,
+            ogTitle = document.head.querySelector('meta[property="og:title"]');
+        if (ogTitle)
+            ogTitle.setAttribute('content', newTitle);
         this.title.setTitle(newTitle);
     }
 
