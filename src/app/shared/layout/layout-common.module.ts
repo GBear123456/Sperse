@@ -81,7 +81,9 @@ let COMPONENTS = [
         ChangePasswordModalComponent,
         NotificationSettingsModalComponent,
         NotificationsComponent,
-        LoginAttemptsModalComponent
+        LoginAttemptsModalComponent,
+        LinkedAccountsModalComponent,
+        LinkAccountModalComponent
     ]
 })
 export class LayoutCommonModule {}

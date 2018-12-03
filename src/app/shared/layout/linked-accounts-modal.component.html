@@ -1,11 +1,7 @@
-<div bsModal #linkedAccountsModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-     aria-hidden="true" [config]="{keyboard: false}">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+<modal-dialog>
+    <dx-scroll-view showScrollbar="onHover">
+        <div class="content">
             <div class="modal-header">
-                <h4 class="modal-title">
-                    <span>{{l("LinkedAccounts")}}</span>
-                </h4>
                 <button class="btn btn-primary pull-right" (click)="manageLinkedAccounts()"><i class="fa fa-plus"></i>{{l("LinkNewAccount")}}</button>
             </div>
             <div class="modal-body">
@@ -69,10 +65,7 @@
                 </div>
                 <!--<Primeng-TurboTable-End>-->
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-right" (click)="close()">{{l("Close")}}</button>
-            </div>
         </div>
-    </div>
-</div>
-<linkAccountModal #linkAccountModal (modalSave)="getLinkedUsers()"></linkAccountModal>
+    </dx-scroll-view>
+    <linkAccountModal #linkAccountModal (modalSave)="getLinkedUsers()"></linkAccountModal>
+</modal-dialog>
