@@ -19,6 +19,7 @@ import { CreditReportComponent } from '@root/personal-finance/landings/credit-re
 import { CreditReportRegFromComponent } from '@root/personal-finance/landings/credit-report/register-form/register-form.component';
 import { LendSpaceDarkComponent } from '@root/personal-finance/landings/lend-space-dark/lend-space-dark.component';
 import { LendSpaceComponent } from '@root/personal-finance/landings/lend-space/lend-space.component';
+import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-space-dark/signup/lend-space-signup.component';
 import {
     DxBoxModule, DxButtonModule,
     DxCheckBoxModule, DxDateBoxModule,
@@ -44,6 +45,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
         CreditReportRegFromComponent,
         LendSpaceComponent,
         LendSpaceDarkComponent,
+        LendSpaceSignupComponent,
         CreditWizardPageComponent
     ],
     imports: [

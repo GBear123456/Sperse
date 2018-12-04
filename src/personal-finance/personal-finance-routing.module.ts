@@ -9,6 +9,7 @@ import { AboutUsComponent } from './pages/about-us/about-us.component';
 import { KbaResultComponent } from './member-area/kba-result/kba-result.component';
 import { LendSpaceComponent } from '@root/personal-finance/landings/lend-space/lend-space.component';
 import { LendSpaceDarkComponent } from '@root/personal-finance/landings/lend-space-dark/lend-space-dark.component';
+import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-space-dark/signup/lend-space-signup.component';
 import { CreditWizardPageComponent } from '@root/personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.component';
 import { CreditReportComponent } from '@root/personal-finance/landings/credit-report/credit-report.component';
 import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common/auth/logged-out-credit-report-guard';
@@ -33,6 +34,10 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                     {
                         path: 'signup',
                         component: CreditWizardPageComponent
+                    },
+                    {
+                        path: 'sign-up',
+                        component: LendSpaceSignupComponent
                     },
                     {
                         path: 'lend-space',
