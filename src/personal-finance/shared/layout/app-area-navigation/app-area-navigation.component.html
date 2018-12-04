@@ -19,7 +19,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <ul class="app-responsive-menu dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-        <li *ngFor="let item of responsiveMemberAreaLinks" routerLinkActive="active">
+        <li *ngFor="let item of responsiveMemberAreaLinks" routerLinkActive="active" [hidden]="item.hidden">
             <a (click)="navigationItemClick($event, item)" routerLinkActive="active" [class.active]="currentUrl === item.routerUrl" [routerLinkActiveOptions]="{exact:true}"
                class="dropdown-item" [ngClass]="item.class" [class.disable]="item.disabled">
                 {{l(item.name)}}
@@ -37,7 +37,7 @@
 
 <ul class="right-actions" *ngIf="!loggedUserId">
     <li class="right-actions--item" *ngFor="let link of actionsButtons">
-        <a [routerLink]="link.routerUrl" class="left-menu--link member-signup"
+        <a [routerLink]="link.routerUrl" class="left-menu--link"
            [ngClass]="link.class"
            [class.disable]="link.disabled">
             <span>{{l(link.name)}}</span>

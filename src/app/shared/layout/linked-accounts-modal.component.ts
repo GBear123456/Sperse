@@ -17,8 +17,6 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     styleUrls: ['./linked-accounts-modal.component.less']
 })
 export class LinkedAccountsModalComponent extends ModalDialogComponent implements OnInit {
-
-    @ViewChild('linkedAccountsModal') modal: ModalDirective;
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
 

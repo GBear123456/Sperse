@@ -21,7 +21,8 @@ import {
     RecurlyPaymentSettings,
     EPCVIPOfferProviderSettings,
     TenantOfferProviderSettingsServiceProxy,
-    TenantCustomizationInfoDto
+    TenantCustomizationInfoDto,
+    EPCVIPMailerSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -57,6 +58,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
+    epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
 
     logoUploader: FileUploader;
     faviconsUploader: FileUploader;
@@ -113,8 +115,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this._tenantPaymentSettingsService.getACHWorksSettings(),
             this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
             this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
-            this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null)
+            this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
+            this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
         ];
+
         let settingNames: string[] = [
             'settings',
             'baseCommercePaymentSettings',
@@ -122,7 +126,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             'achWorksSettings',
             'recurlySettings',
             'idcsSettings',
-            'epcvipSettings'
+            'epcvipSettings',
+            'epcvipEmailSettings'
         ];
 
         forkJoin(requests)
@@ -276,8 +281,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         ];
         if (this.isCreditReportFeatureEnabled)
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
-        if (this.isPFMApplicationsFeatureEnabled)
+        if (this.isPFMApplicationsFeatureEnabled) {
             requests.push(this._tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
+            requests.push(this._tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
+        }
 
         forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));

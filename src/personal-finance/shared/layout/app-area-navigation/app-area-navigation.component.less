@@ -94,6 +94,7 @@
                     color: #535354 !important;
                 }
                 &.member-login {
+                    display: none;
                     color: #fff !important;
                     background-color: #ff9933;
                     transition: .2s;
@@ -265,6 +266,16 @@
     /deep/ .right-actions {
         a.member-login {
             display: block!important;
+        }
+    }
+
+    /deep/ .app-responsive-menu {
+        li {
+            a {
+                &.member-login {
+                    display: block !important;
+                }
+            }
         }
     }
 }

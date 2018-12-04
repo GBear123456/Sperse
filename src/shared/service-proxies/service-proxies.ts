@@ -18272,6 +18272,62 @@ export class ProfileServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    downloadPicture(input: DownloadPictureInput | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/DownloadPicture";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDownloadPicture(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDownloadPicture(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDownloadPicture(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getPasswordComplexitySetting(): Observable<GetPasswordComplexitySettingOutput> {
@@ -22624,6 +22680,58 @@ export class TenantSettingsServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getEPCVIPMailerSettings(): Observable<EPCVIPMailerSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetEPCVIPMailerSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEPCVIPMailerSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEPCVIPMailerSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<EPCVIPMailerSettingsEditDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EPCVIPMailerSettingsEditDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetEPCVIPMailerSettings(response: HttpResponseBase): Observable<EPCVIPMailerSettingsEditDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? EPCVIPMailerSettingsEditDto.fromJS(resultData200) : new EPCVIPMailerSettingsEditDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EPCVIPMailerSettingsEditDto>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -22657,6 +22765,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateAllSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateEPCVIPMailerSettings(input: EPCVIPMailerSettingsEditDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateEPCVIPMailerSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateEPCVIPMailerSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateEPCVIPMailerSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateEPCVIPMailerSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -50310,6 +50470,42 @@ export interface IUpdateProfilePictureInput {
     thumbnail: string;
 }
 
+export class DownloadPictureInput implements IDownloadPictureInput {
+    url!: string;
+
+    constructor(data?: IDownloadPictureInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): DownloadPictureInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new DownloadPictureInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface IDownloadPictureInput {
+    url: string;
+}
+
 export class GetPasswordComplexitySettingOutput implements IGetPasswordComplexitySettingOutput {
     setting!: PasswordComplexitySetting | undefined;
 
@@ -53371,6 +53567,46 @@ export interface ITenantBillingSettingsEditDto {
     legalName: string | undefined;
     address: string | undefined;
     taxVatNo: string | undefined;
+}
+
+export class EPCVIPMailerSettingsEditDto implements IEPCVIPMailerSettingsEditDto {
+    baseUrl!: string | undefined;
+    apiKey!: string | undefined;
+
+    constructor(data?: IEPCVIPMailerSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.baseUrl = data["baseUrl"];
+            this.apiKey = data["apiKey"];
+        }
+    }
+
+    static fromJS(data: any): EPCVIPMailerSettingsEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EPCVIPMailerSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["baseUrl"] = this.baseUrl;
+        data["apiKey"] = this.apiKey;
+        return data; 
+    }
+}
+
+export interface IEPCVIPMailerSettingsEditDto {
+    baseUrl: string | undefined;
+    apiKey: string | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
