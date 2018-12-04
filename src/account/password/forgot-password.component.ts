@@ -25,7 +25,6 @@ export class AdForgotPasswordHostDirective {
 
 @Component({
     templateUrl: './forgot-password.component.html',
-    styleUrls: ['./lend-space-password.less'],
     animations: [accountModuleAnimation()]
 })
 export class ForgotPasswordComponent extends AppComponentBase implements OnInit {
