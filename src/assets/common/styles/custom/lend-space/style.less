@@ -43,7 +43,7 @@ body.lend-space .swal-modal .swal-icon.swal-icon--info {
   box-shadow: none;
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--success {
-  background: #FFF;    
+  background: #FFF;
   border: 10px solid #FFD564;
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
@@ -71,4 +71,46 @@ body.lend-space .swal-modal .swal-button {
 body.lend-space .swal-modal .swal-button:hover {
   color: #FFF;
   background-color: #000;
+}
+body.lend-space {
+
+    .accountsContainer {
+        display: block;
+        .row {
+            width: auto;
+            height: calc(100vh - 146px);
+        }
+        .sidebar {
+            padding-left: 0;
+            border-right: none;
+            .left-navigation .left-navigation-item .left-navigation-link {
+                font-family: Poppins;
+                .menu-icon {
+                    margin-right: 0;
+                }
+            }
+        }
+        .p-content {
+            padding: 0;
+        }
+        .not-initialized-content {
+            .welcome-text,
+            body-text
+            .btn-layout {
+                font-family: 'Poppins' !important;
+            }
+            .btn-layout {
+                border-radius: 2px;
+                background-color: @lend-space-main-color;
+                font-size: 18px !important;
+                color: #000000;
+                transition: 0.2s;
+                border: none;
+                &:hover {
+                    background-color: #e0b400;
+                    box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
+                }
+            }
+        }
+    }
 }

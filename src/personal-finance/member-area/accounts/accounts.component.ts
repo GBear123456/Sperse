@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { Observable, BehaviorSubject, forkJoin } from '@node_modules/rxjs';
+import { Observable, forkJoin } from '@node_modules/rxjs';
 
 import { finalize } from 'rxjs/operators';
 
@@ -13,7 +13,13 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
-import { InstanceType, SyncServiceProxy, InstanceServiceProxy, GetProviderUITokenOutput } from '@shared/service-proxies/service-proxies';
+import {
+    InstanceType,
+    SyncServiceProxy,
+    InstanceServiceProxy,
+    GetProviderUITokenOutput,
+    LayoutType, TenantLoginInfoDtoCustomLayoutType
+} from '@shared/service-proxies/service-proxies';
 import { AccountConnectors } from '@shared/AppEnums';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
@@ -92,11 +98,15 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadQuovo(token) {
-        Quovo.embed({
+        let settings = {
             token: token.toString(),
             elementId: 'quovo-accounts-module',
             moduleName: this.currentSection
-        });
+        };
+        if (this.appSession.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace) {
+            settings['userCss'] = AppConsts.appBaseHref + 'assets/common/styles/custom/lend-space/lend-space-quovo.css';
+        }
+        Quovo.embed(settings);
     }
 
     refreshQuovoSection() {
@@ -128,7 +138,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             ...AccountConnectorDialogComponent.defaultConfig,
             ...{
                 data: {
-                    disabledConnectors: [AccountConnectors.Xero]
+                    connector: AccountConnectors.Quovo
                 }
             }
         };

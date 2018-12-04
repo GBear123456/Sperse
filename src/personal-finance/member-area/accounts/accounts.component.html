@@ -1,5 +1,5 @@
 <ng-container *ngIf="appSession.userId; else pfmFinancePage">
-    <div [class.content-wrap]="!featureCheckerService.isEnabled('PFM.Applications')" class="container" *ngIf="isInstanceInfoLoaded">
+    <div [class.content-wrap]="!featureCheckerService.isEnabled('PFM.Applications')" class="container accountsContainer" *ngIf="isInstanceInfoLoaded">
         <div class="row">
             <ng-container *ngIf="_cfoService.initialized; else notInitialized">
                 <aside class="sidebar col-3">
