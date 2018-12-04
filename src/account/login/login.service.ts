@@ -80,6 +80,7 @@ export class LoginService {
 
         sessionStorage.removeItem('authenticateModel');
         sessionStorage.removeItem('authenticateResult');
+        this.initExternalLoginProviders();
     }
 
     authenticate(finallyCallback?: () => void, redirectUrl?: string, autoDetectTenancy: boolean = true): void {
@@ -148,10 +149,10 @@ export class LoginService {
     }
 
     init(): void {
-        //this.initExternalLoginProviders();
+        this.initExternalLoginProviders();
     }
 
-    private processAuthenticateResult(authenticateResult: AuthenticateResultModel, redirectUrl?: string) {
+    private processAuthenticateResult(authenticateResult, redirectUrl?: string) {
         this.authenticateResult = authenticateResult;
 
         if (authenticateResult.shouldResetPassword) {
@@ -264,9 +265,9 @@ export class LoginService {
             callback();
             return;
         }
-
+        debugger;
         if (loginProvider.name === ExternalLoginProvider.FACEBOOK) {
-            jQuery.getScript('//connect.facebook.net/en_US/sdk.js', () => {
+            jQuery.getScript('https://connect.facebook.net/en_US/sdk.js', () => {
                 FB.init({
                     appId: loginProvider.clientId,
                     cookie: false,
@@ -321,8 +322,7 @@ export class LoginService {
                         this._messageService.info('You have successfully registered. Waiting for activation!');
                         return;
                     }
-
-                    this.login(result.accessToken, result.encryptedAccessToken, result.expireInSeconds, false, '', result.returnUrl);
+                    this.processAuthenticateResult(result, result.returnUrl);
                 });
         }
     }
