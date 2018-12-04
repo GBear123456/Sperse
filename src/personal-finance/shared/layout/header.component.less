@@ -1,6 +1,9 @@
 @import url(_settings);
 
 :host {
+    position:fixed;
+    top:0px;
+    width: 100%;
     z-index: 2;
     &.pfm-app {
         box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.08);
@@ -144,6 +147,7 @@
                 .header-profile-picture {
                     width: 41px;
                     height: 41px;
+                    max-width: 41px!important;
                 }
             }
 
