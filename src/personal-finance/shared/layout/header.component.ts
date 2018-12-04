@@ -137,7 +137,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         }
     ];
     actionsButtons = [
-        {name: 'SIGN UP', class: 'member-signup', routerUrl: '', disabled: true},
+        {name: 'SIGN UP', class: 'member-signup', routerUrl: '/personal-finance/sign-up', disabled: false},
         {name: 'Member Login', class: 'member-login', routerUrl: '/account/login', disabled: false}
     ];
     imgList = [

@@ -1,0 +1,298 @@
+@mainFont: 'Poppins', sans-serif;
+@yellowColor: #f0d500;
+@darkGrayColor: #262626;
+
+:host {
+    // base
+    *:not(.fa) {
+        font-family: @mainFont;
+    }
+    
+    .noselect {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    
+    .yellow-title {
+        font-size: 50px;
+        font-weight: 500;
+        color: @yellowColor !important;
+    }
+    
+    .custom-checkbox {
+        .custom-control-input:checked ~ .custom-control-label::before {
+            background: #ff9933;
+        }
+        .custom-control-input:checked ~ .custom-control-label::after {
+            background-position: 49% 50%;
+        }
+    }
+    
+    .get-free {
+        min-height: 441px;
+        background: #fec80d url(../../../../assets/common/images/lend-space-dark/girl-2.png) 23% 50% no-repeat;
+        background-size: contain;
+        padding: 30px 0;
+        font-family: @mainFont;
+        
+        h2 {
+            text-align: left;
+            color: #000;
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 45px;
+            letter-spacing: -0.68px;
+            margin-bottom: 20px;
+        }
+        
+        h4 {
+            text-transform: uppercase;
+        }
+        
+        p {
+            color: #333;
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 500;
+            
+            .and {
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            
+        }
+        
+        form {
+            margin: 40px 0;
+        }
+        
+        .form-group {
+            position: relative;
+            
+            &--name {
+                padding-right: 0;
+            }
+            
+            &--surname {
+                padding-left: 0;
+                
+                label {
+                    left: 10px !important;
+                }
+            }
+            
+            label:not(.citizen) {
+                position: absolute;
+                font-weight: 500;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                transition: .2s;
+            }
+            
+            .citizen {
+                font-weight: 500;
+                transition: .2s;
+            }
+            
+            input {
+                background-color: transparent;
+                border: 0;
+                border-bottom: 2px solid #000;
+                
+                &:focus ~ label,
+                &:not(:focus):valid ~ label {
+                    top: -10px;
+                    transform: translateY(0);
+                    font-size: 12px;
+                }
+            }
+            
+            .ssl-secure {
+                text-transform: uppercase;
+                font-size: 12px;
+                text-align: left;
+                
+                i {
+                    margin-right: 8px;
+                    font-size: 16px;
+                    position: relative;
+                    top: 2px;
+                    left: 2px;
+                }
+            }
+            
+            .switch {
+                input {
+                    display: none;
+                }
+                
+                span {
+                    border: 1px solid #000;
+                    background: #fff;
+                    color: lighten(#000, 50%);
+                    display: inline-block;
+                    width: 40px;
+                    line-height: 28px;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: .2s;
+                    
+                    &.left {
+                        border-right: 0;
+                        border-radius: 3px 0 0 3px;
+                        margin-left: 10px;
+                    }
+                    
+                    &.right {
+                        border-left: 0;
+                        border-radius: 0 3px 3px 0;
+                    }
+                }
+    
+                input:checked ~ .yes,
+                input:not(:checked) ~ .no {
+                    background: #ffce00;
+                    color: #000;
+                    font-weight: bold;
+                }
+            }
+
+            &.actions {
+                margin-top: 20px;
+                margin-bottom: 30px;
+            }
+        }
+        
+        .privacy-term {
+            font-size: 12px;
+            text-align: left;
+            
+            a {
+                font-weight: 700;
+                color: #000;
+                
+                &:hover {
+                    color: lighten(#000, 20%);
+                }
+            }
+        }
+
+        button {
+            padding: 7px 18px 5px;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 35.35px;
+            text-transform: uppercase;
+            letter-spacing: -1.07px;
+            color: #333;
+            border: 2px solid #333;
+            border-radius: 0;
+            
+            &:hover {
+                background: #333;
+                color: #ccc;
+            }
+        }
+    
+        @media all and (max-width: 1440px) {
+            background-position: 0 50%;
+        }
+    
+        @media all and (max-width: 1280px) {
+            background-position: -15% 50%;
+        }
+    
+        @media all and (max-width: 1024px) {
+            background-position: -125px 50%;
+        }
+    
+        @media all and (max-width: 768px) {
+            height: auto;
+            padding-bottom: 460px;
+            background: #fec80d url(../../../../assets/common/images/lend-space-dark/get-free-mobile-bg.png) 100% 100% no-repeat;
+        
+            h2 {
+                padding-left: 0 !important;
+                margin-top: 30px;
+            }
+        }
+        
+        @media all and (max-width: 600px) {
+            background-position: 50% 100%;
+            padding-bottom: 330px;
+            background-size: contain;
+            text-align: center;
+            
+            h2 {
+                text-align: center;
+            }
+            
+            button {
+                white-space: normal !important;
+            }
+        }
+    }
+    
+    .lend-space-footer {
+        background: #262626;
+        padding: 38px 0 90px;
+        
+        * {
+            color: #ccc;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 18px;
+        }
+        
+        h4 {
+            font-size: 16px;
+            font-weight: 700;
+            
+            + p {
+                text-align: justify;
+            }
+        }
+        
+        .logos-wrap {
+            display: none!important;
+            padding: 25px 0;
+            ul {
+                margin: 0 auto;
+                
+                li {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    transition: .2s;
+                    
+                    .logo-small {
+                        width: 110px;
+                    }
+                    
+                    &:hover {
+                        opacity: .8;
+                    }
+                }
+            }
+        }
+        
+        .terms {
+            display: none;
+            color: #f0d500;
+            font-weight: 400;
+            text-transform: uppercase;
+        }
+        
+        .copy {
+            display: none;
+            margin-bottom: 0;
+        }
+    }
+}
+
+/deep/ .pfm-app .wrapper {
+    padding: 0 !important;
+}
