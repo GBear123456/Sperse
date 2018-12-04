@@ -1,0 +1,44 @@
+@import '../../../../fonts/fonts-poppins.css';
+@import 'colors';
+
+.Dashboard__main,
+.solo,
+.GoalsModal__overlay {
+    background: #ffffff;
+}
+*, body {
+    font-family: Poppins !important;
+}
+
+.solo {
+    border-top: 20px solid @lend-space-main-color;
+}
+
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+
+.css-15ljlg,
+.override__button {
+    border-radius: 2px;
+    background-color: @lend-space-main-color;
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    color: #000000;
+    transition: 0.2s;
+    border: none;
+    &:hover {
+        background-color: @lend-space-hover-color;
+        box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
+    }
+}
+
+@media (min-width: 768px) {
+
+}
+

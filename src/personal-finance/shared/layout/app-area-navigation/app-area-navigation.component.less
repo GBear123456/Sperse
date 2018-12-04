@@ -1,4 +1,5 @@
-@import url(../_settings);
+@import url('../_settings');
+@import url('../../../../assets/common/styles/custom/lend-space/colors.less');
 
 :host {
     display: flex;
@@ -141,9 +142,9 @@
                 padding: 0;
                 &.active,
                 &:hover {
-                    color: @yellow-color;
+                    color: @lend-space-main-color;
                 }
-                
+
                 &.disable {
                     pointer-events: none;
                     opacity: 0.7;
@@ -188,7 +189,7 @@
                         left: 0;
                         width: 5px;
                         height: 5px;
-                        background: @yellow-color;
+                        background: @lend-space-main-color;
                         border-radius: 50%;
                         top: 0;
                         bottom: 0;
@@ -248,14 +249,14 @@
                     letter-spacing: normal;
                     white-space: nowrap;
                 }
-                
+
                 &.disable {
                     pointer-events: none;
                     opacity: 0.7;
                 }
             }
         }
-    
+
         @media all and (max-width: 529px) {
             display: none !important;
         }

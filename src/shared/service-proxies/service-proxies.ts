@@ -15600,9 +15600,10 @@ export class OfferServiceProxy {
      * @category (optional) 
      * @type (optional) 
      * @country (optional) 
+     * @creditScore (optional) 
      * @return Success
      */
-    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined): Observable<CampaignDto[]> {
+    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined): Observable<CampaignDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (category !== undefined)
             url_ += "Category=" + encodeURIComponent("" + category) + "&"; 
@@ -15610,6 +15611,8 @@ export class OfferServiceProxy {
             url_ += "Type=" + encodeURIComponent("" + type) + "&"; 
         if (country !== undefined)
             url_ += "Country=" + encodeURIComponent("" + country) + "&"; 
+        if (creditScore !== undefined)
+            url_ += "CreditScore=" + encodeURIComponent("" + creditScore) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -47540,6 +47543,7 @@ export class CampaignDto implements ICampaignDto {
     logoUrl!: string | undefined;
     categories!: string[] | undefined;
     countries!: string[] | undefined;
+    creditScores!: CreditScores[] | undefined;
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
@@ -47573,6 +47577,11 @@ export class CampaignDto implements ICampaignDto {
                 this.countries = [];
                 for (let item of data["countries"])
                     this.countries.push(item);
+            }
+            if (data["creditScores"] && data["creditScores"].constructor === Array) {
+                this.creditScores = [];
+                for (let item of data["creditScores"])
+                    this.creditScores.push(item);
             }
             this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
             this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
@@ -47608,6 +47617,11 @@ export class CampaignDto implements ICampaignDto {
             for (let item of this.countries)
                 data["countries"].push(item);
         }
+        if (this.creditScores && this.creditScores.constructor === Array) {
+            data["creditScores"] = [];
+            for (let item of this.creditScores)
+                data["creditScores"].push(item);
+        }
         data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
         data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
         data["expireTimeOfDay"] = this.expireTimeOfDay;
@@ -47627,6 +47641,7 @@ export interface ICampaignDto {
     logoUrl: string | undefined;
     categories: string[] | undefined;
     countries: string[] | undefined;
+    creditScores: CreditScores[] | undefined;
     daysOfWeekAvailability: string | undefined;
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
@@ -47647,6 +47662,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     logoUrl!: string | undefined;
     categories!: string[] | undefined;
     countries!: string[] | undefined;
+    creditScores!: CreditScores2[] | undefined;
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
@@ -47683,6 +47699,11 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
                 this.countries = [];
                 for (let item of data["countries"])
                     this.countries.push(item);
+            }
+            if (data["creditScores"] && data["creditScores"].constructor === Array) {
+                this.creditScores = [];
+                for (let item of data["creditScores"])
+                    this.creditScores.push(item);
             }
             this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
             this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
@@ -47721,6 +47742,11 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
             for (let item of this.countries)
                 data["countries"].push(item);
         }
+        if (this.creditScores && this.creditScores.constructor === Array) {
+            data["creditScores"] = [];
+            for (let item of this.creditScores)
+                data["creditScores"].push(item);
+        }
         data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
         data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
         data["expireTimeOfDay"] = this.expireTimeOfDay;
@@ -47743,6 +47769,7 @@ export interface ICampaignDetailsDto {
     logoUrl: string | undefined;
     categories: string[] | undefined;
     countries: string[] | undefined;
+    creditScores: CreditScores2[] | undefined;
     daysOfWeekAvailability: string | undefined;
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
@@ -57574,6 +57601,14 @@ export enum Type {
     Carrier = "Carrier", 
 }
 
+export enum CreditScore {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
+}
+
 export enum Module {
     CFO = "CFO", 
     CRM = "CRM", 
@@ -58138,6 +58173,14 @@ export enum CampaignDtoTraficSource {
     PPC_Display = "PPC_Display", 
 }
 
+export enum CreditScores {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
+}
+
 export enum CampaignDetailsDtoSystemType {
     EPCVIP = "EPCVIP", 
 }
@@ -58176,6 +58219,14 @@ export enum CampaignDetailsDtoTraficSource {
     PPC_Decline = "PPC_Decline", 
     PPC_Reject = "PPC_Reject", 
     PPC_Display = "PPC_Display", 
+}
+
+export enum CreditScores2 {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
 }
 
 export enum SubmitApplicationInputSystemType {

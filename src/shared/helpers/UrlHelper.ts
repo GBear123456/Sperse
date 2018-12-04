@@ -54,4 +54,8 @@ export class UrlHelper {
     static isPfmAppUrl(url): boolean {
         return url && /.?personal\-finance\/{0,1}$/.test(url.split('?').shift());
     }
+
+    static isPfmSignUpUrl(url): boolean {
+        return url && url.indexOf('personal-finance/sign-up') >= 0;
+    }
 }
