@@ -265,7 +265,6 @@ export class LoginService {
             callback();
             return;
         }
-        debugger;
         if (loginProvider.name === ExternalLoginProvider.FACEBOOK) {
             jQuery.getScript('https://connect.facebook.net/en_US/sdk.js', () => {
                 FB.init({
