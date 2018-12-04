@@ -292,7 +292,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.offers$ = this.category$.pipe(
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAmount = undefined; }),
-            switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US').pipe(
+            switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined).pipe(
                 finalize(() => {
                     this.offersLoaded = true;
                     abp.ui.clearBusy(this.offersListRef.nativeElement);

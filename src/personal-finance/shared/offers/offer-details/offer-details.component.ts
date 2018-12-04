@@ -112,7 +112,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
                     of(this.offersService.displayedCards) :
                     this.category$.pipe(
-                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US'))
+                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined))
                     )
                 ).pipe(
                     finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))
