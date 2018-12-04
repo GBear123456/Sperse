@@ -56,8 +56,6 @@ export class LoginService {
 
     externalLoginProviders: ExternalLoginProvider[] = [];
 
-    rememberMe: boolean;
-
     constructor(
         private _tokenAuthService: TokenAuthServiceProxy,
         private _router: Router,
@@ -187,7 +185,7 @@ export class LoginService {
                 authenticateResult.accessToken,
                 authenticateResult.encryptedAccessToken,
                 authenticateResult.expireInSeconds,
-                this.rememberMe,
+                this.authenticateModel.rememberClient,
                 authenticateResult.twoFactorRememberClientToken,
                 redirectUrl
             );
@@ -205,7 +203,6 @@ export class LoginService {
     }
 
     private login(accessToken: string, encryptedAccessToken: string, expireInSeconds: number, rememberMe?: boolean, twoFactorRememberClientToken?: string, redirectUrl?: string): void {
-
         let tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
 
         this._tokenService.setToken(
@@ -250,7 +247,6 @@ export class LoginService {
         this.authenticateModel = new AuthenticateModel();
         this.authenticateModel.rememberClient = false;
         this.authenticateResult = null;
-        this.rememberMe = false;
         this.resetPasswordModel = null;
         this.resetPasswordResult = null;
     }

@@ -289,7 +289,7 @@
                         <input type="text" class="form-control" id="email" name="email" email [(ngModel)]="model.email">
                         <div class="layout-checkbox">
                             <label class="t-checkbox">
-                                <input class="form-control" [(ngModel)]="loginService.rememberMe" type="checkbox" name="rememberMe" id="rememberMe" />
+                                <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient" type="checkbox" name="rememberMe" id="rememberMe" />
                                 {{l("RememberMe")}}
                                 <span></span>
                             </label>
