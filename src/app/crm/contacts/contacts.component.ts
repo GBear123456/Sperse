@@ -165,7 +165,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             {label: 'Notes', route: 'notes'},
             {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
             {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
-            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroup.Partner},
+            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroup.Partner || (this.leadInfo && !this.leadInfo.id)},
             {label: 'Referral History', route: 'referral-history', disabled: true},
             {label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true},
             {label: 'Questionnaire', route: 'questionnaire', disabled: true},
@@ -274,8 +274,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     if (!this.partnerInfo)
                         this.close(true);
                 })).subscribe(result => {
-                    this.loadLeadData();
-                    this.fillContactDetails(result[0]);
+                    let contactInfo = result[0];
+                    this.loadLeadData(contactInfo.personContactInfo);
+                    this.fillContactDetails(contactInfo);
                     this.fillPartnerDetails(result[1]);
                     this.loadPartnerTypes();
                 });
@@ -285,14 +286,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     if (!this.contactInfo)
                         this.close(true);
                 })).subscribe(result => {
-                    this.loadLeadData();
+                    this.loadLeadData(result.personContactInfo);
                     this.fillContactDetails(result);
                 });
             }
         }
     }
 
-    loadLeadData() {
+    loadLeadData(personContactInfo = undefined) {
         let contactInfo  = this._contactService['data'].contactInfo,
             leadInfo = this._contactService['data'].leadInfo;
         if (!this.leadInfo && contactInfo && leadInfo) {
@@ -305,6 +306,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 this.finishLoading(true);
             })).subscribe(result => {
                 this.fillLeadDetails(result);
+                personContactInfo && this.InitNavLinks(personContactInfo);
             });
         }
     }
