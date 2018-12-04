@@ -19,8 +19,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
 import { first, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap } from 'rxjs/operators';
-import { isEmpty, pickBy } from 'lodash';
-import { MatSelect } from '@angular/material';
+import { isEmpty, kebabCase, pickBy } from 'lodash';
+import { MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
 
 /** Third party improrts */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -48,6 +48,13 @@ enum FilterType {
     Select
 }
 
+interface StepCondition {
+    min: number;
+    max: number;
+    step: number;
+    sliderMin?: number;
+}
+
 interface Filter {
     name: string;
     field: string;
@@ -55,10 +62,13 @@ interface Filter {
     min?: number;
     max?: number;
     step?: number;
+    stepsConditions?: StepCondition[];
     value?: any;
+    value$?: any;
     values$?: Observable<any[]>;
     showAll?: boolean;
     fullBackground?: boolean;
+    onChange?: (category) => void;
     minMaxDisplayFunction?: (value: number) => string;
     valueDisplayFunction?: (value: number) => string | { name: string, description: string };
 }
@@ -112,17 +122,31 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
             max: 850
         }
     };
-
+    category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route.params);
     filtersSettings: { [filterGroup: string]: Filter[] } = {
         'loans': [
             {
                 name: this.ls.l('Offers_Filter_Amount'),
                 field: 'amount',
                 type: FilterType.Range,
-                min: 10000,
-                max: 200000,
-                value: 43000,
-                step: 1000,
+                min: 100,
+                max: 100000,
+                value: 5000,
+                step: 100,
+                stepsConditions: [
+                    {
+                        min: 0,
+                        max: 1999,
+                        step: 100,
+                        sliderMin: 100
+                    },
+                    {
+                        min: 2000,
+                        max: 100000,
+                        step: 1000,
+                        sliderMin: 0 // To avoid numbers like 2100, 3100 etc
+                    }
+                ],
                 minMaxDisplayFunction: (value: number) => this.numberAbbrPipe.transform(value),
                 valueDisplayFunction: (value: number) => this.currencyPipe.transform(value, 'USD', 'symbol', '0.0-0')
             },
@@ -140,7 +164,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
                         if (value >= this.creditScores[scoreName].min && value <= this.creditScores[scoreName].max) {
                             return {
                                 name: this.ls.l('Offers_CreditScore_' + scoreName),
-                                description: `(${this.creditScores[scoreName].min}-${this.creditScores[scoreName].max} ${this.ls.l('Offers_CreditScore_scores')})`
+                                description: `(${this.creditScores[scoreName].min}-${this.creditScores[scoreName].max})`
                             };
                         }
                     }
@@ -149,9 +173,33 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
             {
                 name: this.ls.l('Offers_Filter_LoanType'),
                 field: 'type',
-                type: FilterType.Checkbox,
-                values$: of([ 'Small business', 'Personal' ]),
-                showAll: false
+                type: FilterType.Select,
+                values$: of([
+                    {
+                        name: this.ls.l('Offers_PersonalLoans'),
+                        value: Category.PersonalLoans
+                    },
+                    {
+                        name: this.ls.l('Offers_PaydayLoans'),
+                        value: Category.PaydayLoans
+                    },
+                    {
+                        name: this.ls.l('Offers_InstallmentLoans'),
+                        value: Category.InstallmentLoans
+                    },
+                    {
+                        name: this.ls.l('Offers_BusinessLoans'),
+                        value: Category.BusinessLoans
+                    },
+                    {
+                        name: this.ls.l('Offers_AutoLoans'),
+                        value: Category.AutoLoans
+                    }
+                ]),
+                value$: this.category$,
+                onChange: (e: MatSelectChange) => {
+                    this.router.navigate(['../' + kebabCase(e.value)], { relativeTo: this.route });
+                }
             },
             {
                 name: this.ls.l('Offers_Filter_ResidentState'),
@@ -218,7 +266,6 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     scrollHeight: number;
     private rootComponent: RootComponent;
     offersLoaded = false;
-    category$: Observable<Category>;
     categoryDisplayName$: Observable<string>;
 
     constructor(
@@ -243,7 +290,6 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     activate() {
-        this.category$ = this.offersService.getCategoryFromRoute(this.route.params);
         this.filters$ = this.category$.pipe(
             map((category: Category) => this.getFiltersForCategory(category)),
             map(filters => this.hideTooBigFilters(filters))
@@ -418,6 +464,18 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
                               });
         if (offer.redirectUrl) {
             window.open(offer.redirectUrl, '_blank');
+        }
+    }
+
+    changeStep(sliderChange: MatSliderChange, stepsConditions: StepCondition[]) {
+        if (stepsConditions && stepsConditions.length) {
+            stepsConditions.some(condition => {
+                if (sliderChange.value >= condition.min && sliderChange.value <= condition.max) {
+                    sliderChange.source.step = condition.step;
+                    sliderChange.source.min = condition.sliderMin;
+                    return true;
+                }
+            });
         }
     }
 

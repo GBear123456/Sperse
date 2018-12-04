@@ -24,7 +24,14 @@
                                         <div class="min">{{ filter.minMaxDisplayFunction ? filter.minMaxDisplayFunction(filter.min) : filter.min }}</div>
                                         <div class="max">{{ filter.minMaxDisplayFunction ? filter.minMaxDisplayFunction(filter.max) : filter.max }}</div>
                                     </div>
-                                    <mat-slider [min]="filter.min" [max]="filter.max" [value]="filter.value" [class.greyTrackBackground]="!filter.fullBackground" [step]="filter.step || 1" #slider>
+                                    <mat-slider
+                                        [min]="filter.min"
+                                        [max]="filter.max"
+                                        [value]="filter.value"
+                                        [class.greyTrackBackground]="!filter.fullBackground"
+                                        [step]="filter.step || 1"
+                                        (input)="changeStep($event, filter.stepsConditions)"
+                                        #slider>
                                     </mat-slider>
                                     <ng-container *ngIf="filter.valueDisplayFunction(slider.value) as value; else simpleValue">
                                         <ng-container *ngTemplateOutlet="value.name ? twoLinesTemplate : oneLineTemplate"></ng-container>
@@ -42,9 +49,14 @@
                                 </div>
                             </ng-container>
                             <ng-container *ngIf="filter.type === filterType.Select">
-                                <mat-select *ngIf="(filter.values$ | async) as filterValues" [value]="filterValues[0]">
-                                    <mat-option *ngFor="let filterValue of filterValues" [value]="filterValue">
-                                        {{ filterValue }}
+                                <mat-select
+                                    *ngIf="(filter.values$ | async) as filterValues"
+                                    [value]="(filter.value$ | async) || filterValues[0].value || filterValues[0]"
+                                    (selectionChange)="filter.onChange && filter.onChange($event)">
+                                    <mat-option
+                                        *ngFor="let filterOption of filterValues"
+                                        [value]="filterOption.value || filterOption">
+                                        {{ filterOption.name || filterOption }}
                                     </mat-option>
                                 </mat-select>
                             </ng-container>
