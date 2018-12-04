@@ -64,23 +64,23 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             name: 'Loans',
             sublinks: [
                 {
-                    name: 'Personal Loans',
+                    name: this.l('Offers_PersonalLoans'),
                     routerUrl: '/personal-finance/offers/personal-loans'
                 },
                 {
-                    name: 'Payday Loans',
+                    name: this.l('Offers_PaydayLoans'),
                     routerUrl: '/personal-finance/offers/payday-loans'
                 },
                 {
-                    name: 'Installment Loans',
+                    name: this.l('Offers_InstallmentLoans'),
                     routerUrl: '/personal-finance/offers/installment-loans'
                 },
                 {
-                    name: 'Business Loans',
+                    name: this.l('Offers_BusinessLoans'),
                     routerUrl: '/personal-finance/offers/business-loans'
                 },
                 {
-                    name: 'Auto Loans',
+                    name: this.l('Offers_AutoLoans'),
                     routerUrl: '/personal-finance/offers/auto-loans'
                 }
             ]
