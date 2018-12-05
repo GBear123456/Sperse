@@ -108,8 +108,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     }
 
     ngOnInit() {
-        this.totalsData$ =
-        combineLatest(
+        this.totalsData$ = combineLatest(
             this._dashboardWidgetsService.period$.pipe(map(period => this.savePeriod(period))),
             this.isCumulative$
         ).pipe(
