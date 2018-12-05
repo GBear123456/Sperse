@@ -4,6 +4,7 @@
   "search": false,
   "requiredFeature": "CRM",
   "requiredPermission": "Pages.CRM",
+  "localizationSource":  "CRM",
   "navigation": [
     [ "Dashboard", "", "icon-home", "/app/crm/dashboard" ],
     [ "Leads", "Pages.CRM.Customers", "icon-globe", "/app/crm/leads" ],

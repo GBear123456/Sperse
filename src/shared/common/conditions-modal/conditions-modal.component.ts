@@ -27,7 +27,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
             title: this.l('TermsOfService'),
             bodyLink: 'terms.html',
             apiBodyLink: 'GetTermsOfServiceDocument',
-            downloadLink: 'DownloadPrivacyPolicyPdf',
+            downloadLink: 'DownloadTermsOfServicePdf',
             tenantProperty: 'customToSDocumentId',
             defaultLink: 'SperseTermsOfService.pdf'
         },
@@ -35,7 +35,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
             title: this.l('PrivacyPolicy'),
             bodyLink: 'privacy.html',
             apiBodyLink: 'GetPrivacyPolicyDocument',
-            downloadLink: 'DownloadTermsOfServicePdf',
+            downloadLink: 'DownloadPrivacyPolicyPdf',
             tenantProperty: 'customPrivacyPolicyDocumentId',
             defaultLink: 'SpersePrivacyPolicy.pdf'
         }

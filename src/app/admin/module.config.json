@@ -4,6 +4,7 @@
   "search": false,
   "requiredFeature": "Admin",
   "requiredPermission": "Pages.Administration",
+  "localizationSource":  "Platform",
   "navigation": [
     [ "Dashboard", "Pages.Administration.Host.Dashboard", "icon-home", "/app/admin/hostDashboard" ],
     [ "Tenants", "Pages.Tenants", "icon-globe", "/app/admin/tenants", "Admin.Advanced" ],
@@ -17,7 +18,7 @@
     [ "Settings", "Pages.Administration.Host.Settings", "icon-settings", "/app/admin/hostSettings", "Admin.Advanced" ],
     [ "Settings", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/tenantSettings", "Admin.Advanced" ],
     [ "System", "Pages.Administration.Tenant.Settings", "icon-settings", "/app/admin/systemSettings", "Admin.Advanced" ],
-    [ "UI Customization", "", "icon-settings", "/app/admin/ui-customization", "Admin.Advanced" ],
+    [ "UICustomization", "", "icon-settings", "/app/admin/ui-customization", "Admin.Advanced" ],
     [ "Products", "Pages.Editions", "icon-grid", "/app/admin/products" ]
   ]
 }
