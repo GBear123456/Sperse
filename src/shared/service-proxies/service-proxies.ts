@@ -1497,6 +1497,58 @@ export class ApplicationServiceProxy {
         }
         return _observableOf<SignUpMemberResponse>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getMemberInfo(): Observable<GetMemberInfoResponse> {
+        let url_ = this.baseUrl + "/api/services/PFM/Application/GetMemberInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMemberInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMemberInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<GetMemberInfoResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetMemberInfoResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMemberInfo(response: HttpResponseBase): Observable<GetMemberInfoResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetMemberInfoResponse.fromJS(resultData200) : new GetMemberInfoResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetMemberInfoResponse>(<any>null);
+    }
 }
 
 @Injectable()
@@ -15659,7 +15711,7 @@ export class OfferServiceProxy {
      * @creditScore (optional) 
      * @return Success
      */
-    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined): Observable<CampaignDto[]> {
+    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, subId: string): Observable<CampaignDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (category !== undefined)
             url_ += "Category=" + encodeURIComponent("" + category) + "&"; 
@@ -15669,6 +15721,10 @@ export class OfferServiceProxy {
             url_ += "Country=" + encodeURIComponent("" + country) + "&"; 
         if (creditScore !== undefined)
             url_ += "CreditScore=" + encodeURIComponent("" + creditScore) + "&"; 
+        if (subId === undefined || subId === null)
+            throw new Error("The parameter 'subId' must be defined and cannot be null.");
+        else
+            url_ += "subId=" + encodeURIComponent("" + subId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -15721,13 +15777,18 @@ export class OfferServiceProxy {
     }
 
     /**
-     * @id (optional) 
      * @return Success
      */
-    getDetails(id: number | null | undefined): Observable<CampaignDetailsDto> {
+    getDetails(id: number, subId: string): Observable<CampaignDetailsDto> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetDetails?";
-        if (id !== undefined)
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (subId === undefined || subId === null)
+            throw new Error("The parameter 'subId' must be defined and cannot be null.");
+        else
+            url_ += "subId=" + encodeURIComponent("" + subId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -28734,6 +28795,46 @@ export class SignUpMemberResponse implements ISignUpMemberResponse {
 
 export interface ISignUpMemberResponse {
     userId: number | undefined;
+}
+
+export class GetMemberInfoResponse implements IGetMemberInfoResponse {
+    creditScore!: GetMemberInfoResponseCreditScore | undefined;
+    stateCode!: string | undefined;
+
+    constructor(data?: IGetMemberInfoResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.creditScore = data["creditScore"];
+            this.stateCode = data["stateCode"];
+        }
+    }
+
+    static fromJS(data: any): GetMemberInfoResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetMemberInfoResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["creditScore"] = this.creditScore;
+        data["stateCode"] = this.stateCode;
+        return data; 
+    }
+}
+
+export interface IGetMemberInfoResponse {
+    creditScore: GetMemberInfoResponseCreditScore | undefined;
+    stateCode: string | undefined;
 }
 
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
@@ -58051,6 +58152,14 @@ export enum EmploymentInformationIncomeType {
 export enum BankInformationBankAccountType {
     Checking = "Checking", 
     Savings = "Savings", 
+}
+
+export enum GetMemberInfoResponseCreditScore {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
 }
 
 export enum EntityChangeListDtoChangeType {

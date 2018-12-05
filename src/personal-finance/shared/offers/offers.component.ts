@@ -292,7 +292,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.offers$ = this.category$.pipe(
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAmount = undefined; }),
-            switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined).pipe(
+            switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined, 'organic').pipe( //Added 'organic' stub temporary until real value
                 finalize(() => {
                     this.offersLoaded = true;
                     abp.ui.clearBusy(this.offersListRef.nativeElement);
@@ -430,8 +430,10 @@ export class OffersComponent implements OnInit, OnDestroy {
     applyOffer(offer: CampaignDto) {
         const submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.id,
-            systemType: 'EPCVIP'
+            systemType: 'EPCVIP',
+            subId: 'organic' //Added 'organic' stub temporary until real value
         });
+
         abp.ui.setBusy(this.offersListRef.nativeElement);
         this.offerServiceProxy.submitApplication(submitApplicationInput)
                               .pipe(finalize(() => abp.ui.clearBusy(this.offersListRef.nativeElement)))

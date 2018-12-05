@@ -271,7 +271,7 @@ export class LoginService {
                     appId: loginProvider.clientId,
                     cookie: false,
                     xfbml: true,
-                    version: 'v2.5'
+                    version: 'v3.2'
                 });
 
                 FB.getLoginStatus(response => {

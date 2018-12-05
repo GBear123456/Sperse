@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 export class AppUiCustomizationService {
 
     getTheme() {
-      return  this.getSetting("App.UiManagement.Theme");
+      return  this.getSetting('App.UiManagement.Theme');
     }
 
     getContainerClass() {

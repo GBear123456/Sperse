@@ -10,7 +10,7 @@ import {
     ElementRef
 } from '@angular/core';
 
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppComponentBase } from 'shared/common/app-component-base';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({

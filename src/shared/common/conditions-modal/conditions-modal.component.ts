@@ -82,9 +82,9 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
     }
 
     download() {
-        window.open(this.isTenantDocumentAvailable() ? 
-            this.getApiLink('downloadLink') :
-            this.getDefaultLink('defaultLink'), '_blank');
+        window.open(this.isTenantDocumentAvailable()
+            ? this.getApiLink('downloadLink')
+            : this.getDefaultLink('defaultLink'), '_blank');
     }
 
     getApiLink(link) {

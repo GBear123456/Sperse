@@ -22,7 +22,7 @@ export class AppPreBootstrap {
             if (!targetUrl || targetUrl == '/')
                 targetUrl = location.origin;
             _handleUnAuthorizedRequest.call(abpAjax, messagePromise, targetUrl);
-        }
+        };
 
         AppPreBootstrap.getApplicationConfig(appRootUrl, () => {
             const queryStringObj = UrlHelper.getQueryParameters();

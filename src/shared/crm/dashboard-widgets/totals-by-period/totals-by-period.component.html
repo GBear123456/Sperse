@@ -2,9 +2,12 @@
     <div class="left-section">
         <h2 class="title">{{ l('StatisticsByPeriodTitle') }}</h2>
         <dx-select-box
-            [width]="'215px'"
+            [width]="'350px'"
             [items]="selectItems"
-            [value]="selectItems[0]">
+            [displayExpr]="'name'"
+            [valueExpr]="'value'"
+            [value]="selectItems[0].value"
+            (onSelectionChanged)="changeCumulative($event)">
         </dx-select-box>
         <div class="legend">
             <ul class="legend-list">

@@ -6,6 +6,7 @@ import {
     HostBinding,
     ViewEncapsulation
 } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { PackageEditionConfigDto, PackageEditionConfigFeatureDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -17,7 +18,8 @@ import { AppConsts } from '@shared/AppConsts';
     templateUrl: './package-card.component.html',
     styleUrls: ['./package-card.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.Emulated
+    encapsulation: ViewEncapsulation.Emulated,
+    providers: [ DecimalPipe ]
 })
 export class PackageCardComponent implements OnChanges {
     @Input() name: string;
@@ -31,7 +33,10 @@ export class PackageCardComponent implements OnChanges {
     baseUrl = AppConsts.appBaseHref;
     selectedEdition: PackageEditionConfigDto;
 
-    constructor(public localizationService: AppLocalizationService) {}
+    constructor(
+        public localizationService: AppLocalizationService,
+        private decimalPipe: DecimalPipe
+    ) {}
 
     ngOnChanges(changes) {
         this.selectedEdition = this.getSelectedEdition();
@@ -95,7 +100,6 @@ export class PackageCardComponent implements OnChanges {
     getFeatureValue(feature: PackageEditionConfigFeatureDto): string {
         let featureValue = '';
         if (feature.value) {
-            featureValue += ': ';
             if (feature.definition.isVariable && feature.value !== '-1') {
                 featureValue += +feature.value / this.usersCoefficient;
             } else if (feature.value === '-1') {
@@ -103,6 +107,11 @@ export class PackageCardComponent implements OnChanges {
             } else {
                 featureValue += feature.value;
             }
+            /** If value is number - transform it to US format */
+            featureValue = ': ' + (!isNaN(+(featureValue)) && isFinite(+featureValue)
+                                      ? this.decimalPipe.transform(featureValue, '1.0-0', 'en-En')
+                                      : featureValue
+                                  );
         }
         return featureValue;
     }
