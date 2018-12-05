@@ -242,15 +242,16 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     /** Factory for method that customize axis */
 
     getMonthlyBottomAxisCustomizer(elem) {
-        return `${elem.valueText.substring(0, 3).toUpperCase()}<br/><div class="yearArgument">${elem.value.getFullYear().toString().substr(-2)}</div>`;
+        return `${elem.value.toUTCString().split(' ')[2].toUpperCase()}<br/><div class="yearArgument">${elem.value.getUTCFullYear().toString().substr(-2)}</div>`;
     }
 
     getWeeklyBottomAxisCustomizer(elem) {
-        return `${elem.value.getDate()}.${elem.value.getMonth() + 1}`;
+        return `${elem.value.getUTCDate()}.${elem.value.getUTCMonth() + 1}`;
     }
 
     getDailyBottomAxisCustomizer(elem) {
-        return elem.value.toDateString().split(' ').splice(1, 2).join(' ');
+        const [ , date, month ] = elem.value.toUTCString().split(' ');
+        return month + ' ' + date;
     }
 
     render(component?: any) {
