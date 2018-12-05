@@ -4,6 +4,7 @@
   "search": false,
   "requiredFeature": "CFO",
   "requiredPermission": "Pages.CFO",
+  "localizationSource": "CFO",
   "navigation": [
     [
       "",
