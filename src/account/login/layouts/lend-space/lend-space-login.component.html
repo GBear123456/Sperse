@@ -36,7 +36,7 @@
     </form>
     <div class="login-options" *ngIf="loginService.externalLoginProviders.length > 0">
         <div class="login-with">
-            <h4>{{l("LoginWith")}}</h4>
+            <span class="login-with-or">{{l("or")}}</span>
         </div>
         <ul class="social-icons">
             <li *ngFor="let provider of loginService.externalLoginProviders">
@@ -45,5 +45,8 @@
                    title="{{provider.name}}"></a>
             </li>
         </ul>
+    </div>
+    <div class="login-terms-and-condition">
+        <span>{{l("ByContinuingYouAgreTermsAndCondition")}}</span>
     </div>
 </div>
