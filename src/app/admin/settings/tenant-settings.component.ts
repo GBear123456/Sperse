@@ -108,35 +108,36 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     getSettings(): void {
         this.loading = true;
 
-        let requests: Observable<any>[] = [
-            this._tenantSettingsService.getAllSettings(),
-            this._tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
-            this._tenantPaymentSettingsService.getPayPalSettings(),
-            this._tenantPaymentSettingsService.getACHWorksSettings(),
-            this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
-            this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
-            this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
-            this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
-        ];
-
-        let settingNames: string[] = [
-            'settings',
-            'baseCommercePaymentSettings',
-            'payPalPaymentSettings',
-            'achWorksSettings',
-            'recurlySettings',
-            'idcsSettings',
-            'epcvipSettings',
-            'epcvipEmailSettings'
-        ];
-
-        forkJoin(requests)
+        forkJoin([
+            forkJoin([
+                this._tenantSettingsService.getAllSettings(),
+                this._tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
+                this._tenantPaymentSettingsService.getPayPalSettings(),
+                this._tenantPaymentSettingsService.getACHWorksSettings(),
+                this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
+                this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null)
+            ]),
+            forkJoin([
+                this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
+                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
+            ])
+        ])
             .pipe(finalize(() => { this.loading = false; }))
             .subscribe((results) => {
-
-                for (let i = 0; i < results.length; i++) {
-                    this[settingNames[i]] = results[i];
-                }
+                [
+                    [
+                        this.settings,
+                        this.baseCommercePaymentSettings,
+                        this.payPalPaymentSettings,
+                        this.achWorksSettings,
+                        this.recurlySettings,
+                        this.idcsSettings
+                    ],
+                    [
+                        this.epcvipSettings,
+                        this.epcvipEmailSettings
+                    ]
+                ] = results;
 
                 if (this.settings.general) {
                     this.initialTimeZone = this.settings.general.timezone;
