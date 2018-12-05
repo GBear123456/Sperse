@@ -108,35 +108,29 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     getSettings(): void {
         this.loading = true;
 
-        forkJoin([
-            forkJoin([
+        let requests: Observable<any>[] = [
                 this._tenantSettingsService.getAllSettings(),
                 this._tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
                 this._tenantPaymentSettingsService.getPayPalSettings(),
                 this._tenantPaymentSettingsService.getACHWorksSettings(),
                 this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
-                this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null)
-            ]),
-            forkJoin([
+                this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
-            ])
-        ])
+            ];
+
+        forkJoin(requests)
             .pipe(finalize(() => { this.loading = false; }))
             .subscribe((results) => {
                 [
-                    [
-                        this.settings,
-                        this.baseCommercePaymentSettings,
-                        this.payPalPaymentSettings,
-                        this.achWorksSettings,
-                        this.recurlySettings,
-                        this.idcsSettings
-                    ],
-                    [
-                        this.epcvipSettings,
-                        this.epcvipEmailSettings
-                    ]
+                    this.settings,
+                    this.baseCommercePaymentSettings,
+                    this.payPalPaymentSettings,
+                    this.achWorksSettings,
+                    this.recurlySettings,
+                    this.idcsSettings,
+                    this.epcvipSettings,
+                    this.epcvipEmailSettings
                 ] = results;
 
                 if (this.settings.general) {
