@@ -5,6 +5,7 @@
   "requiredFeature": "PFM",
   "defaultPath": "/personal-finance",
   "hostDisabled": true,
+  "localizationSource": "PFM",
   "navigation": [
   ]
 }

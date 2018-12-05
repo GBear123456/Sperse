@@ -54,7 +54,7 @@ export class TopBarComponent extends AppComponentBase {
             this.config = config;
             this.visibleMenuItemsWidth = 0;
             this.menu = new PanelMenu('MainMenu', 'MainMenu',
-                this.initMenu(config['navigation'], 0)
+                this.initMenu(config['navigation'], config['localizationSource'], 0)
             );
 
             _appService.topMenu = this.menu;
@@ -62,13 +62,13 @@ export class TopBarComponent extends AppComponentBase {
         });
     }
 
-    initMenu(config, level): PanelMenuItem[] {
+    initMenu(config, localizationSource, level): PanelMenuItem[] {
         let navList: PanelMenuItem[] = [];
         config.forEach((val) => {
             let value = val.slice(0);
             if (val.length === 7)
-                value.push(this.initMenu(value.pop(), ++level));
-            let item = new PanelMenuItem(this.l(value[0]),
+                value.push(this.initMenu(value.pop(), localizationSource, ++level));
+            let item = new PanelMenuItem(value[0] && this.localizationService.l('Navigation_' + value[0], localizationSource),
                 value[1], value[2], value[3], value[4], value[5], value[6]);
             item.visible = this.showMenuItem(item);
             if (!level && item.visible) {

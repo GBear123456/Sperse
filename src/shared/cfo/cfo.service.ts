@@ -6,6 +6,8 @@ import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServi
 import { Subject, Subscription, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { BehaviorSubject } from '@node_modules/rxjs';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
@@ -14,6 +16,7 @@ export class CFOService extends CFOServiceBase {
     getStatusSubscription: Subscription;
     constructor(
         private _appService: AppService,
+        private _appLocalizationService: AppLocalizationService,
         private _layoutService: LayoutService,
         private _instanceServiceProxy: InstanceServiceProxy,
         private _contactService: ContactServiceProxy
@@ -70,7 +73,7 @@ export class CFOService extends CFOServiceBase {
         this._appService.topMenu.items
             .forEach((item, i) => {
                 if (i == 0) {
-                    item.text = this.initialized ? 'Dashboard' : 'Setup';
+                    item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard' : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
                 } else if (i == 1) {
                     item.disabled = !this.initialized;
                 } else {
