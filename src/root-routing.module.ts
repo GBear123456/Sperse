@@ -131,7 +131,6 @@ export class RootRoutingModule implements AfterViewInit {
                data: { preload: true }
            },
            { path: '', redirectTo: 'app', pathMatch: 'full' },
-           /** Loads eagerly anyway because of '**' */
            {
                path: '**',
                loadChildren: './shared/not-found/not-found.module#NotFoundModule'
