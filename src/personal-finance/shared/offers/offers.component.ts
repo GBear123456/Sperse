@@ -1,6 +1,5 @@
 /** Core imports */
 import {
-    AfterViewInit,
     ApplicationRef,
     ChangeDetectionStrategy,
     Component,
@@ -25,7 +24,6 @@ import { MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
 /** Third party improrts */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { RootComponent } from '@root/root.components';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import {
     CampaignDto,
@@ -79,7 +77,7 @@ interface Filter {
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ CurrencyPipe, NumberAbbrPipe ]
 })
-export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
+export class OffersComponent implements OnInit, OnDestroy {
     @ViewChild('offersList') offersListRef: ElementRef;
     @ViewChild('filtersSideBar') filtersSideBar: ElementRef;
     @ViewChild('sortingSelect') sortingSelect: MatSelect;
@@ -263,8 +261,6 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
 
     selectedSorting: BehaviorSubject<string> = new BehaviorSubject(this.sortings[0].field);
     private selectedSorting$ = this.selectedSorting.asObservable();
-    scrollHeight: number;
-    private rootComponent: RootComponent;
     offersLoaded = false;
     categoryDisplayName$: Observable<string>;
 
@@ -282,7 +278,6 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         private currencyPipe: CurrencyPipe,
         private numberAbbrPipe: NumberAbbrPipe
     ) {
-        this.rootComponent = injector.get(applicationRef.componentTypes[0]);
     }
 
     ngOnInit() {
@@ -297,7 +292,7 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.offers$ = this.category$.pipe(
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAmount = undefined; }),
-            switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US').pipe(
+            switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined).pipe(
                 finalize(() => {
                     this.offersLoaded = true;
                     abp.ui.clearBusy(this.offersListRef.nativeElement);
@@ -347,9 +342,6 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
         this.displayedOffers$.pipe(takeUntil(this.deactivate$)).subscribe((displayedCreditCards: CampaignDto[]) => {
             this.offersService.displayedCards = displayedCreditCards;
         });
-
-        /** Set overflow hidden to container */
-        this.rootComponent.overflowHidden(false);
     }
 
     private getFiltersForCategory(category: Category): Filter[] {
@@ -397,20 +389,6 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
 
     private createFiltersObject() {
         // this.filters.forEach(filter => this.filtersValues[filter.field] = {});
-    }
-
-    ngAfterViewInit() {
-        this.calcScrollHeight();
-    }
-
-    @HostListener('window:resize', ['$event']) onResize() {
-        this.calcScrollHeight();
-    }
-
-    calcScrollHeight() {
-        const footerElement = this.rootComponent.hostElement.nativeElement.querySelector('.page-footer-inner');
-        const footerHeight = footerElement ? footerElement.getBoundingClientRect().height + 30 : 90;
-        this.scrollHeight = window.innerHeight - this.offersListRef.nativeElement.getBoundingClientRect().top - footerHeight;
     }
 
     filterOffers(offers: any[], filtersValues: FilterValues): any[] {
@@ -485,6 +463,5 @@ export class OffersComponent implements AfterViewInit, OnInit, OnDestroy {
 
     deactivate() {
         this.deactivateSubject.next();
-        this.rootComponent.overflowHidden(false);
     }
 }

@@ -7,19 +7,17 @@
             <h1>{{ categoryDisplayName$ | async }}</h1>
             <h3 #availableCards><ng-container *ngIf="cardsAmount">{{ ls.l('Offers_Available') }} {{ categoryDisplayName$ | async }} ({{ cardsAmount }})</ng-container></h3>
             <div class="creditCardsList" #creditCardsList>
-                <dx-scroll-view [height]="scrollHeight">
-                    <mat-radio-group (change)="creditCardChanged($event)" [value]="selectedCardId$ | async">
-                        <mat-radio-button *ngFor="let creditCard of creditCards$ | async" [value]="creditCard.id">
-                            <div class="imageContainer">
-                                <img [src]="creditCard.logoUrl" [alt]="creditCard.name">
-                            </div>
-                            <div class="cardInfo">
-                                <h4>{{ categoryDisplayName$ | async }}</h4>
-                                <h5>{{ creditCard.name }}</h5>
-                            </div>
-                        </mat-radio-button>
-                    </mat-radio-group>
-                </dx-scroll-view>
+                <mat-radio-group (change)="creditCardChanged($event)" [value]="selectedCardId$ | async">
+                    <mat-radio-button *ngFor="let creditCard of creditCards$ | async" [value]="creditCard.id">
+                        <div class="imageContainer">
+                            <img [src]="creditCard.logoUrl" [alt]="creditCard.name">
+                        </div>
+                        <div class="cardInfo">
+                            <h4>{{ categoryDisplayName$ | async }}</h4>
+                            <h5>{{ creditCard.name }}</h5>
+                        </div>
+                    </mat-radio-button>
+                </mat-radio-group>
             </div>
         </div>
         <div class="col-lg-8 rightBlock" #detailsContainer>

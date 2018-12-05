@@ -32,7 +32,6 @@ export class AdResetPasswordHostDirective {
 
 @Component({
     templateUrl: './reset-password.component.html',
-    styleUrls: [ './lend-space-password.less' ],
     animations: [accountModuleAnimation()]
 })
 export class ResetPasswordComponent extends AppComponentBase implements OnInit {

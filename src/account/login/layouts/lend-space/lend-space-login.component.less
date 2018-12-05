@@ -163,6 +163,55 @@
         background: #000 url(../../../../assets/common/images/lend-space-dark/bg.jpg) 50% 50% no-repeat;
         background-size: cover;
     }
+
+    .login-options {
+        padding-top: 10px;
+
+        .login-with {
+            width: 70%;
+            float: left;
+        }
+
+        .social-icons {
+            float: left;
+            padding-top: 10px;
+            padding: 0;
+            margin: 0;
+        }
+
+        .social-icons li {
+            float: left;
+            display: inline;
+            list-style: none;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            text-indent: -9999px;
+        }
+
+        li > a {
+            border-radius: 2px;
+            width: 28px;
+            height: 28px;
+            display: block;
+            background-position: 0 0;
+            background-repeat: no-repeat;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .social-icons li:hover > a {
+            background-position: 0 -38px;
+        }
+
+        .social-icons li .facebook {
+            background: url(../../../../assets/common/images/social/facebook.png) no-repeat;
+        }
+
+        .social-icons li a {
+            border-radius: 15px 15px 15px 15px !important;
+            -moz-border-radius: 15px 15px 15px 15px !important;
+            -webkit-border-radius: 15px 15px 15px 15px !important;
+        }
+    }
 }
 
 /deep/ .dark-layout {

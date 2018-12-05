@@ -1,7 +1,6 @@
 /** Core imports */
 import {
     ApplicationRef,
-    AfterViewInit,
     Component,
     ElementRef,
     HostListener,
@@ -21,7 +20,6 @@ import { finalize, first, map, switchMap, takeUntil, pluck, tap } from 'rxjs/ope
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { RootComponent } from '@root/root.components';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { Category, Type, OfferServiceProxy, CampaignDto, CampaignDetailsDto } from '@shared/service-proxies/service-proxies';
 
@@ -29,14 +27,13 @@ import { Category, Type, OfferServiceProxy, CampaignDto, CampaignDetailsDto } fr
     templateUrl: 'offer-details.component.html',
     styleUrls: [ './offer-details.component.less' ]
 })
-export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
+export class OfferDetailsComponent implements OnInit, OnDestroy {
     @ViewChild('availableCards') availableCardsRef: ElementRef;
     @ViewChild('creditCardsList') creditCardsListRef: ElementRef;
     @ViewChild('detailsContainer') detailsContainerRef: ElementRef;
     @ViewChild('offersList') offersListRef: ElementRef;
     creditCards$: Observable<CampaignDto[]>;
     cardsAmount: number;
-    scrollHeight: number;
     selectedCardId: ReplaySubject<number> = new ReplaySubject<number>(1);
     selectedCardId$: Observable<number> = this.selectedCardId.asObservable();
     selectedCardDetails$: Observable<CampaignDetailsDto>;
@@ -44,7 +41,6 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
     categoryDisplayName$: Observable<string>;
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
-    private rootComponent: RootComponent;
 
     constructor(
         injector: Injector,
@@ -57,7 +53,6 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
         private offerServiceProxy: OfferServiceProxy,
         private renderer: Renderer2
     ) {
-        this.rootComponent = injector.get(applicationRef.componentTypes[0]);
     }
 
     ngOnInit() {
@@ -77,10 +72,6 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
             takeUntil(this.deactivate$),
             switchMap((cardId: number) => this.getCardDetails(cardId))
         );
-    }
-
-    ngAfterViewInit() {
-        this.calcScrollHeight();
     }
 
     private getCardDetails(cardId: number): any {
@@ -121,21 +112,11 @@ export class OfferDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
         return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
                     of(this.offersService.displayedCards) :
                     this.category$.pipe(
-                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US'))
+                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined))
                     )
                 ).pipe(
                     finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))
                 );
-    }
-
-    @HostListener('window:resize', ['$event']) onResize() {
-        this.calcScrollHeight();
-    }
-
-    calcScrollHeight() {
-        const footerElement = this.rootComponent.hostElement.nativeElement.querySelector('.page-footer-inner');
-        const footerHeight = footerElement ? footerElement.getBoundingClientRect().height + 30 : 90;
-        this.scrollHeight = window.innerHeight - this.availableCardsRef.nativeElement.getBoundingClientRect().top - footerHeight;
     }
 
     creditCardChanged(e: MatRadioChange) {
