@@ -299,7 +299,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             rowHeaderLayout: 'tree',
             showTotals: true,
             sortingMethod: (firstItem, secondItem) => {
-                return this.leftMenuOrder.indexOf(firstItem.value.slice(2)) > this.leftMenuOrder.indexOf(secondItem.value.slice(2));
+                return this.leftMenuOrder.indexOf(firstItem.value.slice(2)) > this.leftMenuOrder.indexOf(secondItem.value.slice(2)) ? 1 : -1;
             },
             customizeText: this.customizeFieldText.bind(this)
         },
