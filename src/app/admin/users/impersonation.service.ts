@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { AccountServiceProxy, ImpersonateInput, ImpersonateOutput } from '@shared/service-proxies/service-proxies';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class ImpersonationService {
@@ -24,7 +25,7 @@ export class ImpersonationService {
             .subscribe((result: ImpersonateOutput) => {
                 this._authService.logout(false);
 
-                let targetUrl = this._appUrlService.getAppRootUrlOfTenant(result.tenancyName) + '?secureId=' + result.impersonationToken;
+                let targetUrl = AppConsts.appBaseUrl + '?secureId=' + result.impersonationToken;
                 if (input.tenantId) {
                     targetUrl = targetUrl + '&tenantId=' + input.tenantId;
                 }
@@ -38,7 +39,7 @@ export class ImpersonationService {
             .subscribe((result: ImpersonateOutput) => {
                 this._authService.logout(false);
 
-                let targetUrl = this._appUrlService.getAppRootUrlOfTenant(result.tenancyName) + '?secureId=' + result.impersonationToken;
+                let targetUrl = AppConsts.appBaseUrl + '?secureId=' + result.impersonationToken;
                 if (abp.session.impersonatorTenantId) {
                     targetUrl = targetUrl + '&tenantId=' + abp.session.impersonatorTenantId;
                 }
