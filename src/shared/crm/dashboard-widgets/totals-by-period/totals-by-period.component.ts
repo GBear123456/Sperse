@@ -2,7 +2,7 @@
 import { Component, OnInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { Observable, of } from 'rxjs';
+import { Observable, combineLatest, of } from 'rxjs';
 import {
     finalize,
     first,
@@ -32,6 +32,7 @@ import { DxChartComponent } from 'devextreme-angular';
 import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { BehaviorSubject } from '@node_modules/rxjs';
 
 @Component({
     selector: 'totals-by-period',
@@ -47,9 +48,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     endDate: any;
     chartWidth = 650;
     currency = 'USD';
-    
     clientColor = '#8487e7';
-    leadColor = '#54e4c9';
 
     periods: TotalsByPeriodModel[] = [
          {
@@ -72,8 +71,18 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         }
     ];
     selectItems = [
-        this.l('LeadStageRatioAndClientCount')
+        {
+            name: this.l('CumulativeLeadStageRatioAndMemberCount'),
+            value: true
+        },
+        {
+            name: this.l('NetLeadStageRatioAndMemberCount'),
+            value: false
+        }
     ];
+    private isCumulative: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.selectItems[0].value);
+    private isCumulative$: Observable<boolean> = this.isCumulative.asObservable();
+
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
     private renderTimeout;
     private series: any[] = [
@@ -99,10 +108,13 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     }
 
     ngOnInit() {
-        this.totalsData$ = this._dashboardWidgetsService.period$.pipe(
+        this.totalsData$ =
+        combineLatest(
+            this._dashboardWidgetsService.period$.pipe(map(period => this.savePeriod(period))),
+            this.isCumulative$
+        ).pipe(
             takeUntil(this.destroy$),
-            map(period => this.savePeriod(period)),
-            switchMap(period => this.loadCustomersAndLeadsStats(period)),
+            switchMap(([period, isCumulative]) => this.loadCustomersAndLeadsStats(period, isCumulative)),
             publishReplay(),
             refCount()
         );
@@ -130,6 +142,10 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         });
     }
 
+    changeCumulative(e) {
+        this.isCumulative.next(e.selectedItem.value);
+    }
+
     private savePeriod(period) {
         if (period) {
             if ([this.l('Today'), this.l('Yesterday'), this.l('This_Week'), this.l('This_Month'), this.l('Last_Month')].indexOf(period.name) >= 0)
@@ -140,12 +156,12 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         return this.selectedPeriod;
     }
 
-    private loadCustomersAndLeadsStats(period: any): Observable<GetCustomerAndLeadStatsOutput[]> {
+    private loadCustomersAndLeadsStats(period: any, isCumulative: boolean): Observable<GetCustomerAndLeadStatsOutput[]> {
         this.startLoading();
         return this._dashboardServiceProxy.getCustomerAndLeadStats(
             GroupBy2[(period.name as GroupBy2)],
             period.amount,
-            true
+            isCumulative
         ).pipe(finalize(() => { this.finishLoading(); }) );
     }
 
@@ -238,8 +254,8 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         return elem.value.toDateString().split(' ').splice(1, 2).join(' ');
     }
 
-    render(component = undefined) {
-        component = component || this.chartComponent 
+    render(component?: any) {
+        component = component || this.chartComponent
             && this.chartComponent.instance;
         if (component) {
             clearTimeout(this.renderTimeout);
