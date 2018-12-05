@@ -430,8 +430,10 @@ export class OffersComponent implements OnInit, OnDestroy {
     applyOffer(offer: CampaignDto) {
         const submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.id,
-            systemType: 'EPCVIP'
+            systemType: 'EPCVIP',
+            subId: 'organic' //Added 'organic' stub temporary until real value
         });
+
         abp.ui.setBusy(this.offersListRef.nativeElement);
         this.offerServiceProxy.submitApplication(submitApplicationInput)
                               .pipe(finalize(() => abp.ui.clearBusy(this.offersListRef.nativeElement)))
