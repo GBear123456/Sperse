@@ -1,6 +1,9 @@
-import {Component, ChangeDetectionStrategy, AfterViewInit, Injector, Renderer2, OnDestroy} from '@angular/core';
-import {AppComponentBase} from '@shared/common/app-component-base';
+import { Component, ChangeDetectionStrategy, AfterViewInit, Injector, Renderer2, OnDestroy, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+
+import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
+
 
 @Component({
     selector: 'app-lend-space-dark',
@@ -59,16 +62,17 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
 
     constructor(
         injector: Injector,
+        @Inject(DOCUMENT) private document,
         private renderer: Renderer2
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
     }
 
     ngAfterViewInit(): void {
-        this.renderer.addClass(document.body, 'lending-page');
+        this.renderer.addClass(this.document.body, 'lending-page');
     }
 
     ngOnDestroy() {
-        this.renderer.removeClass(document.body, 'lending-page');
+        this.renderer.removeClass(this.document.body, 'lending-page');
     }
 }
