@@ -76,7 +76,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
 
     private getCardDetails(cardId: number): any {
         abp.ui.setBusy(this.detailsContainerRef.nativeElement);
-        return this.offerServiceProxy.getDetails(cardId).pipe(
+        return this.offerServiceProxy.getDetails(cardId, 'organic').pipe( //Added 'organic' stub temporary until real value
             /** @todo remove in future */
             map(details => {
                 return {
@@ -112,7 +112,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
                     of(this.offersService.displayedCards) :
                     this.category$.pipe(
-                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined))
+                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined, 'organic')) //Added 'organic' stub temporary until real value
                     )
                 ).pipe(
                     finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))
