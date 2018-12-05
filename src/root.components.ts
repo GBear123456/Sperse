@@ -96,7 +96,7 @@ export class AppRootComponent implements OnInit {
                 @Inject(RootComponent) private parent) {}
 
     ngOnInit() {
-        if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'])
+        if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)
             this.parent.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
 
         //tenant specific custom css

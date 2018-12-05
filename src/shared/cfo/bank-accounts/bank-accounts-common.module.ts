@@ -38,6 +38,7 @@ import { SelectionFilterComponent } from './selection-filter/selection-filter.co
 import { SynchProgressComponent } from './synch-progress/synch-progress.component';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { ChooseXeroAccountComponent } from './xero/import-xero-chart-of-accounts-button/choose-xero-account/choose-xero-account.component';
+import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 
 @NgModule({
     imports: [
@@ -58,6 +59,7 @@ import { ChooseXeroAccountComponent } from './xero/import-xero-chart-of-accounts
         DxTagBoxModule,
         DxProgressBarModule,
         DxValidatorModule,
+        AccountConnectorDialogModule,
         DxValidationSummaryModule,
         DxRadioGroupModule
     ],

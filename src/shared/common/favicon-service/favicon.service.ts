@@ -15,19 +15,29 @@ export class FaviconService {
     ];
 
     updateFavicons(favicons: FaviconDto[], faviconBaseUrl: string) {
-        const oldFaviconsLinks = this.document.head.querySelectorAll('link[rel*="icon"]');
-        const oldManifest = this.document.head.querySelector('link[rel="manifest"]');
+        let oldFaviconsLinks = Array.prototype.slice.call(this.document.head.querySelectorAll('link[rel*="icon"]'), 0),
+            oldManifest = this.document.head.querySelector('link[rel="manifest"]');
+
         favicons.forEach((item: FaviconDto) => {
-            let link = this.document.createElement('link');
-            link.rel = item.relationship;
-            link.type = item.type;
-            link.sizes = item.size;
-            link.href = faviconBaseUrl + item.name;
-            this.document.head.appendChild(link);
-        });
-        if (oldManifest)
-            oldManifest.remove();
-        Array.prototype.forEach.call(oldFaviconsLinks, link => link.remove());
+            let href = faviconBaseUrl + item.name;
+            if (document.head.querySelector('link[href="' + href + '"]')) 
+                oldFaviconsLinks = oldFaviconsLinks.map((link) => {
+                    if (link.href == href)
+                        return undefined;
+                    return link;
+                });
+            else {
+                let link = this.document.createElement('link');
+                link.rel = item.relationship;
+                link.type = item.type;
+                link.sizes = item.size;
+                link.href = href;
+                this.document.head.appendChild(link);
+            }
+        });        
+
+        oldFaviconsLinks.forEach((link) => { link && link.remove() });
+        oldManifest && oldManifest.remove();
     }
 
     resetFavicons() {

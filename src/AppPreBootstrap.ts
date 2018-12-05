@@ -49,21 +49,29 @@ export class AppPreBootstrap {
         return platformBrowserDynamic().bootstrapModule(moduleType, compilerOptions);
     }
 
+    private static updateAppConsts(appConfig) {
+        AppConsts.appBaseUrlFormat = environment.appBaseUrl;
+        AppConsts.remoteServiceBaseUrlFormat = appConfig.remoteServiceBaseUrl;
+        AppConsts.recaptchaSiteKey = appConfig.recaptchaSiteKey;
+        AppConsts.googleSheetClientId = appConfig.googleSheetClientId;
+        AppConsts.subscriptionExpireNootifyDayCount = appConfig.subscriptionExpireNootifyDayCount;
+        AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
+        AppConsts.remoteServiceBaseUrl = appConfig.enforceRemoteServiceBaseUrl 
+            ? appConfig.remoteServiceBaseUrl: location.origin;
+    }
+
     private static getApplicationConfig(appRootUrl: string, callback: () => void) {
-        return abp.ajax({
-            url: appRootUrl + 'assets/' + environment.appConfig,
-            method: 'GET',
-        }).done(result => {
-            AppConsts.appBaseUrlFormat = environment.appBaseUrl;
-            AppConsts.remoteServiceBaseUrlFormat = result.remoteServiceBaseUrl;
-            AppConsts.recaptchaSiteKey = result.recaptchaSiteKey;
-            AppConsts.googleSheetClientId = result.googleSheetClientId;
-            AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
-            AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
-            AppConsts.remoteServiceBaseUrl = result.enforceRemoteServiceBaseUrl 
-                ? result.remoteServiceBaseUrl: location.origin;
+        if (window['appconfig']) {
+            AppPreBootstrap.updateAppConsts(window['appconfig']);
             callback();
-        });
+        } else 
+            return abp.ajax({
+                url: appRootUrl + 'assets/' + environment.appConfig,
+                method: 'GET',
+            }).done(result => {
+                AppPreBootstrap.updateAppConsts(result);
+                callback();
+            });
     }
 
     private static getCurrentClockProvider(currentProviderName: string): abp.timing.IClockProvider {

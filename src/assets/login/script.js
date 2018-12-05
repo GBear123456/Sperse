@@ -53,6 +53,7 @@
 
     function getAppConfig() {
         ajax('./assets/appconfig.json').then(function(result) {
+            window.appconfig = result;
             remoteServiceUrl = result.enforceRemoteServiceBaseUrl
                 ? result.remoteServiceBaseUrl: location.origin;
             getCurrentLoginInformations();
@@ -66,6 +67,7 @@
                 "Accept": "application/json"
             }
         ).then(function(response) {
+            window.loginInfo = response;
             var loginInformations = response && response.result;                         
             tenant = loginInformations && loginInformations.tenant;
             if (tenant && tenant.customLayoutType == 'LendSpace') {

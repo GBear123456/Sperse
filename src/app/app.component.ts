@@ -72,7 +72,6 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
 
         this._ngZone.runOutsideAngular(() => {
             mApp.init();
-            mLayout.init();
             mApp.initialized = true;
         });
     }

@@ -19,6 +19,7 @@ import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/ba
 import { CFOService } from '@shared/cfo/cfo.service';
 import { UserOnlyCFOService } from '../shared/common/user-only.cfo.service';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 
 @NgModule({
     imports: [
@@ -30,6 +31,7 @@ import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
         CreditSimulatorModule,
         CreditResourcesModule,
         BankAccountsCommonModule.forRoot(),
+        AccountConnectorDialogModule,
         StickyModule
     ],
     declarations: [

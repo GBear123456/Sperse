@@ -96,7 +96,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
     }
 
     isTenantDocumentAvailable() {
-        return this.appSession.tenant[this.conditionsOptions[this.data.type].tenantProperty];
+        return this.appSession.tenant && this.appSession.tenant[this.conditionsOptions[this.data.type].tenantProperty];
     }
 
     printContent() {

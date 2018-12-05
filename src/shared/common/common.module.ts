@@ -6,14 +6,9 @@ import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
 import { MatDialogModule } from '@angular/material';
-import { DxButtonModule, DxCheckBoxModule, DxValidatorModule, DxTextBoxModule, DxValidationSummaryModule,
-    DxScrollViewModule,  } from 'devextreme-angular';
+import { DxTextBoxModule, DxScrollViewModule, DxCheckBoxModule } from 'devextreme-angular';
 
 /** Application imports */
-import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
-import { AccountConnectorChooserComponent } from '@shared/common/account-connector-dialog/account-connector-chooser/account-connector-chooser.component';
-import { QuovoLoginComponent } from '@shared/common/account-connector-dialog/quovo-login/quovo-login.component';
-import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero-login/xero-login.component';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import { InfoComponent } from '@shared/common/widgets/info/info.component';
 import { ExportService } from './export/export.service';
@@ -45,10 +40,6 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
         InfoComponent,
         CountryPhoneNumberComponent,
         TitleCasePipe,
-        AccountConnectorDialogComponent,
-        AccountConnectorChooserComponent,
-        XeroLoginComponent,
-        QuovoLoginComponent,
         ModalDialogComponent,
         ConditionsModalComponent
     ],
@@ -63,10 +54,9 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
         InfoComponent,
         CountryPhoneNumberComponent,
         TitleCasePipe,
-        AccountConnectorDialogComponent,
+        
         ModalDialogComponent,
         ConditionsModalComponent,
-        DxCheckBoxModule,
         NoDataModule
     ],
     imports: [
@@ -76,15 +66,12 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
         FormsModule,
         InternationalPhoneNumberModule,
         MatDialogModule,
-        DxValidatorModule,
+
         DxTextBoxModule,
-        DxValidationSummaryModule,
         DxCheckBoxModule,
         DxScrollViewModule,
-        DxButtonModule
     ],
     entryComponents: [
-        AccountConnectorDialogComponent,
         ModalDialogComponent,
         ConditionsModalComponent
     ],

@@ -23,7 +23,7 @@ import {
     DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
     DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
     DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
-    DxTreeViewModule, DxRadioGroupModule, DxPopupModule, DxSliderModule,
+    DxTreeViewModule, DxRadioGroupModule, DxPopupModule, DxSliderModule, DxCheckBoxModule,
     DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule, DxSwitchModule, DxTreeListModule
 } from 'devextreme-angular';
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
@@ -108,6 +108,7 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
         ImageCropperModule,
 
         DxListModule,
+        DxCheckBoxModule,
         DxContextMenuModule,
         DxButtonModule,
         DxToolbarModule,

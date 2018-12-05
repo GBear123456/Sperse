@@ -62,7 +62,6 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
             this.createDateRangePicker();
             this.getDashboardStatisticsData();
             this.bindToolTipForIncomeStatisticsChart($(this.incomeStatisticsChart.nativeElement));
-            mApp.initScroller($('.m-scrollable'), {});
         }, 0);
     }
 
@@ -346,7 +345,7 @@ export class HostDashboardComponent extends AppComponentBase implements AfterVie
      */
 
     loadExpiringTenantsTable(expiringTenants): void {
-        this.expiringTenantsData = expiringTenants;
+        this.expiringTenantsData = expiringTenants || [];
     }
 
     gotoAllExpiringTenants(): void {

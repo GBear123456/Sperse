@@ -79,6 +79,7 @@ import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quick
 import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.component';
+import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 
 @NgModule({
     imports: [
@@ -123,7 +124,8 @@ import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.comp
         AngularGooglePlaceModule,
         DxPopupModule,
         BankAccountsCommonModule,
-        SharedIntroStepsModule
+        SharedIntroStepsModule,
+        AccountConnectorDialogModule
     ],
     declarations: [
         StartComponent,
