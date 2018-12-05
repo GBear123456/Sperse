@@ -1,6 +1,6 @@
 import { Component, Injector, Input, HostListener, AfterViewInit } from '@angular/core';
 
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppComponentBase } from 'shared/common/app-component-base';
 
 @Component({
   selector: 'member-area-navigation',

@@ -1,18 +1,21 @@
-@import './colors';
-
 body.lend-space app-header {
   background: #000;
 }
 body.lend-space .dx-treeview-node-container {
   background: #FFF!important;
 }
-body.lend-space .dx-menu-adaptive-mode, body.lend-space app-header dx-drop-down-box, #m_header_topbar, body.lend-space app-header dx-nav-bar .dx-item.dx-tab, body.lend-space app-header dx-nav-bar .dx-state-hover {
+body.lend-space .dx-menu-adaptive-mode,
+body.lend-space app-header dx-drop-down-box,
+#m_header_topbar,
+body.lend-space app-header dx-nav-bar .dx-item.dx-tab,
+body.lend-space app-header dx-nav-bar .dx-state-hover {
   background: transparent!important;
 }
 body.lend-space app-header dx-drop-down-box input {
   border: 0px!important;
 }
-body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text, body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
+body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
+body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
   color: #f0d500!important;
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
@@ -51,13 +54,14 @@ body.lend-space .swal-modal .swal-icon.swal-icon--success {
 body.lend-space .swal-modal .swal-icon.swal-icon--success .swal-icon--success__hide-corners {
   height: 50px!important;
 }
-body.lend-space .swal-modal .swal-icon.swal-icon--success:before, body.lend-space .swal-modal .swal-icon.swal-icon--success:after {
+body.lend-space .swal-modal .swal-icon.swal-icon--success:before,
+body.lend-space .swal-modal .swal-icon.swal-icon--success:after {
   width: 0px!important;
 }
 body.lend-space .swal-modal .swal-icon.swal-icon--warning:before {
   content: "\2713";
 }
-body.lend-space .swal-modal .swal-icon>div:first-child:before {
+body.lend-space .swal-modal .swal-icon > div:first-child:before {
   color: #000!important;
 }
 body.lend-space .swal-modal .swal-title {
@@ -77,45 +81,39 @@ body.lend-space .swal-modal .swal-button:hover {
   color: #FFF;
   background-color: #000;
 }
-body.lend-space {
-
-    .accountsContainer {
-        display: block !important;
-        .row {
-            width: auto !important;
-            height: calc(100vh - 146px);
-        }
-        .sidebar {
-            padding-left: 0;
-            border-right: none !important;
-            .left-navigation .left-navigation-item .left-navigation-link {
-                font-family: Poppins !important;
-                .menu-icon {
-                    margin-right: 0 !important;
-                }
-            }
-        }
-        .p-content {
-            padding: 0 !important;
-        }
-        .not-initialized-content {
-            .welcome-text,
-            body-text
-            .btn-layout {
-                font-family: 'Poppins' !important;
-            }
-            .btn-layout {
-                border-radius: 2px !important;
-                background-color: #ffcc00;
-                font-size: 18px !important;
-                color: #000000;
-                transition: 0.2s;
-                border: none;
-                &:hover {
-                    background-color: #e0b400;
-                    box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
-                }
-            }
-        }
-    }
+body.lend-space .accountsContainer {
+  display: block !important;
+}
+body.lend-space .accountsContainer .row {
+  width: auto !important;
+  height: calc(100vh - 146px);
+}
+body.lend-space .accountsContainer .sidebar {
+  padding-left: 0;
+  border-right: none !important;
+}
+body.lend-space .accountsContainer .sidebar .left-navigation .left-navigation-item .left-navigation-link {
+  font-family: Poppins !important;
+}
+body.lend-space .accountsContainer .sidebar .left-navigation .left-navigation-item .left-navigation-link .menu-icon {
+  margin-right: 0 !important;
+}
+body.lend-space .accountsContainer .p-content {
+  padding: 0 !important;
+}
+body.lend-space .accountsContainer .not-initialized-content .welcome-text,
+body.lend-space .accountsContainer .not-initialized-content body-text .btn-layout {
+  font-family: 'Poppins' !important;
+}
+body.lend-space .accountsContainer .not-initialized-content .btn-layout {
+  border-radius: 2px !important;
+  background-color: #ffcc00;
+  font-size: 18px !important;
+  color: #000000;
+  transition: 0.2s;
+  border: none;
+}
+body.lend-space .accountsContainer .not-initialized-content .btn-layout:hover {
+  background-color: #e0b400;
+  box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
 }

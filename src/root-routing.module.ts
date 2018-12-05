@@ -2,7 +2,6 @@ import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, RouterModule, Router, Routes, NavigationEnd } from '@angular/router';
 import { AppRootComponent } from 'root.components';
 import { RouteGuard } from '@shared/common/auth/route-guard';
-import { NotFoundComponent } from './shared/not-found/not-found.component';
 
 @Injectable()
 export class CustomReuseStrategy implements RouteReuseStrategy {
@@ -99,12 +98,6 @@ const routes: Routes = [{
     imports: [
         RouterModule.forRoot(routes)
     ],
-    declarations: [
-        NotFoundComponent
-    ],
-    entryComponents: [
-        NotFoundComponent
-    ],
     exports: [
         RouterModule
     ]
@@ -138,7 +131,11 @@ export class RootRoutingModule implements AfterViewInit {
                data: { preload: true }
            },
            { path: '', redirectTo: 'app', pathMatch: 'full' },
-           { path: '**', component: NotFoundComponent }
+           /** Loads eagerly anyway because of '**' */
+           {
+               path: '**',
+               loadChildren: './shared/not-found/not-found.module#NotFoundModule'
+           }
         );
         _router.resetConfig(_router.config);
     }

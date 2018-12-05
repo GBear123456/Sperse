@@ -84,16 +84,16 @@ function createMetatag(name, content) {
         document.head.appendChild(meta);
     }
 
-    meta.setAttribute('content', content);    
+    meta.setAttribute('content', content);
 }
 
-function updateMetadata(tenant, ui) {    
-    createMetatag("og:title", document.title);
-    createMetatag("og:description", tenant && 
-        tenant.customLayoutType && tenant.customLayoutType != 'Default' 
-        ? '': "Business management platform, enhanced with AI");
-    createMetatag("og:url", location.origin);
-    createMetatag("og:image",!tenant || !tenant.logoId ? 
+function updateMetadata(tenant, ui) {
+    createMetatag('og:title', document.title);
+    createMetatag('og:description', tenant &&
+        tenant.customLayoutType && tenant.customLayoutType != 'Default'
+        ? '' : 'Business management platform, enhanced with AI');
+    createMetatag('og:url', location.origin);
+    createMetatag('og:image', !tenant || !tenant.logoId ?
         window.location.origin + '/assets/common/images/app-logo-on-' + ui.getAsideSkin() + '.png' :
         AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
 }

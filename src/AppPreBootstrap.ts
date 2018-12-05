@@ -22,7 +22,7 @@ export class AppPreBootstrap {
             if (!targetUrl || targetUrl == '/')
                 targetUrl = location.origin;
             _handleUnAuthorizedRequest.call(abpAjax, messagePromise, targetUrl);
-        }
+        };
 
         AppPreBootstrap.getApplicationConfig(appRootUrl, () => {
             const queryStringObj = UrlHelper.getQueryParameters();
@@ -60,8 +60,8 @@ export class AppPreBootstrap {
             AppConsts.googleSheetClientId = result.googleSheetClientId;
             AppConsts.subscriptionExpireNootifyDayCount = result.subscriptionExpireNootifyDayCount;
             AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
-            AppConsts.remoteServiceBaseUrl = result.enforceRemoteServiceBaseUrl 
-                ? result.remoteServiceBaseUrl: location.origin;
+            AppConsts.remoteServiceBaseUrl = result.enforceRemoteServiceBaseUrl
+                ? result.remoteServiceBaseUrl : location.origin;
             callback();
         });
     }

@@ -1,8 +1,8 @@
 import { Component, OnInit, Injector, ViewChild, HostBinding } from '@angular/core';
 import { AbpSessionService } from '@abp/session/abp-session.service';
-import { AppSessionService } from '@shared/common/session/app-session.service';
-import { ImpersonationService } from '@app/admin/users/impersonation.service';
-import { UserHelper } from '@app/shared/helpers/UserHelper';
+import { AppSessionService } from 'shared/common/session/app-session.service';
+import { ImpersonationService } from 'app/admin/users/impersonation.service';
+import { UserHelper } from 'app/shared/helpers/UserHelper';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import {
     ProfileServiceProxy,
@@ -11,30 +11,30 @@ import {
     LinkedUserDto,
     TenantLoginInfoDto,
     SessionServiceProxy
-} from '@shared/service-proxies/service-proxies';
-import { AppComponentBase } from '@shared/common/app-component-base';
+} from 'shared/service-proxies/service-proxies';
+import { AppComponentBase } from 'shared/common/app-component-base';
 
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
-import { LoginAttemptsModalComponent } from '@app/shared/layout/login-attempts-modal.component';
-import { LinkedAccountsModalComponent } from '@app/shared/layout/linked-accounts-modal.component';
-import { ChangePasswordModalComponent } from '@app/shared/layout/profile/change-password-modal.component';
-import { ChangeProfilePictureModalComponent } from '@app/shared/layout/profile/change-profile-picture-modal.component';
-import { MySettingsModalComponent } from '@app/shared/layout/profile/my-settings-modal.component';
-import { AppAuthService } from '@shared/common/auth/app-auth.service';
-import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
-import { UserNotificationHelper } from '@app/shared/layout/notifications/UserNotificationHelper';
-import { AppConsts } from '@shared/AppConsts';
+import { LoginAttemptsModalComponent } from 'app/shared/layout/login-attempts-modal.component';
+import { LinkedAccountsModalComponent } from 'app/shared/layout/linked-accounts-modal.component';
+import { ChangePasswordModalComponent } from 'app/shared/layout/profile/change-password-modal.component';
+import { ChangeProfilePictureModalComponent } from 'app/shared/layout/profile/change-profile-picture-modal.component';
+import { MySettingsModalComponent } from 'app/shared/layout/profile/my-settings-modal.component';
+import { AppAuthService } from 'shared/common/auth/app-auth.service';
+import { LinkedAccountService } from 'app/shared/layout/linked-account.service';
+import { UserNotificationHelper } from 'app/shared/layout/notifications/UserNotificationHelper';
+import { AppConsts } from 'shared/AppConsts';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
 
 @Component({
-    templateUrl: 'header.component.html',
-    styleUrls: ['header.component.less'],
-    selector: 'header',
+    templateUrl: 'personal-finance-header.component.html',
+    styleUrls: ['personal-finance-header.component.less'],
+    selector: 'personal-finance-header',
     providers: [ImpersonationService]
 })
-export class HeaderComponent extends AppComponentBase implements OnInit {
+export class PersonalFinanceHeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
 
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
@@ -281,7 +281,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     logout(): void {
-        this._authService.logout(true, this.feature.isEnabled('PFM.Applications') ? location.origin + '/personal-finance': undefined);
+        this._authService.logout(true, this.feature.isEnabled('PFM.Applications') ? location.origin + '/personal-finance' : undefined);
     }
 
     onMySettingsModalSaved(): void {

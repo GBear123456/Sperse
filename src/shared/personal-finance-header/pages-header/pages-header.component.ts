@@ -1,7 +1,7 @@
 import { Component, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppComponentBase } from 'shared/common/app-component-base';
 import { Router, NavigationEnd } from '@angular/router';
-import { AppConsts } from '@shared/AppConsts';
+import { AppConsts } from 'shared/AppConsts';
 
 @Component({
     selector: 'app-pages-header',

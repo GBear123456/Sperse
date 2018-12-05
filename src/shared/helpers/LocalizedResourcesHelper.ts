@@ -12,7 +12,7 @@ export class LocalizedResourcesHelper {
 
     static loadLocalizedStlyes(): JQueryPromise<any> {
         const isRtl = rtlDetect.isRtlLang(abp.localization.currentLanguage.name);
-        let theme = abp.setting.get("App.UiManagement.Theme").toLocaleLowerCase();
+        let theme = abp.setting.get('App.UiManagement.Theme').toLocaleLowerCase();
 
         if (isRtl) {
             $('html').attr('dir', 'rtl');
@@ -22,7 +22,7 @@ export class LocalizedResourcesHelper {
     }
 
     static loadLocalizedStylesForTheme(theme: string, isRtl: boolean): JQueryPromise<any> {
-        let cssPostfix = isRtl ? '-rtl':'';
+        let cssPostfix = isRtl ? '-rtl' : '';
 
         $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/' + theme + '/assets/demo/' + theme + '/base/style.bundle' + cssPostfix + '.css'));
         $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/primeng/datatable/css/primeng.datatable' + cssPostfix + '.css'));
