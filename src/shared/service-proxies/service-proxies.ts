@@ -1497,58 +1497,6 @@ export class ApplicationServiceProxy {
         }
         return _observableOf<SignUpMemberResponse>(<any>null);
     }
-
-    /**
-     * @return Success
-     */
-    getMemberInfo(): Observable<GetMemberInfoResponse> {
-        let url_ = this.baseUrl + "/api/services/PFM/Application/GetMemberInfo";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetMemberInfo(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetMemberInfo(<any>response_);
-                } catch (e) {
-                    return <Observable<GetMemberInfoResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetMemberInfoResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetMemberInfo(response: HttpResponseBase): Observable<GetMemberInfoResponse> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetMemberInfoResponse.fromJS(resultData200) : new GetMemberInfoResponse();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetMemberInfoResponse>(<any>null);
-    }
 }
 
 @Injectable()
@@ -15891,6 +15839,58 @@ export class OfferServiceProxy {
         }
         return _observableOf<SubmitApplicationOutput>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getMemberInfo(): Observable<GetMemberInfoResponse> {
+        let url_ = this.baseUrl + "/api/services/PFM/Offer/GetMemberInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMemberInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMemberInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<GetMemberInfoResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetMemberInfoResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMemberInfo(response: HttpResponseBase): Observable<GetMemberInfoResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetMemberInfoResponse.fromJS(resultData200) : new GetMemberInfoResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetMemberInfoResponse>(<any>null);
+    }
 }
 
 @Injectable()
@@ -21506,58 +21506,6 @@ export class TenantCustomizationServiceProxy {
     }
 
     protected processSetCustomLayout(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    sendTestEmail(input: SendTestEmailInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/SendTestEmail";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSendTestEmail(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSendTestEmail(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSendTestEmail(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -28762,7 +28710,7 @@ export interface ISignUpMemberRequest {
 }
 
 export class SignUpMemberResponse implements ISignUpMemberResponse {
-    userId!: number | undefined;
+    authenticateResult!: AuthenticateResultModel | undefined;
 
     constructor(data?: ISignUpMemberResponse) {
         if (data) {
@@ -28775,7 +28723,7 @@ export class SignUpMemberResponse implements ISignUpMemberResponse {
 
     init(data?: any) {
         if (data) {
-            this.userId = data["userId"];
+            this.authenticateResult = data["authenticateResult"] ? AuthenticateResultModel.fromJS(data["authenticateResult"]) : <any>undefined;
         }
     }
 
@@ -28788,20 +28736,29 @@ export class SignUpMemberResponse implements ISignUpMemberResponse {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
+        data["authenticateResult"] = this.authenticateResult ? this.authenticateResult.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface ISignUpMemberResponse {
-    userId: number | undefined;
+    authenticateResult: AuthenticateResultModel | undefined;
 }
 
-export class GetMemberInfoResponse implements IGetMemberInfoResponse {
-    creditScore!: GetMemberInfoResponseCreditScore | undefined;
-    stateCode!: string | undefined;
+export class AuthenticateResultModel implements IAuthenticateResultModel {
+    accessToken!: string | undefined;
+    encryptedAccessToken!: string | undefined;
+    expireInSeconds!: number | undefined;
+    shouldResetPassword!: boolean | undefined;
+    passwordResetCode!: string | undefined;
+    userId!: number | undefined;
+    requiresTwoFactorVerification!: boolean | undefined;
+    twoFactorAuthProviders!: string[] | undefined;
+    twoFactorRememberClientToken!: string | undefined;
+    returnUrl!: string | undefined;
+    detectedTenancies!: TenantModel[] | undefined;
 
-    constructor(data?: IGetMemberInfoResponse) {
+    constructor(data?: IAuthenticateResultModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -28812,29 +28769,72 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
 
     init(data?: any) {
         if (data) {
-            this.creditScore = data["creditScore"];
-            this.stateCode = data["stateCode"];
+            this.accessToken = data["accessToken"];
+            this.encryptedAccessToken = data["encryptedAccessToken"];
+            this.expireInSeconds = data["expireInSeconds"];
+            this.shouldResetPassword = data["shouldResetPassword"];
+            this.passwordResetCode = data["passwordResetCode"];
+            this.userId = data["userId"];
+            this.requiresTwoFactorVerification = data["requiresTwoFactorVerification"];
+            if (data["twoFactorAuthProviders"] && data["twoFactorAuthProviders"].constructor === Array) {
+                this.twoFactorAuthProviders = [];
+                for (let item of data["twoFactorAuthProviders"])
+                    this.twoFactorAuthProviders.push(item);
+            }
+            this.twoFactorRememberClientToken = data["twoFactorRememberClientToken"];
+            this.returnUrl = data["returnUrl"];
+            if (data["detectedTenancies"] && data["detectedTenancies"].constructor === Array) {
+                this.detectedTenancies = [];
+                for (let item of data["detectedTenancies"])
+                    this.detectedTenancies.push(TenantModel.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): GetMemberInfoResponse {
+    static fromJS(data: any): AuthenticateResultModel {
         data = typeof data === 'object' ? data : {};
-        let result = new GetMemberInfoResponse();
+        let result = new AuthenticateResultModel();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["creditScore"] = this.creditScore;
-        data["stateCode"] = this.stateCode;
+        data["accessToken"] = this.accessToken;
+        data["encryptedAccessToken"] = this.encryptedAccessToken;
+        data["expireInSeconds"] = this.expireInSeconds;
+        data["shouldResetPassword"] = this.shouldResetPassword;
+        data["passwordResetCode"] = this.passwordResetCode;
+        data["userId"] = this.userId;
+        data["requiresTwoFactorVerification"] = this.requiresTwoFactorVerification;
+        if (this.twoFactorAuthProviders && this.twoFactorAuthProviders.constructor === Array) {
+            data["twoFactorAuthProviders"] = [];
+            for (let item of this.twoFactorAuthProviders)
+                data["twoFactorAuthProviders"].push(item);
+        }
+        data["twoFactorRememberClientToken"] = this.twoFactorRememberClientToken;
+        data["returnUrl"] = this.returnUrl;
+        if (this.detectedTenancies && this.detectedTenancies.constructor === Array) {
+            data["detectedTenancies"] = [];
+            for (let item of this.detectedTenancies)
+                data["detectedTenancies"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
-export interface IGetMemberInfoResponse {
-    creditScore: GetMemberInfoResponseCreditScore | undefined;
-    stateCode: string | undefined;
+export interface IAuthenticateResultModel {
+    accessToken: string | undefined;
+    encryptedAccessToken: string | undefined;
+    expireInSeconds: number | undefined;
+    shouldResetPassword: boolean | undefined;
+    passwordResetCode: string | undefined;
+    userId: number | undefined;
+    requiresTwoFactorVerification: boolean | undefined;
+    twoFactorAuthProviders: string[] | undefined;
+    twoFactorRememberClientToken: string | undefined;
+    returnUrl: string | undefined;
+    detectedTenancies: TenantModel[] | undefined;
 }
 
 export class PagedResultDtoOfAuditLogListDto implements IPagedResultDtoOfAuditLogListDto {
@@ -43317,6 +43317,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
     creditScoreRating!: ImportPersonalInputCreditScoreRating | undefined;
     gender!: string | undefined;
     fullAddress!: ImportAddressInput | undefined;
+    isUSCitizen!: boolean | undefined;
     webSiteUrl!: string | undefined;
     facebookUrl!: string | undefined;
     linkedInUrl!: string | undefined;
@@ -43354,6 +43355,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.creditScoreRating = data["creditScoreRating"];
             this.gender = data["gender"];
             this.fullAddress = data["fullAddress"] ? ImportAddressInput.fromJS(data["fullAddress"]) : <any>undefined;
+            this.isUSCitizen = data["isUSCitizen"];
             this.webSiteUrl = data["webSiteUrl"];
             this.facebookUrl = data["facebookUrl"];
             this.linkedInUrl = data["linkedInUrl"];
@@ -43391,6 +43393,7 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["creditScoreRating"] = this.creditScoreRating;
         data["gender"] = this.gender;
         data["fullAddress"] = this.fullAddress ? this.fullAddress.toJSON() : <any>undefined;
+        data["isUSCitizen"] = this.isUSCitizen;
         data["webSiteUrl"] = this.webSiteUrl;
         data["facebookUrl"] = this.facebookUrl;
         data["linkedInUrl"] = this.linkedInUrl;
@@ -43421,6 +43424,7 @@ export interface IImportPersonalInput {
     creditScoreRating: ImportPersonalInputCreditScoreRating | undefined;
     gender: string | undefined;
     fullAddress: ImportAddressInput | undefined;
+    isUSCitizen: boolean | undefined;
     webSiteUrl: string | undefined;
     facebookUrl: string | undefined;
     linkedInUrl: string | undefined;
@@ -48110,6 +48114,50 @@ export interface ISubmitApplicationOutput {
     status: string | undefined;
     redirectUrl: string | undefined;
     applicationId: string | undefined;
+}
+
+export class GetMemberInfoResponse implements IGetMemberInfoResponse {
+    creditScore!: GetMemberInfoResponseCreditScore | undefined;
+    stateCode!: string | undefined;
+    countryCode!: string | undefined;
+
+    constructor(data?: IGetMemberInfoResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.creditScore = data["creditScore"];
+            this.stateCode = data["stateCode"];
+            this.countryCode = data["countryCode"];
+        }
+    }
+
+    static fromJS(data: any): GetMemberInfoResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetMemberInfoResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["creditScore"] = this.creditScore;
+        data["stateCode"] = this.stateCode;
+        data["countryCode"] = this.countryCode;
+        return data; 
+    }
+}
+
+export interface IGetMemberInfoResponse {
+    creditScore: GetMemberInfoResponseCreditScore | undefined;
+    stateCode: string | undefined;
+    countryCode: string | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -54772,98 +54820,6 @@ export interface IAuthenticateModel {
     features: string[] | undefined;
 }
 
-export class AuthenticateResultModel implements IAuthenticateResultModel {
-    accessToken!: string | undefined;
-    encryptedAccessToken!: string | undefined;
-    expireInSeconds!: number | undefined;
-    shouldResetPassword!: boolean | undefined;
-    passwordResetCode!: string | undefined;
-    userId!: number | undefined;
-    requiresTwoFactorVerification!: boolean | undefined;
-    twoFactorAuthProviders!: string[] | undefined;
-    twoFactorRememberClientToken!: string | undefined;
-    returnUrl!: string | undefined;
-    detectedTenancies!: TenantModel[] | undefined;
-
-    constructor(data?: IAuthenticateResultModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.accessToken = data["accessToken"];
-            this.encryptedAccessToken = data["encryptedAccessToken"];
-            this.expireInSeconds = data["expireInSeconds"];
-            this.shouldResetPassword = data["shouldResetPassword"];
-            this.passwordResetCode = data["passwordResetCode"];
-            this.userId = data["userId"];
-            this.requiresTwoFactorVerification = data["requiresTwoFactorVerification"];
-            if (data["twoFactorAuthProviders"] && data["twoFactorAuthProviders"].constructor === Array) {
-                this.twoFactorAuthProviders = [];
-                for (let item of data["twoFactorAuthProviders"])
-                    this.twoFactorAuthProviders.push(item);
-            }
-            this.twoFactorRememberClientToken = data["twoFactorRememberClientToken"];
-            this.returnUrl = data["returnUrl"];
-            if (data["detectedTenancies"] && data["detectedTenancies"].constructor === Array) {
-                this.detectedTenancies = [];
-                for (let item of data["detectedTenancies"])
-                    this.detectedTenancies.push(TenantModel.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): AuthenticateResultModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new AuthenticateResultModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accessToken"] = this.accessToken;
-        data["encryptedAccessToken"] = this.encryptedAccessToken;
-        data["expireInSeconds"] = this.expireInSeconds;
-        data["shouldResetPassword"] = this.shouldResetPassword;
-        data["passwordResetCode"] = this.passwordResetCode;
-        data["userId"] = this.userId;
-        data["requiresTwoFactorVerification"] = this.requiresTwoFactorVerification;
-        if (this.twoFactorAuthProviders && this.twoFactorAuthProviders.constructor === Array) {
-            data["twoFactorAuthProviders"] = [];
-            for (let item of this.twoFactorAuthProviders)
-                data["twoFactorAuthProviders"].push(item);
-        }
-        data["twoFactorRememberClientToken"] = this.twoFactorRememberClientToken;
-        data["returnUrl"] = this.returnUrl;
-        if (this.detectedTenancies && this.detectedTenancies.constructor === Array) {
-            data["detectedTenancies"] = [];
-            for (let item of this.detectedTenancies)
-                data["detectedTenancies"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IAuthenticateResultModel {
-    accessToken: string | undefined;
-    encryptedAccessToken: string | undefined;
-    expireInSeconds: number | undefined;
-    shouldResetPassword: boolean | undefined;
-    passwordResetCode: string | undefined;
-    userId: number | undefined;
-    requiresTwoFactorVerification: boolean | undefined;
-    twoFactorAuthProviders: string[] | undefined;
-    twoFactorRememberClientToken: string | undefined;
-    returnUrl: string | undefined;
-    detectedTenancies: TenantModel[] | undefined;
-}
-
 export class SendTwoFactorAuthCodeModel implements ISendTwoFactorAuthCodeModel {
     userId!: number | undefined;
     provider!: string;
@@ -58154,14 +58110,6 @@ export enum BankInformationBankAccountType {
     Savings = "Savings", 
 }
 
-export enum GetMemberInfoResponseCreditScore {
-    NotSure = "NotSure", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Poor = "Poor", 
-}
-
 export enum EntityChangeListDtoChangeType {
     _0 = 0, 
     _1 = 1, 
@@ -58536,6 +58484,14 @@ export enum CreditScores2 {
 
 export enum SubmitApplicationInputSystemType {
     EPCVIP = "EPCVIP", 
+}
+
+export enum GetMemberInfoResponseCreditScore {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
 }
 
 export enum ModuleSubscriptionInfoFrequency {
