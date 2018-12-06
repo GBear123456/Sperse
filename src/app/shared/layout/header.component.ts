@@ -13,14 +13,15 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType,
-    TenantLoginInfoDto, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType,
+    TenantLoginInfoDto, UserLinkServiceProxy, UpdateProfilePictureInput
+} from '@shared/service-proxies/service-proxies';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { UserHelper } from '../helpers/UserHelper';
 import { LinkedAccountsModalComponent } from './linked-accounts-modal.component';
 import { LoginAttemptsModalComponent } from './login-attempts-modal.component';
 import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
-import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -31,7 +32,6 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     selector: 'app-header'
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
-    @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
 
     customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];
