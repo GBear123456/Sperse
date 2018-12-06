@@ -238,11 +238,12 @@
         }
 
 
-        var form = window['loginForm'];
+        var form = window['loginForm'], loginInProgress = false;
         form.elements['userNameOrEmailAddress'].onkeyup = 
             form.elements['password'].onkeyup = checkIsValid;
         form.onsubmit = function() {
-            if (checkIsValid()) {
+            if (checkIsValid() && !loginInProgress) {
+                loginInProgress = true;
                 var params = queryString(document.location.search.substr(1), '&');
                 var cookie = queryString(document.cookie, ';');
                 var authenticateModel = JSON.stringify({
@@ -271,6 +272,7 @@
                     }
                 }).done((response) => {
                     abp.ui.clearBusy();
+                    loginInProgress = false;
                     if (response.result) {
                         handleAuthResult(response.result);
                         sessionStorage.setItem('authenticateResult',

@@ -29,6 +29,7 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;
+    loginInProgress = false;
 
     constructor(
         injector: Injector,
@@ -84,7 +85,8 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
     }
 
     login(): void {
-        this.loginService.authenticate(() => {});
+        this.loginInProgress = true;
+        this.loginService.authenticate(() => { this.loginInProgress = false; });
     }
 
     externalLogin(provider: ExternalLoginProvider) {
