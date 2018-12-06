@@ -2,6 +2,7 @@ import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@
 import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, RouterModule, Router, Routes, NavigationEnd } from '@angular/router';
 import { AppRootComponent } from 'root.components';
 import { RouteGuard } from '@shared/common/auth/route-guard';
+import { NotFoundComponent } from  '@shared/not-found/not-found.component';
 
 @Injectable()
 export class CustomReuseStrategy implements RouteReuseStrategy {
@@ -66,31 +67,35 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 
 const routes: Routes = [{
     path: '',
-    component: AppRootComponent,
     canActivate: [ RouteGuard ],
     canActivateChild: [ RouteGuard ],
     children: [
             {
                 path: 'account',
                 loadChildren: 'account/account.module#AccountModule', //Lazy load account module
-                data: { preload: true }
+                data: { preload: false }
             },
             {
                 path: 'personal-finance',
                 loadChildren: 'personal-finance/personal-finance.module#PersonalFinanceModule', //Lazy load account module
-                data: { preload: true }
+                data: { preload: false }
             },
             {
                 path: 'mobile',
                 loadChildren: 'mobile/mobile.module#MobileModule', //Lazy load mobile module
-                data: { preload: true }
+                data: { preload: false }
             },
             {
                 path: 'desktop',
                 loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
-                data: { preload: true }
+                data: { preload: false }
             }
         ]
+    },
+    {
+        path: '**',
+        loadChildren: 'shared/not-found/not-found.module#NotFoundModule',
+        data: { preload: false }
     }
 ];
 
@@ -130,11 +135,7 @@ export class RootRoutingModule implements AfterViewInit {
 */
                data: { preload: true }
            },
-           { path: '', redirectTo: 'app', pathMatch: 'full' },
-           {
-               path: '**',
-               loadChildren: './shared/not-found/not-found.module#NotFoundModule'
-           }
+           { path: '', redirectTo: 'app', pathMatch: 'full' }
         );
         _router.resetConfig(_router.config);
     }
