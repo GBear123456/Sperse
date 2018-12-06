@@ -422,6 +422,12 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
     }
 
     loadFileContent(file) {
+        if (file.size > 25 * 1024 * 1024) {
+            abp.message.warn(this.l('FilesizeLimitWarn', 25));
+            this.files = [];
+            return;
+        }
+
         this.loadProgress = 0;
         this.fileName = file.name;
         this.fileOrigSize = file.size;
@@ -441,7 +447,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
 
     fileDropped(event) {
         this.files = event.files;
-        for (let file of this.files) {
+        if (this.files.length) {
+            var file = this.files[0];
+
             if (file.fileEntry)
                 file.fileEntry['file'](this.loadFileContent.bind(this));
             else
