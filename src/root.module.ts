@@ -71,7 +71,7 @@ export function appInitializerFactory(
                         reject(err);
                     }
                 );
-            }, resolve, reject);
+            }, Function(), reject);
         });
     };
 }
