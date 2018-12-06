@@ -16,7 +16,6 @@ import { SmsVerificationModalComponent } from '@app/shared/layout/profile/sms-ve
 import { HeaderNotificationsComponent } from './notifications/header-notifications.component';
 import { LoginAttemptsModalComponent } from './login-attempts-modal.component';
 import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
-import { ChangeProfilePictureModalComponent } from './profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from './profile/my-settings-modal.component';
 import { LinkedAccountsModalComponent } from './linked-accounts-modal.component';
 import { LinkAccountModalComponent } from './link-account-modal.component';
@@ -39,7 +38,6 @@ let COMPONENTS = [
     LinkedAccountsModalComponent,
     LinkAccountModalComponent,
     ChangePasswordModalComponent,
-    ChangeProfilePictureModalComponent,
     MySettingsModalComponent,
     NotificationsComponent,
     ChatBarComponent,
