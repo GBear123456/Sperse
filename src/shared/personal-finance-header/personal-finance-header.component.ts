@@ -24,13 +24,14 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { LoginAttemptsModalComponent } from 'app/shared/layout/login-attempts-modal.component';
 import { LinkedAccountsModalComponent } from 'app/shared/layout/linked-accounts-modal.component';
 import { ChangePasswordModalComponent } from 'app/shared/layout/profile/change-password-modal.component';
-import { ChangeProfilePictureModalComponent } from 'app/shared/layout/profile/change-profile-picture-modal.component';
 import { MySettingsModalComponent } from 'app/shared/layout/profile/my-settings-modal.component';
 import { AppAuthService } from 'shared/common/auth/app-auth.service';
 import { LinkedAccountService } from 'app/shared/layout/linked-account.service';
 import { UserNotificationHelper } from 'app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from 'shared/AppConsts';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { UpdateProfilePictureInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'personal-finance-header.component.html',
@@ -39,7 +40,6 @@ import { CFOService } from '@shared/cfo/cfo.service';
     providers: [ImpersonationService]
 })
 export class PersonalFinanceHeaderComponent extends AppComponentBase implements OnInit {
-    @ViewChild('changeProfilePictureModal') changeProfilePictureModal: ChangeProfilePictureModalComponent;
 
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
@@ -298,7 +298,20 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
     }
 
     changeProfilePicture(): void {
-        this.changeProfilePictureModal.show();
+        this.dialog.open(UploadPhotoDialogComponent, {
+            data: {
+                source: this.getProfilePictureUrl(this.appSession.user.profilePictureId)
+            },
+            hasBackdrop: true
+        }).afterClosed().subscribe((result) => {
+            if (result) {
+                this._profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
+                    originalImage: result.origImage,
+                    thumbnail: result.thumImage
+                }));
+                //abp.event.trigger('profilePictureChanged', thumbnailId);
+            }
+        });
     }
 
     changeMySettings(e): void {
