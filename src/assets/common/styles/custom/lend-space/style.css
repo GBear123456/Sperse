@@ -90,10 +90,13 @@ body.lend-space .accountsContainer .row {
 }
 body.lend-space .accountsContainer .sidebar {
   padding-left: 0;
+  padding-right: 0;
   border-right: none !important;
 }
 body.lend-space .accountsContainer .sidebar .left-navigation .left-navigation-item .left-navigation-link {
   font-family: Poppins !important;
+  line-height: 22px !important;
+  padding-right: 0 !important;
 }
 body.lend-space .accountsContainer .sidebar .left-navigation .left-navigation-item .left-navigation-link .menu-icon {
   margin-right: 0 !important;
