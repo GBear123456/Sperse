@@ -12,6 +12,9 @@ import { NotFoundRoutingModule } from '@shared/not-found/not-found-routing.modul
     ],
     declarations: [
         NotFoundComponent
+    ],
+    exports: [
+        NotFoundComponent
     ]
 })
 export class NotFoundModule {}
