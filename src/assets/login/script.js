@@ -67,8 +67,7 @@
                 "Accept": "application/json"
             }
         ).then(function(response) {
-            window.loginInfo = response;
-            var loginInformations = response && response.result;                         
+            var loginInformations = window.loginInfo = response && response.result;
             tenant = loginInformations && loginInformations.tenant;
             if (tenant && tenant.customLayoutType == 'LendSpace') {
                 window.loginPageHandler = undefined;
