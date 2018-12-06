@@ -138,6 +138,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             series.forEach(seria => {
                 this.allSeriesColors[seria.name] = seria.color;
             });
+            this.render();
         });
     }
 
@@ -255,14 +256,15 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     }
 
     render(component?: any) {
-        component = component || this.chartComponent
-            && this.chartComponent.instance;
-        if (component) {
-            clearTimeout(this.renderTimeout);
-            this.renderTimeout = setTimeout(
-                () => component.render()
-            , 300);
-        }
+        clearInterval(this.renderTimeout);
+        this.renderTimeout = setInterval(() => {
+            component = component || this.chartComponent
+                && this.chartComponent.instance;
+            if (component) {
+                component.render();
+                clearInterval(this.renderTimeout);
+            }
+        }, 500);
     }
 
     ngOnDestroy() {
