@@ -7,7 +7,7 @@
                     [title]="data?.title"
                     [module]="module"
                     [showBackground]="true"
-                    [showDowngradeLink]="true"
+                    [showDowngradeLink]="!subscriptionIsFree"
                     (onPlanChosen)="changePlan($event)"
                     (moveToNextStep)="moveToPaymentOptionsStep()">
                 </package-chooser>
