@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="submit" [disabled]="!loginForm.form.valid">
+                    <button type="submit" class="submit" [disabled]="loginInProgress || !loginForm.form.valid">
                         {{l("LoginBtn")}}
                         <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
                     </button>
