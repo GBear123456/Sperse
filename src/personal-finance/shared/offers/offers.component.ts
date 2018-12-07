@@ -8,7 +8,6 @@ import {
     OnDestroy,
     ElementRef,
     ViewChild,
-    HostListener,
     Renderer2,
     ChangeDetectorRef
 } from '@angular/core';
@@ -18,17 +17,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
 import { first, filter, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap, skip } from 'rxjs/operators';
-import { isEmpty, kebabCase, pickBy, capitalize } from 'lodash';
-import { MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
+import { kebabCase, capitalize } from 'lodash';
+import { MatRadioChange, MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
 
-/** Third party improrts */
+/** Third party imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import {
     CampaignDto,
     Category,
-    Type,
     OfferServiceProxy,
     SubmitApplicationInput,
     SubmitApplicationOutput,
@@ -37,41 +35,13 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { CurrencyPipe } from '@angular/common';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
-
-interface FilterValues {
-    [field: string]: { [filterValue: string]: string };
-}
-
-enum FilterType {
-    Checkbox,
-    Range,
-    Select
-}
-
-interface StepCondition {
-    min: number;
-    max: number;
-    step: number;
-    sliderMin?: number;
-}
-
-interface Filter {
-    name: string;
-    field: string;
-    type: FilterType;
-    min?: number;
-    max?: number;
-    step?: number;
-    stepsConditions?: StepCondition[];
-    value?: any;
-    value$?: any;
-    values$?: Observable<any[]>;
-    showAll?: boolean;
-    fullBackground?: boolean;
-    onChange?: (category) => void;
-    minMaxDisplayFunction?: (value: number) => string;
-    valueDisplayFunction?: (value: number) => string | { name: string, description: string };
-}
+import { FilterSettingInterface } from '@root/personal-finance/shared/offers/interfaces/filter-setting.interface';
+import { StepConditionInterface } from '@root/personal-finance/shared/offers/interfaces/step-condition.interface';
+import { FilterType } from '@root/personal-finance/shared/offers/filter-type.enum';
+import { RangeFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/range-filter-setting';
+import { SelectFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/select-filter-setting';
+import { RadioFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/radio-filter-setting';
+import { CheckboxFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/checkbox-filter-setting';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -122,15 +92,13 @@ export class OffersComponent implements OnInit, OnDestroy {
     memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount(), finalize(abp.ui.clearBusy));
     creditScore$: Observable<number> = this.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.covertCreditScoreToNumber(score)));
     stateCode$: Observable<string> = this.memberInfo$.pipe(pluck('stateCode'));
-    filtersSettings: { [filterGroup: string]: Filter[] } = {
+    filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
         'loans': [
-            {
+            new RangeFilterSetting({
                 name: this.ls.l('Offers_Filter_Amount'),
-                field: 'amount',
-                type: FilterType.Range,
                 min: 100,
                 max: 100000,
-                value: 5000,
+                value$: of(5000),
                 step: 100,
                 stepsConditions: [
                     {
@@ -148,11 +116,9 @@ export class OffersComponent implements OnInit, OnDestroy {
                 ],
                 minMaxDisplayFunction: (value: number) => this.numberAbbrPipe.transform(value),
                 valueDisplayFunction: (value: number) => this.currencyPipe.transform(value, 'USD', 'symbol', '0.0-0')
-            },
-            {
+            }),
+            new RangeFilterSetting({
                 name: this.ls.l('Offers_Filter_CreditScore'),
-                field: 'creditScore',
-                type: FilterType.Range,
                 min: 350,
                 max: 850,
                 step: 50,
@@ -165,17 +131,15 @@ export class OffersComponent implements OnInit, OnDestroy {
                     };
                 },
                 value$: this.creditScore$,
-                onChange: (event) => {
-                    if (this.filtersValues.creditScore != event.value) {
-                        this.filtersValues.creditScore = event.value;
+                onChange: (e: MatSliderChange) => {
+                    if (this.filtersValues.creditScore != e.value) {
+                        this.filtersValues.creditScore = e.value;
                         this.selectedFilter.next(this.filtersValues);
                     }
                 }
-            },
-            {
+            }),
+            new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_LoanType'),
-                field: 'type',
-                type: FilterType.Select,
                 values$: of([
                     {
                         name: this.ls.l('Offers_PersonalLoans'),
@@ -202,11 +166,9 @@ export class OffersComponent implements OnInit, OnDestroy {
                 onChange: (e: MatSelectChange) => {
                     this.router.navigate(['../' + kebabCase(e.value)], { relativeTo: this.route });
                 }
-            },
-            {
+            }),
+            new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_ResidentState'),
-                field: 'residentState',
-                type: FilterType.Select,
                 value$: this.stateCode$,
                 values$: this.store$.pipe(
                     select(StatesStoreSelectors.getState, {
@@ -214,47 +176,64 @@ export class OffersComponent implements OnInit, OnDestroy {
                     }),
                     map(states => states.map(state => ({ name: state.name, value: state.code })))
                 )
-            }
+            })
+        ],
+        'creditScore': [
+            new RadioFilterSetting({
+                values$: of([
+                    {
+                        name: this.ls.l('Offers_CreditScore'),
+                        value: Category.CreditScore
+                    },
+                    {
+                        name: this.ls.l('Offers_CreditRepair'),
+                        value: Category.CreditRepair
+                    },
+                    {
+                        name: this.ls.l('Offers_CreditMonitoring'),
+                        value: Category.CreditMonitoring
+                    },
+                    {
+                        name: this.ls.l('Offers_DebtConsolidation'),
+                        value: Category.DebtConsolidation
+                    }
+                ]),
+                value$: this.category$,
+                navigation: true,
+                onChange: (e: MatRadioChange) => {
+                    this.router.navigate(['../' + kebabCase(e.value)], { relativeTo: this.route });
+                }
+            })
         ],
         'default': [
-            {
+            new CheckboxFilterSetting({
                 name: this.ls.l('Offers_Filter_Brand'),
-                field: 'bankName',
-                type: FilterType.Checkbox,
                 values$: of([ 'American Express', 'Bank of America', 'Barclaycard', 'Capital One', 'Chase' ]),
                 showAll: false
-            },
-            {
+            }),
+            new CheckboxFilterSetting({
                 name: this.ls.l('Offers_Filter_Type'),
-                field: 'type',
-                type: FilterType.Checkbox,
                 values$: of([ 'Small business', 'Personal' ]),
                 showAll: false
-            },
-            {
+            }),
+            new CheckboxFilterSetting({
                 name: this.ls.l('Offers_Filter_Category'),
-                field: 'category',
-                type: FilterType.Checkbox,
                 values$: of([ 'Best current offers', 'Flexible points', 'Hotel points', 'Airline miles', 'Cashback' ]),
                 showAll: false
-            },
-            {
+            }),
+            new CheckboxFilterSetting({
                 name: this.ls.l('Offers_Filter_Network'),
-                field: 'network',
-                type: FilterType.Checkbox,
                 values$: of([ 'AmEx', 'Visa', 'Master', 'Diners Club', 'Cashback' ]),
                 showAll: false
-            },
-            {
+            }),
+            new CheckboxFilterSetting({
                 name: this.ls.l('Offers_Filter_Rating'),
-                field: 'rating',
-                type: FilterType.Checkbox,
                 values$: of([ 5, 4, 3, 2, 1 ]),
                 showAll: false
-            }
+            })
         ]
     };
-    filters$: Observable<Filter[]>;
+    filters$: Observable<FilterSettingInterface[]>;
     filtersValues = {
         category: undefined,
         type: undefined,
@@ -325,7 +304,7 @@ export class OffersComponent implements OnInit, OnDestroy {
             switchMap(filter => this.offerServiceProxy.getAll(
                 filter.category,
                 undefined,
-                filter.Country,
+                filter.country,
                 this.covertNumberToCreditScore(filter.creditScore),
                 'organic'
             ).pipe( //Added 'organic' stub temporary until real value
@@ -380,7 +359,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         });
     }
 
-    private getFiltersForCategory(category: Category): Filter[] {
+    private getFiltersForCategory(category: Category): FilterSettingInterface[] {
         let filters = this.filtersSettings['default'];
         switch (category) {
             case Category.PersonalLoans:
@@ -390,29 +369,23 @@ export class OffersComponent implements OnInit, OnDestroy {
             case Category.AutoLoans: {
                 this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
                 filters = this.filtersSettings['loans'];
+                break;
+            }
+            case Category.CreditScore:
+            case Category.CreditRepair:
+            case Category.CreditMonitoring:
+            case Category.DebtConsolidation: {
+                filters = this.filtersSettings['creditScore'];
+                break;
             }
         }
         return filters;
     }
 
-    /**
-     * Fullfill filters with credit cards values
-     * @param {CampaignDto[]} CampaignDto
-     */
-    private fullFillFilterValues(offers: CampaignDto[]) {
-        // offers.forEach(offer => {
-        //     this.filters.forEach(filter => {
-        //         if (offer[filter.field] !== undefined && filter.values['indexOf'](offer[filter.field]) === -1) {
-        //             filter.values['push'](offer[filter.field]);
-        //         }
-        //     });
-        // });
-    }
-
-    private hideTooBigFilters(filters: Filter[]) {
-        /** Change whether to dispay all filter values */
-        filters.forEach(filter => {
-            if (filter.values$) {
+    private hideTooBigFilters(filters) {
+        /** Change whether to display all filter values */
+        filters.forEach((filter) => {
+            if (filter.type === FilterType.Checkbox && filter.values$) {
                 filter.values$.pipe(first()).subscribe(filterValues => {
                     if (filterValues.length <= this.maxDisplayedFilterValues) {
                         filter.showAll = true;
@@ -425,28 +398,6 @@ export class OffersComponent implements OnInit, OnDestroy {
 
     private createFiltersObject() {
         // this.filters.forEach(filter => this.filtersValues[filter.field] = {});
-    }
-
-    filterOffers(offers: any[], filtersValues: FilterValues): any[] {
-        return offers.filter( offer => {
-            for (let field in filtersValues) {
-                const cardFieldValue = offer[field];
-                let selectedFilterValues = pickBy(filtersValues[field]);
-                if (!isEmpty(selectedFilterValues) &&
-                    (!selectedFilterValues.hasOwnProperty(cardFieldValue))
-                ) {
-                    return false;
-                }
-            }
-            return true;
-        });
-    }
-
-    sortCards(offers: any[], field: string): any[]  {
-        return offers.sort((cardA, cardB) => {
-            /** If values are numbers - sort in another order */
-            return (cardA[field] > cardB[field] ? 1 : -1) * (!isNaN(cardA[field]) ? -1 : 1);
-        });
     }
 
     viewCardDetails(card: CampaignDto) {
@@ -483,7 +434,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         }
     }
 
-    changeStep(sliderChange: MatSliderChange, stepsConditions: StepCondition[]) {
+    changeStep(sliderChange: MatSliderChange, stepsConditions: StepConditionInterface[]) {
         if (stepsConditions && stepsConditions.length) {
             stepsConditions.some(condition => {
                 if (sliderChange.value >= condition.min && sliderChange.value <= condition.max) {
