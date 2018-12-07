@@ -56,6 +56,6 @@ export class PagesFooterComponent extends AppComponentBase {
     }
 
     openConditionsDialog(data: any) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: data });
+        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: data });
     }
 }
