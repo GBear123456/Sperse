@@ -26,10 +26,11 @@
                                 <mat-slider
                                     [min]="filter.min"
                                     [max]="filter.max"
-                                    [value]="filter.value"
+                                    [value]="(filter.value$ | async) || filter.value"
                                     [class.greyTrackBackground]="!filter.fullBackground"
                                     [step]="filter.step || 1"
                                     (input)="changeStep($event, filter.stepsConditions)"
+                                    (change)="filter.onChange && filter.onChange($event)"
                                     #slider>
                                 </mat-slider>
                                 <ng-container *ngIf="filter.valueDisplayFunction(slider.value) as value; else simpleValue">
