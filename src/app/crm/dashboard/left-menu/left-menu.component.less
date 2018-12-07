@@ -2,9 +2,12 @@
     position: absolute;
     border-right: 1px solid #dfdfdf;
     z-index: 1;
-
-    @media (max-width: 768px) {
-        display: none;
+    transform: translate(0);
+    transition: transform 0.5s;
+    @media (max-width: 991px) {
+        &.hidden {
+            transform: translate(-100%);
+        }
     }
 
     .left-menu {
@@ -58,7 +61,7 @@
                     cursor: default;
                 }
             }
-  
+
             .link {
                 width: 215px;
                 position: relative;
@@ -129,7 +132,7 @@
                     content: '\f283';
                 }
             }
-            
+
             .icon-info {
                 text-align: center;
                 font-size: 18px;

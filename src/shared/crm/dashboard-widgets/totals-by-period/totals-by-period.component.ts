@@ -18,7 +18,7 @@ import {
     refCount,
     withLatestFrom
 } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import * as moment from 'moment-timezone';
 import 'moment-timezone';
 
@@ -178,18 +178,18 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     }
 
     private getLeadStageSeriaConfig(stageId: number): Observable<any> {
-        return this.store$.select(PipelinesStoreSelectors.getStageById({
+        return this.store$.pipe(select(PipelinesStoreSelectors.getStageById({
             purpose: AppConsts.PipelinePurposeIds.lead,
             stageId: stageId
-        })).pipe(
+        }))).pipe(
             first(),
             map(stage => {
                 return {
                     valueField: stageId.toString(),
-                    name: stage.name,
-                    color: stage.color || this._pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder),
+                    name: stage && stage.name,
+                    color: (stage && stage.color) || this._pipelineService.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder),
                     type: 'stackedBar',
-                    sortOrder: stage.sortOrder
+                    sortOrder: stage && stage.sortOrder
                 };
             })
         );

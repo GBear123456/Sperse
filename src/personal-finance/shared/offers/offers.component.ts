@@ -17,8 +17,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
-import { first, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap } from 'rxjs/operators';
-import { isEmpty, kebabCase, pickBy } from 'lodash';
+import { first, filter, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap, skip } from 'rxjs/operators';
+import { isEmpty, kebabCase, pickBy, capitalize } from 'lodash';
 import { MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
 
 /** Third party improrts */
@@ -31,7 +31,9 @@ import {
     Type,
     OfferServiceProxy,
     SubmitApplicationInput,
-    SubmitApplicationOutput
+    SubmitApplicationOutput,
+    GetMemberInfoResponse,
+    CreditScore
 } from '@shared/service-proxies/service-proxies';
 import { CurrencyPipe } from '@angular/common';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
@@ -99,12 +101,8 @@ export class OffersComponent implements OnInit, OnDestroy {
         }
     ];
     private creditScores = {
-        'bad': {
-            min: 0,
-            max: 549
-        },
         'poor': {
-            min: 550,
+            min: 0,
             max: 649
         },
         'fair': {
@@ -121,6 +119,9 @@ export class OffersComponent implements OnInit, OnDestroy {
         }
     };
     category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route.params);
+    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount(), finalize(abp.ui.clearBusy));
+    creditScore$: Observable<number> = this.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.covertCreditScoreToNumber(score)));
+    stateCode$: Observable<string> = this.memberInfo$.pipe(pluck('stateCode'));
     filtersSettings: { [filterGroup: string]: Filter[] } = {
         'loans': [
             {
@@ -154,17 +155,20 @@ export class OffersComponent implements OnInit, OnDestroy {
                 type: FilterType.Range,
                 min: 350,
                 max: 850,
-                value: 700,
                 step: 50,
                 fullBackground: true,
                 valueDisplayFunction: (value: number) => {
-                    for (let scoreName in this.creditScores) {
-                        if (value >= this.creditScores[scoreName].min && value <= this.creditScores[scoreName].max) {
-                            return {
-                                name: this.ls.l('Offers_CreditScore_' + scoreName),
-                                description: `(${this.creditScores[scoreName].min}-${this.creditScores[scoreName].max})`
-                            };
-                        }
+                    let scoreName = this.getCreditScoreName(value);
+                    return {
+                        name: this.ls.l('Offers_CreditScore_' + scoreName),
+                        description: `(${this.creditScores[scoreName].min}-${this.creditScores[scoreName].max})`
+                    };
+                },
+                value$: this.creditScore$,
+                onChange: (event) => {
+                    if (this.filtersValues.creditScore != event.value) {
+                        this.filtersValues.creditScore = event.value;
+                        this.selectedFilter.next(this.filtersValues);
                     }
                 }
             },
@@ -203,11 +207,12 @@ export class OffersComponent implements OnInit, OnDestroy {
                 name: this.ls.l('Offers_Filter_ResidentState'),
                 field: 'residentState',
                 type: FilterType.Select,
+                value$: this.stateCode$,
                 values$: this.store$.pipe(
                     select(StatesStoreSelectors.getState, {
                         countryCode: 'US'
                     }),
-                    map(states => states.map(state => state.name))
+                    map(states => states.map(state => ({ name: state.name, value: state.code })))
                 )
             }
         ],
@@ -250,11 +255,16 @@ export class OffersComponent implements OnInit, OnDestroy {
         ]
     };
     filters$: Observable<Filter[]>;
-    filtersValues: FilterValues = {};
+    filtersValues = {
+        category: undefined,
+        type: undefined,
+        country: 'US',
+        creditScore: 700
+    };
     filterType = FilterType;
     maxDisplayedFilterValues = 5;
     selectedFilter = new BehaviorSubject(this.filtersValues);
-    private selectedFilter$ = this.selectedFilter.asObservable();
+    private selectedFilter$: Observable<any>;
 
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
@@ -281,6 +291,18 @@ export class OffersComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        abp.ui.setBusy();
+        this.selectedFilter$ = combineLatest(this.creditScore$, this.category$)
+            .pipe(
+                first(),
+                switchMap(([creditScore, category]) => {
+                    this.filtersValues.creditScore = creditScore;
+                    this.filtersValues.category = category;
+                    this.selectedFilter.next(this.filtersValues);
+                    return this.selectedFilter.asObservable();
+                })
+            );
+
         this.activate();
     }
 
@@ -289,10 +311,24 @@ export class OffersComponent implements OnInit, OnDestroy {
             map((category: Category) => this.getFiltersForCategory(category)),
             map(filters => this.hideTooBigFilters(filters))
         );
+        this.category$.pipe(
+            skip(1),
+            filter(category => category != this.filtersValues.category)
+        ).subscribe((category) => {
+            this.filtersValues.category = category;
+            this.selectedFilter.next(this.filtersValues);
+        });
+
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
-        this.offers$ = this.category$.pipe(
+        this.offers$ = this.selectedFilter$.pipe(
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAmount = undefined; }),
-            switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined, 'organic').pipe( //Added 'organic' stub temporary until real value
+            switchMap(filter => this.offerServiceProxy.getAll(
+                filter.category,
+                undefined,
+                filter.Country,
+                this.covertNumberToCreditScore(filter.creditScore),
+                'organic'
+            ).pipe( //Added 'organic' stub temporary until real value
                 finalize(() => {
                     this.offersLoaded = true;
                     abp.ui.clearBusy(this.offersListRef.nativeElement);
@@ -457,6 +493,32 @@ export class OffersComponent implements OnInit, OnDestroy {
                 }
             });
         }
+    }
+
+    private getCreditScoreName(value: number): string {
+        for (let scoreName in this.creditScores) {
+            if (value >= this.creditScores[scoreName].min && value <= this.creditScores[scoreName].max) {
+                return scoreName;
+            }
+        }
+    }
+
+    private covertCreditScoreToNumber(score: CreditScore): number {
+        if (score) {
+            let scoreName = (score as string).toLowerCase();
+            if (this.creditScores[scoreName])
+                return this.creditScores[scoreName].max;
+        }
+
+        return 700;
+    }
+
+    private covertNumberToCreditScore(scoreNumber: number): CreditScore {
+        let scoreName = capitalize(this.getCreditScoreName(scoreNumber));
+        if (CreditScore[scoreName])
+            return <any>CreditScore[scoreName];
+
+        return CreditScore.NotSure;
     }
 
     ngOnDestroy() {

@@ -24,7 +24,7 @@ import {
     DxBoxModule, DxButtonModule,
     DxCheckBoxModule, DxDateBoxModule,
     DxFormModule, DxRadioGroupModule,
-    DxSelectBoxModule,
+    DxSelectBoxModule, DxSwitchModule, DxNumberBoxModule,
     DxTemplateModule, DxTextBoxModule, DxValidationGroupModule, DxValidationSummaryModule, DxValidatorModule
 } from '@root/node_modules/devextreme-angular';
 import { MatGridListModule, MatSidenavModule, MatSliderModule } from '@angular/material';
@@ -69,6 +69,8 @@ import { UtilsModule } from '@shared/utils/utils.module';
         ReactiveFormsModule,
         DxSelectBoxModule,
         DxRadioGroupModule,
+        DxSwitchModule,
+        DxNumberBoxModule,
         DxTemplateModule,
         DxCheckBoxModule,
         DxTextBoxModule,

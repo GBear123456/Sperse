@@ -22,7 +22,8 @@ import {
     EPCVIPOfferProviderSettings,
     TenantOfferProviderSettingsServiceProxy,
     TenantCustomizationInfoDto,
-    EPCVIPMailerSettingsEditDto
+    EPCVIPMailerSettingsEditDto,
+    TenantLoginInfoDtoCustomLayoutType
 } from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -57,6 +58,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
+    isLendSpaceLayout: boolean = this.appSession.tenant.customLayoutType && this.appSession.tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace;
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
 
@@ -116,7 +118,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
                 this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
+                this.isLendSpaceLayout ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
             ];
 
         forkJoin(requests)
@@ -276,10 +278,11 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         ];
         if (this.isCreditReportFeatureEnabled)
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
-        if (this.isPFMApplicationsFeatureEnabled) {
+        if (this.isPFMApplicationsFeatureEnabled) 
             requests.push(this._tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
+        if (this.isLendSpaceLayout)
             requests.push(this._tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
-        }
+        
 
         forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));

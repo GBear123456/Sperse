@@ -5,45 +5,70 @@
                 <h2>Monitor, Gain Insight & Make Better Decisions</h2>
                 <h4>sign up and get your credit score today</h4>
 
-                <form>
-                    <div class="form-row align-items-center name">
+                <form class="sign-up-lend-space" (ngSubmit)="signUpMember()">
+                    <div class="dx-field form-row align-items-center">
                         <div class="form-group form-group--name col">
-                            <input type="text" id="fisrstName" class="form-control" required>
-                            <label for="fisrstName">First Name</label>
+                            <dx-text-box placeholder="First Name"
+                                         (keydown)="validateName($event)"
+                                         [(value)]="registerData.firstName">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                    <dxi-validation-rule type="stringLength" [min]="2" message="Name must have at least 2 symbols"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
                         </div>
                         <div class="form-group form-group--surname col">
-                            <input type="text" id="lastName" class="form-control" required>
-                            <label for="lastName">Last Name</label>
+                            <dx-text-box placeholder="Last Name"
+                                         (keydown)="validateName($event)"
+                                         [(value)]="registerData.lastName">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Name is required"></dxi-validation-rule>
+                                    <dxi-validation-rule type="stringLength" [min]="2" message="Name must have at least 2 symbols"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
                         </div>
                     </div>
-                    <div class="form-row">
+
+                    <div class="dx-field form-row">
                         <div class="form-group col">
-                            <input type="text" id="email" class="form-control" required>
-                            <label for="email">Your email address</label>
+                            <dx-text-box placeholder="Your email address" [(value)]="registerData.email">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="Email is required"></dxi-validation-rule>
+                                    <dxi-validation-rule type="pattern" [pattern]="patterns.emailPattern" message="Email is invalid"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                    </div>
+                    <div class="dx-field form-row align-items-center">
+                        <div class="form-group col col-xs-12">
+                            <dx-text-box placeholder="Zip"
+                                         [(value)]="registerData.postalCode"
+                                         maxLength="5"
+                                         (onFocusIn)="focusInput($event)"
+                                         (onFocusOut)="blurInput($event)">
+                            </dx-text-box>
+                        </div>
+                        <div class="form-group col col-xs-12 dx-field">
+                            <div class="dx-field-label">US Resident</div>
+                            <div class="dx-field-value">
+                                <dx-radio-group [dataSource]="radioGroupCitizen"
+                                                displayExpr="text"
+                                                valueExpr="status"
+                                                layout="horizontal"
+                                                name="isUSCitizen"
+                                                [(value)]="registerData.isUSCitizen">
+                                </dx-radio-group>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-row align-items-center">
-                        <div class="form-group col col-xs-12">
-                            <input type="text" id="zipCode" class="form-control" required>
-                            <label for="zipCode">Zip</label>
-                        </div>
-                        <div class="form-group col col-xs-12">
-                            <span class="switch switch-sm">
-                                <label for="switch-sm" class="citizen noselect">
-                                    US Citizen
-                                    <input type="checkbox" class="switch" id="switch-sm">
-                                    <span class="yes left">Yes</span>
-                                    <span class="no right">No</span>
-                                </label>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="form-group actions">
-                        <button type="submit" class="btn btn-outline-dark">
-                            Activate my free account
-                        </button>
+                    <div class="dx-field actions-field">
+                        <dx-button
+                            text="Activate my free account"
+                            type="success"
+                            class="btn btn-outline-dark"
+                            [useSubmitBehavior]="true">
+                        </dx-button>
                     </div>
 
                     <div class="form-group">
@@ -52,11 +77,25 @@
                             we use 256 ssl technology to encrypt your data
                         </p>
                     </div>
-                    <div class="privacy-term custom-control custom-checkbox">
-                        <input type="checkbox" id="termsAgree" class="custom-control-input" required>
-                        <label for="termsAgree" class="custom-control-label">By checking this box you agree to the <a href="#">Privacy Policy, </a><a href="#">Terms and
-                            Conditions</a> and certify that you are 18 years of age or older and understand the complete "terms of billing".</label>
+
+                    <div class="form-group d-flex">
+                        <div>
+                            <dx-check-box
+                                class="privacy-term"
+                                [(value)]="isAgreeWithTerms">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                                         message="You must agree to the Terms and Conditions"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-check-box>
+                        </div>
+                        <p class="agreement">By continuing, I certify I'm older than 18 years of age. I understand and agree to the LendSpace <a (click)="openConditionsDialog(modalsData.privacy)">Privacy Policy</a>,
+                            <a (click)="openConditionsDialog(modalsData.terms)">Terms of Use</a> and <a (click)="openConditionsDialog(modalsData.lender)">Lender Terms</a>.</p>
                     </div>
+
+                    <!--<div class="form-group">-->
+                        <!--<dx-validation-summary id="summary"></dx-validation-summary>-->
+                    <!--</div>-->
                 </form>
             </div>
         </div>

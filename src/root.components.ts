@@ -1,5 +1,6 @@
 import { Component, Inject, ElementRef, AfterViewInit, OnInit } from '@angular/core';
-import { DOCUMENT, Title } from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';

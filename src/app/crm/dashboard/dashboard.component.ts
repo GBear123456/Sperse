@@ -46,10 +46,17 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         onRefresh: this.refresh.bind(this),
         text: this.l('statistics and reports'),
         icon: 'globe',
-        buttons: []
+        buttons: [
+            {
+                enabled: true,
+                action: () => this.leftMenuHidden = !this.leftMenuHidden,
+                lable: '',
+                'class': 'toggle dx-button'
+            }
+        ]
     };
     dialogConfig = new MatDialogConfig();
-
+    leftMenuHidden = true;
     constructor(
         injector: Injector,
         private _appService: AppService,

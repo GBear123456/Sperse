@@ -3,21 +3,20 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { HeadLineConfigModel } from './headline.model';
 
 @Component({
-  selector: 'app-headline',
-  templateUrl: './headline.component.html',
-  styleUrls: ['./headline.component.less']
+    selector: 'app-headline',
+    templateUrl: './headline.component.html',
+    styleUrls: ['./headline.component.less']
 })
 export class HeadLineComponent extends AppComponentBase {
-  @Input()
-  set config(config: HeadLineConfigModel){
-    this.data = config;
-  }
+    @Input()
+    set config(config: HeadLineConfigModel) {
+        this.data = config;
+    }
+    data: HeadLineConfigModel;
 
-  data: HeadLineConfigModel;
-
-  constructor(
-    injector: Injector
-  ) {
-    super(injector);
-  }
+    constructor(
+        injector: Injector
+    ) {
+        super(injector);
+    }
 }
