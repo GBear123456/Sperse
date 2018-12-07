@@ -15850,7 +15850,7 @@ export class OfferServiceProxy {
         if (subId === undefined || subId === null)
             throw new Error("The parameter 'subId' must be defined and cannot be null.");
         else
-            url_ += "subId=" + encodeURIComponent("" + subId) + "&"; 
+            url_ += "SubId=" + encodeURIComponent("" + subId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -15910,11 +15910,11 @@ export class OfferServiceProxy {
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined and cannot be null.");
         else
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
         if (subId === undefined || subId === null)
             throw new Error("The parameter 'subId' must be defined and cannot be null.");
         else
-            url_ += "subId=" + encodeURIComponent("" + subId) + "&"; 
+            url_ += "SubId=" + encodeURIComponent("" + subId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
