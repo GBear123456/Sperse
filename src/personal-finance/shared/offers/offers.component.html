@@ -72,8 +72,8 @@
             </ul>
         </div>
         <div class="offersList col-sm-12 col-lg-9" #offersList>
-            <div class="subHeader" [hidden]="offersAmount === undefined">
-                <div class="foundCount">
+            <div class="subHeader">
+                <div class="foundCount" [class.hidden]="offersAmount === undefined">
                     {{ ls.l('Offers_WeFound') }} <span>{{ offersAmount }}</span> {{ categoryDisplayName$ | async }}
                 </div>
                 <div class="sortBy">
