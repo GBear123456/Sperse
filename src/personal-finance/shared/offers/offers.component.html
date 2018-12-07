@@ -7,15 +7,22 @@
             <ul class="filters">
                 <ng-container *ngFor="let filter of filters$ | async">
                     <li>
-                        <div class="filterName">{{ filter.name }}</div>
+                        <div class="filterName" *ngIf="filter.name">{{ filter.name }}</div>
                         <ng-container *ngIf="filter.type === filterType.Checkbox">
                             <ng-container *ngFor="let filterValue of filter.values$ | async; let i = index">
-                                <mat-checkbox *ngIf="filter.showAll || i < maxDisplayedFilterValues" (change)="selectedFilter.next(filtersValues)">
-                                    <span *ngIf="!filter.type">{{ filterValue }}</span>
+                                <mat-checkbox *ngIf="filter.showAll || i < maxDisplayedFilterValues" (change)="filter.onChange && filter.onChange($event)" [value]="filterValue.value || filterValue">
+                                    <span *ngIf="!filter.type">{{ filterValue.name || filterValue }}</span>
                                     <stars-rating *ngIf="filter.type === 'rating'" [maxRating]="filterValue"></stars-rating>
                                 </mat-checkbox>
                             </ng-container>
                             <button class="viewMore" *ngIf="!filter.showAll" (click)="filter.showAll = true">{{ ls.l('Offers_ViewMore') }}</button>
+                        </ng-container>
+                        <ng-container *ngIf="filter.type === filterType.Radio">
+                            <mat-radio-group [class.navigation]="filter.navigation" (change)="filter.onChange($event)" [value]="filter.value$ | async">
+                                <mat-radio-button *ngFor="let filterValue of filter.values$ | async" [value]="filterValue.value || filterValue">
+                                    {{ filterValue.name || filterValue }}
+                                </mat-radio-button>
+                            </mat-radio-group>
                         </ng-container>
                         <ng-container *ngIf="filter.type === filterType.Range">
                             <div class="sliderContainer">

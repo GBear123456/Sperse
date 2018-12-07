@@ -93,19 +93,19 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
             name: 'Credit Score',
             sublinks: [
                 {
-                    name: 'Credit Score',
+                    name: this.l('Offers_CreditScore'),
                     routerUrl: '/personal-finance/offers/credit-score'
                 },
                 {
-                    name: 'Credit Repair',
+                    name: this.l('Offers_CreditRepair'),
                     routerUrl: '/personal-finance/offers/credit-repair'
                 },
                 {
-                    name: 'Credit Monitoring',
+                    name: this.l('Offers_CreditMonitoring'),
                     routerUrl: '/personal-finance/offers/credit-monitoring'
                 },
                 {
-                    name: 'Debt Consolidation',
+                    name: this.l('Offers_DebtConsolidation'),
                     routerUrl: '/personal-finance/offers/debt-consolidation'
                 }
             ]
