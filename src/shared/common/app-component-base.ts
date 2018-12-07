@@ -59,6 +59,11 @@ export abstract class AppComponentBase implements OnDestroy {
     get componentIsActivated(): boolean {
         return this._activatedRoute['_routerState'].snapshot.url === this._router.url;
     }
+    get exportService() {
+        if (!this._exportService)
+           this._exportService = this._injector.get(ExportService);
+        return this._exportService
+    }
 
     public searchClear = true;
     public searchValue: string;
@@ -67,7 +72,7 @@ export abstract class AppComponentBase implements OnDestroy {
     private _prevScrollPos: any;
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
-    public _exportService: ExportService;
+    private _exportService: ExportService;
     public capitalize = require('underscore.string/capitalize');
 
     public defaultGridPagerConfig = {
@@ -91,7 +96,6 @@ export abstract class AppComponentBase implements OnDestroy {
         this.ui = _injector.get(AppUiCustomizationService);
         this.httpInterceptor = _injector.get(AppHttpInterceptor);
         this._applicationRef = _injector.get(ApplicationRef);
-        this._exportService = _injector.get(ExportService);
         this.primengTableHelper = new PrimengTableHelper();
         this.appUrlService = _injector.get(AppUrlService);
         this.localizationService = _injector.get(AppLocalizationService);
@@ -158,7 +162,7 @@ export abstract class AppComponentBase implements OnDestroy {
 
     exportTo(option, type) {
         this.startLoading();
-        return this._exportService['exportTo' + type](
+        return this.exportService['exportTo' + type](
             this.dataGrid, option == 'all'
         ).then(() => this.finishLoading());
     }
