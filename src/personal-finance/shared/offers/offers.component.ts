@@ -498,9 +498,11 @@ export class OffersComponent implements OnInit, OnDestroy {
     }
 
     covertCreditScoreToNumber(score: CreditScore): number {
-        let scoreName = score.toLowerCase();
-        if (this.creditScores[scoreName])
-            return this.creditScores[scoreName].max;
+        if (score) {
+            let scoreName = score.toLowerCase();
+            if (this.creditScores[scoreName])
+                return this.creditScores[scoreName].max;
+        }
 
         return 700;
     }
