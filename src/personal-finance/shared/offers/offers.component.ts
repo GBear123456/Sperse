@@ -17,7 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
-import { first, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap, skip } from 'rxjs/operators';
+import { first, filter, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap, skip } from 'rxjs/operators';
 import { isEmpty, kebabCase, pickBy, capitalize } from 'lodash';
 import { MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
 
@@ -170,7 +170,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                         this.filtersValues.creditScore = event.value;
                         this.selectedFilter.next(this.filtersValues);
                     }
-                } 
+                }
             },
             {
                 name: this.ls.l('Offers_Filter_LoanType'),
@@ -298,9 +298,10 @@ export class OffersComponent implements OnInit, OnDestroy {
                 switchMap(([creditScore, category]) => {
                     this.filtersValues.creditScore = creditScore;
                     this.filtersValues.category = category;
-                    this.selectedFilter.next(this.filtersValues); 
+                    this.selectedFilter.next(this.filtersValues);
                     return this.selectedFilter.asObservable();
-                }));
+                })
+            );
 
         this.activate();
     }
@@ -311,18 +312,23 @@ export class OffersComponent implements OnInit, OnDestroy {
             map(filters => this.hideTooBigFilters(filters))
         );
         this.category$.pipe(
-            skip(1)
+            skip(1),
+            filter(category => category != this.filtersValues.category)
         ).subscribe((category) => {
-            if (category != this.filtersValues.category) {
-                this.filtersValues.category = category;
-                this.selectedFilter.next(this.filtersValues);
-            }
+            this.filtersValues.category = category;
+            this.selectedFilter.next(this.filtersValues);
         });
 
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.offers$ = this.selectedFilter$.pipe(
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAmount = undefined; }),
-            switchMap(filter => this.offerServiceProxy.getAll(filter.category, undefined, filter.Country, this.covertNumberToCreditScore(filter.creditScore), 'organic').pipe( //Added 'organic' stub temporary until real value
+            switchMap(filter => this.offerServiceProxy.getAll(
+                filter.category,
+                undefined,
+                filter.Country,
+                this.covertNumberToCreditScore(filter.creditScore),
+                'organic'
+            ).pipe( //Added 'organic' stub temporary until real value
                 finalize(() => {
                     this.offersLoaded = true;
                     abp.ui.clearBusy(this.offersListRef.nativeElement);
@@ -489,7 +495,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         }
     }
 
-    getCreditScoreName(value: number): string {
+    private getCreditScoreName(value: number): string {
         for (let scoreName in this.creditScores) {
             if (value >= this.creditScores[scoreName].min && value <= this.creditScores[scoreName].max) {
                 return scoreName;
@@ -497,9 +503,9 @@ export class OffersComponent implements OnInit, OnDestroy {
         }
     }
 
-    covertCreditScoreToNumber(score: CreditScore): number {
+    private covertCreditScoreToNumber(score: CreditScore): number {
         if (score) {
-            let scoreName = score.toLowerCase();
+            let scoreName = (score as string).toLowerCase();
             if (this.creditScores[scoreName])
                 return this.creditScores[scoreName].max;
         }
@@ -507,7 +513,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         return 700;
     }
 
-    covertNumberToCreditScore(scoreNumber: number): CreditScore {
+    private covertNumberToCreditScore(scoreNumber: number): CreditScore {
         let scoreName = capitalize(this.getCreditScoreName(scoreNumber));
         if (CreditScore[scoreName])
             return <any>CreditScore[scoreName];
