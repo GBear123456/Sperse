@@ -7,12 +7,13 @@ import { LoginService } from '@root/account/login/login.service';
 import { ConditionsType } from '@shared/AppEnums';
 import { MatDialog } from '@angular/material';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ActivationEnd } from '../../../../../node_modules/@angular/router';
 
 @Component({
     selector: 'lend-space-signup',
     templateUrl: './lend-space-signup.component.html',
     styleUrls: ['./lend-space-signup.component.less'],
-    providers: [ ApplicationServiceProxy, LoginService ],
+    providers: [ApplicationServiceProxy, LoginService],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LendSpaceSignupComponent extends AppComponentBase {
@@ -21,17 +22,17 @@ export class LendSpaceSignupComponent extends AppComponentBase {
         emailPattern: AppConsts.regexPatterns.email
     };
     radioGroupCitizen = [
-        {text: 'Yes', status: true},
-        {text: 'No', status: false}
+        { text: 'Yes', status: true },
+        { text: 'No', status: false }
     ];
     isAgreeWithTerms = true;
     registerData: SignUpMemberRequest = new SignUpMemberRequest();
     modalsData = {
-        terms:   { title: 'Terms of Use', type: ConditionsType.Terms, downloadDisabled: true },
+        terms: { title: 'Terms of Use', type: ConditionsType.Terms, downloadDisabled: true },
         privacy: { title: 'Privacy Policy', type: ConditionsType.Policies, downloadDisabled: true },
-        lender:  { title: 'Lender Terms', bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/lender-terms.html', downloadDisabled: true }
+        lender: { title: 'Lender Terms', bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/lender-terms.html', downloadDisabled: true }
     };
-
+    isRoutProcessed = false;
     constructor(
         injector: Injector,
         public _loginService: LoginService,
@@ -40,6 +41,15 @@ export class LendSpaceSignupComponent extends AppComponentBase {
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
         this.registerData.isUSCitizen = true;
+        this._router.events.subscribe((event) => {
+            if (event instanceof ActivationEnd && !this.isRoutProcessed) {
+                let data = event.snapshot.params;
+                this.registerData.firstName = data.firstName;
+                this.registerData.lastName = data.lastName;
+                this.registerData.email = data.email;
+                this.isRoutProcessed = true;
+            }
+        });
     }
 
     signUpMember() {
