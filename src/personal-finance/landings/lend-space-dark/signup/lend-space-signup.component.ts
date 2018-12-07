@@ -51,7 +51,7 @@ export class LendSpaceSignupComponent extends AppComponentBase {
             .subscribe((res: SignUpMemberResponse) => {
                 this._loginService.processAuthenticateResult(
                     res.authenticateResult,
-                    '/personal-finance/offers/personal-loans');
+                    AppConsts.appBaseUrl);
             });
     }
 
