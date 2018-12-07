@@ -18,6 +18,11 @@
             flex: 1 auto;
             display: flex;
             align-items: center;
+
+            @media (max-width: 650px) {
+                justify-content: space-between;
+            }
+
             .title {
                 font-size: 18px;
                 font-weight: 700;
@@ -30,10 +35,15 @@
             }
 
             .legend {
-                display: flex;
+                display: none;
                 flex-flow: column wrap;
                 margin: 0 0 0 auto;
                 flex-basis: 40%;
+                margin-left: 20px;
+
+                @media (min-width: 651px) {
+                    display: flex;
+                }
 
                 .legend-list {
                     padding-left: 0;
@@ -63,7 +73,9 @@
             /deep/ dx-select-box {
                 border-radius: 0;
                 background-color: transparent;
-
+                @media (min-width: 768px) {
+                    width: 350px;
+                }
                 .dx-texteditor-input, input.form-control {
                     color: #677380;
                     line-height: 24px;

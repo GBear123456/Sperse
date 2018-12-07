@@ -2,22 +2,12 @@
     display: block;
 
     .totals-list {
-        display: flex;
-        flex-flow: row wrap;
-        justify-content: space-between;
-
         .total-item {
-            max-width: 32%;
-            width: 100%;
-            padding: 5px 20px 5px 20px;
+            padding: 5px 20px 22px 20px;
             border: 1px solid #E5E9EC;
             border-radius: 4px;
             position: relative;
-
-            @media (max-width: 1540px) {
-                padding-left: 60px !important;
-                background-position: 15px 50% !important;
-            }
+            margin-bottom: 20px;
 
             .chart-head {
                 width: 100vw;
@@ -34,7 +24,7 @@
                     float: right;
                 }
             }
-        
+
             .chart-progress {
                 color: #D4D4D4;
                 span:first-child {
@@ -54,11 +44,11 @@
                 font-stretch: normal;
                 letter-spacing: 0.3px;
                 color: #677380;
-                
+
                 span {
                     font-weight: 500;
                 }
-                
+
                 .plus {
                     position: relative;
                     right: -4px;
@@ -72,7 +62,7 @@
                 div {
                     height: 8px;
                     border-radius: 6px;
-                    
+
                 }
             }
         }

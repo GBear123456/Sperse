@@ -66,12 +66,16 @@
     }
 
     .headline-buttons {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
         .vertical-delimiter {
             width: 30px;
             height: 0px;
             position: relative;
             display: inline-block;
             vertical-align: top;
+            align-self: flex-start;
             &:before {
                 content: '';
                 position: absolute;
@@ -108,6 +112,25 @@
                     right: 2px;
                     border: 2px solid #fff;
                     top: 2px;
+                }
+            }
+        }
+
+        .toggle {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            border-color: #ddd;
+            @media (min-width: 992px) {
+                display: none;
+            }
+            i {
+                font-style: normal;
+                margin-right: 0;
+                &:before {
+                    content: "\f00c";
+                    font-size: 18px;
+                    font-family: DXIcons;
                 }
             }
         }

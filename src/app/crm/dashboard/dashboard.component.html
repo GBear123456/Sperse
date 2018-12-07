@@ -3,7 +3,7 @@
     <app-period (onChange)="periodChanged($event)"></app-period>
 </app-headline>
 <div [@routerTransition]>
-  <left-menu (openIntro)="openDialog()" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
+  <left-menu (openIntro)="openDialog()" [class.hidden]="leftMenuHidden" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
   <div class="widgets-wrapper">
       <div class="col-lg-6 col-xs-12 col-sm-12 wrapper">
           <!-- BEGIN PORTLET-->
@@ -23,20 +23,20 @@
           <dx-scroll-view showScrollbar="onHover" [ngStyle]="{display: dataEmpty == false ? 'block': 'none'}">
               <div class="dashboard-widgets">
                   <counts-and-totals (onDataLoaded)="checkDataEmpty($event)"></counts-and-totals>
-                  <div class="analytics-wrap">
-                      <div class="left-side">
+                  <div class="analytics-wrap row">
+                      <div class="left-side col-xl-4">
                           <new-items-totals></new-items-totals>
                       </div>
-                      <div class="right-side">
+                      <div class="right-side col-xl-8">
                           <totals-by-period></totals-by-period>
                       </div>
                   </div>
 
-                  <div class="analytics-wrap">
-                      <div class="left-side">
+                  <div class="analytics-wrap row">
+                      <div class="left-side col-lg-6 col-xl-4">
                           <totals-by-source></totals-by-source>
                       </div>
-                      <div class="right-side">
+                      <div class="right-side col-lg-6 col-xl-8">
                           <recent-clients (onReady)="checkDataEmpty($event)"></recent-clients>
                       </div>
                   </div>
