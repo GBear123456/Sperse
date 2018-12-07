@@ -46,9 +46,11 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
 
     ngOnInit(): void {
         this._render.addClass(document.body, 'pfm');
+/*
         this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
             try { Typekit.load({ async: true }); } catch (e) { }
         });
+*/
     }
 
     ngOnDestroy() {

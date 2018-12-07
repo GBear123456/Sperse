@@ -11,8 +11,6 @@ import { DxTextBoxModule, DxScrollViewModule, DxCheckBoxModule } from 'devextrem
 /** Application imports */
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import { InfoComponent } from '@shared/common/widgets/info/info.component';
-import { ExportService } from './export/export.service';
-import { ExportGoogleSheetService } from './export/export-google-sheets/export-google-sheets';
 import { CalendarComponent } from './widgets/calendar/calendar.component';
 import { CellsCopyingService } from '@shared/common/xls-mode/cells-copying/cells-copying.service';
 import { PhoneFormatPipe } from './pipes/phone-format/phone-format.pipe';
@@ -77,9 +75,7 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
     ],
     providers: [
         AppUrlService,
-        CellsCopyingService,
-        ExportService,
-        ExportGoogleSheetService
+        CellsCopyingService
     ]
 })
 export class CommonModule {

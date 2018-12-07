@@ -8,6 +8,8 @@ import {ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidge
 /** Application imports */
 import { AppStoreModule } from '@app/store/app-store.module';
 import { ImpersonationService } from '@admin/users/impersonation.service';
+import { ExportService } from '@shared/common/export/export.service';
+import { ExportGoogleSheetService } from '@shared/common/export/export-google-sheets/export-google-sheets';
 import { AppComponent} from './app.component';
 import { AppService } from './app.service';
 import { LayoutModule } from './shared/layout/layout.module';
@@ -54,7 +56,9 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         ContactServiceProxy,
         BusinessEntityServiceProxy,
         BankAccountsServiceProxy,
-        TenantSubscriptionServiceProxy
+        TenantSubscriptionServiceProxy,
+        ExportService,
+        ExportGoogleSheetService
     ]
 })
 export class AppModule {}
