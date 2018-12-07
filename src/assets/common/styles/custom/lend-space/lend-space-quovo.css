@@ -36,6 +36,13 @@ html {
   background-color: #e0b400;
   box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
 }
+button.css-gitmpn {
+  border-color: #ffcc00;
+}
+button.css-o0wm01 {
+  border-color: #ffcc00;
+  background: #ffcc00;
+}
 @media (min-width: 768px) {
   .PFM__header,
   .Content-container {
