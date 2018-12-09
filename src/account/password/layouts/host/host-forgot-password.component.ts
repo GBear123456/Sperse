@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import {Component, Injector, ViewChild} from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { SendPasswordResetCodeInput } from '@shared/service-proxies/service-proxies';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
@@ -10,6 +10,7 @@ import { AppConsts } from '@shared/AppConsts';
     animations: [accountModuleAnimation()]
 })
 export class HostForgotPasswordComponent extends AppComponentBase {
+    @ViewChild('forgotPassForm') form;
     model: SendPasswordResetCodeInput = new SendPasswordResetCodeInput();
     saving = false;
     emailRegex = AppConsts.regexPatterns.email;
@@ -21,8 +22,10 @@ export class HostForgotPasswordComponent extends AppComponentBase {
     }
 
     save(): void {
-        this.saving = true;
-        this._loginService.resetPasswordModel = this.model;
-        this._loginService.sendPasswordResetCode(() => { this.saving = false; }, true);
+        if (this.form.valid) {
+            this.saving = true;
+            this._loginService.resetPasswordModel = this.model;
+            this._loginService.sendPasswordResetCode(() => { this.saving = false; }, true);
+        }
     }
 }
