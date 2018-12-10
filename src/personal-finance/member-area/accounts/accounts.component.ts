@@ -145,10 +145,14 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         if (this._cfoService.initialized)
             this.addAccount();
         else
-            this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType]).subscribe(() => {
-                this.checkInstanceChangeProcess();
-                this.addAccount();
-            });
+            this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType])
+            .subscribe(
+                () => {
+                    this.checkInstanceChangeProcess();
+                    this.addAccount();
+                },
+                () => this.isStartDisabled = false
+            );
     }
 
     private addAccount() {
