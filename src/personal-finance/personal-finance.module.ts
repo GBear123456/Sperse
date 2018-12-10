@@ -33,6 +33,8 @@ import { ReportWizardModule } from '@root/personal-finance/landings/credit-repor
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { AngularGooglePlaceModule } from '@node_modules/angular-google-place';
 import { UtilsModule } from '@shared/utils/utils.module';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { UserOnlyCFOService } from '@root/personal-finance/shared/common/user-only.cfo.service';
 
 @NgModule({
     declarations: [
@@ -86,6 +88,10 @@ import { UtilsModule } from '@shared/utils/utils.module';
         PaymentInfoModule
     ],
     providers: [
+        {
+            provide: CFOService,
+            useClass: UserOnlyCFOService
+        },
         PackageIdService,
         CreditReportServiceProxy
     ]

@@ -16,8 +16,6 @@ import { MemberAreaComponent } from './member-area.component';
 
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
-import { CFOService } from '@shared/cfo/cfo.service';
-import { UserOnlyCFOService } from '../shared/common/user-only.cfo.service';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 
@@ -40,10 +38,6 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         FinancePageComponent
     ],
     providers: [
-        {
-            provide: CFOService,
-            useClass: UserOnlyCFOService
-        },
         InstanceServiceProxy,
         SynchProgressService,
         BankAccountsGeneralService
