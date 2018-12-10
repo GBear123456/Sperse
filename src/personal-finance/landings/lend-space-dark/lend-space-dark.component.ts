@@ -4,6 +4,7 @@ import { DOCUMENT } from '@angular/common';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 
 @Component({
     selector: 'app-lend-space-dark',
@@ -63,16 +64,20 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
     constructor(
         injector: Injector,
         @Inject(DOCUMENT) private document,
+        private zDesk: ZendeskService,
         private renderer: Renderer2
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
     }
 
     ngAfterViewInit(): void {
+        if (!abp.session.userId)
+            this.zDesk.showWidget({ position: { horizontal: 'left', vertical: 'bottom' } });
         this.renderer.addClass(this.document.body, 'lending-page');
     }
 
     ngOnDestroy() {
         this.renderer.removeClass(this.document.body, 'lending-page');
+        this.zDesk.hideWidget();
     }
 }
