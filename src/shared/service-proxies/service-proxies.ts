@@ -20034,8 +20034,8 @@ export class StageServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    rename(input: RenameStageInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Stage/Rename";
+    renameLeadStage(input: RenameStageInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/RenameLeadStage";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -20050,11 +20050,11 @@ export class StageServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRename(response_);
+            return this.processRenameLeadStage(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processRename(<any>response_);
+                    return this.processRenameLeadStage(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -20063,7 +20063,7 @@ export class StageServiceProxy {
         }));
     }
 
-    protected processRename(response: HttpResponseBase): Observable<void> {
+    protected processRenameLeadStage(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -55324,6 +55324,10 @@ export interface IExternalAuthenticateModel {
 
 export class ExternalAuthenticateResultModel implements IExternalAuthenticateResultModel {
     waitingForActivation!: boolean | undefined;
+    userNotFound!: boolean | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    email!: string | undefined;
     accessToken!: string | undefined;
     encryptedAccessToken!: string | undefined;
     expireInSeconds!: number | undefined;
@@ -55348,6 +55352,10 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
     init(data?: any) {
         if (data) {
             this.waitingForActivation = data["waitingForActivation"];
+            this.userNotFound = data["userNotFound"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.email = data["email"];
             this.accessToken = data["accessToken"];
             this.encryptedAccessToken = data["encryptedAccessToken"];
             this.expireInSeconds = data["expireInSeconds"];
@@ -55380,6 +55388,10 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["waitingForActivation"] = this.waitingForActivation;
+        data["userNotFound"] = this.userNotFound;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
         data["accessToken"] = this.accessToken;
         data["encryptedAccessToken"] = this.encryptedAccessToken;
         data["expireInSeconds"] = this.expireInSeconds;
@@ -55405,6 +55417,10 @@ export class ExternalAuthenticateResultModel implements IExternalAuthenticateRes
 
 export interface IExternalAuthenticateResultModel {
     waitingForActivation: boolean | undefined;
+    userNotFound: boolean | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    email: string | undefined;
     accessToken: string | undefined;
     encryptedAccessToken: string | undefined;
     expireInSeconds: number | undefined;

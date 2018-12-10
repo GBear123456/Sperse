@@ -191,6 +191,9 @@ export class LoginService {
                 redirectUrl
             );
 
+        } else if (authenticateResult.userNotFound) {
+            //redirect to sign-up
+            this._router.navigate(['personal-finance/sign-up', { firstName: authenticateResult.firstName, lastName: authenticateResult.lastName, email: authenticateResult.email }]);
         } else if (authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
             this._router.navigate(['account/select-tenant']);

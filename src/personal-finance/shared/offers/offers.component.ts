@@ -291,6 +291,7 @@ export class OffersComponent implements OnInit, OnDestroy {
             map(filters => this.hideTooBigFilters(filters))
         );
         this.category$.pipe(
+            takeUntil(this.deactivate$),
             skip(1),
             filter(category => category != this.filtersValues.category)
         ).subscribe((category) => {
@@ -300,14 +301,15 @@ export class OffersComponent implements OnInit, OnDestroy {
 
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.offers$ = this.selectedFilter$.pipe(
+            takeUntil(this.deactivate$),
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAmount = undefined; }),
             switchMap(filter => this.offerServiceProxy.getAll(
                 filter.category,
                 undefined,
                 filter.country,
                 this.covertNumberToCreditScore(filter.creditScore),
-                'organic'
-            ).pipe( //Added 'organic' stub temporary until real value
+                filter.category
+            ).pipe(
                 finalize(() => {
                     this.offersLoaded = true;
                     abp.ui.clearBusy(this.offersListRef.nativeElement);
@@ -418,7 +420,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         const submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.id,
             systemType: 'EPCVIP',
-            subId: 'organic' //Added 'organic' stub temporary until real value
+            subId: this.filtersValues.category
         });
 
         abp.ui.setBusy(this.offersListRef.nativeElement);

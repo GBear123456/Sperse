@@ -76,35 +76,37 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
 
     private getCardDetails(cardId: number): any {
         abp.ui.setBusy(this.detailsContainerRef.nativeElement);
-        return this.offerServiceProxy.getDetails(cardId, 'organic').pipe( //Added 'organic' stub temporary until real value
-            /** @todo remove in future */
-            map(details => {
-                return {
-                    ...details,
-                    ...{
-                        apr: '17.49%',
-                        penaltyApr: '19.20%',
-                        advancedApr: '23.49%',
-                        pros: [
-                            'High rewards rates',
-                            'No foreign transaction fee'
-                        ],
-                        cons: [
-                            'Has anual fees'
-                        ],
-                        recommendedCreditScore: {
-                            min: 450,
-                            max: 650,
-                            name: 'Good'
-                        },
-                        rewardsRate: '16%',
-                        annualFee: '$0 first year, $59 after',
-                        introApr: 'N/A'
-                    }
-                };
-            }),
-            tap(() => abp.ui.clearBusy(this.detailsContainerRef.nativeElement))
-        );
+        return this.category$
+            .pipe(
+                switchMap((category) => this.offerServiceProxy.getDetails(cardId, category)),
+                /** @todo remove in future */
+                map(details => {
+                    return {
+                        ...details,
+                        ...{
+                            apr: '17.49%',
+                            penaltyApr: '19.20%',
+                            advancedApr: '23.49%',
+                            pros: [
+                                'High rewards rates',
+                                'No foreign transaction fee'
+                            ],
+                            cons: [
+                                'Has anual fees'
+                            ],
+                            recommendedCreditScore: {
+                                min: 450,
+                                max: 650,
+                                name: 'Good'
+                            },
+                            rewardsRate: '16%',
+                            annualFee: '$0 first year, $59 after',
+                            introApr: 'N/A'
+                        }
+                    };
+                }),
+                tap(() => abp.ui.clearBusy(this.detailsContainerRef.nativeElement))
+            );
     }
 
     private getCreditCards() {
@@ -112,7 +114,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
                     of(this.offersService.displayedCards) :
                     this.category$.pipe(
-                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined, 'organic')) //Added 'organic' stub temporary until real value
+                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined, category))
                     )
                 ).pipe(
                     finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))

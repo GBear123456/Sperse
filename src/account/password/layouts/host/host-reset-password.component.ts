@@ -1,4 +1,4 @@
-import {Component, Injector, OnInit} from '@angular/core';
+import {Component, Injector, OnInit, ViewChild} from '@angular/core';
 import {accountModuleAnimation} from '@shared/animations/routerTransition';
 import {AppComponentBase} from '@shared/common/app-component-base';
 import {AppSessionService} from '@shared/common/session/app-session.service';
@@ -19,6 +19,7 @@ import {isEqual} from 'lodash';
     animations: [accountModuleAnimation()]
 })
 export class HostResetPasswordComponent extends AppComponentBase implements OnInit {
+    @ViewChild('resetPassForm') form;
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     saving = false;
@@ -60,25 +61,27 @@ export class HostResetPasswordComponent extends AppComponentBase implements OnIn
     }
 
     save(): void {
-        this.saving = true;
-        this._accountService.resetPassword(this.model)
-            .pipe(finalize(() => {
-                this.saving = false;
-            }))
-            .subscribe((result: ResetPasswordOutput) => {
-                if (!result.canLogin) {
-                    this._router.navigate(['account/login']);
-                    return;
-                }
-
-                // Autheticate
-                this.saving = true;
-                this._loginService.authenticateModel.userNameOrEmailAddress = result.userName;
-                this._loginService.authenticateModel.password = this.model.password;
-                this._loginService.authenticate(() => {
+        if (this.form.valid) {
+            this.saving = true;
+            this._accountService.resetPassword(this.model)
+                .pipe(finalize(() => {
                     this.saving = false;
-                }, undefined, !this.model.resetCode);
-            });
+                }))
+                .subscribe((result: ResetPasswordOutput) => {
+                    if (!result.canLogin) {
+                        this._router.navigate(['account/login']);
+                        return;
+                    }
+
+                    // Autheticate
+                    this.saving = true;
+                    this._loginService.authenticateModel.userNameOrEmailAddress = result.userName;
+                    this._loginService.authenticateModel.password = this.model.password;
+                    this._loginService.authenticate(() => {
+                        this.saving = false;
+                    }, undefined, !this.model.resetCode);
+                });
+        }
     }
 
     parseTenantId(tenantIdAsStr?: string): number {

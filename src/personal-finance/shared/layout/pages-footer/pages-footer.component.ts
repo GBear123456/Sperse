@@ -29,11 +29,10 @@ export class PagesFooterComponent extends AppComponentBase {
         } },
         { url: '', name: 'About Us', action: () => {
             this.openConditionsDialog({
-                    title: 'About Us',
-                    bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/about-us.html',
-                    downloadDisabled: true,
-                    width: '50em'
-                });
+                title: 'About Us',
+                bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/about-us.html',
+                downloadDisabled: true
+            });
         } }
     ];
     defaultMenuItems = [
@@ -57,6 +56,6 @@ export class PagesFooterComponent extends AppComponentBase {
     }
 
     openConditionsDialog(data: any) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: data });
+        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: data });
     }
 }
