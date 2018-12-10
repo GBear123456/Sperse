@@ -121,4 +121,31 @@ body.lend-space {
             }
         }
     }
+
+    .alert.m-alert--outline.alert-success {
+        border-color: @lend-space-main-color;
+        color: #000;
+        .m-alert--icon-solid .m-alert__icon {
+            background: @lend-space-main-color;
+        }
+        &.alert-success.m-alert--icon-solid .m-alert__icon span {
+            border-left-color: @lend-space-main-color;
+        }
+    }
+
+    .btn.btn-primary,
+    .button-primary {
+        background-color: @lend-space-main-color;
+        color: #000;
+        &:before {
+            border-top-color: #000;
+        }
+        &:after {
+            background-color: @lend-space-main-color;
+        }
+        &:hover {
+            background: @lend-space-hover-color;
+        }
+    }
+
 }
