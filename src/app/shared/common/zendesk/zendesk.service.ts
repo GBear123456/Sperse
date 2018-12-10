@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { AppConsts } from '@shared/AppConsts';
+import { extend } from 'underscore'
 
 @Injectable()
 export class ZendeskService {
@@ -14,7 +15,7 @@ export class ZendeskService {
     private isZendeskWebwidgetSetuped = false;
     private showZendeskWebwidgetTimeout: any;
 
-    private setup() {
+    private setup(settings?) {
         if (!this.accountUrl || this.isZendeskWebwidgetSetuped) {
             return;
         }
@@ -22,14 +23,14 @@ export class ZendeskService {
         try {
             this.zendeskWidgetService.setSettings(
                 {
-                    webWidget: {
+                    webWidget: extend({
                         launcher: {
                             label: {
                                 '*': abp.localization.localize('QuestionsOrFeedback',
                                     AppConsts.localization.defaultLocalizationSourceName)
                             }
                         }
-                    }
+                    }, settings)
                 }
             );
 
@@ -39,10 +40,10 @@ export class ZendeskService {
         } 
     }
 
-    showWidget() {
+    showWidget(settings?) {
         try {
             if (this.accountUrl && environment.zenDeskEnabled) {
-                this.setup();
+                this.setup(settings);
                 this.showZendeskWebwidgetTimeout = setTimeout(() => {
                     this.zendeskWidgetService.show();
                 }, 2000);

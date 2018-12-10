@@ -19,13 +19,12 @@ import { CreditReportRegFromComponent } from '@root/personal-finance/landings/cr
 import { LendSpaceDarkComponent } from '@root/personal-finance/landings/lend-space-dark/lend-space-dark.component';
 import { LendSpaceComponent } from '@root/personal-finance/landings/lend-space/lend-space.component';
 import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-space-dark/signup/lend-space-signup.component';
+
 import {
-    DxBoxModule, DxButtonModule,
-    DxCheckBoxModule, DxDateBoxModule,
-    DxFormModule, DxRadioGroupModule,
-    DxSelectBoxModule, DxSwitchModule, DxNumberBoxModule,
-    DxTemplateModule, DxTextBoxModule, DxValidationGroupModule, DxValidationSummaryModule, DxValidatorModule
+    DxTextBoxModule, DxValidatorModule, DxRadioGroupModule, DxButtonModule, DxCheckBoxModule, 
+    DxDateBoxModule, DxValidationSummaryModule, DxValidationGroupModule, DxSelectBoxModule
 } from '@root/node_modules/devextreme-angular';
+
 import { MatGridListModule, MatSidenavModule, MatSliderModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ReportWizardModule } from '@root/personal-finance/landings/credit-report/wizard-form/report-wizard.module';
@@ -34,6 +33,16 @@ import { AngularGooglePlaceModule } from '@node_modules/angular-google-place';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { UserOnlyCFOService } from '@root/personal-finance/shared/common/user-only.cfo.service';
+
+import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
+
+export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
+    accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
+    beforePageLoad(zE) {
+        zE.setLocale('en');
+    }
+}
 
 @NgModule({
     declarations: [
@@ -59,6 +68,7 @@ import { UserOnlyCFOService } from '@root/personal-finance/shared/common/user-on
 
         PersonalFinanceRoutingModule,
         PersonalFinanceCommonModule.forRoot(),
+        ngxZendeskWebwidgetModule.forRoot(ZendeskConfig),
 
         MatSliderModule,
         MatGridListModule,
@@ -67,31 +77,29 @@ import { UserOnlyCFOService } from '@root/personal-finance/shared/common/user-on
         FormsModule,
         AngularGooglePlaceModule,
         ReactiveFormsModule,
-        DxSelectBoxModule,
-        DxRadioGroupModule,
-        DxSwitchModule,
-        DxNumberBoxModule,
-        DxTemplateModule,
-        DxCheckBoxModule,
         DxTextBoxModule,
-        DxFormModule,
-        DxDateBoxModule,
-        DxButtonModule,
         DxValidatorModule,
-        DxValidationGroupModule,
-        DxBoxModule,
+        DxRadioGroupModule,
+        DxButtonModule,
+        DxCheckBoxModule,
+        DxDateBoxModule,
         DxValidationSummaryModule,
+        DxValidationGroupModule,
+        DxSelectBoxModule,
+
         ReportWizardModule,
         UtilsModule,
         PaymentInfoModule
     ],
     providers: [
+        ZendeskService,
         {
             provide: CFOService,
             useClass: UserOnlyCFOService
         },
         PackageIdService,
-        CreditReportServiceProxy
+        CreditReportServiceProxy,
+        ngxZendeskWebwidgetService
     ]
 })
 export class PersonalFinanceModule { }
