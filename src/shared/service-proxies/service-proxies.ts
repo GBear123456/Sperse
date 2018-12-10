@@ -20034,8 +20034,8 @@ export class StageServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    rename(input: RenameStageInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Stage/Rename";
+    renameLeadStage(input: RenameStageInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/RenameLeadStage";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -20050,11 +20050,11 @@ export class StageServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRename(response_);
+            return this.processRenameLeadStage(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processRename(<any>response_);
+                    return this.processRenameLeadStage(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -20063,7 +20063,7 @@ export class StageServiceProxy {
         }));
     }
 
-    protected processRename(response: HttpResponseBase): Observable<void> {
+    protected processRenameLeadStage(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
