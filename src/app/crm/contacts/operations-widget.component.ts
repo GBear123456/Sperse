@@ -17,6 +17,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { takeUntil } from 'rxjs/operators';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
     selector: 'operations-widget',
@@ -89,7 +90,8 @@ export class OperationsWidgetComponent extends AppComponentBase {
         private _clientService: ContactsService,
         private _appService: AppService,
         private _userService: UserServiceProxy,
-        public localizationService: AppLocalizationService
+        private _featureService: FeatureCheckerService,
+        public localizationService: AppLocalizationService,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -188,9 +190,12 @@ export class OperationsWidgetComponent extends AppComponentBase {
                     locateInMenu: 'auto',
                     items: [
                         {
-                            visible: this.isClientCFOAvailable() || !this.isClientProspective() &&
-                                !(this._userService['data'] && this._userService['data'].userId) &&
-                                this._appService.canSendVerificationRequest(),
+                            visible: !this._featureService.isEnabled('PFM')
+                                     && (
+                                        this.isClientCFOAvailable() || !this.isClientProspective()
+                                        && !(this._userService['data'] && this._userService['data'].userId) &&
+                                        this._appService.canSendVerificationRequest()
+                                     ),
                             action: () => {
                                 if (this.isClientCFOAvailable())
                                     this.redirectToCFO();
