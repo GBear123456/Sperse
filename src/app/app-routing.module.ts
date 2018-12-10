@@ -16,7 +16,6 @@ import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { AppComponent } from './app.component';
-import { NotificationsComponent } from './shared/layout/notifications/notifications.component';
 import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.component';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
@@ -65,7 +64,6 @@ export class CfoActivateService implements CanActivate {
                         data: { permission: 'Pages.Detect.Route' }
                     },
                     { path: 'access-denied', component: AccessDeniedComponent },
-                    
                     {
                         path: 'admin',
                         loadChildren: 'app/admin/admin.module#AdminModule', //Lazy load admin module

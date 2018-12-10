@@ -69,15 +69,17 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
 @Injectable()
 export class AppPreloadingStrategy implements PreloadingStrategy {
     preload(route: Route, load: Function): Observable<any> {
-        return abp.session.userId && (!route.data || !route.data.feature || abp.features.isEnabled(route.data.feature)) ? load(): of(null);
+        //return abp.session.userId && (!route.data || !route.data.feature || abp.features.isEnabled(route.data.feature)) ? load() : of(null);
+        return of(null);
     }
 }
 
-const routes: Routes = [{
-    path: '',
-    canActivate: [ RouteGuard ],
-    canActivateChild: [ RouteGuard ],
-    children: [
+const routes: Routes = [
+    {
+        path: '',
+        canActivate: [ RouteGuard ],
+        canActivateChild: [ RouteGuard ],
+        children: [
             {
                 path: 'account',
                 loadChildren: 'account/account.module#AccountModule', //Lazy load account module
@@ -102,7 +104,7 @@ const routes: Routes = [{
 
 @NgModule({
     imports: [
-        RouterModule.forRoot(routes, { 
+        RouterModule.forRoot(routes, {
             preloadingStrategy: AppPreloadingStrategy
         })
     ],
