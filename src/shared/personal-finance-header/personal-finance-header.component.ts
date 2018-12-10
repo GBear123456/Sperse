@@ -58,7 +58,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
     currentDate = new Date();
-    appAreaLinks;
+    appAreaLinks = this.getAppAreaLinks();
 
     memberAreaLinks = [
         {
@@ -107,10 +107,12 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         private _permissionChecker: PermissionCheckerService
     ) {
         super(injector);
-        const cfoService = injector.get(CFOService);
-        cfoService.instanceChangeProcess(() => {
-            this.appAreaLinks = this.getAppAreaLinks(!cfoService || !cfoService.initialized);
-        });
+        if (this.appSession.userId) {
+            const cfoService = injector.get(CFOService);
+            cfoService.instanceChangeProcess(() => {
+                this.appAreaLinks = this.getAppAreaLinks(!cfoService || !cfoService.initialized);
+            });
+        }
         if (this.feature.isEnabled('CFO.Partner')) {
             this.memberAreaLinks.unshift(
                 {
