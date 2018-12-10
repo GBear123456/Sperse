@@ -28,7 +28,7 @@ import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { AppPreBootstrap } from './AppPreBootstrap';
 import { RootComponent, AppRootComponent } from './root.components';
-import { RootRoutingModule, CustomReuseStrategy } from './root-routing.module';
+import { RootRoutingModule, CustomReuseStrategy, AppPreloadingStrategy } from './root-routing.module';
 import { RootStoreModule } from '@root/store';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 
@@ -157,6 +157,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         RootComponent, AppRootComponent
     ],
     providers: [
+        AppPreloadingStrategy,
         AppLocalizationService,
         AppUiCustomizationService,
         AppAuthService,

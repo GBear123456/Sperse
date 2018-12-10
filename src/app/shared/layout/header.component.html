@@ -1,7 +1,7 @@
 <div class="page-header navbar navbar-fixed-top md-shadow-zero-light">
     <div class="page-header-inner">
         <div class="page-logo" *ngIf="_layoutService.showPageLogo">
-            <a routerLink="/">
+            <a routerLink="/app">
                 <img *ngIf="!appSession.tenant || !appSession.tenant.logoId" src="./assets/common/images/sperse-logo.png" alt="logo" class="logo-layout" />
                 <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-layout" />
             </a>

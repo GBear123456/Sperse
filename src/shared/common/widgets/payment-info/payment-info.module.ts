@@ -14,7 +14,7 @@ import {
 import { AngularGooglePlaceModule } from 'angular-google-place';
 
 import { CommonModule } from '@shared/common/common.module';
-import { AppCommonModule } from '@app/shared/common/app-common.module';
+//import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { PaymentInfoComponent } from './payment-info.component';
 
 @NgModule({
@@ -22,7 +22,7 @@ import { PaymentInfoComponent } from './payment-info.component';
         FormsModule,
         CommonModule,
         ngCommon.CommonModule,
-        AppCommonModule,
+//        AppCommonModule,
 
         AngularGooglePlaceModule,
 

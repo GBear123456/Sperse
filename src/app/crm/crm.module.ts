@@ -57,7 +57,6 @@ import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { DeleteAndReassignDialogComponent } from '@app/crm/shared/delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { CrmStoreModule } from '@app/crm/store/crm-store.module';
 import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
-import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CRMDashboardWidgetsModule } from '@shared/crm/dashboard-widgets/dashboard-widgets.module';
 import { CrmRoutingModule } from './crm-routing.module';
@@ -132,7 +131,6 @@ import { AppStoreService } from '@app/store/app-store.service';
       PopoverModule.forRoot(),
       CrmRoutingModule,
       UtilsModule,
-      FiltersModule,
       PipelineModule,
       TableModule,
       PaginatorModule,
