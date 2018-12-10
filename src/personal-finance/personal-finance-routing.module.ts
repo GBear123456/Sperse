@@ -7,7 +7,6 @@ import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-servi
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
 import { KbaResultComponent } from './member-area/kba-result/kba-result.component';
-import { LendSpaceComponent } from '@root/personal-finance/landings/lend-space/lend-space.component';
 import { LendSpaceDarkComponent } from '@root/personal-finance/landings/lend-space-dark/lend-space-dark.component';
 import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-space-dark/signup/lend-space-signup.component';
 import { CreditWizardPageComponent } from '@root/personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.component';
@@ -40,10 +39,6 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                         component: LendSpaceSignupComponent
                     },
                     {
-                        path: 'lend-space',
-                        component: LendSpaceComponent
-                    },
-                    {
                         path: 'kba-result',
                         component: KbaResultComponent,
                         data: { wrapperDisabled: true }
@@ -71,7 +66,7 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                     {
                         path: 'offers',
                         loadChildren: 'personal-finance/shared/offers/offers.module#OffersModule',
-                        data: { preload: true }
+                        data: { preload: false }
                     },
                     {
                         path: 'credit-reports',
@@ -81,7 +76,7 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                     {
                         path: '',
                         loadChildren: 'personal-finance/member-area/member-area.module#MemberAreaModule', //Lazy load module
-                        data: { preload: true }
+                        data: { preload: false }
                     }
                 ]
             }

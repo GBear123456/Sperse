@@ -18,7 +18,7 @@ import {
     DxValidationSummaryModule,
     DxRadioGroupModule
 } from 'devextreme-angular';
-import { AppCommonModule } from '@app/shared/common/app-common.module';
+//import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { SyncServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
@@ -44,7 +44,7 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
     imports: [
         CommonModule,
         ngCommon.CommonModule,
-        AppCommonModule,
+//        AppCommonModule,
         RoundProgressModule,
         DxTabsModule,
         DxScrollViewModule,

@@ -6,7 +6,6 @@ import { PersonalFinanceCommonModule } from './shared/common/personal-finance-co
 import { PersonalFinanceRoutingModule } from './personal-finance-routing.module';
 import { PersonalFinanceComponent } from './personal-finance.component';
 import { LayoutModule } from './shared/layout/layout.module';
-import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { PackageIdService } from './shared/common/packages/package-id.service';
@@ -53,7 +52,6 @@ import { UtilsModule } from '@shared/utils/utils.module';
         TooltipModule.forRoot(),
         FileUploadModule,
         LayoutModule,
-        LayoutCommonModule,
         CommonModule,
         KbaResultModule,
 

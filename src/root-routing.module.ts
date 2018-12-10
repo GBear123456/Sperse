@@ -1,8 +1,9 @@
 import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@angular/core';
-import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, RouterModule, Router, Routes, NavigationEnd } from '@angular/router';
+import { RouteReuseStrategy, DetachedRouteHandle, ActivatedRouteSnapshot, RouterModule, Route, Router, Routes, NavigationEnd, PreloadingStrategy } from '@angular/router';
 import { AppRootComponent } from 'root.components';
 import { RouteGuard } from '@shared/common/auth/route-guard';
-import { NotFoundComponent } from  '@shared/not-found/not-found.component';
+
+import { Observable, of } from 'rxjs';
 
 @Injectable()
 export class CustomReuseStrategy implements RouteReuseStrategy {
@@ -65,6 +66,13 @@ export class CustomReuseStrategy implements RouteReuseStrategy {
     }
 }
 
+@Injectable()
+export class AppPreloadingStrategy implements PreloadingStrategy {
+    preload(route: Route, load: Function): Observable<any> {
+        return abp.session.userId && (!route.data || !route.data.feature || abp.features.isEnabled(route.data.feature)) ? load(): of(null);
+    }
+}
+
 const routes: Routes = [{
     path: '',
     canActivate: [ RouteGuard ],
@@ -73,35 +81,30 @@ const routes: Routes = [{
             {
                 path: 'account',
                 loadChildren: 'account/account.module#AccountModule', //Lazy load account module
-                data: { preload: false }
             },
             {
                 path: 'personal-finance',
                 loadChildren: 'personal-finance/personal-finance.module#PersonalFinanceModule', //Lazy load account module
-                data: { preload: false }
+                data: { feature: 'PFM' }
             },
             {
-                path: 'mobile',
-                loadChildren: 'mobile/mobile.module#MobileModule', //Lazy load mobile module
-                data: { preload: false }
-            },
-            {
-                path: 'desktop',
+                path: 'app',
                 loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
-                data: { preload: false }
+                data: { feature: 'Admin' }
             }
         ]
     },
     {
         path: '**',
         loadChildren: 'shared/not-found/not-found.module#NotFoundModule',
-        data: { preload: false }
     }
 ];
 
 @NgModule({
     imports: [
-        RouterModule.forRoot(routes)
+        RouterModule.forRoot(routes, { 
+            preloadingStrategy: AppPreloadingStrategy
+        })
     ],
     exports: [
         RouterModule
@@ -109,36 +112,11 @@ const routes: Routes = [{
 })
 
 export class RootRoutingModule implements AfterViewInit {
-    constructor(private _router: Router,
-                private _injector: Injector,
-                private _applicationRef: ApplicationRef
-    ) {
-/*
-        if (AppConsts.isMobile) {
-            _router.config[0].children.push(
-                {
-                    path: '',
-                    redirectTo: '/app/cfo/main/start',
-                    pathMatch: 'full'
-                }
-            );
-        }
-*/
-        _router.config[0].children.push(
-           {
-               path: 'app',
-               loadChildren: 'app/app.module#AppModule',
-/*
-               loadChildren: AppConsts.isMobile
-                   ? 'mobile/mobile.module#MobileModule' //Lazy load mobile module
-                   : 'app/app.module#AppModule',         //Lazy load desktop module
-*/
-               data: { preload: true }
-           },
-           { path: '', redirectTo: 'app', pathMatch: 'full' }
-        );
-        _router.resetConfig(_router.config);
-    }
+    constructor(
+        private _injector: Injector,
+        private _router: Router,
+        private _applicationRef: ApplicationRef
+    ) {}
 
     ngAfterViewInit() {
         this._router.events.subscribe((event: NavigationEnd) => {

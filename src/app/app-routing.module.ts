@@ -70,19 +70,19 @@ export class CfoActivateService implements CanActivate {
                         path: 'admin',
                         loadChildren: 'app/admin/admin.module#AdminModule', //Lazy load admin module
                         resolve: { admin: ModulePathResolverService },
-                        data: { preload: false }
+                        data: { feature: 'Admin' }
                     },
                     {
                         path: 'api',
                         loadChildren: 'app/api/api.module#ApiModule', //Lazy load main module
                         resolve: { api: ModulePathResolverService },
-                        data: { preload: false }
+                        data: { feature: 'Api' }
                     },
                     {
                         path: 'crm',
                         loadChildren: 'app/crm/crm.module#CrmModule', //Lazy load admin module
                         resolve: { crm: ModulePathResolverService },
-                        data: { preload: false }
+                        data: { featire: 'CRM' }
                     },
                     {
                         path: 'cfo',
@@ -91,7 +91,7 @@ export class CfoActivateService implements CanActivate {
                     {
                         path: 'cfo/:instance',
                         loadChildren: 'app/cfo/cfo.module#CfoModule', //Lazy load cfo *module
-                        data: { preload: false },
+                        data: { feature: 'CFO' },
                         resolve: { cfo: ModulePathResolverService }
                     }
                 ]
