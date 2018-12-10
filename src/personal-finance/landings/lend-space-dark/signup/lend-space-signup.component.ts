@@ -1,13 +1,18 @@
+/** Core imports */
 import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
+import { ActivationEnd } from '@angular/router';
+
+/** Third party imports */
+import { finalize } from '@node_modules/rxjs/internal/operators';
+import { MatDialog } from '@angular/material';
+
+/** Application imports */
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { AppConsts } from 'shared/AppConsts';
 import { ApplicationServiceProxy, SignUpMemberResponse, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
-import { finalize } from '@node_modules/rxjs/internal/operators';
 import { LoginService } from '@root/account/login/login.service';
 import { ConditionsType } from '@shared/AppEnums';
-import { MatDialog } from '@angular/material';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { ActivationEnd } from '../../../../../node_modules/@angular/router';
 
 @Component({
     selector: 'lend-space-signup',
@@ -19,7 +24,8 @@ import { ActivationEnd } from '../../../../../node_modules/@angular/router';
 export class LendSpaceSignupComponent extends AppComponentBase {
     patterns = {
         namePattern: AppConsts.regexPatterns.name,
-        emailPattern: AppConsts.regexPatterns.email
+        emailPattern: AppConsts.regexPatterns.email,
+        zipPattern: AppConsts.regexPatterns.zipUsPattern
     };
     radioGroupCitizen = [
         { text: 'Yes', status: true },
@@ -68,31 +74,6 @@ export class LendSpaceSignupComponent extends AppComponentBase {
     validateName(event) {
         if (!event.key.match(/^[a-zA-Z]+$/))
             event.preventDefault();
-    }
-
-    focusInput(event) {
-        if (!(event.component._value && event.component._value.trim())) {
-            let input = event.event.target;
-            event.component.option({
-                mask: '00000',
-                maskRules: { 'D': /\d?/ },
-                isValid: true
-            });
-            setTimeout(function () {
-                if (input.createTextRange) {
-                    let part = input.createTextRange();
-                    part.move('character', 0);
-                    part.select();
-                } else if (input.setSelectionRange)
-                    input.setSelectionRange(0, 0);
-                input.focus();
-            }, 100);
-        }
-    }
-
-    blurInput(event) {
-        if (!(event.component._value && event.component._value.trim()))
-            event.component.option({ mask: '', value: '' });
     }
 
     openConditionsDialog(data: any) {
