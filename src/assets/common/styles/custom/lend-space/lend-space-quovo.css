@@ -43,6 +43,22 @@ button.css-o0wm01 {
   border-color: #ffcc00;
   background: #ffcc00;
 }
+button.css-1pf61fi {
+  background-color: #ffcc00;
+  color: #000;
+}
+button.css-1pf61fi:hover {
+  background-color: #e0b400;
+}
+.Connection-card__connection-info {
+  color: #000 !important;
+}
+.Connection-card__connection-info .Connection-card__color-bar {
+  background-color: #ffcc00 !important;
+}
+.Connection-card__connection-info .Connection-card__color-bar .Connection-card__more {
+  color: #000000;
+}
 @media (min-width: 768px) {
   .PFM__header,
   .Content-container {
