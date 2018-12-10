@@ -43,9 +43,14 @@
                         <div class="form-group col col-xs-12">
                             <dx-text-box placeholder="Zip"
                                          [(value)]="registerData.postalCode"
-                                         maxLength="5"
-                                         (onFocusIn)="focusInput($event)"
-                                         (onFocusOut)="blurInput($event)">
+                                         minLength="5"
+                                         maxLength="10">
+                                <dx-validator>
+                                    <dxi-validation-rule type="pattern"
+                                                         [pattern]="patterns.zipPattern"
+                                                         message="Zip Code is invalid">
+                                    </dxi-validation-rule>
+                                </dx-validator>
                             </dx-text-box>
                         </div>
                         <div class="form-group col col-xs-12 dx-field">

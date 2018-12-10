@@ -27,6 +27,7 @@ import { UserNotificationHelper } from 'app/shared/layout/notifications/UserNoti
 import { AppConsts } from 'shared/AppConsts';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({
     templateUrl: 'personal-finance-header.component.html',
@@ -57,65 +58,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
 
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
     currentDate = new Date();
+    appAreaLinks;
 
-
-    appAreaLinks = [
-        {
-            name: 'Loans',
-            sublinks: [
-                {
-                    name: this.l('Offers_PersonalLoans'),
-                    routerUrl: '/personal-finance/offers/personal-loans'
-                },
-                {
-                    name: this.l('Offers_PaydayLoans'),
-                    routerUrl: '/personal-finance/offers/payday-loans'
-                },
-                {
-                    name: this.l('Offers_InstallmentLoans'),
-                    routerUrl: '/personal-finance/offers/installment-loans'
-                },
-                {
-                    name: this.l('Offers_BusinessLoans'),
-                    routerUrl: '/personal-finance/offers/business-loans'
-                },
-                {
-                    name: this.l('Offers_AutoLoans'),
-                    routerUrl: '/personal-finance/offers/auto-loans'
-                }
-            ]
-        },
-        {
-            name: 'Credit Cards',
-            routerUrl: '/personal-finance/offers/credit-cards'
-        },
-        {
-            name: 'Credit Score',
-            sublinks: [
-                {
-                    name: this.l('Offers_CreditScore'),
-                    routerUrl: '/personal-finance/offers/credit-score'
-                },
-                {
-                    name: this.l('Offers_CreditRepair'),
-                    routerUrl: '/personal-finance/offers/credit-repair'
-                },
-                {
-                    name: this.l('Offers_CreditMonitoring'),
-                    routerUrl: '/personal-finance/offers/credit-monitoring'
-                },
-                {
-                    name: this.l('Offers_DebtConsolidation'),
-                    routerUrl: '/personal-finance/offers/debt-consolidation'
-                }
-            ]
-        },
-        {
-            name: 'My Finances',
-            routerUrl: '/personal-finance/my-finances',
-            hidden: !this.feature.isEnabled('CFO.Partner')
-        }
-    ];
     memberAreaLinks = [
         {
             name: 'creditReportLink',
@@ -163,7 +107,10 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         private _permissionChecker: PermissionCheckerService
     ) {
         super(injector);
-
+        const cfoService = injector.get(CFOService);
+        cfoService.instanceChangeProcess(() => {
+            this.appAreaLinks = this.getAppAreaLinks(!cfoService || !cfoService.initialized);
+        });
         if (this.feature.isEnabled('CFO.Partner')) {
             this.memberAreaLinks.unshift(
                 {
@@ -182,6 +129,97 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
             (this.feature.isEnabled('CFO') && this._permissionChecker.isGranted('Pages.CFO')) ||
             (this.feature.isEnabled('CRM') && this._permissionChecker.isGranted('Pages.CRM')) ||
             (this.feature.isEnabled('Admin') && this._permissionChecker.isGranted('Pages.Administration.Users'));
+    }
+
+    private getAppAreaLinks(myFinancesSublinksAreHidden = true) {
+        return [
+            {
+                name: 'Loans',
+                sublinks: [
+                    {
+                        name: this.l('Offers_PersonalLoans'),
+                        routerUrl: '/personal-finance/offers/personal-loans'
+                    },
+                    {
+                        name: this.l('Offers_PaydayLoans'),
+                        routerUrl: '/personal-finance/offers/payday-loans'
+                    },
+                    {
+                        name: this.l('Offers_InstallmentLoans'),
+                        routerUrl: '/personal-finance/offers/installment-loans'
+                    },
+                    {
+                        name: this.l('Offers_BusinessLoans'),
+                        routerUrl: '/personal-finance/offers/business-loans'
+                    },
+                    {
+                        name: this.l('Offers_AutoLoans'),
+                        routerUrl: '/personal-finance/offers/auto-loans'
+                    }
+                ]
+            },
+            {
+                name: 'Credit Cards',
+                routerUrl: '/personal-finance/offers/credit-cards'
+            },
+            {
+                name: 'Credit Score',
+                sublinks: [
+                    {
+                        name: this.l('Offers_CreditScore'),
+                        routerUrl: '/personal-finance/offers/credit-score'
+                    },
+                    {
+                        name: this.l('Offers_CreditRepair'),
+                        routerUrl: '/personal-finance/offers/credit-repair'
+                    },
+                    {
+                        name: this.l('Offers_CreditMonitoring'),
+                        routerUrl: '/personal-finance/offers/credit-monitoring'
+                    },
+                    {
+                        name: this.l('Offers_DebtConsolidation'),
+                        routerUrl: '/personal-finance/offers/debt-consolidation'
+                    }
+                ]
+            },
+            {
+                name: 'My Finances',
+                routerUrl: '/personal-finance/my-finances',
+                hidden: !this.feature.isEnabled('CFO.Partner'),
+                sublinks: [
+                    {
+                        name: 'Summary',
+                        routerUrl: '/personal-finance/my-finances/summary'
+                    },
+                    {
+                        name: 'Goals',
+                        routerUrl: '/personal-finance/my-finances/goals'
+                    },
+                    {
+                        name: 'Allocation',
+                        routerUrl: '/personal-finance/my-finances/allocation'
+                    },
+                    {
+                        name: 'Spending & Budgeting',
+                        routerUrl: '/personal-finance/my-finances/spending'
+                    },
+                    {
+                        name: 'Accounts',
+                        routerUrl: '/personal-finance/my-finances/accounts'
+                    },
+                    {
+                        name: 'Transactions',
+                        routerUrl: '/personal-finance/my-finances/transactions'
+                    },
+                    {
+                        name: 'Holdings',
+                        routerUrl: '/personal-finance/my-finances/holdings'
+                    }
+                ],
+                sublinksHidden: myFinancesSublinksAreHidden
+            }
+        ];
     }
 
     isMemberArea() {

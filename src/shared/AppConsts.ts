@@ -81,7 +81,8 @@ export class AppConsts {
         fullName: /^[^\d]+$/,
         ein: /^\d{2}\-?\d{7}$/,
         duns: /^\d{2}\-?\d{3}-?\d{4}$/,
-        siteUrl: /^(http:\/\/| https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/
+        siteUrl: /^(http:\/\/| https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
+        zipUsPattern: /^\d{5}(?:-\d{4})?$/
     };
 
     static readonly imageUrls = {

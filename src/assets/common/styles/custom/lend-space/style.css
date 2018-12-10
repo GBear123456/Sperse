@@ -120,3 +120,30 @@ body.lend-space .accountsContainer .not-initialized-content .btn-layout:hover {
   background-color: #e0b400;
   box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
 }
+body.lend-space .alert.m-alert--outline.alert-success {
+  border-color: #ffcc00;
+  color: #000;
+}
+body.lend-space .alert.m-alert--outline.alert-success .m-alert--icon-solid .m-alert__icon {
+  background: #ffcc00;
+}
+body.lend-space .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon span {
+  border-left-color: #ffcc00;
+}
+body.lend-space .btn.btn-primary,
+body.lend-space .button-primary {
+  background-color: #ffcc00;
+  color: #000;
+}
+body.lend-space .btn.btn-primary:before,
+body.lend-space .button-primary:before {
+  border-top-color: #000;
+}
+body.lend-space .btn.btn-primary:after,
+body.lend-space .button-primary:after {
+  background-color: #ffcc00;
+}
+body.lend-space .btn.btn-primary:hover,
+body.lend-space .button-primary:hover {
+  background: #e0b400;
+}

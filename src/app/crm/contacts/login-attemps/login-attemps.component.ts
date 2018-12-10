@@ -19,7 +19,7 @@ export class LoginAttempsComponent extends AppComponentBase implements OnInit, O
     ) {
         super(injector);
 
-        _contactsService.userSubscribe((userId) => {            
+        _contactsService.userSubscribe((userId) => {
             if (userId) this.loadData(userId);
         }, this.constructor.name);
     }

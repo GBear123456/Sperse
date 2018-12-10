@@ -3,9 +3,8 @@ import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { Observable, forkJoin } from '@node_modules/rxjs';
-
-import { finalize } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
+import { finalize, first, pluck, takeUntil, tap, skip, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -18,7 +17,7 @@ import {
     SyncServiceProxy,
     InstanceServiceProxy,
     GetProviderUITokenOutput,
-    LayoutType, TenantLoginInfoDtoCustomLayoutType
+    TenantLoginInfoDtoCustomLayoutType
 } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors } from '@shared/AppEnums';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
@@ -35,8 +34,8 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     isStartDisabled = false;
     isInstanceInfoLoaded = false;
 
-    currentSection = 'summary';
-
+    defaultSection = 'summary';
+    sectionName$: Observable<string>;
     menuItems = [
         { name: 'Summary', sectionName: 'summary' },
         { name: 'Goals', sectionName: 'goals' },
@@ -60,17 +59,24 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit() {
-        if (this.appSession.userId) this.checkInstanceChangeProcess();
+        if (this.appSession.userId)
+            this.checkInstanceChangeProcess();
     }
 
-    checkInstanceChangeProcess() {
+    private checkInstanceChangeProcess() {
         this._cfoService.instanceChangeProcess(() => {
             this.isInstanceInfoLoaded = true;
             this.loadQouvoPfm();
         });
+        this.sectionName$ = this._activatedRoute.params.pipe(
+            takeUntil(this.destroy$),
+            pluck('sectionName'),
+            /** If section name is in menuItems array - use it, else - default section */
+            map((sectionName: string) => sectionName && this.menuItems.some(item => item.sectionName === sectionName) ? sectionName : this.defaultSection)
+        );
     }
 
-    loadQouvoPfm() {
+    private loadQouvoPfm() {
         if (this._cfoService.initialized) {
             const element = this.getElementRef().nativeElement.querySelector('.p-content');
             abp.ui.setBusy(element);
@@ -82,26 +88,38 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
                     observer.complete();
                 });
             });
-
             forkJoin(
-                this.tokenLoading$,
+                this.tokenLoading$.pipe(map(tokenRes => tokenRes.token.toString())),
+                this.sectionName$.pipe(first()),
                 quovoLoading$
-            ).pipe(finalize(() => abp.ui.clearBusy(element)))
-                .subscribe(
-                    res => {
-                        this._syncService.syncAllAccounts(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, false, false).subscribe();
-                        let token = res[0].token.toString();
-                        this.loadQuovo(token);
-                    }
-                );
+            ).pipe(
+                finalize(() => abp.ui.clearBusy(element)),
+                tap(() => {
+                    this._syncService.syncAllAccounts(
+                        InstanceType[this._cfoService.instanceType],
+                        this._cfoService.instanceId,
+                        false,
+                        false
+                    ).subscribe();
+                })
+            ).subscribe(
+                ([token, sectionName]) => {
+                    this.loadQuovo(token, sectionName);
+                    /** Subscribe to section name changes
+                     *  skip first to avoid double loading at the first time) */
+                    this.sectionName$.pipe(takeUntil(this.destroy$), skip(1)).subscribe(sectionName => {
+                        this.refreshQuovoSection(sectionName);
+                    });
+                }
+            );
         }
     }
 
-    loadQuovo(token) {
+    private loadQuovo(token, sectionName: string) {
         let settings = {
             token: token.toString(),
             elementId: 'quovo-accounts-module',
-            moduleName: this.currentSection
+            moduleName: sectionName
         };
         if (this.appSession.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace) {
             settings['userCss'] = AppConsts.appBaseHref + 'assets/common/styles/custom/lend-space/lend-space-quovo.css';
@@ -109,7 +127,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         Quovo.embed(settings);
     }
 
-    refreshQuovoSection() {
+    private refreshQuovoSection(sectionName: string) {
         const element = this.getElementRef().nativeElement.querySelector('.p-content');
         abp.ui.setBusy(element);
         this.tokenLoading$
@@ -118,7 +136,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
                 res => {
                     $('.quovo-accounts-module').html('');
                     let token = res.token.toString();
-                    this.loadQuovo(token);
+                    this.loadQuovo(token, sectionName);
                 }
             );
     }
@@ -127,7 +145,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         if (this._cfoService.initialized)
             this.addAccount();
         else
-            this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType]).subscribe(data => {
+            this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType]).subscribe(() => {
                 this.checkInstanceChangeProcess();
                 this.addAccount();
             });
@@ -153,15 +171,12 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         this.checkInstanceChangeProcess();
     }
 
-    ngOnDestroy() {
-        super.ngOnDestroy();
+    changeQuovoSection(sectionName) {
+        this._router.navigate(['../', sectionName], { relativeTo: this._activatedRoute });
     }
 
-    openQuovoSection(sectionName) {
-        if (this.currentSection !== sectionName) {
-            this.currentSection = sectionName;
-            this.refreshQuovoSection();
-        }
+    ngOnDestroy() {
+        super.ngOnDestroy();
     }
 
 }

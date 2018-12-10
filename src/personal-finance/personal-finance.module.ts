@@ -31,6 +31,8 @@ import { ReportWizardModule } from '@root/personal-finance/landings/credit-repor
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { AngularGooglePlaceModule } from '@node_modules/angular-google-place';
 import { UtilsModule } from '@shared/utils/utils.module';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { UserOnlyCFOService } from '@root/personal-finance/shared/common/user-only.cfo.service';
 
 import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
@@ -91,6 +93,10 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     ],
     providers: [
         ZendeskService,
+        {
+            provide: CFOService,
+            useClass: UserOnlyCFOService
+        },
         PackageIdService,
         CreditReportServiceProxy,
         ngxZendeskWebwidgetService

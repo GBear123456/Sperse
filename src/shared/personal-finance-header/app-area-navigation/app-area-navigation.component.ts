@@ -7,7 +7,9 @@ import {
     Renderer2,
     ViewChildren,
     QueryList,
-    ElementRef
+    ElementRef,
+    OnChanges,
+    SimpleChanges
 } from '@angular/core';
 
 import { AppComponentBase } from 'shared/common/app-component-base';
@@ -18,7 +20,7 @@ import { takeUntil } from 'rxjs/operators';
     templateUrl: './app-area-navigation.component.html',
     styleUrls: ['./app-area-navigation.component.less']
 })
-export class AppAreaNavigationComponent extends AppComponentBase implements AfterViewInit {
+export class AppAreaNavigationComponent extends AppComponentBase implements AfterViewInit, OnChanges {
     @Input() memberAreaLinks: any[];
     @Input() actionsButtons: any[];
     @ViewChildren('sublinks') sublinksRefs: QueryList<ElementRef>;
@@ -48,6 +50,12 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
         this.loggedUserId = this.appSession.userId;
     }
 
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.memberAreaLinks) {
+            this.checkMenuWidth();
+        }
+    }
+
     ngAfterViewInit() {
         this.checkMenuWidth();
     }
@@ -74,14 +82,13 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
     }
 
     navigationItemClick(e, link) {
-        if (!link.routerUrl && (!link.sublinks || !link.sublinks.length))
-            return;
-
-        if (link.routerUrl) {
-            this._router.navigate([link.routerUrl]);
-        } else {
+        if (link.sublinks && link.sublinks.length && !link.sublinksHidden) {
             this.closeAllOpenedMenuItems();
             setTimeout(() => this.renderer.addClass(e.target.parentElement, 'opened'));
+        } else if (link.routerUrl) {
+            this._router.navigate([link.routerUrl]);
+        } else {
+            return;
         }
     }
 
