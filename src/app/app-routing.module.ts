@@ -82,7 +82,7 @@ export class CfoActivateService implements CanActivate {
                         path: 'crm',
                         loadChildren: 'app/crm/crm.module#CrmModule', //Lazy load admin module
                         resolve: { crm: ModulePathResolverService },
-                        data: { featire: 'CRM' }
+                        data: { feature: 'CRM' }
                     },
                     {
                         path: 'cfo',
