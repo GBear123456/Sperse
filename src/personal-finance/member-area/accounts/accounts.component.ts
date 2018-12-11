@@ -176,7 +176,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     changeQuovoSection(sectionName) {
-        this._router.navigate(['/personal-finance/my-finances', sectionName], { relativeTo: this._activatedRoute });
+        this._router.navigate(['/personal-finance/my-finances', sectionName]);
     }
 
     ngOnDestroy() {
