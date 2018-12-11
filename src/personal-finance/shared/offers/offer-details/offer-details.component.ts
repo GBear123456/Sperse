@@ -3,7 +3,6 @@ import {
     ApplicationRef,
     Component,
     ElementRef,
-    HostListener,
     OnInit,
     OnDestroy,
     ViewChild,
@@ -21,7 +20,7 @@ import { finalize, first, map, switchMap, takeUntil, pluck, tap } from 'rxjs/ope
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { Category, Type, OfferServiceProxy, CampaignDto, CampaignDetailsDto } from '@shared/service-proxies/service-proxies';
+import { Category, OfferServiceProxy, CampaignDto, CampaignDetailsDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'offer-details.component.html',
@@ -92,7 +91,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
                                 'No foreign transaction fee'
                             ],
                             cons: [
-                                'Has anual fees'
+                                'Has annual fees'
                             ],
                             recommendedCreditScore: {
                                 min: 450,

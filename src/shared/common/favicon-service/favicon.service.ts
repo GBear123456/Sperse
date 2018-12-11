@@ -20,7 +20,7 @@ export class FaviconService {
 
         favicons.forEach((item: FaviconDto) => {
             let href = faviconBaseUrl + item.name;
-            if (document.head.querySelector('link[href="' + href + '"]')) 
+            if (document.head.querySelector('link[href="' + href + '"]'))
                 oldFaviconsLinks = oldFaviconsLinks.map((link) => {
                     if (link.href == href)
                         return undefined;
@@ -34,9 +34,9 @@ export class FaviconService {
                 link.href = href;
                 this.document.head.appendChild(link);
             }
-        });        
+        });
 
-        oldFaviconsLinks.forEach((link) => { link && link.remove() });
+        oldFaviconsLinks.forEach((link) => { link && link.remove(); });
         oldManifest && oldManifest.remove();
     }
 
