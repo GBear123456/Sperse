@@ -35,7 +35,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         Validators.required,
         Validators.pattern(AppConsts.regexPatterns.url)
     ]);
-
+    clearDisabled = true;
     private thumbData: string;
 
     constructor(
@@ -54,6 +54,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
             image.src = this.data.source;
             image.onload = () => {
                 this.cropper.setImage(image);
+                this.clearDisabled = false;
             };
         } else {
             let ctx = this.cropper.cropcanvas.nativeElement.getContext('2d');
@@ -170,10 +171,12 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     }
 
     clearPhoto() {
-        this.dialogRef.close({
-            origImage: '',
-            thumImage: ''
-        });
+        if (!this.clearDisabled) {
+            this.dialogRef.close({
+                origImage: '',
+                thumImage: ''
+            });
+        }
     }
 
     loadFile(paste = false) {

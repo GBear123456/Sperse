@@ -30,7 +30,7 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <div>
-        <button mat-button class="button-layout button-default" (click)="clearPhoto()">{{ l('Clear') }}</button>
+        <button mat-button class="button-layout button-default" [disabled]="clearDisabled" (click)="clearPhoto()">{{ l('Clear') }}</button>
     </div>
     <div>
         <button mat-button mat-dialog-close class="button-layout button-default">{{ l('Cancel') }}</button>
