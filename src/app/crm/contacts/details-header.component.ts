@@ -19,7 +19,7 @@ import { UploadDocumentsDialogComponent } from './documents/upload-documents-dia
 import {
     ContactInfoDto, CreateContactPhotoInput, PersonOrgRelationServiceProxy,
     ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdatePersonOrgRelationInput,
-    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy, OrganizationInfoDto, UserServiceProxy
+    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
