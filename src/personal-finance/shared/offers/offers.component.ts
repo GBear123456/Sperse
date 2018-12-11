@@ -417,23 +417,7 @@ export class OffersComponent implements OnInit, OnDestroy {
     }
 
     applyOffer(offer: CampaignDto) {
-        const submitApplicationInput = SubmitApplicationInput.fromJS({
-            campaignId: offer.id,
-            systemType: 'EPCVIP',
-            subId: this.filtersValues.category
-        });
-
-        abp.ui.setBusy(this.offersListRef.nativeElement);
-        this.offerServiceProxy.submitApplication(submitApplicationInput)
-                              .pipe(finalize(() => abp.ui.clearBusy(this.offersListRef.nativeElement)))
-                              .subscribe((output: SubmitApplicationOutput) => {
-                                 if (!offer.redirectUrl) {
-                                     window.open(output.redirectUrl, '_blank');
-                                 }
-                              });
-        if (offer.redirectUrl) {
-            window.open(offer.redirectUrl, '_blank');
-        }
+        this.offersService.applyOffer(offer, this.filtersValues.category);
     }
 
     changeStep(sliderChange: MatSliderChange, stepsConditions: StepConditionInterface[]) {
