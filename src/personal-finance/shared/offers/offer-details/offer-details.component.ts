@@ -143,22 +143,9 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     }
 
     applyOffer(offer: CampaignDto) {
-        const submitApplicationInput = SubmitApplicationInput.fromJS({
-            campaignId: offer.id,
-            systemType: 'EPCVIP',
-            subId: this.selectedCategory
+        this.category$.pipe(first()).subscribe(category => {
+            this.offersService.applyOffer(offer, category);
         });
-        abp.ui.setBusy();
-        this.offerServiceProxy.submitApplication(submitApplicationInput)
-            .pipe(finalize(() => abp.ui.clearBusy()))
-            .subscribe((output: SubmitApplicationOutput) => {
-                if (!offer.redirectUrl) {
-                    window.open(output.redirectUrl, '_blank');
-                }
-            });
-        if (offer.redirectUrl) {
-            window.open(offer.redirectUrl, '_blank');
-        }
     }
 
     ngOnDestroy() {
