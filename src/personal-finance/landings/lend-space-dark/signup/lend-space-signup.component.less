@@ -33,10 +33,25 @@
     
     .get-free {
         min-height: 441px;
-        background: #fec80d url(../../../../assets/common/images/lend-space-dark/girl-2.png) 23% 50% no-repeat;
-        background-size: contain;
-        padding: 30px 0;
+        background-color: #fec80d;
         font-family: @mainFont;
+        
+        [class^='col'] {
+            padding: 30px 0;
+        }
+        
+        .girl-bg {
+            background: #fec80d url(../../../../assets/common/images/lend-space-dark/girl-2.png) 15px bottom no-repeat;
+            background-size: contain;
+            
+            @media all and (max-width: 1199px) {
+                background-size: 50%;
+            }
+            
+            @media all and (max-width: 991px) {
+                background-image: unset;
+            }
+        }
         
         h2 {
             text-align: left;
@@ -186,24 +201,8 @@
                 }
             }
         }
-    
-        @media all and (max-width: 1440px) {
-            background-position: 0 50%;
-        }
-    
-        @media all and (max-width: 1280px) {
-            background-position: -15% 50%;
-        }
-    
-        @media all and (max-width: 1024px) {
-            background-position: -125px 50%;
-        }
-    
-        @media all and (max-width: 768px) {
-            height: auto;
-            padding-bottom: 460px;
-            background: #fec80d url(../../../../assets/common/images/lend-space-dark/get-free-mobile-bg.png) 100% 100% no-repeat;
         
+        @media all and (max-width: 768px) {
             h2 {
                 padding-left: 0 !important;
                 margin-top: 30px;
@@ -211,9 +210,6 @@
         }
         
         @media all and (max-width: 600px) {
-            background-position: 50% 100%;
-            padding-bottom: 330px;
-            background-size: contain;
             text-align: center;
             
             h2 {
