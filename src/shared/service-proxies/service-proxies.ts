@@ -18074,8 +18074,60 @@ export class PersonOrgRelationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    update(input: UpdatePersonOrgRelationInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Update";
+    createOrUpdate(input: CreateOrUpdatePersonOrgRelationInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/CreateOrUpdate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateJobTitle(input: UpdateJobTitleInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/UpdateJobTitle";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -18090,11 +18142,11 @@ export class PersonOrgRelationServiceProxy {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdate(response_);
+            return this.processUpdateJobTitle(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdate(<any>response_);
+                    return this.processUpdateJobTitle(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -18103,7 +18155,7 @@ export class PersonOrgRelationServiceProxy {
         }));
     }
 
-    protected processUpdate(response: HttpResponseBase): Observable<void> {
+    protected processUpdateJobTitle(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -50644,11 +50696,67 @@ export interface IPersonOrgRelationInfoDto {
     jobTitle: string | undefined;
 }
 
-export class UpdatePersonOrgRelationInput implements IUpdatePersonOrgRelationInput {
+export class CreateOrUpdatePersonOrgRelationInput implements ICreateOrUpdatePersonOrgRelationInput {
+    id!: number | undefined;
+    personId!: number;
+    organizationId!: number | undefined;
+    organizationName!: string | undefined;
+    relationshipType!: string;
+    jobTitle!: string | undefined;
+
+    constructor(data?: ICreateOrUpdatePersonOrgRelationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.personId = data["personId"];
+            this.organizationId = data["organizationId"];
+            this.organizationName = data["organizationName"];
+            this.relationshipType = data["relationshipType"];
+            this.jobTitle = data["jobTitle"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrUpdatePersonOrgRelationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrUpdatePersonOrgRelationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["personId"] = this.personId;
+        data["organizationId"] = this.organizationId;
+        data["organizationName"] = this.organizationName;
+        data["relationshipType"] = this.relationshipType;
+        data["jobTitle"] = this.jobTitle;
+        return data; 
+    }
+}
+
+export interface ICreateOrUpdatePersonOrgRelationInput {
+    id: number | undefined;
+    personId: number;
+    organizationId: number | undefined;
+    organizationName: string | undefined;
+    relationshipType: string;
+    jobTitle: string | undefined;
+}
+
+export class UpdateJobTitleInput implements IUpdateJobTitleInput {
     id!: number;
     jobTitle!: string;
 
-    constructor(data?: IUpdatePersonOrgRelationInput) {
+    constructor(data?: IUpdateJobTitleInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -50664,9 +50772,9 @@ export class UpdatePersonOrgRelationInput implements IUpdatePersonOrgRelationInp
         }
     }
 
-    static fromJS(data: any): UpdatePersonOrgRelationInput {
+    static fromJS(data: any): UpdateJobTitleInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdatePersonOrgRelationInput();
+        let result = new UpdateJobTitleInput();
         result.init(data);
         return result;
     }
@@ -50679,7 +50787,7 @@ export class UpdatePersonOrgRelationInput implements IUpdatePersonOrgRelationInp
     }
 }
 
-export interface IUpdatePersonOrgRelationInput {
+export interface IUpdateJobTitleInput {
     id: number;
     jobTitle: string;
 }
