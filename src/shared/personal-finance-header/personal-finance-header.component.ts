@@ -1,9 +1,10 @@
-/** Сore imports */
-import { Component, OnInit, Injector, ViewChild, HostBinding } from '@angular/core';
+/** Core imports */
+import { Component, OnInit, Injector, HostBinding } from '@angular/core';
 
 /** Third party imports */
-import * as _ from 'lodash';
 import { MatDialog } from '@angular/material';
+import { filter } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 /** Application imports */
 import { AbpSessionService } from '@abp/session/abp-session.service';
@@ -32,6 +33,7 @@ import { AppConsts } from 'shared/AppConsts';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UpdateProfilePictureInput } from '@shared/service-proxies/service-proxies';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: 'personal-finance-header.component.html',
@@ -297,21 +299,29 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         }
     }
 
-    changeProfilePicture(): void {
+    changeProfilePicture(e): void {
         this.dialog.open(UploadPhotoDialogComponent, {
             data: {
-                source: this.getProfilePictureUrl(this.appSession.user.profilePictureId)
+                source: this.getProfilePictureUrl(this.appSession.user.profilePictureId),
+                maxSizeBytes: AppConsts.maxImageSize
             },
             hasBackdrop: true
-        }).afterClosed().subscribe((result) => {
-            if (result) {
+        }).afterClosed()
+            .pipe(filter(result => result))
+            .subscribe((result) => {
+                const base64OrigImage = StringHelper.getBase64(result.origImage),
+                    base64ThumbImage = StringHelper.getBase64(result.thumImage);
                 this._profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
-                    originalImage: result.origImage,
-                    thumbnail: result.thumImage
-                }));
-                //abp.event.trigger('profilePictureChanged', thumbnailId);
-            }
-        });
+                    originalImage: base64OrigImage,
+                    thumbnail: base64ThumbImage
+                })).subscribe(res => {
+                    this.appSession.user.profilePictureId = res;
+                    abp.event.trigger('profilePictureChanged', res);
+                });
+            });
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        }
     }
 
     changeMySettings(e): void {
@@ -330,20 +340,12 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         this._authService.logout(true, this.feature.isEnabled('PFM.Applications') ? location.origin + '/personal-finance' : undefined);
     }
 
-    onMySettingsModalSaved(): void {
-        this.shownLoginInfo = this.appSession.getShownLoginInfo();
-    }
-
     backToMyAccount(): void {
         this._impersonationService.backToImpersonator();
     }
 
     switchToLinkedUser(linkedUser: LinkedUserDto): void {
         this._linkedAccountService.switchToAccount(linkedUser.id, linkedUser.tenantId);
-    }
-
-    get chatEnabled(): boolean {
-        return (!this._abpSessionService.tenantId || this.feature.isEnabled('App.ChatFeature'));
     }
 
     get notificationEnabled(): boolean {

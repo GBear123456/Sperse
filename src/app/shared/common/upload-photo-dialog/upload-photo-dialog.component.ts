@@ -52,7 +52,9 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         if (this.data.source) {
             let image: any = new Image();
             image.src = this.data.source;
-            this.cropper.setImage(image);
+            image.onload = () => {
+                this.cropper.setImage(image);
+            };
         } else {
             let ctx = this.cropper.cropcanvas.nativeElement.getContext('2d');
             ctx.fillStyle = '#FFFFFF';
