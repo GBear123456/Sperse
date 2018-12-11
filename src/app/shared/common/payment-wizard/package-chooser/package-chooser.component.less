@@ -278,15 +278,19 @@
         text-align: center;
         position: relative;
         margin: 0 auto;
+        display: flex;
+        align-items: center;
         .downgrade {
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 0.3px;
             color: #ffffff;
             cursor: pointer;
+            display: none;
         }
         .pricesAreShown {
             font-weight: 500;
+            margin-bottom: 0;
         }
 
         button {
@@ -301,7 +305,6 @@
             line-height: normal;
             position: absolute;
             right: 10px;
-            top: -7px;
             border: none;
             cursor: pointer;
             &[disabled] {
@@ -346,8 +349,11 @@
         transform: skew(0, -183deg);
     }
 
-    .footer button {
-        &[disabled] {
+    .footer {
+        .downgrade {
+            display: block;
+        }
+        button[disabled] {
             background-color: #fff;
         }
     }

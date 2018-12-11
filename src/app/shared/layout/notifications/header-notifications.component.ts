@@ -159,7 +159,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement');
     }
 
-    openPaymentWizardDialog() {
+    openPaymentWizardDialog(e) {
         this._dialog.open(PaymentWizardComponent, {
             height: '655px',
             width: '980px',
@@ -167,6 +167,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
             panelClass: ['payment-wizard', 'setup'],
             data: { module: this._appService.getModule().toUpperCase() }
         }).afterClosed().subscribe(result => { });
+        e.stopPropagation && e.stopPropagation();
     }
 
     openAllNotifications(e): void {
