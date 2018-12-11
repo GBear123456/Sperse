@@ -7,7 +7,7 @@
                         <label for="shortName">{{l('Company_ShortName')}}</label>
                         <dx-text-box name="shortName"
                                      [inputAttr]="{ id: 'shortName' }"
-                                     [valueChangeEvent]="'keyup'"
+                                     [valueChangeEvent]="'focusout'"
                                      [(value)]="company.shortName">
                         </dx-text-box>
                         <span [class]="company.shortName && 'clear-contact' || 'hidden'" (click)="company.shortName = ''"><i class="minus-icon"></i></span>
@@ -45,7 +45,7 @@
                         <dx-number-box name="annualRevenue"
                                      format="currency"
                                      [inputAttr]="{ id: 'annualRevenue' }"
-                                     [valueChangeEvent]="'keyup'"
+                                     [valueChangeEvent]="'focusout'"
                                      [(value)]="company.annualRevenue">
                         </dx-number-box>
                         <span [class]="company.annualRevenue && 'clear-contact' || 'hidden'" (click)="company.annualRevenue = ''"><i class="minus-icon"></i></span>
@@ -83,7 +83,7 @@
                         <label for="industry">{{l('Company_Industry')}}</label>
                         <dx-text-box name="industry"
                                      [inputAttr]="{ id: 'industry' }"
-                                     [valueChangeEvent]="'keyup'"
+                                     [valueChangeEvent]="'focusout'"
                                      [(value)]="company.industry">
                         </dx-text-box>
                         <span [class]="company.industry && 'clear-contact' || 'hidden'" (click)="company.industry = ''"><i class="minus-icon"></i></span>
@@ -93,7 +93,7 @@
                         <dx-number-box name="sicCode"
                                      (onInput)="onInput($event, 4)"
                                      [inputAttr]="{ id: 'sicCode' }"
-                                     [valueChangeEvent]="'keyup'"
+                                     [valueChangeEvent]="'focusout'"
                                      [(value)]="company.businessSicCode">
                         </dx-number-box>
                         <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = ''"><i class="minus-icon"></i></span>
@@ -126,7 +126,7 @@
                         <label for="ein">{{l('Company_EIN')}}</label>
                         <dx-text-box name="ein"
                                      [inputAttr]="{ id: 'ein' }"
-                                     [valueChangeEvent]="'keyup'"
+                                     [valueChangeEvent]="'focusout'"
                                      [(value)]="company.ein"
                                      (onInput)="onInput($event, 10, '00-0000000')">
                             <dx-validator>
@@ -139,7 +139,7 @@
                         <label for="dusn">{{l('Company_DUNS')}}</label>
                         <dx-text-box name="duns"
                                      [inputAttr]="{ id: 'dusn' }"
-                                     [valueChangeEvent]="'keyup'"
+                                     [valueChangeEvent]="'focusout'"
                                      [(value)]="company.duns"
                                      (onInput)="onInput($event, 11, '00-000-0000')">
                             <dx-validator>
@@ -152,7 +152,7 @@
                         <label for="stockSymbol">{{l('Company_StockSymbol')}}</label>
                         <dx-text-box name="stockSymbol"
                                      [inputAttr]="{ id: 'stockSymbol' }"
-                                     [valueChangeEvent]="'keyup'"
+                                     [valueChangeEvent]="'focusout'"
                                      [(value)]="company.ticker"
                                      (onInput)="onInput($event, 15)">
                         </dx-text-box>

@@ -539,22 +539,22 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
             this._contactService.getSimilarContacts(
-                field ? undefined: person.namePrefix || undefined,
-                field ? undefined: person.firstName || undefined,
-                field ? undefined: person.middleName || undefined,
-                field ? undefined: person.lastName || undefined,
-                field ? undefined: person.nameSuffix || undefined,
-                field ? undefined: this.company || undefined,
+                field ? undefined : person.namePrefix || undefined,
+                field ? undefined : person.firstName || undefined,
+                field ? undefined : person.middleName || undefined,
+                field ? undefined : person.lastName || undefined,
+                field ? undefined : person.nameSuffix || undefined,
+                field ? undefined : this.company || undefined,
                 (field == 'emails') && contact.email && [contact.email] || undefined,
                 (field == 'phones') && contact.number && [contact.number] || undefined,
-                isAddress && contact.address || undefined, 
-                isAddress && contact.city || undefined, 
-                isAddress && this.getStateCode(contact.state) || undefined, 
-                isAddress && contact.zip || undefined, 
-                isAddress && this.getCountryCode(contact.country) || undefined, 
+                isAddress && contact.address || undefined,
+                isAddress && contact.city || undefined,
+                isAddress && this.getStateCode(contact.state) || undefined,
+                isAddress && contact.zip || undefined,
+                isAddress && this.getCountryCode(contact.country) || undefined,
                 this.data.customerType).subscribe(response => {
                     if (response) {
-                        if (field) 
+                        if (field)
                             contact.similarCustomers = response;
                         else
                             this.similarCustomers = response;
@@ -565,7 +565,7 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
 
     getSimilarCustomers(field) {
         return this.contacts[field].reduce((similar, fields) => {
-            return fields.similarCustomers ? similar.concat(fields.similarCustomers): similar;
+            return fields.similarCustomers ? similar.concat(fields.similarCustomers) : similar;
         }, []);
     }
 
@@ -742,8 +742,8 @@ export class CreateClientDialogComponent extends ModalDialogComponent implements
     }
 
     onEmailKeyUp(event) {
-        event.component.option('valueChangeEvent', 
-            event.component.option('isValid') ? 'change': 'keyup');
+        event.component.option('valueChangeEvent',
+            event.component.option('isValid') ? 'change' : 'keyup');
     }
 
     onFieldChanged($event, field, i) {
