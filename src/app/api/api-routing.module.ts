@@ -11,8 +11,8 @@ import { IntroductionComponent } from './introduction/introduction.component';
             {
                 path: '',
                 children: [
-                    { path: 'swagger', component: SwaggerComponent, data: { permission: '' } },
-                    { path: 'introduction', component: IntroductionComponent, data: { permission: '' } },
+                    { path: 'swagger', component: SwaggerComponent },
+                    { path: 'introduction', component: IntroductionComponent },
                 ]
             }
         ])
