@@ -191,7 +191,7 @@ export class LoginService {
                 redirectUrl
             );
 
-        } else if (authenticateResult.userNotFound) {
+        } else if (authenticateResult.userNotFound && abp.features.isEnabled('PFM.Applications')) {
             //redirect to sign-up
             this._router.navigate(['personal-finance/sign-up', { firstName: authenticateResult.firstName, lastName: authenticateResult.lastName, email: authenticateResult.email }]);
         } else if (authenticateResult.detectedTenancies.length > 1) {
