@@ -14,6 +14,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ImageCropperComponent, CropperSettings, Bounds } from 'ng2-img-cropper';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { FormControl, Validators } from '@angular/forms';
+import { DownloadPictureInput, ProfileServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'upload-photo-dialog',
@@ -42,7 +43,8 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<UploadPhotoDialogComponent>,
-        private changeDetectorRef: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef,
+        private profileServiceProxy: ProfileServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.cropperSettings = this.getCropperSetting();
@@ -191,7 +193,19 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
             };
             image.onerror = () => {
                 if (!paste) {
-                    this.notify.error(this.l('PhotoIsNotReachable'));
+                    this.profileServiceProxy.downloadPicture(DownloadPictureInput.fromJS({
+                        url: this.fileUrlFormControl.value
+                    })).subscribe(
+                        pictureBase64 => {
+                            const image = new Image();
+                            image.src = 'data:image/jpeg;base64,' + pictureBase64;
+                            image.onload = () => {
+                                this.cropper.setImage(image);
+                                this.changeDetectorRef.detectChanges();
+                            };
+                            image.onerror = () => this.notify.error(this.l('PhotoIsNotReachable'));
+                        }
+                    );
                 }
             };
         }

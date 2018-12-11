@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Route } from '@angular/router';
 import { SwaggerComponent } from './swagger/swagger.component';
 import { IntroductionComponent } from './introduction/introduction.component';
 
