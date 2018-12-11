@@ -20,7 +20,14 @@ import { finalize, first, map, switchMap, takeUntil, pluck, tap } from 'rxjs/ope
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { Category, OfferServiceProxy, CampaignDto, CampaignDetailsDto } from '@shared/service-proxies/service-proxies';
+import {
+    Category,
+    OfferServiceProxy,
+    CampaignDto,
+    CampaignDetailsDto,
+    SubmitApplicationInput,
+    SubmitApplicationOutput
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'offer-details.component.html',
@@ -37,6 +44,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     selectedCardId$: Observable<number> = this.selectedCardId.asObservable();
     selectedCardDetails$: Observable<CampaignDetailsDto>;
     category$: Observable<Category>;
+    selectedCategory: string;
     categoryDisplayName$: Observable<string>;
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
@@ -60,6 +68,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
 
     activate() {
         this.category$ = this.offersService.getCategoryFromRoute(this.route.params).pipe(first());
+        this.category$.subscribe(res => { this.selectedCategory = res; });
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.route.params.pipe(
             takeUntil(this.deactivate$),
@@ -131,6 +140,25 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         this.offersListRef.nativeElement.classList.contains('sm-hidden')
             ? this.renderer.removeClass(this.offersListRef.nativeElement, 'sm-hidden')
             : this.renderer.addClass(this.offersListRef.nativeElement, 'sm-hidden');
+    }
+
+    applyOffer(offer: CampaignDto) {
+        const submitApplicationInput = SubmitApplicationInput.fromJS({
+            campaignId: offer.id,
+            systemType: 'EPCVIP',
+            subId: this.selectedCategory
+        });
+        abp.ui.setBusy();
+        this.offerServiceProxy.submitApplication(submitApplicationInput)
+            .pipe(finalize(() => abp.ui.clearBusy()))
+            .subscribe((output: SubmitApplicationOutput) => {
+                if (!offer.redirectUrl) {
+                    window.open(output.redirectUrl, '_blank');
+                }
+            });
+        if (offer.redirectUrl) {
+            window.open(offer.redirectUrl, '_blank');
+        }
     }
 
     ngOnDestroy() {
