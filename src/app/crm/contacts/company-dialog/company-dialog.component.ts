@@ -29,6 +29,7 @@ import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationCo
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { NoteType } from '@root/shared/AppEnums';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     selector: 'company-dialog',
@@ -87,7 +88,8 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private store$: Store<RootStore.State>,
         private changeDetectorRef: ChangeDetectorRef,
-        private maskPipe: MaskPipe
+        private maskPipe: MaskPipe,
+        private clientService: ContactsService
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -139,7 +141,9 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
                 contactId: this.company.id,
                 text: this.company.notes,
                 typeId: NoteType.CompanyNote,
-            })).subscribe(() => {});
+            })).subscribe(
+                () => this.clientService.invalidate('notes')
+            );
         }
     }
 

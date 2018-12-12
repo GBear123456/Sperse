@@ -13,8 +13,8 @@
                             <img [src]="creditCard.logoUrl" [alt]="creditCard.name">
                         </div>
                         <div class="cardInfo">
-                            <h4>{{ categoryDisplayName$ | async }}</h4>
-                            <h5>{{ creditCard.name }}</h5>
+                            <h4 [title]="categoryDisplayName$ | async">{{ categoryDisplayName$ | async }}</h4>
+                            <h5 [title]="creditCard.name.length > 16 ? creditCard.name : ''">{{ creditCard.name }}</h5>
                         </div>
                     </mat-radio-button>
                 </mat-radio-group>
