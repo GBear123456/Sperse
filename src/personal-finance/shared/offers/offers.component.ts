@@ -17,7 +17,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
 import { first, filter, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap, skip } from 'rxjs/operators';
-import { kebabCase, capitalize } from 'lodash';
+import { kebabCase } from 'lodash';
 import { MatRadioChange, MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
 
 /** Third party imports */
@@ -70,27 +70,9 @@ export class OffersComponent implements OnInit, OnDestroy {
             field: 'rewardsBonus'
         }
     ];
-    private creditScores = {
-        'poor': {
-            min: 0,
-            max: 649
-        },
-        'fair': {
-            min: 650,
-            max: 699
-        },
-        'good': {
-            min: 700,
-            max: 749
-        },
-        'excellent': {
-            min: 750,
-            max: 850
-        }
-    };
     category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route.params);
     memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount(), finalize(abp.ui.clearBusy));
-    creditScore$: Observable<number> = this.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.covertCreditScoreToNumber(score)));
+    creditScore$: Observable<number> = this.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.offersService.covertCreditScoreToNumber(score)));
     stateCode$: Observable<string> = this.memberInfo$.pipe(pluck('stateCode'));
     filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
         'loans': [
@@ -124,10 +106,10 @@ export class OffersComponent implements OnInit, OnDestroy {
                 step: 50,
                 fullBackground: true,
                 valueDisplayFunction: (value: number) => {
-                    let scoreName = this.getCreditScoreName(value);
+                    let scoreName = this.offersService.getCreditScoreName(value);
                     return {
                         name: this.ls.l('Offers_CreditScore_' + scoreName),
-                        description: `(${this.creditScores[scoreName].min}-${this.creditScores[scoreName].max})`
+                        description: `(${this.offersService.creditScores[scoreName].min}-${this.offersService.creditScores[scoreName].max})`
                     };
                 },
                 value$: this.creditScore$,
@@ -307,7 +289,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                 filter.category,
                 undefined,
                 filter.country,
-                this.covertNumberToCreditScore(filter.creditScore),
+                this.offersService.covertNumberToCreditScore(filter.creditScore),
                 filter.category
             ).pipe(
                 finalize(() => {
@@ -446,32 +428,6 @@ export class OffersComponent implements OnInit, OnDestroy {
                 }
             });
         }
-    }
-
-    private getCreditScoreName(value: number): string {
-        for (let scoreName in this.creditScores) {
-            if (value >= this.creditScores[scoreName].min && value <= this.creditScores[scoreName].max) {
-                return scoreName;
-            }
-        }
-    }
-
-    private covertCreditScoreToNumber(score: CreditScore): number {
-        if (score) {
-            let scoreName = (score as string).toLowerCase();
-            if (this.creditScores[scoreName])
-                return this.creditScores[scoreName].max;
-        }
-
-        return 700;
-    }
-
-    private covertNumberToCreditScore(scoreNumber: number): CreditScore {
-        let scoreName = capitalize(this.getCreditScoreName(scoreNumber));
-        if (CreditScore[scoreName])
-            return <any>CreditScore[scoreName];
-
-        return CreditScore.NotSure;
     }
 
     ngOnDestroy() {

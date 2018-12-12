@@ -2,6 +2,7 @@
 import {
     ApplicationRef,
     Component,
+    ChangeDetectionStrategy,
     ElementRef,
     OnInit,
     OnDestroy,
@@ -26,12 +27,15 @@ import {
     CampaignDto,
     CampaignDetailsDto,
     SubmitApplicationInput,
-    SubmitApplicationOutput
+    SubmitApplicationOutput,
+    CreditScores2
 } from '@shared/service-proxies/service-proxies';
+import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 
 @Component({
     templateUrl: 'offer-details.component.html',
-    styleUrls: [ './offer-details.component.less' ]
+    styleUrls: [ './offer-details.component.less' ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OfferDetailsComponent implements OnInit, OnDestroy {
     @ViewChild('availableCards') availableCardsRef: ElementRef;
@@ -56,7 +60,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private location: Location,
-        private offersService: OffersService,
+        public offersService: OffersService,
         private offerServiceProxy: OfferServiceProxy,
         private renderer: Renderer2
     ) {
@@ -102,11 +106,6 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
                             cons: [
                                 'Has annual fees'
                             ],
-                            recommendedCreditScore: {
-                                min: 450,
-                                max: 650,
-                                name: 'Good'
-                            },
                             rewardsRate: '16%',
                             annualFee: '$0 first year, $59 after',
                             introApr: 'N/A'
@@ -159,6 +158,12 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         if (offer.redirectUrl) {
             window.open(offer.redirectUrl, '_blank');
         }
+    }
+
+    getCreditScore(creditScores: CreditScores2[]): CreditScoreInterface {
+        return creditScores && (creditScores.length > 1 || (creditScores.length === 1 && creditScores[0] !== CreditScores2.NotSure))
+                  ? this.offersService.getCreditScoreObject(creditScores[0] as any)
+                  : null;
     }
 
     ngOnDestroy() {

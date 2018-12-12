@@ -62,22 +62,24 @@
                                 <h5 class="title">{{ ls.l('Offers_Cons') }}</h5>
                                 <ul class="cons"><li *ngFor="let con of cardDetails.cons">{{ con }}</li></ul>
                             </div>
-                            <hr>
-                            <div class="recommendedCreditScore">
-                                <h5 class="title">{{ ls.l('Offers_RecommendedCreditScore') }}</h5>
-                                <round-progress
-                                    [max]="850"
-                                    [current]="cardDetails.recommendedCreditScore.max"
-                                    [radius]="65"
-                                    color="#24c26c"
-                                    [semicircle]="true"
-                                    [stroke]="5">
-                                </round-progress>
-                                <div class="details">
-                                    <div class="score">{{ cardDetails.recommendedCreditScore.min }}-{{ cardDetails.recommendedCreditScore.max }}</div>
-                                    <div class="scoreName">{{ cardDetails.recommendedCreditScore.name }}</div>
+                            <ng-container *ngIf="getCreditScore(cardDetails.creditScores) as creditScore">
+                                <hr>
+                                <div class="recommendedCreditScore">
+                                    <h5 class="title">{{ ls.l('Offers_RecommendedCreditScore') }}</h5>
+                                    <round-progress
+                                        [max]="offersService.creditScores['excellent'].max"
+                                        [current]="creditScore.max"
+                                        [radius]="65"
+                                        color="#24c26c"
+                                        [semicircle]="true"
+                                        [stroke]="5">
+                                    </round-progress>
+                                    <div class="details">
+                                        <div class="score">{{ creditScore.min }}-{{ creditScore.max }}</div>
+                                        <div class="scoreName">{{ creditScore.name }}</div>
+                                    </div>
                                 </div>
-                            </div>
+                            </ng-container>
                             <hr>
                             <div class="otherParams">
                                 <ul>
