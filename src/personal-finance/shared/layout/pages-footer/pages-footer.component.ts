@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, HostBinding } from '@angular/core';
+import { Component, Injector, HostBinding } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -18,32 +18,54 @@ export class PagesFooterComponent extends AppComponentBase {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
     appMenuItems = [
-        { url: '', name: 'Terms of Use', action: this.openConditionsDialog.bind(this, { type: ConditionsType.Terms, title: 'Terms of Use' }) },
-        { url: '', name: 'Privacy Policy', action: this.openConditionsDialog.bind(this, { type: ConditionsType.Policies})},
-        { url: '', name: 'Lender Terms', action: () => {
-            this.openConditionsDialog({
+        {
+            url: '',
+            name: 'Terms of Use',
+            action: this.openConditionsDialog.bind(this, {type: ConditionsType.Terms, title: 'Terms of Use'})
+        },
+        {
+            url: '',
+            name: 'Privacy Policy',
+            action: this.openConditionsDialog.bind(this, {type: ConditionsType.Policies})
+        },
+        {
+            url: '',
+            name: 'Lender Terms',
+            action: this.openConditionsDialog.bind(this, {
                 title: 'Lender Terms',
                 bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/lender-terms.html',
                 downloadDisabled: true
-            });
-        } },
-        { url: '', name: 'About Us', action: () => {
-            this.openConditionsDialog({
+            })
+        },
+        {
+            url: '',
+            name: 'Disclosures',
+            action: this.openConditionsDialog.bind(this, {
+                title: 'Disclosures',
+                bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/disclosures.html',
+                downloadDisabled: true
+            })
+        },
+        {
+            url: '',
+            name: 'About Us',
+            action: this.openConditionsDialog.bind(this, {
                 title: 'About Us',
                 bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/about-us.html',
                 downloadDisabled: true
-            });
-        } }
+            })
+        }
     ];
     defaultMenuItems = [
-        { url: '/personal-finance/about', name: 'AboutUs' },
-        { url: '/personal-finance/contact-us', name: 'ContactUs' },
-        { url: '/account/login', name: 'LoginBtn' },
-        { url: '/personal-finance/', name: 'GetStarted' }
+        {url: '/personal-finance/about', name: 'AboutUs'},
+        {url: '/personal-finance/contact-us', name: 'ContactUs'},
+        {url: '/account/login', name: 'LoginBtn'},
+        {url: '/personal-finance/', name: 'GetStarted'}
     ];
     footerMenuItems = [];
     loggedUserId: number;
     currentYear = new Date().getFullYear();
+
     constructor(
         injector: Injector,
         private dialog: MatDialog
@@ -56,6 +78,6 @@ export class PagesFooterComponent extends AppComponentBase {
     }
 
     openConditionsDialog(data: any) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: data });
+        this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
     }
 }
