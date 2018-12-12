@@ -6,13 +6,14 @@ import { Params } from '@angular/router/src/shared';
 /** Third party imports */
 import { camelCase, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
-import { finalize, first, map, pluck } from 'rxjs/operators';
+import { finalize, map, pluck } from 'rxjs/operators';
 import { capitalize } from 'lodash';
 
 /** Application imports */
 import {
     CampaignDto,
     Category,
+    CreditScore,
     SubmitApplicationInput,
     SubmitApplicationOutput,
     OfferServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -60,26 +61,7 @@ export class OffersService {
         return category ? lowerCase(category) : this.defaultCategoryDisplayName;
     }
 
-    applyOffer(offer: CampaignDto, category: string) {
-        const submitApplicationInput = SubmitApplicationInput.fromJS({
-            campaignId: offer.id,
-            systemType: 'EPCVIP',
-            subId: category
-        });
-        abp.ui.setBusy();
-        this.offerServiceProxy.submitApplication(submitApplicationInput)
-            .pipe(finalize(() => abp.ui.clearBusy()))
-            .subscribe((output: SubmitApplicationOutput) => {
-                if (!offer.redirectUrl) {
-                    window.open(output.redirectUrl, '_blank');
-                }
-            });
-        if (offer.redirectUrl) {
-            window.open(offer.redirectUrl, '_blank');
-        }
-    }
-
-	getCreditScoreName(value: number): string {
+    getCreditScoreName(value: number): string {
         for (let scoreName in this.creditScores) {
             if (value >= this.creditScores[scoreName].min && value <= this.creditScores[scoreName].max) {
                 return scoreName;
@@ -110,4 +92,22 @@ export class OffersService {
         }
     }
 
+    applyOffer(offer: CampaignDto, category: string) {
+        const submitApplicationInput = SubmitApplicationInput.fromJS({
+            campaignId: offer.id,
+            systemType: 'EPCVIP',
+            subId: category
+        });
+        abp.ui.setBusy();
+        this.offerServiceProxy.submitApplication(submitApplicationInput)
+            .pipe(finalize(() => abp.ui.clearBusy()))
+            .subscribe((output: SubmitApplicationOutput) => {
+                if (!offer.redirectUrl) {
+                    window.open(output.redirectUrl, '_blank');
+                }
+            });
+        if (offer.redirectUrl) {
+            window.open(offer.redirectUrl, '_blank');
+        }
+    }
 }
