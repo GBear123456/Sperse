@@ -674,7 +674,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    processFilterInternal(cxt = undefined) {
+    processFilterInternal(cxt?: any) {
         if (this.showPipeline) {
             this.pipelineComponent.searchColumns = this.searchColumns;
             this.pipelineComponent.searchValue = this.searchValue;
@@ -834,7 +834,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     activate() {
         super.activate();
-
+        this.lifeCycleSubjectsService.activate.next();
         this._filtersService.localizationSourceName =
             this.localizationSourceName;
 
