@@ -124,7 +124,7 @@ body.lend-space .alert.m-alert--outline.alert-success {
   border-color: #ffcc00;
   color: #000;
 }
-body.lend-space .alert.m-alert--outline.alert-success .m-alert--icon-solid .m-alert__icon {
+body.lend-space .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon {
   background: #ffcc00;
 }
 body.lend-space .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon span {
