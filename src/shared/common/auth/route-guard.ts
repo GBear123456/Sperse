@@ -112,10 +112,6 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             return '/personal-finance/credit-report';
         }
 
-        if (this._feature.isEnabled('Notification')) {
-            return '/app/notifications';
-        }
-
         return '/app/access-denied';
     }
 }
