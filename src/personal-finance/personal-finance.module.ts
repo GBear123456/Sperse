@@ -92,14 +92,14 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         PaymentInfoModule
     ],
     providers: [
-        ZendeskService,
+//        ZendeskService,
         {
             provide: CFOService,
             useClass: UserOnlyCFOService
         },
         PackageIdService,
-        CreditReportServiceProxy,
-        ngxZendeskWebwidgetService
+        CreditReportServiceProxy
+//        ngxZendeskWebwidgetService
     ]
 })
 export class PersonalFinanceModule { }
