@@ -6,11 +6,16 @@ import { Params } from '@angular/router/src/shared';
 /** Third party imports */
 import { camelCase, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
-import { map, pluck } from 'rxjs/operators';
+import { finalize, first, map, pluck } from 'rxjs/operators';
 import { capitalize } from 'lodash';
 
 /** Application imports */
-import { CampaignDto, Category, CreditScore } from '@shared/service-proxies/service-proxies';
+import {
+    CampaignDto,
+    Category,
+    SubmitApplicationInput,
+    SubmitApplicationOutput,
+    OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 
@@ -38,10 +43,10 @@ export class OffersService {
 
     displayedCards: CampaignDto[];
     defaultCategoryDisplayName: string = this.ls.l('Offers_Offers');
-
     constructor(
         private route: ActivatedRoute,
-        private ls: AppLocalizationService
+        private ls: AppLocalizationService,
+        private offerServiceProxy: OfferServiceProxy
     ) {}
 
     getCategoryFromRoute(routeParams: Observable<Params>): Observable<Category> {
@@ -55,7 +60,26 @@ export class OffersService {
         return category ? lowerCase(category) : this.defaultCategoryDisplayName;
     }
 
-    getCreditScoreName(value: number): string {
+    applyOffer(offer: CampaignDto, category: string) {
+        const submitApplicationInput = SubmitApplicationInput.fromJS({
+            campaignId: offer.id,
+            systemType: 'EPCVIP',
+            subId: category
+        });
+        abp.ui.setBusy();
+        this.offerServiceProxy.submitApplication(submitApplicationInput)
+            .pipe(finalize(() => abp.ui.clearBusy()))
+            .subscribe((output: SubmitApplicationOutput) => {
+                if (!offer.redirectUrl) {
+                    window.open(output.redirectUrl, '_blank');
+                }
+            });
+        if (offer.redirectUrl) {
+            window.open(offer.redirectUrl, '_blank');
+        }
+    }
+
+	getCreditScoreName(value: number): string {
         for (let scoreName in this.creditScores) {
             if (value >= this.creditScores[scoreName].min && value <= this.creditScores[scoreName].max) {
                 return scoreName;
@@ -85,4 +109,5 @@ export class OffersService {
             }
         }
     }
+
 }

@@ -74,7 +74,7 @@ export class CfoActivateService implements CanActivate {
                         path: 'api',
                         loadChildren: 'app/api/api.module#ApiModule', //Lazy load main module
                         resolve: { api: ModulePathResolverService },
-                        data: { feature: 'Api' }
+                        data: { feature: 'API' }
                     },
                     {
                         path: 'crm',
