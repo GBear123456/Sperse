@@ -1,8 +1,6 @@
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { Component, EventEmitter, Injector, Output, ViewChild, OnInit } from '@angular/core';
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
 import { LinkedUserDto, UnlinkUserInput, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ModalDirective } from 'ngx-bootstrap';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
@@ -19,10 +17,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 export class LinkedAccountsModalComponent extends ModalDialogComponent implements OnInit {
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
-
     @Output() modalClose: EventEmitter<any> = new EventEmitter<any>();
-
-    private _$linkedAccountsTable: JQuery;
 
     constructor(
         injector: Injector,
@@ -36,7 +31,7 @@ export class LinkedAccountsModalComponent extends ModalDialogComponent implement
     ngOnInit() {
         super.ngOnInit();
 
-        this.data.title = this.l("LinkedAccounts");
+        this.data.title = this.l('LinkedAccounts');
         this.data.editTitle = false;
         this.data.titleClearButton = false;
         this.data.placeholder = this.l('LinkedAccounts');
@@ -91,7 +86,7 @@ export class LinkedAccountsModalComponent extends ModalDialogComponent implement
             closeOnNavigation: false,
             data: {}
         });
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe(() => {
             this.reloadPage();
         });
         if (e.stopPropagation) {
