@@ -1,6 +1,6 @@
 $(document).ready(function () {
     abp.domain = 'app.lendspace.com';
-    var apiOrigin = 'https://' + abp.domain;
+    var apiOrigin = 'https://' + abp.domain,
         form = window['loginForm'];
     
     form.elements['userNameOrEmailAddress'].onkeyup = 
