@@ -9,7 +9,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AuthenticateModel, AuthenticateResultModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel, ExternalLoginProviderInfoModel, TokenAuthServiceProxy, TenantHostType, SendPasswordResetCodeInput, AccountServiceProxy, SendPasswordResetCodeOutput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 declare const FB: any; // Facebook API
 declare const gapi: any; // Facebook API
@@ -55,6 +56,7 @@ export class LoginService {
     resetPasswordResult: SendPasswordResetCodeOutput;
 
     externalLoginProviders: ExternalLoginProvider[] = [];
+    externalLoginProviders$: Observable<ExternalLoginProvider[]>;
 
     constructor(
         private _tokenAuthService: TokenAuthServiceProxy,
@@ -193,7 +195,11 @@ export class LoginService {
 
         } else if (authenticateResult.userNotFound && abp.features.isEnabled('PFM.Applications')) {
             //redirect to sign-up
-            this._router.navigate(['personal-finance/sign-up', { firstName: authenticateResult.firstName, lastName: authenticateResult.lastName, email: authenticateResult.email }]);
+            this._router.navigate(['personal-finance/sign-up', {
+                firstName: authenticateResult.firstName,
+                lastName: authenticateResult.lastName,
+                email: authenticateResult.email
+            }]);
         } else if (authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
             this._router.navigate(['account/select-tenant']);
@@ -256,11 +262,10 @@ export class LoginService {
     }
 
     private initExternalLoginProviders() {
-        this._tokenAuthService
+        this.externalLoginProviders$ = this._tokenAuthService
             .getExternalAuthenticationProviders()
-            .subscribe((providers: ExternalLoginProviderInfoModel[]) => {
-                this.externalLoginProviders = _.map(providers, p => new ExternalLoginProvider(p));
-            });
+            .pipe(map((providers: ExternalLoginProviderInfoModel[]) => _.map(providers, p => new ExternalLoginProvider(p))));
+        this.externalLoginProviders$.subscribe(providers => this.externalLoginProviders = providers);
     }
 
     ensureExternalLoginProviderInitialized(loginProvider: ExternalLoginProvider, callback: () => void) {

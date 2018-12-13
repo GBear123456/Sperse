@@ -400,4 +400,43 @@
             text-transform: capitalize !important;
         }
     }
+    
+    .login-options {
+    
+        .login-with-or {
+            display: inline-block;
+            padding: 0 20px;
+            text-transform: uppercase;
+        }
+        
+        .social-icons {
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        
+        .social-icons li {
+            display: inline-block;
+            list-style: none;
+            text-indent: -9999px;
+        }
+        
+        li > a {
+            width: 28px;
+            height: 28px;
+            display: block;
+            background-repeat: no-repeat;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .social-icons li:hover > a {
+            opacity: .9;
+            background-color: #fff;
+        }
+        
+        .social-icons li .facebook {
+            background: url(../../../../assets/common/images/social/facebook.png) 0 -38px no-repeat;
+            border-radius: 0;
+        }
+    }
 }

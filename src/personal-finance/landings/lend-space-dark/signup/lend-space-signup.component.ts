@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { AppConsts } from 'shared/AppConsts';
 import { ApplicationServiceProxy, SignUpMemberResponse, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
-import { LoginService } from '@root/account/login/login.service';
+import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 
@@ -41,7 +41,7 @@ export class LendSpaceSignupComponent extends AppComponentBase {
     isRoutProcessed = false;
     constructor(
         injector: Injector,
-        public _loginService: LoginService,
+        public loginService: LoginService,
         private _applicationServiceProxy: ApplicationServiceProxy,
         private dialog: MatDialog
     ) {
@@ -65,7 +65,7 @@ export class LendSpaceSignupComponent extends AppComponentBase {
         this._applicationServiceProxy.signUpMember(this.registerData)
             .pipe(finalize(() => { this.finishLoading(true); }))
             .subscribe((res: SignUpMemberResponse) => {
-                this._loginService.processAuthenticateResult(
+                this.loginService.processAuthenticateResult(
                     res.authenticateResult,
                     AppConsts.appBaseUrl
                 );
@@ -79,5 +79,9 @@ export class LendSpaceSignupComponent extends AppComponentBase {
 
     openConditionsDialog(data: any) {
         this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: data });
+    }
+
+    externalLogin(provider: ExternalLoginProvider) {
+        this.loginService.externalAuthenticate(provider);
     }
 }
