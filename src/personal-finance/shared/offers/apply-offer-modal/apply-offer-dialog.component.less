@@ -1,0 +1,81 @@
+:host {
+    display: block;
+    position: relative;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 5px solid #36718D;
+    outline: 0;
+    .modal-header {
+        padding: 15px;
+        border-bottom: 1px solid #e5e5e5;
+        text-align: center;
+        small {
+            font-size: 16px;
+        }
+    }
+    .modal-body {
+        position: relative;
+        padding: 15px;
+        .process-body {
+            .alert {
+                padding: 15px;
+                margin-bottom: 20px;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                &.alert-info {
+                    margin-bottom: 4px;
+                    padding: 7px;
+                }
+                &.alert-success {
+                    color: #3c763d;
+                    background-color: #dff0d8;
+                    border-color: #d6e9c6;
+                    transition: all .55s ease;
+                    opacity: 1;
+                    transform: translateY(0px);
+                    margin-bottom: 4px;
+                    padding: 10px;
+                }
+            }
+            .alert-info {
+                color: #31708f;
+                background-color: #d9edf7;
+                border-color: #bce8f1;
+            }
+            .process-step {
+                h4 {
+                    margin-top: 4px;
+                    margin-bottom: 0;
+                    font-size: 18px;
+                }
+                .spinner,
+                .check-circle {
+                    height: 27px;
+                }
+                .spinner {
+                    background: url('../../../../assets/common/icons/offers/spinner.svg') no-repeat;
+                }
+                .check-circle {
+                    background: url('../../../../assets/common/icons/offers/check-circle.svg') no-repeat;
+                }
+            }
+        }
+    }
+
+    .blockedMessage {
+        padding: 30px;
+        text-align: center;
+        font-size: 30px;
+        font-family: Poppins;
+        font-weight: 600;
+    }
+}
+/deep/ .cdk-overlay-container {
+    .cdk-overlay-pane.apply-offer-dialog {
+        .mat-dialog-container {
+            overflow: visible;
+            padding: 0px;
+            margin: 0px;
+        }
+    }
+}

@@ -55,10 +55,8 @@ export class OffersComponent implements OnInit, OnDestroy {
     @ViewChild('sortingSelect') sortingSelect: MatSelect;
     private offers$: Observable<any>;
     displayedOffers$: Observable<any>;
-    offersAmount: number = null;
-    get offersAreLoading() {
-        return this.offersAmount === null;
-    }
+    offersAmount: number;
+    offersAreLoading = false;
     sortings = [
         {
             name: this.ls.l('Offers_Sorting_UserRating'),
@@ -286,7 +284,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.offers$ = this.selectedFilter$.pipe(
             takeUntil(this.deactivate$),
-            tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAmount = null; }),
+            tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAreLoading = true; }),
             switchMap(filter => this.offerServiceProxy.getAll(
                 filter.category,
                 undefined,
@@ -295,6 +293,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                 filter.category
             ).pipe(
                 finalize(() => {
+                    this.offersAreLoading = false;
                     abp.ui.clearBusy(this.offersListRef.nativeElement);
                     this.changeDetectorRef.detectChanges();
                 })

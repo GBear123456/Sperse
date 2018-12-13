@@ -13,8 +13,9 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
 import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { OffersRoutingModule } from '@root/personal-finance/shared/offers/offers-routing.module';
-import { MatSliderModule } from '@angular/material';
+import { MatDialogModule, MatSliderModule } from '@angular/material';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
+import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 
 @NgModule({
     imports: [
@@ -25,12 +26,14 @@ import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pip
         MatCheckboxModule,
         MatSliderModule,
         MatSelectModule,
+        MatDialogModule,
         DxScrollViewModule,
         RoundProgressModule,
         NoDataModule,
         OffersRoutingModule
     ],
     declarations: [
+        ApplyOfferDialogComponent,
         StarsRatingComponent,
         OffersComponent,
         OfferDetailsComponent,
@@ -39,6 +42,9 @@ import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pip
     providers: [
         OffersService,
         OfferServiceProxy
+    ],
+    entryComponents: [
+        ApplyOfferDialogComponent
     ]
 })
 export class OffersModule {
