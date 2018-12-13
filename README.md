@@ -42,3 +42,18 @@ Once server side is ready, you can run the Angular2 application:
 * Visit ``http://localhost:7200`` in your browser.
   User: admin
   Password: Qwertyuiop1
+  
+Localhost with SSL by @DT
+* run ``npm run start-staging-ssl`` or create the same for start but you need ``localhost:7000`` with https
+* for fixing warning in browser you can update angular.json and maybe add certificate in trusted
+* add code below
+```
+"serve": {
+  "builder": "@angular-devkit/build-angular:dev-server",
+  "options": {
+    "browserTarget": "abp-zero-template:build",
+    "ssl": true,
+    "sslKey": "ssl/server.key",
+    "sslCert": "ssl/server.crt"
+  },
+```
