@@ -1,20 +1,8 @@
-import {
-    Component,
-    ChangeDetectionStrategy,
-    AfterViewInit,
-    Injector,
-    Renderer2,
-    OnDestroy,
-    Inject,
-    OnInit
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, AfterViewInit, Injector, Renderer2, OnDestroy, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { MatDialog } from '@angular/material';
-import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { ConditionsType } from '@shared/AppEnums';
 
 @Component({
     selector: 'app-lend-space-dark',
@@ -22,7 +10,7 @@ import { ConditionsType } from '@shared/AppEnums';
     styleUrls: ['./lend-space-dark.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LendSpaceDarkComponent extends AppComponentBase implements AfterViewInit, OnDestroy, OnInit {
+export class LendSpaceDarkComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
     faq = [
         {title: 'How quickly will my loan be approved?', text: 'Every lender has their own procedures for processing loans. The best way to understand the loan process and the time it will take is to contact the specific lender that you applied for a loan with. They will be able to keep you updated on loan processing times.'},
         {title: 'How will I receive responses from lenders?', text: 'Depending on which lender you chose to work with and your preferences, a lender will contact you through your account, by email, by telephone or by postal mail.'},
@@ -74,22 +62,9 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
     constructor(
         injector: Injector,
         @Inject(DOCUMENT) private document,
-        private renderer: Renderer2,
-        private dialog: MatDialog
+        private renderer: Renderer2
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
-    }
-
-    ngOnInit() {
-        const routeData = this._activatedRoute.snapshot.data;
-        if (routeData.openedPrivacy || routeData.openedTerms) {
-            this.dialog.open(ConditionsModalComponent, {
-                panelClass: ['slider', 'footer-slider'],
-                data: routeData.openedPrivacy
-                        ? { type: ConditionsType.Policies }
-                        : { type: ConditionsType.Terms, title: 'Terms of Use' }
-            });
-        }
     }
 
     ngAfterViewInit(): void {
