@@ -47,8 +47,21 @@ button {
         border-color: @lend-space-main-color;
         background: @lend-space-main-color;
     }
-    &.css-1pf61fi {
-        background-color: #ffcc00;
+    &.css-1pf61fi,
+    &.btn--primary {
+        background-color: @lend-space-main-color;
+        border-color: @lend-space-main-color;
+        color: #000;
+        &:hover, &:focus {
+            background-color: @lend-space-hover-color;
+            border-color: @lend-space-hover-color;
+        }
+    }
+}
+
+#quovo-connect-modal.quovo-connect button.connect-btn {
+    &, &.blue {
+        background-color: @lend-space-main-color;
         color: #000;
         &:hover {
             background-color: @lend-space-hover-color;
