@@ -1,7 +1,8 @@
 $(document).ready(function () {
-    var apiOrigin = 'https://app.lendspace.com';
+    abp.domain = 'app.lendspace.com';
+    var apiOrigin = 'https://' + abp.domain;
         form = window['loginForm'];
-
+    
     form.elements['userNameOrEmailAddress'].onkeyup = 
     form.elements['password'].onkeyup = checkIsValid;
 
@@ -106,7 +107,8 @@ $(document).ready(function () {
             EncryptedAuthToken,
             encryptedAccessToken,
             tokenExpireDate,
-            abp.appPath
+            abp.appPath,
+            abp.domain
         );
 
         if (twoFactorRememberClientToken) {
@@ -114,7 +116,8 @@ $(document).ready(function () {
                 TwoFactorRememberClientToken,
                 twoFactorRememberClientToken,
                 new Date(new Date().getTime() + 365 * 86400000), // 1 year
-                abp.appPath
+                abp.appPath,
+                abp.domain
             );
         }
 
