@@ -31,24 +31,6 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                         }
                     },
                     {
-                        path: 'privacy',
-                        component: LendSpaceDarkComponent,
-                        data: {
-                            openedPrivacy: true,
-                            wrapperDisabled: true,
-                            hideFooter: false
-                        }
-                    },
-                    {
-                        path: 'terms',
-                        component: LendSpaceDarkComponent,
-                        data: {
-                            openedTerms: true,
-                            wrapperDisabled: true,
-                            hideFooter: false
-                        }
-                    },
-                    {
                         path: 'signup',
                         component: CreditWizardPageComponent
                     },
