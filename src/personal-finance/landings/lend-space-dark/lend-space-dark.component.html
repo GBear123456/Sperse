@@ -2,10 +2,11 @@
     <div class="container align-self-center">
         <h1 class="title">It Never Hurts to Check Your Credit Score</h1>
         <div class="buttons-group d-flex justify-content-between">
-            <button class="btn btn-dark btn-custom" *ngFor="let item of buttons">
+            <a class="btn btn-dark btn-custom" *ngFor="let item of topLinks"
+               [routerLink]="item.routerUrl" routerLinkActive="active">
                 <span>{{item.description}}</span>
                 <span>{{item.title}}</span>
-            </button>
+            </a>
         </div>
     </div>
 </div>
@@ -67,9 +68,9 @@
             <div class="col-lg-6 offset-lg-6 col-md-12 align-self-center">
                 <h2>Monitor Your Credit, Gain Insight & Make Better Decisions</h2>
                 <p>As a LendSpace member, you can view all of your accounts, your last reported balances and even what is affecting your credit scores. You will receive alerts when there is an important change on your reports, learn about what affects your credit scores and what you can do to improve them. In addition, you can see personalized recommendations for ways to use your credit more wisely. LendSpace is here to help you with your financial goals.</p>
-                <button type="button" class="btn btn-outline-dark">
+                <a class="btn btn-outline-dark" routerLink="/personal-finance/sign-up">
                     GET YOUR FREE CREDIT SCORE HERE
-                </button>
+                </a>
             </div>
         </div>
     </div>
