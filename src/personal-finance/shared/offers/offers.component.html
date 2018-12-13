@@ -72,8 +72,8 @@
             </ul>
         </div>
         <div class="offersList col-sm-12 col-lg-9" #offersList>
-            <div class="subHeader">
-                <div class="foundCount" [class.hidden]="offersAmount === undefined">
+            <div class="subHeader" [hidden]="!offersAreLoading && offersAmount === 0">
+                <div class="foundCount" [class.hidden]="offersAreLoading">
                     {{ ls.l('Offers_WeFound') }} <span>{{ offersAmount }}</span> {{ categoryDisplayName$ | async }}
                 </div>
                 <div class="sortBy">
@@ -115,7 +115,7 @@
                     </div>
                 </li>
             </ul>
-            <app-no-data *ngIf="offersLoaded && offersAmount === 0"></app-no-data>
+            <app-no-data *ngIf="!offersAreLoading && offersAmount === 0"></app-no-data>
         </div>
     </div>
 </div>
