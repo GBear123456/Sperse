@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild, OnInit } from '@angular/core';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LinkToUserInput, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap';
@@ -13,9 +13,8 @@ export class LinkAccountModalComponent extends ModalDialogComponent implements O
 
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
     @ViewChild('linkAccountModal') modal: ModalDirective;
-    
-    saving = false;
 
+    saving = false;
     linkUser: LinkToUserInput = new LinkToUserInput();
 
     constructor(
@@ -31,7 +30,7 @@ export class LinkAccountModalComponent extends ModalDialogComponent implements O
     ngOnInit() {
         super.ngOnInit();
 
-        this.data.title = this.l("LinkedAccounts");
+        this.data.title = this.l('LinkedAccounts');
         this.data.editTitle = false;
         this.data.titleClearButton = false;
         this.data.placeholder = this.l('LinkedAccounts');
@@ -48,5 +47,5 @@ export class LinkAccountModalComponent extends ModalDialogComponent implements O
                 this.close();
             });
     }
-    
+
 }

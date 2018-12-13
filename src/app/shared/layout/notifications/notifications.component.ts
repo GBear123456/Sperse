@@ -1,10 +1,6 @@
 import { Component, Injector, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
-import { AppUserNotificationState } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { NotificationServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
-import * as moment from 'moment';
-import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
@@ -48,7 +44,6 @@ export class NotificationsComponent extends ModalDialogComponent implements OnIn
         this.data.placeholder = this.l('Notifications');
 
         this.data.buttons = [];
-        
     }
 
     loadNotifications(): void {
@@ -82,10 +77,6 @@ export class NotificationsComponent extends ModalDialogComponent implements OnIn
         });
     }
 
-    isRead(record: any): boolean {
-        return record.formattedNotification.state === 'READ';
-    }
-
     setAllNotificationsAsRead(): void {
         this._userNotificationHelper.setAllAsRead();
     }
@@ -99,12 +90,4 @@ export class NotificationsComponent extends ModalDialogComponent implements OnIn
         this._userNotificationHelper.setAsRead(userNotification.userNotificationId);
     }
 
-    
-    truncateString(text: any, length: number): string {
-        return abp.utils.truncateStringWithPostfix(text, length);
-    }
-    
-    public getRowClass(formattedRecord: IFormattedUserNotification): string {
-        return formattedRecord.state === 'READ' ? 'notification-read' : '';
-    }
 }
