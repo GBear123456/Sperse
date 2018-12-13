@@ -7,7 +7,21 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { AuthenticateModel, AuthenticateResultModel, ExternalAuthenticateModel, ExternalAuthenticateResultModel, ExternalLoginProviderInfoModel, TokenAuthServiceProxy, TenantHostType, SendPasswordResetCodeInput, AccountServiceProxy, SendPasswordResetCodeOutput } from '@shared/service-proxies/service-proxies';
+import {
+    AuthenticateModel,
+    AuthenticateResultModel,
+    ExternalAuthenticateModel,
+    ExternalAuthenticateResultModel,
+    ExternalLoginProviderInfoModel,
+    TokenAuthServiceProxy,
+    TenantHostType,
+    SendPasswordResetCodeInput,
+    AccountServiceProxy,
+    SendPasswordResetCodeOutput,
+    SignUpMemberResponse,
+    ApplicationServiceProxy,
+    SignUpMemberRequest
+} from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 import { finalize, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -57,6 +71,7 @@ export class LoginService {
 
     externalLoginProviders: ExternalLoginProvider[] = [];
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
+    signUpData: SignUpMemberRequest = new SignUpMemberRequest();
 
     constructor(
         private _tokenAuthService: TokenAuthServiceProxy,
@@ -66,10 +81,10 @@ export class LoginService {
         private _tokenService: TokenService,
         private _logService: LogService,
         private _accountService: AccountServiceProxy,
-        private _authService: AppAuthService
+        private _authService: AppAuthService,
+        private _applicationServiceProxy: ApplicationServiceProxy
     ) {
         this.clear();
-
         let model = JSON.parse(sessionStorage.getItem('authenticateModel'));
         if (model) {
             this.authenticateModel = model;
@@ -154,7 +169,7 @@ export class LoginService {
         this.initExternalLoginProviders();
     }
 
-    processAuthenticateResult(authenticateResult, redirectUrl?: string) {
+    private processAuthenticateResult(authenticateResult, redirectUrl?: string) {
         this.authenticateResult = authenticateResult;
 
         if (authenticateResult.shouldResetPassword) {
@@ -194,12 +209,22 @@ export class LoginService {
             );
 
         } else if (authenticateResult.userNotFound && abp.features.isEnabled('PFM.Applications')) {
-            //redirect to sign-up
-            this._router.navigate(['personal-finance/sign-up', {
-                firstName: authenticateResult.firstName,
-                lastName: authenticateResult.lastName,
-                email: authenticateResult.email
-            }]);
+            // show confirmation msg about creating user
+            abp.message.confirm(
+                '',
+                `You will sign up to LendSpace with the ${authenticateResult.email} email.`,
+                (result) => {
+                    if (result) {
+                        this.signUpData = {
+                            ...this.signUpData,
+                            firstName: authenticateResult.firstName,
+                            lastName: authenticateResult.lastName,
+                            email: authenticateResult.email,
+                            isUSCitizen: true
+                        } as SignUpMemberRequest;
+                        this.signUpMember(this.signUpData);
+                    }
+                });
         } else if (authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
             this._router.navigate(['account/select-tenant']);
@@ -210,6 +235,20 @@ export class LoginService {
             this._router.navigate(['account/login']);
 
         }
+    }
+
+    signUpMember(data: SignUpMemberRequest) {
+        abp.ui.setBusy();
+        this._applicationServiceProxy.signUpMember(data)
+            .pipe(finalize(() => {
+                abp.ui.clearBusy();
+            }))
+            .subscribe((res: SignUpMemberResponse) => {
+                this.processAuthenticateResult(
+                    res.authenticateResult,
+                    AppConsts.appBaseUrl
+                );
+            });
     }
 
     private login(accessToken: string, encryptedAccessToken: string, expireInSeconds: number, rememberMe?: boolean, twoFactorRememberClientToken?: string, redirectUrl?: string): void {

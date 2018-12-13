@@ -33,6 +33,7 @@ import { HostForgotPasswordComponent } from './password/layouts/host/host-forgot
 import { LendSpaceForgotPasswordComponent } from './password/layouts/lend-space/lend-space-forgot-password.component';
 import { HostResetPasswordComponent } from './password/layouts/host/host-reset-password.component';
 import { LendSpaceResetPasswordComponent } from './password/layouts/lend-space/lend-space-reset-password.component';
+import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
@@ -91,7 +92,8 @@ import { LendSpaceResetPasswordComponent } from './password/layouts/lend-space/l
         LendSpaceResetPasswordComponent
     ],
     providers: [
-        LoginService
+        LoginService,
+        ApplicationServiceProxy
     ]
 })
 export class AccountModule {
