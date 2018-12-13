@@ -23,7 +23,7 @@ import {
     SignUpMemberRequest
 } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, publishReplay, refCount } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 declare const FB: any; // Facebook API
@@ -68,8 +68,7 @@ export class LoginService {
 
     resetPasswordModel: SendPasswordResetCodeInput;
     resetPasswordResult: SendPasswordResetCodeOutput;
-
-    externalLoginProviders: ExternalLoginProvider[] = [];
+    
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
     signUpData: SignUpMemberRequest = new SignUpMemberRequest();
 
@@ -303,8 +302,10 @@ export class LoginService {
     private initExternalLoginProviders() {
         this.externalLoginProviders$ = this._tokenAuthService
             .getExternalAuthenticationProviders()
-            .pipe(map((providers: ExternalLoginProviderInfoModel[]) => _.map(providers, p => new ExternalLoginProvider(p))));
-        this.externalLoginProviders$.subscribe(providers => this.externalLoginProviders = providers);
+            .pipe(
+                publishReplay(),
+                refCount(),
+                map((providers: ExternalLoginProviderInfoModel[]) => _.map(providers, p => new ExternalLoginProvider(p))));
     }
 
     ensureExternalLoginProviderInitialized(loginProvider: ExternalLoginProvider, callback: () => void) {

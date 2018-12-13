@@ -34,12 +34,12 @@
             </button>
         </div>
     </form>
-    <div class="login-options" *ngIf="loginService.externalLoginProviders.length > 0">
+    <div class="login-options" *ngIf="(loginService.externalLoginProviders$ | async) as externalLoginProviders">
         <div class="login-with">
             <span class="login-with-or">{{l("or")}}</span>
         </div>
         <ul class="social-icons">
-            <li *ngFor="let provider of loginService.externalLoginProviders">
+            <li *ngFor="let provider of externalLoginProviders">
                 <a class="social-login-icon social-icon-color {{provider.icon}}"
                    (click)="externalLogin(provider)"
                    title="{{provider.name}}"></a>
