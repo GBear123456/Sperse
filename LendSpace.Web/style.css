@@ -1414,3 +1414,22 @@ body.pfm[_nghost-c4] .app-responsive-menu li a.member-login, body.pfm [_nghost-c
 body.modal-open {
     overflow: hidden!important;
 }
+not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: #262626;
+}
+not-found .lend-space-img[_ngcontent-c0] {
+    display: block;
+    max-width: 550px;
+    margin-bottom: 30px;
+}
+not-found .btn[_ngcontent-c0] {
+    background: #fc0;
+    color: #000;
+    font-weight: 700!important;
+    border-radius: 4px!important;
+}
