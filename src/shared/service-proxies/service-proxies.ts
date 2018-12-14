@@ -16263,7 +16263,7 @@ export class OrganizationContactServiceProxy {
      * @contactId (optional) 
      * @return Success
      */
-    getOrganizationContactInfo(contactId: number | null | undefined): Observable<ContactInfoBaseDto> {
+    getOrganizationContactInfo(contactId: number | null | undefined): Observable<OrganizationContactInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizationContactInfo?";
         if (contactId !== undefined)
             url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
@@ -16285,14 +16285,14 @@ export class OrganizationContactServiceProxy {
                 try {
                     return this.processGetOrganizationContactInfo(<any>response_);
                 } catch (e) {
-                    return <Observable<ContactInfoBaseDto>><any>_observableThrow(e);
+                    return <Observable<OrganizationContactInfoDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ContactInfoBaseDto>><any>_observableThrow(response_);
+                return <Observable<OrganizationContactInfoDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetOrganizationContactInfo(response: HttpResponseBase): Observable<ContactInfoBaseDto> {
+    protected processGetOrganizationContactInfo(response: HttpResponseBase): Observable<OrganizationContactInfoDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16303,7 +16303,7 @@ export class OrganizationContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ContactInfoBaseDto.fromJS(resultData200) : new ContactInfoBaseDto();
+            result200 = resultData200 ? OrganizationContactInfoDto.fromJS(resultData200) : new OrganizationContactInfoDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16311,7 +16311,7 @@ export class OrganizationContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ContactInfoBaseDto>(<any>null);
+        return _observableOf<OrganizationContactInfoDto>(<any>null);
     }
 
     /**
@@ -48764,70 +48764,6 @@ export interface IOrderSbuscriptionPaymentDto {
     status: string | undefined;
     fee: number | undefined;
     isSubscription: boolean | undefined;
-}
-
-export class ContactInfoBaseDto implements IContactInfoBaseDto {
-    id!: number | undefined;
-    fullName!: string | undefined;
-    userId!: number | undefined;
-    primaryPhoto!: ContactPhotoDto | undefined;
-    primaryPhone!: ContactPhoneDto | undefined;
-    primaryAddress!: ContactAddressDto | undefined;
-    details!: ContactInfoDetailsDto | undefined;
-    comment!: string | undefined;
-
-    constructor(data?: IContactInfoBaseDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.fullName = data["fullName"];
-            this.userId = data["userId"];
-            this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
-            this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
-            this.primaryAddress = data["primaryAddress"] ? ContactAddressDto.fromJS(data["primaryAddress"]) : <any>undefined;
-            this.details = data["details"] ? ContactInfoDetailsDto.fromJS(data["details"]) : <any>undefined;
-            this.comment = data["comment"];
-        }
-    }
-
-    static fromJS(data: any): ContactInfoBaseDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactInfoBaseDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["fullName"] = this.fullName;
-        data["userId"] = this.userId;
-        data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
-        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
-        data["primaryAddress"] = this.primaryAddress ? this.primaryAddress.toJSON() : <any>undefined;
-        data["details"] = this.details ? this.details.toJSON() : <any>undefined;
-        data["comment"] = this.comment;
-        return data; 
-    }
-}
-
-export interface IContactInfoBaseDto {
-    id: number | undefined;
-    fullName: string | undefined;
-    userId: number | undefined;
-    primaryPhoto: ContactPhotoDto | undefined;
-    primaryPhone: ContactPhoneDto | undefined;
-    primaryAddress: ContactAddressDto | undefined;
-    details: ContactInfoDetailsDto | undefined;
-    comment: string | undefined;
 }
 
 export class CreateOrganizationInput implements ICreateOrganizationInput {
