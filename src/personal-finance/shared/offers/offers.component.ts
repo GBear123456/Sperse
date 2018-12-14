@@ -28,8 +28,6 @@ import {
     CampaignDto,
     Category,
     OfferServiceProxy,
-    SubmitApplicationInput,
-    SubmitApplicationOutput,
     GetMemberInfoResponse,
     CreditScore
 } from '@shared/service-proxies/service-proxies';
@@ -42,6 +40,7 @@ import { RangeFilterSetting } from '@root/personal-finance/shared/offers/filters
 import { SelectFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/select-filter-setting';
 import { RadioFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/radio-filter-setting';
 import { CheckboxFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/checkbox-filter-setting';
+import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -72,11 +71,14 @@ export class OffersComponent implements OnInit, OnDestroy {
         }
     ];
     category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route.params);
+    categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.getCategoryGroup(category)));
+    categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
     memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount(), finalize(abp.ui.clearBusy));
     creditScore$: Observable<number> = this.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.offersService.covertCreditScoreToNumber(score)));
     stateCode$: Observable<string> = this.memberInfo$.pipe(pluck('stateCode'));
+    filtersValues = this.getDefaultFilters();
     filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
-        'loans': [
+        [CategoryGroupEnum.Loans]: [
             new RangeFilterSetting({
                 name: this.ls.l('Offers_Filter_Amount'),
                 min: 100,
@@ -113,7 +115,9 @@ export class OffersComponent implements OnInit, OnDestroy {
                         description: `(${this.offersService.creditScores[scoreName].min}-${this.offersService.creditScores[scoreName].max})`
                     };
                 },
-                value$: this.creditScore$,
+                value$: this.creditScore$.pipe(map((creditScore: CreditScore) => {
+                    return this.filtersValues.creditScore || creditScore;
+                })),
                 onChange: (e: MatSliderChange) => {
                     if (this.filtersValues.creditScore != e.value) {
                         this.filtersValues.creditScore = e.value;
@@ -161,7 +165,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                 )
             })
         ],
-        'creditScore': [
+        [CategoryGroupEnum.CreditScore]: [
             new RadioFilterSetting({
                 values$: of([
                     {
@@ -188,7 +192,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                 }
             })
         ],
-        'default': [
+        [CategoryGroupEnum.Default]: [
             new CheckboxFilterSetting({
                 name: this.ls.l('Offers_Filter_Brand'),
                 values$: of([ 'American Express', 'Bank of America', 'Barclaycard', 'Capital One', 'Chase' ]),
@@ -217,12 +221,6 @@ export class OffersComponent implements OnInit, OnDestroy {
         ]
     };
     filters$: Observable<FilterSettingInterface[]>;
-    filtersValues = {
-        category: undefined,
-        type: undefined,
-        country: 'US',
-        creditScore: 700
-    };
     filterType = FilterType;
     maxDisplayedFilterValues = 5;
     selectedFilter = new BehaviorSubject(this.filtersValues);
@@ -233,7 +231,6 @@ export class OffersComponent implements OnInit, OnDestroy {
 
     selectedSorting: BehaviorSubject<string> = new BehaviorSubject(this.sortings[0].field);
     private selectedSorting$ = this.selectedSorting.asObservable();
-    categoryDisplayName$: Observable<string>;
 
     constructor(
         injector: Injector,
@@ -268,8 +265,8 @@ export class OffersComponent implements OnInit, OnDestroy {
     }
 
     activate() {
-        this.filters$ = this.category$.pipe(
-            map((category: Category) => this.getFiltersForCategory(category)),
+        this.filters$ = this.categoryGroup$.pipe(
+            map((categoryGroup: CategoryGroupEnum) => this.filtersSettings[categoryGroup]),
             map(filters => this.hideTooBigFilters(filters))
         );
         this.category$.pipe(
@@ -280,8 +277,6 @@ export class OffersComponent implements OnInit, OnDestroy {
             this.filtersValues.category = category;
             this.selectedFilter.next(this.filtersValues);
         });
-
-        this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.offers$ = this.selectedFilter$.pipe(
             takeUntil(this.deactivate$),
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAreLoading = true; }),
@@ -289,7 +284,9 @@ export class OffersComponent implements OnInit, OnDestroy {
                 filter.category,
                 undefined,
                 filter.country,
-                this.offersService.covertNumberToCreditScore(filter.creditScore),
+                this.getCategoryGroup(filter.category) === CategoryGroupEnum.Loans
+                    ? this.offersService.covertNumberToCreditScore(filter.creditScore)
+                    : undefined,
                 filter.category
             ).pipe(
                 finalize(() => {
@@ -306,18 +303,18 @@ export class OffersComponent implements OnInit, OnDestroy {
             refCount(),
             /** @todo remove to avoid hardcoded data */
             map(offers => offers.map(offer => {
-                    return {
-                        ...offer,
-                        ...{
-                            'annualFee': '$45',
-                            'rewardsRate': '1.5% cashback',
-                            'rewardsBonus': '$100',
-                            'apr': '5.5%',
-                            'rating': Math.floor(Math.random() * 5) + 1,
-                            'reviewsAmount': Math.floor(Math.random() * 1000) + 1
-                        }
-                    };
-                }))
+                return {
+                    ...offer,
+                    ...{
+                        'annualFee': '$45',
+                        'rewardsRate': '1.5% cashback',
+                        'rewardsBonus': '$100',
+                        'apr': '5.5%',
+                        'rating': Math.floor(Math.random() * 5) + 1,
+                        'reviewsAmount': Math.floor(Math.random() * 1000) + 1
+                    }
+                };
+            }))
         );
 
         /** Insert filters values from credit cards data */
@@ -343,8 +340,17 @@ export class OffersComponent implements OnInit, OnDestroy {
         });
     }
 
-    private getFiltersForCategory(category: Category): FilterSettingInterface[] {
-        let filters = this.filtersSettings['default'];
+    private getDefaultFilters() {
+        return {
+            category: undefined,
+            type: undefined,
+            country: 'US',
+            creditScore: null
+        };
+    }
+
+    private getCategoryGroup(category: Category): CategoryGroupEnum {
+        let categoryGroup: CategoryGroupEnum;
         switch (category) {
             case Category.PersonalLoans:
             case Category.PaydayLoans:
@@ -352,18 +358,21 @@ export class OffersComponent implements OnInit, OnDestroy {
             case Category.BusinessLoans:
             case Category.AutoLoans: {
                 this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
-                filters = this.filtersSettings['loans'];
+                categoryGroup = CategoryGroupEnum.Loans;
                 break;
             }
             case Category.CreditScore:
             case Category.CreditRepair:
             case Category.CreditMonitoring:
             case Category.DebtConsolidation: {
-                filters = this.filtersSettings['creditScore'];
+                categoryGroup = CategoryGroupEnum.CreditScore;
                 break;
             }
+            default: {
+                categoryGroup = CategoryGroupEnum.Default;
+            }
         }
-        return filters;
+        return categoryGroup;
     }
 
     private hideTooBigFilters(filters) {
