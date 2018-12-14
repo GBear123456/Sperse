@@ -34892,6 +34892,7 @@ export interface IContactInfoDto {
 
 export class PersonContactInfoDto implements IPersonContactInfoDto {
     person!: PersonInfoDto | undefined;
+    jobTitle!: string | undefined;
     orgRelations!: PersonOrgRelationShortInfo[] | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
@@ -34914,6 +34915,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     init(data?: any) {
         if (data) {
             this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
+            this.jobTitle = data["jobTitle"];
             if (data["orgRelations"] && data["orgRelations"].constructor === Array) {
                 this.orgRelations = [];
                 for (let item of data["orgRelations"])
@@ -34940,6 +34942,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["person"] = this.person ? this.person.toJSON() : <any>undefined;
+        data["jobTitle"] = this.jobTitle;
         if (this.orgRelations && this.orgRelations.constructor === Array) {
             data["orgRelations"] = [];
             for (let item of this.orgRelations)
@@ -34959,6 +34962,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
 
 export interface IPersonContactInfoDto {
     person: PersonInfoDto | undefined;
+    jobTitle: string | undefined;
     orgRelations: PersonOrgRelationShortInfo[] | undefined;
     id: number | undefined;
     fullName: string | undefined;

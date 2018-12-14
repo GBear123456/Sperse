@@ -1,0 +1,32 @@
+:host {
+    display: block;
+    max-width: 405px;
+    padding: 20px;
+
+    /deep/ dx-text-box, /deep/ dx-select-box {
+        display: inline-block;
+        input {
+            height: 48px;
+            font-size: 15px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            letter-spacing: 0.3px;
+            color: #424c56;
+        }
+        &.dx-state-focused .dx-placeholder {
+            font-size: 10px;
+        }
+        .dx-placeholder {
+            font-size: 14px;
+            font-weight: 300;
+            font-style: normal;
+            font-stretch: normal;
+            letter-spacing: 0.3px;      
+        }
+    }
+
+    mat-dialog-actions {
+        justify-content: flex-end;
+    }
+}

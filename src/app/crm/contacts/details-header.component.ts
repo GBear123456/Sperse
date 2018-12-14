@@ -27,6 +27,7 @@ import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactGroup } from '@shared/AppEnums';
 import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
+import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 
 @Component({
     selector: 'details-header',
@@ -48,6 +49,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @Input() ratingId: number;
 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
+    @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
     private _contactInfoBehaviorSubject = new BehaviorSubject<ContactInfoDto>(ContactInfoDto.fromJS({}));
     private readonly ADD_FILES_OPTION   = 0;
@@ -116,10 +118,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             id: this.personOrgRelationInfo.id,
             jobTitle: this.personOrgRelationInfo.jobTitle
         })).subscribe(() => {});
-    }
-
-    getDialogPossition(event, shiftX) {
-        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     showCompanyDialog(e) {
@@ -213,7 +211,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.dialog.open(PersonDialogComponent, {
             data: this.data.personContactInfo,
             hasBackdrop: false,
-            position: this.getDialogPossition(event, 200)
+            position: this.dialogService.calculateDialogPosition(
+                event, event.target.closest('div'), 200, -12)
         });
         event.stopPropagation();
     }
@@ -312,5 +311,18 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                     }
                 });
             });
+    }
+
+    addCompanyDialog(event) {
+        this.dialog.closeAll();
+        this.dialog.open(AddCompanyDialogComponent, {
+            data: {contactId: this.data.personContactInfo.person.contactId},
+            hasBackdrop: false,
+            position: this.dialogService.calculateDialogPosition(event, event.target)
+        }).afterClosed().subscribe(result => {
+            if (result)
+                this.onInvalidate.emit();
+        });
+        event.stopPropagation();
     }
 }

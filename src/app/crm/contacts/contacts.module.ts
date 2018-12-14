@@ -30,6 +30,7 @@ import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
+import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
 import { EditAddressDialog } from './edit-address-dialog/edit-address-dialog.component';
 import { SocialsComponent } from './socials/socials.component';
@@ -109,6 +110,7 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     OrganizationUnitsTreeComponent,
     PermissionTreeComponent,
     AddContactDialogComponent,
+    AddCompanyDialogComponent,
     CompanyDialogComponent
   ],
   imports: [
@@ -165,6 +167,7 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     UploadDocumentDialogComponent,
     UploadDocumentsDialogComponent,
     AddContactDialogComponent,
+    AddCompanyDialogComponent,
     NoteAddDialogComponent
   ],
   providers: [
