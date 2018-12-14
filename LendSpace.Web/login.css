@@ -297,7 +297,8 @@ body.reset-password .left-side {
 
 [_nghost-c12] .login-terms-and-condition[_ngcontent-c12] {
 	color: #fff;
-	text-align: center
+	text-align: center;
+  margin: 10px
 }
 
 [_nghost-c12] .login-terms-and-condition[_ngcontent-c12] a[_ngcontent-c12] {
