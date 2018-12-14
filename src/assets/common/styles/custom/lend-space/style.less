@@ -122,14 +122,22 @@ body.lend-space {
         }
     }
 
-    .alert.m-alert--outline.alert-success {
-        border-color: @lend-space-main-color;
-        color: #000;
-        &.alert-success.m-alert--icon-solid .m-alert__icon {
-            background: @lend-space-main-color;
-            span {
-                border-left-color: @lend-space-main-color;
+    .alert.m-alert--outline {
+        &.alert-success {
+            border-color: @lend-space-main-color;
+            color: #000;
+            &.alert-success.m-alert--icon-solid .m-alert__icon {
+                background: @lend-space-main-color;
+                span {
+                    border-left-color: @lend-space-main-color;
+                }
             }
+        }
+        .m-alert__icon small.label {
+            font-weight: 600;
+            margin-top: 10px;
+            display: block;
+            color: #000;
         }
     }
 
