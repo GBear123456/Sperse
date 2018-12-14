@@ -1,4 +1,11 @@
+/** Сore imports */
 import { Component, OnInit, Injector, ViewChild, HostBinding } from '@angular/core';
+
+/** Third party imports */
+import * as _ from 'lodash';
+import { MatDialog } from '@angular/material';
+
+/** Application imports */
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { AppSessionService } from 'shared/common/session/app-session.service';
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
@@ -13,9 +20,7 @@ import {
     SessionServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
-
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-
 import { LoginAttemptsModalComponent } from 'app/shared/layout/login-attempts-modal.component';
 import { LinkedAccountsModalComponent } from 'app/shared/layout/linked-accounts-modal.component';
 import { ChangePasswordModalComponent } from 'app/shared/layout/profile/change-password-modal.component';
@@ -25,8 +30,6 @@ import { AppAuthService } from 'shared/common/auth/app-auth.service';
 import { LinkedAccountService } from 'app/shared/layout/linked-account.service';
 import { UserNotificationHelper } from 'app/shared/layout/notifications/UserNotificationHelper';
 import { AppConsts } from 'shared/AppConsts';
-import * as _ from 'lodash';
-import { MatDialog } from '@angular/material';
 import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({
@@ -51,7 +54,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
     shownLoginInfo: { fullName, email, tenantName?};
     profileThumbnailId: string;
     recentlyLinkedUsers: LinkedUserDto[];
-    unreadChatMessageCount = 0;
 
     helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
@@ -84,11 +86,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         {name: 'SIGN UP', class: 'member-signup', routerUrl: '/personal-finance/sign-up', disabled: false},
         {name: 'Member Login', class: 'member-login', routerUrl: '/account/login', disabled: false}
     ];
-    imgList = [
-        {img: 'daily-reports-icon.svg', text: 'CreditMonitorAlerts'},
-        {img: 'interactive-tools-icon.svg', text: 'EducationalResources'},
-        {img: 'TUmonitoring-icon.svg', text: 'TransUnionMonitoring'}
-    ];
 
     constructor(
         injector: Injector,
@@ -107,7 +104,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         private _permissionChecker: PermissionCheckerService
     ) {
         super(injector);
-        if (this.appSession.userId) {
+        if (this.appSession.userId && this.feature.isEnabled('CFO.Partner')) {
             const cfoService = injector.get(CFOService);
             cfoService.instanceChangeProcess(() => {
                 this.appAreaLinks = this.getAppAreaLinks(!cfoService || !cfoService.initialized);
@@ -226,10 +223,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
 
     isMemberArea() {
         return Boolean(this.loggedUserId);
-    }
-
-    get multiTenancySideIsTenant(): boolean {
-        return this._abpSessionService.tenantId > 0;
     }
 
     ngOnInit() {
