@@ -20,7 +20,7 @@
 
 .quovo-connect-content {
     width: 880px;
-    height: 688px;
+    height: 662px;
 }
 
 #quovo-connect-modal.quovo-connect .close-modal {
@@ -28,6 +28,10 @@
     color: rgb(55, 56, 58);
     text-shadow: 0 0 1px;
     font-weight: bold;
+}
+
+#quovo-connect-modal.quovo-connect .search {
+    padding-top: 1px;
 }
 
 #quovo-connect-modal.quovo-connect .search h2 {
