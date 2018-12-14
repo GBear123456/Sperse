@@ -104,7 +104,7 @@ $(document).ready(function () {
         );
 
         abp.utils.setCookieValue(
-            EncryptedAuthToken,
+            'enc_auth_token',
             encryptedAccessToken,
             tokenExpireDate,
             abp.appPath,
@@ -113,7 +113,7 @@ $(document).ready(function () {
 
         if (twoFactorRememberClientToken) {
             abp.utils.setCookieValue(
-                TwoFactorRememberClientToken,
+                'TwoFactorRememberClientToken',
                 twoFactorRememberClientToken,
                 new Date(new Date().getTime() + 365 * 86400000), // 1 year
                 abp.appPath,
