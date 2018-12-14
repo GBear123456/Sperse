@@ -28,9 +28,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         }
 
         if (!this._sessionService.user) {
-            if (this._feature.isEnabled('PFM.Applications'))
-                this._router.navigate(['/personal-finance']);
-            else if (this._feature.isEnabled('PFM.CreditReport'))
+            if (this._feature.isEnabled('PFM.CreditReport'))
                 this._router.navigate(['/personal-finance/credit-report']);
             else
                 this._router.navigate(['/account/login']);

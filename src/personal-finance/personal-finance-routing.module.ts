@@ -22,6 +22,7 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                 canActivate: [ CreditReportsRouteGuard ],
                 canActivateChild: [ CreditReportsRouteGuard ],
                 children: [
+/*
                     {
                         path: '',
                         component: LendSpaceDarkComponent,
@@ -30,6 +31,25 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                             hideFooter: false
                         }
                     },
+                    {
+                        path: 'privacy',
+                        component: LendSpaceDarkComponent,
+                        data: {
+                            openedPrivacy: true,
+                            wrapperDisabled: true,
+                            hideFooter: false
+                        }
+                    },
+                    {
+                        path: 'terms',
+                        component: LendSpaceDarkComponent,
+                        data: {
+                            openedTerms: true,
+                            wrapperDisabled: true,
+                            hideFooter: false
+                        }
+                    },
+*/
                     {
                         path: 'signup',
                         component: CreditWizardPageComponent
