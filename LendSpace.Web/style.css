@@ -1205,7 +1205,7 @@ body.pfm[_nghost-c4] .app-responsive-menu li a.member-login, body.pfm [_nghost-c
   text-indent: unset !important;
   background-image: none !important;
   opacity: 0.5;
-  
+
 }
 .modal button.close:before, .modal button.close:after {
   position: absolute;
@@ -1233,11 +1233,11 @@ body.pfm[_nghost-c4] .app-responsive-menu li a.member-login, body.pfm [_nghost-c
 .modal .modal-header .control-buttons {
   float: right;
   margin-top: 0;
-  margin-right: 20px;  
+  margin-right: 20px;
 }
 .modal .modal-header .control-buttons a,
 .modal .modal-header .control-buttons button {
-  height: 30px;  
+  height: 30px;
   background: #fff;
   border: 1px solid #eaeef0;
   padding: 4px 5px 6px;
@@ -1432,4 +1432,69 @@ not-found .btn[_ngcontent-c0] {
     color: #000;
     font-weight: 700!important;
     border-radius: 4px!important;
+}
+
+/**
+    styles for static pages like terms, privacy, etc
+*/
+.content-wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #252525;
+}
+.content-wrapper main#main {
+    margin-top: 89px;
+}
+.content-wrapper main#main * {
+    color: #fff;
+}
+
+nav.pages {
+    padding-top: 20px;
+    position: fixed;
+}
+nav.pages .pages-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+nav.pages .pages-link {
+    padding: 10px 10px 10px 0;
+    font-size: 16px;
+    font-weight: 500;
+    display: block;
+    text-decoration: none;
+    transition: .3s;
+}
+nav.pages .pages-link:hover,
+nav.pages .pages-link:active,
+nav.pages .pages-link:focus,
+nav.pages .pages-link.active {
+    color: #efd400 !important;
+}
+
+.data-wrap {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.data-wrap .doc-title {
+    font-size: 28px;
+    margin-bottom: 18px;
+    background: #3d3d3d;
+    text-align: center;
+    padding: 10px;
+}
+.data-wrap p,
+.data-wrap li {
+    text-align: justify;
+    font-size: 15px;
+    line-height: 1.6;
+    font-family: 'Montserrat', 'Courier New', 'Times New Roman', serif;
+}
+.data-wrap td p {
+    text-align: left;
+}
+.data-wrap li + li {
+    margin-top: 15px;
 }
