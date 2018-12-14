@@ -68,7 +68,7 @@ export class LoginService {
 
     resetPasswordModel: SendPasswordResetCodeInput;
     resetPasswordResult: SendPasswordResetCodeOutput;
-    
+
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
     signUpData: SignUpMemberRequest = new SignUpMemberRequest();
 
@@ -305,7 +305,8 @@ export class LoginService {
             .pipe(
                 publishReplay(),
                 refCount(),
-                map((providers: ExternalLoginProviderInfoModel[]) => _.map(providers, p => new ExternalLoginProvider(p))));
+                map((providers: ExternalLoginProviderInfoModel[]) => _.map(providers, p => new ExternalLoginProvider(p)))
+            );
     }
 
     ensureExternalLoginProviderInitialized(loginProvider: ExternalLoginProvider, callback: () => void) {
