@@ -16,7 +16,7 @@ export class AppAuthService implements OnDestroy {
 
     logout(reload?: boolean, returnUrl?: string): void {
         this.stopTokenCheck();
-        abp.auth.clearToken();
+        this.clearToken();
         if (reload !== false) {
             if (returnUrl) {
                 location.href = returnUrl;
@@ -24,6 +24,13 @@ export class AppAuthService implements OnDestroy {
                 location.href = AppConsts.appBaseUrl;
             }
         }
+    }
+
+    clearToken() {
+        abp.auth.clearToken(); //!!VP Clear token in current (app) domain
+        abp['domain'] = location.origin.split('.').slice(-2).join('.');
+        abp.auth.clearToken(); //!!VP Clear token on top level domain 
+        delete abp['domain'];
     }
 
     startTokenCheck() {
