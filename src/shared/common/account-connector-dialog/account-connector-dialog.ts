@@ -23,7 +23,7 @@ import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero
 })
 export class AccountConnectorDialogComponent implements OnInit {
     static defaultConfig: MatDialogConfig = {
-        height: '688px',
+        height: '662px',
         width: '900px',
         id: 'account-connector-dialog',
         panelClass: ['account-connector-dialog']
