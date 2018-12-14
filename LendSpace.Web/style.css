@@ -1448,6 +1448,7 @@ not-found .btn[_ngcontent-c0] {
 }
 .content-wrapper main#main * {
     color: #fff;
+    font-family: 'Poppins' ,sans-serif;
 }
 
 nav.pages {
@@ -1490,7 +1491,7 @@ nav.pages .pages-link.active {
     text-align: justify;
     font-size: 15px;
     line-height: 1.6;
-    font-family: 'Montserrat', 'Courier New', 'Times New Roman', serif;
+    font-family: 'Poppins' ,sans-serif;
 }
 .data-wrap td p {
     text-align: left;
