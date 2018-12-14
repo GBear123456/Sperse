@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -26,6 +26,7 @@ import * as _ from 'lodash';
     animations: [accountModuleAnimation()]
 })
 export class HostLoginComponent extends AppComponentBase implements OnInit {
+    @ViewChild('loginForm') loginForm;
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;
@@ -85,8 +86,10 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
     }
 
     login(): void {
-        this.loginInProgress = true;
-        this.loginService.authenticate(() => { this.loginInProgress = false; });
+        if (this.loginForm.valid) {
+            this.loginInProgress = true;
+            this.loginService.authenticate(() => { this.loginInProgress = false; });
+        }
     }
 
     externalLogin(provider: ExternalLoginProvider) {
