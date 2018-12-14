@@ -34792,7 +34792,6 @@ export class ContactInfoDto implements IContactInfoDto {
     score!: number | undefined;
     personContactInfo!: PersonContactInfoDto | undefined;
     primaryOrganizationContactInfo!: OrganizationContactInfoDto | undefined;
-    contactPersons!: PersonContactInfoDto[] | undefined;
     creationDate!: moment.Moment | undefined;
     userContextOrderId!: number | undefined;
     userContextOrderType!: string | undefined;
@@ -34829,11 +34828,6 @@ export class ContactInfoDto implements IContactInfoDto {
             this.score = data["score"];
             this.personContactInfo = data["personContactInfo"] ? PersonContactInfoDto.fromJS(data["personContactInfo"]) : <any>undefined;
             this.primaryOrganizationContactInfo = data["primaryOrganizationContactInfo"] ? OrganizationContactInfoDto.fromJS(data["primaryOrganizationContactInfo"]) : <any>undefined;
-            if (data["contactPersons"] && data["contactPersons"].constructor === Array) {
-                this.contactPersons = [];
-                for (let item of data["contactPersons"])
-                    this.contactPersons.push(PersonContactInfoDto.fromJS(item));
-            }
             this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
             this.userContextOrderId = data["userContextOrderId"];
             this.userContextOrderType = data["userContextOrderType"];
@@ -34870,11 +34864,6 @@ export class ContactInfoDto implements IContactInfoDto {
         data["score"] = this.score;
         data["personContactInfo"] = this.personContactInfo ? this.personContactInfo.toJSON() : <any>undefined;
         data["primaryOrganizationContactInfo"] = this.primaryOrganizationContactInfo ? this.primaryOrganizationContactInfo.toJSON() : <any>undefined;
-        if (this.contactPersons && this.contactPersons.constructor === Array) {
-            data["contactPersons"] = [];
-            for (let item of this.contactPersons)
-                data["contactPersons"].push(item.toJSON());
-        }
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["userContextOrderId"] = this.userContextOrderId;
         data["userContextOrderType"] = this.userContextOrderType;
@@ -34896,7 +34885,6 @@ export interface IContactInfoDto {
     score: number | undefined;
     personContactInfo: PersonContactInfoDto | undefined;
     primaryOrganizationContactInfo: OrganizationContactInfoDto | undefined;
-    contactPersons: PersonContactInfoDto[] | undefined;
     creationDate: moment.Moment | undefined;
     userContextOrderId: number | undefined;
     userContextOrderType: string | undefined;
@@ -34904,9 +34892,9 @@ export interface IContactInfoDto {
 
 export class PersonContactInfoDto implements IPersonContactInfoDto {
     person!: PersonInfoDto | undefined;
+    orgRelations!: PersonOrgRelationShortInfo[] | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
-    jobTitle!: string | undefined;
     userId!: number | undefined;
     primaryPhoto!: ContactPhotoDto | undefined;
     primaryPhone!: ContactPhoneDto | undefined;
@@ -34926,9 +34914,13 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     init(data?: any) {
         if (data) {
             this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
+            if (data["orgRelations"] && data["orgRelations"].constructor === Array) {
+                this.orgRelations = [];
+                for (let item of data["orgRelations"])
+                    this.orgRelations.push(PersonOrgRelationShortInfo.fromJS(item));
+            }
             this.id = data["id"];
             this.fullName = data["fullName"];
-            this.jobTitle = data["jobTitle"];
             this.userId = data["userId"];
             this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
             this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
@@ -34948,9 +34940,13 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["person"] = this.person ? this.person.toJSON() : <any>undefined;
+        if (this.orgRelations && this.orgRelations.constructor === Array) {
+            data["orgRelations"] = [];
+            for (let item of this.orgRelations)
+                data["orgRelations"].push(item.toJSON());
+        }
         data["id"] = this.id;
         data["fullName"] = this.fullName;
-        data["jobTitle"] = this.jobTitle;
         data["userId"] = this.userId;
         data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
         data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
@@ -34963,9 +34959,9 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
 
 export interface IPersonContactInfoDto {
     person: PersonInfoDto | undefined;
+    orgRelations: PersonOrgRelationShortInfo[] | undefined;
     id: number | undefined;
     fullName: string | undefined;
-    jobTitle: string | undefined;
     userId: number | undefined;
     primaryPhoto: ContactPhotoDto | undefined;
     primaryPhone: ContactPhoneDto | undefined;
@@ -34976,9 +34972,9 @@ export interface IPersonContactInfoDto {
 
 export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     organization!: OrganizationInfoDto | undefined;
+    contactPersons!: PersonContactInfoDto[] | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
-    jobTitle!: string | undefined;
     userId!: number | undefined;
     primaryPhoto!: ContactPhotoDto | undefined;
     primaryPhone!: ContactPhoneDto | undefined;
@@ -34998,9 +34994,13 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     init(data?: any) {
         if (data) {
             this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
+            if (data["contactPersons"] && data["contactPersons"].constructor === Array) {
+                this.contactPersons = [];
+                for (let item of data["contactPersons"])
+                    this.contactPersons.push(PersonContactInfoDto.fromJS(item));
+            }
             this.id = data["id"];
             this.fullName = data["fullName"];
-            this.jobTitle = data["jobTitle"];
             this.userId = data["userId"];
             this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
             this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
@@ -35020,9 +35020,13 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        if (this.contactPersons && this.contactPersons.constructor === Array) {
+            data["contactPersons"] = [];
+            for (let item of this.contactPersons)
+                data["contactPersons"].push(item.toJSON());
+        }
         data["id"] = this.id;
         data["fullName"] = this.fullName;
-        data["jobTitle"] = this.jobTitle;
         data["userId"] = this.userId;
         data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
         data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
@@ -35035,9 +35039,9 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
 
 export interface IOrganizationContactInfoDto {
     organization: OrganizationInfoDto | undefined;
+    contactPersons: PersonContactInfoDto[] | undefined;
     id: number | undefined;
     fullName: string | undefined;
-    jobTitle: string | undefined;
     userId: number | undefined;
     primaryPhoto: ContactPhotoDto | undefined;
     primaryPhone: ContactPhoneDto | undefined;
@@ -35148,6 +35152,58 @@ export interface IPersonInfoDto {
     contactId: number | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
+}
+
+export class PersonOrgRelationShortInfo implements IPersonOrgRelationShortInfo {
+    id!: number | undefined;
+    isActive!: boolean | undefined;
+    organization!: OrganizationShortInfo | undefined;
+    relationType!: PersonOrgRelationTypeInfo | undefined;
+    jobTitle!: string | undefined;
+
+    constructor(data?: IPersonOrgRelationShortInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.isActive = data["isActive"];
+            this.organization = data["organization"] ? OrganizationShortInfo.fromJS(data["organization"]) : <any>undefined;
+            this.relationType = data["relationType"] ? PersonOrgRelationTypeInfo.fromJS(data["relationType"]) : <any>undefined;
+            this.jobTitle = data["jobTitle"];
+        }
+    }
+
+    static fromJS(data: any): PersonOrgRelationShortInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonOrgRelationShortInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["isActive"] = this.isActive;
+        data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
+        data["relationType"] = this.relationType ? this.relationType.toJSON() : <any>undefined;
+        data["jobTitle"] = this.jobTitle;
+        return data; 
+    }
+}
+
+export interface IPersonOrgRelationShortInfo {
+    id: number | undefined;
+    isActive: boolean | undefined;
+    organization: OrganizationShortInfo | undefined;
+    relationType: PersonOrgRelationTypeInfo | undefined;
+    jobTitle: string | undefined;
 }
 
 export class ContactPhotoDto implements IContactPhotoDto {
@@ -35600,6 +35656,86 @@ export interface IUserKeyInfoDto {
     id: number | undefined;
     userName: string | undefined;
     fullName: string | undefined;
+}
+
+export class OrganizationShortInfo implements IOrganizationShortInfo {
+    id!: number | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IOrganizationShortInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): OrganizationShortInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrganizationShortInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IOrganizationShortInfo {
+    id: number | undefined;
+    name: string | undefined;
+}
+
+export class PersonOrgRelationTypeInfo implements IPersonOrgRelationTypeInfo {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IPersonOrgRelationTypeInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): PersonOrgRelationTypeInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonOrgRelationTypeInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IPersonOrgRelationTypeInfo {
+    id: string | undefined;
+    name: string | undefined;
 }
 
 export class ContactEmailDto implements IContactEmailDto {
@@ -48629,7 +48765,6 @@ export interface IOrderSbuscriptionPaymentDto {
 export class ContactInfoBaseDto implements IContactInfoBaseDto {
     id!: number | undefined;
     fullName!: string | undefined;
-    jobTitle!: string | undefined;
     userId!: number | undefined;
     primaryPhoto!: ContactPhotoDto | undefined;
     primaryPhone!: ContactPhoneDto | undefined;
@@ -48650,7 +48785,6 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
         if (data) {
             this.id = data["id"];
             this.fullName = data["fullName"];
-            this.jobTitle = data["jobTitle"];
             this.userId = data["userId"];
             this.primaryPhoto = data["primaryPhoto"] ? ContactPhotoDto.fromJS(data["primaryPhoto"]) : <any>undefined;
             this.primaryPhone = data["primaryPhone"] ? ContactPhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
@@ -48671,7 +48805,6 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["fullName"] = this.fullName;
-        data["jobTitle"] = this.jobTitle;
         data["userId"] = this.userId;
         data["primaryPhoto"] = this.primaryPhoto ? this.primaryPhoto.toJSON() : <any>undefined;
         data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
@@ -48685,53 +48818,12 @@ export class ContactInfoBaseDto implements IContactInfoBaseDto {
 export interface IContactInfoBaseDto {
     id: number | undefined;
     fullName: string | undefined;
-    jobTitle: string | undefined;
     userId: number | undefined;
     primaryPhoto: ContactPhotoDto | undefined;
     primaryPhone: ContactPhoneDto | undefined;
     primaryAddress: ContactAddressDto | undefined;
     details: ContactInfoDetailsDto | undefined;
     comment: string | undefined;
-}
-
-export class OrganizationShortInfo implements IOrganizationShortInfo {
-    id!: number | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IOrganizationShortInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): OrganizationShortInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new OrganizationShortInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IOrganizationShortInfo {
-    id: number | undefined;
-    name: string | undefined;
 }
 
 export class CreateOrganizationInput implements ICreateOrganizationInput {
