@@ -307,12 +307,9 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     margin:75px auto 0;
     padding:0 22px
 }
-[_nghost-c8] .jumbotron.top[_ngcontent-c8] .buttons-group[_ngcontent-c8] a {
-    width:31%;
-}
 [_nghost-c8] .jumbotron.top[_ngcontent-c8] .buttons-group[_ngcontent-c8] .btn-custom[_ngcontent-c8]{
     text-align:center;
-    width:100%;
+    width:31%;
     border-radius:0;
     background-color:#000;
     border-color:#666
@@ -608,7 +605,7 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     font-weight:700;
     text-transform:uppercase
 }
-[_nghost-c8] .get-free[_ngcontent-c8] button[_ngcontent-c8]{
+[_nghost-c8] .get-free[_ngcontent-c8] a[_ngcontent-c8]{
     padding:10px 26px;
     font-size:18px;
     font-weight:700;
@@ -619,7 +616,7 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     border:2px solid #333;
     border-radius:0
 }
-[_nghost-c8] .get-free[_ngcontent-c8] button[_ngcontent-c8]:hover{
+[_nghost-c8] .get-free[_ngcontent-c8] a[_ngcontent-c8]:hover{
     background:#333;
     color:#ccc
 }
