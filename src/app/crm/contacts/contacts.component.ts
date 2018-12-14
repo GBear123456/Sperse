@@ -184,8 +184,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private fillContactDetails(result, contactId = null) {
         this._contactService['data'].contactInfo = result;
         contactId = contactId || result.personContactInfo.id;
-        if (result.contactPersons) {
-            result.contactPersons.every((contact) => {
+        if (result.primaryOrganizationContactInfo.contactPersons) {
+            result.primaryOrganizationContactInfo.contactPersons.every((contact) => {
                 let isPrimaryContact = (contact.id == contactId);
                 if (isPrimaryContact)
                     result.personContactInfo = contact;
