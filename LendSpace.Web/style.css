@@ -307,9 +307,12 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     margin:75px auto 0;
     padding:0 22px
 }
+[_nghost-c8] .jumbotron.top[_ngcontent-c8] .buttons-group[_ngcontent-c8] a {
+    width:31%;
+}
 [_nghost-c8] .jumbotron.top[_ngcontent-c8] .buttons-group[_ngcontent-c8] .btn-custom[_ngcontent-c8]{
     text-align:center;
-    width:31%;
+    width:100%;
     border-radius:0;
     background-color:#000;
     border-color:#666
@@ -391,6 +394,12 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
 }
 [_nghost-c8] #accordion[_ngcontent-c8]{
     margin-top:8px
+}
+[_nghost-c8] #accordion[_ngcontent-c8] .collapse {
+    overflow: hidden;
+}
+[_nghost-c8] #accordion[_ngcontent-c8] .collapse.in {
+    display: block!important;
 }
 [_nghost-c8] #accordion[_ngcontent-c8] .card[_ngcontent-c8], [_nghost-c8] #accordion[_ngcontent-c8] .card-body[_ngcontent-c8], [_nghost-c8] #accordion[_ngcontent-c8] .card-header[_ngcontent-c8]{
     background:0 0;
@@ -574,7 +583,10 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
 }
 [_nghost-c8] .get-free[_ngcontent-c8]{
     height:441px;
-    background:url(./images/get-free-bg.png) 23% 50%/contain no-repeat #fec80d
+    background: #fec80d
+}
+[_nghost-c8] .get-free[_ngcontent-c8] .row {
+    background:url(./images/get-free-bg2.png) 0% 50%/contain no-repeat
 }
 [_nghost-c8] .get-free[_ngcontent-c8] h2[_ngcontent-c8]{
     text-align:left;
@@ -611,22 +623,14 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     background:#333;
     color:#ccc
 }
-@media all and (max-width:1440px){
-    [_nghost-c8] .get-free[_ngcontent-c8]{
-        background-position:0 50%
-    }
-}
-@media all and (max-width:1280px){
-    [_nghost-c8] .get-free[_ngcontent-c8]{
-        background-position:-15% 50%
-    }
-}
 @media all and (max-width:1024px){
     [_nghost-c8] .why-us[_ngcontent-c8] .why-list[_ngcontent-c8]{
         padding:0
     }
-    [_nghost-c8] .get-free[_ngcontent-c8]{
-        background-position:-125px 50%
+}
+@media all and (max-width:991px){
+    [_nghost-c8] .get-free[_ngcontent-c8] .row {
+        background: none;
     }
 }
 @media all and (max-width:768px){
