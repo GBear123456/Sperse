@@ -21,7 +21,10 @@ export class PagesFooterComponent extends AppComponentBase {
         {
             url: '',
             name: 'Terms of Use',
-            action: this.openConditionsDialog.bind(this, {type: ConditionsType.Terms, title: 'Terms of Use'})
+            action: this.openConditionsDialog.bind(this, {
+                type: ConditionsType.Terms,
+                title: 'Terms of Use'
+            })
         },
         {
             url: '',
