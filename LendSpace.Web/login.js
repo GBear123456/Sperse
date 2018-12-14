@@ -2,8 +2,8 @@ $(document).ready(function () {
     abp.domain = 'lendspace.com';
     var apiOrigin = 'https://app.' + abp.domain,
         form = window['loginForm'];
-    
-    form.elements['userNameOrEmailAddress'].onkeyup = 
+
+    form.elements['userNameOrEmailAddress'].onkeyup =
     form.elements['password'].onkeyup = checkIsValid;
 
     form.onsubmit = function() {
@@ -16,6 +16,8 @@ $(document).ready(function () {
                 twoFactorRememberClientToken: cookie['TwoFactorRememberClientToken'],
                 autoDetectTenancy: true
             });
+            var button = form.elements['submit'];
+            button.setAttribute('disabled', '');
 
             $.ajax({
                 url: apiOrigin + '/api/TokenAuth/Authenticate',
@@ -26,11 +28,13 @@ $(document).ready(function () {
                     "Accept": "application/json"
                 },
                 error: function(request) {
+                    button.removeAttribute('disabled');
                     var response = JSON.parse(request.responseText);
                     if (response.error)
                         abp.message.error(response.error.details, response.error.message);
                 }
             }).done((response) => {
+                button.removeAttribute('disabled');
                 if (response.result)
                     handleAuthResult(response.result);
                 else
@@ -128,13 +132,7 @@ $(document).ready(function () {
     function checkIsValid() {
         var login = form.elements['userNameOrEmailAddress'];
         var password = form.elements['password'];
-        var button = form.elements['submit'];
         var result = login.value && password.value;
-        if (result)
-            button.removeAttribute('disabled');
-        else
-            button.setAttribute('disabled', '');
-
         return result;
     }
 });
