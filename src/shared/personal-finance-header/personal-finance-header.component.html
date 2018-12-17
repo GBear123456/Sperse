@@ -128,7 +128,7 @@
                                                 </a>
                                             </li>
                                             <li class="m-nav__item">
-                                                <a class="m-nav__link disabled">
+                                                <a class="m-nav__link" (click)="changeProfilePicture($event)">
                                                     <i class="m-nav__link-icon flaticon-profile-1"></i>
                                                     <span class="m-nav__link-title">
                                                         <span class="m-nav__link-wrap">
@@ -184,4 +184,3 @@
         [memberAreaLinks]="memberAreaLinks">
     </member-area-navigation>
 </div>
-<changeProfilePictureModal #changeProfilePictureModal></changeProfilePictureModal>

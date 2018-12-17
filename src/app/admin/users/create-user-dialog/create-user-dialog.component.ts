@@ -261,7 +261,7 @@ export class CreateUserDialogComponent extends ModalDialogComponent implements O
         this.dialog.open(UploadPhotoDialogComponent, {
             data: {
                 source: this.photoOriginalData,
-                maxSizeBytes: 5242880
+                maxSizeBytes: AppConsts.maxImageSize
             },
             hasBackdrop: true
         }).afterClosed().subscribe((result) => {

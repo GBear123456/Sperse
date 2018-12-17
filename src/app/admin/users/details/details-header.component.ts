@@ -5,6 +5,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UserServiceProxy, GetUserForEditOutput, UpdateUserPictureInput } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'details-header',
@@ -32,7 +33,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.dialog.open(UploadPhotoDialogComponent, {
             data: {
                 source: this.data['photo'],
-                maxSizeBytes: 5242880
+                maxSizeBytes: AppConsts.maxImageSize
             },
             hasBackdrop: true
         }).afterClosed().subscribe(result => {
