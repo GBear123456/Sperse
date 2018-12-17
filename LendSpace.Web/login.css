@@ -28,12 +28,15 @@
 	background: url(./images/bg.jpg) 50% 50%/cover no-repeat #000
 }
 
-@media all and (max-width:700px) and (max-height:550px) {
-	[_nghost-c10] .wrapper[_ngcontent-c10] {
-		height: 100%
-	}
-	[_nghost-c10] .wrapper[_ngcontent-c10] main[_ngcontent-c10] {
-		padding: 30px 0
+@media all and (max-width:700px) {
+    #main {
+        min-height: 540px;
+    }
+    [_nghost-c10] .wrapper[_ngcontent-c10] {
+		height: auto !important;
+    }
+    [_nghost-c10] .wrapper[_ngcontent-c10] main[_ngcontent-c10] {
+		padding: 30px 15px;
 	}
 }
 
