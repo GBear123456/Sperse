@@ -22,21 +22,26 @@ export class PagesFooterComponent extends AppComponentBase {
             url: '',
             name: 'Terms of Use',
             action: this.openConditionsDialog.bind(this, {
-                type: ConditionsType.Terms,
-                title: 'Terms of Use'
+                title: 'Terms of Use',
+                bodyUrl: this.getTopDomain() + '/documents/terms.html',
+                downloadDisabled: true
             })
         },
         {
             url: '',
             name: 'Privacy Policy',
-            action: this.openConditionsDialog.bind(this, {type: ConditionsType.Policies})
+            action: this.openConditionsDialog.bind(this, {
+                title: 'Terms of Use',
+                bodyUrl: this.getTopDomain() + '/documents/policy.html',
+                downloadDisabled: true
+            })
         },
         {
             url: '',
             name: 'Lender Terms',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Lender Terms',
-                bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/lender-terms.html',
+                bodyUrl: this.getTopDomain() + '/documents/lender.html',
                 downloadDisabled: true
             })
         },
@@ -45,7 +50,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Disclosures',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Disclosures',
-                bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/disclosures.html',
+                bodyUrl: this.getTopDomain() + '/documents/disclosures.html',
                 downloadDisabled: true
             })
         },
@@ -54,7 +59,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'About Us',
             action: this.openConditionsDialog.bind(this, {
                 title: 'About Us',
-                bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/about-us.html',
+                bodyUrl: this.getTopDomain() + '/documents/about.html',
                 downloadDisabled: true
             })
         }
@@ -82,5 +87,9 @@ export class PagesFooterComponent extends AppComponentBase {
 
     openConditionsDialog(data: any) {
         this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
+    }
+
+    getTopDomain() {
+        return location.protocol + "//" + location.origin.split('.').slice(-2).join('.');
     }
 }
