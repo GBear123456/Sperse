@@ -32,7 +32,6 @@ import { UserNotificationHelper } from 'app/shared/layout/notifications/UserNoti
 import { AppConsts } from 'shared/AppConsts';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UpdateProfilePictureInput } from '@shared/service-proxies/service-proxies';
-import { CFOService } from '@shared/cfo/cfo.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
@@ -106,12 +105,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         private _permissionChecker: PermissionCheckerService
     ) {
         super(injector);
-        if (this.appSession.userId && this.feature.isEnabled('CFO.Partner')) {
-            const cfoService = injector.get(CFOService);
-            cfoService.instanceChangeProcess(() => {
-                this.appAreaLinks = this.getAppAreaLinks(!cfoService || !cfoService.initialized);
-            });
-        }
         if (this.feature.isEnabled('CFO.Partner')) {
             this.memberAreaLinks.unshift(
                 {
@@ -132,7 +125,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
             (this.feature.isEnabled('Admin') && this._permissionChecker.isGranted('Pages.Administration.Users'));
     }
 
-    private getAppAreaLinks(myFinancesSublinksAreHidden = true) {
+    private getAppAreaLinks() {
         return [
             {
                 name: 'Loans',
@@ -190,24 +183,16 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
                 hidden: !this.feature.isEnabled('CFO.Partner'),
                 sublinks: [
                     {
-                        name: 'Summary',
+                        name: 'Accounts',
+                        routerUrl: '/personal-finance/my-finances/accounts'
+                    },
+                    {
+                        name: 'Overview',
                         routerUrl: '/personal-finance/my-finances/summary'
                     },
                     {
-                        name: 'Goals',
-                        routerUrl: '/personal-finance/my-finances/goals'
-                    },
-                    {
-                        name: 'Allocation',
-                        routerUrl: '/personal-finance/my-finances/allocation'
-                    },
-                    {
-                        name: 'Spending & Budgeting',
+                        name: 'Budgeting',
                         routerUrl: '/personal-finance/my-finances/spending'
-                    },
-                    {
-                        name: 'Accounts',
-                        routerUrl: '/personal-finance/my-finances/accounts'
                     },
                     {
                         name: 'Transactions',
@@ -216,9 +201,16 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
                     {
                         name: 'Holdings',
                         routerUrl: '/personal-finance/my-finances/holdings'
+                    },
+                    {
+                        name: 'Allocation',
+                        routerUrl: '/personal-finance/my-finances/allocation'
+                    },
+                    {
+                        name: 'Goals',
+                        routerUrl: '/personal-finance/my-finances/goals'
                     }
-                ],
-                sublinksHidden: myFinancesSublinksAreHidden
+                ]
             }
         ];
     }
