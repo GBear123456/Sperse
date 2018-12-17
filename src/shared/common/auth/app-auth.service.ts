@@ -29,7 +29,7 @@ export class AppAuthService implements OnDestroy {
     clearToken() {
         abp.auth.clearToken(); //!!VP Clear token in current (app) domain
         abp['domain'] = location.origin.split('.').slice(-2).join('.');
-        abp.auth.clearToken(); //!!VP Clear token on top level domain 
+        abp.auth.clearToken(); //!!VP Clear token on top level domain
         delete abp['domain'];
     }
 
