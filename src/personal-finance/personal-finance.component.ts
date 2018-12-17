@@ -2,7 +2,6 @@ import { Component, HostBinding, ViewContainerRef, OnInit, OnDestroy, Injector, 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { Router, ActivationEnd } from '@angular/router';
 import { humanize } from 'underscore.string';
-import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 
 declare const Typekit: any;
 
@@ -21,7 +20,6 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
     public constructor(
         injector: Injector,
         viewContainerRef: ViewContainerRef,
-        private _zDesk: ZendeskService,
         private _render: Renderer2
     ) {
         super(injector);
@@ -48,8 +46,6 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
 
     ngOnInit(): void {
         this._render.addClass(document.body, 'pfm');
-        if (!abp.session.userId)
-            this._zDesk.showWidget({ position: { horizontal: 'left', vertical: 'bottom' } });
 
 /*
         this.getRootComponent().addScriptLink('https://use.typekit.net/ocj2gqu.js', 'text/javascript', () => {
@@ -60,7 +56,5 @@ export class PersonalFinanceComponent extends AppComponentBase implements OnInit
 
     ngOnDestroy() {
         this._render.removeClass(document.body, 'pfm');
-        if (abp.session.userId)
-            this._zDesk.hideWidget();
     }
 }

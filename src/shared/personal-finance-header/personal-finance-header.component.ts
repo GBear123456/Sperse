@@ -106,7 +106,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         private _permissionChecker: PermissionCheckerService
     ) {
         super(injector);
-        if (this.appSession.userId) {
+        if (this.appSession.userId && this.feature.isEnabled('CFO.Partner')) {
             const cfoService = injector.get(CFOService);
             cfoService.instanceChangeProcess(() => {
                 this.appAreaLinks = this.getAppAreaLinks(!cfoService || !cfoService.initialized);

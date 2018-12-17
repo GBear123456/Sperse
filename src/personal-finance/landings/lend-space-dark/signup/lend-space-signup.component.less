@@ -36,8 +36,10 @@
         background-color: #fec80d;
         font-family: @mainFont;
         
-        [class^='col'] {
-            padding: 30px 0;
+        @media all and (min-width: 601px) {
+            [class^='col'] {
+                padding: 30px 0;
+            }
         }
         
         .girl-bg {
@@ -78,6 +80,12 @@
                 text-transform: uppercase;
             }
             
+        }
+
+        @media all and (max-width: 600px) {
+            .agreement {
+                text-align: left;
+            }
         }
         
         form {
@@ -219,6 +227,17 @@
             button {
                 white-space: normal !important;
             }
+
+            .zip-citizen-row {
+                display: block;
+
+                .dx-field-label {
+                    font-weight: 600;
+                    font-size: 16px;
+                    text-align: left;
+                    padding-left: 10px;
+                }
+            }
         }
     }
     
@@ -280,6 +299,19 @@
     .actions-field {
         margin-top: 20px;
         margin-bottom: 30px;
+
+        @media all and (max-width: 600px) {
+            flex-direction: column;
+
+            .login-options {
+                margin-top: 15px;
+                flex-direction: column;
+
+                .social-icons {
+                    margin-top: 15px;
+                }
+            }
+        }
     }
     
     .agreement {
@@ -398,6 +430,45 @@
     .form-group--surname {
         input {
             text-transform: capitalize !important;
+        }
+    }
+    
+    .login-options {
+    
+        .login-with-or {
+            display: inline-block;
+            padding: 0 20px;
+            text-transform: uppercase;
+        }
+        
+        .social-icons {
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        
+        .social-icons li {
+            display: inline-block;
+            list-style: none;
+            text-indent: -9999px;
+        }
+        
+        li > a {
+            width: 28px;
+            height: 28px;
+            display: block;
+            background-repeat: no-repeat;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .social-icons li:hover > a {
+            opacity: .9;
+            background-color: #fff;
+        }
+        
+        .social-icons li .facebook {
+            background: url(../../../../assets/common/images/social/facebook.png) 0 -38px no-repeat;
+            border-radius: 0;
         }
     }
 }

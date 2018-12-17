@@ -17,9 +17,16 @@ import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import {
-    ContactInfoDto, CreateContactPhotoInput, PersonOrgRelationServiceProxy,
-    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdateJobTitleInput,
-    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy, OrganizationInfoDto
+    ContactPhotoDto,
+    ContactInfoDto,
+    ContactPhotoServiceProxy,
+    CreateContactPhotoInput,
+    OrganizationInfoDto,
+    OrganizationContactServiceProxy,
+    PersonContactServiceProxy,
+    UpdateJobTitleInput,
+    UpdateOrganizationInfoInput,
+    UpdatePersonInfoInput
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';

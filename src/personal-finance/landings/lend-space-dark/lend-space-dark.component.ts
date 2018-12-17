@@ -31,10 +31,10 @@ export class LendSpaceDarkComponent extends AppComponentBase implements AfterVie
         {title: 'Will the lender require any documentation prior to closing on my loan?', text: 'You’re almost there! Most lenders require past pay stubs, bank statements, information on debts and a copy of your tax return. Closing document requirements can vary depending on your location. Be sure to understand your specific lenders closing requirements.'},
         {title: 'What is the interest rate?', text: 'Interest rates vary based on employment, credit history, debt-to-income ratio, etc. Each lender has their own specific requirements that potential consumers need to meet before they can offer their services. LendSpace strives to help connect our consumer’s needs with lenders who can fulfill those needs.'}
     ];
-    buttons = [
-        {title: 'Credit Card', description: 'I want to get a'},
-        {title: 'Personal Loan', description: 'I want to apply for a'},
-        {title: 'Credit Score', description: 'I want to get my free'}
+    topLinks = [
+        {title: 'Credit Card', description: 'I want to get a', routerUrl: '/personal-finance/offers/credit-cards'},
+        {title: 'Personal Loan', description: 'I want to apply for a', routerUrl: '/personal-finance/offers/personal-loans'},
+        {title: 'Credit Score', description: 'I want to get my free', routerUrl: '/personal-finance/offers/credit-score'}
     ];
     features = [
         {

@@ -43,11 +43,26 @@ button.css-o0wm01 {
   border-color: #ffcc00;
   background: #ffcc00;
 }
-button.css-1pf61fi {
+button.css-1pf61fi,
+button.btn--primary {
+  background-color: #ffcc00;
+  border-color: #ffcc00;
+  color: #000;
+}
+button.css-1pf61fi:hover,
+button.btn--primary:hover,
+button.css-1pf61fi:focus,
+button.btn--primary:focus {
+  background-color: #e0b400;
+  border-color: #e0b400;
+}
+#quovo-connect-modal.quovo-connect button.connect-btn,
+#quovo-connect-modal.quovo-connect button.connect-btn.blue {
   background-color: #ffcc00;
   color: #000;
 }
-button.css-1pf61fi:hover {
+#quovo-connect-modal.quovo-connect button.connect-btn:hover,
+#quovo-connect-modal.quovo-connect button.connect-btn.blue:hover {
   background-color: #e0b400;
 }
 .Connection-card__connection-info {

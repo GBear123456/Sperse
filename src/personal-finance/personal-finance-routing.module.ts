@@ -23,32 +23,6 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                 canActivateChild: [ CreditReportsRouteGuard ],
                 children: [
                     {
-                        path: '',
-                        component: LendSpaceDarkComponent,
-                        data: {
-                            wrapperDisabled: true,
-                            hideFooter: false
-                        }
-                    },
-                    {
-                        path: 'privacy',
-                        component: LendSpaceDarkComponent,
-                        data: {
-                            openedPrivacy: true,
-                            wrapperDisabled: true,
-                            hideFooter: false
-                        }
-                    },
-                    {
-                        path: 'terms',
-                        component: LendSpaceDarkComponent,
-                        data: {
-                            openedTerms: true,
-                            wrapperDisabled: true,
-                            hideFooter: false
-                        }
-                    },
-                    {
                         path: 'signup',
                         component: CreditWizardPageComponent
                     },

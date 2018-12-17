@@ -39,8 +39,8 @@
                             </dx-text-box>
                         </div>
                     </div>
-                    <div class="dx-field form-row align-items-center">
-                        <div class="form-group col col-xs-12">
+                    <div class="dx-field form-row zip-citizen-row align-items-center">
+                        <div class="form-group zip-field col col-xs-12">
                             <dx-text-box placeholder="Zip"
                                          [(value)]="registerData.postalCode"
                                          minLength="5"
@@ -53,7 +53,7 @@
                                 </dx-validator>
                             </dx-text-box>
                         </div>
-                        <div class="form-group col col-xs-12 dx-field">
+                        <div class="form-group citizen-field col col-xs-12 dx-field">
                             <div class="dx-field-label">US Resident</div>
                             <div class="dx-field-value">
                                 <dx-radio-group [dataSource]="radioGroupCitizen"
@@ -67,13 +67,26 @@
                         </div>
                     </div>
 
-                    <div class="dx-field actions-field">
+                    <div class="dx-field actions-field d-flex align-items-center">
                         <dx-button
                             text="Activate my free account"
                             type="success"
                             class="btn btn-outline-dark"
                             [useSubmitBehavior]="true">
                         </dx-button>
+
+                        <div class="login-options d-flex align-items-center"
+                             *ngIf="(loginService.externalLoginProviders$ | async) as externalLoginProviders">
+                            <span class="login-with-or">{{l("or")}}</span>
+                            <ul class="social-icons">
+                                <li *ngFor="let provider of externalLoginProviders">
+                                    <a class="social-login-icon social-icon-color {{provider.icon}}"
+                                       (click)="externalLogin(provider)"
+                                       title="{{provider.name}}">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -94,8 +107,9 @@
                                 </dx-validator>
                             </dx-check-box>
                         </div>
+
                         <p class="agreement">By continuing, I certify I'm older than 18 years of age. I understand and agree to the LendSpace <a (click)="openConditionsDialog(modalsData.privacy)">Privacy Policy</a>,
-                            <a (click)="openConditionsDialog(modalsData.terms)">Terms of Use</a> and <a (click)="openConditionsDialog(modalsData.lender)">Lender Terms</a>.</p>
+                            <a (click)="openConditionsDialog(modalsData.terms)">Terms of Use</a> and <a (click)="openConditionsDialog(modalsData.lender)">Lender Terms</a>. I consent to receive calls, text and pre-recorded messages from LendSpace, its subsidiaries agents and/or partners.</p>
                     </div>
 
                     <!--<div class="form-group">-->
