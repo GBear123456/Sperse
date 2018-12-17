@@ -1137,6 +1137,12 @@ body.pfm[_nghost-c4] .app-responsive-menu li a.member-login, body.pfm [_nghost-c
     [_nghost-c7] .footer-menu[_ngcontent-c7] .footer-menu-block[_ngcontent-c7]{
         padding:0 15px
     }
+    [_nghost-c7] .footer-menu[_ngcontent-c7] img.small-logo[_ngcontent-c7] {
+        margin-bottom: 15px;
+    }
+    [_nghost-c7] .footer-menu[_ngcontent-c7] img.secure-logo[_ngcontent-c7] {
+        margin-left: 0;
+    }
 }
 [_nghost-c7] .footer-menu-list[_ngcontent-c7]{
     padding-left:0;
