@@ -28,9 +28,18 @@ export class AppAuthService implements OnDestroy {
 
     clearToken() {
         abp.auth.clearToken(); //!!VP Clear token in current (app) domain
-        abp['domain'] = location.origin.split('.').slice(-2).join('.');
-        abp.auth.clearToken(); //!!VP Clear token on top level domain 
-        delete abp['domain'];
+        //!!VP Clear token on top level domain 
+        document.cookie = abp.auth.tokenCookieName + 
+            '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=' + 
+                location.origin.split('.').slice(-2).join('.');
+    }
+
+    setCheckDomainToken() { //!!VP this necessary to avoid login issues when use top level domain for login
+        let token = abp.auth.getToken();
+        if (token) {
+            this.clearToken();
+            abp.auth.setToken(token);
+        }
     }
 
     startTokenCheck() {
