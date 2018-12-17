@@ -23,16 +23,22 @@
 [_nghost-c1] .top-headline[_ngcontent-c1] .url[_ngcontent-c1]{
     color:#000;
     text-decoration:none;
-    font-weight:500
+    font-weight:500;
+    transition: .3s;
+
 }
 [_nghost-c1] .top-headline[_ngcontent-c1] .url[_ngcontent-c1]:hover{
-    color:#b3b3b3
+    color:#505050;
 }
 [_nghost-c1] .top-headline[_ngcontent-c1] .get-free-score[_ngcontent-c1]{
     color:#000;
     font-size:12px;
     font-weight:500;
-    margin-bottom:0
+    margin-bottom:0;
+    text-decoration:none;
+}
+[_nghost-c1] .top-headline[_ngcontent-c1] .get-free-score[_ngcontent-c1]:hover{
+    color:#505050;
 }
 [_nghost-c1] .top-headline[_ngcontent-c1] .date[_ngcontent-c1]{
     color:#000
@@ -625,16 +631,35 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
         padding:0
     }
 }
+@media all and (max-width:1023px){
+    #get-free .h-100 {
+        height: auto !important;
+    }
+    #get-free .monitor-your-credit {
+        align-self: flex-start !important;
+    }
+}
 @media all and (max-width:991px){
     [_nghost-c8] .get-free[_ngcontent-c8] .row {
         background: none;
+    }
+    [_nghost-c8] .get-free[_ngcontent-c8]{
+        height:auto;
+        padding-bottom:360px;
+        background:url(./images/get-free-mobile-bg.png) 100% 100% no-repeat #fec80d;
+        background-size: 58%;
+    }
+    [_nghost-c8] .get-free[_ngcontent-c8] h2[_ngcontent-c8]{
+        padding-left:0!important;
+        margin-top:30px
     }
 }
 @media all and (max-width:768px){
     [_nghost-c8] .get-free[_ngcontent-c8]{
         height:auto;
         padding-bottom:460px;
-        background:url(./images/get-free-mobile-bg.png) 100% 100% no-repeat #fec80d
+        background:url(./images/get-free-mobile-bg.png) 100% 100% no-repeat #fec80d;
+        background-size: 82%;
     }
     [_nghost-c8] .get-free[_ngcontent-c8] h2[_ngcontent-c8]{
         padding-left:0!important;
@@ -644,8 +669,8 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
 @media all and (max-width:600px){
     [_nghost-c8] .get-free[_ngcontent-c8]{
         background-position:50% 100%;
-        padding-bottom:330px;
-        background-size:contain;
+        padding-bottom:400px;
+        background-size:90%;
         text-align:center
     }
     [_nghost-c8] .get-free[_ngcontent-c8] h2[_ngcontent-c8]{
@@ -653,6 +678,20 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     }
     [_nghost-c8] .get-free[_ngcontent-c8] button[_ngcontent-c8]{
         white-space:normal!important
+    }
+}
+@media all and (max-width:480px){
+    [_nghost-c8] .get-free[_ngcontent-c8]{
+        padding-bottom:350px;
+        background-size:contain;
+        text-align:center
+    }
+}
+@media all and (max-width:375px){
+    [_nghost-c8] .get-free[_ngcontent-c8]{
+        padding-bottom:310px;
+        background-size:contain;
+        text-align:center
     }
 }
 [_nghost-c8] .lend-space-header[_ngcontent-c8] .top-headline[_ngcontent-c8]{
@@ -670,7 +709,8 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     text-decoration:none
 }
 [_nghost-c8] .lend-space-header[_ngcontent-c8] .top-headline[_ngcontent-c8] .url[_ngcontent-c8]:hover{
-    color:#b3b3b3
+    color:#505050;
+    text-decoration: underline;
 }
 [_nghost-c8] .lend-space-header[_ngcontent-c8] .top-headline[_ngcontent-c8] .get-free-score[_ngcontent-c8]{
     color:#f0d500;
@@ -777,12 +817,13 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
 }
 [_nghost-c4] .app-area-navigation[_ngcontent-c4]{
     width:100%;
+    max-width: 100%;
     padding-left:0;
     list-style-type:none;
     text-align:center;
     margin:10px 0 14px;
     display:flex;
-    flex-wrap:nowrap;
+    flex-wrap: wrap;
     justify-content:center
 }
 [_nghost-c4] .app-area-navigation[_ngcontent-c4] li[_ngcontent-c4]{
@@ -844,7 +885,7 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     font-family:Poppins;
     font-size:14px;
     font-weight:600;
-    white-space:nowrap
+    white-space:normal
 }
 [_nghost-c4] .app-area-navigation[_ngcontent-c4] li[_ngcontent-c4] a.disabled[_ngcontent-c4], [_nghost-c4] .app-responsive-menu[_ngcontent-c4] li[_ngcontent-c4] a.disabled[_ngcontent-c4]{
     color:#535354!important
