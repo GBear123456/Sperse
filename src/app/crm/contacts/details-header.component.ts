@@ -24,6 +24,7 @@ import {
     OrganizationInfoDto,
     OrganizationContactServiceProxy,
     PersonContactServiceProxy,
+    PersonOrgRelationServiceProxy,
     UpdateJobTitleInput,
     UpdateOrganizationInfoInput,
     UpdatePersonInfoInput
