@@ -117,7 +117,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                         sliderMin: 0 // To avoid numbers like 2100, 3100 etc
                     }
                 ],
-                minMaxDisplayFunction: (value: number) => this.numberAbbrPipe.transform(value),
+                minMaxDisplayFunction: (value: number) => this.numberAbbrPipe.transform(value, '$'),
                 valueDisplayFunction: (value: number) => this.currencyPipe.transform(value, 'USD', 'symbol', '0.0-0')
             }),
             new RangeFilterSetting({
