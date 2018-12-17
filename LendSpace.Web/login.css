@@ -37,6 +37,9 @@
     [_nghost-c10] .wrapper[_ngcontent-c10] {
 		height: auto !important;
     }
+    [_nghost-c10] .wrapper[_ngcontent-c10] .row[_ngcontent-c10] {
+        height: auto !important;
+    }
     [_nghost-c10] .wrapper[_ngcontent-c10] main[_ngcontent-c10] {
 		padding: 30px 15px;
 	}
