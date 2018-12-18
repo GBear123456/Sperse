@@ -333,26 +333,25 @@
 }
 
 /deep/ .sign-up-lend-space {
-    
+
     .dx-texteditor {
         background-color: transparent;
         border-radius: 0;
     }
-    
+
     input[type="text"].dx-texteditor-input {
         background-color: transparent;
         border: 0;
         border-radius: 0;
         border-bottom: 2px solid #000;
     }
-    
+
     .dx-placeholder {
         font-size: 15px;
         font-weight: 600;
         color: #000 !important;
         transition: .2s;
     }
-    
     //.custom-radio-2-btn {
     //    .dx-field-value {
     //        .dx-radiobutton {
@@ -375,99 +374,96 @@
     //        }
     //    }
     //}
-    
     dx-button {
         border: 2px solid #333;
         border-radius: 0;
         color: #333;
         padding: 5px 10px;
-        
-        
+
+
         &.dx-state-focused {
             background-color: #333 !important;
             color: #fff !important;
             border-color: #333 !important;
         }
     }
-    
+
     .dx-button-text {
         font-size: 18px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: -1.07px;
     }
-    
+
     .dx-radiobutton-icon {
         &::before {
             background-color: #e8daa8;
         }
     }
-    
+
     .privacy-term {
         .dx-checkbox-icon {
             vertical-align: top;
             background-color: #e8daa8 !important;
         }
-        
-        &.dx-checkbox-checked  {
+
+        &.dx-checkbox-checked {
             .dx-checkbox-icon {
                 background-color: #f58023 !important;
             }
         }
-    
+
         &.dx-invalid .dx-checkbox-container .dx-checkbox-icon {
             border-color: red !important;
         }
-        
+
         .dx-checkbox-text {
             font-size: 12px;
             line-height: 18px;
             color: #333;
         }
     }
-    
+
     .form-group--name,
     .form-group--surname {
         input {
             text-transform: capitalize !important;
         }
     }
-    
+
     .login-options {
-    
+
         .login-with-or {
             display: inline-block;
             padding: 0 20px;
             text-transform: uppercase;
         }
-        
+
         .social-icons {
             margin: 0;
             padding: 0;
             text-align: center;
         }
-        
+
         .social-icons li {
             display: inline-block;
             list-style: none;
             text-indent: -9999px;
         }
-        
+
         li > a {
-            width: 28px;
-            height: 28px;
             display: block;
-            background-repeat: no-repeat;
-            transition: all 0.3s ease-in-out;
         }
-        
+
         .social-icons li:hover > a {
-            opacity: .9;
-            background-color: #fff;
+            opacity: .8;
         }
-        
+
         .social-icons li .facebook {
-            background: url(../../../../assets/common/images/social/facebook.png) 0 -38px no-repeat;
+            width: 198px;
+            height: 52px;
+            background: url(../../../../assets/common/images/social/facebook_2.png) no-repeat;
+            background-size: cover;
             border-radius: 0;
         }
     }

@@ -31,9 +31,14 @@
 @media all and (max-width:700px) {
     #main {
         min-height: 540px;
+        height: auto;
+        padding: 20px 15px;
     }
     [_nghost-c10] .wrapper[_ngcontent-c10] {
 		height: auto !important;
+    }
+    [_nghost-c10] .wrapper[_ngcontent-c10] .row[_ngcontent-c10] {
+        height: auto !important;
     }
     [_nghost-c10] .wrapper[_ngcontent-c10] main[_ngcontent-c10] {
 		padding: 30px 15px;
