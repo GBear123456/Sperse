@@ -17,26 +17,33 @@ import { AppConsts } from '@shared/AppConsts';
 export class PagesFooterComponent extends AppComponentBase {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
+    private readonly LENDSPACE_DOMAIN = 'https://www.lendspace.com';
+
     appMenuItems = [
         {
             url: '',
             name: 'Terms of Use',
             action: this.openConditionsDialog.bind(this, {
-                type: ConditionsType.Terms,
-                title: 'Terms of Use'
+                title: 'Terms of Use',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/terms.html',
+                downloadDisabled: true
             })
         },
         {
             url: '',
             name: 'Privacy Policy',
-            action: this.openConditionsDialog.bind(this, {type: ConditionsType.Policies})
+            action: this.openConditionsDialog.bind(this, {
+                title: 'Terms of Use',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/policy.html',
+                downloadDisabled: true
+            })
         },
         {
             url: '',
             name: 'Lender Terms',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Lender Terms',
-                bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/lender-terms.html',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/lender.html',
                 downloadDisabled: true
             })
         },
@@ -45,7 +52,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Disclosures',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Disclosures',
-                bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/disclosures.html',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/disclosures.html',
                 downloadDisabled: true
             })
         },
@@ -54,7 +61,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'About Us',
             action: this.openConditionsDialog.bind(this, {
                 title: 'About Us',
-                bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/about-us.html',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/about.html',
                 downloadDisabled: true
             })
         }

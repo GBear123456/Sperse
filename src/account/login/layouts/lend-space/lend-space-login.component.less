@@ -226,30 +226,29 @@
         }
 
         li > a {
-            width: 28px;
-            height: 28px;
             display: block;
-            background-position: 0 0;
-            background-repeat: no-repeat;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .social-icons li:hover > a {
-            background-position: 0 -38px;
         }
 
         .social-icons li .facebook {
-            background: url(../../../../assets/common/images/social/facebook.png) no-repeat;
+            &:hover {
+                opacity: .8;
+            }
+
+            width: 288px;
+            height: 52px;
+            background: url(../../../../assets/common/images/social/facebook_3.png) no-repeat;
+            background-size: cover;
             border-radius: 0;
         }
     }
 
-    .login-terms-and-condition{
+    .login-terms-and-condition {
         color: white;
         text-align: center;
 
         a {
             transition: .2s;
+
             &:hover {
                 color: darken(#fff, 18%);
             }

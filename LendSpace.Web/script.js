@@ -26,8 +26,8 @@ $(document).ready(function () {
     }
 
     function checkMenuAppearance() {
-        var nav = $('.app-area-navigation'), 
-            responsive = $('.app-responsive-menu'), 
+        var nav = $('.app-area-navigation'),
+            responsive = $('.app-responsive-menu'),
             actions = $('.right-actions'),
             dropdown = $('.dropdown'),
             space = nav.width();

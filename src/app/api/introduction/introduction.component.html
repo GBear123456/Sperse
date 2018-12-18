@@ -3,19 +3,30 @@
     <div class="content">
         <setup-steps></setup-steps>
         <div class="api-into portlet light no-padding margin-bottom-0">
-            <div class="portlet-body">
+            <div *ngIf="!apiKeys" class="portlet-body">
                 <div>
                     <p class="sperse-api">
                         <img class="logo-api" alt="API Logo" src="./assets/common/icons/api.svg" /><span>API</span>
                     </p>
                     <p class="welcome-api">{{ l('API_Intro_Welcome') }}</p>
-                    <div class="input-group code-container">
-                        <input type="text" class="form-control code-input" placeholder="XXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX">
-                        <div class="input-group-append">
-                            <button class="btn btn-layout">{{ l('API_Intro_GenerateKey') }}</button>
-                        </div>
-                    </div>
+
+                    <button class="btn btn-layout" (click)="addApiKey()">{{ l('API_Intro_GenerateKey') }}</button>
                 </div>
+            </div>
+            <div *ngIf="apiKeys">
+                <h1 class="text-left">{{l('ApiKeys')}}</h1>
+                <button class="btn btn-layout pull-right" (click)="addApiKey()">{{ l('API_Intro_GenerateKey') }}</button>
+                <dx-data-grid id="gridContainer"
+                              keyExpr="id"
+                              [dataSource]="apiKeys">
+                    <dxi-column dataField="name" caption="{{l('ApiKey_Name')}}"></dxi-column>
+                    <dxi-column dataField="key" caption="{{l('ApiKey_Key')}}"></dxi-column>
+                    <dxi-column dataField="expirationDate" caption="{{l('ApiKey_ExpirationDate')}}" dataType="date"></dxi-column>
+                    <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                    <div *dxTemplate="let data of 'editDeleteTemplate'">
+                        <a class="dx-link" (click)="deleteApiKey(data)">{{l('Delete')}}</a>
+                    </div>
+                </dx-data-grid>
             </div>
         </div>
     </div>

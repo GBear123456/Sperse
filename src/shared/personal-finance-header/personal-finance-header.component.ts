@@ -131,23 +131,23 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
                 name: 'Loans',
                 sublinks: [
                     {
-                        name: this.l('Offers_PersonalLoans'),
+                        name: this.ls('PFM', 'Offers_PersonalLoans'),
                         routerUrl: '/personal-finance/offers/personal-loans'
                     },
                     {
-                        name: this.l('Offers_PaydayLoans'),
+                        name: this.ls('PFM', 'Offers_PaydayLoans'),
                         routerUrl: '/personal-finance/offers/payday-loans'
                     },
                     {
-                        name: this.l('Offers_InstallmentLoans'),
+                        name: this.ls('PFM', 'Offers_InstallmentLoans'),
                         routerUrl: '/personal-finance/offers/installment-loans'
                     },
                     {
-                        name: this.l('Offers_BusinessLoans'),
+                        name: this.ls('PFM', 'Offers_BusinessLoans'),
                         routerUrl: '/personal-finance/offers/business-loans'
                     },
                     {
-                        name: this.l('Offers_AutoLoans'),
+                        name: this.ls('PFM', 'Offers_AutoLoans'),
                         routerUrl: '/personal-finance/offers/auto-loans'
                     }
                 ]
@@ -160,19 +160,19 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
                 name: 'Credit Score',
                 sublinks: [
                     {
-                        name: this.l('Offers_CreditScore'),
+                        name: this.ls('PFM', 'Offers_CreditScore'),
                         routerUrl: '/personal-finance/offers/credit-score'
                     },
                     {
-                        name: this.l('Offers_CreditRepair'),
+                        name: this.ls('PFM', 'Offers_CreditRepair'),
                         routerUrl: '/personal-finance/offers/credit-repair'
                     },
                     {
-                        name: this.l('Offers_CreditMonitoring'),
+                        name: this.ls('PFM', 'Offers_CreditMonitoring'),
                         routerUrl: '/personal-finance/offers/credit-monitoring'
                     },
                     {
-                        name: this.l('Offers_DebtConsolidation'),
+                        name: this.ls('PFM', 'Offers_DebtConsolidation'),
                         routerUrl: '/personal-finance/offers/debt-consolidation'
                     }
                 ]
