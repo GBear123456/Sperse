@@ -83,7 +83,7 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: type }});
+        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
     }
 
     login(): void {
