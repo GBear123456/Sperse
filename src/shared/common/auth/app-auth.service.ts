@@ -35,11 +35,15 @@ export class AppAuthService implements OnDestroy {
     }
 
     setCheckDomainToken() { //!!VP this necessary to avoid login issues when use top level domain for login
-        let token = abp.auth.getToken();
-        if (token) {
-            this.clearToken();
-            abp.auth.setToken(token);
-        }
+        document.cookie.split(';').some((data) => {
+            let parts = data.split('=');
+            if ((parts[0].trim() == abp.auth.tokenCookieName) && parts[1]) {
+                this.clearToken();
+                abp.auth.setToken(parts[1]);
+                return true;
+            }
+            return false;
+        });
     }
 
     startTokenCheck() {
