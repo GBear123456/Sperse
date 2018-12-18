@@ -31,6 +31,7 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;
     loginInProgress = false;
+    showPassword = false;
 
     constructor(
         injector: Injector,
@@ -98,5 +99,10 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
 
     getLoginPlaceholder(): string {
         return abp.session.tenantId ? this.l('UserNameOrEmail') : this.l('EmailAddress');
+    }
+
+    showHidePassword(event) {
+        this.showPassword = !this.showPassword;
+        event.currentTarget.text = this.l((this.showPassword ? 'Hide' : 'Show'));
     }
 }
