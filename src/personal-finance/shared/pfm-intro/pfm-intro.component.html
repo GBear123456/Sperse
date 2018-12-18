@@ -1,0 +1,36 @@
+<button mat-dialog-close class="close-dialog"><i class="la la-times"></i></button>
+<mat-dialog-content>
+    <mat-horizontal-stepper [linear]="false" #stepper [@.disabled]="true">
+        <mat-step>
+            <div class="first-step step-item">
+                <div class="header">
+                    <img src="./assets/common/images/lend-space-dark/logo-lend-space.svg" alt="Lend Space">
+                </div>
+                <div class="main">
+                    <div>
+                        <img src="./assets/common/icons/budicon-safe-deposit.svg" alt="Safe deposit">
+                    </div>
+                    <div>
+                        <h3>{{ ls.l('ConnectAllYourFinancialAccounts') }}</h3>
+                        <p>{{ ls.l('SelectFromALotOfFinancialInstitutions') }}</p>
+                    </div>
+                </div>
+                <div class="banks-logos">
+                    <ul>
+                        <li *ngFor="let bankName of bankNames">
+                            <ng-container *ngIf="getBankLogoName(bankName) as bankLogoName">
+                                <img [src]="'./assets/common/images/pfm-intro/' + bankLogoName  + '/' + bankLogoName + '.png'"
+                                     [srcset]="'./assets/common/images/pfm-intro/' + bankLogoName  + '/' + bankLogoName + '@2x.png 2x,' +
+                                           './assets/common/images/pfm-intro/' + bankLogoName  + '/' + bankLogoName + '@3x.png 3x'"
+                                     [alt]="bankName">
+                            </ng-container>
+                        </li>
+                    </ul>
+                </div>
+                <div class="footer">
+                    <button class="btn btn-layout" (click)="onNext()">Next</button>
+                </div>
+            </div>
+        </mat-step>
+    </mat-horizontal-stepper>
+</mat-dialog-content>

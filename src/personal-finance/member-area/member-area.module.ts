@@ -3,6 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { StickyModule } from 'ng2-sticky-kit/ng2-sticky-kit';
+import { MatDialogModule, MatStepperModule } from '@angular/material';
 import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
 
 import { MemberAreaRoutingModule } from './member-area-routing.module';
@@ -18,6 +19,7 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
+import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-intro.component';
 
 @NgModule({
     imports: [
@@ -30,17 +32,23 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         CreditResourcesModule,
         BankAccountsCommonModule.forRoot(),
         AccountConnectorDialogModule,
-        StickyModule
+        StickyModule,
+        MatStepperModule,
+        MatDialogModule
     ],
     declarations: [
         MemberAreaComponent,
         AccountsComponent,
-        FinancePageComponent
+        FinancePageComponent,
+        PfmIntroComponent
     ],
     providers: [
         InstanceServiceProxy,
         SynchProgressService,
         BankAccountsGeneralService
+    ],
+    entryComponents: [
+        PfmIntroComponent
     ]
 })
 export class MemberAreaModule {

@@ -4,7 +4,7 @@ import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 /** Third party imports */
 import { MatDialog } from '@angular/material';
 import { Observable, forkJoin } from 'rxjs';
-import { finalize, first, pluck, takeUntil, tap, skip, map } from 'rxjs/operators';
+import { finalize, first, filter, pluck, takeUntil, tap, skip, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -21,6 +21,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors } from '@shared/AppEnums';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-intro.component';
 
 declare const Quovo: any;
 
@@ -140,6 +141,20 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
                 }
             );
     }
+
+    openPfmIntro() {
+        const dialogConfig = {
+            height: '650px',
+            width: '900px',
+            id: 'pfm-intro',
+            panelClass: 'pfm-intro'
+        };
+        const dialogRef = this.dialog.open(PfmIntroComponent, dialogConfig);
+        dialogRef.afterClosed().pipe(filter(start => !!start)).subscribe(() => {
+            this.onStart();
+        });
+    }
+
     onStart(): void {
         this.isStartDisabled = true;
         if (this._cfoService.initialized)
