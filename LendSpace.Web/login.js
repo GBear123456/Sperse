@@ -12,7 +12,7 @@ $(document).ready(function () {
             var authenticateModel = JSON.stringify({
                 userNameOrEmailAddress: form.elements['userNameOrEmailAddress'].value,
                 password: form.elements['password'].value,
-                rememberClient: form.elements['rememberMe'].value,
+                rememberClient: form.elements['rememberMe'].checked,
                 twoFactorRememberClientToken: cookie['TwoFactorRememberClientToken'],
                 autoDetectTenancy: true
             });

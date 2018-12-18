@@ -140,6 +140,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
                 }
             );
     }
+
     onStart(): void {
         this.isStartDisabled = true;
         if (this._cfoService.initialized)
