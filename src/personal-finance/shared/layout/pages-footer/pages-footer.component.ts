@@ -17,13 +17,15 @@ import { AppConsts } from '@shared/AppConsts';
 export class PagesFooterComponent extends AppComponentBase {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
+    private readonly LENDSPACE_DOMAIN = 'https://www.lendspace.com';
+
     appMenuItems = [
         {
             url: '',
             name: 'Terms of Use',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Terms of Use',
-                bodyUrl: this.getTopDomain() + '/documents/terms.html',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/terms.html',
                 downloadDisabled: true
             })
         },
@@ -32,7 +34,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Privacy Policy',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Terms of Use',
-                bodyUrl: this.getTopDomain() + '/documents/policy.html',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/policy.html',
                 downloadDisabled: true
             })
         },
@@ -41,7 +43,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Lender Terms',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Lender Terms',
-                bodyUrl: this.getTopDomain() + '/documents/lender.html',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/lender.html',
                 downloadDisabled: true
             })
         },
@@ -50,7 +52,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Disclosures',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Disclosures',
-                bodyUrl: this.getTopDomain() + '/documents/disclosures.html',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/disclosures.html',
                 downloadDisabled: true
             })
         },
@@ -59,7 +61,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'About Us',
             action: this.openConditionsDialog.bind(this, {
                 title: 'About Us',
-                bodyUrl: this.getTopDomain() + '/documents/about.html',
+                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/about.html',
                 downloadDisabled: true
             })
         }
@@ -87,9 +89,5 @@ export class PagesFooterComponent extends AppComponentBase {
 
     openConditionsDialog(data: any) {
         this.dialog.open(ConditionsModalComponent, {panelClass: ['slider', 'footer-slider'], data: data});
-    }
-
-    getTopDomain() {
-        return location.protocol + "//" + location.origin.split('.').slice(-2).join('.');
     }
 }
