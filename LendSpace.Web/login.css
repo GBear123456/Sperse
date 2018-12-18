@@ -103,6 +103,47 @@ body.reset-password .left-side {
 	outline: 0
 }
 
+[_nghost-c12] .login-form[_ngcontent-c12] .icon-input[_ngcontent-c12] {
+    position: relative;
+}
+
+[_nghost-c12] .login-form[_ngcontent-c12] .icon-input[_ngcontent-c12] input[_ngcontent-c12] {
+    padding-left: 55px;
+}
+
+[_nghost-c12] .login-form[_ngcontent-c12] .icon-input.icon-input__password[_ngcontent-c12]::before {
+    left: 20px;
+    width: 14px;
+    height: 22px;
+    background: url(./images/lock-circle.svg) no-repeat;
+    background-size: contain;
+}
+
+[_nghost-c12] .login-form[_ngcontent-c12] .icon-input[_ngcontent-c12]::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    background: url(./images/single-man.svg) no-repeat;
+    background-size: contain;
+}
+
+[_nghost-c12] .login-form[_ngcontent-c12] .icon-input.icon-input__password[_ngcontent-c12] .show-password[_ngcontent-c12] {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.92;
+    letter-spacing: 0.2px;
+    color: rgba(117, 117, 117, 0.6);
+}
+
 [_nghost-c12] .login-form[_ngcontent-c12] input[_ngcontent-c12] {
 	border: 1px solid #dfdfdf;
 	border-radius: 4px;

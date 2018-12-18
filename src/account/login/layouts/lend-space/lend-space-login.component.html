@@ -1,15 +1,16 @@
 <div [@routerTransition]>
     <h1 class="sign-in">{{l("Sign in")}}</h1>
     <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
-        <div class="form-group clearfix">
+        <div class="form-group icon-input icon-input__user clearfix">
             <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
                    class="form-control form-control-solid placeholder-no-fix input-ltr" type="text" autocomplete="off"
-                   placeholder="{{l('Username')}}" name="userNameOrEmailAddress" required tabindex="1" />
+                   placeholder="{{l('EmailAddress')}}" name="userNameOrEmailAddress" required tabindex="1" />
         </div>
-        <div class="form-group clearfix">
+        <div class="form-group icon-input icon-input__password clearfix">
             <input [(ngModel)]="loginService.authenticateModel.password"
-                   class="form-control form-control-solid placeholder-no-fix input-ltr" type="password" autocomplete="off"
+                   class="form-control form-control-solid placeholder-no-fix input-ltr" type="{{showPassword ? 'text' : 'password'}}" autocomplete="off"
                    placeholder="{{l('Password')}}" name="password" required maxlength="32" tabindex="2" />
+            <a class="show-password" (click)="showHidePassword($event)">{{l("Show")}}</a>
         </div>
         <div class="form-group clearfix options row">
             <div class="col">
