@@ -5,17 +5,40 @@ import { ApiRoutingModule } from './api-routing.module';
 import { SwaggerComponent } from './swagger/swagger.component';
 import { IntroductionComponent } from './introduction/introduction.component';
 import { SetupStepComponent } from './shared/setup-steps/setup-steps.component';
+import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
+import {
+    DxDataGridModule,
+    DxTextBoxModule,
+    DxDateBoxModule,
+    DxValidatorModule,
+    DxValidationGroupModule
+} from 'devextreme-angular';
+
+import {
+    MatDialogModule
+}
+from '@angular/material';
 
 @NgModule({
     imports: [
         ApiRoutingModule,
         CommonModule,
-        AppCommonModule
+        AppCommonModule,
+        DxDataGridModule,
+        DxTextBoxModule,
+        DxDateBoxModule,
+        DxValidatorModule,
+        DxValidationGroupModule,
+        MatDialogModule
     ],
     declarations: [
         SwaggerComponent,
         IntroductionComponent,
-        SetupStepComponent
+        SetupStepComponent,
+        EditKeyDialog
+    ],
+    entryComponents: [
+        EditKeyDialog
     ]
 })
 

@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>{{l('API_Intro_GenerateKey')}}</h2>
+<mat-dialog-content class="content">
+    <dx-validation-group (onInitialized)="initValidationGroup($event)">
+        <div class="dx-field d-flex align-items-center">
+            <div class="dx-field-label">{{l('ApiKey_Name')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box name="name"
+                             [(value)]="model.name">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{l('NameIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-text-box>
+            </div>
+        </div>
+        <div class="dx-field d-flex align-items-center">
+            <div class="dx-field-label">{{l('ApiKey_ExpirationDate')}}</div>
+            <div class="dx-field-value">
+                <dx-date-box name="expirationDate"
+                             [(value)]="model.expirationDate">
+                    <dx-validator></dx-validator>
+                </dx-date-box>
+            </div>
+        </div>
+    </dx-validation-group>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{l('Save')}}</button>
+</mat-dialog-actions>
