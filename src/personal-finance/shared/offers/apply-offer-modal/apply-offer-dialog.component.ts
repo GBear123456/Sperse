@@ -13,7 +13,7 @@ export class ApplyOfferDialogComponent implements OnInit {
     delayMessages: string[];
     redirectUrl: string;
     showBlockedMessage = false;
-
+    currentStepIndex = 0;
     constructor(
         private dialogRef: MatDialogRef<ApplyOfferDialogComponent>,
         @Inject(MAT_DIALOG_DATA) private data: any,
@@ -30,7 +30,7 @@ export class ApplyOfferDialogComponent implements OnInit {
             if (!this.completeDelays || (this.completeDelays[index])) {
                 setTimeout(
                     () => {
-                        step.completed = true;
+                        this.currentStepIndex = index;
                         if ((index + 1) === this.processingSteps.length) {
                             /** Redirect to the provided link */
                             if (this.data.redirectUrl) {

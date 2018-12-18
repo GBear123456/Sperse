@@ -28,20 +28,16 @@ export class OffersService {
 
     processingSteps = [
         {
-            name: 'Verifying Loan Request',
-            completed: false
+            name: 'Verifying Loan Request'
         },
         {
-            name: 'Accessing Loan Provider Database',
-            completed: false
+            name: 'Accessing Loan Provider Database'
         },
         {
-            name: 'Confirming Availability',
-            completed: false
+            name: 'Confirming Availability'
         },
         {
-            name: 'Retrieving Response',
-            completed: false
+            name: 'Retrieving Response'
         }
     ];
 
@@ -123,7 +119,7 @@ export class OffersService {
             subId: category
         });
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-            width: '370px',
+            width: '500px',
             panelClass: 'apply-offer-dialog',
             data: {
                 processingSteps: cloneDeep(this.processingSteps),
