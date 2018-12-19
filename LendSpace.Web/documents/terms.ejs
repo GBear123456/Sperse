@@ -9,6 +9,14 @@
 
     ol li p {
         line-height: 129%;
+        line-height: 1.3em;
+    }
+
+    @media print {
+        ol li p {
+            line-height: 1em !important;
+            margin-bottom: 3px !important;
+        }
     }
 
     ol {
