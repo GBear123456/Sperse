@@ -31,6 +31,10 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                         path: 'my-finances/:sectionName',
                         component: AccountsComponent,
                         data: { wrapperDisabled: true }
+                    },
+                    {
+                        path: '',
+                        redirectTo: '/personal-finance/offers/personal-loans'
                     }
                 ]
             }
