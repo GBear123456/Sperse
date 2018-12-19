@@ -888,7 +888,7 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     font-family:Poppins;
     font-size:14px;
     font-weight:600;
-    white-space:normal
+    white-space:nowrap
 }
 [_nghost-c4] .app-area-navigation[_ngcontent-c4] li[_ngcontent-c4] a.disabled[_ngcontent-c4], [_nghost-c4] .app-responsive-menu[_ngcontent-c4] li[_ngcontent-c4] a.disabled[_ngcontent-c4]{
     color:#535354!important
