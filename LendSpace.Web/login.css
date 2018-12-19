@@ -436,3 +436,6 @@ body.reset-password .left-side {
   color: #FFF;
   background-color: #000;
 }
+.member-login {
+    display: none!important;
+}

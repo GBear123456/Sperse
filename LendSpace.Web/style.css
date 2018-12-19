@@ -1,3 +1,6 @@
+app-root {
+    height: 100%;
+}
 [_nghost-c0] .page-content[_ngcontent-c0] {
     flex: 1;
     margin-top: 69px;
@@ -891,7 +894,6 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     color:#535354!important
 }
 [_nghost-c4] .app-area-navigation[_ngcontent-c4] li[_ngcontent-c4] a.member-login[_ngcontent-c4], [_nghost-c4] .app-responsive-menu[_ngcontent-c4] li[_ngcontent-c4] a.member-login[_ngcontent-c4]{
-    display:none;
     color:#fff!important;
     background-color:#f93;
     transition:.2s
@@ -1008,7 +1010,6 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     color:#fff
 }
 [_nghost-c4] .right-actions[_ngcontent-c4] li[_ngcontent-c4] a.member-login[_ngcontent-c4]{
-    display:none;
     color:#fff;
     font-size:12px!important;
     background-color:#f93
@@ -1036,13 +1037,6 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
         display:none!important
     }
 }
-body.pfm[_nghost-c4] .right-actions a.member-login, body.pfm [_nghost-c4] .right-actions a.member-login{
-    display:block!important
-}
-body.pfm[_nghost-c4] .app-responsive-menu li a.member-login, body.pfm [_nghost-c4] .app-responsive-menu li a.member-login{
-    display:block!important
-}
-
 [_nghost-c7]:not(.pfm-app) .top-footer[_ngcontent-c7]{
     background-color:#133240
 }
