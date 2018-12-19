@@ -15,10 +15,6 @@ import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offe
                 path: ':category',
                 component: OffersComponent,
                 data: { reuse: true },
-            },
-            {
-                path: '',
-                redirectTo: 'credit-cards'
             }
         ])
     ],
