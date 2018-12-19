@@ -1,0 +1,106 @@
+// vars
+@bg-color: #ffefb2;
+@text-color: #000000;
+@text-color-sec: #4a4a4a;
+@font-family: 'Poppins', sans-serif;
+
+:host {
+    display: block;
+    height: 100%;
+    
+    .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .title {
+        font-size: 46px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .subtitle {
+        font-size: 20px;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+        margin-bottom: 20px;
+    }
+    
+    .category-wrapper {
+        background: @bg-color;
+        padding: 67px 78px 47px;
+        width: calc(~"100% + 156px");
+        margin-left: -78px;
+        margin-right: -78px;
+        
+        @media all and (max-width: 1366px) {
+            max-width: 100%;
+        }
+    }
+    
+    .category-list {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    
+        .category-item {
+            max-width: 300px;
+            
+            .card {
+                background-color: transparent;
+                border: 0;
+                text-decoration: none;
+                transition: .3s;
+                
+                &:hover {
+                    opacity: .9;
+                }
+                
+                .card-img-top {
+                    border-radius: 14px;
+                }
+    
+                .card-body {
+                    padding: 20px 0;
+                }
+            }
+            
+            .card-custom-wrap {
+                display: flex;
+                align-items: center;
+                margin: 0;
+                justify-content: center;
+                min-height: 60px;
+                
+                .img-block {
+                    width: 45px;
+                    
+                    img {
+                        max-width: 100%;
+                    }
+                }
+                
+                .text-block {
+                    flex: 1 1 auto;
+                    margin-left: 10px;
+                    
+                    * {
+                        text-align: left !important;
+                    }
+                    
+                    p {
+                        font-size: 14px;
+                        line-height: 2;
+                        color: @text-color-sec;
+                    }
+                    h2 {
+                        font-size: 19px;
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+    }
+}
