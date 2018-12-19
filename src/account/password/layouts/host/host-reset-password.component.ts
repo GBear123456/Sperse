@@ -64,9 +64,6 @@ export class HostResetPasswordComponent extends AppComponentBase implements OnIn
         if (this.form.valid) {
             this.saving = true;
             this._accountService.resetPassword(this.model)
-                .pipe(finalize(() => {
-                    this.saving = false;
-                }))
                 .subscribe((result: ResetPasswordOutput) => {
                     if (!result.canLogin) {
                         this._router.navigate(['account/login']);
@@ -80,7 +77,7 @@ export class HostResetPasswordComponent extends AppComponentBase implements OnIn
                     this._loginService.authenticate(() => {
                         this.saving = false;
                     }, undefined, !this.model.resetCode);
-                });
+                }, () => { this.saving = false; });
         }
     }
 
