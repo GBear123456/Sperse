@@ -351,7 +351,10 @@ body.reset-password .left-side {
 }
 
 [_nghost-c12] .login-terms-and-condition[_ngcontent-c12] a[_ngcontent-c12] {
+  color: #FFF;
 	transition: .2s
+  padding: 0 2px;
+  font-weight: 600;
 }
 
 [_nghost-c12] .login-terms-and-condition[_ngcontent-c12] a[_ngcontent-c12]:hover {
