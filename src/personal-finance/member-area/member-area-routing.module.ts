@@ -7,6 +7,7 @@ import { CreditSimulatorComponent } from './credit-simulator/credit-simulator.co
 import { CreditResourcesComponent } from './credit-resources/credit-resources.component';
 import { AccountsComponent } from './accounts/accounts.component';
 import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/auth/logged-in-credit-report-guard';
+import { LendspaceWelcomeComponent } from '@root/personal-finance/pages/lendspace-welcome/lendspace-welcome.component';
 
 @NgModule({
     imports: [
@@ -34,7 +35,7 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                     },
                     {
                         path: '',
-                        redirectTo: '/personal-finance/offers/personal-loans'
+                        redirectTo: '/personal-finance/home'
                     }
                 ]
             }

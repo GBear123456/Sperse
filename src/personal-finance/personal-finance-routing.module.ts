@@ -6,8 +6,8 @@ import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.co
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
+import { LendspaceWelcomeComponent } from './pages/lendspace-welcome/lendspace-welcome.component';
 import { KbaResultComponent } from './member-area/kba-result/kba-result.component';
-import { LendSpaceDarkComponent } from '@root/personal-finance/landings/lend-space-dark/lend-space-dark.component';
 import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-space-dark/signup/lend-space-signup.component';
 import { CreditWizardPageComponent } from '@root/personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.component';
 import { CreditReportComponent } from '@root/personal-finance/landings/credit-report/credit-report.component';
@@ -22,16 +22,14 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                 canActivate: [ CreditReportsRouteGuard ],
                 canActivateChild: [ CreditReportsRouteGuard ],
                 children: [
-/*
                     {
-                        path: '',
-                        component: LendSpaceDarkComponent,
+                        path: 'home',
+                        component: LendspaceWelcomeComponent,
                         data: {
-                            wrapperDisabled: true,
-                            hideFooter: false
+                            wrapperDisabled: true
                         }
                     },
-                    {
+                    /*{
                         path: 'privacy',
                         component: LendSpaceDarkComponent,
                         data: {

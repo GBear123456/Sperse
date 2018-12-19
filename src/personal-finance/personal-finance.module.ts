@@ -11,6 +11,7 @@ import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.co
 import { PackageIdService } from './shared/common/packages/package-id.service';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
+import { LendspaceWelcomeComponent } from './pages/lendspace-welcome/lendspace-welcome.component';
 import { CreditReportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { KbaResultModule } from './member-area/kba-result/kba-result.module';
 import { CreditWizardPageComponent } from './landings/credit-report/wizard-form/wizard-page/wizard-page.component';
@@ -51,6 +52,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         PrivacyPolicyComponent,
         ContactUsComponent,
         AboutUsComponent,
+        LendspaceWelcomeComponent,
         CreditReportComponent,
         CreditReportRegFromComponent,
         LendSpaceComponent,
