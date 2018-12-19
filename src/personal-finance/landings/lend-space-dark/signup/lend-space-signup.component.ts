@@ -37,9 +37,9 @@ export class LendSpaceSignupComponent extends AppComponentBase {
     isAgreedToRecieveCalls = false;
     registerData: SignUpMemberRequest = new SignUpMemberRequest();
     modalsData = {
-        terms: { title: 'Terms of Use', type: ConditionsType.Terms, downloadDisabled: true },
-        privacy: { title: 'Privacy Policy', type: ConditionsType.Policies, downloadDisabled: true },
-        lender: { title: 'Lender Terms', bodyUrl: AppConsts.appBaseHref + 'assets/documents/lend-space/lender-terms.html', downloadDisabled: true }
+        terms: { title: 'Terms of Use', bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/terms.html', downloadDisabled: true },
+        privacy: { title: 'Privacy Policy', bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/policy.html', downloadDisabled: true },
+        lender: { title: 'Lender Terms', bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/lender.html', downloadDisabled: true }
     };
     isRoutProcessed = false;
     constructor(

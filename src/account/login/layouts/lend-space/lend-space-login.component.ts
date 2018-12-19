@@ -4,6 +4,9 @@ import { Component } from '@angular/core';
 /** Application imports */
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { HostLoginComponent } from '../host/host-login.component';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsType } from '@shared/AppEnums';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: './lend-space-login.component.html',
@@ -12,4 +15,16 @@ import { HostLoginComponent } from '../host/host-login.component';
     ],
     animations: [accountModuleAnimation()]
 })
-export class LendSpaceLoginComponent extends HostLoginComponent { }
+export class LendSpaceLoginComponent extends HostLoginComponent { 
+    openConditionsDialog(type: ConditionsType) {
+        let isTerms = (type == ConditionsType.Terms);
+        this.dialog.open(ConditionsModalComponent, { 
+            panelClass: ['slider', 'footer-slider'],
+            data: {
+                title: isTerms ? 'Terms of Use': 'Privacy Policy',
+                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/' + (isTerms ? 'terms': 'policy') + '.html',
+                downloadDisabled: true
+            }
+        });
+    }
+}

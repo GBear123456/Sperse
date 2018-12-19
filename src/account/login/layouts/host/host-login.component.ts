@@ -35,11 +35,11 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         public loginService: LoginService,
         private _sessionService: AbpSessionService,
         private _sessionAppService: SessionServiceProxy,
-        private _appSession: AppSessionService,
-        private dialog: MatDialog
+        private _appSession: AppSessionService
     ) {
         super(injector);
     }
