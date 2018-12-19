@@ -1,18 +1,18 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Injector } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angular/core';
 import { ActivationEnd } from '@angular/router';
 
 /** Third party imports */
-import { finalize } from '@node_modules/rxjs/internal/operators';
 import { MatDialog } from '@angular/material';
 
 /** Application imports */
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { AppConsts } from 'shared/AppConsts';
-import { ApplicationServiceProxy, SignUpMemberResponse, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
+import { ApplicationServiceProxy, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { DxCheckBoxComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'lend-space-signup',
@@ -22,16 +22,19 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LendSpaceSignupComponent extends AppComponentBase {
+    @ViewChild('agreeWithTermsCheckBox') agreeWithTermsCheckBox: DxCheckBoxComponent;
+    @ViewChild('agreeToRecieveCallsCheckBox') agreeToRecieveCallsCheckBox: DxCheckBoxComponent;
+
     patterns = {
         namePattern: AppConsts.regexPatterns.name,
         emailPattern: AppConsts.regexPatterns.email,
-        zipPattern: AppConsts.regexPatterns.zipUsPattern
+        zipPattern: AppConsts.regexPatterns.zipUsPattern,
+        phonePattern: AppConsts.regexPatterns.phone
     };
-    radioGroupCitizen = [
-        { text: 'Yes', status: true },
-        { text: 'No', status: false }
-    ];
+
+    phoneMask = '+1 (999) 999-9999';
     isAgreeWithTerms = true;
+    isAgreedToRecieveCalls = false;
     registerData: SignUpMemberRequest = new SignUpMemberRequest();
     modalsData = {
         terms: { title: 'Terms of Use', type: ConditionsType.Terms, downloadDisabled: true },
@@ -42,7 +45,6 @@ export class LendSpaceSignupComponent extends AppComponentBase {
     constructor(
         injector: Injector,
         public loginService: LoginService,
-        private _applicationServiceProxy: ApplicationServiceProxy,
         private dialog: MatDialog
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
@@ -77,6 +79,11 @@ export class LendSpaceSignupComponent extends AppComponentBase {
     }
 
     externalLogin(provider: ExternalLoginProvider) {
-        this.loginService.externalAuthenticate(provider);
+        if (this.isAgreeWithTerms && this.isAgreedToRecieveCalls)
+            this.loginService.externalAuthenticate(provider);
+        else {
+            this.agreeWithTermsCheckBox.validator.instance.validate();
+            this.agreeToRecieveCallsCheckBox.validator.instance.validate();
+        }
     }
 }

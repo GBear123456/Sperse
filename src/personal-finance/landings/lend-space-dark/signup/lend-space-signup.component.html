@@ -28,7 +28,6 @@
                             </dx-text-box>
                         </div>
                     </div>
-
                     <div class="dx-field form-row">
                         <div class="form-group col">
                             <dx-text-box placeholder="Your email address" [(value)]="registerData.email">
@@ -40,7 +39,18 @@
                         </div>
                     </div>
                     <div class="dx-field form-row zip-citizen-row align-items-center">
-                        <div class="form-group zip-field col col-xs-12">
+                        <div class="form-group col">
+                            <dx-text-box placeholder="Phone Number"
+                                         mask="+1 (999) 999-9999"
+                                         showMaskMode="onFocus"
+                                         [(value)]="registerData.phoneNumber">
+                                <dx-validator>
+                                    <dxi-validation-rule type="pattern" [pattern]="patterns.phonePattern" message="Phone is incorrect"></dxi-validation-rule>
+                                    <dxi-validation-rule type="stringLength" [max]="15" message="Phone length is invalid"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-text-box>
+                        </div>
+                        <div class="form-group zip-field col">
                             <dx-text-box placeholder="Zip"
                                          [(value)]="registerData.postalCode"
                                          minLength="5"
@@ -53,28 +63,45 @@
                                 </dx-validator>
                             </dx-text-box>
                         </div>
-                        <div class="form-group citizen-field col col-xs-12 dx-field">
-                            <div class="dx-field-label">US Resident</div>
-                            <div class="dx-field-value">
-                                <dx-radio-group [dataSource]="radioGroupCitizen"
-                                                displayExpr="text"
-                                                valueExpr="status"
-                                                layout="horizontal"
-                                                name="isUSCitizen"
-                                                [(value)]="registerData.isUSCitizen">
-                                </dx-radio-group>
-                            </div>
-                        </div>
                     </div>
-
+                    <div class="form-group d-flex">
+                        <div>
+                            <dx-check-box #agreeToRecieveCallsCheckBox
+                                          class="privacy-term"
+                                          [(value)]="isAgreedToRecieveCalls">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                                         message="You must agree to this point"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-check-box>
+                        </div>
+                        <p class="agreement">
+                            I consent to receive calls, texts, emails, and pre-recorded messages from LendSpace, its subsidiaries, agents, and/or partners, dialed manually or by autodialer.
+                        </p>
+                    </div>
+                    <div class="form-group d-flex">
+                        <div>
+                            <dx-check-box #agreeWithTermsCheckBox
+                                          class="privacy-term"
+                                          [(value)]="isAgreeWithTerms">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required"
+                                                         message="You must agree to the Terms and Conditions"></dxi-validation-rule>
+                                </dx-validator>
+                            </dx-check-box>
+                        </div>
+                        <p class="agreement">
+                            By continuing, I certify I'm a US resident and older than 18 years of age.
+                            I understand and agree to the LendSpace <a (click)="openConditionsDialog(modalsData.terms)">Terms of Use</a>,
+                            <a (click)="openConditionsDialog(modalsData.privacy)">Privacy Policy</a> and <a (click)="openConditionsDialog(modalsData.lender)">Lender Terms</a>.
+                        </p>
+                    </div>
                     <div class="dx-field actions-field d-flex align-items-center">
-                        <dx-button
-                            text="Activate my free account"
-                            type="success"
-                            class="btn btn-outline-dark"
-                            [useSubmitBehavior]="true">
+                        <dx-button text="Activate my free account"
+                                   type="success"
+                                   class="btn btn-outline-dark activate-button"
+                                   [useSubmitBehavior]="true">
                         </dx-button>
-
                         <div class="login-options d-flex align-items-center"
                              *ngIf="(loginService.externalLoginProviders$ | async) as externalLoginProviders">
                             <span class="login-with-or">{{l("or")}}</span>
@@ -88,32 +115,14 @@
                             </ul>
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <p class="ssl-secure">
+                        <p class="ssl-secure text-center">
                             <i class="fa fa-lock"></i>
                             we use 256 ssl technology to encrypt your data
                         </p>
                     </div>
-
-                    <div class="form-group d-flex">
-                        <div>
-                            <dx-check-box
-                                class="privacy-term"
-                                [(value)]="isAgreeWithTerms">
-                                <dx-validator>
-                                    <dxi-validation-rule type="required"
-                                                         message="You must agree to the Terms and Conditions"></dxi-validation-rule>
-                                </dx-validator>
-                            </dx-check-box>
-                        </div>
-
-                        <p class="agreement">By continuing, I certify I'm older than 18 years of age. I understand and agree to the LendSpace <a (click)="openConditionsDialog(modalsData.privacy)">Privacy Policy</a>,
-                            <a (click)="openConditionsDialog(modalsData.terms)">Terms of Use</a> and <a (click)="openConditionsDialog(modalsData.lender)">Lender Terms</a>. I consent to receive calls, text and pre-recorded messages from LendSpace, its subsidiaries agents and/or partners.</p>
-                    </div>
-
                     <!--<div class="form-group">-->
-                        <!--<dx-validation-summary id="summary"></dx-validation-summary>-->
+                    <!--<dx-validation-summary id="summary"></dx-validation-summary>-->
                     <!--</div>-->
                 </form>
             </div>

@@ -18,8 +18,8 @@ import { CreateClientDialogComponent } from '../shared/create-client-dialog/crea
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import {
     ContactInfoDto, CreateContactPhotoInput, PersonOrgRelationServiceProxy,
-    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy, UpdatePersonOrgRelationInput,
-    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy, OrganizationInfoDto
+    ContactPhotoDto, UpdateOrganizationInfoInput, OrganizationContactServiceProxy,
+    PersonContactServiceProxy, UpdatePersonInfoInput, ContactPhotoServiceProxy, OrganizationInfoDto, UpdateJobTitleInput
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
@@ -112,7 +112,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
 
     updatePersonOrgRelation(value) {
         this.personOrgRelationInfo.jobTitle = value;
-        this._personOrgRelationService.update(UpdatePersonOrgRelationInput.fromJS({
+        this._personOrgRelationService.updateJobTitle(UpdateJobTitleInput.fromJS({
             id: this.personOrgRelationInfo.id,
             jobTitle: this.personOrgRelationInfo.jobTitle
         })).subscribe(() => {});
