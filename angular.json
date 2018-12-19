@@ -190,6 +190,25 @@
                 }
               ]
             },
+            "devbeta": {
+              "optimization": false,
+              "sourceMap": false,
+              "extractCss": true,
+              "aot": false,
+              "showCircularDependencies": true,
+              "vendorChunk": true,
+              "buildOptimizer": false,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.devbeta.ts"
+                },
+                {
+                  "replace": "src/assets/appconfig.json",
+                  "with": "src/assets/appconfig.devbeta.json"
+                }
+              ]
+            },
             "staging": {
               "optimization": true,
               "outputHashing": "all",
@@ -272,6 +291,12 @@
             },
             "devstaging": {
               "browserTarget": "abp-zero-template:build:devstaging",
+              "optimization": false,
+              "sourceMap": false,
+              "aot": false
+            },
+            "devbeta": {
+              "browserTarget": "abp-zero-template:build:devbeta",
               "optimization": false,
               "sourceMap": false,
               "aot": false
@@ -516,6 +541,26 @@
                 {
                   "replace": "src/assets/appconfig.json",
                   "with": "src/assets/appconfig.devstaging.json"
+                }
+              ]
+            },
+            "devbeta": {
+              "optimization": false,
+              "sourceMap": false,
+              "extractCss": false,
+              "aot": false,
+              "showCircularDependencies": true,
+              "buildOptimizer": false,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.devbeta.ts"
+                },
+                {
+                  "replace": "src/assets/appconfig.json",
+                  "with": "src/assets/appconfig.devbeta.json"
                 }
               ]
             },
