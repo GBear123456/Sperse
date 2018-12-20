@@ -1449,7 +1449,7 @@ export class ApiKeyServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    generate(input: GenerateApiKeyInput | null | undefined): Observable<string> {
+    generate(input: GenerateApiKeyInput | null | undefined): Observable<ApiKeyInfo> {
         let url_ = this.baseUrl + "/api/services/Platform/ApiKey/Generate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1472,14 +1472,14 @@ export class ApiKeyServiceProxy {
                 try {
                     return this.processGenerate(<any>response_);
                 } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
+                    return <Observable<ApiKeyInfo>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string>><any>_observableThrow(response_);
+                return <Observable<ApiKeyInfo>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGenerate(response: HttpResponseBase): Observable<string> {
+    protected processGenerate(response: HttpResponseBase): Observable<ApiKeyInfo> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1490,7 +1490,7 @@ export class ApiKeyServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? ApiKeyInfo.fromJS(resultData200) : new ApiKeyInfo();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1498,7 +1498,7 @@ export class ApiKeyServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string>(<any>null);
+        return _observableOf<ApiKeyInfo>(<any>null);
     }
 
     /**
@@ -28253,9 +28253,12 @@ export interface IUserInfoDto {
 
 export class ApiKeyInfo implements IApiKeyInfo {
     id!: number | undefined;
-    key!: string | undefined;
-    expirationDate!: moment.Moment | undefined;
     name!: string | undefined;
+    key!: string | undefined;
+    expireDate!: moment.Moment | undefined;
+    creationTime!: moment.Moment | undefined;
+    userId!: number | undefined;
+    userName!: string | undefined;
 
     constructor(data?: IApiKeyInfo) {
         if (data) {
@@ -28269,9 +28272,12 @@ export class ApiKeyInfo implements IApiKeyInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.key = data["key"];
-            this.expirationDate = data["expirationDate"] ? moment(data["expirationDate"].toString()) : <any>undefined;
             this.name = data["name"];
+            this.key = data["key"];
+            this.expireDate = data["expireDate"] ? moment(data["expireDate"].toString()) : <any>undefined;
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.userId = data["userId"];
+            this.userName = data["userName"];
         }
     }
 
@@ -28285,18 +28291,24 @@ export class ApiKeyInfo implements IApiKeyInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["key"] = this.key;
-        data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
         data["name"] = this.name;
+        data["key"] = this.key;
+        data["expireDate"] = this.expireDate ? this.expireDate.toISOString() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
         return data; 
     }
 }
 
 export interface IApiKeyInfo {
     id: number | undefined;
-    key: string | undefined;
-    expirationDate: moment.Moment | undefined;
     name: string | undefined;
+    key: string | undefined;
+    expireDate: moment.Moment | undefined;
+    creationTime: moment.Moment | undefined;
+    userId: number | undefined;
+    userName: string | undefined;
 }
 
 export class GenerateApiKeyInput implements IGenerateApiKeyInput {
