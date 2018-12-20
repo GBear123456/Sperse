@@ -110,4 +110,7 @@ export class AppConsts {
     static readonly generalDictionariesCacheLifetime = 2 * 60 * 60 * 1000;
 
     static readonly maxImageSize = 5242880;
+
+    /* Custom tenant domains */
+    static readonly LENDSPACE_DOMAIN = 'https://www.lendspace.com';
 }

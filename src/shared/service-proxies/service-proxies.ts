@@ -28977,6 +28977,7 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
     lastName!: string;
     email!: string;
     postalCode!: string | undefined;
+    phoneNumber!: string | undefined;
     isUSCitizen!: boolean;
 
     constructor(data?: ISignUpMemberRequest) {
@@ -28995,6 +28996,7 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
             this.lastName = data["lastName"];
             this.email = data["email"];
             this.postalCode = data["postalCode"];
+            this.phoneNumber = data["phoneNumber"];
             this.isUSCitizen = data["isUSCitizen"];
         }
     }
@@ -29013,6 +29015,7 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
         data["lastName"] = this.lastName;
         data["email"] = this.email;
         data["postalCode"] = this.postalCode;
+        data["phoneNumber"] = this.phoneNumber;
         data["isUSCitizen"] = this.isUSCitizen;
         return data; 
     }
@@ -29024,6 +29027,7 @@ export interface ISignUpMemberRequest {
     lastName: string;
     email: string;
     postalCode: string | undefined;
+    phoneNumber: string | undefined;
     isUSCitizen: boolean;
 }
 

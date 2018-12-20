@@ -1,3 +1,6 @@
+app-root {
+    height: 100%;
+}
 [_nghost-c0] .page-content[_ngcontent-c0] {
     flex: 1;
     margin-top: 69px;
@@ -885,13 +888,12 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     font-family:Poppins;
     font-size:14px;
     font-weight:600;
-    white-space:normal
+    white-space:nowrap
 }
 [_nghost-c4] .app-area-navigation[_ngcontent-c4] li[_ngcontent-c4] a.disabled[_ngcontent-c4], [_nghost-c4] .app-responsive-menu[_ngcontent-c4] li[_ngcontent-c4] a.disabled[_ngcontent-c4]{
     color:#535354!important
 }
 [_nghost-c4] .app-area-navigation[_ngcontent-c4] li[_ngcontent-c4] a.member-login[_ngcontent-c4], [_nghost-c4] .app-responsive-menu[_ngcontent-c4] li[_ngcontent-c4] a.member-login[_ngcontent-c4]{
-    display:none;
     color:#fff!important;
     background-color:#f93;
     transition:.2s
@@ -1008,7 +1010,6 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
     color:#fff
 }
 [_nghost-c4] .right-actions[_ngcontent-c4] li[_ngcontent-c4] a.member-login[_ngcontent-c4]{
-    display:none;
     color:#fff;
     font-size:12px!important;
     background-color:#f93
@@ -1036,13 +1037,6 @@ body.lend-space personal-finance-header.pfm-app .page-header #header-app-menu{
         display:none!important
     }
 }
-body.pfm[_nghost-c4] .right-actions a.member-login, body.pfm [_nghost-c4] .right-actions a.member-login{
-    display:block!important
-}
-body.pfm[_nghost-c4] .app-responsive-menu li a.member-login, body.pfm [_nghost-c4] .app-responsive-menu li a.member-login{
-    display:block!important
-}
-
 [_nghost-c7]:not(.pfm-app) .top-footer[_ngcontent-c7]{
     background-color:#133240
 }
@@ -1232,185 +1226,19 @@ body.pfm[_nghost-c4] .app-responsive-menu li a.member-login, body.pfm [_nghost-c
     opacity: 1!important;
     background: transparent;
 }
-.modal button.close {
-  position: absolute;
-  width: 30px;
-  top: 22px;
-  left: 30px;
-  margin: 0px;
-  height: 30px;
-  -webkit-appearance: none;
-  padding: 0;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
-  font-size: 46px !important;
-  font-weight: normal !important;
-  text-indent: unset !important;
-  background-image: none !important;
-  opacity: 0.5;
-
-}
-.modal button.close:before, .modal button.close:after {
-  position: absolute;
-  top: 5px;
-  left: 15px;
-  content: ' '!important;
-  height: 20px;
-  width: 2px;
-  background-color: #FFF;
-}
-.modal button.close:before {
-    transform: rotate(45deg);
-}
-.modal button.close:after {
-    transform: rotate(-45deg);
-}
-.modal button.close:hover {
-    opacity: 1;
-}
-.modal .modal-header {
-  padding: 15px 25px;
-  background: #000;
-  border-bottom: 1px solid #eaeef0;
-}
-.modal .modal-header .control-buttons {
-  float: right;
-  margin-top: 0;
-  margin-right: 20px;
-}
-.modal .modal-header .control-buttons a,
-.modal .modal-header .control-buttons button {
-  height: 30px;
-  background: #fff;
-  border: 1px solid #eaeef0;
-  padding: 4px 5px 6px;
-  min-width: 55px;
-  text-align: center;
-  display: block;
-  float: left;
-  line-height: 1.5;
-  outline: none;
-  cursor: pointer;
-}
-.modal .modal-header .control-buttons a {
-  display: none;
-  border-radius: 3px;
-}
-.modal .modal-header .control-buttons button {
-  border-radius: 3px;
-  margin-left: -1px;
-}
-.modal .modal-header .modal-title {
-  margin: 0;
-  color: #FFF!important;
-  margin-left: 60px;
-  line-height: 1.85;
-  font-family: Poppins;
-  flex: 1 auto;
-}
-.modal .modal-dialog {
-  max-width: 100%;
-  transform: translate(0,0)!important;
-}
-.modal .modal-body {
-  position: relative;
-  padding: 15px 25px;
-  background: #262626;
-  color: #FFF!important;
-  font-family: Poppins;
-}
-.modal .modal-body font, .modal .modal-body ul, .modal .modal-body ol, .modal .modal-body p {
-  font-family: Poppins;
-  color: #FFF!important;
-}
-.modal .modal-body h3 {
-  font-family: Montserrat;
-  font-weight: normal;
-  font-size: 16px;
-  color: #424c56;
-  margin-bottom: 5px;
-  text-transform: uppercase;
-}
-.modal .modal-body h3.margin-bottom {
-  margin-bottom: 16px;
-}
-.modal .modal-body p {
-  margin-bottom: 16px;
-}
-.modal .modal-body strong {
-  color: #424c56;
-}
-.modal .modal-body hr {
-  margin: 25px 0;
-}
-.modal.left .modal-dialog,
-.modal.right .modal-dialog {
-  position: fixed;
-  margin: auto;
-  width: 50%;
-  height: 100%;
-  -webkit-transform: translate3d(0%, 0, 0);
-  -ms-transform: translate3d(0%, 0, 0);
-  -o-transform: translate3d(0%, 0, 0);
-  transform: translate3d(0%, 0, 0);
-}
-.modal.left .modal-content,
-.modal.right .modal-content {
-  height: 100%;
-  overflow-y: auto;
-}
-.modal.left .modal-body,
-.modal.right .modal-body {
-  padding: 15px 25px 35px;
-}
-/*Left*/
-.modal.left.fade .modal-dialog {
-  left: -50%;
-  -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
-  -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
-  -o-transition: opacity 0.3s linear, left 0.3s ease-out;
-  transition: opacity 0.3s linear, left 0.3s ease-out;
-}
-.modal.left.fade.show .modal-dialog {
-  left: 0;
-}
-/*Right*/
-.modal.right.fade .modal-dialog {
-  right: -50%;
-  -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
-  -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
-  -o-transition: opacity 0.3s linear, right 0.3s ease-out;
-  transition: opacity 0.3s linear, right 0.3s ease-out;
-}
-.modal.right.fade.in .modal-dialog {
-  right: 0;
-}
-@media (max-width: 767px) {
-  .modal.left .modal-dialog,
-  .modal.right .modal-dialog {
-    width: 100%;
-  }
-  .modal.left.fade .modal-dialog {
-    left: -100%;
-  }
-  .modal.right.fade .modal-dialog {
-    right: -100%;
-  }
-  .modal-title {
-    clear: both;
-    padding-top: 15px;
-    text-align: center;
-  }
-}
-@media screen {
-  #printSection {
-    display: none;
-  }
+.control-buttons {
+    position:absolute;
+    top:33px;
+    right:33px
 }
 .visible-on-print {
-  visibility: hidden;
-  height: 0;
+    visibility: hidden;
+    height: 0;
+}
+@media screen {
+    #printSection {
+        display: none;
+    }
 }
 @media print {
   body * {
@@ -1419,44 +1247,21 @@ body.pfm[_nghost-c4] .app-responsive-menu li a.member-login, body.pfm [_nghost-c
   #printSection,
   #printSection * {
     visibility: visible;
-    font-size: 14px;
+    font-size: 18px;
   }
   #printSection {
     position: absolute;
     left: 0;
     top: 0;
   }
+  #printSection h2.doc-title {
+      font-size: 28px;
+  }
   .visible-on-print {
-    visibility: visible;
-    text-align: center;
-    height: auto;
+      visibility: visible;
+      text-align: center;
+      height: auto;
   }
-  .visible-on-print p + p {
-    font-size: 28px;
-  }
-}
-.modal .modal-content {
-    overflow: hidden;
-}
-.modal .modal-content .modal-header {
-    align-items: center;
-}
-.modal .modal-content .modal-header .modal-title {
-    text-align: left;
-}
-.modal .modal-content .modal-header .close {
-    margin-top: 0;
-}
-.modal .modal-content .modal-body {
-    height: 100%;
-    text-align: left;
-    overflow-y: auto;
-}
-.dropdown.open ul {
-    display: block!important;
-}
-body.modal-open {
-    overflow: hidden!important;
 }
 not-found {
     display: flex;

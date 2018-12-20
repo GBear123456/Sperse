@@ -370,7 +370,7 @@ export class LoginService {
                         this._messageService.info('You have successfully registered. Waiting for activation!');
                         return;
                     }
-                    this.processAuthenticateResult(result, result.returnUrl);
+                    this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
                 });
         }
     }

@@ -1,0 +1,12 @@
+{
+    "index": {
+        "layout": false
+    },
+    "login": {
+        "layout": false,
+        "title": "LendSpace: Login" 
+    },
+    "404": {
+        "layout": false
+    }
+}

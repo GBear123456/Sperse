@@ -17,15 +17,13 @@ import { AppConsts } from '@shared/AppConsts';
 export class PagesFooterComponent extends AppComponentBase {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
-    private readonly LENDSPACE_DOMAIN = 'https://www.lendspace.com';
-
     appMenuItems = [
         {
             url: '',
             name: 'Terms of Use',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Terms of Use',
-                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/terms.html',
+                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/terms.html',
                 downloadDisabled: true
             })
         },
@@ -33,8 +31,8 @@ export class PagesFooterComponent extends AppComponentBase {
             url: '',
             name: 'Privacy Policy',
             action: this.openConditionsDialog.bind(this, {
-                title: 'Terms of Use',
-                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/policy.html',
+                title: 'Privacy Policy',
+                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/policy.html',
                 downloadDisabled: true
             })
         },
@@ -43,7 +41,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Lender Terms',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Lender Terms',
-                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/lender.html',
+                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/lender.html',
                 downloadDisabled: true
             })
         },
@@ -52,7 +50,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Disclosures',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Disclosures',
-                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/disclosures.html',
+                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/disclosures.html',
                 downloadDisabled: true
             })
         },
@@ -61,7 +59,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'About Us',
             action: this.openConditionsDialog.bind(this, {
                 title: 'About Us',
-                bodyUrl: this.LENDSPACE_DOMAIN + '/documents/about.html',
+                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/about.html',
                 downloadDisabled: true
             })
         }

@@ -135,4 +135,17 @@ $(document).ready(function () {
         var result = login.value && password.value;
         return result;
     }
+
+    $('.show-password').click(showHidePassword.bind(this));
+
+    function showHidePassword() {
+        if (form.elements.password.type === 'text') {
+            form.elements.password.type = 'password';
+            $('.show-password').text('SHOW');
+        }
+        else {
+            form.elements.password.type = 'text';
+            $('.show-password').text('HIDE');
+        }
+    }
 });

@@ -31,14 +31,15 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;
     loginInProgress = false;
+    showPassword = false;
 
     constructor(
         injector: Injector,
+        public dialog: MatDialog,
         public loginService: LoginService,
         private _sessionService: AbpSessionService,
         private _sessionAppService: SessionServiceProxy,
-        private _appSession: AppSessionService,
-        private dialog: MatDialog
+        private _appSession: AppSessionService
     ) {
         super(injector);
     }
@@ -82,7 +83,7 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: type }});
+        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
     }
 
     login(): void {
@@ -98,5 +99,10 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
 
     getLoginPlaceholder(): string {
         return abp.session.tenantId ? this.l('UserNameOrEmail') : this.l('EmailAddress');
+    }
+
+    showHidePassword(event) {
+        this.showPassword = !this.showPassword;
+        event.currentTarget.text = this.l((this.showPassword ? 'Hide' : 'Show'));
     }
 }

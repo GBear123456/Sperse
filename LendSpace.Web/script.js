@@ -1,15 +1,6 @@
 $(document).ready(function () {
-    var dialog = $('#dialog');
-    dialog.on('show.bs.modal', function(event) {
-        var target = $(event.relatedTarget);
-        dialog.find('.modal-title').text(target.text());
-
-        $(this).find('.modal-body').html('loading...')
-            .load(location.origin + '/documents/' + target.data('doc') + '.html', function() { });
-    });
-
     $('.print-this').on('click', function(event) {
-        printElement($(event.target).closest('.modal-dialog').find('.print-this-section')[0]);
+        printElement($('.data-wrap')[0]);
     });
 
     function printElement(elem) {
