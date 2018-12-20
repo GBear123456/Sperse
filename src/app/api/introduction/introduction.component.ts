@@ -5,6 +5,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
 import { MatDialog } from '@angular/material';
 import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
+import * as _ from 'lodash';
 
 @Component({
     templateUrl: './introduction.component.html',
@@ -21,6 +22,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
 
     public apiKeys: ApiKeyInfo[];
     private elementForBlocking: Element;
+    private canManageApiKeys: boolean = this.permission.isGranted('Pages.API.ManageKeys');
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -34,7 +36,8 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
             .subscribe((result: GenerateApiKeyInput) => {
                 if (result) {
                     this._apiKeyService.generate(result).subscribe(result => {
-                        this.loadApiKeys();
+                        if (!this.apiKeys) this.apiKeys = [];
+                        this.apiKeys.unshift(result);
                         abp.notify.success(this.l('SuccessfullySaved'));
                     });
                 }
@@ -50,7 +53,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
 
     loadApiKeys() {
         abp.ui.setBusy(this.elementForBlocking);
-        this._apiKeyService.getAll(abp.session.userId)
+        this._apiKeyService.getAll(undefined)
             .subscribe((apiKeys) => {
                 abp.ui.clearBusy(this.elementForBlocking);
 
@@ -65,7 +68,11 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
                 this._apiKeyService.delete(data.key)
                     .subscribe(() => {
                         abp.ui.clearBusy(this.elementForBlocking);
-                        this.loadApiKeys();
+                        if (this.apiKeys.length == 1)
+                            this.apiKeys = [];
+                        else
+                            _.remove(this.apiKeys, x => x.id == data.key);
+
                         abp.notify.info(this.l('SuccessfullyDeleted'));
                     });
             };

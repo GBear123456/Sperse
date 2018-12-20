@@ -10,19 +10,21 @@
                     </p>
                     <p class="welcome-api">{{ l('API_Intro_Welcome') }}</p>
 
-                    <button class="btn btn-layout" (click)="addApiKey()">{{ l('API_Intro_GenerateKey') }}</button>
+                    <button *ngIf="canManageApiKeys" class="btn btn-layout" (click)="addApiKey()">{{ l('API_Intro_GenerateKey') }}</button>
                 </div>
             </div>
             <div *ngIf="apiKeys">
                 <h1 class="text-left">{{l('ApiKeys')}}</h1>
-                <button class="btn btn-layout pull-right" (click)="addApiKey()">{{ l('API_Intro_GenerateKey') }}</button>
+                <button *ngIf="canManageApiKeys" class="btn btn-layout pull-right" (click)="addApiKey()">{{ l('API_Intro_GenerateKey') }}</button>
                 <dx-data-grid id="gridContainer"
                               keyExpr="id"
                               [dataSource]="apiKeys">
                     <dxi-column dataField="name" caption="{{l('ApiKey_Name')}}"></dxi-column>
                     <dxi-column dataField="key" caption="{{l('ApiKey_Key')}}"></dxi-column>
-                    <dxi-column dataField="expirationDate" caption="{{l('ApiKey_ExpirationDate')}}" dataType="date"></dxi-column>
-                    <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" cellTemplate="editDeleteTemplate"></dxi-column>
+                    <dxi-column dataField="expireDate" caption="{{l('ApiKey_ExpirationDate')}}" dataType="date"></dxi-column>
+                    <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" dataType="date"></dxi-column>
+                    <dxi-column dataField="userName" caption="{{l('UserName')}}"></dxi-column>
+                    <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" [visible]="canManageApiKeys" cellTemplate="editDeleteTemplate"></dxi-column>
                     <div *dxTemplate="let data of 'editDeleteTemplate'">
                         <a class="dx-link" (click)="deleteApiKey(data)">{{l('Delete')}}</a>
                     </div>
