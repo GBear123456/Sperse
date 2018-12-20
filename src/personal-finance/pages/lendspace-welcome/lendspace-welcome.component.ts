@@ -9,6 +9,14 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 export class LendspaceWelcomeComponent extends AppComponentBase implements OnInit {
     categoryItems = [
         {
+            imgName: 'personal-loans',
+            icon: 'shopping-cart-verified-symbol.svg',
+            title: 'Personal Loans',
+            text: 'Find lowest rates for',
+            router: '/personal-finance/offers/personal-loans',
+            hidden: false
+        },
+        {
             imgName: 'credit-cards',
             icon: 'credit-card-with-check-symbol.svg',
             title: 'Credit Cards',
@@ -19,17 +27,9 @@ export class LendspaceWelcomeComponent extends AppComponentBase implements OnIni
         {
             imgName: 'credit-reports',
             icon: 'gauge.svg',
-            title: 'Credit Reports',
+            title: 'Credit Scores',
             text: 'Access your 3-Bureau',
-            router: '/personal-finance/credit-reports',
-            hidden: false
-        },
-        {
-            imgName: 'personal-loans',
-            icon: 'shopping-cart-verified-symbol.svg',
-            title: 'Personal Loans',
-            text: 'Find lowest rates for',
-            router: '/personal-finance/offers/personal-loans',
+            router: '/personal-finance/offers/credit-score',
             hidden: false
         },
         {
@@ -39,7 +39,7 @@ export class LendspaceWelcomeComponent extends AppComponentBase implements OnIni
             text: 'Track your combined',
             router: '/personal-finance/my-finances',
             hidden: !this.feature.isEnabled('CFO.Partner'),
-        },
+        }
     ];
 
     constructor(injector: Injector) {
