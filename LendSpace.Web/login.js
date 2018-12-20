@@ -81,14 +81,9 @@ $(document).ready(function () {
             navigate('/account/send-code');
         } else if (authenticateResult.accessToken) {
             // Successfully logged in
-            login(
-                authenticateResult.accessToken,
-                authenticateResult.encryptedAccessToken,
-                authenticateResult.expireInSeconds,
-                form && form.elements['rememberMe'].checked,
-                authenticateResult.twoFactorRememberClientToken,
-                authenticateResult.returnUrl
-            );
+            authenticateResult.rememberClient = Boolean(form && form.elements['rememberMe'].checked);
+            document.cookie = 'AuthData=' + JSON.stringify(authenticateResult) + '; domain=' + abp.domain;
+            location.href = apiOrigin;
         } else if (authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
             navigate('/account/select-tenant');
@@ -97,36 +92,6 @@ $(document).ready(function () {
             abp.message.warn('Unexpected authenticateResult!');
             navigate('/account/login');
         }
-    }
-
-    function login(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
-        var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
-
-        abp.auth.setToken(
-            accessToken,
-            tokenExpireDate
-        );
-
-        abp.utils.setCookieValue(
-            'enc_auth_token',
-            encryptedAccessToken,
-            tokenExpireDate,
-            abp.appPath,
-            abp.domain
-        );
-
-        if (twoFactorRememberClientToken) {
-            abp.utils.setCookieValue(
-                'TwoFactorRememberClientToken',
-                twoFactorRememberClientToken,
-                new Date(new Date().getTime() + 365 * 86400000), // 1 year
-                abp.appPath,
-                abp.domain
-            );
-        }
-
-        abp.multiTenancy.setTenantIdCookie();
-        location.href = apiOrigin;
     }
 
     function checkIsValid() {

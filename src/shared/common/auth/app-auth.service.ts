@@ -2,7 +2,6 @@ import { Injectable, OnDestroy, NgZone } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
-
 @Injectable()
 export class AppAuthService implements OnDestroy {
     private tokenCheckTimeout: any;
@@ -16,7 +15,7 @@ export class AppAuthService implements OnDestroy {
 
     logout(reload?: boolean, returnUrl?: string): void {
         this.stopTokenCheck();
-        this.clearToken();
+        abp.auth.clearToken();
         if (reload !== false) {
             if (returnUrl) {
                 location.href = returnUrl;
@@ -26,24 +25,54 @@ export class AppAuthService implements OnDestroy {
         }
     }
 
-    clearToken() {
-        abp.auth.clearToken(); //!!VP Clear token in current (app) domain
-        //!!VP Clear token on top level domain 
-        document.cookie = abp.auth.tokenCookieName + 
-            '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=' + 
-                location.origin.split('.').slice(-2).join('.');
-    }
-
-    setCheckDomainToken() { //!!VP this necessary to avoid login issues when use top level domain for login
+    setCheckDomainToken() { //!!VP this necessary to provide login from top domain level
+        const authDataKey = 'AuthData';
         document.cookie.split(';').some((data) => {
             let parts = data.split('=');
-            if ((parts[0].trim() == abp.auth.tokenCookieName) && parts[1]) {
-                this.clearToken();
-                abp.auth.setToken(parts[1]);
+            if ((parts[0].trim() == authDataKey) && parts[1]) {
+                let authData = JSON.parse(parts[1]);
+                this.setLoginCookies(
+                    authData.accessToken,
+                    authData.encryptedAccessToken,
+                    authData.expireInSeconds,
+                    authData.rememberClient,
+                    authData.twoFactorRememberClientToken,
+                    authData.returnUrl
+                );
+                document.cookie = authDataKey + '=; domain=' + 
+                    location.origin.split('.').slice(-2).join('.');
+
                 return true;
             }
             return false;
         });
+    }
+
+    setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
+        let tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
+
+        abp.auth.setToken(
+            accessToken,
+            tokenExpireDate
+        );
+
+        abp.utils.setCookieValue(
+            AppConsts.authorization.encrptedAuthTokenName,
+            encryptedAccessToken,
+            tokenExpireDate,
+            abp.appPath
+        );
+
+        if (twoFactorRememberClientToken) {
+            abp.utils.setCookieValue(
+                'TwoFactorRememberClientToken',
+                twoFactorRememberClientToken,
+                new Date(new Date().getTime() + 365 * 86400000), // 1 year
+                abp.appPath
+            );
+        }
+
+        abp.multiTenancy.setTenantIdCookie();
     }
 
     startTokenCheck() {

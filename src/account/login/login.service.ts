@@ -251,30 +251,7 @@ export class LoginService {
     }
 
     private login(accessToken: string, encryptedAccessToken: string, expireInSeconds: number, rememberMe?: boolean, twoFactorRememberClientToken?: string, redirectUrl?: string): void {
-        let tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
-
-        this._tokenService.setToken(
-            accessToken,
-            tokenExpireDate
-        );
-
-        this._utilsService.setCookieValue(
-            AppConsts.authorization.encrptedAuthTokenName,
-            encryptedAccessToken,
-            tokenExpireDate,
-            abp.appPath
-        );
-
-        if (twoFactorRememberClientToken) {
-            this._utilsService.setCookieValue(
-                LoginService.twoFactorRememberClientTokenName,
-                twoFactorRememberClientToken,
-                new Date(new Date().getTime() + 365 * 86400000), // 1 year
-                abp.appPath
-            );
-        }
-
-        abp.multiTenancy.setTenantIdCookie();
+        this._authService.setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl);
 
         redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
         if (redirectUrl) {
