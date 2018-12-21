@@ -246,6 +246,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (!dataSource)
                 dataSource = this._dataSources[stage.name] =
                     new DataSource(_.extend(_.clone(this._dataSource), {
+                        onLoadError: (error) => { this.httpInterceptor.handleError(error); },
                         requireTotalCount: !this.totalsURI,
                         select: this.selectFields
                     }));
