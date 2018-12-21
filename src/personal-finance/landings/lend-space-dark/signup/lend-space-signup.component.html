@@ -68,10 +68,10 @@
                         <div>
                             <dx-check-box #agreeToRecieveCallsCheckBox
                                           class="privacy-term"
+                                          validationMessageMode="always"
                                           [(value)]="isAgreedToRecieveCalls">
                                 <dx-validator>
-                                    <dxi-validation-rule type="required"
-                                                         message="You must agree to this point"></dxi-validation-rule>
+                                    <dxi-validation-rule type="required" message="You must agree to this point"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-check-box>
                         </div>
@@ -83,10 +83,10 @@
                         <div>
                             <dx-check-box #agreeWithTermsCheckBox
                                           class="privacy-term"
+                                          validationMessageMode="always"
                                           [(value)]="isAgreeWithTerms">
                                 <dx-validator>
-                                    <dxi-validation-rule type="required"
-                                                         message="You must agree to the Terms and Conditions"></dxi-validation-rule>
+                                    <dxi-validation-rule type="required" message="You must agree to the Terms and Conditions"></dxi-validation-rule>
                                 </dx-validator>
                             </dx-check-box>
                         </div>
