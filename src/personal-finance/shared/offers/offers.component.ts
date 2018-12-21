@@ -231,6 +231,7 @@ export class OffersComponent implements OnInit, OnDestroy {
 
     selectedSorting: BehaviorSubject<string> = new BehaviorSubject(this.sortings[0].field);
     private selectedSorting$ = this.selectedSorting.asObservable();
+    buttonCaption: string = 'Apply';
 
     constructor(
         injector: Injector,
@@ -249,9 +250,21 @@ export class OffersComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.category$.subscribe((category) => {
+        this.category$.subscribe((category) => {    
             if (!category)
                 return this.router.navigate(['/personal-finance/home']);
+
+            switch(category) {
+                case Category.PersonalLoans: 
+                    this.buttonCaption = 'ApplyNow';
+                    break;
+                case Category.CreditCards: 
+                    this.buttonCaption = 'ViewOffers';
+                    break;
+                case Category.CreditScore: 
+                    this.buttonCaption = 'GetOffer';
+                    break;
+            } 
 
             abp.ui.setBusy();
             this.selectedFilter$ = combineLatest(this.creditScore$, this.category$)

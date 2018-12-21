@@ -1,6 +1,24 @@
 @import '../../shared/layout/_settings';
 @import '../../../assets/common/styles/custom/lend-space/colors.less';
 
+:host-context(body.lend-space) {
+    .default-finance {
+        display: none !important;
+    }
+    .lend-space-finance {
+        display: block;
+        height: 100%;
+        padding: 25px 0;
+    }
+
+    .accountsContainer {
+        height: 100%;
+        .row {
+            height: 100%;
+        }
+    }
+}
+
 :host {
     .quovo-accounts-module {
         height: 100%;
@@ -12,6 +30,10 @@
         min-height: 750px;
         max-width: 1300px;
         margin: 0 auto;
+    }
+    
+    .lend-space-finance {
+        display: none;
     }
 
     .container {

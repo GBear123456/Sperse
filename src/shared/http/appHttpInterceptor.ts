@@ -6,17 +6,16 @@ import { Subject } from '@node_modules/rxjs';
 
 @Injectable()
 export class AppHttpInterceptor extends AbpHttpInterceptor {
-    constructor(configuration: AppHttpConfiguration) {
+    constructor(public configuration: AppHttpConfiguration) {
         super(configuration);
     }
 
     handleError(error) {
-        if (error['httpStatus']) {
-            error = {
-                ...error,
-                ...<HttpResponse<any>>{ status: error['httpStatus'] }
-            };
-        }
+        if (error['errorDetails'])
+            error.error = new Blob([JSON.stringify(error.errorDetails)]);
+                                  
+        if (error['httpStatus'])
+            error.status = error['httpStatus'];
 
         return this.handleErrorResponse(error, new Subject());
     }

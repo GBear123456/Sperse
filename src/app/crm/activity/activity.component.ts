@@ -112,6 +112,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     initDataSource() {
         this.dataSource = {
             requireTotalCount: false,
+            onLoadError: (error) => { 
+                this.httpInterceptor.handleError(error);
+            },
             store: {
                 key: 'Id',
                 type: 'odata',

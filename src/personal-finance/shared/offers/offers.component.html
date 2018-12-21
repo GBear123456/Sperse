@@ -76,14 +76,14 @@
                 <div class="foundCount" [class.hidden]="offersAreLoading">
                     {{ ls.l('Offers_WeFound') }} <span>{{ offersAmount }}</span> {{ categoryDisplayName$ | async }}
                 </div>
-                <div class="sortBy">
+                <!-- div class="sortBy">
                     <span class="label">{{ ls.l('Offers_SortBy') }}</span>
                     <mat-select (selectionChange)="selectedSorting.next($event.value);" [value]="sortings[0].field" #sortingSelect>
                         <mat-option *ngFor="let sorting of sortings" [value]="sorting.field">
                             {{ sorting.name }}
                         </mat-option>
                     </mat-select>
-                </div>
+                </div -->
                 <div class="mobileButtons">
                     <button class="btn btn-secondary sortingButton" (click)="toggleSorting($event)"></button>
                     <button class="btn-btn-secondary filteringButton" (click)="toggleFiltering($event)"></button>
@@ -96,10 +96,10 @@
                     </div>
                     <div class="description col-12 col-md-8 col-lg-6">
                         <h4><span *ngIf="offerItem.bankName">{{ offerItem.bankName }} + ' - '</span>{{offerItem.name }}</h4>
-                        <div class="rating" *ngIf="offerItem.rating">
+                        <!-- div class="rating" *ngIf="offerItem.rating">
                             <stars-rating [currentRating]="offerItem.rating" color="#f0d500"></stars-rating>
                             <span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span>
-                        </div>
+                        </div -->
                         <ul class="descriptionItems">
                             <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'rewardsBonus', 'apr']">
                                 <li *ngIf="offerItem[param]">
@@ -110,7 +110,7 @@
                         </ul>
                     </div>
                     <div class="actions col-12 offset-md-3 col-md-9 offset-lg-0 col-lg-3 ">
-                        <button class="applyButton" (click)="applyOffer(offerItem)"><span>{{ ls.l('Apply') }}</span></button>
+                        <button class="applyButton" (click)="applyOffer(offerItem)"><span>{{ ls.l(buttonCaption) }}</span></button>
                         <button class="viewMore" (click)="viewCardDetails(offerItem)">{{ ls.l('View_details') }}</button>
                     </div>
                 </li>
