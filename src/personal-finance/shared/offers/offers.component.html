@@ -76,14 +76,14 @@
                 <div class="foundCount" [class.hidden]="offersAreLoading">
                     {{ ls.l('Offers_WeFound') }} <span>{{ offersAmount }}</span> {{ categoryDisplayName$ | async }}
                 </div>
-                <div class="sortBy">
+                <!-- div class="sortBy">
                     <span class="label">{{ ls.l('Offers_SortBy') }}</span>
                     <mat-select (selectionChange)="selectedSorting.next($event.value);" [value]="sortings[0].field" #sortingSelect>
                         <mat-option *ngFor="let sorting of sortings" [value]="sorting.field">
                             {{ sorting.name }}
                         </mat-option>
                     </mat-select>
-                </div>
+                </div -->
                 <div class="mobileButtons">
                     <button class="btn btn-secondary sortingButton" (click)="toggleSorting($event)"></button>
                     <button class="btn-btn-secondary filteringButton" (click)="toggleFiltering($event)"></button>
