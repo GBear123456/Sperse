@@ -1,8 +1,24 @@
 <div class="container">
     <div class="not-initialized-content">
-        <p class="welcome-text">{{ l('Accounts_Welcome') }}</p>
-        <p class="body-text">{{ l('Accounts_BodyText') }}</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus, quasi suscipit. Ea in minus praesentium quis recusandae repudiandae voluptate! Dicta distinctio eligendi id nulla obcaecati officia quae reprehenderit sequi, soluta.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam dolores hic possimus saepe tempora. Animi doloribus esse eum expedita facere fugit natus nobis optio, quae repellendus, reprehenderit similique soluta voluptatem!</p>
+        <h1 class="finance-title">{{l('Finance_Title')}}</h1>
+        <h2 class="finance-subtitle">{{l('Finance_SubTitle')}}</h2>
+        <button class="finance-button" [disabled]="isStartDisabled" (click)="onClick()">{{ l('GetStarted') }}</button>
+        <div class="row advantages">
+            <div class="col-lg-7 col-md-12 d-flex align-items-center">
+                <ul class="advantages-list accounts">
+                    <li class="advantages-item" [ngClass]="item.class" *ngFor="let item of advantages">
+                        <h3>{{item.title}}</h3>
+                        <p>{{item.text}}</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-5 col-md-12">
+                <img src="./assets/common/images/lend-space-dark/my-finance-img.jpg"
+                     alt="My Finances"
+                     class="img-fluid"
+                     srcset="./assets/common/images/lend-space-dark/my-finance-img@2x.jpg 2x,
+                     ./assets/common/images/lend-space-dark/my-finance-img@3x.jpg 3x">
+            </div>
+        </div>
     </div>
 </div>

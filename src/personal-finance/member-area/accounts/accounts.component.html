@@ -18,16 +18,18 @@
                 </div>
             </ng-container>
             <ng-template #notInitialized>
-                <div class="not-initialized-content col-12">
+                <div class="not-initialized-content default-finance col-12">
                     <p class="welcome-text">{{ l('Accounts_Welcome') }}</p>
                     <p class="body-text">{{ l('Accounts_BodyText') }}</p>
-                    <button (click)="onStart()" class="btn btn-layout" [disabled]="isStartDisabled">{{ l('GetStarted') }}</button>
+                    <button (click)="onStart()"
+                            class="btn btn-layout"
+                            [disabled]="isStartDisabled">{{ l('GetStarted') }}</button>
                 </div>
+                <pfm-finance-page class="lend-space-finance"
+                                  [isStartDisabled]="isStartDisabled"
+                                  (onButtonClicked)="onStart()"></pfm-finance-page>
             </ng-template>
         </div>
     </div>
 </ng-container>
 
-<ng-template #pfmFinancePage>
-    <pfm-finance-page></pfm-finance-page>
-</ng-template>
