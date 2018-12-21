@@ -80,7 +80,7 @@ export class AppAuthService implements OnDestroy {
         let currentToken = abp.auth.getToken();
         if (currentToken)
             this._ngZone.runOutsideAngular(() => {
-                setTimeout(() => this.checkAuthToken(currentToken), 3000);
+                this.tokenCheckTimeout = setTimeout(() => this.checkAuthToken(currentToken), 3000);
             });
     }
 
@@ -94,7 +94,6 @@ export class AppAuthService implements OnDestroy {
 
     private checkAuthToken(initialToken) {
         let currentToken = abp.auth.getToken();
-
         if (initialToken != currentToken) {
             let warningMessage = 'Current user has changed. Page should be reloaded.';
             if (this._appLocalizationService)
