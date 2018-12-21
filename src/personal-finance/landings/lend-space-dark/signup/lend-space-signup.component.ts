@@ -32,7 +32,6 @@ export class LendSpaceSignupComponent extends AppComponentBase {
         phonePattern: AppConsts.regexPatterns.phone
     };
 
-    phoneMask = '+1 (999) 999-9999';
     isAgreeWithTerms = true;
     isAgreedToRecieveCalls = false;
     registerData: SignUpMemberRequest = new SignUpMemberRequest();
