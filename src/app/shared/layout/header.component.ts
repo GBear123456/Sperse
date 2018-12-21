@@ -3,7 +3,7 @@ import { Component, Injector, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 /** Application imports */
@@ -15,7 +15,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType,
-    TenantLoginInfoDto, UserLinkServiceProxy, UpdateProfilePictureInput
+    TenantLoginInfoDto, UserLinkServiceProxy, UpdateProfilePictureInput, CommonUserInfoServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { UserHelper } from '../helpers/UserHelper';
@@ -25,11 +25,14 @@ import { ChangePasswordModalComponent } from './profile/change-password-modal.co
 import { MySettingsModalComponent } from './profile/my-settings-modal.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { Observable } from 'rxjs';
+import { isEqual } from 'lodash';
 
 @Component({
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.less'],
-    selector: 'app-header'
+    selector: 'app-header',
+    providers: [CommonUserInfoServiceProxy]
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
 
@@ -38,7 +41,9 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     currentLanguage: abp.localization.ILanguageInfo;
     isImpersonatedLogin = false;
     shownLoginNameTitle = '';
-    shownLoginInfo: { fullName, email, tenantName? };
+    shownLoginInfo: { fullName, email, tenantName?};
+    userCompany$: Observable<string>;
+
     helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
     tenancyName = '';
     userName = '';
@@ -58,7 +63,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _authService: AppAuthService,
         private _impersonationService: ImpersonationService,
         private _linkedAccountService: LinkedAccountService,
-        public _layoutService: LayoutService
+        public _layoutService: LayoutService,
+        private _commonUserInfoService:  CommonUserInfoServiceProxy
     ) {
         super(injector);
     }
@@ -75,6 +81,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         this.shownLoginNameTitle = this.isImpersonatedLogin ? this.l('YouCanBackToYourAccount') : '';
         this.getCurrentLoginInformations();
         this.getRecentlyLinkedUsers();
+        this.userCompany$ = this._commonUserInfoService.getCompany().pipe(map(x => isEqual(x, {}) ? null : x));
 
         this.registerToEvents();
     }

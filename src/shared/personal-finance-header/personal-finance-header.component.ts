@@ -3,7 +3,7 @@ import { Component, OnInit, Injector, HostBinding } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 /** Application imports */
@@ -18,7 +18,8 @@ import {
     UserServiceProxy,
     LinkedUserDto,
     TenantLoginInfoDto,
-    SessionServiceProxy
+    SessionServiceProxy,
+    CommonUserInfoServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -33,12 +34,14 @@ import { AppConsts } from 'shared/AppConsts';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UpdateProfilePictureInput } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { Observable } from 'rxjs';
+import { isEqual } from 'lodash';
 
 @Component({
     templateUrl: 'personal-finance-header.component.html',
     styleUrls: ['personal-finance-header.component.less'],
     selector: 'personal-finance-header',
-    providers: [ImpersonationService]
+    providers: [ImpersonationService, CommonUserInfoServiceProxy]
 })
 export class PersonalFinanceHeaderComponent extends AppComponentBase implements OnInit {
 
@@ -53,6 +56,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
 
     shownLoginNameTitle = '';
     shownLoginInfo: { fullName, email, tenantName?};
+    userCompany$: Observable<string>;
+
     profileThumbnailId: string;
     recentlyLinkedUsers: LinkedUserDto[];
 
@@ -102,7 +107,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         private _userNotificationHelper: UserNotificationHelper,
         private _sessionService: SessionServiceProxy,
         private _appSessionService: AppSessionService,
-        private _permissionChecker: PermissionCheckerService
+        private _permissionChecker: PermissionCheckerService,
+        private _commonUserInfoService: CommonUserInfoServiceProxy
     ) {
         super(injector);
         if (this.feature.isEnabled('CFO.Partner')) {
@@ -228,6 +234,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         this.getCurrentLoginInformations();
         this.getRecentlyLinkedUsers();
 
+        this.userCompany$ = this._commonUserInfoService.getCompany().pipe(map(x => isEqual(x, {}) ? null : x));
         this.registerToEvents();
     }
 
