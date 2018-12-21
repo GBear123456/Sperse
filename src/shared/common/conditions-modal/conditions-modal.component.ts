@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, Injector, ElementRef } from '@angular/core';
+import { ViewChild, Component, ChangeDetectionStrategy, OnInit, Injector, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import printJS from 'print-js';
 import { from } from 'rxjs';
+import { DxScrollViewComponent } from 'devextreme-angular';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -20,6 +21,7 @@ import { ConditionsType } from '@shared/AppEnums';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConditionsModalComponent extends ModalDialogComponent implements OnInit {
+    @ViewChild(DxScrollViewComponent) scroll: DxScrollViewComponent;
     conditionBody$: Observable<SafeHtml>;
 
     private conditionsOptions = {
@@ -77,7 +79,10 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
                 method: 'GET'
             })
         ).pipe(
-            map(html => this.sanitizer.bypassSecurityTrustHtml(html))
+            map((html) => {
+                setTimeout(() => this.scroll.instance.update());
+                return this.sanitizer.bypassSecurityTrustHtml(html)
+            })
         );
     }
 
