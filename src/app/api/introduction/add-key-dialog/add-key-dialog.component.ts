@@ -18,7 +18,6 @@ import {
 export class EditKeyDialog extends AppComponentBase {
     isValid = false;
     validator: any;
-    movePos: any;
     model: GenerateApiKeyInput = new GenerateApiKeyInput();
 
     constructor(injector: Injector,

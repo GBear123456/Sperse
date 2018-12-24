@@ -9021,7 +9021,7 @@ export class ContactPhotoServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createContactPhoto(input: CreateContactPhotoInput | null | undefined): Observable<CreateContactPhotoOutput> {
+    createContactPhoto(input: CreateContactPhotoInput | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactPhoto/CreateContactPhoto";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9044,14 +9044,14 @@ export class ContactPhotoServiceProxy {
                 try {
                     return this.processCreateContactPhoto(<any>response_);
                 } catch (e) {
-                    return <Observable<CreateContactPhotoOutput>><any>_observableThrow(e);
+                    return <Observable<string>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CreateContactPhotoOutput>><any>_observableThrow(response_);
+                return <Observable<string>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateContactPhoto(response: HttpResponseBase): Observable<CreateContactPhotoOutput> {
+    protected processCreateContactPhoto(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -9062,7 +9062,7 @@ export class ContactPhotoServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateContactPhotoOutput.fromJS(resultData200) : new CreateContactPhotoOutput();
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -9070,7 +9070,59 @@ export class ContactPhotoServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CreateContactPhotoOutput>(<any>null);
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    clearContactPhoto(contactId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactPhoto/ClearContactPhoto?";
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processClearContactPhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processClearContactPhoto(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processClearContactPhoto(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -18686,6 +18738,54 @@ export class ProfileServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    clearProfilePicture(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/ClearProfilePicture";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processClearProfilePicture(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processClearProfilePicture(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processClearProfilePicture(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -25655,6 +25755,58 @@ export class UserServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    clearUserPicture(userId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/ClearUserPicture?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processClearUserPicture(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processClearUserPicture(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processClearUserPicture(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -28418,6 +28570,7 @@ export interface IGenerateApiKeyInput {
 export class RegisterApplicantRequest implements IRegisterApplicantRequest {
     systemType!: RegisterApplicantRequestSystemType;
     testMode!: boolean | undefined;
+    newUserPassword!: string | undefined;
     sendWelcomeEmail!: boolean | undefined;
     trackingInformation!: TrackingInformation | undefined;
     personalInformation!: PersonalInformation | undefined;
@@ -28440,6 +28593,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
         if (data) {
             this.systemType = data["systemType"];
             this.testMode = data["testMode"];
+            this.newUserPassword = data["newUserPassword"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
             this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
             this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
@@ -28462,6 +28616,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["testMode"] = this.testMode;
+        data["newUserPassword"] = this.newUserPassword;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
         data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
@@ -28477,6 +28632,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
 export interface IRegisterApplicantRequest {
     systemType: RegisterApplicantRequestSystemType;
     testMode: boolean | undefined;
+    newUserPassword: string | undefined;
     sendWelcomeEmail: boolean | undefined;
     trackingInformation: TrackingInformation | undefined;
     personalInformation: PersonalInformation | undefined;
@@ -38881,42 +39037,6 @@ export interface ICreateContactPhotoInput {
     thumbnail: string;
     photoSourceId: string | undefined;
     comment: string | undefined;
-}
-
-export class CreateContactPhotoOutput implements ICreateContactPhotoOutput {
-    id!: number | undefined;
-
-    constructor(data?: ICreateContactPhotoOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactPhotoOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactPhotoOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ICreateContactPhotoOutput {
-    id: number | undefined;
 }
 
 export class ContactRatingInfoDto implements IContactRatingInfoDto {
