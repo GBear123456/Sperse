@@ -14,6 +14,8 @@ export class ApplyOfferDialogComponent implements OnInit {
     redirectUrl: string;
     showBlockedMessage = false;
     currentStepIndex = 0;
+    title: string;
+    subtitle: string;
     constructor(
         private dialogRef: MatDialogRef<ApplyOfferDialogComponent>,
         @Inject(MAT_DIALOG_DATA) private data: any,
@@ -23,6 +25,8 @@ export class ApplyOfferDialogComponent implements OnInit {
         this.defaultCompleteInterval = this.data.defaultCompleteInterval || this.defaultCompleteInterval;
         this.completeDelays = this.data.completeDelays;
         this.delayMessages = this.data.delayMessages;
+        this.title = this.ls.l(this.data.title);
+        this.subtitle = this.ls.l(this.data.subtitle);
     }
 
     ngOnInit() {
