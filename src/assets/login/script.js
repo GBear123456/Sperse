@@ -26,7 +26,32 @@
             appBootstrap = boot;
         };        
 
+        setCheckDomainToken();
+
         getAppConfig();
+    }
+
+    function setCheckDomainToken() { //!!VP this necessary to provide login from top domain level
+        const authDataKey = 'AuthData';
+        document.cookie.split(';').some(function(data) {
+            var parts = data.split('=');
+            if ((parts[0].trim() == authDataKey) && parts[1]) {
+                var authData = JSON.parse(parts[1]);
+                setLoginCookies(
+                    authData.accessToken,
+                    authData.encryptedAccessToken,
+                    authData.expireInSeconds,
+                    authData.rememberClient,
+                    authData.twoFactorRememberClientToken,
+                    authData.returnUrl
+                );
+                document.cookie = authDataKey + '=; domain=' + 
+                    location.origin.split('.').slice(-2).join('.');
+
+                return true;
+            }
+            return false;
+        });
     }
 
     function getBaseHref() {
@@ -153,7 +178,18 @@
     }
 
     function login(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
+        setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl);
 
+        redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
+        if (redirectUrl) {
+            sessionStorage.removeItem('redirectUrl');
+            location.href = redirectUrl;
+        } else {
+            location.href = location.origin;
+        }
+    }
+
+    function setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
         var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
 
         abp.auth.setToken(
@@ -172,20 +208,12 @@
             abp.utils.setCookieValue(
                 TwoFactorRememberClientToken,
                 twoFactorRememberClientToken,
-                new Date(new Date().getTime() + 365 * 86400000), // 1 year
+                new Date(new Date().getTime() + 365 * 86400000),// 1 year
                 abp.appPath
             );
         }
 
         abp.multiTenancy.setTenantIdCookie();
-
-        redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
-        if (redirectUrl) {
-            sessionStorage.removeItem('redirectUrl');
-            location.href = redirectUrl;
-        } else {
-            location.href = location.origin;
-        }
     }
 
     function createStylesheet(href) {
