@@ -23,12 +23,16 @@
             (pathParts.pop() == 'login')
         )
     ) {
+
+        setCheckDomainToken();
+
+        if (location.origin.includes('lendspace.com')) //!!VP temporary fast hack to avoid custom login page logic run
+            return ;
+
         window.loginPageHandler = function(context, boot) { 
             appContext = context;
             appBootstrap = boot;
-        };        
-
-        setCheckDomainToken();
+        };                
 
         getAppConfig();
     }
