@@ -1,10 +1,10 @@
 <mat-dialog-content>
-    <ng-container  *ngIf="!showBlockedMessage">
+    <ng-container *ngIf="!showBlockedMessage">
         <div class="nextImageBlock">
             <img src="./assets/common/icons/next-arrow.svg" alt="Next">
         </div>
-        <h2>{{ ls.l('Offers_ProcessingLoanRequest') }}</h2>
-        <p>{{ ls.l('Offers_WaitLoanRequestProcessing') }}</p>
+        <h2>{{title}}</h2>
+        <p>{{subtitle}}</p>
         <ng-container *ngIf="processingSteps[currentStepIndex] as processingStep">
             <div class="alert alert-success text-center" *ngIf="delayMessages && delayMessages[currentStepIndex + 1]">
                 <strong>{{ delayMessages[currentStepIndex + 1] }}</strong>

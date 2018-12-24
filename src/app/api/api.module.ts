@@ -16,8 +16,8 @@ import {
 
 import {
     MatDialogModule
-}
-from '@angular/material';
+} from '@angular/material';
+import { ClipboardModule } from 'ngx-clipboard';
 
 @NgModule({
     imports: [
@@ -29,7 +29,8 @@ from '@angular/material';
         DxDateBoxModule,
         DxValidatorModule,
         DxValidationGroupModule,
-        MatDialogModule
+        MatDialogModule,
+        ClipboardModule
     ],
     declarations: [
         SwaggerComponent,

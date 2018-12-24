@@ -118,17 +118,26 @@ export class OffersService {
             systemType: 'EPCVIP',
             subId: category
         });
+        const modalData = {
+            processingSteps: [null, null, null, null],
+            completeDelays: [ 250, 250, 250, 250 ],
+            delayMessages: null,
+            title: 'Offers_ConnectingToPartners',
+            subtitle: 'Offers_NewWindowWillBeOpen',
+            redirectUrl: offer.redirectUrl
+        };
+        if (!linkIsDirect) {
+            modalData.processingSteps = cloneDeep(this.processingSteps);
+            modalData.title = 'Offers_ProcessingLoanRequest';
+            modalData.subtitle = 'Offers_WaitLoanRequestProcessing';
+            modalData.completeDelays = [ 1000, 1000, 1000, null ];
+            modalData.delayMessages = [ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
+        }
+
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
             width: '500px',
             panelClass: 'apply-offer-dialog',
-            data: {
-                processingSteps: cloneDeep(this.processingSteps),
-                completeDelays: linkIsDirect
-                                    ? [ 250, 250, 250, 250 ]
-                                    : [ 1000, 1000, 1000, null ],
-                delayMessages: linkIsDirect ? null : [ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ],
-                redirectUrl: offer.redirectUrl
-            }
+            data: modalData
         });
         this.offerServiceProxy.submitApplication(submitApplicationInput)
             .subscribe((output: SubmitApplicationOutput) => {

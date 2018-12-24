@@ -106,12 +106,25 @@
             text-transform: capitalize;
         }
         h3 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             letter-spacing: 0.2px;
             line-height: 24px;
             margin-bottom: 25px;
+            
+            .amount-count {
+                float: right;
+                display: block;
+            }
         }
+        
+        .available-amount {
+            display: flex;
+            max-width: 100%;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
         .creditCardsList {
             font-size: 16px;
             font-weight: 500;
@@ -132,18 +145,23 @@
                         display: none;
                     }
                 }
+                .mat-radio-label {
+                    max-width: 100%;
+                }
                 .mat-radio-label-content {
                     display: flex;
                     align-items: center;
+                    max-width: 100%;
                     .cardInfo {
                         margin-left: 16px;
                         font-size: 18px;
                         line-height: 1.25;
                         overflow: hidden;
-                        flex-basis: 200px;
+                        //flex-basis: 200px;
                         h4, h5 {
                             overflow: hidden;
                             text-overflow: ellipsis;
+                            max-width: 185px;
                         }
                         h4 {
                             font-size: 13px;
@@ -164,8 +182,15 @@
                         border: 3px solid transparent;
                         border-radius: 4px;
                         height: 66px;
+                        width: 90px;
+                        min-width: 90px;
                         display: flex;
                         align-items: center;
+                        
+                        img {
+                            object-fit: cover;
+                            max-width: 100%;
+                        }
                     }
                 }
                 &.mat-radio-checked {
