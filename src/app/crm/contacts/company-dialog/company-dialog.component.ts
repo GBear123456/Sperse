@@ -176,37 +176,39 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         }).afterClosed()
             .pipe(filter(result => result))
             .subscribe(result => {
-                let base64OrigImage: string;
-                let base64ThumbImage: string;
-                let apiObserverable: Observable<void>;
-
                 if (result.clearPhoto) {
-                    apiObserverable = this.contactPhotoServiceProxy.clearContactPhoto(this.company.id);
+                    this.contactPhotoServiceProxy.clearContactPhoto(this.company.id)
+                        .subscribe(() => {
+                            this.handlePhotoChange(null);
+                        });
                 }
                 else {
-                    base64OrigImage = StringHelper.getBase64(result.origImage);
-                    base64ThumbImage = StringHelper.getBase64(result.thumImage);
+                    let base64OrigImage = StringHelper.getBase64(result.origImage);
+                    let base64ThumbImage = StringHelper.getBase64(result.thumImage);
 
-                    apiObserverable = this.contactPhotoServiceProxy.createContactPhoto(
+                    this.contactPhotoServiceProxy.createContactPhoto(
                         CreateContactPhotoInput.fromJS({
                             contactId: this.company.id,
                             originalImage: base64OrigImage,
                             thumbnail: base64ThumbImage
                         })
-                    );
+                    ).subscribe(() => {
+                        let primaryPhoto = base64OrigImage
+                            ? ContactPhotoDto.fromJS({
+                                original: base64OrigImage,
+                                thumbnail: base64ThumbImage
+                            })
+                            : null;
+                        this.handlePhotoChange(primaryPhoto);
+                    });
                 }
-
-                apiObserverable.subscribe(() => {
-                    this.company.primaryPhoto = base64OrigImage
-                        ? ContactPhotoDto.fromJS({
-                            original: base64OrigImage,
-                            thumbnail: base64ThumbImage
-                        })
-                        : null;
-                    this.changeDetectorRef.detectChanges();
-                });
             });
         event.stopPropagation();
+    }
+
+    private handlePhotoChange(photo: ContactPhotoDto) {
+        this.company.primaryPhoto = photo;
+        this.changeDetectorRef.detectChanges();
     }
 
     private getCompanyPhoto(company): { source?: string } {

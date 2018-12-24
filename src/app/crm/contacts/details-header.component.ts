@@ -158,20 +158,17 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         }).afterClosed()
             .pipe(filter(result => result))
             .subscribe(result => {
-                let base64OrigImage: string;
-                let base64ThumbImage: string;
                 let dataField = (isCompany ? 'primaryOrganization' : 'person') + 'ContactInfo';
 
                 if (result.clearPhoto) {
                     this.contactPhotoServiceProxy.clearContactPhoto(this.data[dataField].id)
                         .subscribe(() => {
-                            this.data[dataField].primaryPhoto = null;
-                            this.handlePhotoChange(this.data[dataField].userId, null);
+                            this.handlePhotoChange(dataField, null, null);
                         });
                 }
                 else {
-                    base64OrigImage = StringHelper.getBase64(result.origImage),
-                    base64ThumbImage = StringHelper.getBase64(result.thumImage),
+                    let base64OrigImage = StringHelper.getBase64(result.origImage);
+                    let base64ThumbImage = StringHelper.getBase64(result.thumImage);
 
                     this.contactPhotoServiceProxy.createContactPhoto(
                         CreateContactPhotoInput.fromJS({
@@ -179,22 +176,24 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                             originalImage: base64OrigImage,
                             thumbnail: base64ThumbImage
                         })).subscribe((result) => {
-                            this.data[dataField].primaryPhoto = base64OrigImage
+                            let primaryPhoto = base64OrigImage
                                 ? ContactPhotoDto.fromJS({
                                     original: base64OrigImage,
                                     thumbnail: base64ThumbImage
                                 }) :
                                 undefined;
 
-                            this.handlePhotoChange(this.data[dataField].userId, result)
+                            this.handlePhotoChange(dataField, primaryPhoto, result)
                         });
                 }
         });
         event.stopPropagation();
     }
 
-    private handlePhotoChange(userId, thumbnailId: string) {
-        if (userId == abp.session.userId)
+    private handlePhotoChange(dataField: string, photo: ContactPhotoDto, thumbnailId: string) {
+        this.data[dataField].primaryPhoto = photo;
+
+        if (this.data[dataField].userId == abp.session.userId)
             abp.event.trigger('profilePictureChanged', thumbnailId);
     }
 
