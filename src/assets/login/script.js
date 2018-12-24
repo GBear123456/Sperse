@@ -1,4 +1,6 @@
 (function() {
+    const tokenCookieName = 'Abp.AuthToken';
+    const tenantIdCookieName = 'Abp.TenantId';
     const TwoFactorRememberClientToken = 'TwoFactorRememberClientToken';
     const AbpLocalizationCultureName = 'Abp.Localization.CultureName';
     const EncryptedAuthToken = 'enc_auth_token';
@@ -189,31 +191,57 @@
         }
     }
 
-    function setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
-        var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
+    function setCookieValue(key, value, expireDate, path, domain) {
+        var cookieValue = encodeURIComponent(key) + '=';
 
-        abp.auth.setToken(
-            accessToken,
-            tokenExpireDate
-        );
-
-        abp.utils.setCookieValue(
-            EncryptedAuthToken,
-            encryptedAccessToken,
-            tokenExpireDate,
-            abp.appPath
-        );
-
-        if (twoFactorRememberClientToken) {
-            abp.utils.setCookieValue(
-                TwoFactorRememberClientToken,
-                twoFactorRememberClientToken,
-                new Date(new Date().getTime() + 365 * 86400000),// 1 year
-                abp.appPath
-            );
+        if (value) {
+            cookieValue = cookieValue + encodeURIComponent(value);
         }
 
-        abp.multiTenancy.setTenantIdCookie();
+        if (expireDate) {
+            cookieValue = cookieValue + "; expires=" + expireDate.toUTCString();
+        }
+
+        if (path) {
+            cookieValue = cookieValue + "; path=" + path;
+        }
+
+        if (domain) {
+            cookieValue = cookieValue + "; domain=" + domain;
+        }
+
+        document.cookie = cookieValue;
+    }
+
+    deleteCookie = function (key, path) {
+        var cookieValue = encodeURIComponent(key) + '=';
+
+        cookieValue = cookieValue + "; expires=" + (new Date(new Date().getTime() - 86400000)).toUTCString();
+
+        if (path) {
+            cookieValue = cookieValue + "; path=" + path;
+        }
+
+        document.cookie = cookieValue;
+    }
+
+    function setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
+        var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
+        
+        var appPath = '/';
+
+        setCookieValue(tokenCookieName, accessToken, tokenExpireDate, appPath);
+        setCookieValue(EncryptedAuthToken, encryptedAccessToken, tokenExpireDate, appPath);
+
+        if (twoFactorRememberClientToken)
+            setCookieValue(
+                TwoFactorRememberClientToken, 
+                twoFactorRememberClientToken,
+                new Date(new Date().getTime() + 365 * 86400000),// 1 year
+                appPath
+            );
+
+        deleteCookie(tenantIdCookieName, appPath);
     }
 
     function createStylesheet(href) {
