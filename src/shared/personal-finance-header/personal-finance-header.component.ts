@@ -163,7 +163,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
                 routerUrl: '/personal-finance/offers/credit-cards'
             },
             {
-                name: 'Credit Score',
+                name: 'Credit Scores',
                 sublinks: [
                     {
                         name: this.ls('PFM', 'Offers_CreditScore'),
