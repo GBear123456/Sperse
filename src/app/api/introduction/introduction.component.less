@@ -60,6 +60,36 @@
             text-decoration: underline;
             color: #337ab7;
         }
+
+        .key-container {
+            position: relative;
+
+            span {
+                max-width: 100%;
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            i {
+                opacity: 0;
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+            }
+
+            &:hover {
+                span {
+                    max-width: 93%;
+                }
+
+                i {
+                    opacity: 1;
+                }
+            }
+        }
     }
 
     .btn-layout {

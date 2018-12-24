@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
+import { ClipboardService } from 'ngx-clipboard'
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
 import { MatDialog } from '@angular/material';
@@ -26,7 +27,8 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        private _apiKeyService: ApiKeyServiceProxy) {
+        private _apiKeyService: ApiKeyServiceProxy,
+        private _clipboardService: ClipboardService) {
         super(injector);
     }
 
@@ -77,6 +79,11 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
                     });
             };
         });
+    }
+
+    copyToClipboard(text) {
+        this._clipboardService.copyFromContent(text);
+        abp.notify.info(this.l('Copied'));
     }
 
     ngOnDestroy() {

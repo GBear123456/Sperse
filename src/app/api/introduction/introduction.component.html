@@ -20,13 +20,17 @@
                               keyExpr="id"
                               [dataSource]="apiKeys">
                     <dxi-column dataField="name" caption="{{l('ApiKey_Name')}}"></dxi-column>
-                    <dxi-column dataField="key" caption="{{l('ApiKey_Key')}}"></dxi-column>
+                    <dxi-column dataField="key" caption="{{l('ApiKey_Key')}}" cellTemplate="keyTemplate"></dxi-column>
                     <dxi-column dataField="expireDate" caption="{{l('ApiKey_ExpirationDate')}}" dataType="date"></dxi-column>
                     <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" dataType="date"></dxi-column>
                     <dxi-column dataField="userName" caption="{{l('UserName')}}"></dxi-column>
                     <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" [visible]="canManageApiKeys" cellTemplate="editDeleteTemplate"></dxi-column>
                     <div *dxTemplate="let data of 'editDeleteTemplate'">
                         <a class="dx-link" (click)="deleteApiKey(data)">{{l('Delete')}}</a>
+                    </div>
+                    <div *dxTemplate="let data of 'keyTemplate'" class="key-container">
+                        <span title="{{data.data.key}}">{{data.data.key}}</span>
+                        <i class="fa fa-copy" (click)="copyToClipboard(data.data.key)"></i>
                     </div>
                 </dx-data-grid>
             </div>
