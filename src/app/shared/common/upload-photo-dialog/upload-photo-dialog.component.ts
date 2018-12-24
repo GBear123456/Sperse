@@ -73,15 +73,15 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         setting.croppedHeight = 100;
         setting.canvasWidth = 619;
         setting.canvasHeight = 300;
-        setting.minWidth = 115;
-        setting.minHeight = 115;
+        setting.minWidth = 1;
+        setting.minHeight = 1;
         setting.rounded = false;
         setting.keepAspect = false;
         setting.noFileInput = true;
         setting.preserveSize = true;
         setting.compressRatio = 2;
         setting.minWithRelativeToResolution = true;
-        setting.cropperDrawSettings.strokeColor = 'rgba(255,255,255,1)';
+        setting.cropperDrawSettings.strokeColor = 'rgba(0,174,239,1)';
         setting.cropperDrawSettings.strokeWidth = 2;
         setting.cropperClass = 'cropper-canvas';
 
