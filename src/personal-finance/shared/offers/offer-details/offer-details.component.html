@@ -5,7 +5,12 @@
     <div class="row">
         <div class="col-md-7 col-lg-4 leftBlock sm-hidden" #offersList>
             <h1>{{ categoryDisplayName$ | async }}</h1>
-            <h3 #availableCards><ng-container *ngIf="cardsAmount">{{ ls.l('Offers_Available') }} {{ categoryDisplayName$ | async }} ({{ cardsAmount }})</ng-container></h3>
+            <h3 #availableCards class="available-amount">
+                <ng-container *ngIf="cardsAmount">
+                    <span>{{ ls.l('Offers_Available') }} {{ categoryDisplayName$ | async }}</span>
+                    <span class="amount-count">({{ cardsAmount }})</span>
+                </ng-container>
+            </h3>
             <div class="creditCardsList" #creditCardsList>
                 <mat-radio-group (change)="creditCardChanged($event)" [value]="selectedCardId$ | async">
                     <mat-radio-button *ngFor="let creditCard of creditCards$ | async" [value]="creditCard.id">
