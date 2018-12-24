@@ -265,20 +265,20 @@ export class OffersComponent implements OnInit, OnDestroy {
                     this.buttonCaption = 'GetOffer';
                     break;
             } 
-
-            abp.ui.setBusy();
-            this.selectedFilter$ = combineLatest(this.creditScore$, this.category$)
-                .pipe(
-                    first(),
-                    switchMap(([creditScore, category]) => {
-                        this.filtersValues.creditScore = creditScore;
-                        this.filtersValues.category = category;
-                        this.selectedFilter.next(this.filtersValues);
-                        return this.selectedFilter.asObservable();
-                    })
-                );
-            this.activate();
         });
+
+        this.selectedFilter$ = combineLatest(this.creditScore$, this.category$)
+            .pipe(
+                first(),
+                switchMap(([creditScore, category]) => {
+                    this.filtersValues.creditScore = creditScore;
+                    this.filtersValues.category = category;
+                    this.selectedFilter.next(this.filtersValues);
+                    return this.selectedFilter.asObservable();
+                })
+            );            
+
+        this.activate();
     }
 
     activate() {
