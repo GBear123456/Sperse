@@ -213,7 +213,7 @@
         document.cookie = cookieValue;
     }
 
-    deleteCookie = function (key, path) {
+    function deleteCookie(key, path) {
         var cookieValue = encodeURIComponent(key) + '=';
 
         cookieValue = cookieValue + "; expires=" + (new Date(new Date().getTime() - 86400000)).toUTCString();
