@@ -38,13 +38,13 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     defaultSection = 'summary';
     sectionName$: Observable<string>;
     menuItems = [
-        { name: 'Summary', sectionName: 'summary' },
-        { name: 'Goals', sectionName: 'goals' },
-        { name: 'Allocation', sectionName: 'allocation' },
-        { name: 'SpendingAndBudgeting', sectionName: 'spending' },
         { name: 'Accounts', sectionName: 'accounts' },
+        { name: 'Overview', sectionName: 'summary' },
+        { name: 'Budgeting', sectionName: 'spending' },
         { name: 'Transactions', sectionName: 'transactions' },
-        { name: 'Holdings', sectionName: 'holdings' }
+        { name: 'Holdings', sectionName: 'holdings' },
+        { name: 'Allocation', sectionName: 'allocation' },
+        { name: 'Goals', sectionName: 'goals' }
     ];
 
     constructor(
