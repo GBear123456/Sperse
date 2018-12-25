@@ -33,7 +33,7 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit, OnD
                 takeUntil(this.destroy$),
                 tap(x => 'quovo login open event'),
                 switchMap(() => this.quovoService.open(this.accountId))
-            ).subscribe(() => { console.log('quovo login open'); });
+            ).subscribe(() => {});
 
         this.quovoService.quovoClosed$
             .pipe(takeUntil(this.destroy$))
