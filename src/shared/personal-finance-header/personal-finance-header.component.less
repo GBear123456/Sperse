@@ -178,6 +178,19 @@
             max-width: 310px;
             min-width: 220px;
             height: 60px;
+    
+            @media all and (max-width: 767px) {
+                max-width: 100%;
+                min-width: 180px !important;
+                
+                a {
+                    max-width: 100%;
+                    
+                    img {
+                        max-width: 100%;
+                    }
+                }
+            }
 
             a {
                 max-width: 200px;
