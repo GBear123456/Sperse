@@ -30,6 +30,10 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
         return true;
     }
 
+    isPublicSection(route) {
+        return route.data && route.data.isPublic;
+    }
+
     canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
         if (UrlHelper.isPfmAppUrl(state.url)) {
             if (this._featureChecker.isEnabled('PFM.Applications'))
@@ -46,7 +50,7 @@ export class CreditReportsRouteGuard implements CanActivate, CanActivateChild {
                 this._router.navigate(['/app/access-denied']);
                 return false;
             }
-        } else if (UrlHelper.isPfmSignUpUrl(state.url)) {
+        } else if (UrlHelper.isPfmSignUpUrl(state.url) || this.isPublicSection(route)) {
             return true;
         } else {
             sessionStorage.setItem('redirectUrl', location.origin + state.url);

@@ -4,6 +4,7 @@ import { PersonalFinanceComponent } from './personal-finance.component';
 import { CreditReportsRouteGuard } from './shared/common/auth/auth-route-guard';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
+import { ArticlesComponent } from './pages/articles/articles.component';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
 import { LendspaceWelcomeComponent } from './pages/lendspace-welcome/lendspace-welcome.component';
@@ -80,6 +81,11 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                         path: 'contact-us',
                         component: ContactUsComponent,
                         data: { wrapperDisabled: true }
+                    },
+                    {
+                        path: 'atricles',
+                        component: ArticlesComponent,
+                        data: { wrapperDisabled: true, isPublic: true }
                     },
                     {
                         path: 'offers',

@@ -10,6 +10,7 @@ import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-servi
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { PackageIdService } from './shared/common/packages/package-id.service';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
+import { ArticlesComponent } from './pages/articles/articles.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
 import { LendspaceWelcomeComponent } from './pages/lendspace-welcome/lendspace-welcome.component';
 import { CreditReportServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -51,6 +52,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         TermsOfServiceComponent,
         PrivacyPolicyComponent,
         ContactUsComponent,
+        ArticlesComponent,
         AboutUsComponent,
         LendspaceWelcomeComponent,
         CreditReportComponent,

@@ -217,6 +217,10 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
                         routerUrl: '/personal-finance/my-finances/goals'
                     }
                 ]
+            },
+            {
+                name: 'Articles',
+                routerUrl: '/personal-finance/atricles'
             }
         ];
     }
