@@ -52,6 +52,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     categoryDisplayName$: Observable<string>;
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
+    buttonCaption: string = 'Apply';
 
     constructor(
         injector: Injector,
@@ -72,7 +73,19 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
 
     activate() {
         this.category$ = this.offersService.getCategoryFromRoute(this.route.params).pipe(first());
-        this.category$.subscribe(res => { this.selectedCategory = res; });
+        this.category$.subscribe(res => { 
+            switch(this.selectedCategory = res) {
+                case Category.PersonalLoans: 
+                    this.buttonCaption = 'ApplyNow';
+                    break;
+                case Category.CreditCards: 
+                    this.buttonCaption = 'ViewOffers';
+                    break;
+                case Category.CreditScore: 
+                    this.buttonCaption = 'GetOffer';
+                    break;
+            } 
+        });
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.route.params.pipe(
             takeUntil(this.deactivate$),
