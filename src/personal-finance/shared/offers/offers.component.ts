@@ -304,7 +304,9 @@ export class OffersComponent implements OnInit, OnDestroy {
                 this.getCategoryGroup(filter.category) === CategoryGroupEnum.Loans
                     ? this.offersService.covertNumberToCreditScore(filter.creditScore)
                     : undefined,
-                filter.category
+                filter.category,
+                undefined,
+                undefined
             ).pipe(
                 finalize(() => {
                     this.offersAreLoading = false;
