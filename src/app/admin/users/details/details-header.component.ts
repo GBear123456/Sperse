@@ -1,6 +1,7 @@
 import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 
+import { filter } from 'rxjs/operators';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UserServiceProxy, GetUserForEditOutput, UpdateUserPictureInput } from '@shared/service-proxies/service-proxies';
@@ -36,20 +37,31 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                 maxSizeBytes: AppConsts.maxImageSize
             },
             hasBackdrop: true
-        }).afterClosed().subscribe(result => {
-            if (result && result.origImage) {
-                this._userService.updateUserPicture(UpdateUserPictureInput.fromJS({
-                    userId: this.data['userId'],
-                    image: StringHelper.getBase64(result.origImage),
-                    imageThumbnail: StringHelper.getBase64(result.imageThumbnail)
-                })).subscribe((thumbnailId) => {
-                    this.data['photo'] = result.origImage;
-
-                    if (this.data['userId'] == abp.session.userId)
-                        abp.event.trigger('profilePictureChanged', thumbnailId);
-                });
-            }
-        });
+        }).afterClosed()
+            .pipe(filter(result => result))
+            .subscribe(result => {
+                if (result.clearPhoto) {
+                    this._userService.clearUserPicture(this.data['userId'])
+                        .subscribe(() => {
+                            this.handlePictureChange(null, null);
+                        });
+                } else if (result.origImage) {
+                    this._userService.updateUserPicture(UpdateUserPictureInput.fromJS({
+                        userId: this.data['userId'],
+                        image: StringHelper.getBase64(result.origImage),
+                        imageThumbnail: StringHelper.getBase64(result.imageThumbnail)
+                    })).subscribe((thumbnailId) => {
+                        this.handlePictureChange(result.origImage, thumbnailId);
+                    });
+                }
+            });
         event.stopPropagation();
+    }
+
+    private handlePictureChange(origImage: string, thumbnailId: string) {
+        this.data['photo'] = origImage;
+
+        if (this.data['userId'] == abp.session.userId)
+            abp.event.trigger('profilePictureChanged', thumbnailId);
     }
 }

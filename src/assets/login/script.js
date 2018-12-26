@@ -1,4 +1,6 @@
 (function() {
+    const tokenCookieName = 'Abp.AuthToken';
+    const tenantIdCookieName = 'Abp.TenantId';
     const TwoFactorRememberClientToken = 'TwoFactorRememberClientToken';
     const AbpLocalizationCultureName = 'Abp.Localization.CultureName';
     const EncryptedAuthToken = 'enc_auth_token';
@@ -21,12 +23,41 @@
             (pathParts.pop() == 'login')
         )
     ) {
+
+        setCheckDomainToken();
+
+        if (location.origin.includes('lendspace.com')) //!!VP temporary fast hack to avoid custom login page logic run
+            return ;
+
         window.loginPageHandler = function(context, boot) { 
             appContext = context;
             appBootstrap = boot;
-        };        
+        };                
 
         getAppConfig();
+    }
+
+    function setCheckDomainToken() { //!!VP this necessary to provide login from top domain level
+        const authDataKey = 'AuthData';
+        document.cookie.split(';').some(function(data) {
+            var parts = data.split('=');
+            if ((parts[0].trim() == authDataKey) && parts[1]) {
+                var authData = JSON.parse(parts[1]);
+                setLoginCookies(
+                    authData.accessToken,
+                    authData.encryptedAccessToken,
+                    authData.expireInSeconds,
+                    authData.rememberClient,
+                    authData.twoFactorRememberClientToken,
+                    authData.returnUrl
+                );
+                document.cookie = authDataKey + '=; domain=' + 
+                    location.origin.split('.').slice(-2).join('.');
+
+                return true;
+            }
+            return false;
+        });
     }
 
     function getBaseHref() {
@@ -153,31 +184,7 @@
     }
 
     function login(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
-
-        var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
-
-        abp.auth.setToken(
-            accessToken,
-            tokenExpireDate
-        );
-
-        abp.utils.setCookieValue(
-            EncryptedAuthToken,
-            encryptedAccessToken,
-            tokenExpireDate,
-            abp.appPath
-        );
-
-        if (twoFactorRememberClientToken) {
-            abp.utils.setCookieValue(
-                TwoFactorRememberClientToken,
-                twoFactorRememberClientToken,
-                new Date(new Date().getTime() + 365 * 86400000), // 1 year
-                abp.appPath
-            );
-        }
-
-        abp.multiTenancy.setTenantIdCookie();
+        setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl);
 
         redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
         if (redirectUrl) {
@@ -186,6 +193,59 @@
         } else {
             location.href = location.origin;
         }
+    }
+
+    function setCookieValue(key, value, expireDate, path, domain) {
+        var cookieValue = encodeURIComponent(key) + '=';
+
+        if (value) {
+            cookieValue = cookieValue + encodeURIComponent(value);
+        }
+
+        if (expireDate) {
+            cookieValue = cookieValue + "; expires=" + expireDate.toUTCString();
+        }
+
+        if (path) {
+            cookieValue = cookieValue + "; path=" + path;
+        }
+
+        if (domain) {
+            cookieValue = cookieValue + "; domain=" + domain;
+        }
+
+        document.cookie = cookieValue;
+    }
+
+    function deleteCookie(key, path) {
+        var cookieValue = encodeURIComponent(key) + '=';
+
+        cookieValue = cookieValue + "; expires=" + (new Date(new Date().getTime() - 86400000)).toUTCString();
+
+        if (path) {
+            cookieValue = cookieValue + "; path=" + path;
+        }
+
+        document.cookie = cookieValue;
+    }
+
+    function setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
+        var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
+        
+        var appPath = '/';
+
+        setCookieValue(tokenCookieName, accessToken, tokenExpireDate, appPath);
+        setCookieValue(EncryptedAuthToken, encryptedAccessToken, tokenExpireDate, appPath);
+
+        if (twoFactorRememberClientToken)
+            setCookieValue(
+                TwoFactorRememberClientToken, 
+                twoFactorRememberClientToken,
+                new Date(new Date().getTime() + 365 * 86400000),// 1 year
+                appPath
+            );
+
+        deleteCookie(tenantIdCookieName, appPath);
     }
 
     function createStylesheet(href) {

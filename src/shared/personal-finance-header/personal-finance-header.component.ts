@@ -312,19 +312,30 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         }).afterClosed()
             .pipe(filter(result => result))
             .subscribe((result) => {
-                const base64OrigImage = StringHelper.getBase64(result.origImage),
-                    base64ThumbImage = StringHelper.getBase64(result.thumImage);
-                this._profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
-                    originalImage: base64OrigImage,
-                    thumbnail: base64ThumbImage
-                })).subscribe(res => {
-                    this.appSession.user.profilePictureId = res;
-                    abp.event.trigger('profilePictureChanged', res);
-                });
+                if (result.clearPhoto) {
+                    this._profileServiceProxy.clearProfilePicture()
+                        .subscribe(() => {
+                            this.handleProfilePictureChange(null);
+                        });
+                } else {
+                    const base64OrigImage = StringHelper.getBase64(result.origImage),
+                        base64ThumbImage = StringHelper.getBase64(result.thumImage);
+                    this._profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
+                        originalImage: base64OrigImage,
+                        thumbnail: base64ThumbImage
+                    })).subscribe(thumbnailId => {
+                        this.handleProfilePictureChange(thumbnailId);
+                    });
+                }
             });
         if (e.stopPropagation) {
             e.stopPropagation();
         }
+    }
+
+    private handleProfilePictureChange(thumbnailId: string) {
+        this.appSession.user.profilePictureId = thumbnailId;
+        abp.event.trigger('profilePictureChanged', thumbnailId);
     }
 
     changeMySettings(e): void {

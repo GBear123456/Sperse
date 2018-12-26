@@ -76,7 +76,7 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
                 this.inlineMemberAreaLinks.push(this.memberAreaLinks[index]);
         });
 
-        if (window.innerWidth < 530) {
+        if (window.innerWidth < 530 && !this.loggedUserId) {
             this.responsiveMemberAreaLinks.push(...this.actionsButtons);
         }
     }

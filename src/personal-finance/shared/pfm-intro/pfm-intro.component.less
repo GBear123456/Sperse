@@ -11,7 +11,6 @@
         background: transparent;
         border: 0;
         right: 15px;
-        // top: 15px;
         top: 4%;
         padding: 0;
         outline: none;
@@ -20,6 +19,7 @@
         i {
             font-size: 25px;
             margin: 0;
+            color: #fff;
         }
 
         &:hover {
@@ -46,13 +46,13 @@
 
         .main {
             text-align: center;
-            /* flex-grow: 2; */
             display: flex;
             justify-content: center;
             border-radius: 15px;
             background: #fff;
-            margin: 0px 85px;
-            padding: 40px 0;
+            margin: 0 85px;
+            padding: 40px 60px;
+            box-shadow: 0 22px 81px 0 rgba(37, 41, 66, 0.1);
 
             img {
                 margin-right: 39px;
@@ -66,6 +66,7 @@
                 line-height: normal;
                 letter-spacing: normal;
                 color: #000000;
+                
             }
 
             p {
@@ -76,6 +77,11 @@
                 line-height: 1.86;
                 letter-spacing: normal;
                 color: #4a4a4a;
+            }
+            
+            h3,
+            p {
+                text-align: left;
             }
         }
 
@@ -106,11 +112,6 @@
             .btn-layout {
                 background: @lend-space-main-color;
                 font-size: 17px !important;
-                font-weight: 700;
-                font-style: normal;
-                font-stretch: normal;
-                line-height: normal;
-                letter-spacing: normal;
                 text-align: center;
                 color: #000;
                 background: #ffcc00;
@@ -130,6 +131,9 @@
     }
 
     /deep/ mat-horizontal-stepper {
+        background: #fff url(../../../assets/common/images/pfm-intro/intro-header-background.svg) 50% -10px no-repeat;
+        background-size: contain;
+        
         .mat-stepper-horizontal-line,
         .mat-horizontal-stepper-header:first-child {
             display: none !important;
@@ -150,8 +154,13 @@
             height: 100%;
         }
     }
-
 }
+
+//::ng-deep .cdk-overlay-backdrop {
+//    filter: blur(3px);
+//    backdrop-filter: blur(3px);
+//    background-color: rgba(0, 0, 0, 0.75) !important;
+//}
 
 .mat-dialog-content {
     padding: 0;

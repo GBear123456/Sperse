@@ -9021,7 +9021,7 @@ export class ContactPhotoServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createContactPhoto(input: CreateContactPhotoInput | null | undefined): Observable<CreateContactPhotoOutput> {
+    createContactPhoto(input: CreateContactPhotoInput | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactPhoto/CreateContactPhoto";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -9044,14 +9044,14 @@ export class ContactPhotoServiceProxy {
                 try {
                     return this.processCreateContactPhoto(<any>response_);
                 } catch (e) {
-                    return <Observable<CreateContactPhotoOutput>><any>_observableThrow(e);
+                    return <Observable<string>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CreateContactPhotoOutput>><any>_observableThrow(response_);
+                return <Observable<string>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateContactPhoto(response: HttpResponseBase): Observable<CreateContactPhotoOutput> {
+    protected processCreateContactPhoto(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -9062,7 +9062,7 @@ export class ContactPhotoServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateContactPhotoOutput.fromJS(resultData200) : new CreateContactPhotoOutput();
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -9070,7 +9070,59 @@ export class ContactPhotoServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CreateContactPhotoOutput>(<any>null);
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    clearContactPhoto(contactId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactPhoto/ClearContactPhoto?";
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processClearContactPhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processClearContactPhoto(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processClearContactPhoto(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -15899,9 +15951,11 @@ export class OfferServiceProxy {
      * @type (optional) 
      * @country (optional) 
      * @creditScore (optional) 
+     * @isOfferCollection (optional) 
+     * @itemOfOfferCollection (optional) 
      * @return Success
      */
-    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, subId: string): Observable<CampaignDto[]> {
+    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, subId: string, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<CampaignDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (category !== undefined)
             url_ += "Category=" + encodeURIComponent("" + category) + "&"; 
@@ -15915,6 +15969,10 @@ export class OfferServiceProxy {
             throw new Error("The parameter 'subId' must be defined and cannot be null.");
         else
             url_ += "SubId=" + encodeURIComponent("" + subId) + "&"; 
+        if (isOfferCollection !== undefined)
+            url_ += "IsOfferCollection=" + encodeURIComponent("" + isOfferCollection) + "&"; 
+        if (itemOfOfferCollection !== undefined)
+            url_ += "ItemOfOfferCollection=" + encodeURIComponent("" + itemOfOfferCollection) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -16132,6 +16190,69 @@ export class OfferServiceProxy {
             }));
         }
         return _observableOf<GetMemberInfoResponse>(<any>null);
+    }
+}
+
+@Injectable()
+export class OfferManagementServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @fetchAll (optional) 
+     * @return Success
+     */
+    pull(fetchAll: boolean | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/Pull?";
+        if (fetchAll !== undefined)
+            url_ += "fetchAll=" + encodeURIComponent("" + fetchAll) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPull(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPull(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processPull(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -18683,6 +18804,54 @@ export class ProfileServiceProxy {
             }));
         }
         return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    clearProfilePicture(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/ClearProfilePicture";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processClearProfilePicture(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processClearProfilePicture(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processClearProfilePicture(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -25655,6 +25824,58 @@ export class UserServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    clearUserPicture(userId: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/User/ClearUserPicture?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processClearUserPicture(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processClearUserPicture(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processClearUserPicture(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -28319,7 +28540,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
     id!: number | undefined;
     name!: string | undefined;
     key!: string | undefined;
-    expireDate!: moment.Moment | undefined;
+    expirationDate!: moment.Moment | undefined;
     creationTime!: moment.Moment | undefined;
     userId!: number | undefined;
     userName!: string | undefined;
@@ -28338,7 +28559,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.key = data["key"];
-            this.expireDate = data["expireDate"] ? moment(data["expireDate"].toString()) : <any>undefined;
+            this.expirationDate = data["expirationDate"] ? moment(data["expirationDate"].toString()) : <any>undefined;
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.userId = data["userId"];
             this.userName = data["userName"];
@@ -28357,7 +28578,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["key"] = this.key;
-        data["expireDate"] = this.expireDate ? this.expireDate.toISOString() : <any>undefined;
+        data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         data["userName"] = this.userName;
@@ -28369,7 +28590,7 @@ export interface IApiKeyInfo {
     id: number | undefined;
     name: string | undefined;
     key: string | undefined;
-    expireDate: moment.Moment | undefined;
+    expirationDate: moment.Moment | undefined;
     creationTime: moment.Moment | undefined;
     userId: number | undefined;
     userName: string | undefined;
@@ -28418,6 +28639,7 @@ export interface IGenerateApiKeyInput {
 export class RegisterApplicantRequest implements IRegisterApplicantRequest {
     systemType!: RegisterApplicantRequestSystemType;
     testMode!: boolean | undefined;
+    newUserPassword!: string | undefined;
     sendWelcomeEmail!: boolean | undefined;
     trackingInformation!: TrackingInformation | undefined;
     personalInformation!: PersonalInformation | undefined;
@@ -28440,6 +28662,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
         if (data) {
             this.systemType = data["systemType"];
             this.testMode = data["testMode"];
+            this.newUserPassword = data["newUserPassword"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
             this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
             this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
@@ -28462,6 +28685,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["testMode"] = this.testMode;
+        data["newUserPassword"] = this.newUserPassword;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
         data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
@@ -28477,6 +28701,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
 export interface IRegisterApplicantRequest {
     systemType: RegisterApplicantRequestSystemType;
     testMode: boolean | undefined;
+    newUserPassword: string | undefined;
     sendWelcomeEmail: boolean | undefined;
     trackingInformation: TrackingInformation | undefined;
     personalInformation: PersonalInformation | undefined;
@@ -38883,42 +39108,6 @@ export interface ICreateContactPhotoInput {
     comment: string | undefined;
 }
 
-export class CreateContactPhotoOutput implements ICreateContactPhotoOutput {
-    id!: number | undefined;
-
-    constructor(data?: ICreateContactPhotoOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): CreateContactPhotoOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateContactPhotoOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ICreateContactPhotoOutput {
-    id: number | undefined;
-}
-
 export class ContactRatingInfoDto implements IContactRatingInfoDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -48338,6 +48527,13 @@ export class CampaignDto implements ICampaignDto {
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
+    offerCollection!: CampaignDtoOfferCollection | undefined;
+    overallRating!: number | undefined;
+    issuingBank!: string | undefined;
+    annualFee!: string | undefined;
+    rewardsRate!: string | undefined;
+    introRewardsBonus!: string | undefined;
+    regAPRRate!: string | undefined;
 
     constructor(data?: ICampaignDto) {
         if (data) {
@@ -48377,6 +48573,13 @@ export class CampaignDto implements ICampaignDto {
             this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
             this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
             this.expireTimeOfDay = data["expireTimeOfDay"];
+            this.offerCollection = data["offerCollection"];
+            this.overallRating = data["overallRating"];
+            this.issuingBank = data["issuingBank"];
+            this.annualFee = data["annualFee"];
+            this.rewardsRate = data["rewardsRate"];
+            this.introRewardsBonus = data["introRewardsBonus"];
+            this.regAPRRate = data["regAPRRate"];
         }
     }
 
@@ -48416,6 +48619,13 @@ export class CampaignDto implements ICampaignDto {
         data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
         data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
         data["expireTimeOfDay"] = this.expireTimeOfDay;
+        data["offerCollection"] = this.offerCollection;
+        data["overallRating"] = this.overallRating;
+        data["issuingBank"] = this.issuingBank;
+        data["annualFee"] = this.annualFee;
+        data["rewardsRate"] = this.rewardsRate;
+        data["introRewardsBonus"] = this.introRewardsBonus;
+        data["regAPRRate"] = this.regAPRRate;
         return data; 
     }
 }
@@ -48436,6 +48646,13 @@ export interface ICampaignDto {
     daysOfWeekAvailability: string | undefined;
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
+    offerCollection: CampaignDtoOfferCollection | undefined;
+    overallRating: number | undefined;
+    issuingBank: string | undefined;
+    annualFee: string | undefined;
+    rewardsRate: string | undefined;
+    introRewardsBonus: string | undefined;
+    regAPRRate: string | undefined;
 }
 
 export class CampaignDetailsDto implements ICampaignDetailsDto {
@@ -48457,6 +48674,13 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
+    offerCollection!: CampaignDetailsDtoOfferCollection | undefined;
+    overallRating!: number | undefined;
+    issuingBank!: string | undefined;
+    annualFee!: string | undefined;
+    rewardsRate!: string | undefined;
+    introRewardsBonus!: string | undefined;
+    regAPRRate!: string | undefined;
 
     constructor(data?: ICampaignDetailsDto) {
         if (data) {
@@ -48499,6 +48723,13 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
             this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
             this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
             this.expireTimeOfDay = data["expireTimeOfDay"];
+            this.offerCollection = data["offerCollection"];
+            this.overallRating = data["overallRating"];
+            this.issuingBank = data["issuingBank"];
+            this.annualFee = data["annualFee"];
+            this.rewardsRate = data["rewardsRate"];
+            this.introRewardsBonus = data["introRewardsBonus"];
+            this.regAPRRate = data["regAPRRate"];
         }
     }
 
@@ -48541,6 +48772,13 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
         data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
         data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
         data["expireTimeOfDay"] = this.expireTimeOfDay;
+        data["offerCollection"] = this.offerCollection;
+        data["overallRating"] = this.overallRating;
+        data["issuingBank"] = this.issuingBank;
+        data["annualFee"] = this.annualFee;
+        data["rewardsRate"] = this.rewardsRate;
+        data["introRewardsBonus"] = this.introRewardsBonus;
+        data["regAPRRate"] = this.regAPRRate;
         return data; 
     }
 }
@@ -48564,6 +48802,13 @@ export interface ICampaignDetailsDto {
     daysOfWeekAvailability: string | undefined;
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
+    offerCollection: CampaignDetailsDtoOfferCollection | undefined;
+    overallRating: number | undefined;
+    issuingBank: string | undefined;
+    annualFee: string | undefined;
+    rewardsRate: string | undefined;
+    introRewardsBonus: string | undefined;
+    regAPRRate: string | undefined;
 }
 
 export class SubmitApplicationInput implements ISubmitApplicationInput {
@@ -58368,6 +58613,23 @@ export enum CreditScore {
     Poor = "Poor", 
 }
 
+export enum ItemOfOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    LowInterest = "LowInterest", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
+}
+
 export enum Module {
     CFO = "CFO", 
     CRM = "CRM", 
@@ -58940,6 +59202,23 @@ export enum CreditScores {
     Poor = "Poor", 
 }
 
+export enum CampaignDtoOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    LowInterest = "LowInterest", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
+}
+
 export enum CampaignDetailsDtoSystemType {
     EPCVIP = "EPCVIP", 
 }
@@ -58986,6 +59265,23 @@ export enum CreditScores2 {
     Good = "Good", 
     Fair = "Fair", 
     Poor = "Poor", 
+}
+
+export enum CampaignDetailsDtoOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    LowInterest = "LowInterest", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
 }
 
 export enum SubmitApplicationInputSystemType {

@@ -18,6 +18,7 @@ import { MaskPipe } from 'ngx-mask';
 import { DxSelectBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -36,7 +37,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
     templateUrl: './company-dialog.component.html',
     styleUrls: ['./company-dialog.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ ContactPhotoServiceProxy, MaskPipe ]
+    providers: [ContactPhotoServiceProxy, MaskPipe]
 })
 export class CompanyDialogComponent extends ModalDialogComponent implements OnInit {
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
@@ -125,7 +126,7 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         this.company.companyName = this.company.fullName = this.data.title;
         let input = new UpdateOrganizationInfoInput(this.company);
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
-        let size = _.find(this.companySizes, item => item.id === this.company.companySize );
+        let size = _.find(this.companySizes, item => item.id === this.company.companySize);
         if (size) {
             input.sizeFrom = size.from;
             input.sizeTo = size.to;
@@ -149,8 +150,8 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
 
     private getMomentFromDateWithoutTime(date: any): moment.Moment {
         return date.getFullYear
-                    ? moment.utc(date.getFullYear() + '-' + ( date.getMonth() + 1 ) + '-' + date.getDate())
-                    : moment.utc(date.format('YYYY-MM-DD'));
+            ? moment.utc(date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate())
+            : moment.utc(date.format('YYYY-MM-DD'));
     }
 
     private loadCountries() {
@@ -172,28 +173,42 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         this.dialog.open(UploadPhotoDialogComponent, {
             data: { ...this.company, ...this.getCompanyPhoto(this.company) },
             hasBackdrop: true
-        }).afterClosed().subscribe(result => {
-            if (result) {
-                let base64OrigImage = StringHelper.getBase64(result.origImage),
-                    base64ThumbImage = StringHelper.getBase64(result.thumImage);
-                this.contactPhotoServiceProxy.createContactPhoto(
-                    CreateContactPhotoInput.fromJS({
-                        contactId: this.company.id,
-                        originalImage: base64OrigImage,
-                        thumbnail: base64ThumbImage
-                    })
-                ).subscribe(() => {
-                    this.company.primaryPhoto = base64OrigImage
-                                                ? ContactPhotoDto.fromJS({
-                                                    original: base64OrigImage,
-                                                    thumbnail: base64ThumbImage
-                                                })
-                                                : null;
-                    this.changeDetectorRef.detectChanges();
-                });
-            }
-        });
+        }).afterClosed()
+            .pipe(filter(result => result))
+            .subscribe(result => {
+                if (result.clearPhoto) {
+                    this.contactPhotoServiceProxy.clearContactPhoto(this.company.id)
+                        .subscribe(() => {
+                            this.handlePhotoChange(null);
+                        });
+                }
+                else {
+                    let base64OrigImage = StringHelper.getBase64(result.origImage);
+                    let base64ThumbImage = StringHelper.getBase64(result.thumImage);
+
+                    this.contactPhotoServiceProxy.createContactPhoto(
+                        CreateContactPhotoInput.fromJS({
+                            contactId: this.company.id,
+                            originalImage: base64OrigImage,
+                            thumbnail: base64ThumbImage
+                        })
+                    ).subscribe(() => {
+                        let primaryPhoto = base64OrigImage
+                            ? ContactPhotoDto.fromJS({
+                                original: base64OrigImage,
+                                thumbnail: base64ThumbImage
+                            })
+                            : null;
+                        this.handlePhotoChange(primaryPhoto);
+                    });
+                }
+            });
         event.stopPropagation();
+    }
+
+    private handlePhotoChange(photo: ContactPhotoDto) {
+        this.company.primaryPhoto = photo;
+        this.changeDetectorRef.detectChanges();
     }
 
     private getCompanyPhoto(company): { source?: string } {

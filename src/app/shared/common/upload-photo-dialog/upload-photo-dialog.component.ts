@@ -175,8 +175,9 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     clearPhoto() {
         if (!this.clearDisabled) {
             this.dialogRef.close({
-                origImage: '',
-                thumImage: ''
+                clearPhoto: true,
+                origImage: null,
+                thumImage: null
             });
         }
     }

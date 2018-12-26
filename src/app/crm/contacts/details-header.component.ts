@@ -7,6 +7,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -154,28 +155,46 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
             hasBackdrop: true
-        }).afterClosed().subscribe(result => {
-            if (result) {
-                let base64OrigImage = StringHelper.getBase64(result.origImage),
-                    base64ThumbImage = StringHelper.getBase64(result.thumImage),
-                    dataField = (isCompany ? 'primaryOrganization' : 'person') + 'ContactInfo';
-                this.contactPhotoServiceProxy.createContactPhoto(
-                    CreateContactPhotoInput.fromJS({
-                        contactId: this.data[dataField].id,
-                        originalImage: base64OrigImage,
-                        thumbnail: base64ThumbImage
-                    })
-                ).subscribe(() => {
-                    this.data[dataField].primaryPhoto = base64OrigImage
-                        ? ContactPhotoDto.fromJS({
-                            original: base64OrigImage,
+        }).afterClosed()
+            .pipe(filter(result => result))
+            .subscribe(result => {
+                let dataField = (isCompany ? 'primaryOrganization' : 'person') + 'ContactInfo';
+
+                if (result.clearPhoto) {
+                    this.contactPhotoServiceProxy.clearContactPhoto(this.data[dataField].id)
+                        .subscribe(() => {
+                            this.handlePhotoChange(dataField, null, null);
+                        });
+                }
+                else {
+                    let base64OrigImage = StringHelper.getBase64(result.origImage);
+                    let base64ThumbImage = StringHelper.getBase64(result.thumImage);
+
+                    this.contactPhotoServiceProxy.createContactPhoto(
+                        CreateContactPhotoInput.fromJS({
+                            contactId: this.data[dataField].id,
+                            originalImage: base64OrigImage,
                             thumbnail: base64ThumbImage
-                        }) :
-                        undefined;
-                });
-            }
+                        })).subscribe((result) => {
+                            let primaryPhoto = base64OrigImage
+                                ? ContactPhotoDto.fromJS({
+                                    original: base64OrigImage,
+                                    thumbnail: base64ThumbImage
+                                }) :
+                                undefined;
+
+                            this.handlePhotoChange(dataField, primaryPhoto, result)
+                        });
+                }
         });
         event.stopPropagation();
+    }
+
+    private handlePhotoChange(dataField: string, photo: ContactPhotoDto, thumbnailId: string) {
+        this.data[dataField].primaryPhoto = photo;
+
+        if (this.data[dataField].userId == abp.session.userId)
+            abp.event.trigger('profilePictureChanged', thumbnailId);
     }
 
     private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
