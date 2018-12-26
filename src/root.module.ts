@@ -37,8 +37,10 @@ export function appInitializerFactory(
     platformLocation: PlatformLocation,
     faviconService: FaviconService
 ) {
-    return () => {
-        handleLogoutRequest(injector.get(AppAuthService));
+    return () => {        
+        let appAuthService = injector.get(AppAuthService);
+        appAuthService.setCheckDomainToken();
+        handleLogoutRequest(appAuthService);
 
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);

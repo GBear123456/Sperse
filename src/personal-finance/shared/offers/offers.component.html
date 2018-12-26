@@ -96,10 +96,10 @@
                     </div>
                     <div class="description col-12 col-md-8 col-lg-6">
                         <h4><span *ngIf="offerItem.bankName">{{ offerItem.bankName }} + ' - '</span>{{offerItem.name }}</h4>
-                        <!-- div class="rating" *ngIf="offerItem.rating">
+                        <div class="rating" *ngIf="offerItem.rating">
                             <stars-rating [currentRating]="offerItem.rating" color="#f0d500"></stars-rating>
-                            <span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span>
-                        </div -->
+                            <!-- span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span -->
+                        </div>
                         <ul class="descriptionItems">
                             <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'rewardsBonus', 'apr']">
                                 <li *ngIf="offerItem[param]">

@@ -1,7 +1,6 @@
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { Injectable } from '@angular/core';
 import { ApplicationInfoDto, GetCurrentLoginInformationsOutput, SessionServiceProxy, TenantLoginInfoDto, UserLoginInfoDto } from '@shared/service-proxies/service-proxies';
-import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Injectable()
 export class AppSessionService {
@@ -11,8 +10,7 @@ export class AppSessionService {
 
     constructor(
         private _sessionService: SessionServiceProxy,
-        private _abpMultiTenancyService: AbpMultiTenancyService,
-        private _appAuthService: AppAuthService
+        private _abpMultiTenancyService: AbpMultiTenancyService
     ) {
     }
 
@@ -66,8 +64,7 @@ export class AppSessionService {
         return info;
     }
 
-    init(): Promise<boolean> {
-        this._appAuthService.setCheckDomainToken();
+    init(): Promise<boolean> {        
         return new Promise<boolean>((resolve, reject) => {
             let updateLoginInfo = (result) => {
                 this._application = result.application;
