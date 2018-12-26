@@ -21,7 +21,7 @@
                               [dataSource]="apiKeys">
                     <dxi-column dataField="name" caption="{{l('ApiKey_Name')}}"></dxi-column>
                     <dxi-column dataField="key" caption="{{l('ApiKey_Key')}}" cellTemplate="keyTemplate"></dxi-column>
-                    <dxi-column dataField="expireDate" caption="{{l('ApiKey_ExpirationDate')}}" dataType="date"></dxi-column>
+                    <dxi-column dataField="expirationDate" caption="{{l('ApiKey_ExpirationDate')}}" dataType="date"></dxi-column>
                     <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" dataType="date"></dxi-column>
                     <dxi-column dataField="userName" caption="{{l('UserName')}}"></dxi-column>
                     <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" [visible]="canManageApiKeys" cellTemplate="editDeleteTemplate"></dxi-column>

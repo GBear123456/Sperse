@@ -15951,9 +15951,11 @@ export class OfferServiceProxy {
      * @type (optional) 
      * @country (optional) 
      * @creditScore (optional) 
+     * @isOfferCollection (optional) 
+     * @itemOfOfferCollection (optional) 
      * @return Success
      */
-    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, subId: string): Observable<CampaignDto[]> {
+    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, subId: string, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<CampaignDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (category !== undefined)
             url_ += "Category=" + encodeURIComponent("" + category) + "&"; 
@@ -15967,6 +15969,10 @@ export class OfferServiceProxy {
             throw new Error("The parameter 'subId' must be defined and cannot be null.");
         else
             url_ += "SubId=" + encodeURIComponent("" + subId) + "&"; 
+        if (isOfferCollection !== undefined)
+            url_ += "IsOfferCollection=" + encodeURIComponent("" + isOfferCollection) + "&"; 
+        if (itemOfOfferCollection !== undefined)
+            url_ += "ItemOfOfferCollection=" + encodeURIComponent("" + itemOfOfferCollection) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -16184,6 +16190,69 @@ export class OfferServiceProxy {
             }));
         }
         return _observableOf<GetMemberInfoResponse>(<any>null);
+    }
+}
+
+@Injectable()
+export class OfferManagementServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @fetchAll (optional) 
+     * @return Success
+     */
+    pull(fetchAll: boolean | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/Pull?";
+        if (fetchAll !== undefined)
+            url_ += "fetchAll=" + encodeURIComponent("" + fetchAll) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPull(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPull(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processPull(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -28471,7 +28540,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
     id!: number | undefined;
     name!: string | undefined;
     key!: string | undefined;
-    expireDate!: moment.Moment | undefined;
+    expirationDate!: moment.Moment | undefined;
     creationTime!: moment.Moment | undefined;
     userId!: number | undefined;
     userName!: string | undefined;
@@ -28490,7 +28559,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
             this.id = data["id"];
             this.name = data["name"];
             this.key = data["key"];
-            this.expireDate = data["expireDate"] ? moment(data["expireDate"].toString()) : <any>undefined;
+            this.expirationDate = data["expirationDate"] ? moment(data["expirationDate"].toString()) : <any>undefined;
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.userId = data["userId"];
             this.userName = data["userName"];
@@ -28509,7 +28578,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
         data["id"] = this.id;
         data["name"] = this.name;
         data["key"] = this.key;
-        data["expireDate"] = this.expireDate ? this.expireDate.toISOString() : <any>undefined;
+        data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         data["userName"] = this.userName;
@@ -28521,7 +28590,7 @@ export interface IApiKeyInfo {
     id: number | undefined;
     name: string | undefined;
     key: string | undefined;
-    expireDate: moment.Moment | undefined;
+    expirationDate: moment.Moment | undefined;
     creationTime: moment.Moment | undefined;
     userId: number | undefined;
     userName: string | undefined;
@@ -48458,6 +48527,13 @@ export class CampaignDto implements ICampaignDto {
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
+    offerCollection!: CampaignDtoOfferCollection | undefined;
+    overallRating!: number | undefined;
+    issuingBank!: string | undefined;
+    annualFee!: string | undefined;
+    rewardsRate!: string | undefined;
+    introRewardsBonus!: string | undefined;
+    regAPRRate!: string | undefined;
 
     constructor(data?: ICampaignDto) {
         if (data) {
@@ -48497,6 +48573,13 @@ export class CampaignDto implements ICampaignDto {
             this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
             this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
             this.expireTimeOfDay = data["expireTimeOfDay"];
+            this.offerCollection = data["offerCollection"];
+            this.overallRating = data["overallRating"];
+            this.issuingBank = data["issuingBank"];
+            this.annualFee = data["annualFee"];
+            this.rewardsRate = data["rewardsRate"];
+            this.introRewardsBonus = data["introRewardsBonus"];
+            this.regAPRRate = data["regAPRRate"];
         }
     }
 
@@ -48536,6 +48619,13 @@ export class CampaignDto implements ICampaignDto {
         data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
         data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
         data["expireTimeOfDay"] = this.expireTimeOfDay;
+        data["offerCollection"] = this.offerCollection;
+        data["overallRating"] = this.overallRating;
+        data["issuingBank"] = this.issuingBank;
+        data["annualFee"] = this.annualFee;
+        data["rewardsRate"] = this.rewardsRate;
+        data["introRewardsBonus"] = this.introRewardsBonus;
+        data["regAPRRate"] = this.regAPRRate;
         return data; 
     }
 }
@@ -48556,6 +48646,13 @@ export interface ICampaignDto {
     daysOfWeekAvailability: string | undefined;
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
+    offerCollection: CampaignDtoOfferCollection | undefined;
+    overallRating: number | undefined;
+    issuingBank: string | undefined;
+    annualFee: string | undefined;
+    rewardsRate: string | undefined;
+    introRewardsBonus: string | undefined;
+    regAPRRate: string | undefined;
 }
 
 export class CampaignDetailsDto implements ICampaignDetailsDto {
@@ -48577,6 +48674,13 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
+    offerCollection!: CampaignDetailsDtoOfferCollection | undefined;
+    overallRating!: number | undefined;
+    issuingBank!: string | undefined;
+    annualFee!: string | undefined;
+    rewardsRate!: string | undefined;
+    introRewardsBonus!: string | undefined;
+    regAPRRate!: string | undefined;
 
     constructor(data?: ICampaignDetailsDto) {
         if (data) {
@@ -48619,6 +48723,13 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
             this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
             this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
             this.expireTimeOfDay = data["expireTimeOfDay"];
+            this.offerCollection = data["offerCollection"];
+            this.overallRating = data["overallRating"];
+            this.issuingBank = data["issuingBank"];
+            this.annualFee = data["annualFee"];
+            this.rewardsRate = data["rewardsRate"];
+            this.introRewardsBonus = data["introRewardsBonus"];
+            this.regAPRRate = data["regAPRRate"];
         }
     }
 
@@ -48661,6 +48772,13 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
         data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
         data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
         data["expireTimeOfDay"] = this.expireTimeOfDay;
+        data["offerCollection"] = this.offerCollection;
+        data["overallRating"] = this.overallRating;
+        data["issuingBank"] = this.issuingBank;
+        data["annualFee"] = this.annualFee;
+        data["rewardsRate"] = this.rewardsRate;
+        data["introRewardsBonus"] = this.introRewardsBonus;
+        data["regAPRRate"] = this.regAPRRate;
         return data; 
     }
 }
@@ -48684,6 +48802,13 @@ export interface ICampaignDetailsDto {
     daysOfWeekAvailability: string | undefined;
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
+    offerCollection: CampaignDetailsDtoOfferCollection | undefined;
+    overallRating: number | undefined;
+    issuingBank: string | undefined;
+    annualFee: string | undefined;
+    rewardsRate: string | undefined;
+    introRewardsBonus: string | undefined;
+    regAPRRate: string | undefined;
 }
 
 export class SubmitApplicationInput implements ISubmitApplicationInput {
@@ -58488,6 +58613,23 @@ export enum CreditScore {
     Poor = "Poor", 
 }
 
+export enum ItemOfOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    LowInterest = "LowInterest", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
+}
+
 export enum Module {
     CFO = "CFO", 
     CRM = "CRM", 
@@ -59060,6 +59202,23 @@ export enum CreditScores {
     Poor = "Poor", 
 }
 
+export enum CampaignDtoOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    LowInterest = "LowInterest", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
+}
+
 export enum CampaignDetailsDtoSystemType {
     EPCVIP = "EPCVIP", 
 }
@@ -59106,6 +59265,23 @@ export enum CreditScores2 {
     Good = "Good", 
     Fair = "Fair", 
     Poor = "Poor", 
+}
+
+export enum CampaignDetailsDtoOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    LowInterest = "LowInterest", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
 }
 
 export enum SubmitApplicationInputSystemType {
