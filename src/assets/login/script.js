@@ -18,17 +18,11 @@
     var cookie = queryString(document.cookie, ';');
     var params = queryString(document.location.search.substr(1), '&');
     if (
-        !params.secureId && !params.tenantId && (
+        !checkSetDomainToken() && !params.secureId && !params.tenantId && (
             (!pathParts.length && !cookie['Abp.AuthToken']) ||
             (pathParts.pop() == 'login')
         )
-    ) {
-
-        setCheckDomainToken();
-
-        if (location.origin.includes('lendspace.com')) //!!VP temporary fast hack to avoid custom login page logic run
-            return ;
-
+    ) {        
         window.loginPageHandler = function(context, boot) { 
             appContext = context;
             appBootstrap = boot;
@@ -37,24 +31,27 @@
         getAppConfig();
     }
 
-    function setCheckDomainToken() { //!!VP this necessary to provide login from top domain level
+    function checkSetDomainToken() { //!!VP this necessary to provide login from top domain level
         const authDataKey = 'AuthData';
-        document.cookie.split(';').some(function(data) {
-            var parts = data.split('=');
-            if ((parts[0].trim() == authDataKey) && parts[1]) {
-                var authData = JSON.parse(parts[1]);
-                setLoginCookies(
-                    authData.accessToken,
-                    authData.encryptedAccessToken,
-                    authData.expireInSeconds,
-                    authData.rememberClient,
-                    authData.twoFactorRememberClientToken,
-                    authData.returnUrl
-                );
-                document.cookie = authDataKey + '=; domain=' + 
-                    location.origin.split('.').slice(-2).join('.');
-
-                return true;
+        return document.cookie.split(';').some(function(data) {
+            var parts = data.split(authDataKey + '=');
+            if ((parts.length == 2) && parts[1].trim()) {
+                try {
+                    var authData = JSON.parse(parts[1]);
+                    setLoginCookies(
+                        authData.accessToken,
+                        authData.encryptedAccessToken,
+                        authData.expireInSeconds,
+                        authData.rememberClient,
+                        authData.twoFactorRememberClientToken,
+                        authData.returnUrl
+                    );
+                    document.cookie = authDataKey + '=; domain=' + 
+                        location.origin.split('.').slice(-2).join('.');
+                    return true;
+                } catch(e) {
+                    return false;
+                }                
             }
             return false;
         });
