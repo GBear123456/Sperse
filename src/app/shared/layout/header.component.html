@@ -184,8 +184,17 @@
                                                         </a>
                                                     </li>
                                                     <li class="m-nav__separator m-nav__separator--fit"></li>
-                                                    <li class="m-nav__item">
-                                                        <a href="javascript:;" (click)="logout()" class="btn m-btn--pill btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder">{{l("Logout")}}</a>
+                                                    <li class="m-nav__item bottom-logout">
+                                                        <a class="m-nav__link" href="javascript:;" (click)="logout()">
+                                                            <img class="user-menu-icon" src="assets/common/icons/logout.svg">
+                                                            <span class="m-nav__link-title">
+                                                                <span class="m-nav__link-wrap">
+                                                                    <span class="m-nav__link-text">
+                                                                        {{l("Logout")}}
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        </a>
                                                     </li>
                                                 </ul>
                                             </div>

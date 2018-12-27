@@ -88,7 +88,7 @@ export class AppConsts {
     static readonly imageUrls = {
         noPhoto: 'assets/common/images/no-photo.png',
         profileDefault: 'assets/common/images/default-profile-picture.png',
-        profileLendSpace: 'assets/common/images/no-photo.png'
+        profileLendSpace: 'assets/common/images/lend-space-dark/avatar.svg'
     };
 
     static readonly defaultCompanyName = 'Unknown company';

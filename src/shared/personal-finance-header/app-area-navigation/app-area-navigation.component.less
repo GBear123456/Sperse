@@ -59,22 +59,10 @@
                 }
             }
             .sublinks {
-                &:before {
-                    width: 0;
-                    height: 0;
-                    content: '';
-                    display: block;
-                    border-left: 10px solid transparent;
-                    border-right: 10px solid transparent;
-                    position: relative;
-                    top: -10px;
-                    left: 20px;
-                    border-bottom: 10px solid #000;
-                }
                 display: none;
                 position: absolute;
                 left: 0;
-                background-color: #000;
+                background-color: #313131;
             }
         }
     }
@@ -109,7 +97,7 @@
             a:hover,
             &.active > a {
                 color: #ffcc00;
-                background: none;
+                background: #000;
                 img {
                     opacity: 0;
                     &.active-img {
@@ -126,20 +114,17 @@
     /** Common styles for second level menu and responsive menu */
     .sublinks,
     .app-responsive-menu {
-        background-color: #000;
+        background-color: #313131;
         border-radius: 8px;
-        padding: 19px 27px 17px;
+        padding: 19px 0px 17px 0px;
         top: 60px;
         li {
             display: block;
             padding: 0;
             text-align: left;
-            &:not(:last-child) {
-                margin-bottom: 9px;
-            }
             a {
                 color: #FFF;
-                padding: 0;
+                padding: 6px 30px;
                 &.active,
                 &:hover {
                     color: @lend-space-main-color;
@@ -163,7 +148,7 @@
             height: 0;
             border-style: solid;
             border-width: 0 12px 15px 12px;
-            border-color: transparent transparent #000000 transparent;
+            border-color: transparent transparent #313131 transparent;
             top: 45px;
             left: 0;
             right: 0;
@@ -188,7 +173,7 @@
                     &:before {
                         content: '';
                         position: absolute;
-                        left: 0;
+                        left: 30px;
                         width: 5px;
                         height: 5px;
                         background: @lend-space-main-color;

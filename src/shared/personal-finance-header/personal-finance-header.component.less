@@ -86,7 +86,50 @@
                     // padding-top: 6px;
 
                     .m-nav__item {
-                        padding: 0 14px !important;
+                        padding: 0 14px !important;                        
+
+                        &.bottom-logout {
+                            display: inline-block;
+                            width: 121px;
+                            .m-nav__link-text {
+                                color: #3463ae;
+                            }
+                        }
+                        &.bottom-back {
+                            display: inline-block;
+                            padding: 0px!important;
+                            width: 150px;
+                            float: right;
+                            .m-nav__link-text {
+                                color: #3463ae;
+                            }
+                        }
+
+                        .m-nav__link {
+                            white-space: nowrap;
+                        }
+
+                        .user-menu-icon {
+                            display: inline-block;
+                            margin: 5px 15px 5px 0px;
+                        }
+                        .m-nav__link-title {                    
+                            display: inline-block;
+
+                            .m-nav__link-text {
+                                font-family: Poppins;
+                                font-size: 15px;
+                                font-weight: 500;
+                                font-style: normal;
+                                font-stretch: normal;
+                                line-height: 1.67;
+                                letter-spacing: normal;
+                            }
+                        }
+                        .m-nav__separator {
+                            height: 1px;
+                            background: #f4f5f8;
+                        }
 
                         @media (max-width: 768px) {
                             padding: 0 8px !important;
@@ -136,6 +179,7 @@
                     }
 
                     &.tenantName {
+                        display: none;
                         text-align: left;
                         margin-top: 15px;
                         font-size: 22px;
@@ -143,10 +187,18 @@
                     }
                 }
 
-                .header-profile-picture {
+                .header-profile-picture, 
+                /deep/ #header_notification_bar .header-profile-picture{
                     width: 41px;
                     height: 41px;
                     max-width: 41px!important;
+                    &[src*="avatar"] {
+                        padding: 8px;
+                        background: #f0d500;
+                    }
+                }
+
+                /deep/ #header_notification_bar {
                 }
             }
 

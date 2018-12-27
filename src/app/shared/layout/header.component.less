@@ -30,6 +30,13 @@
                 .m-nav__item {
                     padding: 0 14px !important;
 
+                    &.bottom-logout {
+                        width: 100px;
+                        .m-nav__link-text {
+                            color: #3463ae;
+                        }
+                    }
+
                     @media (max-width: 768px) {
                         padding: 0 8px !important;
                     }
@@ -160,13 +167,61 @@
 }
 
 /deep/ body.lend-space {
-    .page-header .page-top i[aria-label="Notifications"] {
-        display: inline-block!important;
-        background: url('../../../assets/common/images/lend-space-dark/notification.svg') no-repeat!important;
-        width: 17px!important;
-        height: 20px!important;
-        &:before {
-            display: none!important;
+    .page-header .page-top {
+        i[aria-label="Notifications"] {
+            display: inline-block!important;
+            background: url('../../../assets/common/images/lend-space-dark/notification.svg') no-repeat!important;
+            width: 17px!important;
+            height: 20px!important;
+            &:before {
+                display: none!important;
+            }
+        }
+
+        .m-nav__item {
+            .m-nav__link-title {                    
+                display: inline-block;
+
+                .m-nav__link-text {
+                    font-family: Poppins;
+                    font-size: 15px;
+                    font-weight: 500;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.67;
+                    letter-spacing: normal;
+                }
+            }
+            &.bottom-logout {
+                width: 121px!important;
+            }
+            .m-nav__link {
+                white-space: nowrap;
+            }
+
+            .user-menu-icon {
+                display: inline-block;
+                margin: 5px 15px 5px 0px;
+            }
+
+            .m-nav__link-icon:before {
+                    content: none;
+            }
+            .m-nav__link-icon.flaticon-more-v6 {  
+                background: url(../../../assets/common/images/lend-space-dark/icons/lock-open.svg) no-repeat;
+            }
+            .m-nav__link-icon.flaticon-list { 
+                background: url(../../../assets/common/images/lend-space-dark/icons/playlist.svg) no-repeat;
+            }
+            .m-nav__link-icon.flaticon-profile-1 { 
+                background: url(../../../assets/common/images/lend-space-dark/icons/user-picture.svg) no-repeat;
+            }
+            .m-nav__link-icon.flaticon-cogwheel { 
+                background: url(../../../assets/common/images/lend-space-dark/icons/settings-gear.svg) no-repeat;
+            }
+            .m-nav__link-icon.flaticon-info { 
+                background: url(../../../assets/common/images/lend-space-dark/icons/help.svg) no-repeat;
+            }
         }
     }
 }

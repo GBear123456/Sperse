@@ -110,7 +110,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
         private _permissionChecker: PermissionCheckerService,
         private _commonUserInfoService: CommonUserInfoServiceProxy
     ) {
-        super(injector);
+        super(injector, AppConsts.localization.PFMLocalizationSourceName);
         if (this.feature.isEnabled('CFO.Partner')) {
             this.memberAreaLinks.unshift(
                 {
