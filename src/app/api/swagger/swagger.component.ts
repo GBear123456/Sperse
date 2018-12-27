@@ -28,11 +28,19 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
 
     ngOnInit() {
         window.addEventListener('message', this.onSwaggerLoaded);
-        this.link = this._sanitizer
-            .bypassSecurityTrustResourceUrl(
-                AppConsts.remoteServiceBaseUrl +
-                '/api/index.html?tokenAuth=' + abp.auth.getToken()
-            );
+        if (AppConsts.remoteServiceBaseUrl == AppConsts.appBaseUrl) {
+            this.link = this._sanitizer
+                .bypassSecurityTrustResourceUrl(
+                    AppConsts.remoteServiceBaseUrl +
+                    '/api/index.html'
+                );
+        } else {
+            this.link = this._sanitizer
+                .bypassSecurityTrustResourceUrl(
+                    AppConsts.remoteServiceBaseUrl +
+                    '/api/index.html?tokenAuth=' + abp.auth.getToken()
+                );
+        }
         abp.ui.setBusy();
     }
 
