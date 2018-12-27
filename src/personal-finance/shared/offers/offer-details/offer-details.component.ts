@@ -103,7 +103,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         abp.ui.setBusy(this.detailsContainerRef.nativeElement);
         return this.category$
             .pipe(
-                switchMap((category) => this.offerServiceProxy.getDetails(cardId, category)),
+                switchMap((category) => this.offerServiceProxy.getDetails(cardId)),
                 /** @todo remove in future */
                 map(details => {
                     return {
@@ -134,7 +134,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
                     of(this.offersService.displayedCards) :
                     this.category$.pipe(
-                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined, category, undefined, undefined))
+                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined, undefined, undefined))
                     )
                 ).pipe(
                     finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))
@@ -155,9 +155,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     }
 
     applyOffer(offer: CampaignDto) {
-        this.category$.pipe(first()).subscribe(category => {
-            this.offersService.applyOffer(offer, category);
-        });
+        this.offersService.applyOffer(offer);
     }
 
     getCreditScore(creditScores: CreditScores2[]): CreditScoreInterface {

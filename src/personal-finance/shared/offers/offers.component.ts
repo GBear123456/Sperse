@@ -304,7 +304,6 @@ export class OffersComponent implements OnInit, OnDestroy {
                 this.getCategoryGroup(filter.category) === CategoryGroupEnum.Loans
                     ? this.offersService.covertNumberToCreditScore(filter.creditScore)
                     : undefined,
-                filter.category,
                 undefined,
                 undefined
             ).pipe(
@@ -427,7 +426,7 @@ export class OffersComponent implements OnInit, OnDestroy {
     }
 
     applyOffer(offer: CampaignDto) {
-        this.offersService.applyOffer(offer, this.filtersValues.category);
+        this.offersService.applyOffer(offer);
     }
 
     changeStep(sliderChange: MatSliderChange, stepsConditions: StepConditionInterface[]) {

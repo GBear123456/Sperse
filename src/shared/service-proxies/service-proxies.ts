@@ -15955,7 +15955,7 @@ export class OfferServiceProxy {
      * @itemOfOfferCollection (optional) 
      * @return Success
      */
-    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, subId: string, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<CampaignDto[]> {
+    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<CampaignDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (category !== undefined)
             url_ += "Category=" + encodeURIComponent("" + category) + "&"; 
@@ -15965,10 +15965,6 @@ export class OfferServiceProxy {
             url_ += "Country=" + encodeURIComponent("" + country) + "&"; 
         if (creditScore !== undefined)
             url_ += "CreditScore=" + encodeURIComponent("" + creditScore) + "&"; 
-        if (subId === undefined || subId === null)
-            throw new Error("The parameter 'subId' must be defined and cannot be null.");
-        else
-            url_ += "SubId=" + encodeURIComponent("" + subId) + "&"; 
         if (isOfferCollection !== undefined)
             url_ += "IsOfferCollection=" + encodeURIComponent("" + isOfferCollection) + "&"; 
         if (itemOfOfferCollection !== undefined)
@@ -16027,16 +16023,12 @@ export class OfferServiceProxy {
     /**
      * @return Success
      */
-    getDetails(id: number, subId: string): Observable<CampaignDetailsDto> {
+    getDetails(id: number): Observable<CampaignDetailsDto> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetDetails?";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined and cannot be null.");
         else
             url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        if (subId === undefined || subId === null)
-            throw new Error("The parameter 'subId' must be defined and cannot be null.");
-        else
-            url_ += "SubId=" + encodeURIComponent("" + subId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -16237,6 +16229,58 @@ export class OfferManagementServiceProxy {
     }
 
     protected processPull(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    extend(input: ExtendOfferDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/Extend";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processExtend(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processExtend(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processExtend(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -48517,6 +48561,7 @@ export class CampaignDto implements ICampaignDto {
     status!: CampaignDtoStatus | undefined;
     type!: CampaignDtoType | undefined;
     name!: string | undefined;
+    subId!: string | undefined;
     traficSource!: CampaignDtoTraficSource | undefined;
     redirectUrl!: string | undefined;
     created!: moment.Moment | undefined;
@@ -48533,7 +48578,7 @@ export class CampaignDto implements ICampaignDto {
     annualFee!: string | undefined;
     rewardsRate!: string | undefined;
     introRewardsBonus!: string | undefined;
-    regAPRRate!: string | undefined;
+    regularAPR!: string | undefined;
 
     constructor(data?: ICampaignDto) {
         if (data) {
@@ -48551,6 +48596,7 @@ export class CampaignDto implements ICampaignDto {
             this.status = data["status"];
             this.type = data["type"];
             this.name = data["name"];
+            this.subId = data["subId"];
             this.traficSource = data["traficSource"];
             this.redirectUrl = data["redirectUrl"];
             this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
@@ -48579,7 +48625,7 @@ export class CampaignDto implements ICampaignDto {
             this.annualFee = data["annualFee"];
             this.rewardsRate = data["rewardsRate"];
             this.introRewardsBonus = data["introRewardsBonus"];
-            this.regAPRRate = data["regAPRRate"];
+            this.regularAPR = data["regularAPR"];
         }
     }
 
@@ -48597,6 +48643,7 @@ export class CampaignDto implements ICampaignDto {
         data["status"] = this.status;
         data["type"] = this.type;
         data["name"] = this.name;
+        data["subId"] = this.subId;
         data["traficSource"] = this.traficSource;
         data["redirectUrl"] = this.redirectUrl;
         data["created"] = this.created ? this.created.toISOString() : <any>undefined;
@@ -48625,7 +48672,7 @@ export class CampaignDto implements ICampaignDto {
         data["annualFee"] = this.annualFee;
         data["rewardsRate"] = this.rewardsRate;
         data["introRewardsBonus"] = this.introRewardsBonus;
-        data["regAPRRate"] = this.regAPRRate;
+        data["regularAPR"] = this.regularAPR;
         return data; 
     }
 }
@@ -48636,6 +48683,7 @@ export interface ICampaignDto {
     status: CampaignDtoStatus | undefined;
     type: CampaignDtoType | undefined;
     name: string | undefined;
+    subId: string | undefined;
     traficSource: CampaignDtoTraficSource | undefined;
     redirectUrl: string | undefined;
     created: moment.Moment | undefined;
@@ -48652,18 +48700,41 @@ export interface ICampaignDto {
     annualFee: string | undefined;
     rewardsRate: string | undefined;
     introRewardsBonus: string | undefined;
-    regAPRRate: string | undefined;
+    regularAPR: string | undefined;
 }
 
 export class CampaignDetailsDto implements ICampaignDetailsDto {
     description!: string | undefined;
     termsOfService!: string | undefined;
     updated!: moment.Moment | undefined;
+    isPublished!: boolean | undefined;
+    interestRating!: number | undefined;
+    feesRating!: number | undefined;
+    benefitsRating!: number | undefined;
+    rewardsRating!: number | undefined;
+    serviceRating!: number | undefined;
+    cardNetwork!: CampaignDetailsDtoCardNetwork | undefined;
+    cardType!: CampaignDetailsDtoCardType | undefined;
+    targetAudience!: CampaignDetailsDtoTargetAudience | undefined;
+    securingType!: CampaignDetailsDtoSecuringType | undefined;
+    introAPR!: string | undefined;
+    balanceTransferFee!: string | undefined;
+    monthlyFee!: string | undefined;
+    activationFee!: string | undefined;
+    durationForZeroPercentagePurchasesInMonths!: number | undefined;
+    zeroPercentageInterestTransfers!: string | undefined;
+    durationForZeroPercentageTransfersInMonths!: number | undefined;
+    bankName!: string | undefined;
+    details!: string[] | undefined;
+    pros!: string[] | undefined;
+    cons!: string[] | undefined;
+    flags!: Flags | undefined;
     systemType!: CampaignDetailsDtoSystemType | undefined;
     id!: number | undefined;
     status!: CampaignDetailsDtoStatus | undefined;
     type!: CampaignDetailsDtoType | undefined;
     name!: string | undefined;
+    subId!: string | undefined;
     traficSource!: CampaignDetailsDtoTraficSource | undefined;
     redirectUrl!: string | undefined;
     created!: moment.Moment | undefined;
@@ -48680,7 +48751,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     annualFee!: string | undefined;
     rewardsRate!: string | undefined;
     introRewardsBonus!: string | undefined;
-    regAPRRate!: string | undefined;
+    regularAPR!: string | undefined;
 
     constructor(data?: ICampaignDetailsDto) {
         if (data) {
@@ -48696,11 +48767,46 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
             this.description = data["description"];
             this.termsOfService = data["termsOfService"];
             this.updated = data["updated"] ? moment(data["updated"].toString()) : <any>undefined;
+            this.isPublished = data["isPublished"];
+            this.interestRating = data["interestRating"];
+            this.feesRating = data["feesRating"];
+            this.benefitsRating = data["benefitsRating"];
+            this.rewardsRating = data["rewardsRating"];
+            this.serviceRating = data["serviceRating"];
+            this.cardNetwork = data["cardNetwork"];
+            this.cardType = data["cardType"];
+            this.targetAudience = data["targetAudience"];
+            this.securingType = data["securingType"];
+            this.introAPR = data["introAPR"];
+            this.balanceTransferFee = data["balanceTransferFee"];
+            this.monthlyFee = data["monthlyFee"];
+            this.activationFee = data["activationFee"];
+            this.durationForZeroPercentagePurchasesInMonths = data["durationForZeroPercentagePurchasesInMonths"];
+            this.zeroPercentageInterestTransfers = data["zeroPercentageInterestTransfers"];
+            this.durationForZeroPercentageTransfersInMonths = data["durationForZeroPercentageTransfersInMonths"];
+            this.bankName = data["bankName"];
+            if (data["details"] && data["details"].constructor === Array) {
+                this.details = [];
+                for (let item of data["details"])
+                    this.details.push(item);
+            }
+            if (data["pros"] && data["pros"].constructor === Array) {
+                this.pros = [];
+                for (let item of data["pros"])
+                    this.pros.push(item);
+            }
+            if (data["cons"] && data["cons"].constructor === Array) {
+                this.cons = [];
+                for (let item of data["cons"])
+                    this.cons.push(item);
+            }
+            this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
             this.systemType = data["systemType"];
             this.id = data["id"];
             this.status = data["status"];
             this.type = data["type"];
             this.name = data["name"];
+            this.subId = data["subId"];
             this.traficSource = data["traficSource"];
             this.redirectUrl = data["redirectUrl"];
             this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
@@ -48729,7 +48835,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
             this.annualFee = data["annualFee"];
             this.rewardsRate = data["rewardsRate"];
             this.introRewardsBonus = data["introRewardsBonus"];
-            this.regAPRRate = data["regAPRRate"];
+            this.regularAPR = data["regularAPR"];
         }
     }
 
@@ -48745,11 +48851,46 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
         data["description"] = this.description;
         data["termsOfService"] = this.termsOfService;
         data["updated"] = this.updated ? this.updated.toISOString() : <any>undefined;
+        data["isPublished"] = this.isPublished;
+        data["interestRating"] = this.interestRating;
+        data["feesRating"] = this.feesRating;
+        data["benefitsRating"] = this.benefitsRating;
+        data["rewardsRating"] = this.rewardsRating;
+        data["serviceRating"] = this.serviceRating;
+        data["cardNetwork"] = this.cardNetwork;
+        data["cardType"] = this.cardType;
+        data["targetAudience"] = this.targetAudience;
+        data["securingType"] = this.securingType;
+        data["introAPR"] = this.introAPR;
+        data["balanceTransferFee"] = this.balanceTransferFee;
+        data["monthlyFee"] = this.monthlyFee;
+        data["activationFee"] = this.activationFee;
+        data["durationForZeroPercentagePurchasesInMonths"] = this.durationForZeroPercentagePurchasesInMonths;
+        data["zeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
+        data["durationForZeroPercentageTransfersInMonths"] = this.durationForZeroPercentageTransfersInMonths;
+        data["bankName"] = this.bankName;
+        if (this.details && this.details.constructor === Array) {
+            data["details"] = [];
+            for (let item of this.details)
+                data["details"].push(item);
+        }
+        if (this.pros && this.pros.constructor === Array) {
+            data["pros"] = [];
+            for (let item of this.pros)
+                data["pros"].push(item);
+        }
+        if (this.cons && this.cons.constructor === Array) {
+            data["cons"] = [];
+            for (let item of this.cons)
+                data["cons"].push(item);
+        }
+        data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
         data["systemType"] = this.systemType;
         data["id"] = this.id;
         data["status"] = this.status;
         data["type"] = this.type;
         data["name"] = this.name;
+        data["subId"] = this.subId;
         data["traficSource"] = this.traficSource;
         data["redirectUrl"] = this.redirectUrl;
         data["created"] = this.created ? this.created.toISOString() : <any>undefined;
@@ -48778,7 +48919,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
         data["annualFee"] = this.annualFee;
         data["rewardsRate"] = this.rewardsRate;
         data["introRewardsBonus"] = this.introRewardsBonus;
-        data["regAPRRate"] = this.regAPRRate;
+        data["regularAPR"] = this.regularAPR;
         return data; 
     }
 }
@@ -48787,11 +48928,34 @@ export interface ICampaignDetailsDto {
     description: string | undefined;
     termsOfService: string | undefined;
     updated: moment.Moment | undefined;
+    isPublished: boolean | undefined;
+    interestRating: number | undefined;
+    feesRating: number | undefined;
+    benefitsRating: number | undefined;
+    rewardsRating: number | undefined;
+    serviceRating: number | undefined;
+    cardNetwork: CampaignDetailsDtoCardNetwork | undefined;
+    cardType: CampaignDetailsDtoCardType | undefined;
+    targetAudience: CampaignDetailsDtoTargetAudience | undefined;
+    securingType: CampaignDetailsDtoSecuringType | undefined;
+    introAPR: string | undefined;
+    balanceTransferFee: string | undefined;
+    monthlyFee: string | undefined;
+    activationFee: string | undefined;
+    durationForZeroPercentagePurchasesInMonths: number | undefined;
+    zeroPercentageInterestTransfers: string | undefined;
+    durationForZeroPercentageTransfersInMonths: number | undefined;
+    bankName: string | undefined;
+    details: string[] | undefined;
+    pros: string[] | undefined;
+    cons: string[] | undefined;
+    flags: Flags | undefined;
     systemType: CampaignDetailsDtoSystemType | undefined;
     id: number | undefined;
     status: CampaignDetailsDtoStatus | undefined;
     type: CampaignDetailsDtoType | undefined;
     name: string | undefined;
+    subId: string | undefined;
     traficSource: CampaignDetailsDtoTraficSource | undefined;
     redirectUrl: string | undefined;
     created: moment.Moment | undefined;
@@ -48808,13 +48972,12 @@ export interface ICampaignDetailsDto {
     annualFee: string | undefined;
     rewardsRate: string | undefined;
     introRewardsBonus: string | undefined;
-    regAPRRate: string | undefined;
+    regularAPR: string | undefined;
 }
 
 export class SubmitApplicationInput implements ISubmitApplicationInput {
     systemType!: SubmitApplicationInputSystemType;
     campaignId!: number;
-    subId!: string;
 
     constructor(data?: ISubmitApplicationInput) {
         if (data) {
@@ -48829,7 +48992,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         if (data) {
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
-            this.subId = data["subId"];
         }
     }
 
@@ -48844,7 +49006,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
-        data["subId"] = this.subId;
         return data; 
     }
 }
@@ -48852,7 +49013,6 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
 export interface ISubmitApplicationInput {
     systemType: SubmitApplicationInputSystemType;
     campaignId: number;
-    subId: string;
 }
 
 export class SubmitApplicationOutput implements ISubmitApplicationOutput {
@@ -48941,6 +49101,178 @@ export interface IGetMemberInfoResponse {
     creditScore: GetMemberInfoResponseCreditScore | undefined;
     stateCode: string | undefined;
     countryCode: string | undefined;
+}
+
+export class ExtendOfferDto implements IExtendOfferDto {
+    id!: number;
+    isPublished!: boolean;
+    overallRating!: number;
+    interestRating!: number | undefined;
+    feesRating!: number | undefined;
+    benefitsRating!: number | undefined;
+    rewardsRating!: number | undefined;
+    serviceRating!: number | undefined;
+    cardNetwork!: ExtendOfferDtoCardNetwork;
+    cardType!: ExtendOfferDtoCardType;
+    targetAudience!: ExtendOfferDtoTargetAudience;
+    securingType!: ExtendOfferDtoSecuringType;
+    regularAPR!: string | undefined;
+    introAPR!: string | undefined;
+    balanceTransferFee!: string | undefined;
+    annualFee!: string | undefined;
+    monthlyFee!: string | undefined;
+    activationFee!: string | undefined;
+    introRewardsBonus!: string | undefined;
+    rewardsRate!: string | undefined;
+    durationForZeroPercentagePurchasesInMonths!: number | undefined;
+    zeroPercentageInterestTransfers!: string | undefined;
+    durationForZeroPercentageTransfersInMonths!: number | undefined;
+    bankName!: string | undefined;
+    offerCollection!: ExtendOfferDtoOfferCollection | undefined;
+    details!: string[] | undefined;
+    pros!: string[] | undefined;
+    cons!: string[] | undefined;
+    flags!: Flags2 | undefined;
+
+    constructor(data?: IExtendOfferDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.isPublished = data["isPublished"];
+            this.overallRating = data["overallRating"];
+            this.interestRating = data["interestRating"];
+            this.feesRating = data["feesRating"];
+            this.benefitsRating = data["benefitsRating"];
+            this.rewardsRating = data["rewardsRating"];
+            this.serviceRating = data["serviceRating"];
+            this.cardNetwork = data["cardNetwork"];
+            this.cardType = data["cardType"];
+            this.targetAudience = data["targetAudience"];
+            this.securingType = data["securingType"];
+            this.regularAPR = data["regularAPR"];
+            this.introAPR = data["introAPR"];
+            this.balanceTransferFee = data["balanceTransferFee"];
+            this.annualFee = data["annualFee"];
+            this.monthlyFee = data["monthlyFee"];
+            this.activationFee = data["activationFee"];
+            this.introRewardsBonus = data["introRewardsBonus"];
+            this.rewardsRate = data["rewardsRate"];
+            this.durationForZeroPercentagePurchasesInMonths = data["durationForZeroPercentagePurchasesInMonths"];
+            this.zeroPercentageInterestTransfers = data["zeroPercentageInterestTransfers"];
+            this.durationForZeroPercentageTransfersInMonths = data["durationForZeroPercentageTransfersInMonths"];
+            this.bankName = data["bankName"];
+            this.offerCollection = data["offerCollection"];
+            if (data["details"] && data["details"].constructor === Array) {
+                this.details = [];
+                for (let item of data["details"])
+                    this.details.push(item);
+            }
+            if (data["pros"] && data["pros"].constructor === Array) {
+                this.pros = [];
+                for (let item of data["pros"])
+                    this.pros.push(item);
+            }
+            if (data["cons"] && data["cons"].constructor === Array) {
+                this.cons = [];
+                for (let item of data["cons"])
+                    this.cons.push(item);
+            }
+            this.flags = data["flags"] ? Flags2.fromJS(data["flags"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ExtendOfferDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExtendOfferDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["isPublished"] = this.isPublished;
+        data["overallRating"] = this.overallRating;
+        data["interestRating"] = this.interestRating;
+        data["feesRating"] = this.feesRating;
+        data["benefitsRating"] = this.benefitsRating;
+        data["rewardsRating"] = this.rewardsRating;
+        data["serviceRating"] = this.serviceRating;
+        data["cardNetwork"] = this.cardNetwork;
+        data["cardType"] = this.cardType;
+        data["targetAudience"] = this.targetAudience;
+        data["securingType"] = this.securingType;
+        data["regularAPR"] = this.regularAPR;
+        data["introAPR"] = this.introAPR;
+        data["balanceTransferFee"] = this.balanceTransferFee;
+        data["annualFee"] = this.annualFee;
+        data["monthlyFee"] = this.monthlyFee;
+        data["activationFee"] = this.activationFee;
+        data["introRewardsBonus"] = this.introRewardsBonus;
+        data["rewardsRate"] = this.rewardsRate;
+        data["durationForZeroPercentagePurchasesInMonths"] = this.durationForZeroPercentagePurchasesInMonths;
+        data["zeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
+        data["durationForZeroPercentageTransfersInMonths"] = this.durationForZeroPercentageTransfersInMonths;
+        data["bankName"] = this.bankName;
+        data["offerCollection"] = this.offerCollection;
+        if (this.details && this.details.constructor === Array) {
+            data["details"] = [];
+            for (let item of this.details)
+                data["details"].push(item);
+        }
+        if (this.pros && this.pros.constructor === Array) {
+            data["pros"] = [];
+            for (let item of this.pros)
+                data["pros"].push(item);
+        }
+        if (this.cons && this.cons.constructor === Array) {
+            data["cons"] = [];
+            for (let item of this.cons)
+                data["cons"].push(item);
+        }
+        data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IExtendOfferDto {
+    id: number;
+    isPublished: boolean;
+    overallRating: number;
+    interestRating: number | undefined;
+    feesRating: number | undefined;
+    benefitsRating: number | undefined;
+    rewardsRating: number | undefined;
+    serviceRating: number | undefined;
+    cardNetwork: ExtendOfferDtoCardNetwork;
+    cardType: ExtendOfferDtoCardType;
+    targetAudience: ExtendOfferDtoTargetAudience;
+    securingType: ExtendOfferDtoSecuringType;
+    regularAPR: string | undefined;
+    introAPR: string | undefined;
+    balanceTransferFee: string | undefined;
+    annualFee: string | undefined;
+    monthlyFee: string | undefined;
+    activationFee: string | undefined;
+    introRewardsBonus: string | undefined;
+    rewardsRate: string | undefined;
+    durationForZeroPercentagePurchasesInMonths: number | undefined;
+    zeroPercentageInterestTransfers: string | undefined;
+    durationForZeroPercentageTransfersInMonths: number | undefined;
+    bankName: string | undefined;
+    offerCollection: ExtendOfferDtoOfferCollection | undefined;
+    details: string[] | undefined;
+    pros: string[] | undefined;
+    cons: string[] | undefined;
+    flags: Flags2 | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -59219,6 +59551,139 @@ export enum CampaignDtoOfferCollection {
     NoCredit = "NoCredit", 
 }
 
+export enum CampaignDetailsDtoCardNetwork {
+    AmEx = "AmEx", 
+    Discover = "Discover", 
+    Mastercard = "Mastercard", 
+    Visa = "Visa", 
+    Store = "Store", 
+}
+
+export enum CampaignDetailsDtoCardType {
+    Credit = "Credit", 
+    Debit = "Debit", 
+}
+
+export enum CampaignDetailsDtoTargetAudience {
+    Consumer = "Consumer", 
+    Business = "Business", 
+    Students = "Students", 
+}
+
+export enum CampaignDetailsDtoSecuringType {
+    Unsecured = "Unsecured", 
+    Secured = "Secured", 
+    Prepaid = "Prepaid", 
+}
+
+export class Flags implements IFlags {
+    choice!: boolean | undefined;
+    best!: boolean | undefined;
+    travelAndAirlineMiles!: boolean | undefined;
+    dinigRewards!: boolean | undefined;
+    gasRewards!: boolean | undefined;
+    cashBackRewards!: boolean | undefined;
+    instantDecision!: boolean | undefined;
+    instantResponse!: boolean | undefined;
+    noCreditCheck!: boolean | undefined;
+    guaranteedApproval!: boolean | undefined;
+    rebuildCredit!: boolean | undefined;
+    chipCard!: boolean | undefined;
+    applePay!: boolean | undefined;
+    groceryRewards!: boolean | undefined;
+    entertainmentRewards!: boolean | undefined;
+    hotelRewards!: boolean | undefined;
+    hasNoRewards!: boolean | undefined;
+    zeroPercentageOnPurchases!: boolean | undefined;
+    zeroPercentageInterestTransfers!: boolean | undefined;
+
+    constructor(data?: IFlags) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.choice = data["Choice"];
+            this.best = data["Best"];
+            this.travelAndAirlineMiles = data["TravelAndAirlineMiles"];
+            this.dinigRewards = data["DinigRewards"];
+            this.gasRewards = data["GasRewards"];
+            this.cashBackRewards = data["CashBackRewards"];
+            this.instantDecision = data["InstantDecision"];
+            this.instantResponse = data["InstantResponse"];
+            this.noCreditCheck = data["NoCreditCheck"];
+            this.guaranteedApproval = data["GuaranteedApproval"];
+            this.rebuildCredit = data["RebuildCredit"];
+            this.chipCard = data["ChipCard"];
+            this.applePay = data["ApplePay"];
+            this.groceryRewards = data["GroceryRewards"];
+            this.entertainmentRewards = data["EntertainmentRewards"];
+            this.hotelRewards = data["HotelRewards"];
+            this.hasNoRewards = data["HasNoRewards"];
+            this.zeroPercentageOnPurchases = data["ZeroPercentageOnPurchases"];
+            this.zeroPercentageInterestTransfers = data["ZeroPercentageInterestTransfers"];
+        }
+    }
+
+    static fromJS(data: any): Flags {
+        data = typeof data === 'object' ? data : {};
+        let result = new Flags();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Choice"] = this.choice;
+        data["Best"] = this.best;
+        data["TravelAndAirlineMiles"] = this.travelAndAirlineMiles;
+        data["DinigRewards"] = this.dinigRewards;
+        data["GasRewards"] = this.gasRewards;
+        data["CashBackRewards"] = this.cashBackRewards;
+        data["InstantDecision"] = this.instantDecision;
+        data["InstantResponse"] = this.instantResponse;
+        data["NoCreditCheck"] = this.noCreditCheck;
+        data["GuaranteedApproval"] = this.guaranteedApproval;
+        data["RebuildCredit"] = this.rebuildCredit;
+        data["ChipCard"] = this.chipCard;
+        data["ApplePay"] = this.applePay;
+        data["GroceryRewards"] = this.groceryRewards;
+        data["EntertainmentRewards"] = this.entertainmentRewards;
+        data["HotelRewards"] = this.hotelRewards;
+        data["HasNoRewards"] = this.hasNoRewards;
+        data["ZeroPercentageOnPurchases"] = this.zeroPercentageOnPurchases;
+        data["ZeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
+        return data; 
+    }
+}
+
+export interface IFlags {
+    choice: boolean | undefined;
+    best: boolean | undefined;
+    travelAndAirlineMiles: boolean | undefined;
+    dinigRewards: boolean | undefined;
+    gasRewards: boolean | undefined;
+    cashBackRewards: boolean | undefined;
+    instantDecision: boolean | undefined;
+    instantResponse: boolean | undefined;
+    noCreditCheck: boolean | undefined;
+    guaranteedApproval: boolean | undefined;
+    rebuildCredit: boolean | undefined;
+    chipCard: boolean | undefined;
+    applePay: boolean | undefined;
+    groceryRewards: boolean | undefined;
+    entertainmentRewards: boolean | undefined;
+    hotelRewards: boolean | undefined;
+    hasNoRewards: boolean | undefined;
+    zeroPercentageOnPurchases: boolean | undefined;
+    zeroPercentageInterestTransfers: boolean | undefined;
+}
+
 export enum CampaignDetailsDtoSystemType {
     EPCVIP = "EPCVIP", 
 }
@@ -59294,6 +59759,156 @@ export enum GetMemberInfoResponseCreditScore {
     Good = "Good", 
     Fair = "Fair", 
     Poor = "Poor", 
+}
+
+export enum ExtendOfferDtoCardNetwork {
+    AmEx = "AmEx", 
+    Discover = "Discover", 
+    Mastercard = "Mastercard", 
+    Visa = "Visa", 
+    Store = "Store", 
+}
+
+export enum ExtendOfferDtoCardType {
+    Credit = "Credit", 
+    Debit = "Debit", 
+}
+
+export enum ExtendOfferDtoTargetAudience {
+    Consumer = "Consumer", 
+    Business = "Business", 
+    Students = "Students", 
+}
+
+export enum ExtendOfferDtoSecuringType {
+    Unsecured = "Unsecured", 
+    Secured = "Secured", 
+    Prepaid = "Prepaid", 
+}
+
+export enum ExtendOfferDtoOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    LowInterest = "LowInterest", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
+}
+
+export class Flags2 implements IFlags2 {
+    choice!: boolean | undefined;
+    best!: boolean | undefined;
+    travelAndAirlineMiles!: boolean | undefined;
+    dinigRewards!: boolean | undefined;
+    gasRewards!: boolean | undefined;
+    cashBackRewards!: boolean | undefined;
+    instantDecision!: boolean | undefined;
+    instantResponse!: boolean | undefined;
+    noCreditCheck!: boolean | undefined;
+    guaranteedApproval!: boolean | undefined;
+    rebuildCredit!: boolean | undefined;
+    chipCard!: boolean | undefined;
+    applePay!: boolean | undefined;
+    groceryRewards!: boolean | undefined;
+    entertainmentRewards!: boolean | undefined;
+    hotelRewards!: boolean | undefined;
+    hasNoRewards!: boolean | undefined;
+    zeroPercentageOnPurchases!: boolean | undefined;
+    zeroPercentageInterestTransfers!: boolean | undefined;
+
+    constructor(data?: IFlags2) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.choice = data["Choice"];
+            this.best = data["Best"];
+            this.travelAndAirlineMiles = data["TravelAndAirlineMiles"];
+            this.dinigRewards = data["DinigRewards"];
+            this.gasRewards = data["GasRewards"];
+            this.cashBackRewards = data["CashBackRewards"];
+            this.instantDecision = data["InstantDecision"];
+            this.instantResponse = data["InstantResponse"];
+            this.noCreditCheck = data["NoCreditCheck"];
+            this.guaranteedApproval = data["GuaranteedApproval"];
+            this.rebuildCredit = data["RebuildCredit"];
+            this.chipCard = data["ChipCard"];
+            this.applePay = data["ApplePay"];
+            this.groceryRewards = data["GroceryRewards"];
+            this.entertainmentRewards = data["EntertainmentRewards"];
+            this.hotelRewards = data["HotelRewards"];
+            this.hasNoRewards = data["HasNoRewards"];
+            this.zeroPercentageOnPurchases = data["ZeroPercentageOnPurchases"];
+            this.zeroPercentageInterestTransfers = data["ZeroPercentageInterestTransfers"];
+        }
+    }
+
+    static fromJS(data: any): Flags2 {
+        data = typeof data === 'object' ? data : {};
+        let result = new Flags2();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["Choice"] = this.choice;
+        data["Best"] = this.best;
+        data["TravelAndAirlineMiles"] = this.travelAndAirlineMiles;
+        data["DinigRewards"] = this.dinigRewards;
+        data["GasRewards"] = this.gasRewards;
+        data["CashBackRewards"] = this.cashBackRewards;
+        data["InstantDecision"] = this.instantDecision;
+        data["InstantResponse"] = this.instantResponse;
+        data["NoCreditCheck"] = this.noCreditCheck;
+        data["GuaranteedApproval"] = this.guaranteedApproval;
+        data["RebuildCredit"] = this.rebuildCredit;
+        data["ChipCard"] = this.chipCard;
+        data["ApplePay"] = this.applePay;
+        data["GroceryRewards"] = this.groceryRewards;
+        data["EntertainmentRewards"] = this.entertainmentRewards;
+        data["HotelRewards"] = this.hotelRewards;
+        data["HasNoRewards"] = this.hasNoRewards;
+        data["ZeroPercentageOnPurchases"] = this.zeroPercentageOnPurchases;
+        data["ZeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
+        return data; 
+    }
+}
+
+export interface IFlags2 {
+    choice: boolean | undefined;
+    best: boolean | undefined;
+    travelAndAirlineMiles: boolean | undefined;
+    dinigRewards: boolean | undefined;
+    gasRewards: boolean | undefined;
+    cashBackRewards: boolean | undefined;
+    instantDecision: boolean | undefined;
+    instantResponse: boolean | undefined;
+    noCreditCheck: boolean | undefined;
+    guaranteedApproval: boolean | undefined;
+    rebuildCredit: boolean | undefined;
+    chipCard: boolean | undefined;
+    applePay: boolean | undefined;
+    groceryRewards: boolean | undefined;
+    entertainmentRewards: boolean | undefined;
+    hotelRewards: boolean | undefined;
+    hasNoRewards: boolean | undefined;
+    zeroPercentageOnPurchases: boolean | undefined;
+    zeroPercentageInterestTransfers: boolean | undefined;
 }
 
 export enum ModuleSubscriptionInfoFrequency {
