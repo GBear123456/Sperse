@@ -264,7 +264,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
                 component.render();
                 clearInterval(this.renderTimeout);
             }
-        }, 500);
+        }, 600);
     }
 
     ngOnDestroy() {
