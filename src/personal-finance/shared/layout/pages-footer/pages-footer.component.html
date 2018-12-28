@@ -12,7 +12,7 @@
             <div class="footer-menu-block">
                 <ul class="footer-menu-list">
                     <li class="footer-menu-item {{item.class}}" *ngFor="let item of footerMenuItems">
-                        <a class="footer-menu-link" [href]="item.url">{{l(item.name)}}</a>
+                        <a class="footer-menu-link" (click)="item.action && item.action()">{{l(item.name)}}</a>
                     </li>
                 </ul>
             </div>
