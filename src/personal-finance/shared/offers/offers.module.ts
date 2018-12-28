@@ -16,6 +16,7 @@ import { OffersRoutingModule } from '@root/personal-finance/shared/offers/offers
 import { MatDialogModule, MatSliderModule } from '@angular/material';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
+import { CreditCardsComponent } from './credit-cards/credit-cards.component';
 
 @NgModule({
     imports: [
@@ -37,7 +38,8 @@ import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/
         StarsRatingComponent,
         OffersComponent,
         OfferDetailsComponent,
-        NumberAbbrPipe
+        NumberAbbrPipe,
+        CreditCardsComponent
     ],
     providers: [
         OffersService,

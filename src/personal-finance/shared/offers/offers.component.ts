@@ -250,21 +250,21 @@ export class OffersComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.category$.subscribe((category) => {    
+        this.category$.subscribe((category) => {
             if (!category)
                 return this.router.navigate(['/personal-finance/home']);
 
             switch(category) {
-                case Category.PersonalLoans: 
+                case Category.PersonalLoans:
                     this.buttonCaption = 'ApplyNow';
                     break;
-                case Category.CreditCards: 
+                case Category.CreditCards:
                     this.buttonCaption = 'ViewOffers';
                     break;
-                case Category.CreditScore: 
+                case Category.CreditScore:
                     this.buttonCaption = 'GetOffer';
                     break;
-            } 
+            }
         });
 
         this.selectedFilter$ = combineLatest(this.creditScore$, this.category$)
@@ -276,7 +276,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                     this.selectedFilter.next(this.filtersValues);
                     return this.selectedFilter.asObservable();
                 })
-            );            
+            );
 
         this.activate();
     }
