@@ -89,8 +89,8 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.route.params.pipe(
             takeUntil(this.deactivate$),
-            pluck('id'),
-        ).subscribe(id => this.selectedCardId.next(+id));
+            pluck('campaignId'),
+        ).subscribe(campaignId => this.selectedCardId.next(+campaignId));
         this.creditCards$ = this.getCreditCards();
         this.creditCards$.pipe(takeUntil(this.deactivate$)).subscribe(creditCards => this.cardsAmount = creditCards.length);
         this.selectedCardDetails$ = this.selectedCardId$.pipe(

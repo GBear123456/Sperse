@@ -114,7 +114,7 @@ export class OffersService {
     applyOffer(offer: CampaignDto) {
         const linkIsDirect = !!offer.redirectUrl;
         const submitApplicationInput = SubmitApplicationInput.fromJS({
-            campaignId: offer.id,
+            campaignId: offer.campaignId,
             systemType: 'EPCVIP'
         });
         const modalData = {

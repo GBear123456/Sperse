@@ -16023,12 +16023,12 @@ export class OfferServiceProxy {
     /**
      * @return Success
      */
-    getDetails(id: number): Observable<CampaignDetailsDto> {
+    getDetails(campaignId: number): Observable<CampaignDetailsDto> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetDetails?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        if (campaignId === undefined || campaignId === null)
+            throw new Error("The parameter 'campaignId' must be defined and cannot be null.");
         else
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+            url_ += "CampaignId=" + encodeURIComponent("" + campaignId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -48560,7 +48560,7 @@ export interface INotificationSubscriptionDto {
 
 export class CampaignDto implements ICampaignDto {
     systemType!: CampaignDtoSystemType | undefined;
-    id!: number | undefined;
+    campaignId!: number | undefined;
     status!: CampaignDtoStatus | undefined;
     type!: CampaignDtoType | undefined;
     name!: string | undefined;
@@ -48595,7 +48595,7 @@ export class CampaignDto implements ICampaignDto {
     init(data?: any) {
         if (data) {
             this.systemType = data["systemType"];
-            this.id = data["id"];
+            this.campaignId = data["campaignId"];
             this.status = data["status"];
             this.type = data["type"];
             this.name = data["name"];
@@ -48642,7 +48642,7 @@ export class CampaignDto implements ICampaignDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
-        data["id"] = this.id;
+        data["campaignId"] = this.campaignId;
         data["status"] = this.status;
         data["type"] = this.type;
         data["name"] = this.name;
@@ -48682,7 +48682,7 @@ export class CampaignDto implements ICampaignDto {
 
 export interface ICampaignDto {
     systemType: CampaignDtoSystemType | undefined;
-    id: number | undefined;
+    campaignId: number | undefined;
     status: CampaignDtoStatus | undefined;
     type: CampaignDtoType | undefined;
     name: string | undefined;
@@ -48731,7 +48731,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     cons!: string[] | undefined;
     flags!: Flags | undefined;
     systemType!: CampaignDetailsDtoSystemType | undefined;
-    id!: number | undefined;
+    campaignId!: number | undefined;
     status!: CampaignDetailsDtoStatus | undefined;
     type!: CampaignDetailsDtoType | undefined;
     name!: string | undefined;
@@ -48801,7 +48801,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
             }
             this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
             this.systemType = data["systemType"];
-            this.id = data["id"];
+            this.campaignId = data["campaignId"];
             this.status = data["status"];
             this.type = data["type"];
             this.name = data["name"];
@@ -48883,7 +48883,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
         }
         data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
         data["systemType"] = this.systemType;
-        data["id"] = this.id;
+        data["campaignId"] = this.campaignId;
         data["status"] = this.status;
         data["type"] = this.type;
         data["name"] = this.name;
@@ -48946,7 +48946,7 @@ export interface ICampaignDetailsDto {
     cons: string[] | undefined;
     flags: Flags | undefined;
     systemType: CampaignDetailsDtoSystemType | undefined;
-    id: number | undefined;
+    campaignId: number | undefined;
     status: CampaignDetailsDtoStatus | undefined;
     type: CampaignDetailsDtoType | undefined;
     name: string | undefined;
@@ -49099,7 +49099,7 @@ export interface IGetMemberInfoResponse {
 }
 
 export class ExtendOfferDto implements IExtendOfferDto {
-    id!: number;
+    campaignId!: number;
     subId!: string | undefined;
     isPublished!: boolean;
     overallRating!: number;
@@ -49141,7 +49141,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
+            this.campaignId = data["campaignId"];
             this.subId = data["subId"];
             this.isPublished = data["isPublished"];
             this.overallRating = data["overallRating"];
@@ -49195,7 +49195,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
+        data["campaignId"] = this.campaignId;
         data["subId"] = this.subId;
         data["isPublished"] = this.isPublished;
         data["overallRating"] = this.overallRating;
@@ -49242,7 +49242,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
 }
 
 export interface IExtendOfferDto {
-    id: number;
+    campaignId: number;
     subId: string | undefined;
     isPublished: boolean;
     overallRating: number;

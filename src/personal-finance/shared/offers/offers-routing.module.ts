@@ -16,7 +16,7 @@ import { CreditCardsComponent } from '@root/personal-finance/shared/offers/credi
                 component: CreditCardsComponent
             },
             {
-                path: ':category/:id',
+                path: ':category/:campaignId',
                 component: OfferDetailsComponent,
                 data: { reuse: true }
             },
