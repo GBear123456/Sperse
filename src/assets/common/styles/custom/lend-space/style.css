@@ -2,7 +2,7 @@ body.lend-space app-header {
   background: #000;
 }
 body.lend-space .dx-treeview-node-container {
-  background: #FFF !important;
+  background: #FFF!important;
 }
 body.lend-space .dx-menu-adaptive-mode,
 body.lend-space app-header dx-drop-down-box,
@@ -16,13 +16,13 @@ body.lend-space app-header dx-drop-down-box input {
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
-  color: #f0d500 !important;
+  color: #f0d500!important;
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
   border-bottom: none!important;
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab .dx-menu-item-text {
-  color: #FFF !important;
+  color: #FFF!important;
 }
 body.lend-space .m-dropdown__arrow {
   color: #313131 !important;
@@ -62,7 +62,7 @@ body.lend-space .swal-modal .swal-icon.swal-icon--warning:before {
   content: "\2713";
 }
 body.lend-space .swal-modal .swal-icon > div:first-child:before {
-  color: #000 !important;
+  color: #000!important;
 }
 body.lend-space .swal-modal .swal-title {
   color: #000;
@@ -152,4 +152,76 @@ body.lend-space .button-primary:after {
 body.lend-space .btn.btn-primary:hover,
 body.lend-space .button-primary:hover {
   background: #e0b400;
+}
+body.lend-space modal-dialog .close-dialog {
+  background: #313131!important;
+}
+body.lend-space modal-dialog .close-dialog:before,
+body.lend-space modal-dialog .close-dialog:after {
+  background: #FFF!important;
+}
+body.lend-space modal-dialog .mat-dialog-header {
+  background: #313131!important;
+}
+body.lend-space modal-dialog .mat-dialog-header dx-text-box {
+  background: transparent!important;
+}
+body.lend-space modal-dialog .mat-dialog-header dx-text-box input {
+  color: #FFF!important;
+  background: transparent!important;
+}
+body.lend-space modal-dialog .mat-dialog-header button {
+  border-radius: 5px!important;
+  margin-right: 10px!important;
+}
+body.lend-space modal-dialog mat-dialog-content {
+  background: #262626;
+}
+body.lend-space modal-dialog mat-dialog-content #content * {
+  color: #FFF!important;
+}
+body.lend-space modal-dialog mat-dialog-content #content * .doc-title {
+  text-align: center;
+}
+body.lend-space .cdk-overlay-pane.footer-slider {
+  max-width: 50vw !important;
+}
+@media all and (max-width: 600px) {
+  body.lend-space .cdk-overlay-pane.slider {
+    max-width: 100vw !important;
+  }
+  body.lend-space mat-dialog-container {
+    position: relative !important;
+  }
+  body.lend-space mat-dialog-container modal-dialog {
+    position: static !important;
+  }
+  body.lend-space .mat-dialog-header {
+    flex-direction: column;
+    height: 110px !important;
+  }
+  body.lend-space .mat-dialog-header dx-text-box {
+    max-width: 100%;
+    order: 2;
+  }
+  body.lend-space .mat-dialog-header dx-text-box input {
+    text-align: center;
+  }
+  body.lend-space .mat-dialog-header .mat-dialog-actions {
+    justify-content: flex-end;
+    padding: 0;
+  }
+  body.lend-space .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons {
+    margin-right: 28px;
+  }
+  body.lend-space .close-dialog {
+    left: auto !important;
+    right: 0 !important;
+    top: 21px !important;
+    background-color: transparent !important;
+  }
+  body.lend-space .close-dialog:before,
+  body.lend-space .close-dialog:after {
+    background: #FFF!important;
+  }
 }
