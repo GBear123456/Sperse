@@ -40,7 +40,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     private filters: FilterModel[];
     selectedPermission: string;
     role: number;
-    group: Group;
+    group = Group.Employee;
 
     public actionMenuItems: any;
     public actionRecord: any;
@@ -361,6 +361,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     })
                 ]
             );
+
+            this.updateGroupFilter(Group.Employee);
         });
 
         this._filtersService.apply((filter) => {
