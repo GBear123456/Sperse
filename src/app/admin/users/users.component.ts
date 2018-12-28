@@ -367,12 +367,14 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             let filterValue = filter &&
                 filter.items.element.value;
 
-            if (filter.caption == 'role')
-                this.role = filterValue;
-            else if (filter.caption == 'permission')
-                this.selectedPermission = filterValue;
-            else if (filter.caption == 'group')
-                this.group = filterValue;
+            if (filter) {
+                if (filter.caption == 'role')
+                    this.role = filterValue;
+                else if (filter.caption == 'permission')
+                    this.selectedPermission = filterValue;
+                else if (filter.caption == 'group')
+                    this.group = filterValue;
+            }
 
             this.initToolbarConfig();
             this.invalidate();
