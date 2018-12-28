@@ -32,7 +32,6 @@
     }
     
     button {
-        background: @button-bg-color;
         box-shadow: none;
         border: 0;
         outline: none;
@@ -44,11 +43,18 @@
         text-align: center;
         color: @headings-color;
         transition: .3s;
+    
+        background: @button-bg-color url(../../../../assets/common/images/pfm-cc/arrow-right.svg) no-repeat right 20px center;
         
+        @media all and (max-width: 768px) {
+            padding: 5px 15px;
+            background-image: none;
+        }
+    
         &:hover,
         &:active,
         &:focus {
-            background: lighten(@button-bg-color, 8%);
+            background-color: lighten(@button-bg-color, 8%);
         }
     }
     
@@ -148,7 +154,7 @@
         }
         
         &-item {
-            width: 18.7%;
+            margin-bottom: 10px;
             
             a {
                 display: block;
@@ -232,6 +238,12 @@
             margin-top: 15px;
         }
         
+        &__img {
+            &--wrap {
+                text-align: center;
+            }
+        }
+        
         &__card-name {
             font-size: 22px;
             font-weight: 600;
@@ -283,6 +295,59 @@
                     display: block;
                 }
             }
+        }
+    }
+    
+    @media all and (max-width: 768px) {
+        .container {
+            max-width: 100%;
+            width: 100%;
+        }
+        
+        .credit-score-item {
+            flex: 0 0 25%;
+            max-width: 25%;
+            
+            a {
+                padding: 10px 8px;
+            }
+        }
+        .offer-navigation {
+            flex: 0 0 33.33333%;
+            max-width: 33.33333%;
+        }
+        .offer-collection {
+            flex: 0 0 66.66667%;
+            max-width: 66.66667%;
+        }
+        .card-item {
+            padding: 0 25px;
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .credit-score-item {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        .offer-navigation {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        .offer-collection {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        .card-item {
+            padding: 0 25px;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        .offer-navigation__list {
+            margin-bottom: 30px;
+            text-align: center;
         }
     }
 }
