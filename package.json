@@ -19,6 +19,7 @@
     "start": "ng serve --host 0.0.0.0 --port 7200 --configuration=dev",
     "start-staging": "ng serve --host 0.0.0.0 --port 7200 --configuration=devstaging",
     "start-beta": "ng serve --host 0.0.0.0 --port 7200 --configuration=devbeta",
+    "start-beta-ssl": "ng serve --host 0.0.0.0 --port 7200 --configuration=devbeta --ssl --ssl-cert ssl/server.crt --ssl-key ssl/server.key",
     "start-staging-ssl": "ng serve --host 0.0.0.0 --port 7200 --configuration=devstaging --ssl --ssl-cert ssl/server.crt --ssl-key ssl/server.key",
     "debug": "ng serve --host 0.0.0.0 --port 7200 --configuration=dev --source-map=true",
     "debug-staging": "ng serve --host 0.0.0.0 --port 7200 --configuration=devstaging --source-map=true",

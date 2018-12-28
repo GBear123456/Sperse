@@ -65,6 +65,7 @@ export class LoginService {
 
     authenticateModel: AuthenticateModel;
     authenticateResult: AuthenticateResultModel;
+    externalLoginModal: ExternalAuthenticateModel;
 
     resetPasswordModel: SendPasswordResetCodeInput;
     resetPasswordResult: SendPasswordResetCodeOutput;
@@ -214,14 +215,11 @@ export class LoginService {
                 `You will sign up to LendSpace with the ${authenticateResult.email} email.`,
                 (result) => {
                     if (result) {
-                        this.signUpData = {
-                            ...this.signUpData,
-                            firstName: authenticateResult.firstName,
-                            lastName: authenticateResult.lastName,
-                            email: authenticateResult.email,
-                            isUSCitizen: true
-                        } as SignUpMemberRequest;
-                        this.signUpMember(this.signUpData);
+                        this.externalLoginModal.autoRegistration = true;
+                        this._tokenAuthService.externalAuthenticate(this.externalLoginModal)
+                            .subscribe((result: ExternalAuthenticateResultModel) => {
+                                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+                            });
                     }
                 });
         } else if (authenticateResult.detectedTenancies.length > 1) {
@@ -334,7 +332,7 @@ export class LoginService {
 
     private facebookLoginStatusChangeCallback(resp) {
         if (resp.status === 'connected') {
-            const model = new ExternalAuthenticateModel();
+            const model = this.externalLoginModal = new ExternalAuthenticateModel();
             model.authProvider = ExternalLoginProvider.FACEBOOK;
             model.providerAccessCode = resp.authResponse.accessToken;
             model.providerKey = resp.authResponse.userID;
