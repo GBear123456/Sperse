@@ -18,7 +18,7 @@ export class CreditCardsComponent implements OnInit {
     cardOffersList$: Observable<CampaignDto[]>;
     creditScoreNames = ['Excellent', 'Good', 'Fair', 'Bad', 'NoCredit'];
     creditCardCollection: any[] = [];
-    menuItems: any[] = [];
+    filteredGroup: any[] = [];
     bestCardsByScore: any[] = [];
     bestCreditCard: any;
     cards: CampaignDto[];
@@ -54,7 +54,7 @@ export class CreditCardsComponent implements OnInit {
             this.selectedOfferGroup = _.first(list.filter(item => this.route.snapshot.params.group == item.offerCollection));
             this.creditCardCollection = list.filter(item => !_.contains(this.creditScoreNames, item.offerCollection));
             this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection));
-            // this.menuItems = _.uniq(this.creditCardCollection, 'offerCollection');
+            this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection');
         });
     }
 
