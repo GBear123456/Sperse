@@ -328,7 +328,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                         'rewardsRate': '1.5% cashback',
                         'rewardsBonus': '$100',
                         'apr': '5.5%',
-                        'rating': Math.floor(Math.random() * 5) + 1,
+                        'rating': 5,
                         'reviewsAmount': Math.floor(Math.random() * 1000) + 1
                     }
                 };
