@@ -48710,7 +48710,6 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     description!: string | undefined;
     termsOfService!: string | undefined;
     updated!: moment.Moment | undefined;
-    isPublished!: boolean | undefined;
     interestRating!: number | undefined;
     feesRating!: number | undefined;
     benefitsRating!: number | undefined;
@@ -48727,7 +48726,6 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     durationForZeroPercentagePurchasesInMonths!: number | undefined;
     zeroPercentageInterestTransfers!: string | undefined;
     durationForZeroPercentageTransfersInMonths!: number | undefined;
-    bankName!: string | undefined;
     details!: string[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
@@ -48770,7 +48768,6 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
             this.description = data["description"];
             this.termsOfService = data["termsOfService"];
             this.updated = data["updated"] ? moment(data["updated"].toString()) : <any>undefined;
-            this.isPublished = data["isPublished"];
             this.interestRating = data["interestRating"];
             this.feesRating = data["feesRating"];
             this.benefitsRating = data["benefitsRating"];
@@ -48787,7 +48784,6 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
             this.durationForZeroPercentagePurchasesInMonths = data["durationForZeroPercentagePurchasesInMonths"];
             this.zeroPercentageInterestTransfers = data["zeroPercentageInterestTransfers"];
             this.durationForZeroPercentageTransfersInMonths = data["durationForZeroPercentageTransfersInMonths"];
-            this.bankName = data["bankName"];
             if (data["details"] && data["details"].constructor === Array) {
                 this.details = [];
                 for (let item of data["details"])
@@ -48854,7 +48850,6 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
         data["description"] = this.description;
         data["termsOfService"] = this.termsOfService;
         data["updated"] = this.updated ? this.updated.toISOString() : <any>undefined;
-        data["isPublished"] = this.isPublished;
         data["interestRating"] = this.interestRating;
         data["feesRating"] = this.feesRating;
         data["benefitsRating"] = this.benefitsRating;
@@ -48871,7 +48866,6 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
         data["durationForZeroPercentagePurchasesInMonths"] = this.durationForZeroPercentagePurchasesInMonths;
         data["zeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
         data["durationForZeroPercentageTransfersInMonths"] = this.durationForZeroPercentageTransfersInMonths;
-        data["bankName"] = this.bankName;
         if (this.details && this.details.constructor === Array) {
             data["details"] = [];
             for (let item of this.details)
@@ -48931,7 +48925,6 @@ export interface ICampaignDetailsDto {
     description: string | undefined;
     termsOfService: string | undefined;
     updated: moment.Moment | undefined;
-    isPublished: boolean | undefined;
     interestRating: number | undefined;
     feesRating: number | undefined;
     benefitsRating: number | undefined;
@@ -48948,7 +48941,6 @@ export interface ICampaignDetailsDto {
     durationForZeroPercentagePurchasesInMonths: number | undefined;
     zeroPercentageInterestTransfers: string | undefined;
     durationForZeroPercentageTransfersInMonths: number | undefined;
-    bankName: string | undefined;
     details: string[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
@@ -49108,6 +49100,7 @@ export interface IGetMemberInfoResponse {
 
 export class ExtendOfferDto implements IExtendOfferDto {
     id!: number;
+    subId!: string | undefined;
     isPublished!: boolean;
     overallRating!: number;
     interestRating!: number | undefined;
@@ -49130,7 +49123,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
     durationForZeroPercentagePurchasesInMonths!: number | undefined;
     zeroPercentageInterestTransfers!: string | undefined;
     durationForZeroPercentageTransfersInMonths!: number | undefined;
-    bankName!: string | undefined;
+    issuingBank!: string | undefined;
     offerCollection!: ExtendOfferDtoOfferCollection | undefined;
     details!: string[] | undefined;
     pros!: string[] | undefined;
@@ -49149,6 +49142,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.subId = data["subId"];
             this.isPublished = data["isPublished"];
             this.overallRating = data["overallRating"];
             this.interestRating = data["interestRating"];
@@ -49171,7 +49165,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
             this.durationForZeroPercentagePurchasesInMonths = data["durationForZeroPercentagePurchasesInMonths"];
             this.zeroPercentageInterestTransfers = data["zeroPercentageInterestTransfers"];
             this.durationForZeroPercentageTransfersInMonths = data["durationForZeroPercentageTransfersInMonths"];
-            this.bankName = data["bankName"];
+            this.issuingBank = data["issuingBank"];
             this.offerCollection = data["offerCollection"];
             if (data["details"] && data["details"].constructor === Array) {
                 this.details = [];
@@ -49202,6 +49196,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["subId"] = this.subId;
         data["isPublished"] = this.isPublished;
         data["overallRating"] = this.overallRating;
         data["interestRating"] = this.interestRating;
@@ -49224,7 +49219,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
         data["durationForZeroPercentagePurchasesInMonths"] = this.durationForZeroPercentagePurchasesInMonths;
         data["zeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
         data["durationForZeroPercentageTransfersInMonths"] = this.durationForZeroPercentageTransfersInMonths;
-        data["bankName"] = this.bankName;
+        data["issuingBank"] = this.issuingBank;
         data["offerCollection"] = this.offerCollection;
         if (this.details && this.details.constructor === Array) {
             data["details"] = [];
@@ -49248,6 +49243,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
 
 export interface IExtendOfferDto {
     id: number;
+    subId: string | undefined;
     isPublished: boolean;
     overallRating: number;
     interestRating: number | undefined;
@@ -49270,7 +49266,7 @@ export interface IExtendOfferDto {
     durationForZeroPercentagePurchasesInMonths: number | undefined;
     zeroPercentageInterestTransfers: string | undefined;
     durationForZeroPercentageTransfersInMonths: number | undefined;
-    bankName: string | undefined;
+    issuingBank: string | undefined;
     offerCollection: ExtendOfferDtoOfferCollection | undefined;
     details: string[] | undefined;
     pros: string[] | undefined;
@@ -58953,7 +58949,7 @@ export enum ItemOfOfferCollection {
     BalanceTransfer = "BalanceTransfer", 
     CashBack = "CashBack", 
     RewardPoints = "RewardPoints", 
-    LowInterest = "LowInterest", 
+    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     TravelAirlineHotel = "TravelAirlineHotel", 
     SecuredOrPrepaid = "SecuredOrPrepaid", 
     BusinessCards = "BusinessCards", 
@@ -59548,7 +59544,7 @@ export enum CampaignDtoOfferCollection {
     BalanceTransfer = "BalanceTransfer", 
     CashBack = "CashBack", 
     RewardPoints = "RewardPoints", 
-    LowInterest = "LowInterest", 
+    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     TravelAirlineHotel = "TravelAirlineHotel", 
     SecuredOrPrepaid = "SecuredOrPrepaid", 
     BusinessCards = "BusinessCards", 
@@ -59746,7 +59742,7 @@ export enum CampaignDetailsDtoOfferCollection {
     BalanceTransfer = "BalanceTransfer", 
     CashBack = "CashBack", 
     RewardPoints = "RewardPoints", 
-    LowInterest = "LowInterest", 
+    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     TravelAirlineHotel = "TravelAirlineHotel", 
     SecuredOrPrepaid = "SecuredOrPrepaid", 
     BusinessCards = "BusinessCards", 
@@ -59800,7 +59796,7 @@ export enum ExtendOfferDtoOfferCollection {
     BalanceTransfer = "BalanceTransfer", 
     CashBack = "CashBack", 
     RewardPoints = "RewardPoints", 
-    LowInterest = "LowInterest", 
+    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     TravelAirlineHotel = "TravelAirlineHotel", 
     SecuredOrPrepaid = "SecuredOrPrepaid", 
     BusinessCards = "BusinessCards", 
