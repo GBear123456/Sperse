@@ -21,7 +21,7 @@ export class LendspaceWelcomeComponent extends AppComponentBase implements OnIni
             icon: 'credit-card-with-check-symbol.svg',
             title: 'Credit Cards',
             text: 'Search for the right',
-            router: '/personal-finance/offers/credit-cards',
+            router: '/personal-finance/offers/credit-cards/home',
             hidden: false
         },
         {

@@ -160,7 +160,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
             },
             {
                 name: 'Credit Cards',
-                routerUrl: '/personal-finance/offers/credit-cards'
+                routerUrl: '/personal-finance/offers/credit-cards/home'
             },
             {
                 name: 'Credit Scores',
