@@ -25433,12 +25433,13 @@ export class UserServiceProxy {
      * @permission (optional) 
      * @role (optional) 
      * @onlyLockedUsers (optional) 
+     * @group (optional) 
      * @sorting (optional) 
      * @maxResultCount (optional) 
      * @skipCount (optional) 
      * @return Success
      */
-    getUsers(filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
+    getUsers(filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: Group | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
@@ -25448,6 +25449,8 @@ export class UserServiceProxy {
             url_ += "Role=" + encodeURIComponent("" + role) + "&"; 
         if (onlyLockedUsers !== undefined)
             url_ += "OnlyLockedUsers=" + encodeURIComponent("" + onlyLockedUsers) + "&"; 
+        if (group !== undefined)
+            url_ += "Group=" + encodeURIComponent("" + group) + "&"; 
         if (sorting !== undefined)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
         if (maxResultCount !== undefined)
@@ -58775,6 +58778,12 @@ export enum InstanceType92 {
 export enum InstanceType93 {
     User = "User", 
     Main = "Main", 
+}
+
+export enum Group {
+    Employee = "Employee", 
+    Member = "Member", 
+    Partner = "Partner", 
 }
 
 export enum ModuleType2 {

@@ -2,7 +2,7 @@ import { Component, Injector, ViewEncapsulation, ViewChild, OnDestroy } from '@a
 
 import {
     UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
-    PermissionServiceProxy, FlatPermissionWithLevelDto
+    PermissionServiceProxy, Group
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -24,6 +24,7 @@ import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-
 import { AppService } from '@app/app.service';
 import { forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import * as _ from 'underscore';
 
 import { MatDialog } from '@angular/material';
 
@@ -39,6 +40,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     private filters: FilterModel[];
     selectedPermission: string;
     role: number;
+    group: Group;
 
     public actionMenuItems: any;
     public actionRecord: any;
@@ -58,6 +60,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
 
     private rootComponent: any;
+    private usersComponent: any;
     private formatting = AppConsts.formatting;
 
     dataSource: DataSource;
@@ -116,6 +119,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     this.selectedPermission || undefined,
                     this.role || undefined,
                     false,
+                    this.group,
                     (loadOptions.sort || []).map((item) => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                     }).join(','), loadOptions.take, loadOptions.skip
@@ -175,6 +179,64 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                areItemsDependent: true,
+                items: [
+                    {
+                        name: 'All',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('All'),
+                            checkPressed: () => {
+                                return !this.group;
+                            }
+                        },
+                        action: () => {
+                            this.filterByGroup(undefined);
+                        }
+                    },
+                    {
+                        name: 'Employees',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('Employees'),
+                            checkPressed: () => {
+                                return this.group == Group.Employee;
+                            }
+                        },
+                        action: () => {
+                            this.filterByGroup(Group.Employee);
+                        }
+                    },
+                    {
+                        name: 'Members',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('Members'),
+                            checkPressed: () => {
+                                return this.group == Group.Member;
+                            }
+                        },
+                        action: () => {
+                            this.filterByGroup(Group.Member);
+                        }
+                    },
+                    {
+                        name: 'Partners',
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('Partners'),
+                            checkPressed: () => {
+                                return this.group == Group.Partner;
+                            }
+                        },
+                        action: () => {
+                            this.filterByGroup(Group.Partner);
                         }
                     }
                 ]
@@ -281,6 +343,21 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 })
                             })
                         }
+                    }),
+                    new FilterModel({
+                        component: FilterRadioGroupComponent,
+                        caption: 'group',
+                        items: {
+                            element: new FilterRadioGroupModel({
+                                value: this.group,
+                                list: [Group.Employee, Group.Member, Group.Partner].map((item) => {
+                                    return {
+                                        id: item,
+                                        name: this.l(item)
+                                    };
+                                })
+                            })
+                        }
                     })
                 ]
             );
@@ -289,16 +366,34 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this._filtersService.apply((filter) => {
             let filterValue = filter &&
                 filter.items.element.value;
-            if (filterValue) {
-                if (filter.caption == 'role')
-                    this.role = filterValue;
-                else
-                    this.selectedPermission = filterValue;
-            }
+
+            if (filter.caption == 'role')
+                this.role = filterValue;
+            else if (filter.caption == 'permission')
+                this.selectedPermission = filterValue;
+            else if (filter.caption == 'group')
+                this.group = filterValue;
 
             this.initToolbarConfig();
             this.invalidate();
         });
+    }
+
+    filterByGroup(group: Group) {
+        this.group = group;
+
+        this.initToolbarConfig();
+        this.invalidate();
+        this.updateGroupFilter(group);
+    }
+
+    updateGroupFilter(group: Group) {
+        let groupFilterModel = _.findWhere(this.filters, { caption: 'group' });
+        if (groupFilterModel) {
+            groupFilterModel.isSelected = true;
+            groupFilterModel.items.element.value = group;
+            this._filtersService.change(groupFilterModel);
+        }
     }
 
     showCompactRowsHeight() {
