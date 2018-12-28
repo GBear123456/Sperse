@@ -16,11 +16,12 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class PagesFooterComponent extends AppComponentBase {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
+    domain = AppConsts.LENDSPACE_DOMAIN;
 
     appMenuItems = [
         {
-            url: '',
             name: 'Terms of Use',
+            url: this.domain + '/terms',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Terms of Use',
                 bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/terms.html',
@@ -28,8 +29,8 @@ export class PagesFooterComponent extends AppComponentBase {
             })
         },
         {
-            url: '',
             name: 'Privacy Policy',
+            url: this.domain + '/privacy',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Privacy Policy',
                 bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/policy.html',
@@ -37,8 +38,8 @@ export class PagesFooterComponent extends AppComponentBase {
             })
         },
         {
-            url: '',
             name: 'Lender Terms',
+            url: this.domain + '/lenderterms',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Lender Terms',
                 bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/lender.html',
@@ -46,8 +47,8 @@ export class PagesFooterComponent extends AppComponentBase {
             })
         },
         {
-            url: '',
             name: 'Disclosures',
+            url: this.domain + '/disclosures',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Disclosures',
                 bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/disclosures.html',
@@ -55,8 +56,8 @@ export class PagesFooterComponent extends AppComponentBase {
             })
         },
         {
-            url: '',
             name: 'About Us',
+            url: this.domain + '/aboutus',
             action: this.openConditionsDialog.bind(this, {
                 title: 'About Us',
                 bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/about.html',
