@@ -44,7 +44,7 @@
     </section>
 
     <section class="results-by-category">
-        <ng-container *ngIf="cards && menuItems">
+        <ng-container *ngIf="cards && creditCardCollection && creditCardCollection.length; else noOffers">
             <h2>Top results by category</h2>
 
             <div class="row">
@@ -111,6 +111,9 @@
             </div>
         </div>
         </ng-container>
+        <ng-template #noOffers>
+            <app-no-data></app-no-data>
+        </ng-template>
     </section>
 
     <!--<app-no-data [showLink]="true" *ngIf="">-->
