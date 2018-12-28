@@ -268,7 +268,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
 
     showLoginAttempts(e): void {
         this.dialog.open(LoginAttemptsModalComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'user-info'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}
@@ -280,7 +280,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
 
     showLinkedAccounts(e): void {
         this.dialog.open(LinkedAccountsModalComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'user-info'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}
@@ -292,7 +292,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
 
     changePassword(e): void {
         this.dialog.open(ChangePasswordModalComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'user-info'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}
@@ -340,7 +340,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
 
     changeMySettings(e): void {
         this.dialog.open(MySettingsModalComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'user-info'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}

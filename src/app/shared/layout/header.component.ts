@@ -134,7 +134,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     showLoginAttempts(e): void {
         this.dialog.open(LoginAttemptsModalComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'user-info'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}
@@ -146,7 +146,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     showLinkedAccounts(e): void {
         this.dialog.open(LinkedAccountsModalComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'user-info'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}
@@ -158,7 +158,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     changePassword(e): void {
         this.dialog.open(ChangePasswordModalComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'user-info'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}
@@ -206,7 +206,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
 
     changeMySettings(e): void {
         this.dialog.open(MySettingsModalComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'user-info'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}

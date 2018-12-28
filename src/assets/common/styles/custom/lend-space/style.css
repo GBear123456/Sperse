@@ -153,75 +153,124 @@ body.lend-space .btn.btn-primary:hover,
 body.lend-space .button-primary:hover {
   background: #e0b400;
 }
-body.lend-space modal-dialog .close-dialog {
+.cdk-overlay-pane.footer-slider,
+.cdk-overlay-pane.user-info {
+  max-width: 50vw !important;
+}
+.cdk-overlay-pane.footer-slider modal-dialog .close-dialog,
+.cdk-overlay-pane.user-info modal-dialog .close-dialog {
   background: #313131!important;
 }
-body.lend-space modal-dialog .close-dialog:before,
-body.lend-space modal-dialog .close-dialog:after {
+.cdk-overlay-pane.footer-slider modal-dialog .close-dialog:before,
+.cdk-overlay-pane.user-info modal-dialog .close-dialog:before,
+.cdk-overlay-pane.footer-slider modal-dialog .close-dialog:after,
+.cdk-overlay-pane.user-info modal-dialog .close-dialog:after {
   background: #FFF!important;
 }
-body.lend-space modal-dialog .mat-dialog-header {
+.cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header,
+.cdk-overlay-pane.user-info modal-dialog .mat-dialog-header {
   background: #313131!important;
 }
-body.lend-space modal-dialog .mat-dialog-header dx-text-box {
+.cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header dx-text-box,
+.cdk-overlay-pane.user-info modal-dialog .mat-dialog-header dx-text-box {
   background: transparent!important;
 }
-body.lend-space modal-dialog .mat-dialog-header dx-text-box input {
+.cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header dx-text-box input,
+.cdk-overlay-pane.user-info modal-dialog .mat-dialog-header dx-text-box input {
   color: #FFF!important;
   background: transparent!important;
 }
-body.lend-space modal-dialog .mat-dialog-header button {
+.cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header button,
+.cdk-overlay-pane.user-info modal-dialog .mat-dialog-header button {
   border-radius: 5px!important;
   margin-right: 10px!important;
 }
-body.lend-space modal-dialog mat-dialog-content {
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content {
   background: #262626;
 }
-body.lend-space modal-dialog mat-dialog-content #content * {
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content label,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content label,
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content h4,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content h4 {
+  color: #FFF;
+}
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link {
+  border-bottom: 1px solid #FFF;
+}
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link span,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link span {
+  color: #FFF;
+}
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link:hover,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link:hover,
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link.active,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link.active {
+  border-bottom: 1px solid #ffcc00!important;
+}
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link:hover span,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link:hover span,
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link.active span,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link.active span {
+  font-weight: 500;
+  color: #ffcc00!important;
+}
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content *,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content * {
   color: #FFF!important;
 }
-body.lend-space modal-dialog mat-dialog-content #content * .doc-title {
+.cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content * .doc-title,
+.cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content * .doc-title {
   text-align: center;
 }
-body.lend-space .cdk-overlay-pane.footer-slider {
-  max-width: 50vw !important;
-}
 @media all and (max-width: 600px) {
-  body.lend-space .cdk-overlay-pane.slider {
+  .cdk-overlay-pane.footer-slider,
+  .cdk-overlay-pane.user-info {
     max-width: 100vw !important;
   }
-  body.lend-space mat-dialog-container {
+  .cdk-overlay-pane.footer-slider mat-dialog-container,
+  .cdk-overlay-pane.user-info mat-dialog-container {
     position: relative !important;
   }
-  body.lend-space mat-dialog-container modal-dialog {
+  .cdk-overlay-pane.footer-slider mat-dialog-container modal-dialog,
+  .cdk-overlay-pane.user-info mat-dialog-container modal-dialog {
     position: static !important;
   }
-  body.lend-space .mat-dialog-header {
+  .cdk-overlay-pane.footer-slider .mat-dialog-header,
+  .cdk-overlay-pane.user-info .mat-dialog-header {
     flex-direction: column;
     height: 110px !important;
   }
-  body.lend-space .mat-dialog-header dx-text-box {
+  .cdk-overlay-pane.footer-slider .mat-dialog-header dx-text-box,
+  .cdk-overlay-pane.user-info .mat-dialog-header dx-text-box {
     max-width: 100%;
     order: 2;
   }
-  body.lend-space .mat-dialog-header dx-text-box input {
+  .cdk-overlay-pane.footer-slider .mat-dialog-header dx-text-box input,
+  .cdk-overlay-pane.user-info .mat-dialog-header dx-text-box input {
     text-align: center;
   }
-  body.lend-space .mat-dialog-header .mat-dialog-actions {
+  .cdk-overlay-pane.footer-slider .mat-dialog-header .mat-dialog-actions,
+  .cdk-overlay-pane.user-info .mat-dialog-header .mat-dialog-actions {
     justify-content: flex-end;
     padding: 0;
   }
-  body.lend-space .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons {
+  .cdk-overlay-pane.footer-slider .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons,
+  .cdk-overlay-pane.user-info .mat-dialog-header .mat-dialog-actions .mat-dialog-buttons {
     margin-right: 28px;
   }
-  body.lend-space .close-dialog {
+  .cdk-overlay-pane.footer-slider .close-dialog,
+  .cdk-overlay-pane.user-info .close-dialog {
     left: auto !important;
     right: 0 !important;
     top: 21px !important;
     background-color: transparent !important;
   }
-  body.lend-space .close-dialog:before,
-  body.lend-space .close-dialog:after {
+  .cdk-overlay-pane.footer-slider .close-dialog:before,
+  .cdk-overlay-pane.user-info .close-dialog:before,
+  .cdk-overlay-pane.footer-slider .close-dialog:after,
+  .cdk-overlay-pane.user-info .close-dialog:after {
     background: #FFF!important;
   }
 }

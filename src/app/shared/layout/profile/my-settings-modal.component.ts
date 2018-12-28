@@ -11,6 +11,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
+    styleUrls: ['./my-settings-modal.component.less'],
     providers: [DialogService]
 })
 export class MySettingsModalComponent extends ModalDialogComponent implements AfterViewChecked, OnInit {
