@@ -5,6 +5,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 @Injectable()
 export class AppAuthService implements OnDestroy {
     private tokenCheckTimeout: any;
+    private tokenCheckBusy: boolean = false;
 
     constructor(
         private _appLocalizationService: AppLocalizationService,
@@ -14,6 +15,10 @@ export class AppAuthService implements OnDestroy {
     }
 
     logout(reload?: boolean, returnUrl?: string): void {
+        if (this.tokenCheckBusy) {
+            setTimeout(() => this.logout(reload, returnUrl), 500);
+            return;
+        }
         this.stopTokenCheck();
         abp.auth.clearToken();
         if (reload !== false) {
@@ -93,6 +98,7 @@ export class AppAuthService implements OnDestroy {
     }
 
     private checkAuthToken(initialToken) {
+        this.tokenCheckBusy = true;
         let currentToken = abp.auth.getToken();
         if (initialToken != currentToken) {
             let warningMessage = 'Current user has changed. Page should be reloaded.';
@@ -102,5 +108,6 @@ export class AppAuthService implements OnDestroy {
         } else {
             this.tokenCheckTimeout = setTimeout(() => this.checkAuthToken(initialToken), 3000);
         }
+        this.tokenCheckBusy = false;
     }
 }
