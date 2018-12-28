@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, OnInit, Injector, HostBinding } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -96,6 +97,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
     constructor(
         injector: Injector,
         public dialog: MatDialog,
+        private _router: Router,
         private _abpSessionService: AbpSessionService,
         private _abpMultiTenancyService: AbpMultiTenancyService,
         private _profileServiceProxy: ProfileServiceProxy,
@@ -364,5 +366,12 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
 
     get notificationEnabled(): boolean {
         return (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
+    }
+
+    logoClick(event) {
+        if (this.loggedUserId)
+            this._router.navigate(['/personal-finance/home']);
+        else 
+            window.open(AppConsts.LENDSPACE_DOMAIN, '_self');
     }
 }
