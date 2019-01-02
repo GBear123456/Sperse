@@ -35,8 +35,8 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() contactInfoData: ContactInfoDetailsDto;
     @Input() set contactInfo(value: ContactInfoDto) {
         if (this._contactInfo = value)
-            this.contactInfoData = this.isCompany ? 
-                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details: 
+            this.contactInfoData = this.isCompany ?
+                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details :
                 value.personContactInfo && value.personContactInfo.details;
 
     }
@@ -72,10 +72,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        /** Load addressTypes only if they are needed */
-        if (this.contactInfoData && this.contactInfoData.addresses) {
-            this.loadAddressTypes();
-        }
+        this.loadAddressTypes();
         this.getAddressTypes()
             .subscribe(types => {
                 types.map((type) => {
@@ -241,7 +238,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                     this._itemInEditMode.inplaceEdit = false;
 
                 this._itemInEditMode = address;
-            } else 
+            } else
                 this.showDialog(address, event, index);
             this._clickCounter = 0;
         }, 250);
@@ -267,7 +264,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     updateItem(address, event, index) {
         event.event.stopPropagation();
 
-        if ((this._latestFormatedAddress != address.autoComplete) 
+        if ((this._latestFormatedAddress != address.autoComplete)
             && (address.autoComplete != this.aggregateAddress(address))
         ) {
             address.inplaceEdit = false;
