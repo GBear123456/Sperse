@@ -15,8 +15,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import { MatRadioChange } from '@angular/material/radio';
-import { Observable, Subject, ReplaySubject, of } from 'rxjs';
-import { finalize, first, map, switchMap, takeUntil, pluck, tap } from 'rxjs/operators';
+import { Observable, Subject, ReplaySubject, of, combineLatest } from 'rxjs';
+import { finalize, first, map, switchMap, takeUntil, pluck, tap, withLatestFrom, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -99,9 +99,9 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
 
     private getCardDetails(cardId: number): any {
         abp.ui.setBusy(this.detailsContainerRef.nativeElement);
-        return this.category$
+        return combineLatest(this.category$, this.offersService.memberInfo$)
             .pipe(
-                switchMap((category) => this.offerServiceProxy.getDetails(cardId)),
+                switchMap(([category, memberInfo]) => this.offerServiceProxy.getDetails(memberInfo.testMode, cardId)),
                 /** @todo remove in future */
                 map(details => {
                     return {
@@ -131,8 +131,11 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         abp.ui.setBusy(this.creditCardsListRef.nativeElement);
         return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
                     of(this.offersService.displayedCards) :
-                    this.category$.pipe(
-                        switchMap(category => this.offerServiceProxy.getAll(category, undefined, 'US', undefined, undefined, undefined))
+                        combineLatest(this.category$, this.offersService.memberInfo$).pipe(
+                        switchMap(([category, memberInfo]) => this.offerServiceProxy.getAll(memberInfo.testMode, memberInfo.isDirectPostSupported,
+                                                    category, undefined, 'US', undefined, undefined, undefined)),
+                        publishReplay(),
+                        refCount()
                     )
                 ).pipe(
                     finalize(() => abp.ui.clearBusy(this.creditCardsListRef.nativeElement))

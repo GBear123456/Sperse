@@ -16,7 +16,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
-import { first, filter, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap, skip } from 'rxjs/operators';
+import { first, filter, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap, skip, withLatestFrom } from 'rxjs/operators';
 import { kebabCase } from 'lodash';
 import { MatRadioChange, MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
 
@@ -73,9 +73,8 @@ export class OffersComponent implements OnInit, OnDestroy {
     category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route.params);
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
-    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount(), finalize(abp.ui.clearBusy));
-    creditScore$: Observable<number> = this.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.offersService.covertCreditScoreToNumber(score)));
-    stateCode$: Observable<string> = this.memberInfo$.pipe(pluck('stateCode'));
+    creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.offersService.covertCreditScoreToNumber(score)));
+    stateCode$: Observable<string> = this.offersService.memberInfo$.pipe(pluck('stateCode'));
     filtersValues = this.getDefaultFilters();
     filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
         [CategoryGroupEnum.Loans]: [
@@ -297,7 +296,10 @@ export class OffersComponent implements OnInit, OnDestroy {
         this.offers$ = this.selectedFilter$.pipe(
             takeUntil(this.deactivate$),
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAreLoading = true; }),
-            switchMap(filter => this.offerServiceProxy.getAll(
+            withLatestFrom(this.offersService.memberInfo$),
+            switchMap(([filter, memberInfo]) => this.offerServiceProxy.getAll(
+                memberInfo.testMode,
+                memberInfo.isDirectPostSupported,
                 filter.category,
                 undefined,
                 filter.country,

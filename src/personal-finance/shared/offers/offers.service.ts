@@ -7,7 +7,7 @@ import { Params } from '@angular/router/src/shared';
 import { MatDialog } from '@angular/material';
 import { camelCase, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
-import { map, pluck } from 'rxjs/operators';
+import { map, pluck, publishReplay, refCount, finalize, first } from 'rxjs/operators';
 import { capitalize, cloneDeep } from 'lodash';
 
 /** Application imports */
@@ -17,7 +17,8 @@ import {
     CreditScore,
     SubmitApplicationInput,
     SubmitApplicationOutput,
-    OfferServiceProxy
+    OfferServiceProxy,
+    GetMemberInfoResponse
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
@@ -25,6 +26,7 @@ import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/
 
 @Injectable()
 export class OffersService {
+    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount()); //, finalize(abp.ui.clearBusy)
 
     processingSteps = [
         {

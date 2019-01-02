@@ -15955,8 +15955,16 @@ export class OfferServiceProxy {
      * @itemOfOfferCollection (optional) 
      * @return Success
      */
-    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<OfferDto[]> {
+    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<OfferDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
+        if (testMode === undefined || testMode === null)
+            throw new Error("The parameter 'testMode' must be defined and cannot be null.");
+        else
+            url_ += "TestMode=" + encodeURIComponent("" + testMode) + "&"; 
+        if (isDirectPostSupported === undefined || isDirectPostSupported === null)
+            throw new Error("The parameter 'isDirectPostSupported' must be defined and cannot be null.");
+        else
+            url_ += "IsDirectPostSupported=" + encodeURIComponent("" + isDirectPostSupported) + "&"; 
         if (category !== undefined)
             url_ += "Category=" + encodeURIComponent("" + category) + "&"; 
         if (type !== undefined)
@@ -16023,8 +16031,12 @@ export class OfferServiceProxy {
     /**
      * @return Success
      */
-    getDetails(campaignId: number): Observable<OfferDetailsDto> {
+    getDetails(testMode: boolean, campaignId: number): Observable<OfferDetailsDto> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetDetails?";
+        if (testMode === undefined || testMode === null)
+            throw new Error("The parameter 'testMode' must be defined and cannot be null.");
+        else
+            url_ += "TestMode=" + encodeURIComponent("" + testMode) + "&"; 
         if (campaignId === undefined || campaignId === null)
             throw new Error("The parameter 'campaignId' must be defined and cannot be null.");
         else
@@ -16281,6 +16293,58 @@ export class OfferManagementServiceProxy {
     }
 
     protected processExtend(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @data (optional) 
+     * @return Success
+     */
+    extendFromCSV(data: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/ExtendFromCSV";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(data);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processExtendFromCSV(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processExtendFromCSV(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processExtendFromCSV(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -35145,8 +35209,6 @@ export class ContactInfoDto implements IContactInfoDto {
     personContactInfo!: PersonContactInfoDto | undefined;
     primaryOrganizationContactInfo!: OrganizationContactInfoDto | undefined;
     creationDate!: moment.Moment | undefined;
-    userContextOrderId!: number | undefined;
-    userContextOrderType!: string | undefined;
 
     constructor(data?: IContactInfoDto) {
         if (data) {
@@ -35181,8 +35243,6 @@ export class ContactInfoDto implements IContactInfoDto {
             this.personContactInfo = data["personContactInfo"] ? PersonContactInfoDto.fromJS(data["personContactInfo"]) : <any>undefined;
             this.primaryOrganizationContactInfo = data["primaryOrganizationContactInfo"] ? OrganizationContactInfoDto.fromJS(data["primaryOrganizationContactInfo"]) : <any>undefined;
             this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
-            this.userContextOrderId = data["userContextOrderId"];
-            this.userContextOrderType = data["userContextOrderType"];
         }
     }
 
@@ -35217,8 +35277,6 @@ export class ContactInfoDto implements IContactInfoDto {
         data["personContactInfo"] = this.personContactInfo ? this.personContactInfo.toJSON() : <any>undefined;
         data["primaryOrganizationContactInfo"] = this.primaryOrganizationContactInfo ? this.primaryOrganizationContactInfo.toJSON() : <any>undefined;
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
-        data["userContextOrderId"] = this.userContextOrderId;
-        data["userContextOrderType"] = this.userContextOrderType;
         return data; 
     }
 }
@@ -35238,8 +35296,6 @@ export interface IContactInfoDto {
     personContactInfo: PersonContactInfoDto | undefined;
     primaryOrganizationContactInfo: OrganizationContactInfoDto | undefined;
     creationDate: moment.Moment | undefined;
-    userContextOrderId: number | undefined;
-    userContextOrderType: string | undefined;
 }
 
 export class PersonContactInfoDto implements IPersonContactInfoDto {
@@ -48564,7 +48620,6 @@ export class OfferDto implements IOfferDto {
     status!: OfferDtoStatus | undefined;
     type!: OfferDtoType | undefined;
     name!: string | undefined;
-    subId!: string | undefined;
     traficSource!: OfferDtoTraficSource | undefined;
     redirectUrl!: string | undefined;
     created!: moment.Moment | undefined;
@@ -48599,7 +48654,6 @@ export class OfferDto implements IOfferDto {
             this.status = data["status"];
             this.type = data["type"];
             this.name = data["name"];
-            this.subId = data["subId"];
             this.traficSource = data["traficSource"];
             this.redirectUrl = data["redirectUrl"];
             this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
@@ -48646,7 +48700,6 @@ export class OfferDto implements IOfferDto {
         data["status"] = this.status;
         data["type"] = this.type;
         data["name"] = this.name;
-        data["subId"] = this.subId;
         data["traficSource"] = this.traficSource;
         data["redirectUrl"] = this.redirectUrl;
         data["created"] = this.created ? this.created.toISOString() : <any>undefined;
@@ -48686,7 +48739,6 @@ export interface IOfferDto {
     status: OfferDtoStatus | undefined;
     type: OfferDtoType | undefined;
     name: string | undefined;
-    subId: string | undefined;
     traficSource: OfferDtoTraficSource | undefined;
     redirectUrl: string | undefined;
     created: moment.Moment | undefined;
@@ -48735,7 +48787,6 @@ export class OfferDetailsDto implements IOfferDetailsDto {
     status!: OfferDetailsDtoStatus | undefined;
     type!: OfferDetailsDtoType | undefined;
     name!: string | undefined;
-    subId!: string | undefined;
     traficSource!: OfferDetailsDtoTraficSource | undefined;
     redirectUrl!: string | undefined;
     created!: moment.Moment | undefined;
@@ -48805,7 +48856,6 @@ export class OfferDetailsDto implements IOfferDetailsDto {
             this.status = data["status"];
             this.type = data["type"];
             this.name = data["name"];
-            this.subId = data["subId"];
             this.traficSource = data["traficSource"];
             this.redirectUrl = data["redirectUrl"];
             this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
@@ -48887,7 +48937,6 @@ export class OfferDetailsDto implements IOfferDetailsDto {
         data["status"] = this.status;
         data["type"] = this.type;
         data["name"] = this.name;
-        data["subId"] = this.subId;
         data["traficSource"] = this.traficSource;
         data["redirectUrl"] = this.redirectUrl;
         data["created"] = this.created ? this.created.toISOString() : <any>undefined;
@@ -48950,7 +48999,6 @@ export interface IOfferDetailsDto {
     status: OfferDetailsDtoStatus | undefined;
     type: OfferDetailsDtoType | undefined;
     name: string | undefined;
-    subId: string | undefined;
     traficSource: OfferDetailsDtoTraficSource | undefined;
     redirectUrl: string | undefined;
     created: moment.Moment | undefined;
@@ -49058,6 +49106,8 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
     creditScore!: GetMemberInfoResponseCreditScore | undefined;
     stateCode!: string | undefined;
     countryCode!: string | undefined;
+    isDirectPostSupported!: boolean | undefined;
+    testMode!: boolean | undefined;
 
     constructor(data?: IGetMemberInfoResponse) {
         if (data) {
@@ -49073,6 +49123,8 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
             this.creditScore = data["creditScore"];
             this.stateCode = data["stateCode"];
             this.countryCode = data["countryCode"];
+            this.isDirectPostSupported = data["isDirectPostSupported"];
+            this.testMode = data["testMode"];
         }
     }
 
@@ -49088,6 +49140,8 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
         data["creditScore"] = this.creditScore;
         data["stateCode"] = this.stateCode;
         data["countryCode"] = this.countryCode;
+        data["isDirectPostSupported"] = this.isDirectPostSupported;
+        data["testMode"] = this.testMode;
         return data; 
     }
 }
@@ -49096,10 +49150,13 @@ export interface IGetMemberInfoResponse {
     creditScore: GetMemberInfoResponseCreditScore | undefined;
     stateCode: string | undefined;
     countryCode: string | undefined;
+    isDirectPostSupported: boolean | undefined;
+    testMode: boolean | undefined;
 }
 
 export class ExtendOfferDto implements IExtendOfferDto {
     campaignId!: number;
+    customName!: string | undefined;
     subId!: string | undefined;
     isPublished!: boolean;
     overallRating!: number;
@@ -49142,6 +49199,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
     init(data?: any) {
         if (data) {
             this.campaignId = data["campaignId"];
+            this.customName = data["customName"];
             this.subId = data["subId"];
             this.isPublished = data["isPublished"];
             this.overallRating = data["overallRating"];
@@ -49196,6 +49254,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["campaignId"] = this.campaignId;
+        data["customName"] = this.customName;
         data["subId"] = this.subId;
         data["isPublished"] = this.isPublished;
         data["overallRating"] = this.overallRating;
@@ -49243,6 +49302,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
 
 export interface IExtendOfferDto {
     campaignId: number;
+    customName: string | undefined;
     subId: string | undefined;
     isPublished: boolean;
     overallRating: number;
