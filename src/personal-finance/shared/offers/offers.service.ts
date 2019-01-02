@@ -134,7 +134,7 @@ export class OffersService {
         }
 
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
-            width: '500px',
+            width: '530px',
             panelClass: 'apply-offer-dialog',
             data: modalData
         });

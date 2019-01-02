@@ -1,8 +1,6 @@
 <mat-dialog-content>
     <ng-container *ngIf="!showBlockedMessage">
-        <div class="nextImageBlock">
-            <img src="./assets/common/icons/next-arrow.svg" alt="Next">
-        </div>
+        <div class="nextImageBlock"></div>
         <h2>{{title}}</h2>
         <p>{{subtitle}}</p>
         <ng-container *ngIf="processingSteps[currentStepIndex] as processingStep">
