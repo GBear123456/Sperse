@@ -62,8 +62,8 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         id: null,
         fullName: '',
         shortName: '',
-        companyType: null,
-        companySize: null,
+        typeId: null,
+        sizeId: null,
         annualRevenue: '',
         formedStateId: null,
         formedCountryId: 'US',
@@ -101,8 +101,10 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         this.data.title = this.company.fullName = company.fullName;
         this.company = { ...this.company, ...company.organization };
         this.company.id = company.id;
-        let size = _.find(this.companySizes, size => size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom);
-        this.company.companySize = size ? size.id : null;
+        if (this.company.sizeId === null) {
+            let size = _.find(this.companySizes, size => size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom);
+            this.company.sizeId = size ? size.id : null;
+        }
         this.company.primaryPhoto = company.primaryPhoto;
         this.data.editTitle = true;
         this.data.titleClearButton = true;
@@ -126,7 +128,7 @@ export class CompanyDialogComponent extends ModalDialogComponent implements OnIn
         this.company.companyName = this.company.fullName = this.data.title;
         let input = new UpdateOrganizationInfoInput(this.company);
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
-        let size = _.find(this.companySizes, item => item.id === this.company.companySize);
+        let size = _.find(this.companySizes, item => item.id === this.company.sizeId);
         if (size) {
             input.sizeFrom = size.from;
             input.sizeTo = size.to;

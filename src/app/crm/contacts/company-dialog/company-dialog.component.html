@@ -22,7 +22,7 @@
                                 valueExpr="id"
                                 placeholder="{{l('Select')}}"
                                 [dataSource]="companyTypes$ | async"
-                                [(value)]="company.companyType">
+                                [(value)]="company.typeId">
                             </dx-select-box>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                                 valueExpr="id"
                                 placeholder="{{l('Select')}}"
                                 [dataSource]="companySizes"
-                                [(value)]="company.companySize">
+                                [(value)]="company.sizeId">
                             </dx-select-box>
                         </div>
                     </div>
