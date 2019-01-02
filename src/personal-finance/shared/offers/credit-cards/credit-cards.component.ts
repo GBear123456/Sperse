@@ -17,9 +17,9 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
 export class CreditCardsComponent implements OnInit {
     cardOffersList$: Observable<OfferDto[]>;
     creditScoreNames = ['Excellent', 'Good', 'Fair', 'Bad', 'NoCredit'];
-    creditCardCollection: any[] = [];
-    filteredGroup: any[] = [];
-    bestCardsByScore: any[] = [];
+    creditCardCollection: CampaignDto[] = [];
+    filteredGroup: CampaignDto[] = [];
+    bestCardsByScore: CampaignDto[] = [];
     bestCreditCard: any;
     cards: OfferDto[];
     selectedOfferGroup: OfferDto;
