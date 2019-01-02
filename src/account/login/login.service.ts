@@ -149,9 +149,7 @@ export class LoginService {
         this.ensureExternalLoginProviderInitialized(provider, () => {
             this._authService.stopTokenCheck();
             if (provider.name === ExternalLoginProvider.FACEBOOK) {
-                FB.login(response => {
-                    this.facebookLoginStatusChangeCallback(response);
-                }, { scope: 'email' });
+                this.facebookLogin();
             } else if (provider.name === ExternalLoginProvider.GOOGLE) {
                 gapi.auth2.getAuthInstance().signIn().then(() => {
                     this.googleLoginStatusChangeCallback(gapi.auth2.getAuthInstance().isSignedIn.get());
@@ -163,6 +161,17 @@ export class LoginService {
             }
             this._authService.startTokenCheck();
         });
+    }
+
+    facebookLogin() {
+        FB.login(response => {
+            if (response.authResponse.grantedScopes.split(',').includes('email')) {
+                this.facebookLoginStatusChangeCallback(response);
+            }
+            else {
+                abp.message.error('Email is required', 'Facebook Login Failed');
+            }
+        }, { scope: 'email', return_scopes: true, auth_type: 'rerequest' });
     }
 
     init(): void {
@@ -297,13 +306,7 @@ export class LoginService {
                     xfbml: true,
                     version: 'v3.2'
                 });
-
-                FB.getLoginStatus(response => {
-                    this.facebookLoginStatusChangeCallback(response);
-                    if (response.status !== 'connected') {
-                        callback();
-                    }
-                });
+                this.facebookLogin();
             });
         } else if (loginProvider.name === ExternalLoginProvider.GOOGLE) {
             jQuery.getScript('https://apis.google.com/js/api.js', () => {
