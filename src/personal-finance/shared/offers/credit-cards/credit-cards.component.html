@@ -5,7 +5,7 @@
             and comparing the best credit card offers takes a lot of work and time.</p>
     </div>
 
-    <section class="cards" *ngIf="bestCreditCard || (creditCardCollection && creditCardCollection.length)">
+    <section class="cards" *ngIf="bestCreditCard || (filteredGroup && filteredGroup.length)">
         <div class="heading">
             <h2>To help you find the ideal card for you, the LendSpace team has assembled the</h2>
             <button *ngIf="bestCreditCard"
@@ -16,7 +16,7 @@
         </div>
 
         <ul class="row cards-list">
-            <ng-container *ngFor="let cardOfferGroup of creditCardCollection">
+            <ng-container *ngFor="let cardOfferGroup of filteredGroup">
                 <li class="col-md-3 col-sm-4 col-xs-12 cards-item" *ngIf="cardOfferGroup.offerCollection != 'Best'">
                     <a class="cards-item-wrap"
                        (click)="openOffers(cardOfferGroup)">
@@ -44,13 +44,13 @@
     </section>
 
     <section class="results-by-category">
-        <ng-container *ngIf="cards && creditCardCollection && creditCardCollection.length; else noOffers">
+        <ng-container *ngIf="cards && filteredGroup && filteredGroup.length; else noOffers">
             <h2>Top results by category</h2>
 
             <div class="row">
             <div class="col-md-3 col-sm-4 col-xs-12 offer-navigation">
                 <ul class="offer-navigation__list">
-                     <li class="offer-navigation__item" *ngFor="let menuItem of creditCardCollection">
+                     <li class="offer-navigation__item" *ngFor="let menuItem of filteredGroup">
                         <a class="offer-navigation__link"
                            [routerLink]="'/personal-finance/offers/credit-cards/home/' + menuItem.offerCollection"
                            routerLinkActive="active">
