@@ -18304,66 +18304,6 @@ export class PersonOrgRelationServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    get(personId: number, orgId: number): Observable<PersonOrgRelationInfoDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Get?";
-        if (personId === undefined || personId === null)
-            throw new Error("The parameter 'personId' must be defined and cannot be null.");
-        else
-            url_ += "PersonId=" + encodeURIComponent("" + personId) + "&"; 
-        if (orgId === undefined || orgId === null)
-            throw new Error("The parameter 'orgId' must be defined and cannot be null.");
-        else
-            url_ += "OrgId=" + encodeURIComponent("" + orgId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGet(<any>response_);
-                } catch (e) {
-                    return <Observable<PersonOrgRelationInfoDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PersonOrgRelationInfoDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGet(response: HttpResponseBase): Observable<PersonOrgRelationInfoDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PersonOrgRelationInfoDto.fromJS(resultData200) : new PersonOrgRelationInfoDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PersonOrgRelationInfoDto>(<any>null);
-    }
-
-    /**
      * @input (optional) 
      * @return Success
      */
@@ -35301,6 +35241,7 @@ export interface IContactInfoDto {
 export class PersonContactInfoDto implements IPersonContactInfoDto {
     person!: PersonInfoDto | undefined;
     jobTitle!: string | undefined;
+    primaryOrgRelationId!: number | undefined;
     orgRelations!: PersonOrgRelationShortInfo[] | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
@@ -35324,6 +35265,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         if (data) {
             this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
             this.jobTitle = data["jobTitle"];
+            this.primaryOrgRelationId = data["primaryOrgRelationId"];
             if (data["orgRelations"] && data["orgRelations"].constructor === Array) {
                 this.orgRelations = [];
                 for (let item of data["orgRelations"])
@@ -35351,6 +35293,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data = typeof data === 'object' ? data : {};
         data["person"] = this.person ? this.person.toJSON() : <any>undefined;
         data["jobTitle"] = this.jobTitle;
+        data["primaryOrgRelationId"] = this.primaryOrgRelationId;
         if (this.orgRelations && this.orgRelations.constructor === Array) {
             data["orgRelations"] = [];
             for (let item of this.orgRelations)
@@ -35371,6 +35314,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
 export interface IPersonContactInfoDto {
     person: PersonInfoDto | undefined;
     jobTitle: string | undefined;
+    primaryOrgRelationId: number | undefined;
     orgRelations: PersonOrgRelationShortInfo[] | undefined;
     id: number | undefined;
     fullName: string | undefined;
@@ -51402,46 +51346,6 @@ export interface ICreateUserForContactInput {
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     assignedRoleNames: string[];
-}
-
-export class PersonOrgRelationInfoDto implements IPersonOrgRelationInfoDto {
-    id!: number | undefined;
-    jobTitle!: string | undefined;
-
-    constructor(data?: IPersonOrgRelationInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.jobTitle = data["jobTitle"];
-        }
-    }
-
-    static fromJS(data: any): PersonOrgRelationInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PersonOrgRelationInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["jobTitle"] = this.jobTitle;
-        return data; 
-    }
-}
-
-export interface IPersonOrgRelationInfoDto {
-    id: number | undefined;
-    jobTitle: string | undefined;
 }
 
 export class CreateOrUpdatePersonOrgRelationInput implements ICreateOrUpdatePersonOrgRelationInput {

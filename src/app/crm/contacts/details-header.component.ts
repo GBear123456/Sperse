@@ -103,20 +103,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     initializePersonOrgRelationInfo() {
         this._contactInfoBehaviorSubject.subscribe(data => {
             let contactId = data && data.id,
-                orgId = data && data.primaryOrganizationContactInfo && data.primaryOrganizationContactInfo.id;
-            if (contactId && orgId) {
-                if (this._personOrgRelationService['data'] && this._personOrgRelationService['data'].id == contactId) {
-                    this.personOrgRelationInfo = this._personOrgRelationService['data'].personOrgRelationInfo;
-                } else {
-                    this._personOrgRelationService.get(contactId, orgId)
-                        .subscribe(response => {
-                            this._personOrgRelationService['data'] = {
-                                id: contactId,
-                                personOrgRelationInfo: this.personOrgRelationInfo = response || {}
-                            };
-                        }
-                    );
-                }
+                orgId = data && data.primaryOrganizationContactInfo && data.primaryOrganizationContactInfo.id,
+                orgRelations = data && data.personContactInfo.orgRelations;
+            if (contactId && orgId && orgRelations) {
+                let primaryOrgRelationId = data.personContactInfo.primaryOrgRelationId;
+                this.personOrgRelationInfo = _.find(orgRelations, orgRelation => orgRelation.id === primaryOrgRelationId);
             }
         });
     }
