@@ -23,7 +23,7 @@ import { LendSpaceComponent } from '@root/personal-finance/landings/lend-space/l
 import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-space-dark/signup/lend-space-signup.component';
 
 import {
-    DxTextBoxModule, DxValidatorModule, DxRadioGroupModule, DxButtonModule, DxCheckBoxModule, 
+    DxTextBoxModule, DxValidatorModule, DxRadioGroupModule, DxButtonModule, DxCheckBoxModule,
     DxDateBoxModule, DxValidationSummaryModule, DxValidationGroupModule, DxSelectBoxModule
 } from '@root/node_modules/devextreme-angular';
 
