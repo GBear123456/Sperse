@@ -24,10 +24,8 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
 import {
     Category,
     OfferServiceProxy,
-    CampaignDto,
-    CampaignDetailsDto,
-    SubmitApplicationInput,
-    SubmitApplicationOutput,
+    OfferDto,
+    OfferDetailsDto,
     CreditScores2
 } from '@shared/service-proxies/service-proxies';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
@@ -42,11 +40,11 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     @ViewChild('creditCardsList') creditCardsListRef: ElementRef;
     @ViewChild('detailsContainer') detailsContainerRef: ElementRef;
     @ViewChild('offersList') offersListRef: ElementRef;
-    creditCards$: Observable<CampaignDto[]>;
+    creditCards$: Observable<OfferDto[]>;
     cardsAmount: number;
     selectedCardId: ReplaySubject<number> = new ReplaySubject<number>(1);
     selectedCardId$: Observable<number> = this.selectedCardId.asObservable();
-    selectedCardDetails$: Observable<CampaignDetailsDto>;
+    selectedCardDetails$: Observable<OfferDetailsDto>;
     category$: Observable<Category>;
     selectedCategory: string;
     categoryDisplayName$: Observable<string>;
@@ -154,7 +152,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
             : this.renderer.addClass(this.offersListRef.nativeElement, 'sm-hidden');
     }
 
-    applyOffer(offer: CampaignDto) {
+    applyOffer(offer: OfferDto) {
         this.offersService.applyOffer(offer);
     }
 

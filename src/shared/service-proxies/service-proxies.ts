@@ -15955,7 +15955,7 @@ export class OfferServiceProxy {
      * @itemOfOfferCollection (optional) 
      * @return Success
      */
-    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<CampaignDto[]> {
+    getAll(category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<OfferDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (category !== undefined)
             url_ += "Category=" + encodeURIComponent("" + category) + "&"; 
@@ -15987,14 +15987,14 @@ export class OfferServiceProxy {
                 try {
                     return this.processGetAll(<any>response_);
                 } catch (e) {
-                    return <Observable<CampaignDto[]>><any>_observableThrow(e);
+                    return <Observable<OfferDto[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CampaignDto[]>><any>_observableThrow(response_);
+                return <Observable<OfferDto[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAll(response: HttpResponseBase): Observable<CampaignDto[]> {
+    protected processGetAll(response: HttpResponseBase): Observable<OfferDto[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16008,7 +16008,7 @@ export class OfferServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(CampaignDto.fromJS(item));
+                    result200.push(OfferDto.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -16017,13 +16017,13 @@ export class OfferServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CampaignDto[]>(<any>null);
+        return _observableOf<OfferDto[]>(<any>null);
     }
 
     /**
      * @return Success
      */
-    getDetails(campaignId: number): Observable<CampaignDetailsDto> {
+    getDetails(campaignId: number): Observable<OfferDetailsDto> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetDetails?";
         if (campaignId === undefined || campaignId === null)
             throw new Error("The parameter 'campaignId' must be defined and cannot be null.");
@@ -16047,14 +16047,14 @@ export class OfferServiceProxy {
                 try {
                     return this.processGetDetails(<any>response_);
                 } catch (e) {
-                    return <Observable<CampaignDetailsDto>><any>_observableThrow(e);
+                    return <Observable<OfferDetailsDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<CampaignDetailsDto>><any>_observableThrow(response_);
+                return <Observable<OfferDetailsDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetDetails(response: HttpResponseBase): Observable<CampaignDetailsDto> {
+    protected processGetDetails(response: HttpResponseBase): Observable<OfferDetailsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16065,7 +16065,7 @@ export class OfferServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CampaignDetailsDto.fromJS(resultData200) : new CampaignDetailsDto();
+            result200 = resultData200 ? OfferDetailsDto.fromJS(resultData200) : new OfferDetailsDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16073,7 +16073,7 @@ export class OfferServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<CampaignDetailsDto>(<any>null);
+        return _observableOf<OfferDetailsDto>(<any>null);
     }
 
     /**
@@ -48558,14 +48558,14 @@ export interface INotificationSubscriptionDto {
     isSubscribed: boolean | undefined;
 }
 
-export class CampaignDto implements ICampaignDto {
-    systemType!: CampaignDtoSystemType | undefined;
+export class OfferDto implements IOfferDto {
+    systemType!: OfferDtoSystemType | undefined;
     campaignId!: number | undefined;
-    status!: CampaignDtoStatus | undefined;
-    type!: CampaignDtoType | undefined;
+    status!: OfferDtoStatus | undefined;
+    type!: OfferDtoType | undefined;
     name!: string | undefined;
     subId!: string | undefined;
-    traficSource!: CampaignDtoTraficSource | undefined;
+    traficSource!: OfferDtoTraficSource | undefined;
     redirectUrl!: string | undefined;
     created!: moment.Moment | undefined;
     logoUrl!: string | undefined;
@@ -48575,7 +48575,7 @@ export class CampaignDto implements ICampaignDto {
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
-    offerCollection!: CampaignDtoOfferCollection | undefined;
+    offerCollection!: OfferDtoOfferCollection | undefined;
     overallRating!: number | undefined;
     issuingBank!: string | undefined;
     annualFee!: string | undefined;
@@ -48583,7 +48583,7 @@ export class CampaignDto implements ICampaignDto {
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
 
-    constructor(data?: ICampaignDto) {
+    constructor(data?: IOfferDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48632,9 +48632,9 @@ export class CampaignDto implements ICampaignDto {
         }
     }
 
-    static fromJS(data: any): CampaignDto {
+    static fromJS(data: any): OfferDto {
         data = typeof data === 'object' ? data : {};
-        let result = new CampaignDto();
+        let result = new OfferDto();
         result.init(data);
         return result;
     }
@@ -48680,14 +48680,14 @@ export class CampaignDto implements ICampaignDto {
     }
 }
 
-export interface ICampaignDto {
-    systemType: CampaignDtoSystemType | undefined;
+export interface IOfferDto {
+    systemType: OfferDtoSystemType | undefined;
     campaignId: number | undefined;
-    status: CampaignDtoStatus | undefined;
-    type: CampaignDtoType | undefined;
+    status: OfferDtoStatus | undefined;
+    type: OfferDtoType | undefined;
     name: string | undefined;
     subId: string | undefined;
-    traficSource: CampaignDtoTraficSource | undefined;
+    traficSource: OfferDtoTraficSource | undefined;
     redirectUrl: string | undefined;
     created: moment.Moment | undefined;
     logoUrl: string | undefined;
@@ -48697,7 +48697,7 @@ export interface ICampaignDto {
     daysOfWeekAvailability: string | undefined;
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
-    offerCollection: CampaignDtoOfferCollection | undefined;
+    offerCollection: OfferDtoOfferCollection | undefined;
     overallRating: number | undefined;
     issuingBank: string | undefined;
     annualFee: string | undefined;
@@ -48706,7 +48706,7 @@ export interface ICampaignDto {
     regularAPR: string | undefined;
 }
 
-export class CampaignDetailsDto implements ICampaignDetailsDto {
+export class OfferDetailsDto implements IOfferDetailsDto {
     description!: string | undefined;
     termsOfService!: string | undefined;
     updated!: moment.Moment | undefined;
@@ -48715,10 +48715,10 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     benefitsRating!: number | undefined;
     rewardsRating!: number | undefined;
     serviceRating!: number | undefined;
-    cardNetwork!: CampaignDetailsDtoCardNetwork | undefined;
-    cardType!: CampaignDetailsDtoCardType | undefined;
-    targetAudience!: CampaignDetailsDtoTargetAudience | undefined;
-    securingType!: CampaignDetailsDtoSecuringType | undefined;
+    cardNetwork!: OfferDetailsDtoCardNetwork | undefined;
+    cardType!: OfferDetailsDtoCardType | undefined;
+    targetAudience!: OfferDetailsDtoTargetAudience | undefined;
+    securingType!: OfferDetailsDtoSecuringType | undefined;
     introAPR!: string | undefined;
     balanceTransferFee!: string | undefined;
     monthlyFee!: string | undefined;
@@ -48730,13 +48730,13 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     pros!: string[] | undefined;
     cons!: string[] | undefined;
     flags!: Flags | undefined;
-    systemType!: CampaignDetailsDtoSystemType | undefined;
+    systemType!: OfferDetailsDtoSystemType | undefined;
     campaignId!: number | undefined;
-    status!: CampaignDetailsDtoStatus | undefined;
-    type!: CampaignDetailsDtoType | undefined;
+    status!: OfferDetailsDtoStatus | undefined;
+    type!: OfferDetailsDtoType | undefined;
     name!: string | undefined;
     subId!: string | undefined;
-    traficSource!: CampaignDetailsDtoTraficSource | undefined;
+    traficSource!: OfferDetailsDtoTraficSource | undefined;
     redirectUrl!: string | undefined;
     created!: moment.Moment | undefined;
     logoUrl!: string | undefined;
@@ -48746,7 +48746,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
-    offerCollection!: CampaignDetailsDtoOfferCollection | undefined;
+    offerCollection!: OfferDetailsDtoOfferCollection | undefined;
     overallRating!: number | undefined;
     issuingBank!: string | undefined;
     annualFee!: string | undefined;
@@ -48754,7 +48754,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
 
-    constructor(data?: ICampaignDetailsDto) {
+    constructor(data?: IOfferDetailsDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48838,9 +48838,9 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
         }
     }
 
-    static fromJS(data: any): CampaignDetailsDto {
+    static fromJS(data: any): OfferDetailsDto {
         data = typeof data === 'object' ? data : {};
-        let result = new CampaignDetailsDto();
+        let result = new OfferDetailsDto();
         result.init(data);
         return result;
     }
@@ -48921,7 +48921,7 @@ export class CampaignDetailsDto implements ICampaignDetailsDto {
     }
 }
 
-export interface ICampaignDetailsDto {
+export interface IOfferDetailsDto {
     description: string | undefined;
     termsOfService: string | undefined;
     updated: moment.Moment | undefined;
@@ -48930,10 +48930,10 @@ export interface ICampaignDetailsDto {
     benefitsRating: number | undefined;
     rewardsRating: number | undefined;
     serviceRating: number | undefined;
-    cardNetwork: CampaignDetailsDtoCardNetwork | undefined;
-    cardType: CampaignDetailsDtoCardType | undefined;
-    targetAudience: CampaignDetailsDtoTargetAudience | undefined;
-    securingType: CampaignDetailsDtoSecuringType | undefined;
+    cardNetwork: OfferDetailsDtoCardNetwork | undefined;
+    cardType: OfferDetailsDtoCardType | undefined;
+    targetAudience: OfferDetailsDtoTargetAudience | undefined;
+    securingType: OfferDetailsDtoSecuringType | undefined;
     introAPR: string | undefined;
     balanceTransferFee: string | undefined;
     monthlyFee: string | undefined;
@@ -48945,13 +48945,13 @@ export interface ICampaignDetailsDto {
     pros: string[] | undefined;
     cons: string[] | undefined;
     flags: Flags | undefined;
-    systemType: CampaignDetailsDtoSystemType | undefined;
+    systemType: OfferDetailsDtoSystemType | undefined;
     campaignId: number | undefined;
-    status: CampaignDetailsDtoStatus | undefined;
-    type: CampaignDetailsDtoType | undefined;
+    status: OfferDetailsDtoStatus | undefined;
+    type: OfferDetailsDtoType | undefined;
     name: string | undefined;
     subId: string | undefined;
-    traficSource: CampaignDetailsDtoTraficSource | undefined;
+    traficSource: OfferDetailsDtoTraficSource | undefined;
     redirectUrl: string | undefined;
     created: moment.Moment | undefined;
     logoUrl: string | undefined;
@@ -48961,7 +48961,7 @@ export interface ICampaignDetailsDto {
     daysOfWeekAvailability: string | undefined;
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
-    offerCollection: CampaignDetailsDtoOfferCollection | undefined;
+    offerCollection: OfferDetailsDtoOfferCollection | undefined;
     overallRating: number | undefined;
     issuingBank: string | undefined;
     annualFee: string | undefined;
@@ -59491,11 +59491,11 @@ export enum TenantNotificationSeverity {
     _4 = 4, 
 }
 
-export enum CampaignDtoSystemType {
+export enum OfferDtoSystemType {
     EPCVIP = "EPCVIP", 
 }
 
-export enum CampaignDtoStatus {
+export enum OfferDtoStatus {
     PendingReview = "PendingReview", 
     Active = "Active", 
     Denied = "Denied", 
@@ -59506,14 +59506,14 @@ export enum CampaignDtoStatus {
     Deleted = "Deleted", 
 }
 
-export enum CampaignDtoType {
+export enum OfferDtoType {
     MultiOfferSinglePage = "MultiOfferSinglePage", 
     TrafficDistribution = "TrafficDistribution", 
     DirectPost = "DirectPost", 
     Carrier = "Carrier", 
 }
 
-export enum CampaignDtoTraficSource {
+export enum OfferDtoTraficSource {
     PPC_Default = "PPC_Default", 
     Email = "Email", 
     SEO = "SEO", 
@@ -59539,7 +59539,7 @@ export enum CreditScores {
     Poor = "Poor", 
 }
 
-export enum CampaignDtoOfferCollection {
+export enum OfferDtoOfferCollection {
     Best = "Best", 
     BalanceTransfer = "BalanceTransfer", 
     CashBack = "CashBack", 
@@ -59556,7 +59556,7 @@ export enum CampaignDtoOfferCollection {
     NoCredit = "NoCredit", 
 }
 
-export enum CampaignDetailsDtoCardNetwork {
+export enum OfferDetailsDtoCardNetwork {
     AmEx = "AmEx", 
     Discover = "Discover", 
     Mastercard = "Mastercard", 
@@ -59564,18 +59564,18 @@ export enum CampaignDetailsDtoCardNetwork {
     Store = "Store", 
 }
 
-export enum CampaignDetailsDtoCardType {
+export enum OfferDetailsDtoCardType {
     Credit = "Credit", 
     Debit = "Debit", 
 }
 
-export enum CampaignDetailsDtoTargetAudience {
+export enum OfferDetailsDtoTargetAudience {
     Consumer = "Consumer", 
     Business = "Business", 
     Students = "Students", 
 }
 
-export enum CampaignDetailsDtoSecuringType {
+export enum OfferDetailsDtoSecuringType {
     Unsecured = "Unsecured", 
     Secured = "Secured", 
     Prepaid = "Prepaid", 
@@ -59689,11 +59689,11 @@ export interface IFlags {
     zeroPercentageInterestTransfers: boolean | undefined;
 }
 
-export enum CampaignDetailsDtoSystemType {
+export enum OfferDetailsDtoSystemType {
     EPCVIP = "EPCVIP", 
 }
 
-export enum CampaignDetailsDtoStatus {
+export enum OfferDetailsDtoStatus {
     PendingReview = "PendingReview", 
     Active = "Active", 
     Denied = "Denied", 
@@ -59704,14 +59704,14 @@ export enum CampaignDetailsDtoStatus {
     Deleted = "Deleted", 
 }
 
-export enum CampaignDetailsDtoType {
+export enum OfferDetailsDtoType {
     MultiOfferSinglePage = "MultiOfferSinglePage", 
     TrafficDistribution = "TrafficDistribution", 
     DirectPost = "DirectPost", 
     Carrier = "Carrier", 
 }
 
-export enum CampaignDetailsDtoTraficSource {
+export enum OfferDetailsDtoTraficSource {
     PPC_Default = "PPC_Default", 
     Email = "Email", 
     SEO = "SEO", 
@@ -59737,7 +59737,7 @@ export enum CreditScores2 {
     Poor = "Poor", 
 }
 
-export enum CampaignDetailsDtoOfferCollection {
+export enum OfferDetailsDtoOfferCollection {
     Best = "Best", 
     BalanceTransfer = "BalanceTransfer", 
     CashBack = "CashBack", 

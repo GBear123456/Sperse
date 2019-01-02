@@ -12,7 +12,7 @@ import { capitalize, cloneDeep } from 'lodash';
 
 /** Application imports */
 import {
-    CampaignDto,
+    OfferDto,
     Category,
     CreditScore,
     SubmitApplicationInput,
@@ -60,7 +60,7 @@ export class OffersService {
         }
     };
 
-    displayedCards: CampaignDto[];
+    displayedCards: OfferDto[];
     defaultCategoryDisplayName: string = this.ls.l('Offers_Offers');
     constructor(
         private route: ActivatedRoute,
@@ -111,7 +111,7 @@ export class OffersService {
         }
     }
 
-    applyOffer(offer: CampaignDto) {
+    applyOffer(offer: OfferDto) {
         const linkIsDirect = !!offer.redirectUrl;
         const submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.campaignId,

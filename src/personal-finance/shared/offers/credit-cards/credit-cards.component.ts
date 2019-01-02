@@ -5,7 +5,7 @@ import { finalize, map } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import * as _ from 'underscore';
 
-import { CampaignDto, Category, ItemOfOfferCollection, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OfferDto, Category, ItemOfOfferCollection, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 
@@ -15,14 +15,14 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
     styleUrls: ['./credit-cards.component.less']
 })
 export class CreditCardsComponent implements OnInit {
-    cardOffersList$: Observable<CampaignDto[]>;
+    cardOffersList$: Observable<OfferDto[]>;
     creditScoreNames = ['Excellent', 'Good', 'Fair', 'Bad', 'NoCredit'];
     creditCardCollection: any[] = [];
     menuItems: any[] = [];
     bestCardsByScore: any[] = [];
     bestCreditCard: any;
-    cards: CampaignDto[];
-    selectedOfferGroup: CampaignDto;
+    cards: OfferDto[];
+    selectedOfferGroup: OfferDto;
 
     offerCollection$: Observable<any> = combineLatest(
         this.route.params,
@@ -65,7 +65,7 @@ export class CreditCardsComponent implements OnInit {
         });
     }
 
-    openOffers(offer: CampaignDto) {
+    openOffers(offer: OfferDto) {
         this.offersService.applyOffer(offer);
     }
 
@@ -80,7 +80,7 @@ export class CreditCardsComponent implements OnInit {
             ItemOfOfferCollection[collection]
             )
             .pipe(finalize(() => abp.ui.clearBusy()))
-            .subscribe( (offers: CampaignDto[]) => {
+            .subscribe((offers: OfferDto[]) => {
                 this.cards = offers;
             });
     }

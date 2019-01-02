@@ -25,7 +25,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import {
-    CampaignDto,
+    OfferDto,
     Category,
     OfferServiceProxy,
     GetMemberInfoResponse,
@@ -336,7 +336,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         );
 
         /** Insert filters values from credit cards data */
-        this.offers$.pipe(takeUntil(this.deactivate$), map((offers: CampaignDto[]) => {
+        this.offers$.pipe(takeUntil(this.deactivate$), map((offers: OfferDto[]) => {
             /** @todo uncomment in future when data will be good for filtering */
             //this.fullFillFilterValues(offers);
         }));
@@ -353,7 +353,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                 //     sortingField
                 // ))
             //);
-        this.displayedOffers$.pipe(takeUntil(this.deactivate$)).subscribe((displayedCreditCards: CampaignDto[]) => {
+        this.displayedOffers$.pipe(takeUntil(this.deactivate$)).subscribe((displayedCreditCards: OfferDto[]) => {
             this.offersService.displayedCards = displayedCreditCards;
         });
     }
@@ -411,7 +411,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         // this.filters.forEach(filter => this.filtersValues[filter.field] = {});
     }
 
-    viewCardDetails(card: CampaignDto) {
+    viewCardDetails(card: OfferDto) {
         this.router.navigate(['./', card.campaignId], { relativeTo: this.route });
     }
 
@@ -425,7 +425,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         this.sortingSelect.toggle();
     }
 
-    applyOffer(offer: CampaignDto) {
+    applyOffer(offer: OfferDto) {
         this.offersService.applyOffer(offer);
     }
 
