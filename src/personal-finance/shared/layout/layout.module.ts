@@ -12,10 +12,7 @@ import { AutoCompleteModule, EditorModule, FileUploadModule as PrimeNgFileUpload
 /** Application imports */
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
-import { AppService } from '@app/app.service';
 import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
-import { PersonalFinanceHeaderComponent } from '@shared/personal-finance-layout/personal-finance-header.component';
-import { PersonalFinanceFooterComponent } from '@shared/personal-finance-layout/personal-finance-footer.component';
 import { UserManagementListComponent } from './user-management-list/user-management-list.component';
 
 let COMPONENTS = [
@@ -46,7 +43,6 @@ let COMPONENTS = [
     exports: COMPONENTS,
     entryComponents: COMPONENTS,
     providers: [
-        AppService,
         InstanceServiceProxy,
         TenantSubscriptionServiceProxy
     ]
