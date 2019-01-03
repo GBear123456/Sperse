@@ -7,7 +7,6 @@ import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-servi
 import { ArticlesComponent } from './pages/articles/articles.component';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
-import { LendspaceWelcomeComponent } from './pages/lendspace-welcome/lendspace-welcome.component';
 import { KbaResultComponent } from './member-area/kba-result/kba-result.component';
 import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-space-dark/signup/lend-space-signup.component';
 import { CreditWizardPageComponent } from '@root/personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.component';
@@ -23,32 +22,6 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                 canActivate: [ CreditReportsRouteGuard ],
                 canActivateChild: [ CreditReportsRouteGuard ],
                 children: [
-                    {
-                        path: 'home',
-                        component: LendspaceWelcomeComponent,
-                        data: {
-                            wrapperDisabled: true
-                        }
-                    },
-                    /*{
-                        path: 'privacy',
-                        component: LendSpaceDarkComponent,
-                        data: {
-                            openedPrivacy: true,
-                            wrapperDisabled: true,
-                            hideFooter: false
-                        }
-                    },
-                    {
-                        path: 'terms',
-                        component: LendSpaceDarkComponent,
-                        data: {
-                            openedTerms: true,
-                            wrapperDisabled: true,
-                            hideFooter: false
-                        }
-                    },
-*/
                     {
                         path: 'signup',
                         component: CreditWizardPageComponent

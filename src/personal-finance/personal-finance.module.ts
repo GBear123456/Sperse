@@ -5,14 +5,13 @@ import { FileUploadModule } from '@node_modules/ng2-file-upload';
 import { PersonalFinanceCommonModule } from './shared/common/personal-finance-common.module';
 import { PersonalFinanceRoutingModule } from './personal-finance-routing.module';
 import { PersonalFinanceComponent } from './personal-finance.component';
-import { LayoutModule } from './shared/layout/layout.module';
+import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
 import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
 import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
 import { PackageIdService } from './shared/common/packages/package-id.service';
 import { ContactUsComponent } from './pages/contact-us/contact-us.component';
 import { ArticlesComponent } from './pages/articles/articles.component';
 import { AboutUsComponent } from './pages/about-us/about-us.component';
-import { LendspaceWelcomeComponent } from './pages/lendspace-welcome/lendspace-welcome.component';
 import { CreditReportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { KbaResultModule } from './member-area/kba-result/kba-result.module';
 import { CreditWizardPageComponent } from './landings/credit-report/wizard-form/wizard-page/wizard-page.component';
@@ -35,7 +34,6 @@ import { AngularGooglePlaceModule } from '@node_modules/angular-google-place';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { UserOnlyCFOService } from '@root/personal-finance/shared/common/user-only.cfo.service';
-
 import { ngxZendeskWebwidgetModule, ngxZendeskWebwidgetConfig, ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 
@@ -54,7 +52,6 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         ContactUsComponent,
         ArticlesComponent,
         AboutUsComponent,
-        LendspaceWelcomeComponent,
         CreditReportComponent,
         CreditReportRegFromComponent,
         LendSpaceComponent,
@@ -66,7 +63,7 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         ModalModule.forRoot(),
         TooltipModule.forRoot(),
         FileUploadModule,
-        LayoutModule,
+        PersonalFinanceLayoutModule,
         CommonModule,
         KbaResultModule,
 

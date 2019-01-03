@@ -1,0 +1,29 @@
+<app-pages-header *ngIf="!showDefaultHeader"></app-pages-header>
+<div class="top-headline">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a href="//lendspace.com" class="url">www.lendspace.com</a>
+        <p class="get-free-score">Get Your Free Credit Score with LendSpace</p>
+        <p class="date">{{currentDate | date:'longDate'}}</p>
+    </div>
+</div>
+<div class="page-header navbar navbar-fixed-top navbar-light md-shadow-zero-light container" [ngClass]="{'pfm-app': hasPfmAppFeature}" *ngIf="showDefaultHeader">
+    <div class="page-logo">
+        <a href="javascript:void(0);" (click)="logoClick($event)">
+            <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" class="logo-default" width="200" />
+        </a>
+    </div>
+
+    <app-area-navigation *ngIf="hasPfmAppFeature"
+        id="header-app-menu"
+        [memberAreaLinks]="appAreaLinks"
+        [actionsButtons]="actionsButtons">
+    </app-area-navigation>
+
+    <ng-template ad-header-host></ng-template>
+
+    <member-area-navigation
+        *ngIf="!hasPfmAppFeature"
+        id="header-menu"
+        [memberAreaLinks]="memberAreaLinks">
+    </member-area-navigation>
+</div>

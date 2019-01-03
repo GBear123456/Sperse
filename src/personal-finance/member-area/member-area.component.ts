@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ComponentFactoryResolver } from '@angular/core';
+
+import { PersonalFinanceLayoutService } from '@shared/personal-finance-layout/personal-finance-layout.service';
+import { UserManagementListComponent } from '../shared/layout/user-management-list/user-management-list.component';
+
 
 @Component({
   selector: 'app-root',
@@ -7,8 +11,15 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class MemberAreaComponent implements OnInit {
-  constructor() { }
+    constructor(
+        private pfmLayoutService: PersonalFinanceLayoutService,
+        private componentFactoryResolver: ComponentFactoryResolver
+    ) { 
+        this.pfmLayoutService.headerContentUpdate(
+            this.componentFactoryResolver.resolveComponentFactory(UserManagementListComponent)
+        );
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 }

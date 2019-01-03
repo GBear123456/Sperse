@@ -10,6 +10,7 @@ import { MemberAreaRoutingModule } from './member-area-routing.module';
 import { CreditReportModule } from './credit-report/credit-report.module';
 import { CreditSimulatorModule } from './credit-simulator/credit-simulator.module';
 import { CreditResourcesModule } from './credit-resources/credit-resources.module';
+import { LayoutModule } from '../shared/layout/layout.module';
 
 import { AccountsComponent } from './accounts/accounts.component';
 import { FinancePageComponent } from './accounts/finance-page/finance-page.component';
@@ -20,6 +21,7 @@ import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/ba
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-intro.component';
+import { LendspaceWelcomeComponent } from './lendspace-welcome/lendspace-welcome.component';
 
 @NgModule({
     imports: [
@@ -34,13 +36,15 @@ import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-i
         AccountConnectorDialogModule,
         StickyModule,
         MatStepperModule,
-        MatDialogModule
+        MatDialogModule,
+        LayoutModule
     ],
     declarations: [
         MemberAreaComponent,
         AccountsComponent,
         FinancePageComponent,
-        PfmIntroComponent
+        PfmIntroComponent,
+        LendspaceWelcomeComponent
     ],
     providers: [
         InstanceServiceProxy,
