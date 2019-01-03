@@ -16315,7 +16315,7 @@ export class OfferManagementServiceProxy {
      * @data (optional) 
      * @return Success
      */
-    extendFromCSV(data: string | null | undefined): Observable<void> {
+    extendFromCSV(data: string | null | undefined): Observable<ExtendFromCSVOutput> {
         let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/ExtendFromCSV";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -16327,6 +16327,7 @@ export class OfferManagementServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -16337,14 +16338,14 @@ export class OfferManagementServiceProxy {
                 try {
                     return this.processExtendFromCSV(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<ExtendFromCSVOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<ExtendFromCSVOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processExtendFromCSV(response: HttpResponseBase): Observable<void> {
+    protected processExtendFromCSV(response: HttpResponseBase): Observable<ExtendFromCSVOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16353,14 +16354,17 @@ export class OfferManagementServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ExtendFromCSVOutput.fromJS(resultData200) : new ExtendFromCSVOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<ExtendFromCSVOutput>(<any>null);
     }
 }
 
@@ -48559,28 +48563,17 @@ export interface INotificationSubscriptionDto {
 }
 
 export class OfferDto implements IOfferDto {
-    systemType!: OfferDtoSystemType | undefined;
     campaignId!: number | undefined;
-    status!: OfferDtoStatus | undefined;
-    type!: OfferDtoType | undefined;
     name!: string | undefined;
-    traficSource!: OfferDtoTraficSource | undefined;
     redirectUrl!: string | undefined;
-    created!: moment.Moment | undefined;
     logoUrl!: string | undefined;
-    categories!: string[] | undefined;
-    countries!: string[] | undefined;
-    creditScores!: CreditScores[] | undefined;
-    daysOfWeekAvailability!: string | undefined;
-    effectiveTimeOfDay!: string | undefined;
-    expireTimeOfDay!: string | undefined;
-    offerCollection!: OfferDtoOfferCollection | undefined;
     overallRating!: number | undefined;
     issuingBank!: string | undefined;
     annualFee!: string | undefined;
     rewardsRate!: string | undefined;
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
+    offerCollection!: OfferDtoOfferCollection | undefined;
 
     constructor(data?: IOfferDto) {
         if (data) {
@@ -48593,40 +48586,17 @@ export class OfferDto implements IOfferDto {
 
     init(data?: any) {
         if (data) {
-            this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
-            this.status = data["status"];
-            this.type = data["type"];
             this.name = data["name"];
-            this.traficSource = data["traficSource"];
             this.redirectUrl = data["redirectUrl"];
-            this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
             this.logoUrl = data["logoUrl"];
-            if (data["categories"] && data["categories"].constructor === Array) {
-                this.categories = [];
-                for (let item of data["categories"])
-                    this.categories.push(item);
-            }
-            if (data["countries"] && data["countries"].constructor === Array) {
-                this.countries = [];
-                for (let item of data["countries"])
-                    this.countries.push(item);
-            }
-            if (data["creditScores"] && data["creditScores"].constructor === Array) {
-                this.creditScores = [];
-                for (let item of data["creditScores"])
-                    this.creditScores.push(item);
-            }
-            this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
-            this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
-            this.expireTimeOfDay = data["expireTimeOfDay"];
-            this.offerCollection = data["offerCollection"];
             this.overallRating = data["overallRating"];
             this.issuingBank = data["issuingBank"];
             this.annualFee = data["annualFee"];
             this.rewardsRate = data["rewardsRate"];
             this.introRewardsBonus = data["introRewardsBonus"];
             this.regularAPR = data["regularAPR"];
+            this.offerCollection = data["offerCollection"];
         }
     }
 
@@ -48639,115 +48609,51 @@ export class OfferDto implements IOfferDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
-        data["status"] = this.status;
-        data["type"] = this.type;
         data["name"] = this.name;
-        data["traficSource"] = this.traficSource;
         data["redirectUrl"] = this.redirectUrl;
-        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
         data["logoUrl"] = this.logoUrl;
-        if (this.categories && this.categories.constructor === Array) {
-            data["categories"] = [];
-            for (let item of this.categories)
-                data["categories"].push(item);
-        }
-        if (this.countries && this.countries.constructor === Array) {
-            data["countries"] = [];
-            for (let item of this.countries)
-                data["countries"].push(item);
-        }
-        if (this.creditScores && this.creditScores.constructor === Array) {
-            data["creditScores"] = [];
-            for (let item of this.creditScores)
-                data["creditScores"].push(item);
-        }
-        data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
-        data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
-        data["expireTimeOfDay"] = this.expireTimeOfDay;
-        data["offerCollection"] = this.offerCollection;
         data["overallRating"] = this.overallRating;
         data["issuingBank"] = this.issuingBank;
         data["annualFee"] = this.annualFee;
         data["rewardsRate"] = this.rewardsRate;
         data["introRewardsBonus"] = this.introRewardsBonus;
         data["regularAPR"] = this.regularAPR;
+        data["offerCollection"] = this.offerCollection;
         return data; 
     }
 }
 
 export interface IOfferDto {
-    systemType: OfferDtoSystemType | undefined;
     campaignId: number | undefined;
-    status: OfferDtoStatus | undefined;
-    type: OfferDtoType | undefined;
     name: string | undefined;
-    traficSource: OfferDtoTraficSource | undefined;
     redirectUrl: string | undefined;
-    created: moment.Moment | undefined;
     logoUrl: string | undefined;
-    categories: string[] | undefined;
-    countries: string[] | undefined;
-    creditScores: CreditScores[] | undefined;
-    daysOfWeekAvailability: string | undefined;
-    effectiveTimeOfDay: string | undefined;
-    expireTimeOfDay: string | undefined;
-    offerCollection: OfferDtoOfferCollection | undefined;
     overallRating: number | undefined;
     issuingBank: string | undefined;
     annualFee: string | undefined;
     rewardsRate: string | undefined;
     introRewardsBonus: string | undefined;
     regularAPR: string | undefined;
+    offerCollection: OfferDtoOfferCollection | undefined;
 }
 
 export class OfferDetailsDto implements IOfferDetailsDto {
-    description!: string | undefined;
-    termsOfService!: string | undefined;
-    updated!: moment.Moment | undefined;
-    interestRating!: number | undefined;
-    feesRating!: number | undefined;
-    benefitsRating!: number | undefined;
-    rewardsRating!: number | undefined;
-    serviceRating!: number | undefined;
-    cardNetwork!: OfferDetailsDtoCardNetwork | undefined;
-    cardType!: OfferDetailsDtoCardType | undefined;
-    targetAudience!: OfferDetailsDtoTargetAudience | undefined;
-    securingType!: OfferDetailsDtoSecuringType | undefined;
+    creditScores!: CreditScores[] | undefined;
     introAPR!: string | undefined;
-    balanceTransferFee!: string | undefined;
-    monthlyFee!: string | undefined;
-    activationFee!: string | undefined;
-    durationForZeroPercentagePurchasesInMonths!: number | undefined;
-    zeroPercentageInterestTransfers!: string | undefined;
-    durationForZeroPercentageTransfersInMonths!: number | undefined;
-    details!: string[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
-    flags!: Flags | undefined;
-    systemType!: OfferDetailsDtoSystemType | undefined;
     campaignId!: number | undefined;
-    status!: OfferDetailsDtoStatus | undefined;
-    type!: OfferDetailsDtoType | undefined;
     name!: string | undefined;
-    traficSource!: OfferDetailsDtoTraficSource | undefined;
     redirectUrl!: string | undefined;
-    created!: moment.Moment | undefined;
     logoUrl!: string | undefined;
-    categories!: string[] | undefined;
-    countries!: string[] | undefined;
-    creditScores!: CreditScores2[] | undefined;
-    daysOfWeekAvailability!: string | undefined;
-    effectiveTimeOfDay!: string | undefined;
-    expireTimeOfDay!: string | undefined;
-    offerCollection!: OfferDetailsDtoOfferCollection | undefined;
     overallRating!: number | undefined;
     issuingBank!: string | undefined;
     annualFee!: string | undefined;
     rewardsRate!: string | undefined;
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
+    offerCollection!: OfferDetailsDtoOfferCollection | undefined;
 
     constructor(data?: IOfferDetailsDto) {
         if (data) {
@@ -48760,30 +48666,12 @@ export class OfferDetailsDto implements IOfferDetailsDto {
 
     init(data?: any) {
         if (data) {
-            this.description = data["description"];
-            this.termsOfService = data["termsOfService"];
-            this.updated = data["updated"] ? moment(data["updated"].toString()) : <any>undefined;
-            this.interestRating = data["interestRating"];
-            this.feesRating = data["feesRating"];
-            this.benefitsRating = data["benefitsRating"];
-            this.rewardsRating = data["rewardsRating"];
-            this.serviceRating = data["serviceRating"];
-            this.cardNetwork = data["cardNetwork"];
-            this.cardType = data["cardType"];
-            this.targetAudience = data["targetAudience"];
-            this.securingType = data["securingType"];
-            this.introAPR = data["introAPR"];
-            this.balanceTransferFee = data["balanceTransferFee"];
-            this.monthlyFee = data["monthlyFee"];
-            this.activationFee = data["activationFee"];
-            this.durationForZeroPercentagePurchasesInMonths = data["durationForZeroPercentagePurchasesInMonths"];
-            this.zeroPercentageInterestTransfers = data["zeroPercentageInterestTransfers"];
-            this.durationForZeroPercentageTransfersInMonths = data["durationForZeroPercentageTransfersInMonths"];
-            if (data["details"] && data["details"].constructor === Array) {
-                this.details = [];
-                for (let item of data["details"])
-                    this.details.push(item);
+            if (data["creditScores"] && data["creditScores"].constructor === Array) {
+                this.creditScores = [];
+                for (let item of data["creditScores"])
+                    this.creditScores.push(item);
             }
+            this.introAPR = data["introAPR"];
             if (data["pros"] && data["pros"].constructor === Array) {
                 this.pros = [];
                 for (let item of data["pros"])
@@ -48794,41 +48682,17 @@ export class OfferDetailsDto implements IOfferDetailsDto {
                 for (let item of data["cons"])
                     this.cons.push(item);
             }
-            this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
-            this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
-            this.status = data["status"];
-            this.type = data["type"];
             this.name = data["name"];
-            this.traficSource = data["traficSource"];
             this.redirectUrl = data["redirectUrl"];
-            this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
             this.logoUrl = data["logoUrl"];
-            if (data["categories"] && data["categories"].constructor === Array) {
-                this.categories = [];
-                for (let item of data["categories"])
-                    this.categories.push(item);
-            }
-            if (data["countries"] && data["countries"].constructor === Array) {
-                this.countries = [];
-                for (let item of data["countries"])
-                    this.countries.push(item);
-            }
-            if (data["creditScores"] && data["creditScores"].constructor === Array) {
-                this.creditScores = [];
-                for (let item of data["creditScores"])
-                    this.creditScores.push(item);
-            }
-            this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
-            this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
-            this.expireTimeOfDay = data["expireTimeOfDay"];
-            this.offerCollection = data["offerCollection"];
             this.overallRating = data["overallRating"];
             this.issuingBank = data["issuingBank"];
             this.annualFee = data["annualFee"];
             this.rewardsRate = data["rewardsRate"];
             this.introRewardsBonus = data["introRewardsBonus"];
             this.regularAPR = data["regularAPR"];
+            this.offerCollection = data["offerCollection"];
         }
     }
 
@@ -48841,30 +48705,12 @@ export class OfferDetailsDto implements IOfferDetailsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["description"] = this.description;
-        data["termsOfService"] = this.termsOfService;
-        data["updated"] = this.updated ? this.updated.toISOString() : <any>undefined;
-        data["interestRating"] = this.interestRating;
-        data["feesRating"] = this.feesRating;
-        data["benefitsRating"] = this.benefitsRating;
-        data["rewardsRating"] = this.rewardsRating;
-        data["serviceRating"] = this.serviceRating;
-        data["cardNetwork"] = this.cardNetwork;
-        data["cardType"] = this.cardType;
-        data["targetAudience"] = this.targetAudience;
-        data["securingType"] = this.securingType;
-        data["introAPR"] = this.introAPR;
-        data["balanceTransferFee"] = this.balanceTransferFee;
-        data["monthlyFee"] = this.monthlyFee;
-        data["activationFee"] = this.activationFee;
-        data["durationForZeroPercentagePurchasesInMonths"] = this.durationForZeroPercentagePurchasesInMonths;
-        data["zeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
-        data["durationForZeroPercentageTransfersInMonths"] = this.durationForZeroPercentageTransfersInMonths;
-        if (this.details && this.details.constructor === Array) {
-            data["details"] = [];
-            for (let item of this.details)
-                data["details"].push(item);
+        if (this.creditScores && this.creditScores.constructor === Array) {
+            data["creditScores"] = [];
+            for (let item of this.creditScores)
+                data["creditScores"].push(item);
         }
+        data["introAPR"] = this.introAPR;
         if (this.pros && this.pros.constructor === Array) {
             data["pros"] = [];
             for (let item of this.pros)
@@ -48875,91 +48721,37 @@ export class OfferDetailsDto implements IOfferDetailsDto {
             for (let item of this.cons)
                 data["cons"].push(item);
         }
-        data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
-        data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
-        data["status"] = this.status;
-        data["type"] = this.type;
         data["name"] = this.name;
-        data["traficSource"] = this.traficSource;
         data["redirectUrl"] = this.redirectUrl;
-        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
         data["logoUrl"] = this.logoUrl;
-        if (this.categories && this.categories.constructor === Array) {
-            data["categories"] = [];
-            for (let item of this.categories)
-                data["categories"].push(item);
-        }
-        if (this.countries && this.countries.constructor === Array) {
-            data["countries"] = [];
-            for (let item of this.countries)
-                data["countries"].push(item);
-        }
-        if (this.creditScores && this.creditScores.constructor === Array) {
-            data["creditScores"] = [];
-            for (let item of this.creditScores)
-                data["creditScores"].push(item);
-        }
-        data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
-        data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
-        data["expireTimeOfDay"] = this.expireTimeOfDay;
-        data["offerCollection"] = this.offerCollection;
         data["overallRating"] = this.overallRating;
         data["issuingBank"] = this.issuingBank;
         data["annualFee"] = this.annualFee;
         data["rewardsRate"] = this.rewardsRate;
         data["introRewardsBonus"] = this.introRewardsBonus;
         data["regularAPR"] = this.regularAPR;
+        data["offerCollection"] = this.offerCollection;
         return data; 
     }
 }
 
 export interface IOfferDetailsDto {
-    description: string | undefined;
-    termsOfService: string | undefined;
-    updated: moment.Moment | undefined;
-    interestRating: number | undefined;
-    feesRating: number | undefined;
-    benefitsRating: number | undefined;
-    rewardsRating: number | undefined;
-    serviceRating: number | undefined;
-    cardNetwork: OfferDetailsDtoCardNetwork | undefined;
-    cardType: OfferDetailsDtoCardType | undefined;
-    targetAudience: OfferDetailsDtoTargetAudience | undefined;
-    securingType: OfferDetailsDtoSecuringType | undefined;
+    creditScores: CreditScores[] | undefined;
     introAPR: string | undefined;
-    balanceTransferFee: string | undefined;
-    monthlyFee: string | undefined;
-    activationFee: string | undefined;
-    durationForZeroPercentagePurchasesInMonths: number | undefined;
-    zeroPercentageInterestTransfers: string | undefined;
-    durationForZeroPercentageTransfersInMonths: number | undefined;
-    details: string[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
-    flags: Flags | undefined;
-    systemType: OfferDetailsDtoSystemType | undefined;
     campaignId: number | undefined;
-    status: OfferDetailsDtoStatus | undefined;
-    type: OfferDetailsDtoType | undefined;
     name: string | undefined;
-    traficSource: OfferDetailsDtoTraficSource | undefined;
     redirectUrl: string | undefined;
-    created: moment.Moment | undefined;
     logoUrl: string | undefined;
-    categories: string[] | undefined;
-    countries: string[] | undefined;
-    creditScores: CreditScores2[] | undefined;
-    daysOfWeekAvailability: string | undefined;
-    effectiveTimeOfDay: string | undefined;
-    expireTimeOfDay: string | undefined;
-    offerCollection: OfferDetailsDtoOfferCollection | undefined;
     overallRating: number | undefined;
     issuingBank: string | undefined;
     annualFee: string | undefined;
     rewardsRate: string | undefined;
     introRewardsBonus: string | undefined;
     regularAPR: string | undefined;
+    offerCollection: OfferDetailsDtoOfferCollection | undefined;
 }
 
 export class SubmitApplicationInput implements ISubmitApplicationInput {
@@ -49129,7 +48921,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
     details!: string[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
-    flags!: Flags2 | undefined;
+    flags!: Flags | undefined;
 
     constructor(data?: IExtendOfferDto) {
         if (data) {
@@ -49184,7 +48976,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
                 for (let item of data["cons"])
                     this.cons.push(item);
             }
-            this.flags = data["flags"] ? Flags2.fromJS(data["flags"]) : <any>undefined;
+            this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
         }
     }
 
@@ -49275,7 +49067,51 @@ export interface IExtendOfferDto {
     details: string[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
-    flags: Flags2 | undefined;
+    flags: Flags | undefined;
+}
+
+export class ExtendFromCSVOutput implements IExtendFromCSVOutput {
+    notMatchedUrls!: string[] | undefined;
+
+    constructor(data?: IExtendFromCSVOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["notMatchedUrls"] && data["notMatchedUrls"].constructor === Array) {
+                this.notMatchedUrls = [];
+                for (let item of data["notMatchedUrls"])
+                    this.notMatchedUrls.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): ExtendFromCSVOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ExtendFromCSVOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.notMatchedUrls && this.notMatchedUrls.constructor === Array) {
+            data["notMatchedUrls"] = [];
+            for (let item of this.notMatchedUrls)
+                data["notMatchedUrls"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IExtendFromCSVOutput {
+    notMatchedUrls: string[] | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -59455,54 +59291,6 @@ export enum TenantNotificationSeverity {
     _4 = 4, 
 }
 
-export enum OfferDtoSystemType {
-    EPCVIP = "EPCVIP", 
-}
-
-export enum OfferDtoStatus {
-    PendingReview = "PendingReview", 
-    Active = "Active", 
-    Denied = "Denied", 
-    Suspended = "Suspended", 
-    SuspendedRisk = "SuspendedRisk", 
-    Inactive = "Inactive", 
-    Dormant = "Dormant", 
-    Deleted = "Deleted", 
-}
-
-export enum OfferDtoType {
-    MultiOfferSinglePage = "MultiOfferSinglePage", 
-    TrafficDistribution = "TrafficDistribution", 
-    DirectPost = "DirectPost", 
-    Carrier = "Carrier", 
-}
-
-export enum OfferDtoTraficSource {
-    PPC_Default = "PPC_Default", 
-    Email = "Email", 
-    SEO = "SEO", 
-    SMS = "SMS", 
-    Decline = "Decline", 
-    Reject = "Reject", 
-    Display = "Display", 
-    Mixed = "Mixed", 
-    TypeIn = "TypeIn", 
-    QualityControl = "QualityControl", 
-    PPC_Email = "PPC_Email", 
-    PPC_SEO = "PPC_SEO", 
-    PPC_Decline = "PPC_Decline", 
-    PPC_Reject = "PPC_Reject", 
-    PPC_Display = "PPC_Display", 
-}
-
-export enum CreditScores {
-    NotSure = "NotSure", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Poor = "Poor", 
-}
-
 export enum OfferDtoOfferCollection {
     Best = "Best", 
     BalanceTransfer = "BalanceTransfer", 
@@ -59520,7 +59308,44 @@ export enum OfferDtoOfferCollection {
     NoCredit = "NoCredit", 
 }
 
-export enum OfferDetailsDtoCardNetwork {
+export enum CreditScores {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
+}
+
+export enum OfferDetailsDtoOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
+}
+
+export enum SubmitApplicationInputSystemType {
+    EPCVIP = "EPCVIP", 
+}
+
+export enum GetMemberInfoResponseCreditScore {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
+}
+
+export enum ExtendOfferDtoCardNetwork {
     AmEx = "AmEx", 
     Discover = "Discover", 
     Mastercard = "Mastercard", 
@@ -59528,21 +59353,38 @@ export enum OfferDetailsDtoCardNetwork {
     Store = "Store", 
 }
 
-export enum OfferDetailsDtoCardType {
+export enum ExtendOfferDtoCardType {
     Credit = "Credit", 
     Debit = "Debit", 
 }
 
-export enum OfferDetailsDtoTargetAudience {
+export enum ExtendOfferDtoTargetAudience {
     Consumer = "Consumer", 
     Business = "Business", 
     Students = "Students", 
 }
 
-export enum OfferDetailsDtoSecuringType {
+export enum ExtendOfferDtoSecuringType {
     Unsecured = "Unsecured", 
     Secured = "Secured", 
     Prepaid = "Prepaid", 
+}
+
+export enum ExtendOfferDtoOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
 }
 
 export class Flags implements IFlags {
@@ -59632,233 +59474,6 @@ export class Flags implements IFlags {
 }
 
 export interface IFlags {
-    choice: boolean | undefined;
-    best: boolean | undefined;
-    travelAndAirlineMiles: boolean | undefined;
-    dinigRewards: boolean | undefined;
-    gasRewards: boolean | undefined;
-    cashBackRewards: boolean | undefined;
-    instantDecision: boolean | undefined;
-    instantResponse: boolean | undefined;
-    noCreditCheck: boolean | undefined;
-    guaranteedApproval: boolean | undefined;
-    rebuildCredit: boolean | undefined;
-    chipCard: boolean | undefined;
-    applePay: boolean | undefined;
-    groceryRewards: boolean | undefined;
-    entertainmentRewards: boolean | undefined;
-    hotelRewards: boolean | undefined;
-    hasNoRewards: boolean | undefined;
-    zeroPercentageOnPurchases: boolean | undefined;
-    zeroPercentageInterestTransfers: boolean | undefined;
-}
-
-export enum OfferDetailsDtoSystemType {
-    EPCVIP = "EPCVIP", 
-}
-
-export enum OfferDetailsDtoStatus {
-    PendingReview = "PendingReview", 
-    Active = "Active", 
-    Denied = "Denied", 
-    Suspended = "Suspended", 
-    SuspendedRisk = "SuspendedRisk", 
-    Inactive = "Inactive", 
-    Dormant = "Dormant", 
-    Deleted = "Deleted", 
-}
-
-export enum OfferDetailsDtoType {
-    MultiOfferSinglePage = "MultiOfferSinglePage", 
-    TrafficDistribution = "TrafficDistribution", 
-    DirectPost = "DirectPost", 
-    Carrier = "Carrier", 
-}
-
-export enum OfferDetailsDtoTraficSource {
-    PPC_Default = "PPC_Default", 
-    Email = "Email", 
-    SEO = "SEO", 
-    SMS = "SMS", 
-    Decline = "Decline", 
-    Reject = "Reject", 
-    Display = "Display", 
-    Mixed = "Mixed", 
-    TypeIn = "TypeIn", 
-    QualityControl = "QualityControl", 
-    PPC_Email = "PPC_Email", 
-    PPC_SEO = "PPC_SEO", 
-    PPC_Decline = "PPC_Decline", 
-    PPC_Reject = "PPC_Reject", 
-    PPC_Display = "PPC_Display", 
-}
-
-export enum CreditScores2 {
-    NotSure = "NotSure", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Poor = "Poor", 
-}
-
-export enum OfferDetailsDtoOfferCollection {
-    Best = "Best", 
-    BalanceTransfer = "BalanceTransfer", 
-    CashBack = "CashBack", 
-    RewardPoints = "RewardPoints", 
-    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
-    TravelAirlineHotel = "TravelAirlineHotel", 
-    SecuredOrPrepaid = "SecuredOrPrepaid", 
-    BusinessCards = "BusinessCards", 
-    NoAnnualFees = "NoAnnualFees", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Bad = "Bad", 
-    NoCredit = "NoCredit", 
-}
-
-export enum SubmitApplicationInputSystemType {
-    EPCVIP = "EPCVIP", 
-}
-
-export enum GetMemberInfoResponseCreditScore {
-    NotSure = "NotSure", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Poor = "Poor", 
-}
-
-export enum ExtendOfferDtoCardNetwork {
-    AmEx = "AmEx", 
-    Discover = "Discover", 
-    Mastercard = "Mastercard", 
-    Visa = "Visa", 
-    Store = "Store", 
-}
-
-export enum ExtendOfferDtoCardType {
-    Credit = "Credit", 
-    Debit = "Debit", 
-}
-
-export enum ExtendOfferDtoTargetAudience {
-    Consumer = "Consumer", 
-    Business = "Business", 
-    Students = "Students", 
-}
-
-export enum ExtendOfferDtoSecuringType {
-    Unsecured = "Unsecured", 
-    Secured = "Secured", 
-    Prepaid = "Prepaid", 
-}
-
-export enum ExtendOfferDtoOfferCollection {
-    Best = "Best", 
-    BalanceTransfer = "BalanceTransfer", 
-    CashBack = "CashBack", 
-    RewardPoints = "RewardPoints", 
-    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
-    TravelAirlineHotel = "TravelAirlineHotel", 
-    SecuredOrPrepaid = "SecuredOrPrepaid", 
-    BusinessCards = "BusinessCards", 
-    NoAnnualFees = "NoAnnualFees", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Bad = "Bad", 
-    NoCredit = "NoCredit", 
-}
-
-export class Flags2 implements IFlags2 {
-    choice!: boolean | undefined;
-    best!: boolean | undefined;
-    travelAndAirlineMiles!: boolean | undefined;
-    dinigRewards!: boolean | undefined;
-    gasRewards!: boolean | undefined;
-    cashBackRewards!: boolean | undefined;
-    instantDecision!: boolean | undefined;
-    instantResponse!: boolean | undefined;
-    noCreditCheck!: boolean | undefined;
-    guaranteedApproval!: boolean | undefined;
-    rebuildCredit!: boolean | undefined;
-    chipCard!: boolean | undefined;
-    applePay!: boolean | undefined;
-    groceryRewards!: boolean | undefined;
-    entertainmentRewards!: boolean | undefined;
-    hotelRewards!: boolean | undefined;
-    hasNoRewards!: boolean | undefined;
-    zeroPercentageOnPurchases!: boolean | undefined;
-    zeroPercentageInterestTransfers!: boolean | undefined;
-
-    constructor(data?: IFlags2) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.choice = data["Choice"];
-            this.best = data["Best"];
-            this.travelAndAirlineMiles = data["TravelAndAirlineMiles"];
-            this.dinigRewards = data["DinigRewards"];
-            this.gasRewards = data["GasRewards"];
-            this.cashBackRewards = data["CashBackRewards"];
-            this.instantDecision = data["InstantDecision"];
-            this.instantResponse = data["InstantResponse"];
-            this.noCreditCheck = data["NoCreditCheck"];
-            this.guaranteedApproval = data["GuaranteedApproval"];
-            this.rebuildCredit = data["RebuildCredit"];
-            this.chipCard = data["ChipCard"];
-            this.applePay = data["ApplePay"];
-            this.groceryRewards = data["GroceryRewards"];
-            this.entertainmentRewards = data["EntertainmentRewards"];
-            this.hotelRewards = data["HotelRewards"];
-            this.hasNoRewards = data["HasNoRewards"];
-            this.zeroPercentageOnPurchases = data["ZeroPercentageOnPurchases"];
-            this.zeroPercentageInterestTransfers = data["ZeroPercentageInterestTransfers"];
-        }
-    }
-
-    static fromJS(data: any): Flags2 {
-        data = typeof data === 'object' ? data : {};
-        let result = new Flags2();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["Choice"] = this.choice;
-        data["Best"] = this.best;
-        data["TravelAndAirlineMiles"] = this.travelAndAirlineMiles;
-        data["DinigRewards"] = this.dinigRewards;
-        data["GasRewards"] = this.gasRewards;
-        data["CashBackRewards"] = this.cashBackRewards;
-        data["InstantDecision"] = this.instantDecision;
-        data["InstantResponse"] = this.instantResponse;
-        data["NoCreditCheck"] = this.noCreditCheck;
-        data["GuaranteedApproval"] = this.guaranteedApproval;
-        data["RebuildCredit"] = this.rebuildCredit;
-        data["ChipCard"] = this.chipCard;
-        data["ApplePay"] = this.applePay;
-        data["GroceryRewards"] = this.groceryRewards;
-        data["EntertainmentRewards"] = this.entertainmentRewards;
-        data["HotelRewards"] = this.hotelRewards;
-        data["HasNoRewards"] = this.hasNoRewards;
-        data["ZeroPercentageOnPurchases"] = this.zeroPercentageOnPurchases;
-        data["ZeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
-        return data; 
-    }
-}
-
-export interface IFlags2 {
     choice: boolean | undefined;
     best: boolean | undefined;
     travelAndAirlineMiles: boolean | undefined;

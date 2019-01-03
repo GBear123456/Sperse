@@ -26,7 +26,7 @@ import {
     OfferServiceProxy,
     OfferDto,
     OfferDetailsDto,
-    CreditScores2
+    CreditScores
 } from '@shared/service-proxies/service-proxies';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 
@@ -159,8 +159,8 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         this.offersService.applyOffer(offer);
     }
 
-    getCreditScore(creditScores: CreditScores2[]): CreditScoreInterface {
-        return creditScores && (creditScores.length > 1 || (creditScores.length === 1 && creditScores[0] !== CreditScores2.NotSure))
+    getCreditScore(creditScores: CreditScores[]): CreditScoreInterface {
+        return creditScores && (creditScores.length > 1 || (creditScores.length === 1 && creditScores[0] !== CreditScores.NotSure))
                   ? this.offersService.getCreditScoreObject(creditScores[0] as any)
                   : null;
     }
