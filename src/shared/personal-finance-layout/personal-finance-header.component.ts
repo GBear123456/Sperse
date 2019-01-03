@@ -61,7 +61,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         private _pfmLayoutService: PersonalFinanceLayoutService
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
-        _pfmLayoutService.headerContentSubscribe((component) => {            
+        _pfmLayoutService.headerContentSubscribe((component) => {
             setTimeout(() => {
                 this.adHeaderHost.viewContainerRef.clear();
                 this.adHeaderHost.viewContainerRef.createComponent(component);
@@ -176,7 +176,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
             },
             {
                 name: 'Articles',
-                routerUrl: '/personal-finance/atricles'
+                routerUrl: '/personal-finance/articles'
             }
         ];
     }
@@ -188,7 +188,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
     logoClick(event) {
         if (this.loggedUserId)
             this._router.navigate(['/personal-finance/home']);
-        else 
+        else
             window.open(AppConsts.LENDSPACE_DOMAIN, '_self');
     }
 }

@@ -3,7 +3,9 @@ import { Component, OnInit, Injector, HostBinding } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { isEqual } from 'lodash';
 import * as _ from 'lodash';
 
 /** Application imports */
@@ -34,8 +36,6 @@ import { AppConsts } from 'shared/AppConsts';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UpdateProfilePictureInput } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@shared/helpers/StringHelper';
-import { Observable } from 'rxjs';
-import { isEqual } from 'lodash';
 
 @Component({
     templateUrl: 'personal-finance-header.component.html',
@@ -73,7 +73,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
             name: 'creditReportLink',
             imgUrl: 'assets/images/icons/credit-report-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
-            routerUrl: '/personal-finance/credit-report'
+            routerUrl: '/personal-finance/credit-reports'
         },
         {
             name: 'creditSimulatorLink',

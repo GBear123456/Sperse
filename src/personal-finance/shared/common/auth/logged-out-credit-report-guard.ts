@@ -11,7 +11,7 @@ export class LoggedOutCreditReportGuard implements CanActivate {
 
     canActivate() {
         if (this.sessionService.userId) {
-            this.router.navigate(['personal-finance/credit-report']);
+            this.router.navigate(['personal-finance/credit-reports']);
         }
         return true;
     }

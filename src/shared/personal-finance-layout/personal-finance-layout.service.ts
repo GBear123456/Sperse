@@ -2,7 +2,7 @@
 import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
-import { Subject, Observable } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class PersonalFinanceLayoutService {

@@ -65,12 +65,12 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                         data: { preload: false }
                     },
                     {
-                        path: 'credit-reports',
+                        path: 'credit-report',
                         canActivate: [ LoggedOutCreditReportGuard ],
                         loadChildren: 'personal-finance/pages/credit-report/credit-report.module#CreditReportModule'
                     },
                     {
-                        path: 'credit-report',
+                        path: 'credit-reports',
                         canActivate: [ LoggedInCreditReportGuard ],
                         loadChildren: 'personal-finance/pages/credit-report/credit-report.module#CreditReportModule'
                     },

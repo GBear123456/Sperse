@@ -7,7 +7,7 @@ import { Params } from '@angular/router/src/shared';
 import { MatDialog } from '@angular/material';
 import { camelCase, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
-import { map, pluck, publishReplay, refCount, finalize, first } from 'rxjs/operators';
+import { map, pluck, publishReplay, refCount } from 'rxjs/operators';
 import { capitalize, cloneDeep } from 'lodash';
 
 /** Application imports */

@@ -52,7 +52,7 @@ export class UserManagementListComponent extends AppComponentBase implements OnI
     profileThumbnailId: string;
     recentlyLinkedUsers: LinkedUserDto[];
 
-    helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];    
+    helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
 
     dialog: MatDialog;
     private _authService: AppAuthService;

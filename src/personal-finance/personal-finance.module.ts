@@ -6,21 +6,23 @@ import { CommonModule } from '@angular/common';
 import { PersonalFinanceCommonModule } from './shared/common/personal-finance-common.module';
 import { PersonalFinanceRoutingModule } from './personal-finance-routing.module';
 import { PersonalFinanceComponent } from './personal-finance.component';
-import { LayoutModule } from './shared/layout/layout.module';
 import { PackageIdService } from './shared/common/packages/package-id.service';
+import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
+import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     declarations: [
         PersonalFinanceComponent
     ],
     imports: [
-        LayoutModule,
+        PersonalFinanceLayoutModule,
         CommonModule,
         PersonalFinanceRoutingModule,
         PersonalFinanceCommonModule.forRoot()
     ],
     providers: [
-        PackageIdService
+        PackageIdService,
+        InstanceServiceProxy
     ]
 })
 export class PersonalFinanceModule { }
