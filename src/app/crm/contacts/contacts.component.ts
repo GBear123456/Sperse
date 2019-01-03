@@ -27,7 +27,8 @@ import {
     PartnerInfoDto,
     UpdatePartnerTypeInput,
     UserServiceProxy,
-    CustomerServiceProxy
+    CustomerServiceProxy,
+    PersonContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from './verification-checklist/verification-checklist.model';
 import { OperationsWidgetComponent } from './operations-widget.component';
@@ -54,6 +55,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     customerId: number;
     customerType: string;
     contactInfo: ContactInfoDto;
+    personContactInfo: PersonContactInfoDto;
     primaryContact: any;
     verificationChecklist: VerificationChecklistItem[];
     leadInfo: LeadInfoDto;
@@ -197,6 +199,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
+        this.personContactInfo = result.personContactInfo;
         this.initVerificationChecklist();
 
         this._contactsService.userUpdate(
@@ -408,8 +411,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             position: this.getDialogPossition(event, -182, 89),
             panelClass: ['related-contacts']
         }).afterClosed().subscribe(result => {
+            this.personContactInfo = this.contactInfo.personContactInfo;
             if (result == 'addNewContact') this.addNewContact(event);
-            // this.onContactSelected(this.data.personContactInfo);
         });
         event.stopPropagation();
     }

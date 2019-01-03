@@ -1,4 +1,6 @@
-<details-header [data]="contactInfo" [ratingId]="ratingId"
+<details-header [data]="contactInfo"
+                [personContactInfo]="personContactInfo"
+                [ratingId]="ratingId"
                 (onInvalidate)="invalidate()"
                 (onContactSelected)="onContactSelected($event)"></details-header>
 <div class="close-details" (click)="close()"></div>

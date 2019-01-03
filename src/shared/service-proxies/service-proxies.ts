@@ -35245,7 +35245,7 @@ export interface IContactInfoDto {
 export class PersonContactInfoDto implements IPersonContactInfoDto {
     person!: PersonInfoDto | undefined;
     jobTitle!: string | undefined;
-    primaryOrgRelationId!: number | undefined;
+    orgRelationId!: number | undefined;
     orgRelations!: PersonOrgRelationShortInfo[] | undefined;
     id!: number | undefined;
     fullName!: string | undefined;
@@ -35269,7 +35269,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         if (data) {
             this.person = data["person"] ? PersonInfoDto.fromJS(data["person"]) : <any>undefined;
             this.jobTitle = data["jobTitle"];
-            this.primaryOrgRelationId = data["primaryOrgRelationId"];
+            this.orgRelationId = data["orgRelationId"];
             if (data["orgRelations"] && data["orgRelations"].constructor === Array) {
                 this.orgRelations = [];
                 for (let item of data["orgRelations"])
@@ -35297,7 +35297,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data = typeof data === 'object' ? data : {};
         data["person"] = this.person ? this.person.toJSON() : <any>undefined;
         data["jobTitle"] = this.jobTitle;
-        data["primaryOrgRelationId"] = this.primaryOrgRelationId;
+        data["orgRelationId"] = this.orgRelationId;
         if (this.orgRelations && this.orgRelations.constructor === Array) {
             data["orgRelations"] = [];
             for (let item of this.orgRelations)
@@ -35318,7 +35318,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
 export interface IPersonContactInfoDto {
     person: PersonInfoDto | undefined;
     jobTitle: string | undefined;
-    primaryOrgRelationId: number | undefined;
+    orgRelationId: number | undefined;
     orgRelations: PersonOrgRelationShortInfo[] | undefined;
     id: number | undefined;
     fullName: string | undefined;

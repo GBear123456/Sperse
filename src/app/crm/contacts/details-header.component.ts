@@ -20,6 +20,7 @@ import { UploadDocumentsDialogComponent } from './documents/upload-documents-dia
 import {
     ContactPhotoDto,
     ContactInfoDto,
+    PersonContactInfoDto,
     ContactPhotoServiceProxy,
     CreateContactPhotoInput,
     OrganizationInfoDto,
@@ -55,12 +56,18 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         return this._contactInfoBehaviorSubject.getValue();
     }
 
+    @Input()
+    public set personContactInfo(data: PersonContactInfoDto) {
+        this._personContactInfoBehaviorSubject.next(data);
+    }
+
     @Input() ratingId: number;
 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
     private _contactInfoBehaviorSubject = new BehaviorSubject<ContactInfoDto>(ContactInfoDto.fromJS({}));
+    private _personContactInfoBehaviorSubject = new BehaviorSubject<PersonContactInfoDto>(PersonContactInfoDto.fromJS({}));
     private readonly ADD_FILES_OPTION   = 0;
     private readonly ADD_NOTES_OPTION   = 1;
     private readonly ADD_CONTACT_OPTION = 2;
@@ -101,13 +108,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     initializePersonOrgRelationInfo() {
-        this._contactInfoBehaviorSubject.subscribe(data => {
-            let contactId = data && data.id,
-                orgId = data && data.primaryOrganizationContactInfo && data.primaryOrganizationContactInfo.id,
-                orgRelations = data && data.personContactInfo.orgRelations;
-            if (contactId && orgId && orgRelations) {
-                let primaryOrgRelationId = data.personContactInfo.primaryOrgRelationId;
-                this.personOrgRelationInfo = _.find(orgRelations, orgRelation => orgRelation.id === primaryOrgRelationId);
+        this._personContactInfoBehaviorSubject.subscribe(data => {
+            if (data && data.orgRelations) {
+                this.personOrgRelationInfo = _.find(data.orgRelations, orgRelation => orgRelation.id === data.orgRelationId);
             }
         });
     }
