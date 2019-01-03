@@ -17,7 +17,7 @@
 
         <ul class="row cards-list">
             <ng-container *ngFor="let cardOfferGroup of filteredGroup">
-                <li class="col-md-3 col-sm-4 col-xs-12 cards-item" *ngIf="cardOfferGroup.offerCollection != 'Best'">
+                <li class="col-md-3 col-sm-4 cards-item" *ngIf="cardOfferGroup.offerCollection != 'Best'">
                     <a class="cards-item-wrap"
                        (click)="openOffers(cardOfferGroup)">
                         <img [src]="'./assets/common/images/pfm-cc/' + cardOfferGroup.offerCollection + '.svg'"
@@ -34,7 +34,7 @@
         <div class="gradient"></div>
         <div class="credit-score-wrap">
             <ul class="credit-score-list row">
-                <li class="credit-score-item col-md-2 col-sm-3 col-xs-12" *ngFor="let item of bestCardsByScore">
+                <li class="credit-score-item col-md-2 col-sm-3" *ngFor="let item of bestCardsByScore">
                     <a (click)="openOffers(item)">
                         {{ls.l('OfferCollection_' + item.offerCollection)}}
                     </a>
@@ -48,7 +48,7 @@
             <h2>Top results by category</h2>
 
             <div class="row">
-            <div class="col-md-3 col-sm-4 col-xs-12 offer-navigation">
+            <div class="col-md-3 col-sm-4 offer-navigation">
                 <ul class="offer-navigation__list">
                      <li class="offer-navigation__item" *ngFor="let menuItem of filteredGroup">
                         <a class="offer-navigation__link"
@@ -61,9 +61,9 @@
                     </li>
                 </ul>
             </div>
-            <div class="col-md-9 col-sm-8 col-xs-12 offer-collection">
+            <div class="col-md-9 col-sm-8 offer-collection">
                 <div class="row" *ngIf="(cards && cards.length); else noData">
-                    <div class="col-md-4 col-sm-6 col-xs-12 card-item" *ngFor="let card of cards" (click)="openOffers(card)">
+                    <div class="col-md-4 col-sm-6 card-item" *ngFor="let card of cards" (click)="openOffers(card)">
                         <div class="card-item__img--wrap">
                             <img [src]="card.logoUrl" alt="Credit Card" class="card-item__img img-fluid">
                         </div>
