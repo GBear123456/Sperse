@@ -2,17 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PersonalFinanceComponent } from './personal-finance.component';
 import { CreditReportsRouteGuard } from './shared/common/auth/auth-route-guard';
-import { PrivacyPolicyComponent } from './pages/privacy-policy/privacy-policy.component';
-import { TermsOfServiceComponent } from './pages/terms-of-service/terms-of-service.component';
-import { ArticlesComponent } from './pages/articles/articles.component';
-import { ContactUsComponent } from './pages/contact-us/contact-us.component';
-import { AboutUsComponent } from './pages/about-us/about-us.component';
-import { LendspaceWelcomeComponent } from './pages/lendspace-welcome/lendspace-welcome.component';
-import { KbaResultComponent } from './member-area/kba-result/kba-result.component';
-import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-space-dark/signup/lend-space-signup.component';
-import { CreditWizardPageComponent } from '@root/personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.component';
-import { CreditReportComponent } from '@root/personal-finance/landings/credit-report/credit-report.component';
 import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common/auth/logged-out-credit-report-guard';
+import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/auth/logged-in-credit-report-guard';
 
 @NgModule({
     imports: [
@@ -25,66 +16,47 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                 children: [
                     {
                         path: 'home',
-                        component: LendspaceWelcomeComponent,
+                        loadChildren: 'personal-finance/pages/lendspace-welcome/lendspace-welcome.module#LendspaceWelcomeModule',
                         data: {
                             wrapperDisabled: true
                         }
                     },
-                    /*{
-                        path: 'privacy',
-                        component: LendSpaceDarkComponent,
-                        data: {
-                            openedPrivacy: true,
-                            wrapperDisabled: true,
-                            hideFooter: false
-                        }
-                    },
-                    {
-                        path: 'terms',
-                        component: LendSpaceDarkComponent,
-                        data: {
-                            openedTerms: true,
-                            wrapperDisabled: true,
-                            hideFooter: false
-                        }
-                    },
-*/
                     {
                         path: 'signup',
-                        component: CreditWizardPageComponent
+                        loadChildren: 'personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.module#WizardPageModule'
                     },
                     {
                         path: 'sign-up',
-                        component: LendSpaceSignupComponent
+                        loadChildren: 'personal-finance/landings/lend-space-dark/signup/lend-space-signup.module#LendSpaceSignupModule'
                     },
                     {
                         path: 'kba-result',
-                        component: KbaResultComponent,
+                        loadChildren: 'personal-finance/pages/kba-result/kba-result.module#KbaResultModule',
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'privacy-policy',
-                        component: PrivacyPolicyComponent,
+                        loadChildren: 'personal-finance/pages/privacy-policy/privacy-policy.module#PrivacyPolicyModule',
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'terms-of-service',
-                        component: TermsOfServiceComponent,
+                        loadChildren: 'personal-finance/pages/terms-of-service/terms-of-service.module#TermsOfServiceModule',
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'about',
-                        component: AboutUsComponent,
+                        loadChildren: 'personal-finance/pages/about-us/about-us.module#AboutUsModule',
                         data: { wrapperDisabled: true }
                     },
                     {
                         path: 'contact-us',
-                        component: ContactUsComponent,
+                        loadChildren: 'personal-finance/pages/contact-us/contact-us.module#ContactUsModule',
                         data: { wrapperDisabled: true }
                     },
                     {
-                        path: 'atricles',
-                        component: ArticlesComponent,
+                        path: 'articles',
+                        loadChildren: 'personal-finance/pages/articles/articles.module#ArticlesModule',
                         data: { wrapperDisabled: true, isPublic: true }
                     },
                     {
@@ -95,18 +67,35 @@ import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common
                     {
                         path: 'credit-reports',
                         canActivate: [ LoggedOutCreditReportGuard ],
-                        component: CreditReportComponent
+                        loadChildren: 'personal-finance/pages/credit-report/credit-report.module#CreditReportModule'
+                    },
+                    {
+                        path: 'credit-report',
+                        canActivate: [ LoggedInCreditReportGuard ],
+                        loadChildren: 'personal-finance/pages/credit-report/credit-report.module#CreditReportModule'
+                    },
+                    {
+                        path: 'credit-simulator',
+                        loadChildren: 'personal-finance/pages/credit-simulator/credit-simulator.module#CreditSimulatorModule'
+                    },
+                    {
+                        path: 'credit-resources',
+                        loadChildren: 'personal-finance/pages/credit-resources/credit-resources.module#CreditResourcesModule'
+                    },
+                    {
+                        path: 'my-finances',
+                        loadChildren: 'personal-finance/pages/accounts/accounts.module#AccountsModule',
+                        data: { wrapperDisabled: true }
                     },
                     {
                         path: '',
-                        loadChildren: 'personal-finance/member-area/member-area.module#MemberAreaModule', //Lazy load module
-                        data: { preload: false }
+                        component: PersonalFinanceComponent
                     }
                 ]
             }
         ])
     ],
     exports: [ RouterModule ],
-    providers: [ LoggedOutCreditReportGuard ]
+    providers: [ LoggedOutCreditReportGuard, LoggedInCreditReportGuard ]
 })
 export class PersonalFinanceRoutingModule { }

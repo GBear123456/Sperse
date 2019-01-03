@@ -73,7 +73,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
             name: 'creditReportLink',
             imgUrl: 'assets/images/icons/credit-report-icon.svg',
             activeImgUrl: 'assets/images/icons/credit-report-active-icon.svg',
-            routerUrl: '/personal-finance'
+            routerUrl: '/personal-finance/credit-report'
         },
         {
             name: 'creditSimulatorLink',
@@ -220,7 +220,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
             },
             {
                 name: 'Articles',
-                routerUrl: '/personal-finance/atricles'
+                routerUrl: '/personal-finance/articles'
             }
         ];
     }
@@ -369,7 +369,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase implements 
     logoClick(event) {
         if (this.loggedUserId)
             this._router.navigate(['/personal-finance/home']);
-        else 
+        else
             window.open(AppConsts.LENDSPACE_DOMAIN, '_self');
     }
 }

@@ -10,7 +10,6 @@ import { AppComponentBase } from 'shared/common/app-component-base';
 import { AppConsts } from 'shared/AppConsts';
 import { ApplicationServiceProxy, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
-import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { DxCheckBoxComponent } from 'devextreme-angular';
 
@@ -18,7 +17,7 @@ import { DxCheckBoxComponent } from 'devextreme-angular';
     selector: 'lend-space-signup',
     templateUrl: './lend-space-signup.component.html',
     styleUrls: ['./lend-space-signup.component.less'],
-    providers: [ApplicationServiceProxy, LoginService],
+    providers: [ ApplicationServiceProxy, LoginService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LendSpaceSignupComponent extends AppComponentBase {

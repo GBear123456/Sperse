@@ -13,13 +13,16 @@ import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
+    ApplicationServiceProxy,
     CountryStateDto,
     MemberServiceProxy,
     RegisterMemberRequestGender,
     MemberPaymentAuthorizeRequestDto,
-    MemberInfoDto, MemberInfoDtoGender, MemberAddressDto,
+    MemberInfoDto,
+    MemberInfoDtoGender,
+    MemberAddressDto,
     PasswordComplexitySetting,
-    RegisterMemberRequestTenantHostType
+    RegisterMemberRequestTenantHostType,
 } from '@shared/service-proxies/service-proxies';
 import { PaymentInfoComponent } from '@shared/common/widgets/payment-info/payment-info.component';
 import { WizardComponent } from '../wizard.component';
@@ -32,7 +35,7 @@ import { PackageIdService } from '../../../../shared/common/packages/package-id.
     selector: 'app-wizard-page',
     templateUrl: 'wizard-page.component.html',
     styleUrls: ['wizard-page.component.less'],
-    providers: [MemberServiceProxy, LoginService]
+    providers: [ ApplicationServiceProxy, MemberServiceProxy, LoginService ]
 })
 export class CreditWizardPageComponent extends AppComponentBase implements OnInit {
     @ViewChild(WizardComponent) mWizard: WizardComponent;
@@ -173,8 +176,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
                 .every(function (input) {
                     return (input.type != 'text') || (Boolean(input.value)
                         && !input.getAttribute('aria-invalid'));
-                }
-                );
+                });
     }
 
     validate(event): boolean {

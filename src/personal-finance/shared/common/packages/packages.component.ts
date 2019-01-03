@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Injector } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PackageServiceProxy, ListResultDtoOfPackageDto } from '@shared/service-proxies/service-proxies';
 import { PackageIdService } from './package-id.service';

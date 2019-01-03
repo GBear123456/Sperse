@@ -1,6 +1,6 @@
 import { Component, HostBinding, ViewContainerRef, OnInit, OnDestroy, Injector, Renderer2 } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { Router, ActivationEnd } from '@angular/router';
+import { ActivationEnd } from '@angular/router';
 import { humanize } from 'underscore.string';
 
 declare const Typekit: any;
