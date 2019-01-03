@@ -1,0 +1,198 @@
+:host {
+    min-height: 69px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+    &.pfm-app {
+        box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    /deep/ a.disabled {
+        pointer-events: none!important;
+        i, span {
+            color: #ddd!important;
+        }
+    }
+
+    .top-headline {
+        display: none;
+        padding: 0;
+        background-color: #f0d500;
+        border-bottom: 2px solid #4c4c4c;
+
+        .url,
+        .date {
+            font-size: 9px;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+
+        .url {
+            color: #000;
+            font-weight: 500;
+            transition: .3s;
+
+            &:hover {
+                color: lighten(#000, 20%);
+            }
+        }
+
+        .get-free-score {
+            color: #000;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+
+        .date {
+            color: #000;
+        }
+
+        @media all and (max-width: 600px) {
+            .container {
+                flex-direction: column;
+
+                .get-free-score, .date {
+                    display: none;
+                }
+            }
+        }
+    }
+    .dark-lend-space-logo {
+        display: none;
+    }
+
+    .page-header.navbar {
+        flex-wrap: nowrap;        
+
+        &.navbar-fixed-top,
+        &.navbar-static-top {
+            z-index: 1000;
+        }
+
+        .page-logo {
+            position: relative;
+            max-width: 310px;
+            min-width: 220px;
+            height: 60px;
+    
+            @media all and (max-width: 767px) {
+                max-width: 100%;
+                min-width: 180px !important;
+                
+                a {
+                    max-width: 100%;
+                    
+                    img {
+                        max-width: 100%;
+                    }
+                }
+            }
+
+            a {
+                max-width: 200px;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                position: absolute;
+                margin: auto;
+                top: 0px;
+                bottom: 0px;
+            }
+
+            &:after {
+                right: 0px;
+            }
+        }
+
+        span.username {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            direction: rtl;
+            text-align: left;
+            display: none !important;
+        }
+
+        li.username-header {
+            color: #FFF;
+            text-align: center;
+            height: 35px;
+            padding-top: 10px;
+            font-weight: 500;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            direction: rtl;
+        }
+
+        member-area-navigation {
+            flex-grow: 2;
+            flex-basis: unset;
+            order: 2;
+            width: calc(~"100% - 436px");
+        }
+
+        app-area-navigation {
+            @media all and (max-width: 529px) {
+                order: 3;
+                margin-left: 12px;
+            }
+        }
+    }
+}
+
+/deep/ body.lend-space {
+    &.lending-page {
+        .top-headline {
+            display: block!important;
+        }
+    }
+    personal-finance-header.pfm-app {
+        background: #000;
+
+        .page-header {
+            padding: 0 15px;
+            justify-content: unset;
+
+            .page-logo {
+                min-width: 210px !important;
+            }
+
+            .page-top {
+                i[aria-label="Notifications"] {
+                    display: inline-block;
+                    background: url('../../assets/common/images/lend-space-dark/notification.svg') no-repeat;
+                    width: 17px;
+                    height: 20px;
+                    &:before {
+                        display: none;
+                    }
+                }
+            }
+
+            #header-app-menu {
+                width: 100%;
+
+                @media all and (max-width: 529px) {
+                    margin-left: auto !important;
+                }
+
+                .app-area-navigation {
+
+                    > li {
+                        padding: 0;
+
+                        &:first-child {
+                            > a {
+                                padding-left: 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

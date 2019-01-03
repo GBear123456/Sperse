@@ -5,11 +5,11 @@ import { MatDialog } from '@angular/material';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 
 @Component({
-    templateUrl: 'footer.component.html',
-    styleUrls: ['footer.component.less'],
-    selector: 'footer'
+    templateUrl: 'personal-finance-footer.component.html',
+    styleUrls: ['personal-finance-footer.component.less'],
+    selector: 'personal-finance-footer'
 })
-export class FooterComponent extends AppComponentBase {
+export class PersonalFinanceFooterComponent extends AppComponentBase {
     @HostBinding('class.default') showDefaultFooter = true;
 
     hasPfmAppFeature = false;

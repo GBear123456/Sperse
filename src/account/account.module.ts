@@ -28,7 +28,7 @@ import { HostLoginComponent } from './login/layouts/host/host-login.component';
 import { LendSpaceLoginComponent } from './login/layouts/lend-space/lend-space-login.component';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
-import { LayoutModule } from '../personal-finance/shared/layout/layout.module';
+import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
 import { HostForgotPasswordComponent } from './password/layouts/host/host-forgot-password.component';
 import { LendSpaceForgotPasswordComponent } from './password/layouts/lend-space/lend-space-forgot-password.component';
 import { HostResetPasswordComponent } from './password/layouts/host/host-reset-password.component';
@@ -48,11 +48,11 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
 
         CommonModule,
 
-        LayoutModule,
         UtilsModule,
         PaymentInfoModule,
         ServiceProxyModule,
-        AccountRoutingModule
+        AccountRoutingModule,
+        PersonalFinanceLayoutModule,
     ],
     declarations: [
         AccountComponent,

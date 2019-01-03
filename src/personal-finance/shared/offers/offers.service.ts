@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injectable, ComponentFactoryResolver } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Params } from '@angular/router/src/shared';
 
@@ -23,6 +23,8 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
+import { PersonalFinanceLayoutService } from '@shared/personal-finance-layout/personal-finance-layout.service';
+import { UserManagementListComponent } from '../layout/user-management-list/user-management-list.component';
 
 @Injectable()
 export class OffersService {
@@ -68,8 +70,14 @@ export class OffersService {
         private route: ActivatedRoute,
         private ls: AppLocalizationService,
         private offerServiceProxy: OfferServiceProxy,
-        private dialog: MatDialog
-    ) {}
+        private dialog: MatDialog,
+        private pfmLayoutService: PersonalFinanceLayoutService,
+        private componentFactoryResolver: ComponentFactoryResolver
+    ) {
+        this.pfmLayoutService.headerContentUpdate(
+            this.componentFactoryResolver.resolveComponentFactory(UserManagementListComponent)
+        );
+    }
 
     getCategoryFromRoute(routeParams: Observable<Params>): Observable<Category> {
         return routeParams.pipe(

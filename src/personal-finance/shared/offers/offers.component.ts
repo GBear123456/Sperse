@@ -20,7 +20,7 @@ import { first, filter, finalize, map, publishReplay, refCount, takeUntil, tap, 
 import { kebabCase } from 'lodash';
 import { MatRadioChange, MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
 
-/** Third party imports */
+/** App part imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';

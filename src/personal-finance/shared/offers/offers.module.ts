@@ -5,6 +5,7 @@ import { OffersComponent } from '@root/personal-finance/shared/offers/offers.com
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
+import { LayoutModule } from '../layout/layout.module';
 import { StarsRatingComponent } from '@root/personal-finance/shared/offers/stars-rating/stars-rating.component';
 import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
@@ -31,7 +32,8 @@ import { CreditCardsComponent } from './credit-cards/credit-cards.component';
         DxScrollViewModule,
         RoundProgressModule,
         NoDataModule,
-        OffersRoutingModule
+        OffersRoutingModule,
+        LayoutModule
     ],
     declarations: [
         ApplyOfferDialogComponent,

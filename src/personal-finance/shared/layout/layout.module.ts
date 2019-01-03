@@ -10,19 +10,13 @@ import { TableModule } from 'primeng/table';
 import { AutoCompleteModule, EditorModule, FileUploadModule as PrimeNgFileUploadModule, InputMaskModule, PaginatorModule } from 'primeng/primeng';
 
 /** Application imports */
-import { PersonalFinanceHeaderModule } from '@root/shared/personal-finance-header/personal-finance-header.module';
-import { FooterComponent } from './footer.component';
-import { PagesFooterComponent } from './pages-footer/pages-footer.component';
-
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
-import { AppService } from '@app/app.service';
 import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
-import { PersonalFinanceHeaderComponent } from '@shared/personal-finance-header/personal-finance-header.component';
+import { UserManagementListComponent } from './user-management-list/user-management-list.component';
 
 let COMPONENTS = [
-    FooterComponent,
-    PagesFooterComponent
+    UserManagementListComponent
 ];
 
 @NgModule({
@@ -33,7 +27,6 @@ let COMPONENTS = [
 
         LayoutCommonModule,
         PersonalFinanceCommonModule,
-        PersonalFinanceHeaderModule,
         ModalModule.forRoot(),
         TooltipModule.forRoot(),
         TabsModule.forRoot(),
@@ -47,9 +40,9 @@ let COMPONENTS = [
         InputMaskModule
     ],
     declarations: COMPONENTS,
-    exports: [ ...COMPONENTS, PersonalFinanceHeaderComponent ],
+    exports: COMPONENTS,
+    entryComponents: COMPONENTS,
     providers: [
-        AppService,
         InstanceServiceProxy,
         TenantSubscriptionServiceProxy
     ]
