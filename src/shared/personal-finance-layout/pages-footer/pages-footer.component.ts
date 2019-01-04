@@ -1,7 +1,7 @@
 import { Component, Injector, HostBinding } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';

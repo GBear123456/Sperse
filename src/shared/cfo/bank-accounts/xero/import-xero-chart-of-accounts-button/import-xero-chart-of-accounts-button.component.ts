@@ -3,7 +3,7 @@ import { Component, OnInit, Injector, Output, Input, EventEmitter } from '@angul
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
@@ -71,7 +71,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
                 }
             });
     }
-    
+
     newConnect() {
         abp.ui.clearBusy();
         if (!this.createAccountAvailable)

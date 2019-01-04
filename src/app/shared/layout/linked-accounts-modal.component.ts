@@ -6,7 +6,7 @@ import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 import { LinkAccountModalComponent } from './link-account-modal.component';
 import { UserHelper } from '../helpers/UserHelper';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({

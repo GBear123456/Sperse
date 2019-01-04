@@ -24,7 +24,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
 
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-    hasPlatformPermissions = false;
     showDefaultHeader = true;
     loggedUserId: number;
 
@@ -80,11 +79,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         this.loggedUserId = abp.session.userId;
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
         this.showDefaultHeader = this.isMemberArea() || this.hasPfmAppFeature;
-
-        this.hasPlatformPermissions =
-            (this.feature.isEnabled('CFO') && this.permission.isGranted('Pages.CFO')) ||
-            (this.feature.isEnabled('CRM') && this.permission.isGranted('Pages.CRM')) ||
-            (this.feature.isEnabled('Admin') && this.permission.isGranted('Pages.Administration.Users'));
     }
 
     private getAppAreaLinks() {

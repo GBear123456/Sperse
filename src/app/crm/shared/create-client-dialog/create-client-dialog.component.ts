@@ -2,7 +2,7 @@
 import { Component, OnInit, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { DxContextMenuComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';

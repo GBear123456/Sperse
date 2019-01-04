@@ -14,9 +14,7 @@ import {
     DxValidationGroupModule
 } from 'devextreme-angular';
 
-import {
-    MatDialogModule
-} from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import { ClipboardModule } from 'ngx-clipboard';
 
 @NgModule({

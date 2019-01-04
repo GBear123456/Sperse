@@ -2,7 +2,7 @@
 import { Component, Input, Output, EventEmitter, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DxTreeListComponent } from 'devextreme-angular';
 import DataSource from 'devextreme/data/data_source';
 import * as _ from 'underscore';

@@ -25,7 +25,8 @@
     "debug-staging": "ng serve --host 0.0.0.0 --port 7200 --configuration=devstaging --source-map=true",
     "test": "ng test",
     "pree2e": "webdriver-manager update --standalone false --gecko false",
-    "e2e": "protractor"
+    "e2e": "protractor",
+    "bundle-report": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --configuration=prod --stats-json && npm run bundle-report"
   },
   "private": false,
   "dependencies": {
@@ -217,6 +218,7 @@
     "protractor": "~5.1.2",
     "ts-node": "~3.3.0",
     "tslint": "~5.7.0",
-    "typescript": "2.7.2"
+    "typescript": "2.7.2",
+    "webpack-bundle-analyzer": "^3.0.3"
   }
 }

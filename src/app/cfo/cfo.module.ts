@@ -3,7 +3,10 @@ import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
 
 /** Third party imports */
-import { MatTabsModule, MatDialogModule, MatStepperModule, MatTooltipModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTabsModule } from '@angular/material/tabs';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import {

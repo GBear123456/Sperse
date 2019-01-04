@@ -5,7 +5,7 @@ import { AppService } from '@app/app.service';
 
 import { ClassificationServiceProxy, ApplyOption, InstanceType } from '@shared/service-proxies/service-proxies';
 
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { RuleDialogComponent } from './rule-edit-dialog/rule-edit-dialog.component';
 import { RuleDeleteDialogComponent } from './rule-delete-dialog/rule-delete-dialog.component';
 

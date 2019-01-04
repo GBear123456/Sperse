@@ -3,7 +3,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuovoService } from '../quovo/QuovoService';
 import { SyncAccountServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 
 @Component({

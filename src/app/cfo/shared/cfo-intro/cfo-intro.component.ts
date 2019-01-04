@@ -2,7 +2,8 @@
 import { Component, Injector, Inject, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatHorizontalStepper, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MatHorizontalStepper } from '@angular/material/stepper';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';

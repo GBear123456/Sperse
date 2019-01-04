@@ -10,7 +10,7 @@ import {
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AccountConnector } from '@shared/common/account-connector-dialog/models/account-connector.model';
 import { AccountConnectors } from '@shared/AppEnums';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: 'account-connector-chooser',

@@ -9,7 +9,7 @@ import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.m
 import { ContactsService } from '../contacts.service';
 import { DxSelectBoxComponent } from 'devextreme-angular';
 import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { finalize } from 'rxjs/operators';
 
@@ -210,7 +210,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     updatePhoneNumber(isValid, value) {
-        isValid && this.update(this.PHONE_FIELD, 
+        isValid && this.update(this.PHONE_FIELD,
             this.data.user.phoneNumber, () => {
                 this.phoneInplaceEdit = false;
             }

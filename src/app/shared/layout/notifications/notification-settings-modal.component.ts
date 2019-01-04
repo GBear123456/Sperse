@@ -2,7 +2,7 @@ import { Component, Injector, ViewChild, OnInit } from '@angular/core';
 import { GetNotificationSettingsOutput, NotificationServiceProxy, NotificationSubscriptionDto, UpdateNotificationSettingsInput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
@@ -69,7 +69,7 @@ export class NotificationSettingsModalComponent extends ModalDialogComponent imp
                 this.close();
             });
     }
-    
+
     private getSettings(callback: () => void) {
         this._notificationService.getNotificationSettings().subscribe((result: GetNotificationSettingsOutput) => {
             this.settings = result;

@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Params } from '@angular/router/src/shared';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, pluck, publishReplay, refCount } from 'rxjs/operators';
@@ -22,8 +22,6 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
-import { PersonalFinanceLayoutService } from '@shared/personal-finance-layout/personal-finance-layout.service';
-import { UserManagementListComponent } from '../layout/user-management-list/user-management-list.component';
 
 @Injectable()
 export class OffersService {
@@ -69,14 +67,8 @@ export class OffersService {
         private route: ActivatedRoute,
         private ls: AppLocalizationService,
         private offerServiceProxy: OfferServiceProxy,
-        private dialog: MatDialog,
-        private pfmLayoutService: PersonalFinanceLayoutService,
-        private componentFactoryResolver: ComponentFactoryResolver
-    ) {
-        this.pfmLayoutService.headerContentUpdate(
-            this.componentFactoryResolver.resolveComponentFactory(UserManagementListComponent)
-        );
-    }
+        private dialog: MatDialog
+    ) {}
 
     getCategoryFromRoute(routeParams: Observable<Params>): Observable<Category> {
         return routeParams.pipe(
@@ -124,7 +116,7 @@ export class OffersService {
         const linkIsDirect = !!offer.redirectUrl;
         const submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.campaignId,
-            systemType: 'EPCVIP'
+            systemType: offer.systemType
         });
         const modalData = {
             processingSteps: [null, null, null, null],
@@ -139,7 +131,7 @@ export class OffersService {
             modalData.title = 'Offers_ProcessingLoanRequest';
             modalData.subtitle = 'Offers_WaitLoanRequestProcessing';
             modalData.completeDelays = [ 1000, 1000, 1000, null ];
-            modalData.delayMessages = [ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
+            modalData.delayMessages = <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
         }
 
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
@@ -148,11 +140,16 @@ export class OffersService {
             data: modalData
         });
         this.offerServiceProxy.submitApplication(submitApplicationInput)
-            .subscribe((output: SubmitApplicationOutput) => {
-                if (!linkIsDirect) {
-                    window.open(output.redirectUrl, '_blank');
-                    applyOfferDialog.componentInstance.showBlockedMessage = true;
-                }
-            });
+            .subscribe(
+                (output: SubmitApplicationOutput) => {
+                    if (!linkIsDirect) {
+                        /** If window opening is blocked - show message for allowing popups opening, else - close popup and redirect to the link (code for redirect in the popup component) */
+                        !window.open(output.redirectUrl, '_blank')
+                            ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                            : applyOfferDialog.close();
+                    }
+                },
+                () => applyOfferDialog.close()
+            );
     }
 }

@@ -6,7 +6,7 @@ import { CurrentUserProfileEditDto, DefaultTimezoneScope, ProfileServiceProxy, U
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { finalize } from 'rxjs/operators';
 import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
 @Component({

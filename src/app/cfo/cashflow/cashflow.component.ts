@@ -2,7 +2,7 @@
 import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DxPivotGridComponent, DxDataGridComponent } from 'devextreme-angular';
 import DevExpress from 'devextreme/bundles/dx.all';
 import config from 'devextreme/core/config';

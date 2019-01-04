@@ -4,7 +4,7 @@ import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServi
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { PaymentWizardComponent } from '../../common/payment-wizard/payment-wizard.component';
 import { AppService } from '@app/app.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { NotificationsComponent } from '@app/shared/layout/notifications/notifications.component';
 
 @Component({

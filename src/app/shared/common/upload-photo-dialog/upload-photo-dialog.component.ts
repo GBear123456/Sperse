@@ -10,7 +10,7 @@ import {
     ElementRef
 } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ImageCropperComponent, CropperSettings, Bounds } from 'ng2-img-cropper';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { FormControl, Validators } from '@angular/forms';

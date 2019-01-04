@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, OnInit, Injector, OnDestroy, ElementRef } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Injector, OnDestroy } from '@angular/core';
 
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';

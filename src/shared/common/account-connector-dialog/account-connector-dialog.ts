@@ -9,7 +9,7 @@ import {
     Output
 } from '@angular/core';
 import { AccountConnectors } from '@shared/AppEnums';
-import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
 import { QuovoLoginComponent } from '@shared/common/account-connector-dialog/quovo-login/quovo-login.component';
 import { XeroLoginComponent } from '@shared/common/account-connector-dialog/xero-login/xero-login.component';

@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit, Input } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto } from 'shared/service-proxies/service-proxies';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {ChooseResetRulesComponent} from './choose-reset-rules/choose-reset-rules.component';
 
 @Component({

@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core
 import { ActivationEnd } from '@angular/router';
 
 /** Third party libraries **/
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';

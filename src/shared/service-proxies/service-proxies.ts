@@ -20250,58 +20250,6 @@ export class SessionServiceProxy {
         }
         return _observableOf<UpdateUserSignInTokenOutput>(<any>null);
     }
-
-    /**
-     * @return Success
-     */
-    getUserInformation(): Observable<GetUserInformationOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/Session/GetUserInformation";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetUserInformation(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetUserInformation(<any>response_);
-                } catch (e) {
-                    return <Observable<GetUserInformationOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetUserInformationOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetUserInformation(response: HttpResponseBase): Observable<GetUserInformationOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetUserInformationOutput.fromJS(resultData200) : new GetUserInformationOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetUserInformationOutput>(<any>null);
-    }
 }
 
 @Injectable()
@@ -48565,6 +48513,7 @@ export interface INotificationSubscriptionDto {
 export class OfferDto implements IOfferDto {
     campaignId!: number | undefined;
     name!: string | undefined;
+    systemType!: OfferDtoSystemType | undefined;
     redirectUrl!: string | undefined;
     logoUrl!: string | undefined;
     overallRating!: number | undefined;
@@ -48588,6 +48537,7 @@ export class OfferDto implements IOfferDto {
         if (data) {
             this.campaignId = data["campaignId"];
             this.name = data["name"];
+            this.systemType = data["systemType"];
             this.redirectUrl = data["redirectUrl"];
             this.logoUrl = data["logoUrl"];
             this.overallRating = data["overallRating"];
@@ -48611,6 +48561,7 @@ export class OfferDto implements IOfferDto {
         data = typeof data === 'object' ? data : {};
         data["campaignId"] = this.campaignId;
         data["name"] = this.name;
+        data["systemType"] = this.systemType;
         data["redirectUrl"] = this.redirectUrl;
         data["logoUrl"] = this.logoUrl;
         data["overallRating"] = this.overallRating;
@@ -48627,6 +48578,7 @@ export class OfferDto implements IOfferDto {
 export interface IOfferDto {
     campaignId: number | undefined;
     name: string | undefined;
+    systemType: OfferDtoSystemType | undefined;
     redirectUrl: string | undefined;
     logoUrl: string | undefined;
     overallRating: number | undefined;
@@ -48639,12 +48591,15 @@ export interface IOfferDto {
 }
 
 export class OfferDetailsDto implements IOfferDetailsDto {
+    description!: string | undefined;
     creditScores!: CreditScores[] | undefined;
     introAPR!: string | undefined;
+    details!: string[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
     campaignId!: number | undefined;
     name!: string | undefined;
+    systemType!: OfferDetailsDtoSystemType | undefined;
     redirectUrl!: string | undefined;
     logoUrl!: string | undefined;
     overallRating!: number | undefined;
@@ -48666,12 +48621,18 @@ export class OfferDetailsDto implements IOfferDetailsDto {
 
     init(data?: any) {
         if (data) {
+            this.description = data["description"];
             if (data["creditScores"] && data["creditScores"].constructor === Array) {
                 this.creditScores = [];
                 for (let item of data["creditScores"])
                     this.creditScores.push(item);
             }
             this.introAPR = data["introAPR"];
+            if (data["details"] && data["details"].constructor === Array) {
+                this.details = [];
+                for (let item of data["details"])
+                    this.details.push(item);
+            }
             if (data["pros"] && data["pros"].constructor === Array) {
                 this.pros = [];
                 for (let item of data["pros"])
@@ -48684,6 +48645,7 @@ export class OfferDetailsDto implements IOfferDetailsDto {
             }
             this.campaignId = data["campaignId"];
             this.name = data["name"];
+            this.systemType = data["systemType"];
             this.redirectUrl = data["redirectUrl"];
             this.logoUrl = data["logoUrl"];
             this.overallRating = data["overallRating"];
@@ -48705,12 +48667,18 @@ export class OfferDetailsDto implements IOfferDetailsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["description"] = this.description;
         if (this.creditScores && this.creditScores.constructor === Array) {
             data["creditScores"] = [];
             for (let item of this.creditScores)
                 data["creditScores"].push(item);
         }
         data["introAPR"] = this.introAPR;
+        if (this.details && this.details.constructor === Array) {
+            data["details"] = [];
+            for (let item of this.details)
+                data["details"].push(item);
+        }
         if (this.pros && this.pros.constructor === Array) {
             data["pros"] = [];
             for (let item of this.pros)
@@ -48723,6 +48691,7 @@ export class OfferDetailsDto implements IOfferDetailsDto {
         }
         data["campaignId"] = this.campaignId;
         data["name"] = this.name;
+        data["systemType"] = this.systemType;
         data["redirectUrl"] = this.redirectUrl;
         data["logoUrl"] = this.logoUrl;
         data["overallRating"] = this.overallRating;
@@ -48737,12 +48706,15 @@ export class OfferDetailsDto implements IOfferDetailsDto {
 }
 
 export interface IOfferDetailsDto {
+    description: string | undefined;
     creditScores: CreditScores[] | undefined;
     introAPR: string | undefined;
+    details: string[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
     campaignId: number | undefined;
     name: string | undefined;
+    systemType: OfferDetailsDtoSystemType | undefined;
     redirectUrl: string | undefined;
     logoUrl: string | undefined;
     overallRating: number | undefined;
@@ -52878,46 +52850,6 @@ export interface IUpdateUserSignInTokenOutput {
     signInToken: string | undefined;
     encodedUserId: string | undefined;
     encodedTenantId: string | undefined;
-}
-
-export class GetUserInformationOutput implements IGetUserInformationOutput {
-    tenancyName!: string | undefined;
-    userName!: string | undefined;
-
-    constructor(data?: IGetUserInformationOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.tenancyName = data["tenancyName"];
-            this.userName = data["userName"];
-        }
-    }
-
-    static fromJS(data: any): GetUserInformationOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetUserInformationOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["tenancyName"] = this.tenancyName;
-        data["userName"] = this.userName;
-        return data; 
-    }
-}
-
-export interface IGetUserInformationOutput {
-    tenancyName: string | undefined;
-    userName: string | undefined;
 }
 
 export class CreateStageInput implements ICreateStageInput {
@@ -59291,6 +59223,10 @@ export enum TenantNotificationSeverity {
     _4 = 4, 
 }
 
+export enum OfferDtoSystemType {
+    EPCVIP = "EPCVIP", 
+}
+
 export enum OfferDtoOfferCollection {
     Best = "Best", 
     BalanceTransfer = "BalanceTransfer", 
@@ -59314,6 +59250,10 @@ export enum CreditScores {
     Good = "Good", 
     Fair = "Fair", 
     Poor = "Poor", 
+}
+
+export enum OfferDetailsDtoSystemType {
+    EPCVIP = "EPCVIP", 
 }
 
 export enum OfferDetailsDtoOfferCollection {

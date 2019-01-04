@@ -2,7 +2,7 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 

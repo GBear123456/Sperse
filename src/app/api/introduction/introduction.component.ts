@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
-import { ClipboardService } from 'ngx-clipboard'
+import { ClipboardService } from 'ngx-clipboard';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
 import * as _ from 'lodash';
 

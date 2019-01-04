@@ -4,7 +4,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 /** Third party imports */
-import { MatDialogModule, MatStepperModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatStepperModule } from '@angular/material/stepper';
 import { StickyModule } from 'ng2-sticky-kit';
 
 /** Application imports */
@@ -17,6 +18,7 @@ import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-i
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 import { UserOnlyCFOService } from '@root/personal-finance/shared/common/user-only.cfo.service';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { LayoutModule } from '@root/personal-finance/shared/layout/layout.module';
 
 @NgModule({
     declarations: [
@@ -26,6 +28,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
     ],
     imports: [
         AccountConnectorDialogModule,
+        LayoutModule,
         CommonModule,
         MatStepperModule,
         MatDialogModule,

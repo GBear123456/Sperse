@@ -12,7 +12,8 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef, MatStepper } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 

@@ -2,7 +2,8 @@
 import { ChangeDetectionStrategy, Component, Inject, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatHorizontalStepper, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MatHorizontalStepper } from '@angular/material/stepper';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { kebabCase } from 'lodash';
 
 /** Application imports */

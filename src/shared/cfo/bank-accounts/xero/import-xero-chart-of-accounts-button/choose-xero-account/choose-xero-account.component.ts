@@ -1,5 +1,5 @@
 import { Component, Inject, Injector, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { SyncAccountDto } from 'shared/service-proxies/service-proxies';
 

@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core
 import { ActivationEnd } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
 import { forkJoin } from 'rxjs';

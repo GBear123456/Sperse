@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef, ViewChi
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -60,12 +60,12 @@ export class AddContactDialogComponent extends AppComponentBase implements OnIni
         });
     }
 
-    onValueChanged(event) {  
+    onValueChanged(event) {
         this.fullNameParser.parseIntoPerson(
             this.data.fullName, this.data.person);
     }
 
-    onSave(event) {        
+    onSave(event) {
         this.dialogRef.close();
     }
 }

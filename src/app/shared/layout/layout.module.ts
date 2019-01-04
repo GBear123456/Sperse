@@ -5,7 +5,7 @@ import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 /** Third party modules */
-import { MatTabsModule } from '@angular/material';
+import { MatTabsModule } from '@angular/material/tabs';
 import {
     DxMenuModule, DxScrollViewModule, DxButtonModule,
     DxDropDownBoxModule, DxListModule, DxNavBarModule
