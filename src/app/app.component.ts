@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef, NgZone } from '@angular/core';
+import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef, NgZone, ViewEncapsulation } from '@angular/core';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service';
 import { AppComponentBase } from 'shared/common/app-component-base';
@@ -10,7 +10,10 @@ import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.less']
+    styleUrls: ['./app.component.less', 
+        '../../node_modules/ng2-image-viewer/imageviewer.scss'
+    ],
+    encapsulation: ViewEncapsulation.None
 })
 export class AppComponent extends AppComponentBase implements OnInit, AfterViewInit {
 

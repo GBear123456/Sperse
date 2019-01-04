@@ -23,6 +23,8 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentType } from './document-type.enum';
 import { ContactsService } from '../contacts.service';
 
+import "@node_modules/ng2-image-viewer/imageviewer.js";
+
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],

@@ -7,6 +7,12 @@ import { HostDashboardData, HostDashboardServiceProxy } from '@shared/service-pr
 import * as moment from 'moment';
 import { Table } from 'primeng/table';
 
+import "@node_modules/flot/jquery.flot.js";
+import "@node_modules/flot/jquery.flot.pie.js";
+import "@node_modules/flot/jquery.flot.categories.js";
+import "@node_modules/flot/jquery.flot.time.js";
+import "@node_modules/jquery.flot.tooltip/js/jquery.flot.tooltip.min.js";
+
 @Component({
     templateUrl: './host-dashboard.component.html',
     styleUrls: ['./host-dashboard.component.less'],
