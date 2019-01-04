@@ -131,7 +131,7 @@ export class OffersService {
             modalData.title = 'Offers_ProcessingLoanRequest';
             modalData.subtitle = 'Offers_WaitLoanRequestProcessing';
             modalData.completeDelays = [ 1000, 1000, 1000, null ];
-            modalData.delayMessages = [ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
+            modalData.delayMessages = <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
         }
 
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
@@ -142,8 +142,10 @@ export class OffersService {
         this.offerServiceProxy.submitApplication(submitApplicationInput)
             .subscribe((output: SubmitApplicationOutput) => {
                 if (!linkIsDirect) {
-                    window.open(output.redirectUrl, '_blank');
-                    applyOfferDialog.componentInstance.showBlockedMessage = true;
+                    /** If window opening is blocked - show message for allowing popups opening, else - close popup and redirect to the link (code for redirect in the popup component) */
+                    !window.open(output.redirectUrl, '_blank')
+                        ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                        : applyOfferDialog.close();
                 }
             });
     }
