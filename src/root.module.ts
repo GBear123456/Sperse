@@ -37,7 +37,7 @@ export function appInitializerFactory(
     platformLocation: PlatformLocation,
     faviconService: FaviconService
 ) {
-    return () => {        
+    return () => {
         let appAuthService = injector.get(AppAuthService);
         appAuthService.setCheckDomainToken();
         handleLogoutRequest(appAuthService);
