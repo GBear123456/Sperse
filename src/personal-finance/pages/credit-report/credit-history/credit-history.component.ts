@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Injector, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { CreditReportServiceProxy, ScoreHistoryDto, CreditReportDto } from '@shared/service-proxies/service-proxies';
+import { CreditReportServiceProxy, CreditReportDto } from '@shared/service-proxies/service-proxies';
 import { DxChartComponent } from 'devextreme-angular';
-import * as moment from 'moment'
+import * as moment from 'moment';
 
 @Component({
     selector: 'app-credit-history',
@@ -18,7 +18,7 @@ export class CreditHistoryComponent extends AppComponentBase implements OnInit {
         Equifax: '#b22642',
         Experian: '#177cc6',
         TransUnion: '#4fdadc'
-    }
+    };
 
     constructor(
         injector: Injector,
@@ -40,7 +40,7 @@ export class CreditHistoryComponent extends AppComponentBase implements OnInit {
                             his.scoreDate = scoreHisDto.scoreDate.toDate();
                             his.score = scoreHisDto.score;
                             this.scoreHistory.push(his);
-                        })
+                        });
                     });
                 }
             });
@@ -53,7 +53,7 @@ export class CreditHistoryComponent extends AppComponentBase implements OnInit {
         } else {
             series.show();
         }
-    };
+    }
 
     customizeDate = (arg: any) => {
         return this.formatDate(arg.value);

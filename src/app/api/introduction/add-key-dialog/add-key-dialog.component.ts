@@ -1,15 +1,12 @@
 /** Core imports */
-import { Component, Inject, Injector, ElementRef } from '@angular/core';
+import { Component, Inject, Injector } from '@angular/core';
 
 /** Third party imports */
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import * as _ from 'underscore';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import {
-    GenerateApiKeyInput
-} from '@shared/service-proxies/service-proxies';
+import { GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'add-key-dialog.component.html',
@@ -22,7 +19,6 @@ export class EditKeyDialog extends AppComponentBase {
 
     constructor(injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        private elementRef: ElementRef,
         public dialogRef: MatDialogRef<EditKeyDialog>) {
         super(injector);
     }

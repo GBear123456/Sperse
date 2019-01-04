@@ -1,7 +1,7 @@
 import { Component, Injector, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConditionsType } from '@shared/AppEnums';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 
 @Component({

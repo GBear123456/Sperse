@@ -2,7 +2,7 @@
 import { AfterViewInit, Component, Injector, HostListener, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
@@ -96,8 +96,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         _clientService.invalidateSubscribe((area) => {
             if (area == 'documents') {
                 this._documentService['data'] = undefined;
-                this.loadDocuments(); 
-            }           
+                this.loadDocuments();
+            }
         });
     }
 

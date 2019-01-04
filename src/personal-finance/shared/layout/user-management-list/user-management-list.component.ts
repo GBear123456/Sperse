@@ -2,7 +2,7 @@
 import { Component, Injector, OnInit } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { isEqual } from 'lodash';

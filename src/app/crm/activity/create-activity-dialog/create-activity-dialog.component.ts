@@ -2,7 +2,7 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DxContextMenuComponent, DxDateBoxComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
 import { finalize } from 'rxjs/operators';
@@ -340,7 +340,7 @@ export class CreateActivityDialogComponent extends ModalDialogComponent implemen
                 date = date.startOf('day');
             if (propertyName === 'endDate')
                 date = date.endOf('day');
-            
+
             return date;
         }
         else {

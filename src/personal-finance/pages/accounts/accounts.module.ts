@@ -4,7 +4,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 /** Third party imports */
-import { MatDialogModule, MatStepperModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatStepperModule } from '@angular/material/stepper';
 import { StickyModule } from 'ng2-sticky-kit';
 
 /** Application imports */

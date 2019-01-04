@@ -4,17 +4,13 @@ import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
-import {
-    MatSidenavModule,
-    MatProgressBarModule,
-    MatTabsModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    MatSelectModule,
-    MatStepperModule
-} from '@angular/material';
-import { AppCommonModule } from '@app/shared/common/app-common.module';
-import { CommonModule } from '@shared/common/common.module';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatStepperModule } from '@angular/material/stepper';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import {
     DxListModule,
@@ -78,6 +74,8 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ContactsModule } from './contacts/contacts.module';
 import { AppStoreService } from '@app/store/app-store.service';
+import { AppCommonModule } from '@app/shared/common/app-common.module';
+import { CommonModule } from '@shared/common/common.module';
 
 @NgModule({
     imports: [

@@ -2,7 +2,7 @@
 import { Component, Injector, Input } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
@@ -37,8 +37,8 @@ export class SocialsComponent extends AppComponentBase {
     @Input() contactInfoData: ContactInfoDetailsDto;
     @Input() set contactInfo(value: ContactInfoDto) {
         if (this._contactInfo = value)
-            this.contactInfoData = this.isCompany ? 
-                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details: 
+            this.contactInfoData = this.isCompany ?
+                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details:
                 value.personContactInfo && value.personContactInfo.details;
 
     }

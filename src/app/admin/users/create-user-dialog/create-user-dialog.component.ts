@@ -2,7 +2,7 @@
 import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DxContextMenuComponent, DxTextBoxComponent } from 'devextreme-angular';
 import { CacheService } from 'ng2-cache-service';
 import * as nameParser from 'parse-full-name';

@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, Injector, ViewChild } from '@angula
 import { ActivationEnd } from '@angular/router';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppComponentBase } from 'shared/common/app-component-base';

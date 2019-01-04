@@ -3,7 +3,7 @@ import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angul
 
 /** Third party imports */
 import { DxSchedulerComponent } from 'devextreme-angular';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 import buildQuery from 'odata-query';
 
@@ -112,7 +112,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     initDataSource() {
         this.dataSource = {
             requireTotalCount: false,
-            onLoadError: (error) => { 
+            onLoadError: (error) => {
                 this.httpInterceptor.handleError(error);
             },
             store: {

@@ -4,7 +4,7 @@ import { EntityDtoOfGuid, NotificationServiceProxy } from '@shared/service-proxi
 import * as moment from 'moment';
 import * as Push from 'push.js'; // if using ES6
 import { NotificationSettingsModalComponent } from './notification-settings-modal.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface IFormattedUserNotification {
     userNotificationId: string;

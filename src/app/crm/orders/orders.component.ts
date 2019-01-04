@@ -11,7 +11,6 @@ import {
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular';
-import * as _ from 'underscore';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';

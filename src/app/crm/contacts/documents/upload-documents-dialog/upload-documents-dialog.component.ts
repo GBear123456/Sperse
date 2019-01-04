@@ -2,7 +2,7 @@
 import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FileSystemFileEntry } from 'ngx-file-drop';
 import { finalize } from 'rxjs/operators';
 

@@ -3,7 +3,7 @@ import { Component, Inject, Injector, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as _ from 'underscore';
 import { AngularGooglePlaceService } from '@node_modules/angular-google-place';
 

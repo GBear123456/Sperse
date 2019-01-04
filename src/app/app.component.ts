@@ -6,7 +6,7 @@ import { PaymentWizardComponent } from './shared/common/payment-wizard/payment-w
 import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 import { AppService } from './app.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     templateUrl: './app.component.html',

@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Params } from '@angular/router/src/shared';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, pluck, publishReplay, refCount } from 'rxjs/operators';

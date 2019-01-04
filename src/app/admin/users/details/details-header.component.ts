@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { filter } from 'rxjs/operators';
 import { AppComponentBase } from '@shared/common/app-component-base';

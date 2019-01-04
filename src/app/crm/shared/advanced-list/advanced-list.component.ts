@@ -8,7 +8,7 @@ import { ContactListsServiceProxy, AddContactsToListsInput, ContactListInput,
 
 import * as _ from 'underscore';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 
 @Component({

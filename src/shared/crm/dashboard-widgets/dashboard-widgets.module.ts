@@ -24,7 +24,7 @@ import {
     DxDataGridModule,
     DxVectorMapModule
 } from 'devextreme-angular';
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
     imports: [

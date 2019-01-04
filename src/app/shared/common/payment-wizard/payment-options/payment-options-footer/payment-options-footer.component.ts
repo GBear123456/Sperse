@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, Injector, Output, EventEmitter } from '@angular/core';
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { AppComponentBase } from '@shared/common/app-component-base';
 
 @Component({

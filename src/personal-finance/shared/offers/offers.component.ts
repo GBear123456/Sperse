@@ -18,7 +18,9 @@ import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
 import { first, filter, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap, skip, withLatestFrom } from 'rxjs/operators';
 import { kebabCase } from 'lodash';
-import { MatRadioChange, MatSelect, MatSelectChange, MatSliderChange } from '@angular/material';
+import { MatRadioChange } from '@angular/material/radio';
+import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { MatSliderChange } from '@angular/material/slider';
 
 /** App part imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

@@ -5,7 +5,7 @@ import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     templateUrl: './notifications.component.html',

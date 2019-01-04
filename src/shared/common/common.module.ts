@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DxTextBoxModule, DxScrollViewModule, DxCheckBoxModule } from 'devextreme-angular';
 
 /** Application imports */
@@ -52,7 +52,7 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
         InfoComponent,
         CountryPhoneNumberComponent,
         TitleCasePipe,
-        
+
         ModalDialogComponent,
         ConditionsModalComponent,
         NoDataModule

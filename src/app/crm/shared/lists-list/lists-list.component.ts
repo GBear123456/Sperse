@@ -2,7 +2,7 @@
 import { Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { ActionsSubject, Store, select } from '@ngrx/store';
 import { ofType } from '@ngrx/effects';
 import { finalize, first } from 'rxjs/operators';

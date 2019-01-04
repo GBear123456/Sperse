@@ -2,7 +2,7 @@
 import { Component, OnInit, Injector, Input } from '@angular/core';
 
 /** Third party imports  */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';

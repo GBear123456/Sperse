@@ -2,7 +2,7 @@
 import { Component, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { filter, first, takeUntil } from 'rxjs/operators';
 

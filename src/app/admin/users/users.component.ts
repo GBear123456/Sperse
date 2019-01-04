@@ -26,7 +26,7 @@ import { forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     templateUrl: './users.component.html',
@@ -297,12 +297,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     openUserDetails(userId) {
-        this.searchClear = false; 
+        this.searchClear = false;
         this.actionRecord = null;
         setTimeout(() => {
             this._router.navigate(['app/admin/user/' + userId + '/user-information'],
                 { queryParams: { referrer: 'app/admin/users'} });
-        }); 
+        });
     }
 
     initFilterConfig() {

@@ -1,10 +1,8 @@
 import { Component, Injector, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
-import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { AppService } from '@app/app.service';
-import { Module } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './setup-steps.component.html',
@@ -43,7 +41,7 @@ export class SetupStepComponent extends CFOComponentBase {
         else if (index == this.SelectedStepIndex) return 'current';
         else return '';
     }
-    
+
     showIntro() {
         this.dialogConfig.height = '655px';
         this.dialogConfig.width = '880px';

@@ -2,7 +2,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';

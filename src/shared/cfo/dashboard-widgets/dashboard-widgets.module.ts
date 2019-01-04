@@ -16,7 +16,7 @@ import {
     DxChartModule,
     DxSliderModule
 } from 'devextreme-angular';
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import { ChooseResetRulesComponent } from './categorization-status/choose-reset-rules/choose-reset-rules.component';
 
 

@@ -1,6 +1,6 @@
 import { FilterSettingInterface } from 'personal-finance/shared/offers/interfaces/filter-setting.interface';
 import { StepConditionInterface } from 'personal-finance/shared/offers/interfaces/step-condition.interface';
-import { MatSliderChange } from '@angular/material';
+import { MatSliderChange } from '@angular/material/slider';
 
 export interface RangeFilterInterface extends FilterSettingInterface {
     min?: number;

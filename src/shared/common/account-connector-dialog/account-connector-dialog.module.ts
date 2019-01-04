@@ -6,7 +6,7 @@ import { AccountConnectorChooserComponent } from './account-connector-chooser/ac
 import { QuovoLoginComponent } from './quovo-login/quovo-login.component';
 import { XeroLoginComponent } from './xero-login/xero-login.component';
 
-import { MatDialogModule } from '@angular/material';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DxButtonModule, DxValidatorModule, DxTextBoxModule, DxValidationSummaryModule } from 'devextreme-angular';
 
 @NgModule({

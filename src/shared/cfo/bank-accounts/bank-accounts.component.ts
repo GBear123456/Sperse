@@ -2,7 +2,7 @@
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { finalize, first, filter, takeUntil } from 'rxjs/operators';
 

@@ -2,7 +2,8 @@
 import { Component, Inject, Injector, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef, MatHorizontalStepper } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatHorizontalStepper } from '@angular/material/stepper';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';

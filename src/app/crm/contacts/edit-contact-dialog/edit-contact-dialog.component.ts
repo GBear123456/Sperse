@@ -3,7 +3,7 @@ import { Component, Inject, Injector, ElementRef, ViewChild } from '@angular/cor
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -151,6 +151,6 @@ export class EditContactDialog extends AppComponentBase {
 
     getUsageTypeHint(item) {
         return item && (['emailAddress', 'phoneNumber'].indexOf(this.data.field) >= 0) ?
-            this.l('ContactInformation_' + this.capitalize(this.data.field.slice(0, 5)) + 'TypeTooltip_' + item.id): '';  
+            this.l('ContactInformation_' + this.capitalize(this.data.field.slice(0, 5)) + 'TypeTooltip_' + item.id): '';
     }
 }

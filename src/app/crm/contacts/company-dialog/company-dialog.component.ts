@@ -12,7 +12,7 @@ import {
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { MaskPipe } from 'ngx-mask';
 import { DxSelectBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
