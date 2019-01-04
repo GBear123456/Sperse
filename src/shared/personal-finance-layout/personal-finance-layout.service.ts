@@ -2,14 +2,14 @@
 import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
-import { Subject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
 @Injectable()
 export class PersonalFinanceLayoutService {
-    private headerSubject: Subject<Object>;
+    private headerSubject: ReplaySubject<Object>;
 
     constructor(injector: Injector) {
-        this.headerSubject = new Subject<Object>();
+        this.headerSubject = new ReplaySubject<Object>();
     }
 
     headerContentSubscribe(callback) {

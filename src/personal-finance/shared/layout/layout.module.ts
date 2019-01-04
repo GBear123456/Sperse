@@ -1,5 +1,5 @@
 /** Core imports */
-import { NgModule } from '@angular/core';
+import { ComponentFactoryResolver, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +14,8 @@ import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { UserManagementListComponent } from './user-management-list/user-management-list.component';
+import { PersonalFinanceLayoutService } from '@shared/personal-finance-layout/personal-finance-layout.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 let COMPONENTS = [
     UserManagementListComponent
@@ -47,4 +49,16 @@ let COMPONENTS = [
         TenantSubscriptionServiceProxy
     ]
 })
-export class LayoutModule { }
+export class LayoutModule {
+    constructor(
+        private pfmLayoutService: PersonalFinanceLayoutService,
+        private componentFactoryResolver: ComponentFactoryResolver,
+        private sessionService: AppSessionService
+    ) {
+        if (this.sessionService.userId !== null) {
+            this.pfmLayoutService.headerContentUpdate(
+                this.componentFactoryResolver.resolveComponentFactory(UserManagementListComponent)
+            );
+        }
+    }
+}

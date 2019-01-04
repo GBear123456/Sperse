@@ -4,7 +4,7 @@ import { ngxZendeskWebwidgetService } from 'ngx-zendesk-webwidget';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
-import { extend } from 'underscore'
+import { extend } from 'underscore';
 
 @Injectable()
 export class ZendeskService {
@@ -26,7 +26,7 @@ export class ZendeskService {
         }
 
         try {
-            let tenant = this._appSession.tenant;       
+            let tenant = this._appSession.tenant;
             if (tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace))
                 settings = { position: { horizontal: 'left', vertical: 'bottom' } };
             this.zendeskWidgetService.setSettings(
@@ -43,9 +43,9 @@ export class ZendeskService {
             );
 
             this.isZendeskWebwidgetSetuped = true;
-        } catch(e) { 
+        } catch(e) {
             this.isZendeskWebwidgetSetuped = false;
-        } 
+        }
     }
 
     showWidget(settings?) {
@@ -56,7 +56,7 @@ export class ZendeskService {
                     this.zendeskWidgetService.show();
                 }, 2000);
             }
-        } catch(e) { } 
+        } catch(e) { }
     }
 
     hideWidget() {
@@ -65,6 +65,6 @@ export class ZendeskService {
                 clearTimeout(this.showZendeskWebwidgetTimeout);
                 this.zendeskWidgetService.hide();
             }
-        } catch(e) { } 
+        } catch (e) { }
     }
 }
