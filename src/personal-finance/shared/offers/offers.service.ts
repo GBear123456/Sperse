@@ -140,13 +140,16 @@ export class OffersService {
             data: modalData
         });
         this.offerServiceProxy.submitApplication(submitApplicationInput)
-            .subscribe((output: SubmitApplicationOutput) => {
-                if (!linkIsDirect) {
-                    /** If window opening is blocked - show message for allowing popups opening, else - close popup and redirect to the link (code for redirect in the popup component) */
-                    !window.open(output.redirectUrl, '_blank')
-                        ? applyOfferDialog.componentInstance.showBlockedMessage = true
-                        : applyOfferDialog.close();
-                }
-            });
+            .subscribe(
+                (output: SubmitApplicationOutput) => {
+                    if (!linkIsDirect) {
+                        /** If window opening is blocked - show message for allowing popups opening, else - close popup and redirect to the link (code for redirect in the popup component) */
+                        !window.open(output.redirectUrl, '_blank')
+                            ? applyOfferDialog.componentInstance.showBlockedMessage = true
+                            : applyOfferDialog.close();
+                    }
+                },
+                () => applyOfferDialog.close()
+            );
     }
 }
