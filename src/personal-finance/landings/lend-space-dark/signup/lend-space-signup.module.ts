@@ -3,10 +3,12 @@ import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-s
 import { RouterModule } from '@angular/router';
 import { DxButtonModule, DxCheckBoxModule, DxTextBoxModule, DxValidatorModule } from 'devextreme-angular';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
         CommonModule,
+        FormsModule,
         DxTextBoxModule,
         DxValidatorModule,
         DxCheckBoxModule,
