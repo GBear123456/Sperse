@@ -32,6 +32,7 @@
   "exclude": [
       "./account/register/**",
       "./account/payment/**",
-      "./app/crm/shared/advanced-list/**"
+      "./app/crm/shared/advanced-list/**",
+      "./personal-finance/landings/**"
   ]
 }
