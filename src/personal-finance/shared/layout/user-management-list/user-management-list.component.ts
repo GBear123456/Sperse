@@ -48,7 +48,7 @@ export class UserManagementListComponent extends AppComponentBase implements OnI
     isImpersonatedLogin = false;
     shownLoginNameTitle = '';
     userCompany$: Observable<string>;
-
+    hasPlatformPermissions = false;
     profileThumbnailId: string;
     recentlyLinkedUsers: LinkedUserDto[];
 
@@ -98,6 +98,11 @@ export class UserManagementListComponent extends AppComponentBase implements OnI
 
         this.userCompany$ = this._commonUserInfoService.getCompany().pipe(map(x => isEqual(x, {}) ? null : x));
         this.registerToEvents();
+
+        this.hasPlatformPermissions =
+            (this.feature.isEnabled('CFO') && this.permission.isGranted('Pages.CFO')) ||
+            (this.feature.isEnabled('CRM') && this.permission.isGranted('Pages.CRM')) ||
+            (this.feature.isEnabled('Admin') && this.permission.isGranted('Pages.Administration.Users'));
     }
 
     getShownUserName(linkedUser: LinkedUserDto): string {
