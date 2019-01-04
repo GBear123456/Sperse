@@ -362,7 +362,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 ]
             );
 
-            this.updateGroupFilter(Group.Employee);
+            this.updateGroupFilter(this.group);
         });
 
         this._filtersService.apply((filter) => {
