@@ -181,7 +181,6 @@
     "urijs": "^1.19.0",
     "videogular2": "^6.3.0",
     "waypoints": "^4.0.1",
-    "webpack-bundle-analyzer": "^3.0.3",
     "xlsx": "^0.13.2",
     "zone.js": "^0.8.26"
   },
@@ -219,6 +218,7 @@
     "protractor": "~5.1.2",
     "ts-node": "~3.3.0",
     "tslint": "~5.7.0",
-    "typescript": "2.7.2"
+    "typescript": "2.7.2",
+    "webpack-bundle-analyzer": "^3.0.3"
   }
 }
