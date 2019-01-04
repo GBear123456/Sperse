@@ -33,6 +33,8 @@
       "./account/register/**",
       "./account/payment/**",
       "./app/crm/shared/advanced-list/**",
-      "./personal-finance/landings/**"
+      "./personal-finance/landings/lend-space-dark/lend-space-dark.component.ts",
+      "./personal-finance/landings/credit-report/credit-report.component.ts",
+      "./personal-finance/landings/credit-report/register-form/register-form.component.ts"
   ]
 }
