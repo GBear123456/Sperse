@@ -5,10 +5,9 @@ import { Params } from '@angular/router/src/shared';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { camelCase, lowerCase, upperFirst } from 'lodash';
+import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, pluck, publishReplay, refCount } from 'rxjs/operators';
-import { capitalize, cloneDeep } from 'lodash';
 
 /** Application imports */
 import {

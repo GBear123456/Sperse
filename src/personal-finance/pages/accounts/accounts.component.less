@@ -1,0 +1,148 @@
+@import '../../../shared/personal-finance-layout/_settings';
+@import '../../../assets/common/styles/custom/lend-space/colors.less';
+
+:host-context(body.lend-space) {
+    .default-finance {
+        display: none !important;
+    }
+    .lend-space-finance {
+        display: block;
+        height: 100%;
+        padding: 25px 0;
+    }
+
+    .accountsContainer {
+        height: 100%;
+        .row {
+            height: 100%;
+        }
+    }
+}
+
+:host {
+    .quovo-accounts-module {
+        height: 100%;
+        width: 100%;
+    }
+
+    .content-wrap {
+        width: 100%;
+        min-height: 750px;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    .lend-space-finance {
+        display: none;
+    }
+
+    .container {
+        display: flex;
+        min-height: 750px;
+        justify-content: center;
+        .row {
+            width: 100%;
+        }
+        .not-initialized-content {
+            text-align: center;
+            width: 100%;
+            flex-direction: column;
+            justify-content: center;
+            display: flex;
+            align-items: center;
+
+            .welcome-text {
+                color: #202B35;
+                font-size: 32px;
+                font-weight: 600;
+            }
+
+            .body-text {
+                color: #677380;
+                font-size: 15px;
+                font-weight: 500;
+                line-height: 22px;
+                max-width: 650px;
+                margin: 27px auto 38px;
+            }
+
+            .btn-layout {
+                padding: 18px 68px 21px 66px !important;
+                height: 52px;
+                text-transform: none !important;
+                line-height: 0 !important;
+                border-radius: 26px;
+                font-size: 16px;
+                font-weight: 500 !important;
+
+                &:after {
+                    content: none;
+                }
+            }
+        }
+
+        .sidebar {
+            border-right: 2px solid rgb(223, 223, 223);
+            flex: 0 0 20%;
+
+            @media all and (max-width: 1024px) {
+                display: none;
+            }
+
+            .left-navigation {
+                margin-top: 28px;
+                list-style-type: none;
+                padding-left: 0;
+
+                .left-navigation-item {
+                    .left-navigation-link {
+                        cursor: pointer;
+                        padding: 10px 15px;
+                        font-family: @lato;
+                        font-size: 16px;
+                        line-height: 28px;
+                        font-weight: 500;
+                        letter-spacing: 0.3px;
+                        color: @font-color-gray;
+                        text-decoration: none;
+                        display: flex;
+                        flex-direction: row;
+                        align-content: center;
+
+                        .menu-icon {
+                            margin-right: 10px;
+                        }
+
+                        &:hover {
+                            color: @orange-color;
+                        }
+                    }
+
+                    &.active {
+                        .left-navigation-link {
+                            color: @orange-color;
+                        }
+                    }
+                }
+            }
+        }
+
+        .p-content {
+            flex: 0 0 80%;
+            padding: 30px 15px 15px 15px;
+            max-width: calc(~"100% - 255px");
+
+            @media all and (max-width: 1024px) {
+                max-width: 100%;
+                padding-left: 0;
+                flex: 0 0 100%;
+            }
+        }
+    }
+}
+
+@media all and (max-width: 1400px) {
+    .content-wrap {
+        max-width: 94%;
+    }
+}

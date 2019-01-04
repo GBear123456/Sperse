@@ -1,0 +1,29 @@
+<div class="report-item">
+  <div class="report-item-title" id="creditAlerts">{{l("creditAlerts")}}</div>
+  <div class="report-item-content">
+    <ul class="alerts-list">
+      <li class="alert-item"
+          *ngFor="let item of creditReport?.alerts"
+          [ngClass]="{'negative': item.type === 0, 'warning': item.type===2}">
+        <b>{{ item.date?.utc().format('MMM DD, YYYY') }}</b> <span class="alert-bureau">{{ item.bureau }}</span>
+        <p>
+          {{ item.text }}
+        </p>
+      </li>
+      <!--<li class="alert-item"
+          *ngFor="let item of alerts"
+          [class.negative]="item.type === 1">
+        <b>{{ item.date?.utc().format('MMM DD, YYYY') }}</b> <span class="alert-bureau">{{ item.bureau }}</span>
+        <p>
+          {{ item.text }}
+        </p>
+      </li>-->
+        <!-- TODO: need set how much alerts must be showing after click and optimize this code and script -->
+    </ul>
+    <!--{{alerts}}-->
+    <!--<div class="text-center">
+      <a href="javascript:;" class="view-more" (click)="showMoreAlerts()">{{l("viewMore")}}</a>
+    </div>-->
+    <hr>
+  </div>
+</div>

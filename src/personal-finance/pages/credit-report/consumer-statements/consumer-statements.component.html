@@ -1,0 +1,23 @@
+<div class="report-item">
+  <div class="report-item-title" id="consumerStatements">{{l("consumerStatements")}}</div>
+  <div class="report-item-content">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>{{l("date")}}</th>
+          <th>{{l("bureau")}}</th>
+          <th>{{l("statement")}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of creditReport?.consumerStatements">
+          <td class="date" width="150">{{item.date?.utc().format('MMM DD, YYYY')}}</td>
+          <td class="bureau" width="150">
+            <img src="assets/images/credit-report/{{item.bureau | lowercase}}.png" srcset="assets/images/credit-report/{{item.bureau | lowercase}}@2x.png 2x, assets/images/credit-report/{{item.bureau | lowercase}}@3x.png 3x" class="bureau-img">
+          </td>
+          <td class="statement">{{item.statement}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

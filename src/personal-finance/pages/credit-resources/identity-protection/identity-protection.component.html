@@ -1,0 +1,30 @@
+<div class="sub-title">
+    <h2>{{l("identityProtectionResources")}}</h2>
+</div>
+<p class="description">
+    {{l("identityProtectionResourcesDescription")}}
+</p>
+<div class="sources">
+    <ul class="sources-list">
+        <li class="sources-item" *ngFor="let item of identityList">
+            <div class="row">
+                <div class="col-md-3 col-sm-4 col-xs-12 img">
+                    <a [href]="item.url" target="_blank">
+                        <img [src]="item.img"
+                             [srcset]="item.imgSrcset"
+                             [alt]="item.title"
+                             class="img-fluid">
+                    </a>
+                </div>
+                <div class="col-md-9 col-sm-8 col-xs-12 content">
+                    <h3 class="title-link">
+                        <a [href]="item.url" target="_blank">{{item.title}}</a>
+                    </h3>
+                    <p class="org-description">
+                        {{item.description}}
+                    </p>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

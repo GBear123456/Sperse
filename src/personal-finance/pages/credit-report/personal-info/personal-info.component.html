@@ -1,0 +1,59 @@
+<div class="report-item">
+  <div class="report-item-title" id="personalInfo">{{l("personalInfo")}}</div>
+  <div class="info-alert">
+    {{l("creditScoreRepresentation")}}
+  </div>
+  <div class="report-item-content">
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th></th>
+        <th *ngFor="let item of creditReport?.bureauReports">
+          <img src="assets/images/credit-report/{{item.bureau | lowercase}}.png" srcset="assets/images/credit-report/{{item.bureau | lowercase}}@2x.png 2x, assets/images/credit-report/{{item.bureau | lowercase}}@3x.png 3x" class="bureau-img">
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="row-title">{{l("Name")}}</td>
+        <td *ngFor="let item of creditReport?.bureauReports">{{item.personalInfo.name}}</td>
+      </tr>
+      <tr>
+        <td class="row-title">{{l("dob")}}</td>
+        <td *ngFor="let item of creditReport?.bureauReports">{{item.personalInfo.doB?.utc().format('MMM DD, YYYY')}}</td>
+      </tr>
+      <tr>
+        <td class="row-title">{{l("currentAddress")}}</td>
+        <td *ngFor="let item of creditReport?.bureauReports">
+          <address>
+            {{item.personalInfo?.currentAddress?.line1}}<br>
+            {{item.personalInfo?.currentAddress?.line2}}
+            {{item.personalInfo?.currentAddress?.line3}}
+            {{item.personalInfo?.currentAddress?.line4}}
+          </address>
+        </td>
+      </tr>
+      <tr>
+        <td class="row-title">{{l("previousAddress")}}</td>
+        <td *ngFor="let item of creditReport?.bureauReports">
+          <address *ngFor="let item of item.personalInfo.previousAddresses">
+            {{item.line1}}<br>
+            {{item.line2}}
+            {{item.line3}}
+            {{item.line4}}
+          </address>
+        </td>
+      </tr>
+      <tr>
+        <td class="row-title">{{l("employer")}}</td>
+        <td *ngFor="let item of creditReport?.bureauReports">
+          <span *ngFor="let item of item.personalInfo.employers">
+            {{item.name}}<br>
+            {{item.date?.utc().format('MMM DD, YYYY')}}<br><br>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>

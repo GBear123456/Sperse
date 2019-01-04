@@ -1,0 +1,25 @@
+﻿<div class="report-item">
+  <div class="report-item-title" id="creditSummary">{{l("creditSummary")}}</div>
+  <div class="report-item-content">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th></th>
+          <th *ngFor="let item of creditReport?.bureauReports">
+            <img src="assets/images/credit-report/{{item.bureau | lowercase}}.png" srcset="assets/images/credit-report/{{item.bureau | lowercase}}@2x.png 2x, assets/images/credit-report/{{item.bureau | lowercase}}@3x.png 3x" class="bureau-img">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let node of ['totalAccounts','openAccounts','closedAccounts','deliquent','derogatory','balances','payments','publicRecords','inquiries2Years']">
+          <td class="row-title">
+            {{ l(node) }}
+          </td>
+          <td *ngFor="let item of creditReport?.bureauReports">
+            {{ getCreditSummary(item.creditSummary, [node]) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
