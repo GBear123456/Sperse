@@ -27,7 +27,7 @@ import {
     OrganizationContactServiceProxy,
     PersonContactServiceProxy,
     PersonOrgRelationServiceProxy,
-    UpdateJobTitleInput,
+    UpdatePersonOrgRelationInput,
     UpdateOrganizationInfoInput,
     UpdatePersonInfoInput
 } from '@shared/service-proxies/service-proxies';
@@ -115,10 +115,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    updatePersonOrgRelation(value) {
+    updateJobTitle(value) {
         this.personOrgRelationInfo.jobTitle = value;
-        this._personOrgRelationService.updateJobTitle(UpdateJobTitleInput.fromJS({
+        this._personOrgRelationService.update(UpdatePersonOrgRelationInput.fromJS({
             id: this.personOrgRelationInfo.id,
+            relationshipType: this.personOrgRelationInfo.relationType.id,
             jobTitle: this.personOrgRelationInfo.jobTitle
         })).subscribe(() => {});
     }
