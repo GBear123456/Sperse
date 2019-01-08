@@ -56,18 +56,19 @@ export class AppPreBootstrap {
         AppConsts.googleSheetClientId = appConfig.googleSheetClientId;
         AppConsts.subscriptionExpireNootifyDayCount = appConfig.subscriptionExpireNootifyDayCount;
         AppConsts.appBaseUrl = window.location.protocol + '//' + window.location.host;
-        AppConsts.remoteServiceBaseUrl = appConfig.enforceRemoteServiceBaseUrl 
-            ? appConfig.remoteServiceBaseUrl: location.origin;
+        AppConsts.remoteServiceBaseUrl = appConfig.enforceRemoteServiceBaseUrl
+            ? appConfig.remoteServiceBaseUrl : location.origin;
     }
 
     private static getApplicationConfig(appRootUrl: string, callback: () => void) {
         if (window['appconfig']) {
             AppPreBootstrap.updateAppConsts(window['appconfig']);
             callback();
-        } else 
-            return abp.ajax({
+        } else
+            return $.ajax({
                 url: appRootUrl + 'assets/' + environment.appConfig,
                 method: 'GET',
+                dataType: 'json'
             }).done(result => {
                 AppPreBootstrap.updateAppConsts(result);
                 callback();

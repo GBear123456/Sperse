@@ -13,7 +13,6 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     handleError(error) {
         if (error['errorDetails'])
             error.error = new Blob([JSON.stringify(error.errorDetails)]);
-                                  
         if (error['httpStatus'])
             error.status = error['httpStatus'];
 
