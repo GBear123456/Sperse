@@ -1,7 +1,15 @@
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
 /* You can add global styles to this file, and also import other style files */
 
 body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     font-family: Montserrat;
+}
+
+app-root > ng-component {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 
 a {

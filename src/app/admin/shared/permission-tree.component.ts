@@ -4,9 +4,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import * as _ from 'lodash';
 
 @Component({
-    selector: 'permission-tree',
-    template:
-    `<div class='permission-tree'></div>`
+    selector: "permission-tree",
+    template: "<div class='permission-tree'></div>"
 })
 export class PermissionTreeComponent extends AppComponentBase implements OnInit, AfterViewInit, AfterViewChecked {
 

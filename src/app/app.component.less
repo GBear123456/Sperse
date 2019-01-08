@@ -1,59 +1,69 @@
-:host {
-    position: absolute;
-    width: 100% !important;
-    height: 100%;
+/** Node modules assets */
+@import '~jstree/dist/themes/default/style.min.css';
+@import '~malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css';
+@import "~font-awesome/css/font-awesome.css";
+@import "~primeng/resources/primeng.min.css";
+@import "~bootstrap-select/dist/css/bootstrap-select.css";
+@import "~bootstrap-daterangepicker/daterangepicker.css";
 
-    .page-container {
-        padding: 0;
-        .page-sidebar-wrapper {
-            z-index: 100;
-            transition: 1s;
-            position: relative;
-            left: -340px;
-            &.show-sidebar-wrapper {
-                left: 0px;
-            }
-        }
+/** Internal assets */
+@import "../assets/metronic/src/vendors/flaticon/css/flaticon.css";
+@import "../assets/metronic/src/vendors/line-awesome/css/line-awesome.css";
 
-        .page-content-wrapper,
-        .page-content {
-            height: 100%;
-        }
+/** Application assets */
+@import "./shared/core.less";
+@import "./shared/layout/layout.less";
+/* @import "./shared/dx-customs.less"; */
 
-        .page-content-wrapper {
-            z-index: 0;
-            .page-content {
-                margin-left: 0;
-                transition: 1s;
-                &.fixed-filters {
-                    margin-left: 340px;
-                }
-            }
-        }
-
-        &.subscription-bar-visible {
-            margin-top: 45px;
-            /deep/ ng-component {
-                #gridContainer, .funnel-wrapper, dx-scheduler {
-                    height: calc(~"100vh - 256px")!important;
-                }
-            }
-        }
-    }
-
-    app-toolbar {
-        top: 75px;
+.page-container {
+    padding: 0;
+    .page-sidebar-wrapper {
+        z-index: 100;
+        transition: 1s;
         position: relative;
+        left: -340px;
+        &.show-sidebar-wrapper {
+            left: 0px;
+        }
     }
 
-    /deep/ .img-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
+    .page-content-wrapper,
+    .page-content {
+        height: 100%;
     }
+
+    .page-content-wrapper {
+        z-index: 0;
+        > app-toolbar {
+            top: 75px;
+            position: relative;
+        }
+        .page-content {
+            margin-left: 0;
+            transition: 1s;
+            &.fixed-filters {
+                margin-left: 340px;
+            }
+        }
+    }
+
+    &.subscription-bar-visible {
+        margin-top: 45px;
+        /deep/ ng-component {
+            #gridContainer, .funnel-wrapper, dx-scheduler {
+                height: calc(~"100vh - 256px")!important;
+            }
+        }
+    }
+}
+
+/deep/ .img-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
 /deep/ .modal-backdrop {
