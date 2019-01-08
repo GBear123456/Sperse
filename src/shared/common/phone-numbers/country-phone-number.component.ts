@@ -10,7 +10,7 @@ import { PhoneNumberComponent } from '../../../node_modules/ngx-international-ph
 })
 export class CountryPhoneNumberComponent extends AppComponentBase implements OnInit, AfterViewInit {
     @Input() phoneNumber: string;
-    @Input() required: boolean = true;
+    @Input() required = true;
     @Output() phoneNumberChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() onInitialized = new EventEmitter();
     @Output() onKeyUp = new EventEmitter();
@@ -25,7 +25,7 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
         super(injector, AppConsts.localization.defaultLocalizationSourceName);
     }
 
-    isValid() {        
+    isValid() {
         let country = this.intPhoneNumber.selectedCountry;
         return !this.value || (country && this.value.match(
             new RegExp('^\\+' + country.dialCode + '$'))) || this.model.valid;
@@ -56,8 +56,8 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     }
 
     ngAfterViewInit() {
-        this.intPhoneNumber.registerOnChange((value) => {             
-            this.phoneNumberChange.emit(this.value = value); 
+        this.intPhoneNumber.registerOnChange((value) => {
+            this.phoneNumberChange.emit(this.value = value);
         });
     }
 }

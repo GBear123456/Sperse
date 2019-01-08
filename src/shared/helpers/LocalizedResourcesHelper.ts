@@ -1,4 +1,3 @@
-import { AppConsts } from '@shared/AppConsts';
 import * as _ from 'lodash';
 import * as rtlDetect from 'rtl-detect';
 

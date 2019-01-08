@@ -195,26 +195,36 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content 
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content h4 {
   color: #FFF;
 }
-body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link,
-body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link {
-  border-bottom: 1px solid #FFF;
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item {
+  margin-right: 0;
+  margin-left: 0;
 }
-body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link span,
-body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link span {
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link {
+  border-bottom: 1px solid #FFF;
+  padding-right: 30px;
+  padding-left: 5px;
+}
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link span,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link span {
   color: #FFF;
 }
-body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link:hover,
-body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link:hover,
-body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link.active,
-body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link.active {
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover,
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active {
   border-bottom: 1px solid #ffcc00!important;
 }
-body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link:hover span,
-body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link:hover span,
-body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__link.active span,
-body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__link.active span {
-  font-weight: 500;
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span {
   color: #ffcc00!important;
+}
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper {
+  background: #fff;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content *,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content * {
