@@ -5,7 +5,13 @@ import { CommonModule } from '@angular/common';
 
 /** Third party imports */
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
-import { DxCircularGaugeModule, DxBarGaugeModule, DxTabsModule, DxDataGridModule, DxLoadPanelModule, DxTemplateModule, DxChartModule } from 'devextreme-angular';
+import { DxCircularGaugeModule } from 'devextreme-angular/ui/circular-gauge';
+import { DxBarGaugeModule } from 'devextreme-angular/ui/bar-gauge';
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxLoadPanelModule } from 'devextreme-angular/ui/load-panel';
+import { DxTemplateModule } from 'devextreme-angular/core/template';
+import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { NgxPageScrollModule } from 'ngx-page-scroll';
 import { StickyModule } from 'ng2-sticky-kit/ng2-sticky-kit';
 

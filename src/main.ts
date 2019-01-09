@@ -1,12 +1,12 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import 'moment-timezone';
-import 'moment/min/locales.min';
-import { environment } from './environments/environment';
 import { hmrBootstrap } from './hmr';
-import './polyfills.ts';
+import { environment } from './environments/environment';
 import { RootModule } from './root.module';
-import 'hammerjs';
+
+import 'moment-timezone';
+import 'moment/locale/en-gb';
+import './polyfills.ts';
 
 if (environment.production) {
     enableProdMode();

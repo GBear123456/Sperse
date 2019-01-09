@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Injector, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { CreditReportServiceProxy, CreditReportDto } from '@shared/service-proxies/service-proxies';
-import { DxChartComponent } from 'devextreme-angular';
+import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import * as moment from 'moment';
 
 @Component({

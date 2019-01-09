@@ -53,8 +53,6 @@
 
               "node_modules/js-cookie/src/js.cookie.js",
               "node_modules/@aspnet/signalr/dist/browser/signalr.min.js",
-              "node_modules/moment/min/moment.min.js",
-              "node_modules/moment-timezone/builds/moment-timezone.min.js",
 
               "node_modules/popper.js/dist/umd/popper.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
@@ -79,7 +77,6 @@
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.blockUI.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.spin.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.sweet-alert.js",
-              "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.moment.js",
 
               "src/assets/metronic/src/js/framework/base/app.js",
               "src/assets/metronic/src/js/framework/base/util.js",

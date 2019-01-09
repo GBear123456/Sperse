@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, Injector, ViewChild } from '@a
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { CreditReportServiceProxy, AccountInfoDto, CreditReportDto } from '@shared/service-proxies/service-proxies';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import * as moment from 'moment';
 
 @Component({
