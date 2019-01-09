@@ -186,7 +186,7 @@ export class UserManagementListComponent extends AppComponentBase implements OnI
 
     registerToEvents() {
         abp.event.on('profilePictureChanged', (thumbnailId) => {
-            this.profileThumbnailId = thumbnailId;
+            this.profileThumbnailId = this.appSession.user.profileThumbnailId = thumbnailId;
         });
     }
 
