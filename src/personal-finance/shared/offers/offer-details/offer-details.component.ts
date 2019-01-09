@@ -50,7 +50,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     categoryDisplayName$: Observable<string>;
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
-    buttonCaption: string = 'Apply';
+    buttonCaption = 'Apply';
 
     constructor(
         injector: Injector,
@@ -71,18 +71,18 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
 
     activate() {
         this.category$ = this.offersService.getCategoryFromRoute(this.route.params).pipe(first());
-        this.category$.subscribe(res => { 
-            switch(this.selectedCategory = res) {
-                case Category.PersonalLoans: 
+        this.category$.subscribe(res => {
+            switch (this.selectedCategory = res) {
+                case Category.PersonalLoans:
                     this.buttonCaption = 'ApplyNow';
                     break;
-                case Category.CreditCards: 
+                case Category.CreditCards:
                     this.buttonCaption = 'ViewOffers';
                     break;
-                case Category.CreditScore: 
+                case Category.CreditScore:
                     this.buttonCaption = 'GetOffer';
                     break;
-            } 
+            }
         });
         this.categoryDisplayName$ = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
         this.route.params.pipe(
@@ -102,27 +102,6 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         return combineLatest(this.category$, this.offersService.memberInfo$)
             .pipe(
                 switchMap(([category, memberInfo]) => this.offerServiceProxy.getDetails(memberInfo.testMode, cardId)),
-                /** @todo remove in future */
-                map(details => {
-                    return {
-                        ...details,
-                        ...{
-                            apr: '17.49%',
-                            penaltyApr: '19.20%',
-                            advancedApr: '23.49%',
-                            pros: [
-                                'High rewards rates',
-                                'No foreign transaction fee'
-                            ],
-                            cons: [
-                                'Has annual fees'
-                            ],
-                            rewardsRate: '16%',
-                            annualFee: '$0 first year, $59 after',
-                            introApr: 'N/A'
-                        }
-                    };
-                }),
                 tap(() => abp.ui.clearBusy(this.detailsContainerRef.nativeElement))
             );
     }

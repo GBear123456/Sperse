@@ -31,7 +31,7 @@
                     <div class="bankDetails col-md-8">
                         <img [src]="cardDetails.logoUrl" [alt]="cardDetails.name">
                         <div class="cardInfo">
-                            <h4>{{ categoryDisplayName$ | async }}</h4>
+                            <h4 *ngIf="cardDetails.issuingBank">{{ cardDetails.issuingBank }}</h4>
                             <h5>{{ cardDetails.name }}</h5>
                         </div>
                     </div>
@@ -44,16 +44,18 @@
                     <div class="col-sm-5 col-xl-7 left-details">
                         <div class="detailsBlock">
                             <h5 class="title">{{ ls.l('Offers_Details') }}</h5>
-                            <p class="details">{{ cardDetails.description }}</p>
+                            <ul class="details-list" *ngIf="cardDetails.details">
+                                <li *ngFor="let detail of cardDetails.details">{{ detail }}</li>
+                            </ul>
                         </div>
                         <hr>
                         <div class="aprVariable">
-                            <h5 class="title">{{ ls.l('Offers_APR_Variable') }}</h5>
+                            <h5 class="title">{{ ls.l('Offers_APR') }}</h5>
                             <ul class="row">
                                 <ng-container>
-                                    <li class="col-xl-4" *ngFor="let prop of ['apr', 'penaltyApr', 'advancedApr']">
+                                    <li class="col-xl-4" *ngFor="let prop of ['regularAPR']">
                                         <h5>{{ ls.l('Offers_' + prop) }}</h5>
-                                        <p>{{ cardDetails[prop] }}, {{ ls.l('Offers_variable') }}</p>
+                                        <p>{{ cardDetails[prop] }}</p>
                                     </li>
                                 </ng-container>
                             </ul>
@@ -62,10 +64,14 @@
                     <div class="col-sm-7 col-xl-5 right-details">
                         <div class="rightSideBar">
                             <div class="prosAndCons">
-                                <h5 class="title">{{ ls.l('Offers_Pros') }}</h5>
-                                <ul class="pros"><li *ngFor="let pro of cardDetails.pros">{{ pro }}</li></ul>
-                                <h5 class="title">{{ ls.l('Offers_Cons') }}</h5>
-                                <ul class="cons"><li *ngFor="let con of cardDetails.cons">{{ con }}</li></ul>
+                                <ng-container *ngIf="cardDetails.pros.length">
+                                    <h5 class="title">{{ ls.l('Offers_Pros') }}</h5>
+                                    <ul class="pros"><li *ngFor="let pro of cardDetails.pros">{{ pro }}</li></ul>
+                                </ng-container>
+                                <ng-container *ngIf="cardDetails.cons.length">
+                                    <h5 class="title">{{ ls.l('Offers_Cons') }}</h5>
+                                    <ul class="cons"><li *ngFor="let con of cardDetails.cons">{{ con }}</li></ul>
+                                </ng-container>
                             </div>
                             <ng-container *ngIf="getCreditScore(cardDetails.creditScores) as creditScore">
                                 <hr>
@@ -88,18 +94,12 @@
                             <hr>
                             <div class="otherParams">
                                 <ul>
-                                    <li>
-                                        <h5 class="title">{{ ls.l('Offers_rewardsRate') }}</h5>
-                                        <p>{{ cardDetails.rewardsRate }}</p>
-                                    </li>
-                                    <li>
-                                        <h5 class="title">{{ ls.l('Offers_annualFee') }}</h5>
-                                        <p>{{ cardDetails.annualFee }}</p>
-                                    </li>
-                                    <li>
-                                        <h5 class="title">{{ ls.l('Offers_IntroApr') }}</h5>
-                                        <p>{{ cardDetails.introApr }}</p>
-                                    </li>
+                                    <ng-container *ngFor="let otherParam of ['rewardsRate', 'annualFee', 'introAPR']">
+                                        <li *ngIf="cardDetails[otherParam]">
+                                            <h5 class="title">{{ ls.l('Offers_' + otherParam) }}</h5>
+                                            <p>{{ cardDetails[otherParam] }}</p>
+                                        </li>
+                                    </ng-container>
                                 </ul>
                             </div>
                         </div>

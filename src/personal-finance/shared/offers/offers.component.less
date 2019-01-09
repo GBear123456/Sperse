@@ -393,9 +393,11 @@
                         }
                         .descriptionItems {
                             display: flex;
-                            justify-content: space-between;
                             li {
                                 display: inline-block;
+                                &:not(:last-child) {
+                                    margin-right: 15px;
+                                }
                                 h5 {
                                     font-size: 13px;
                                     font-weight: 500;

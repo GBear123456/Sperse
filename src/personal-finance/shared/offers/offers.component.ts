@@ -30,7 +30,6 @@ import {
     OfferDto,
     Category,
     OfferServiceProxy,
-    GetMemberInfoResponse,
     CreditScore
 } from '@shared/service-proxies/service-proxies';
 import { CurrencyPipe } from '@angular/common';
@@ -322,21 +321,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                 this.changeDetectorRef.detectChanges();
             }),
             publishReplay(),
-            refCount(),
-            /** @todo remove to avoid hardcoded data */
-            map(offers => offers.map(offer => {
-                return {
-                    ...offer,
-                    ...{
-                        'annualFee': '$45',
-                        'rewardsRate': '1.5% cashback',
-                        'rewardsBonus': '$100',
-                        'apr': '5.5%',
-                        'rating': 5,
-                        'reviewsAmount': Math.floor(Math.random() * 1000) + 1
-                    }
-                };
-            }))
+            refCount()
         );
 
         /** Insert filters values from credit cards data */

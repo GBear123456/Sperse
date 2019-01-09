@@ -96,18 +96,18 @@
                     </div>
                     <div class="description col-12 col-md-8 col-lg-6">
                         <h4 (click)="applyOffer(offerItem)"><span *ngIf="offerItem.bankName">{{ offerItem.bankName }} + ' - '</span>{{offerItem.name }}</h4>
-                        <div class="rating" *ngIf="offerItem.rating">
-                            <stars-rating [currentRating]="offerItem.rating" color="#f0d500"></stars-rating>
+                        <div class="rating" *ngIf="offerItem.overallRating">
+                            <stars-rating [currentRating]="offerItem.overallRating" color="#f0d500"></stars-rating>
                             <!-- span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span -->
                         </div>
-                        <!--<ul class="descriptionItems">
-                            <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'rewardsBonus', 'apr']">
+                        <ul class="descriptionItems">
+                            <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'regularApr']">
                                 <li *ngIf="offerItem[param]">
                                     <h5>{{ ls.l('Offers_' + param) }}</h5>
                                     <p>{{ offerItem[param] }}</p>
                                 </li>
                             </ng-container>
-                        </ul>-->
+                        </ul>
                     </div>
                     <div class="actions col-12 offset-md-3 col-md-9 offset-lg-0 col-lg-3 ">
                         <button class="applyButton" (click)="applyOffer(offerItem)"><span>{{ ls.l(buttonCaption) }}</span></button>
