@@ -20,7 +20,7 @@ import { OffersService } from 'personal-finance/shared/offers/offers.service';
 })
 export class CreditScoreComponent implements OnInit {
     @ViewChild('content') contentElementRef: ElementRef;
-    bureauAmount = 3;
+    bureauAmount = '3';
     logoes = [
         'transunion',
         'equifax',
