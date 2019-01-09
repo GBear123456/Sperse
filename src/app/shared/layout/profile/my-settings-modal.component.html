@@ -38,8 +38,11 @@
                         </div>
                         <div *ngIf="!smsEnabled || isPhoneNumberEmpty">
                             <div class="form-group">
-                                <label for="PhoneNumber">{{l("PhoneNumber")}}</label>
-                                <input id="PhoneNumber" type="text" name="PhoneNumber" class="form-control" [(ngModel)]="user.phoneNumber" maxlength="24">
+                                <label>{{l("PhoneNumber")}}</label>
+                                <country-phone-number class="phoneNumber"
+                                                      [(phoneNumber)]="user.phoneNumber"
+                                                      [required]="false">
+                                </country-phone-number>
                             </div>
                         </div>
                         <div class="form-group" *ngIf="showTimezoneSelection">

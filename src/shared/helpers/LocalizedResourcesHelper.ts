@@ -1,4 +1,3 @@
-import { AppConsts } from '@shared/AppConsts';
 import * as _ from 'lodash';
 import * as rtlDetect from 'rtl-detect';
 
@@ -31,8 +30,7 @@ export class LocalizedResourcesHelper {
         $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/metronic-customize.css'));
         $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/themes/' + theme + '/metronic-customize.css'));
 
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/metronic-customize-angular.css'));
-        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/themes/' + theme + '/metronic-customize-angular.css'));
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/metronic-customize-angular.min.css'));
 
         if (abp.setting.get('App.UiManagement.Left.Position') === 'top') {
             $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/metronic-customize-top-menu.css'));

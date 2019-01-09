@@ -21,7 +21,7 @@
             <inplace-edit #companyName [data]="getNameInplaceEditData('primaryOrganizationContactInfo')" (valueChanged)="updateCompanyField($event)"></inplace-edit><div class="actions" [hidden]="companyName.isEditModeEnabled"><i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i><i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i></div>
         </h2>
         <h3 *ngIf="this?.personOrgRelationInfo?.id">
-            <inplace-edit [data]="getJobTitleInplaceEditData()" (valueChanged)="updatePersonOrgRelation($event)"></inplace-edit>
+            <inplace-edit [data]="getJobTitleInplaceEditData()" (valueChanged)="updateJobTitle($event)"></inplace-edit>
         </h3>
 
         <div class="organization_logo">

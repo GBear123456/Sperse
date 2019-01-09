@@ -167,8 +167,7 @@ export class LoginService {
         FB.login(response => {
             if (response.authResponse.grantedScopes.split(',').includes('email')) {
                 this.facebookLoginStatusChangeCallback(response);
-            }
-            else {
+            } else {
                 abp.message.error('Email is required', 'Facebook Login Failed');
             }
         }, { scope: 'email', return_scopes: true, auth_type: 'rerequest' });

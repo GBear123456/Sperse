@@ -9,7 +9,7 @@ import { finalize } from 'rxjs/operators';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { PersonOrgRelationType } from '@shared/AppEnums';
-import { OrganizationContactServiceProxy, CreateOrUpdatePersonOrgRelationInput, PersonOrgRelationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OrganizationContactServiceProxy, CreatePersonOrgRelationInput, PersonOrgRelationServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'add-company-dialog.html',
@@ -69,8 +69,8 @@ export class AddCompanyDialogComponent extends AppComponentBase {
 
     onSave(event) {
         this.startLoading(true);
-        this.relationServiceProxy.createOrUpdate(
-            CreateOrUpdatePersonOrgRelationInput.fromJS({
+        this.relationServiceProxy.create(
+            CreatePersonOrgRelationInput.fromJS({
                 personId: this.data.contactId,
                 organizationId: this.data.id,
                 organizationName: this.data.company,
