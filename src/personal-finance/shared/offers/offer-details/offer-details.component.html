@@ -52,8 +52,8 @@
                         <div class="aprVariable">
                             <h5 class="title">{{ ls.l('Offers_APR') }}</h5>
                             <ul class="row">
-                                <ng-container>
-                                    <li class="col-xl-4" *ngFor="let prop of ['regularAPR']">
+                                <ng-container *ngFor="let prop of ['regularAPR']">
+                                    <li class="col-xl-4" *ngIf="cardDetails[prop]">
                                         <h5>{{ ls.l('Offers_' + prop) }}</h5>
                                         <p>{{ cardDetails[prop] }}</p>
                                     </li>
