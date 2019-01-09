@@ -26,7 +26,6 @@ import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/
 @Injectable()
 export class OffersService {
     memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount()); //, finalize(abp.ui.clearBusy)
-
     processingSteps = [
         {
             name: 'Verifying Loan Request'

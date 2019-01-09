@@ -10,6 +10,7 @@
         {relationship: "icon", type: "image/png", name: "favicon-16x16.png", size: "16x16"},
         {relationship: "apple-touch-icon", type: "image/png", name: "apple-touch-icon.png", size: "180x180"}
     ];
+    document.cookie = "InitialReferrer=" + document.referrer;
 
     var tenant;
     var remoteServiceUrl = '';
@@ -121,6 +122,8 @@
 
     function updateFavicons(favicons, faviconBaseUrl) {
         var head = document.head;
+        head.querySelectorAll('link[type="image/x-icon"]')[0].remove(); // remove static favicon
+
         favicons.forEach((item) => {
             var link = document.createElement('link');
             link.rel = item.relationship;

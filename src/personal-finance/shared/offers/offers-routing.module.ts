@@ -3,6 +3,8 @@ import { RouterModule } from '@angular/router';
 import { OffersComponent } from '@root/personal-finance/shared/offers/offers.component';
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
 import { CreditCardsComponent } from '@root/personal-finance/shared/offers/credit-cards/credit-cards.component';
+import { CreditScoreComponent } from '@root/personal-finance/shared/offers/credit-score/credit-score.component';
+import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/credit-monitoring/credit-monitoring.component';
 
 @NgModule({
     imports: [
@@ -14,6 +16,22 @@ import { CreditCardsComponent } from '@root/personal-finance/shared/offers/credi
             {
                 path: 'credit-cards/home/:group',
                 component: CreditCardsComponent
+            },
+            {
+                path: 'credit-score',
+                component: CreditScoreComponent
+            },
+            {
+                path: 'credit-repair',
+                component: CreditScoreComponent
+            },
+            {
+                path: 'credit-monitoring',
+                component: CreditMonitoringComponent
+            },
+            {
+                path: 'debt-consolidation',
+                component: CreditScoreComponent
             },
             {
                 path: ':category/:campaignId',

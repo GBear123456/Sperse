@@ -1,13 +1,19 @@
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpResponse } from '@angular/common/http';
+import { HttpEvent, HttpResponse, HttpHeaders } from '@angular/common/http';
 import { Subject } from '@node_modules/rxjs';
 
 @Injectable()
 export class AppHttpInterceptor extends AbpHttpInterceptor {
     constructor(public configuration: AppHttpConfiguration) {
         super(configuration);
+    }
+
+    addAuthorizationHeaders(header: HttpHeaders): HttpHeaders {
+        let headers = super.addAuthorizationHeaders(header);
+        headers = headers.set('InitialReferrer', abp.utils.getCookieValue('InitialReferrer'));
+        return headers;
     }
 
     handleError(error) {

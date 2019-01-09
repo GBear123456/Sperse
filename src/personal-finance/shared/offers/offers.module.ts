@@ -24,6 +24,9 @@ import { OffersRoutingModule } from '@root/personal-finance/shared/offers/offers
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CreditCardsComponent } from './credit-cards/credit-cards.component';
+import { CreditScoreComponent } from '@root/personal-finance/shared/offers/credit-score/credit-score.component';
+import { CreditScoreNavigationComponent } from '@root/personal-finance/shared/offers/credit-score-navigation/credit-score-navigation.component';
+import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/credit-monitoring/credit-monitoring.component';
 
 @NgModule({
     imports: [
@@ -47,7 +50,10 @@ import { CreditCardsComponent } from './credit-cards/credit-cards.component';
         OffersComponent,
         OfferDetailsComponent,
         NumberAbbrPipe,
-        CreditCardsComponent
+        CreditCardsComponent,
+        CreditScoreComponent,
+        CreditScoreNavigationComponent,
+        CreditMonitoringComponent
     ],
     providers: [
         OffersService,
