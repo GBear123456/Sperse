@@ -95,7 +95,7 @@
                         <img [src]="offerItem.logoUrl" [alt]="offerItem.name" (click)="applyOffer(offerItem)">
                     </div>
                     <div class="description col-12 col-md-8 col-lg-6">
-                        <h4 (click)="applyOffer(offerItem)"><span *ngIf="offerItem.bankName">{{ offerItem.bankName }} + ' - '</span>{{offerItem.name }}</h4>
+                        <h4 (click)="applyOffer(offerItem)"><span *ngIf="offerItem.issuingBank">{{ offerItem.issuingBank + ' - ' }}</span>{{offerItem.name }}</h4>
                         <div class="rating" *ngIf="offerItem.overallRating">
                             <stars-rating [currentRating]="offerItem.overallRating" color="#f0d500"></stars-rating>
                             <!-- span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span -->
