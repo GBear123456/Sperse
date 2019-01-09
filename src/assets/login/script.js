@@ -122,6 +122,8 @@
 
     function updateFavicons(favicons, faviconBaseUrl) {
         var head = document.head;
+        head.querySelectorAll('link[type="image/x-icon"]')[0].remove(); // remove static favicon
+
         favicons.forEach((item) => {
             var link = document.createElement('link');
             link.rel = item.relationship;
