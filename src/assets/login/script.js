@@ -10,6 +10,7 @@
         {relationship: "icon", type: "image/png", name: "favicon-16x16.png", size: "16x16"},
         {relationship: "apple-touch-icon", type: "image/png", name: "apple-touch-icon.png", size: "180x180"}
     ];
+    document.cookie = "InitialReferrer=" + document.referrer;
 
     var tenant;
     var remoteServiceUrl = '';
