@@ -4,16 +4,7 @@ import { OffersComponent } from '@root/personal-finance/shared/offers/offers.com
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
 import { CreditCardsComponent } from '@root/personal-finance/shared/offers/credit-cards/credit-cards.component';
 import { CreditScoreComponent } from '@root/personal-finance/shared/offers/credit-score/credit-score.component';
-import { kebabCase } from 'lodash';
-import { Category } from '@shared/service-proxies/service-proxies';
 import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/credit-monitoring/credit-monitoring.component';
-
-const creditCardsCategories = [
-    kebabCase(Category.CreditScore),
-    kebabCase(Category.CreditRepair),
-    kebabCase(Category.CreditMonitoring),
-    kebabCase(Category.DebtConsolidation)
-];
 
 @NgModule({
     imports: [
@@ -27,19 +18,19 @@ const creditCardsCategories = [
                 component: CreditCardsComponent
             },
             {
-                path: creditCardsCategories[0],
+                path: 'credit-score',
                 component: CreditScoreComponent
             },
             {
-                path: creditCardsCategories[1],
+                path: 'credit-repair',
                 component: CreditScoreComponent
             },
             {
-                path: creditCardsCategories[2],
+                path: 'credit-monitoring',
                 component: CreditMonitoringComponent
             },
             {
-                path: creditCardsCategories[3],
+                path: 'debt-consolidation',
                 component: CreditScoreComponent
             },
             {
