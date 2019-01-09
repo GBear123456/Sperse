@@ -158,8 +158,7 @@ body.lend-space {
     .cdk-overlay-pane {
         &.footer-slider, &.user-info {
             max-width: 50vw !important;
-
-            modal-dialog {
+            modal-dialog, app-modal-dialog {
                 .close-dialog {
                     background: #313131!important;
                     &:before, &:after {
@@ -168,12 +167,12 @@ body.lend-space {
                 }
                 .mat-dialog-header {
                     background: #313131!important;
-                    dx-text-box {
+                    dx-text-box {                    
                         background: transparent!important;
-                        input {
-                            color: #FFF!important;
-                            background: transparent!important;
-                        }
+                    }
+                    input {
+                        color: #FFF!important;
+                        background: transparent!important;
                     }
                     button {
                         border-radius: 5px!important;
@@ -236,10 +235,10 @@ body.lend-space {
                     dx-text-box {
                         max-width: 100%;
                         order: 2;
+                    }
 
-                        input {
-                            text-align: center;
-                        }
+                    input {
+                        text-align: center;
                     }
 
                     .mat-dialog-actions {

@@ -18311,8 +18311,8 @@ export class PersonOrgRelationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createOrUpdate(input: CreateOrUpdatePersonOrgRelationInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/CreateOrUpdate";
+    create(input: CreatePersonOrgRelationInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Create";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -18327,11 +18327,11 @@ export class PersonOrgRelationServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateOrUpdate(response_);
+            return this.processCreate(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateOrUpdate(<any>response_);
+                    return this.processCreate(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -18340,7 +18340,7 @@ export class PersonOrgRelationServiceProxy {
         }));
     }
 
-    protected processCreateOrUpdate(response: HttpResponseBase): Observable<void> {
+    protected processCreate(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18363,8 +18363,8 @@ export class PersonOrgRelationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    updateJobTitle(input: UpdateJobTitleInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/UpdateJobTitle";
+    update(input: UpdatePersonOrgRelationInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Update";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -18379,11 +18379,11 @@ export class PersonOrgRelationServiceProxy {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateJobTitle(response_);
+            return this.processUpdate(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateJobTitle(<any>response_);
+                    return this.processUpdate(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -18392,7 +18392,7 @@ export class PersonOrgRelationServiceProxy {
         }));
     }
 
-    protected processUpdateJobTitle(response: HttpResponseBase): Observable<void> {
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -51156,15 +51156,14 @@ export interface ICreateUserForContactInput {
     assignedRoleNames: string[];
 }
 
-export class CreateOrUpdatePersonOrgRelationInput implements ICreateOrUpdatePersonOrgRelationInput {
-    id!: number | undefined;
+export class CreatePersonOrgRelationInput implements ICreatePersonOrgRelationInput {
     personId!: number;
     organizationId!: number | undefined;
     organizationName!: string | undefined;
     relationshipType!: string;
-    jobTitle!: string | undefined;
+    jobTitle!: string;
 
-    constructor(data?: ICreateOrUpdatePersonOrgRelationInput) {
+    constructor(data?: ICreatePersonOrgRelationInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -51175,7 +51174,6 @@ export class CreateOrUpdatePersonOrgRelationInput implements ICreateOrUpdatePers
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
             this.personId = data["personId"];
             this.organizationId = data["organizationId"];
             this.organizationName = data["organizationName"];
@@ -51184,16 +51182,15 @@ export class CreateOrUpdatePersonOrgRelationInput implements ICreateOrUpdatePers
         }
     }
 
-    static fromJS(data: any): CreateOrUpdatePersonOrgRelationInput {
+    static fromJS(data: any): CreatePersonOrgRelationInput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateOrUpdatePersonOrgRelationInput();
+        let result = new CreatePersonOrgRelationInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["personId"] = this.personId;
         data["organizationId"] = this.organizationId;
         data["organizationName"] = this.organizationName;
@@ -51203,20 +51200,20 @@ export class CreateOrUpdatePersonOrgRelationInput implements ICreateOrUpdatePers
     }
 }
 
-export interface ICreateOrUpdatePersonOrgRelationInput {
-    id: number | undefined;
+export interface ICreatePersonOrgRelationInput {
     personId: number;
     organizationId: number | undefined;
     organizationName: string | undefined;
     relationshipType: string;
-    jobTitle: string | undefined;
+    jobTitle: string;
 }
 
-export class UpdateJobTitleInput implements IUpdateJobTitleInput {
+export class UpdatePersonOrgRelationInput implements IUpdatePersonOrgRelationInput {
     id!: number;
+    relationshipType!: string;
     jobTitle!: string;
 
-    constructor(data?: IUpdateJobTitleInput) {
+    constructor(data?: IUpdatePersonOrgRelationInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -51228,13 +51225,14 @@ export class UpdateJobTitleInput implements IUpdateJobTitleInput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.relationshipType = data["relationshipType"];
             this.jobTitle = data["jobTitle"];
         }
     }
 
-    static fromJS(data: any): UpdateJobTitleInput {
+    static fromJS(data: any): UpdatePersonOrgRelationInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateJobTitleInput();
+        let result = new UpdatePersonOrgRelationInput();
         result.init(data);
         return result;
     }
@@ -51242,13 +51240,15 @@ export class UpdateJobTitleInput implements IUpdateJobTitleInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["relationshipType"] = this.relationshipType;
         data["jobTitle"] = this.jobTitle;
         return data; 
     }
 }
 
-export interface IUpdateJobTitleInput {
+export interface IUpdatePersonOrgRelationInput {
     id: number;
+    relationshipType: string;
     jobTitle: string;
 }
 

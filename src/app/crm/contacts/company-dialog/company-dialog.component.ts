@@ -9,7 +9,7 @@ import {
     ViewChildren,
     QueryList
 } from '@angular/core';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -39,7 +39,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ContactPhotoServiceProxy, MaskPipe]
 })
-export class CompanyDialogComponent extends ModalDialogComponent implements OnInit {
+export class CompanyDialogComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
     states$: Observable<CountryStateDto[]>;

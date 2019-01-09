@@ -4,15 +4,15 @@ import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'notificationSettingsModal',
     templateUrl: './notification-settings-modal.component.html',
-    providers: [DialogService]
+    providers: [ DialogService ]
 })
-export class NotificationSettingsModalComponent extends ModalDialogComponent implements OnInit  {
+export class NotificationSettingsModalComponent extends AppModalDialogComponent implements OnInit  {
     saving = false;
 
     settings: GetNotificationSettingsOutput;

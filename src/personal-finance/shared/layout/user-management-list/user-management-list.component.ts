@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnInit, ViewEncapsulation } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -39,6 +39,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     selector: 'user-management-list',
     templateUrl: './user-management-list.component.html',
     styleUrls: ['./user-management-list.component.less'],
+    encapsulation: ViewEncapsulation.None,
     providers: [ImpersonationService, CommonUserInfoServiceProxy]
 })
 export class UserManagementListComponent extends AppComponentBase implements OnInit {

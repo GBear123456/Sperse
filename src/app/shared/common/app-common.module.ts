@@ -40,6 +40,7 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
 import { ConfirmDialogComponent } from './dialogs/confirm/confirm-dialog.component';
+import { AppModalDialogComponent } from './dialogs/modal/app-modal-dialog.component';
 import { ImportWizardComponent } from './import-wizard/import-wizard.component';
 import { ConfirmImportDialog } from './import-wizard/confirm-import-dialog/confirm-import-dialog.component';
 import { ImportProgressBarComponent } from './import-wizard/import-progress-bar/import-progress-bar.component';
@@ -172,7 +173,8 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
         ListsListComponent,
         RatingComponent,
         StarsListComponent,
-        TypesListComponent
+        TypesListComponent,
+        AppModalDialogComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -198,7 +200,8 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
         ListsListComponent,
         RatingComponent,
         StarsListComponent,
-        TypesListComponent
+        TypesListComponent,
+        AppModalDialogComponent
     ],
     providers: [
         DateTimeService,
@@ -209,7 +212,8 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
         ConfirmImportDialog,
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
-        PaymentWizardComponent
+        PaymentWizardComponent,
+        AppModalDialogComponent
     ]
 })
 export class AppCommonModule {

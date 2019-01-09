@@ -15,7 +15,7 @@ import {
     UserRoleDto, PasswordComplexitySetting, TenantHostType
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -26,7 +26,7 @@ import { OrganizationUnitsTreeComponent, IOrganizationUnitsTreeComponentData } f
     styleUrls: ['create-user-dialog.component.less'],
     providers: [ DialogService ]
 })
-export class CreateUserDialogComponent extends ModalDialogComponent implements OnInit {
+export class CreateUserDialogComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild('organizationUnitTree') organizationUnitTree: OrganizationUnitsTreeComponent;
     @ViewChild('phoneNumber') phoneNumber: DxTextBoxComponent;

@@ -3,13 +3,13 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LinkToUserInput, UserLinkServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap';
 import { finalize } from 'rxjs/operators';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 @Component({
     selector: 'linkAccountModal',
     templateUrl: './link-account-modal.component.html'
 })
-export class LinkAccountModalComponent extends ModalDialogComponent implements OnInit {
+export class LinkAccountModalComponent extends AppModalDialogComponent implements OnInit {
 
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
     @ViewChild('linkAccountModal') modal: ModalDirective;

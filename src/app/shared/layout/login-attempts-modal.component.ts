@@ -5,7 +5,7 @@ import { ProfileServiceProxy, UserLoginAttemptDto, UserLoginServiceProxy } from 
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 @Component({
     selector: 'loginAttemptsModal',
@@ -13,7 +13,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     styleUrls: ['./login-attempts-modal.component.less'],
     providers: [DialogService]
 })
-export class LoginAttemptsModalComponent extends ModalDialogComponent implements OnInit {
+export class LoginAttemptsModalComponent extends AppModalDialogComponent implements OnInit {
 
     userLoginAttempts: UserLoginAttemptDto[];
     profileThumbnailId: string;

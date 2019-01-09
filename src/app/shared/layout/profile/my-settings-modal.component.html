@@ -1,4 +1,4 @@
-<modal-dialog>
+<app-modal-dialog>
     <dx-scroll-view showScrollbar="onHover">
         <div class="tab-content">
             <div class="modal-body" *ngIf="user">
@@ -76,4 +76,4 @@
         </div>
     </dx-scroll-view>
     <smsVerificationModal #smsVerificationModal (modalSave)="changePhoneNumberToVerified()"></smsVerificationModal>
-</modal-dialog>
+</app-modal-dialog>

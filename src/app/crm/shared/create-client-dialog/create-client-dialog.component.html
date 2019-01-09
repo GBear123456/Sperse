@@ -33,7 +33,7 @@
     (onSelectionChanged)="onUserAssignmentChanged($event)">
 </crm-user-assignment-list>
 
-<modal-dialog (onTitleKeyUp)="onFullNameKeyUp($event)">
+<app-modal-dialog (onTitleKeyUp)="onFullNameKeyUp($event)">
     <div class="photo-area" (click)="showUploadPhoto($event)"
         [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 
@@ -297,4 +297,4 @@
             </div>            
         </dx-scroll-view>
     </div>
-</modal-dialog>
+</app-modal-dialog>

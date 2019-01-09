@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { JsonpModule } from '@angular/http';
 import { CommonModule } from '@shared/common/common.module';
-import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { RecaptchaModule } from 'ng-recaptcha';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -50,7 +49,6 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
 
         UtilsModule,
         PaymentInfoModule,
-        ServiceProxyModule,
         AccountRoutingModule,
         PersonalFinanceLayoutModule,
     ],

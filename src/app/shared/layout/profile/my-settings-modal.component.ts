@@ -5,7 +5,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CurrentUserProfileEditDto, DefaultTimezoneScope, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { finalize } from 'rxjs/operators';
-import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
@@ -14,7 +14,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
     styleUrls: ['./my-settings-modal.component.less'],
     providers: [DialogService]
 })
-export class MySettingsModalComponent extends ModalDialogComponent implements AfterViewChecked, OnInit {
+export class MySettingsModalComponent extends AppModalDialogComponent implements AfterViewChecked, OnInit {
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();

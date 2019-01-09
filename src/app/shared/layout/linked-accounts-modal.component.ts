@@ -7,14 +7,14 @@ import { Table } from 'primeng/table';
 import { LinkAccountModalComponent } from './link-account-modal.component';
 import { UserHelper } from '../helpers/UserHelper';
 import { MatDialog } from '@angular/material/dialog';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 @Component({
     selector: 'linkedAccountsModal',
     templateUrl: './linked-accounts-modal.component.html',
     styleUrls: ['./linked-accounts-modal.component.less']
 })
-export class LinkedAccountsModalComponent extends ModalDialogComponent implements OnInit {
+export class LinkedAccountsModalComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
     @Output() modalClose: EventEmitter<any> = new EventEmitter<any>();
