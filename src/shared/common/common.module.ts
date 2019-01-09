@@ -6,7 +6,6 @@ import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
 import { MatDialogModule } from '@angular/material/dialog';
-import { DxTextBoxModule, DxScrollViewModule, DxCheckBoxModule } from 'devextreme-angular';
 
 /** Application imports */
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
@@ -63,11 +62,7 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
         RouterModule,
         FormsModule,
         InternationalPhoneNumberModule,
-        MatDialogModule,
-
-        DxTextBoxModule,
-        DxCheckBoxModule,
-        DxScrollViewModule,
+        MatDialogModule
     ],
     entryComponents: [
         ModalDialogComponent,

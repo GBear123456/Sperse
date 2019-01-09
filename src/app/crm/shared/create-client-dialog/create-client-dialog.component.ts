@@ -34,7 +34,7 @@ import {
     ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput,
     PersonInfoDto, LeadServiceProxy, CreateLeadInput, CreateContactLinkInput
 } from '@shared/service-proxies/service-proxies';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarCustomersDialogComponent } from '../similar-customers-dialog/similar-customers-dialog.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
@@ -52,7 +52,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     styleUrls: ['create-client-dialog.component.less'],
     providers: [ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ]
 })
-export class CreateClientDialogComponent extends ModalDialogComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CreateClientDialogComponent extends AppModalDialogComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;

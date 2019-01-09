@@ -4,7 +4,7 @@ import { NotificationServiceProxy, UserNotification } from '@shared/service-prox
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class NotificationsComponent extends ModalDialogComponent implements OnInit {
+export class NotificationsComponent extends AppModalDialogComponent implements OnInit {
 
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;

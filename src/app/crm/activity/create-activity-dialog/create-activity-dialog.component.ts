@@ -17,7 +17,7 @@ import {
     UpdateActivityDto
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
-import { ModalDialogComponent } from 'shared/common/dialogs/modal/modal-dialog.component';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { StaticListComponent } from '../../shared/static-list/static-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { ActivityAssignedUsersStoreSelectors } from '@app/store';
@@ -28,7 +28,7 @@ import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.compon
     styleUrls: ['create-activity-dialog.component.less'],
     providers: [ActivityServiceProxy, DialogService]
 })
-export class CreateActivityDialogComponent extends ModalDialogComponent implements OnInit {
+export class CreateActivityDialogComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild('leadsList') leadsList: StaticListComponent;
     @ViewChild('clientsList') clientsList: StaticListComponent;

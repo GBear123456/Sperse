@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, AfterViewInit, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -12,9 +12,6 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
     private slider: any;
     public data: any;
     public dialogRef: MatDialogRef<ModalDialogComponent, any>;
-
-    @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onTitleChanged: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(
         injector: Injector
@@ -67,15 +64,5 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
             }, 300);
         } else
             this.dialogRef.close(closeData);
-    }
-
-    titleChanged(event) {
-        let title = event.element.getElementsByTagName('input')[0].value;
-        this.data.isTitleValid = Boolean(title);
-        this.onTitleChanged.emit(title);
-    }
-
-    titleKeyUp(event) {
-        this.onTitleKeyUp.emit(event.element.getElementsByTagName('input')[0].value);
     }
 }
