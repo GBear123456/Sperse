@@ -8,6 +8,13 @@ import { kebabCase } from 'lodash';
 import { Category } from '@shared/service-proxies/service-proxies';
 import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/credit-monitoring/credit-monitoring.component';
 
+const creditCardsCategories = [
+    kebabCase(Category.CreditScore),
+    kebabCase(Category.CreditRepair),
+    kebabCase(Category.CreditMonitoring),
+    kebabCase(Category.DebtConsolidation)
+];
+
 @NgModule({
     imports: [
         RouterModule.forChild([
@@ -20,19 +27,19 @@ import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/
                 component: CreditCardsComponent
             },
             {
-                path: kebabCase(Category.CreditScore),
+                path: creditCardsCategories[0],
                 component: CreditScoreComponent
             },
             {
-                path: kebabCase(Category.CreditRepair),
+                path: creditCardsCategories[1],
                 component: CreditScoreComponent
             },
             {
-                path: kebabCase(Category.CreditMonitoring),
+                path: creditCardsCategories[2],
                 component: CreditMonitoringComponent
             },
             {
-                path: kebabCase(Category.DebtConsolidation),
+                path: creditCardsCategories[3],
                 component: CreditScoreComponent
             },
             {
