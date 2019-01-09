@@ -6,16 +6,14 @@ import { RouterModule } from '@angular/router';
 
 /** Third party imports */
 import { AngularGooglePlaceModule } from '@node_modules/angular-google-place';
-import {
-    DxButtonModule,
-    DxDateBoxModule,
-    DxRadioGroupModule,
-    DxSelectBoxModule,
-    DxTextBoxModule,
-    DxValidationGroupModule,
-    DxValidationSummaryModule,
-    DxValidatorModule
-} from 'devextreme-angular';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
+import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 
 /** Application imports */
 import { ReportWizardModule } from '@root/personal-finance/landings/credit-report/wizard-form/report-wizard.module';

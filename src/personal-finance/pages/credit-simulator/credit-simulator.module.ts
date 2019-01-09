@@ -9,13 +9,11 @@ import { ScorePreviewComponent } from './score-preview/score-preview.component';
 import { RouterModule } from '@angular/router';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-    DxSliderModule,
-    DxSwitchModule,
-    DxRadioGroupModule,
-    DxButtonModule,
-    DxNumberBoxModule
-} from 'devextreme-angular';
+import { DxSliderModule } from 'devextreme-angular/ui/slider';
+import { DxSwitchModule } from 'devextreme-angular/ui/switch';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { SimulationGroupComponent } from './simulation-group/simulation-group.component';
 
 @NgModule({

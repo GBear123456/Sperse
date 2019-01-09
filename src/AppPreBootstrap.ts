@@ -167,14 +167,9 @@ export class AppPreBootstrap {
             $.extend(true, abp, result);
             abp.clock.provider = this.getCurrentClockProvider(result.clock.provider);
 
-            if (window.hasOwnProperty('moment')) {
-                moment.locale(abp.localization.currentLanguage.name);
-                (window as any).moment.locale(abp.localization.currentLanguage.name);
-                if (abp.clock.provider.supportsMultipleTimezone && moment) {
-                    moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
-                    (window as any).moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
-                }
-            }
+            moment.locale(abp.localization.currentLanguage.name);
+            if (abp.clock.provider.supportsMultipleTimezone && moment)
+                moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
 
             abp.event.trigger('abp.dynamicScriptsInitialized');
 

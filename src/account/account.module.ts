@@ -1,11 +1,7 @@
-import { AbpModule } from '@abp/abp.module';
-import * as ngCommon from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { JsonpModule } from '@angular/http';
-import { CommonModule } from '@shared/common/common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
-import { RecaptchaModule } from 'ng-recaptcha';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { AccountRoutingModule } from './account-routing.module';
 import { AccountComponent, AdLayoutHostDirective } from './account.component';
@@ -36,16 +32,10 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
 
 @NgModule({
     imports: [
-        ngCommon.CommonModule,
-        FormsModule,
-        JsonpModule,
-
-        RecaptchaModule.forRoot(),
-        ModalModule.forRoot(),
-
-        AbpModule,
-
         CommonModule,
+        FormsModule,
+
+        ModalModule.forRoot(),
 
         UtilsModule,
         PaymentInfoModule,

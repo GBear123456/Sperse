@@ -11,7 +11,7 @@ import { AppConsts } from 'shared/AppConsts';
 import { ApplicationServiceProxy, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { DxCheckBoxComponent } from 'devextreme-angular';
+import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
 
 @Component({
     selector: 'lend-space-signup',
