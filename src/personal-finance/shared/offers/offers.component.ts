@@ -232,7 +232,7 @@ export class OffersComponent implements OnInit, OnDestroy {
 
     selectedSorting: BehaviorSubject<string> = new BehaviorSubject(this.sortings[0].field);
     private selectedSorting$ = this.selectedSorting.asObservable();
-    buttonCaption: string = 'Apply';
+    buttonCaption = 'Apply';
 
     constructor(
         injector: Injector,
@@ -255,7 +255,7 @@ export class OffersComponent implements OnInit, OnDestroy {
             if (!category)
                 return this.router.navigate(['/personal-finance/home']);
 
-            switch(category) {
+            switch (category) {
                 case Category.PersonalLoans:
                     this.buttonCaption = 'ApplyNow';
                     break;
