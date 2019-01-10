@@ -50,14 +50,12 @@
                         </div>
                         <hr>
                         <div class="aprVariable">
-                            <h5 class="title">{{ ls.l('Offers_APR') }}</h5>
+                            <h5 class="title">{{ ls.l('Offers_APR_Variable') }}</h5>
                             <ul class="row">
-                                <ng-container *ngFor="let prop of ['regularAPR']">
-                                    <li class="col-xl-4" *ngIf="cardDetails[prop]">
-                                        <h5>{{ ls.l('Offers_' + prop) }}</h5>
-                                        <p>{{ cardDetails[prop] }}</p>
-                                    </li>
-                                </ng-container>
+                                <li class="col-xl-4" *ngFor="let prop of ['regularAPR']">
+                                    <h5>{{ ls.l('Offers_' + prop) }}</h5>
+                                    <p>{{ offersService.getParamDisplayValue(cardDetails[prop]) }}</p>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -94,12 +92,10 @@
                             <hr>
                             <div class="otherParams">
                                 <ul>
-                                    <ng-container *ngFor="let otherParam of ['rewardsRate', 'annualFee', 'introAPR']">
-                                        <li *ngIf="cardDetails[otherParam]">
-                                            <h5 class="title">{{ ls.l('Offers_' + otherParam) }}</h5>
-                                            <p>{{ cardDetails[otherParam] }}</p>
-                                        </li>
-                                    </ng-container>
+                                    <li *ngFor="let otherParam of ['rewardsRate', 'annualFee', 'introAPR']">
+                                        <h5 class="title">{{ ls.l('Offers_' + otherParam) }}</h5>
+                                        <p>{{ offersService.getParamDisplayValue(cardDetails[otherParam]) }}</p>
+                                    </li>
                                 </ul>
                             </div>
                         </div>

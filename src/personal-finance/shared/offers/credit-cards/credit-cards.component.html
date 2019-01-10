@@ -77,21 +77,11 @@
                         </div>
 
                         <div class="card-item__info">
-                            <div class="card-item__annual row">
-                                <div class="text-left col-6">Annual Fee</div>
-                                <div class="text-right col-6"><b>{{(+card.annualFee | currency:'USD':'symbol':'1.2-2') || 'None'}}</b></div>
-                            </div>
-                            <div class="card-item__rewards-rate row">
-                                <div class="text-left col-6">Rewards rate</div>
-                                <div class="text-right col-6"><b>{{(+card.rewardsRate / 100 | percent:'1.0-1') || 0}}</b></div>
-                            </div>
-                            <div class="card-item__rewards-bonus row">
-                                <div class="text-left col-6">Rewards bonus</div>
-                                <div class="text-right col-6"><b>{{(+card.introRewardsBonus | currency:'USD':'symbol':'1.2-2') || 0}}</b></div>
-                            </div>
-                            <div class="card-item__apr row">
-                                <div class="text-left col-6">APR</div>
-                                <div class="text-right col-6"><b>{{(+card.regularAPR / 100 | percent:'1.0-1') || 0}}</b></div>
+                            <div class="row" *ngFor="let param of ['annualFee', 'rewardsRate', 'introRewardsBonus', 'regularAPR']">
+                                <div class="text-left col-5">{{ ls.l('Offers_' + param) }}</div>
+                                <div class="text-right col-7" *ngIf="offersService.getParamDisplayValue(card[param]) as displayValue">
+                                    <b [title]="displayValue">{{ displayValue }}</b>
+                                </div>
                             </div>
                         </div>
                     </div>

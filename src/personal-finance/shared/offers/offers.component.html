@@ -101,10 +101,10 @@
                             <!-- span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span -->
                         </div>
                         <ul class="descriptionItems">
-                            <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'regularApr']">
+                            <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'introRewardsBonus', 'regularApr']">
                                 <li *ngIf="offerItem[param]">
                                     <h5>{{ ls.l('Offers_' + param) }}</h5>
-                                    <p>{{ offerItem[param] }}</p>
+                                    <p>{{ offersService.getParamDisplayValue(offerItem[param]) }}</p>
                                 </li>
                             </ng-container>
                         </ul>
