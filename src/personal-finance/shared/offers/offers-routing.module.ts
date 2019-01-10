@@ -22,16 +22,8 @@ import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/
                 component: CreditScoreComponent
             },
             {
-                path: 'credit-repair',
-                component: CreditScoreComponent
-            },
-            {
                 path: 'credit-monitoring',
                 component: CreditMonitoringComponent
-            },
-            {
-                path: 'debt-consolidation',
-                component: CreditScoreComponent
             },
             {
                 path: ':category/:campaignId',
@@ -41,7 +33,7 @@ import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/
             {
                 path: ':category',
                 component: OffersComponent,
-                data: { reuse: true },
+                data: { reuse: true }
             },
             {
                 path: '',
