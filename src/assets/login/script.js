@@ -23,11 +23,11 @@
             (!pathParts.length && !cookie['Abp.AuthToken']) ||
             (pathParts.pop() == 'login')
         )
-    ) {        
-        window.loginPageHandler = function(context, boot) { 
+    ) {
+        window.loginPageHandler = function(context, boot) {
             appContext = context;
             appBootstrap = boot;
-        };                
+        };
 
         getAppConfig();
     }
@@ -47,12 +47,12 @@
                         authData.twoFactorRememberClientToken,
                         authData.returnUrl
                     );
-                    document.cookie = authDataKey + '=; domain=' + 
+                    document.cookie = authDataKey + '=; domain=' +
                         location.origin.split('.').slice(-2).join('.');
                     return true;
                 } catch(e) {
                     return false;
-                }                
+                }
             }
             return false;
         });
@@ -101,7 +101,7 @@
             if (tenant && tenant.customLayoutType == 'LendSpace') {
                 window.loginPageHandler = undefined;
                 appBootstrap && appBootstrap.call(appContext);
-            } else {                
+            } else {
                 window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
 
                 loadLoginStylesheet();
@@ -231,7 +231,7 @@
 
     function setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl) {
         var tokenExpireDate = rememberMe ? (new Date(new Date().getTime() + 1000 * expireInSeconds)) : undefined;
-        
+
         var appPath = '/';
 
         setCookieValue(tokenCookieName, accessToken, tokenExpireDate, appPath);
@@ -239,7 +239,7 @@
 
         if (twoFactorRememberClientToken)
             setCookieValue(
-                TwoFactorRememberClientToken, 
+                TwoFactorRememberClientToken,
                 twoFactorRememberClientToken,
                 new Date(new Date().getTime() + 365 * 86400000),// 1 year
                 appPath
@@ -276,7 +276,7 @@
         createMetatag("og:description", tenant && tenant.customLayoutType && tenant.customLayoutType != 'Default'
             ? '': "Business management platform, enhanced with AI");
         createMetatag("og:url", location.origin);
-        createMetatag("og:image", !tenant || !tenant.logoId ? 
+        createMetatag("og:image", !tenant || !tenant.logoId ?
             window.location.origin + '/assets/common/images/app-logo-on-light.png' :
             AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
     }
@@ -299,7 +299,7 @@
 
 
         var form = window['loginForm'], loginInProgress = false;
-        form.elements['userNameOrEmailAddress'].onkeyup = 
+        form.elements['userNameOrEmailAddress'].onkeyup =
             form.elements['password'].onkeyup = checkIsValid;
         form.onsubmit = function() {
             if (checkIsValid() && !loginInProgress) {
@@ -353,65 +353,64 @@
             inputCheckTimeout = setTimeout(checkIsValid, 300);
         }
 
-        window.addEventListener('load', function() {
-            $(document).ready(function () {
-                if (tenant) {
-                    if (tenant.customPrivacyPolicyDocumentId)
-                        $('#privacy .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadPrivacyPolicyPdf?tenantId=' + tenant.Id);
+        $(document).ready(function () {
+            updateCurrentYear();
+            if (tenant) {
+                if (tenant.customPrivacyPolicyDocumentId)
+                    $('#privacy .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadPrivacyPolicyPdf?tenantId=' + tenant.Id);
 
-                    if (tenant.customToSDocumentId)
-                        $('#terms .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadTermsOfServicePdf?tenantId=' + tenant.Id);
-                }
-                $('.agree-rights').show();
+                if (tenant.customToSDocumentId)
+                    $('#terms .download').attr('href', remoteServiceUrl + '/api/TenantCustomization/DownloadTermsOfServicePdf?tenantId=' + tenant.Id);
+            }
+            $('.agree-rights').show();
 
-                var privacy = $('#privacy');
-                privacy.on('show.bs.modal', function() {
-                    $(this)
-                        .addClass('modal-scrollfix')
-                        .find('.modal-body')
-                        .html('loading...')
-                        .load(tenant && tenant.customToSDocumentId ? 
-                            remoteServiceUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + tenant.Id: 
-                            './assets/documents/terms.html', function() {
-                                privacy
-                                    .removeClass('modal-scrollfix')
-                                    .modal('handleUpdate');
-                        });
-                });
-
-                var terms = $('#terms');
-                terms.on('show.bs.modal', function() {
-                    $(this)
-                        .addClass('modal-scrollfix')
-                        .find('.modal-body')
-                        .html('loading...')
-                        .load(tenant && tenant.customPrivacyPolicyDocumentId ? 
-                            remoteServiceUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + tenant.Id: 
-                            './assets/documents/privacy.html', function() {
-                                terms
-                                    .removeClass('modal-scrollfix')
-                                    .modal('handleUpdate');
-                        });
-                });
-
-                $('.print-this').on('click', function(event) {
-                    printElement($(event.target).closest('.modal-dialog').find('.print-this-section')[0]);
-                });
+            var privacy = $('#privacy');
+            privacy.on('show.bs.modal', function() {
+                $(this)
+                    .addClass('modal-scrollfix')
+                    .find('.modal-body')
+                    .html('loading...')
+                    .load(tenant && tenant.customToSDocumentId ?
+                        remoteServiceUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + tenant.Id:
+                        './assets/documents/terms.html', function() {
+                            privacy
+                                .removeClass('modal-scrollfix')
+                                .modal('handleUpdate');
+                    });
             });
 
-            function printElement(elem) {
-                let domClone = elem.cloneNode(true);
-                let printSection = document.getElementById('printSection');
-                if (!printSection) {
-                    printSection = document.createElement('div');
-                    printSection.id = 'printSection';
-                    document.body.appendChild(printSection);
-                }
-                printSection.innerHTML = '';
-                printSection.appendChild(domClone);
-                window.print();
-            }
+            var terms = $('#terms');
+            terms.on('show.bs.modal', function() {
+                $(this)
+                    .addClass('modal-scrollfix')
+                    .find('.modal-body')
+                    .html('loading...')
+                    .load(tenant && tenant.customPrivacyPolicyDocumentId ?
+                        remoteServiceUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + tenant.Id:
+                        './assets/documents/privacy.html', function() {
+                            terms
+                                .removeClass('modal-scrollfix')
+                                .modal('handleUpdate');
+                    });
+            });
+
+            $('.print-this').on('click', function(event) {
+                printElement($(event.target).closest('.modal-dialog').find('.print-this-section')[0]);
+            });
         });
+
+        function printElement(elem) {
+            let domClone = elem.cloneNode(true);
+            let printSection = document.getElementById('printSection');
+            if (!printSection) {
+                printSection = document.createElement('div');
+                printSection.id = 'printSection';
+                document.body.appendChild(printSection);
+            }
+            printSection.innerHTML = '';
+            printSection.appendChild(domClone);
+            window.print();
+        }
 
         function checkIsValid() {
             var login = form.elements['userNameOrEmailAddress'];
@@ -425,5 +424,9 @@
 
             return result;
         }
+    }
+
+    function updateCurrentYear() {
+        document.querySelector('.current-year').innerHTML = new Date().getFullYear().toString();
     }
 })();
