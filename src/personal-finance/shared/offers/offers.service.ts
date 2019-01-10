@@ -151,4 +151,17 @@ export class OffersService {
                 () => applyOfferDialog.close()
             );
     }
+
+    getParamDisplayValue(paramValue: string, valuesToConvert: { [value: string]: string } = null): string {
+        const loweredParamValue = paramValue && paramValue.toLowerCase ? paramValue.toLowerCase() : paramValue;
+        const defaultValuesToConvert = {
+            'null': 'N/A',
+            '-' : 'N/A',
+            'no' : 'None',
+            'false': 'None',
+            'true': 'Applicable'
+        };
+        valuesToConvert = { ...defaultValuesToConvert, ...valuesToConvert };
+        return valuesToConvert && valuesToConvert[loweredParamValue] || paramValue;
+    }
 }
