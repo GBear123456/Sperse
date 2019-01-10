@@ -50,9 +50,16 @@
             justify-content: center;
             border-radius: 15px;
             background: #fff;
-            margin: 0 85px;
-            padding: 40px 60px;
             box-shadow: 0 22px 81px 0 rgba(37, 41, 66, 0.1);
+            margin: 0 15px;
+            padding: 10px;
+            flex-direction: column;
+
+            @media (min-width: 992px) {
+                margin: 0 85px;
+                padding: 40px 60px;
+                flex-direction: initial;
+            }
 
             img {
                 margin-right: 39px;
@@ -66,7 +73,6 @@
                 line-height: normal;
                 letter-spacing: normal;
                 color: #000000;
-                
             }
 
             p {
@@ -78,7 +84,7 @@
                 letter-spacing: normal;
                 color: #4a4a4a;
             }
-            
+
             h3,
             p {
                 text-align: left;
@@ -89,7 +95,10 @@
             ul {
                 display: flex;
                 flex-wrap: wrap;
-                padding: 0 110px;
+                padding: 0px 15px;
+                @media (min-width: 992px) {
+                    padding: 0 110px;
+                }
                 li {
                     border-radius: 3.8px;
                     border: 1px solid #dfdfdf;
@@ -98,7 +107,13 @@
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    width: calc(100% * (1/5) - 9.5px);
+                    width: calc(100% * (1/2) - 9.5px);
+                    img {
+                        max-width: 100%;
+                    }
+                    @media (min-width: 992px) {
+                        width: calc(100% * (1/5) - 9.5px);
+                    }
                 }
             }
         }
@@ -133,7 +148,7 @@
     /deep/ mat-horizontal-stepper {
         background: #fff url(../../../assets/common/images/pfm-intro/intro-header-background.svg) 50% -10px no-repeat;
         background-size: contain;
-        
+
         .mat-stepper-horizontal-line,
         .mat-horizontal-stepper-header:first-child {
             display: none !important;

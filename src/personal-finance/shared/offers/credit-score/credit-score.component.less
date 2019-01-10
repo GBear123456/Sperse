@@ -13,6 +13,7 @@
             font-size: 46px;
             margin-bottom: 26px;
             font-weight: 700;
+            white-space: nowrap;
         }
     }
     .content-header {
@@ -40,7 +41,7 @@
                     height: 13px;
                     background: @lend-space-color;
                     width: 100%;
-                    bottom: 3px;
+                    bottom: 8px;
                     z-index: -1;
                     left: 0;
                 }
@@ -56,33 +57,40 @@
     }
     .offers {
         background-color: #ffefb2;
-        padding: 40px 50px;
+        padding: 40px 50px 40px;
         margin-bottom: 49px;
-        li {
-            position: relative;
-            text-align: center;
-            margin-bottom: 30px;
-            cursor: pointer;
-            .offer-item {
-                background: #fff;
-                height: 144px;
-                display: flex;
-                align-items: center;
-                img {
-                    max-width: 100%;
+        ul {
+            margin-bottom: 19px;
+            li {
+                position: relative;
+                text-align: center;
+                cursor: pointer;
+                &:nth-child(n + 4) {
+                    margin-top: 40px;
                 }
-                .applyButton {
-                    position: absolute;
-                    bottom: -20px;
-                    margin: auto;
-                    left: 0;
-                    right: 0;
-                    cursor: pointer;
+                .offer-item {
+                    background: #fff;
+                    height: 144px;
+                    display: flex;
+                    align-items: center;
+                    padding: 0 15px;
+                    img {
+                        max-width: 100%;
+                        margin: auto;
+                    }
+                    .applyButton {
+                        position: absolute;
+                        bottom: -20px;
+                        margin: auto;
+                        left: 0;
+                        right: 0;
+                        cursor: pointer;
+                    }
                 }
-            }
-            &:hover {
-                .applyButton {
-                    background-color: #e0b400 !important;
+                &:hover {
+                    .applyButton {
+                        background-color: #e0b400 !important;
+                    }
                 }
             }
         }
@@ -123,6 +131,7 @@
         padding: 24px 21px 28px 41px;
         background-color: #f4f5f5;
         display: flex;
+        margin-top: 30px;
         &:before {
             content: url("../../../../assets/common/icons/offers/search.svg");
             margin-right: 30px;

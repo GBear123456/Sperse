@@ -48,7 +48,6 @@ export class UserManagementListComponent extends AppComponentBase implements OnI
     tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
     isImpersonatedLogin = false;
     shownLoginNameTitle = '';
-    userCompany$: Observable<string>;
     hasPlatformPermissions = false;
     profileThumbnailId: string;
     recentlyLinkedUsers: LinkedUserDto[];
@@ -97,7 +96,6 @@ export class UserManagementListComponent extends AppComponentBase implements OnI
         this.shownLoginNameTitle = this.isImpersonatedLogin ? this.l('YouCanBackToYourAccount') : '';
         this.getRecentlyLinkedUsers();
 
-        this.userCompany$ = this._commonUserInfoService.getCompany().pipe(map(x => isEqual(x, {}) ? null : x));
         this.registerToEvents();
 
         this.hasPlatformPermissions =

@@ -93,6 +93,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_WORK_EMAIL1 = 'businessInfo_workEmail1';
     private readonly BUSINESS_WORK_EMAIL2 = 'businessInfo_workEmail2';
     private readonly BUSINESS_WORK_EMAIL3 = 'businessInfo_workEmail3';
+    private readonly PERSONAL_PREFERREDTOD = 'personalInfo_preferredToD';
+    private readonly PERSONAL_CREDITSCORERATING = 'personalInfo_creditScoreRating';
 
     private readonly IMPORT_TYPE_LEAD_INDEX = 0;
     private readonly IMPORT_TYPE_CLIENT_INDEX = 1;
@@ -152,6 +154,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE,
         this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME,
         this.BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE
+    ];
+
+    private readonly FIELDS_TO_IGNORE = [
+        this.PERSONAL_PREFERREDTOD,
+        this.PERSONAL_CREDITSCORERATING
     ];
 
     importStatuses: any = ImportStatus;
@@ -443,8 +450,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     expanded: true
                 });
                 this.setMappingFields(this.mappingObjectNames[v], combinedName);
-            }
-            else {
+            } else {
+                if (this.FIELDS_TO_IGNORE.indexOf(combinedName) > -1)
+                    return;
+
                 this.mappingFields.push({
                     id: combinedName,
                     name: this.l(ImportWizardComponent.getFieldLocalizationName(combinedName)),

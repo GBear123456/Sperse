@@ -20,7 +20,7 @@ import { OffersService } from 'personal-finance/shared/offers/offers.service';
 })
 export class CreditScoreComponent implements OnInit {
     @ViewChild('content') contentElementRef: ElementRef;
-    bureauAmount = 3;
+    bureauAmount = '3';
     logoes = [
         'transunion',
         'equifax',
@@ -35,7 +35,6 @@ export class CreditScoreComponent implements OnInit {
     currentDate = moment().format('MMM DD, YYYY');
     category$: Observable<Category>;
     offers$: Observable<OfferDto[]>;
-    offersLoading = false;
 
     constructor(
         public ls: AppLocalizationService,
@@ -45,13 +44,8 @@ export class CreditScoreComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        console.log(this.contentElementRef);
         this.category$ = this.route.url.pipe(map((urlSegment: UrlSegment) => upperFirst(camelCase(urlSegment[0].path))));
-        this.category$.subscribe(x => {
-            console.log(x);
-        });
         abp.ui.setBusy(this.contentElementRef.nativeElement);
-        this.offersLoading = true;
         this.offers$ = combineLatest(
                 this.category$,
                 this.offersService.memberInfo$
@@ -64,13 +58,10 @@ export class CreditScoreComponent implements OnInit {
                         undefined,
                         'US',
                         undefined,
-                        true,
+                        false,
                         undefined
                     ).pipe(
-                        finalize(() => {
-                            abp.ui.clearBusy(this.contentElementRef.nativeElement);
-                            this.offersLoading = true;
-                        })
+                        finalize(() => abp.ui.clearBusy(this.contentElementRef.nativeElement))
                     )
                 ),
             );
