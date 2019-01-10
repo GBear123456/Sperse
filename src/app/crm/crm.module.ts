@@ -55,7 +55,6 @@ import { CrmRoutingModule } from './crm-routing.module';
 import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { LeadsStatsComponent } from './dashboard/leads-stats/leads-stats.component';
 import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
 import { CreateClientDialogComponent } from './shared/create-client-dialog/create-client-dialog.component';
 import { LeadsComponent } from './leads/leads.component';
@@ -133,7 +132,6 @@ import { CommonModule } from '@shared/common/common.module';
       OrdersComponent,
       DashboardComponent,
       DashboardMenuComponent,
-      LeadsStatsComponent,
       ImportListComponent,
       ImportLeadsComponent,
       DeleteAndReassignDialogComponent,
