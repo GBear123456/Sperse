@@ -60,7 +60,10 @@ export class CreditCardsComponent implements OnInit {
             this.selectedOfferGroup = _.first(list.filter(item => this.route.snapshot.params.group == item.offerCollection));
             this.creditCardCollection = list.filter(item => !_.contains(this.creditScoreNames, item.offerCollection));
             this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection));
-            this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection');
+            const itemOfOfferCollections = _.values(ItemOfOfferCollection);
+            this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort((a, b) => {
+                return itemOfOfferCollections.indexOf(a['offerCollection']) > itemOfOfferCollections.indexOf(b['offerCollection']) ? 1 : -1;
+            });
         });
     }
 
