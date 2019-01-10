@@ -11,7 +11,7 @@
     </div>
     <div class="category-wrapper">
         <ul class="category-list row">
-            <li class="category-item col" *ngFor="let category of categoryItems" [hidden]="category.hidden">
+            <li class="category-item col-sm-6 col-lg-3" *ngFor="let category of categoryItems" [hidden]="category.hidden">
                 <a class="card" [routerLink]="category.router">
                     <img class="card-img-top"
                          [src]="'./assets/common/images/lend-space-dark/categories/' + category.imgName + '.jpg'"
