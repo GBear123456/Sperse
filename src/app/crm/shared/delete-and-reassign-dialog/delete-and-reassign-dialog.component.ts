@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { DxRadioGroupComponent } from 'devextreme-angular';
+import { DxRadioGroupComponent } from 'devextreme-angular/ui/radio-group';
 
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 

@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 import { forkJoin } from 'rxjs';

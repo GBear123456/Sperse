@@ -2,7 +2,7 @@ import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy, ViewChild
 import { SyncProgressOutput, InstanceType, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from 'shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { DxTooltipComponent } from 'devextreme-angular';
+import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { takeUntil } from 'rxjs/operators';
 

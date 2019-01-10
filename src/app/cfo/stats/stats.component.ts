@@ -2,7 +2,7 @@
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { DxChartComponent } from 'devextreme-angular';
+import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
 import { forkJoin } from 'rxjs';

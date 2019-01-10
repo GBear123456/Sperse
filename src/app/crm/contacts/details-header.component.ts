@@ -4,7 +4,7 @@ import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter } f
 /** Third party import */
 import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
-import { DxContextMenuComponent } from 'devextreme-angular';
+import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';

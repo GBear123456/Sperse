@@ -4,7 +4,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, Injector, OnDestroy } from
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { DxContextMenuComponent } from 'devextreme-angular';
+import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { CacheService } from 'ng2-cache-service';
 import { finalize, filter } from 'rxjs/operators';
 import * as _ from 'underscore';

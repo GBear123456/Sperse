@@ -2,7 +2,7 @@
 import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
 
 /** Third party imports */
-import { DxProgressBarComponent } from 'devextreme-angular';
+import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';

@@ -53,6 +53,7 @@
 
               "node_modules/js-cookie/src/js.cookie.js",
               "node_modules/@aspnet/signalr/dist/browser/signalr.min.js",
+              "node_modules/moment/min/moment.min.js",
 
               "node_modules/popper.js/dist/umd/popper.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",

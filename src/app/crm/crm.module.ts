@@ -12,38 +12,34 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { AngularGooglePlaceModule } from 'angular-google-place';
-import {
-    DxListModule,
-    DxTreeListModule,
-    DxTooltipModule,
-    DxDataGridModule,
-    DxToolbarModule,
-    DxTemplateModule,
-    DxDateBoxModule,
-    DxTextBoxModule,
-    DxValidatorModule,
-    DxValidationSummaryModule,
-    DxValidationGroupModule,
-    DxButtonModule,
-    DxFileUploaderModule,
-    DxSelectBoxModule,
-    DxPivotGridModule,
-    DxNumberBoxModule,
-    DxScrollViewModule,
-    DxTextAreaModule,
-    DxContextMenuModule,
-    DxSliderModule,
-    DxRadioGroupModule,
-    DxCheckBoxModule,
-    DxTagBoxModule,
-    DxDropDownBoxModule,
-    DxSchedulerModule,
-    DxPopoverModule,
-    DxCalendarModule
-} from 'devextreme-angular';
-import { TableModule } from 'primeng/table';
-import { PaginatorModule } from 'primeng/primeng';
-import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
+import { DxTemplateModule } from 'devextreme-angular/core/template';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
+import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxPivotGridModule } from 'devextreme-angular/ui/pivot-grid';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
+import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
+import { DxSliderModule } from 'devextreme-angular/ui/slider';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
+import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
+import { DxPopoverModule } from 'devextreme-angular/ui/popover';
+import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
+
 import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
@@ -123,15 +119,9 @@ import { CommonModule } from '@shared/common/common.module';
       CRMDashboardWidgetsModule,
       ContactsModule,
       FileUploadModule,
-      ModalModule.forRoot(),
-      TabsModule.forRoot(),
-      TooltipModule.forRoot(),
-      PopoverModule.forRoot(),
       CrmRoutingModule,
       UtilsModule,
       PipelineModule,
-      TableModule,
-      PaginatorModule,
       SharedIntroStepsModule,
       CrmStoreModule
     ],

@@ -4,7 +4,7 @@ import { Component, Injector, ViewChild, OnInit, OnDestroy } from '@angular/core
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
-import { DxTreeViewComponent } from 'devextreme-angular';
+import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 import { includes, flatMap } from 'lodash';
 
 /** Application imports */

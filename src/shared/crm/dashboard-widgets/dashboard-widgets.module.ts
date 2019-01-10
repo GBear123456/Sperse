@@ -14,16 +14,15 @@ import { DashboardWidgetsService } from './dashboard-widgets.service';
 
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 
-import {
-    DxSelectBoxModule,
-    DxCheckBoxModule,
-    DxTooltipModule,
-    DxChartModule,
-    DxSliderModule,
-    DxPieChartModule,
-    DxDataGridModule,
-    DxVectorMapModule
-} from 'devextreme-angular';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxChartModule } from 'devextreme-angular/ui/chart';
+import { DxSliderModule } from 'devextreme-angular/ui/slider';
+import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxVectorMapModule } from 'devextreme-angular/ui/vector-map';
+
 import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({

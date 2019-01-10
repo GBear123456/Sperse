@@ -3,7 +3,8 @@ import { AfterViewInit, Component, Injector, HostListener, OnInit, OnDestroy, Vi
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { DxDataGridComponent, DxTooltipComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import { FileSystemFileEntry } from 'ngx-file-drop';

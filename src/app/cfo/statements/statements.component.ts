@@ -4,7 +4,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
 /** Third party imports */
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
 import { forkJoin } from 'rxjs';

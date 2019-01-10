@@ -2,7 +2,7 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import DataSource from 'devextreme/data/data_source';
-import { DxTreeViewComponent } from 'devextreme-angular';
+import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 import * as _ from 'lodash';
 
 @Component({

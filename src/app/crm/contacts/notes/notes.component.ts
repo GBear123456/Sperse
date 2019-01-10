@@ -3,7 +3,7 @@ import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 import { formatDate } from '@angular/common';
 
 /** Third party imports */
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 
 /** Application imports */

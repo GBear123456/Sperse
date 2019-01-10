@@ -9,13 +9,12 @@ import {TrendByPeriodComponent} from './trend-by-period/trend-by-period.componen
 import {DashboardService} from './dashboard.service';
 import {RoundProgressModule} from 'angular-svg-round-progressbar';
 
-import {
-    DxSelectBoxModule,
-    DxCheckBoxModule,
-    DxTooltipModule,
-    DxChartModule,
-    DxSliderModule
-} from 'devextreme-angular';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxChartModule } from 'devextreme-angular/ui/chart';
+import { DxSliderModule } from 'devextreme-angular/ui/slider';
+
 import { MatDialogModule } from '@angular/material/dialog';
 import { ChooseResetRulesComponent } from './categorization-status/choose-reset-rules/choose-reset-rules.component';
 

@@ -2,7 +2,7 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import DataSource from 'devextreme/data/data_source';
-import { DxTreeViewComponent } from 'devextreme-angular';
+import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 import * as _ from 'lodash';
 
 @Component({

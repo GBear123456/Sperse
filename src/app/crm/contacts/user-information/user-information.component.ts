@@ -7,7 +7,7 @@ import { UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleService
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { ContactsService } from '../contacts.service';
-import { DxSelectBoxComponent } from 'devextreme-angular';
+import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 

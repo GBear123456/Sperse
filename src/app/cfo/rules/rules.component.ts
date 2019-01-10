@@ -18,7 +18,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import DataSource from 'devextreme/data/data_source';
 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { DxTreeListComponent } from 'devextreme-angular';
+import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 
 import 'devextreme/data/odata/store';
 

@@ -6,10 +6,14 @@ import { FormsModule } from '@angular/forms';
 
 /** Third party modules */
 import { MatTabsModule } from '@angular/material/tabs';
-import {
-    DxMenuModule, DxScrollViewModule, DxButtonModule,
-    DxDropDownBoxModule, DxListModule, DxNavBarModule
-} from 'devextreme-angular';
+
+import { DxMenuModule } from 'devextreme-angular/ui/menu';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxNavBarModule } from 'devextreme-angular/ui/nav-bar';
+
 import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
 import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, PaginatorModule } from 'primeng/primeng';
 import { TableModule } from 'primeng/table';

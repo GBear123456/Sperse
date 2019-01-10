@@ -1,6 +1,8 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { DxRadioGroupComponent, DxTextAreaComponent } from 'devextreme-angular';
+import { DxRadioGroupComponent } from 'devextreme-angular/ui/radio-group';
+import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
+
 import * as _ from 'underscore';
 
 import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';

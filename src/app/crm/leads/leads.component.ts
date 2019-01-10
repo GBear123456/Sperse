@@ -12,7 +12,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { RouteReuseStrategy } from '@angular/router';
 import DataSource from 'devextreme/data/data_source';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Store, select } from '@ngrx/store';
 import { first } from 'rxjs/operators';
 

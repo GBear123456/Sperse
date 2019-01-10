@@ -10,7 +10,7 @@ import {
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';

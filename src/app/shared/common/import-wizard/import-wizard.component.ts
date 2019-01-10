@@ -7,7 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { Papa } from 'ngx-papaparse';
 import { UploadFile } from 'ngx-file-drop';
-import { DxDataGridComponent, DxProgressBarComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
 
 import * as _ from 'underscore';
 import * as _s from 'underscore.string';

@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 
-import { DxTreeListComponent } from 'devextreme-angular';
+import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 

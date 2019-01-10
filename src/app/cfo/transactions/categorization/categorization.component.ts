@@ -3,7 +3,7 @@ import { Component, Input, Output, EventEmitter, Injector, OnInit, AfterViewInit
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { DxTreeListComponent } from 'devextreme-angular';
+import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import DataSource from 'devextreme/data/data_source';
 import * as _ from 'underscore';
 
@@ -12,8 +12,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import {
-CategoryTreeServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput,
-GetCategoryTreeOutput, UpdateAccountingTypeInput, CreateAccountingTypeInput
+    CategoryTreeServiceProxy, InstanceType, UpdateCategoryInput, CreateCategoryInput,
+    GetCategoryTreeOutput, UpdateAccountingTypeInput, CreateAccountingTypeInput
 } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 

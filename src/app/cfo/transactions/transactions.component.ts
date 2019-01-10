@@ -4,7 +4,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from
 /** Third party imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { MatDialog } from '@angular/material/dialog';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 import { forkJoin } from 'rxjs';

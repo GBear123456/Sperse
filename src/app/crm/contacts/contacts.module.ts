@@ -14,10 +14,27 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
-import { DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeListModule,
-         DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
-         DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxContextMenuModule,
-         DxRadioGroupModule, DxDropDownBoxModule, DxTreeViewModule } from 'devextreme-angular';
+
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
+import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
+import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
+import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
+
 import { FileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
 import { VgCoreModule } from 'videogular2/core';

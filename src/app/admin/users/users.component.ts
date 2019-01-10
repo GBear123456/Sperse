@@ -13,7 +13,7 @@ import { CreateUserDialogComponent } from './create-user-dialog/create-user-dial
 import { ImpersonationService } from './impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 
 import { FiltersService } from '@shared/filters/filters.service';

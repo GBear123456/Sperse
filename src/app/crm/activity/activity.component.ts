@@ -2,7 +2,7 @@
 import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { DxSchedulerComponent } from 'devextreme-angular';
+import { DxSchedulerComponent } from 'devextreme-angular/ui/scheduler';
 import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 import buildQuery from 'odata-query';

@@ -7,7 +7,10 @@ import { QuovoLoginComponent } from './quovo-login/quovo-login.component';
 import { XeroLoginComponent } from './xero-login/xero-login.component';
 
 import { MatDialogModule } from '@angular/material/dialog';
-import { DxButtonModule, DxValidatorModule, DxTextBoxModule, DxValidationSummaryModule } from 'devextreme-angular';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
 
 @NgModule({
     imports: [

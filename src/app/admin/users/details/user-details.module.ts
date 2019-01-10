@@ -10,11 +10,23 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import {
-    DxSelectBoxModule, DxCheckBoxModule, DxNumberBoxModule, DxScrollViewModule, DxTreeViewModule,
-    DxListModule, DxButtonModule, DxDataGridModule, DxDateBoxModule, DxTooltipModule, DxTextBoxModule,
-    DxValidatorModule, DxValidationGroupModule, DxToolbarModule, DxTextAreaModule, DxSliderModule, DxRadioGroupModule
-} from 'devextreme-angular';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
+import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
+import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
+import { DxSliderModule } from 'devextreme-angular/ui/slider'; 
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { ImageCropperModule } from 'ng2-img-cropper';
 import { FileDropModule } from 'ngx-file-drop';
 

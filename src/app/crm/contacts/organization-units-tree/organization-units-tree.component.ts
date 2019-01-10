@@ -6,7 +6,7 @@ import { ContactsService } from '../contacts.service';
 import { finalize } from 'rxjs/operators';
 
 import DataSource from 'devextreme/data/data_source';
-import { DxTreeViewComponent } from 'devextreme-angular';
+import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 import * as _ from 'lodash';
 
 @Component({

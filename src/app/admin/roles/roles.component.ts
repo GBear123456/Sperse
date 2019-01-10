@@ -6,7 +6,7 @@ import { FileDownloadService } from '@shared/utils/file-download.service';
 import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 
 import { FiltersService } from '@shared/filters/filters.service';

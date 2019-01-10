@@ -27,7 +27,8 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                     },
                     {
                         path: 'sign-up',
-                        loadChildren: 'personal-finance/landings/lend-space-dark/signup/lend-space-signup.module#LendSpaceSignupModule'
+                        loadChildren: 'personal-finance/landings/lend-space-dark/signup/lend-space-signup.module#LendSpaceSignupModule',
+                        data: { wrapperDisabled: true }
                     },
                     {
                         path: 'kba-result',

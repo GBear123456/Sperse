@@ -2,7 +2,7 @@
 import { Component, Injector, Input, Output, ViewChild, OnInit, EventEmitter, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import Form from 'devextreme/ui/form';
 import { forkJoin } from 'rxjs';
 import * as _ from 'underscore';

@@ -2,7 +2,7 @@
 import { Component, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { forkJoin } from 'rxjs';
 
 /** Application imports */

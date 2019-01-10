@@ -2,7 +2,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { Component, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
-import { DxDataGridComponent, DxTreeViewComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, GetTransactionCommonDetailsInput,

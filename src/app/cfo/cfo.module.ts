@@ -9,36 +9,34 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
-import {
-    DxButtonModule,
-    DxCheckBoxModule,
-    DxDataGridModule,
-    DxDateBoxModule,
-    DxDropDownBoxModule,
-    DxFileUploaderModule,
-    DxPivotGridModule,
-    DxTemplateModule,
-    DxTextBoxModule,
-    DxNumberBoxModule,
-    DxToolbarModule,
-    DxTooltipModule,
-    DxValidationSummaryModule,
-    DxValidationGroupModule,
-    DxValidatorModule,
-    DxScrollViewModule,
-    DxChartModule,
-    DxRadioGroupModule,
-    DxTreeListModule,
-    DxTreeViewModule,
-    DxProgressBarModule,
-    DxTabsModule,
-    DxTagBoxModule,
-    DxResizableModule,
-    DxRangeSliderModule,
-    DxSwitchModule,
-    DxPopupModule,
-    DxSelectBoxModule
-} from 'devextreme-angular';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
+import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
+import { DxPivotGridModule } from 'devextreme-angular/ui/pivot-grid';
+import { DxTemplateModule } from 'devextreme-angular/core/template';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
+import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxChartModule } from 'devextreme-angular/ui/chart';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
+import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
+import { DxProgressBarModule } from 'devextreme-angular/ui/progress-bar';
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
+import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
+import { DxResizableModule } from 'devextreme-angular/ui/resizable';
+import { DxRangeSliderModule } from 'devextreme-angular/ui/range-slider';
+import { DxSwitchModule } from 'devextreme-angular/ui/switch';
+import { DxPopupModule } from 'devextreme-angular/ui/popup';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { ModalModule } from 'ngx-bootstrap';
 
 /** Application imports */

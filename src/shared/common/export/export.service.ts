@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { ExportGoogleSheetService } from './export-google-sheets/export-google-sheets';
 import { Angular5Csv } from './export-csv/export-csv';
 import DataSource from 'devextreme/data/data_source';

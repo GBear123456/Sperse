@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit, Input, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardService } from '../dashboard.service';
-import { DxChartComponent } from 'devextreme-angular';
+import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import {
     BankAccountsServiceProxy,
     GroupBy,

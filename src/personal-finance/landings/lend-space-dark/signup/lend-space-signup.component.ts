@@ -16,7 +16,9 @@ import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
 @Component({
     selector: 'lend-space-signup',
     templateUrl: './lend-space-signup.component.html',
-    styleUrls: ['./lend-space-signup.component.less'],
+    styleUrls: [        
+        './lend-space-signup.component.less'
+    ],
     providers: [ ApplicationServiceProxy, LoginService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

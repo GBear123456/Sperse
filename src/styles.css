@@ -1,6 +1,10 @@
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 @import "~font-awesome/css/font-awesome.css";
 
+/* Should be considered to remove dx from root */
+@import "./node_modules/devextreme/dist/css/dx.common.css";
+@import "./node_modules/devextreme/dist/css/dx.light.css";
+
 /* You can add global styles to this file, and also import other style files */
 
 body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {

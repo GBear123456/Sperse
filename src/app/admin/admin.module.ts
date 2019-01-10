@@ -11,10 +11,21 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { DxFileUploaderModule, DxDataGridModule, DxValidatorModule, DxTooltipModule, DxContextMenuModule,
-    DxListModule, DxValidationSummaryModule, DxTextBoxModule, DxButtonModule, DxSelectBoxModule,
-    DxTextAreaModule, DxValidationGroupModule, DxNumberBoxModule, DxScrollViewModule
-} from 'devextreme-angular';
+
+import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
+import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { FileUploadModule } from 'ng2-file-upload';
 import { ModalModule, PopoverModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
 import { AutoCompleteModule, EditorModule, FileUploadModule as PrimeNgFileUploadModule, InputMaskModule, PaginatorModule } from 'primeng/primeng';

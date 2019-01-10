@@ -18,9 +18,16 @@ import { FilterCalendarComponent } from './calendar/filter-calendar.component';
 import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterRadioGroupComponent } from './radio-group/filter-radio-group.component';
 
-import { DxTreeListModule, DxCheckBoxModule, DxSelectBoxModule, DxTextBoxModule, DxRadioGroupModule,
-    DxDateBoxModule, DxDropDownBoxModule, DxDataGridModule, DxRangeSliderModule
-} from 'devextreme-angular';
+import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
+import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxRangeSliderModule } from 'devextreme-angular/ui/range-slider';
+
 import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';

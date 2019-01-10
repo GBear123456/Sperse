@@ -17,14 +17,32 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import {
-    DxDropDownBoxModule, DxListModule, DxButtonModule, DxToolbarModule,
-    DxMenuModule, DxTextBoxModule, DxValidationGroupModule, DxValidatorModule,
-    DxSelectBoxModule, DxTextAreaModule, DxDataGridModule, DxContextMenuModule,
-    DxTreeViewModule, DxRadioGroupModule, DxPopupModule, DxSliderModule, DxCheckBoxModule,
-    DxTabsModule, DxTagBoxModule, DxProgressBarModule, DxTooltipModule, DxSwitchModule, DxTreeListModule
-} from 'devextreme-angular';
+
+import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
+import { DxMenuModule } from 'devextreme-angular/ui/menu';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
+import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxPopupModule } from 'devextreme-angular/ui/popup';
+import { DxSliderModule } from 'devextreme-angular/ui/slider';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
+import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
+import { DxProgressBarModule } from 'devextreme-angular/ui/progress-bar';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxSwitchModule } from 'devextreme-angular/ui/switch';
+import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
 import { DxiValidationRuleModule } from 'devextreme-angular/ui/nested/validation-rule-dxi';
+
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
 import { ModalModule } from 'ngx-bootstrap';

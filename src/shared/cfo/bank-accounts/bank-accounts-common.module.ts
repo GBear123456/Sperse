@@ -1,23 +1,23 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
 import { CommonModule } from '@shared/common/common.module';
-import {
-    DxDataGridModule,
-    DxScrollViewModule,
-    DxTabsModule,
-    DxSelectBoxModule,
-    DxContextMenuModule,
-    DxPopupModule,
-    DxTooltipModule,
-    DxTextBoxModule,
-    DxButtonModule,
-    DxSwitchModule,
-    DxTagBoxModule,
-    DxProgressBarModule,
-    DxValidatorModule,
-    DxValidationSummaryModule,
-    DxRadioGroupModule
-} from 'devextreme-angular';
+
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
+import { DxPopupModule } from 'devextreme-angular/ui/popup';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { DxSwitchModule } from 'devextreme-angular/ui/switch';
+import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
+import { DxProgressBarModule } from 'devextreme-angular/ui/progress-bar';
+import { DxValidatorModule } from 'devextreme-angular/ui/validator';
+import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
+import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+
 //import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { SyncServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy } from '@shared/service-proxies/service-proxies';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';

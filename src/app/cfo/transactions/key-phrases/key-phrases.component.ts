@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { DxTreeListComponent } from 'devextreme-angular';
+import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 
 import DataSource from 'devextreme/data/data_source';
 

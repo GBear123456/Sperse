@@ -3,7 +3,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { DxDataGridComponent } from 'devextreme-angular';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 import * as XLSX from 'xlsx';

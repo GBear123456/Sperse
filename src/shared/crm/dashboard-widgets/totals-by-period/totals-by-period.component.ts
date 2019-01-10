@@ -28,7 +28,7 @@ import { TotalsByPeriodModel } from './totals-by-period.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DashboardServiceProxy, GroupBy, GroupBy2 } from 'shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
-import { DxChartComponent } from 'devextreme-angular';
+import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -264,7 +264,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
                 component.render();
                 clearInterval(this.renderTimeout);
             }
-        }, 600);
+        }, 1000);
     }
 
     ngOnDestroy() {

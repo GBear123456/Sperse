@@ -4,7 +4,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { InplaceEditModel } from './inplace-edit.model';
 
-import { DxTextBoxComponent } from 'devextreme-angular';
+import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 
 @Component({
     selector: 'inplace-edit',

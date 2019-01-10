@@ -12,7 +12,7 @@ import { merge, from, asapScheduler } from 'rxjs';
 import { take, toArray } from 'rxjs/operators';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { DashboardService } from '../dashboard.service';
-import { DxChartComponent } from 'devextreme-angular';
+import { DxChartComponent } from 'devextreme-angular/ui/chart';
 
 @Component({
     selector: 'app-trend-by-period',
