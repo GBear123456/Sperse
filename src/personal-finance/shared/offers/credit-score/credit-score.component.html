@@ -13,18 +13,20 @@
                          [srcset]="'./assets/images/credit-report/offers/' + logo + '@2x.png 2x, ./assets/images/credit-report/' + logo + '@3x.png 3x'">
                 </div>
                 <h1>{{ ls.l('CreditScore_GetYour') }} <span>{{ ls.l('CreditScore_FreeCreditScores') }}</span></h1>
-                <h3>{{ ls.l('CreditScore_FromBureau', bureauAmount) }} <span>{{ currentDate }}</span></h3>
+                <h3>{{ ls.ls('PFM', 'CreditScore_FromBureau', bureauAmount) }} <span>{{ currentDate }}</span></h3>
             </div>
             <div class="offers" #content>
-                <ul class="row" *ngIf="(offers$ | async) as offers">
-                    <li class="col-md-4" *ngFor="let offer of offers" (click)="offersService.applyOffer(offer)">
-                        <div class="offer-item">
-                            <img [src]="offer.logoUrl" [alt]="offer.name">
-                            <button class="applyButton">{{ ls.l('CreditScore_GetOffer') }}</button>
-                        </div>
-                    </li>
-                </ul>
-                <app-no-data *ngIf="offersLoading && (offers$ | async)"></app-no-data>
+                <ng-container *ngIf="(offers$ | async) as offers">
+                    <ul class="row">
+                        <li class="col-md-4" *ngFor="let offer of offers" (click)="offersService.applyOffer(offer)">
+                            <div class="offer-item">
+                                <img [src]="offer.logoUrl" [alt]="offer.name">
+                                <button class="applyButton">{{ ls.l('CreditScore_GetOffer') }}</button>
+                            </div>
+                        </li>
+                    </ul>
+                    <app-no-data *ngIf="!offers.length"></app-no-data>
+                </ng-container>
             </div>
             <div class="row">
                 <div class="col-md-6">
