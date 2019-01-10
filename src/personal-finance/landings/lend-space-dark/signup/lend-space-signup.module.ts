@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
-import { LendSpaceSignupComponent } from '@root/personal-finance/landings/lend-space-dark/signup/lend-space-signup.component';
+import { LendSpaceSignupComponent } from './lend-space-signup.component';
+import { LendSpaceSignupWrapperComponent } from './signup-wrapper.component';
 import { RouterModule } from '@angular/router';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -18,9 +19,12 @@ import { FormsModule } from '@angular/forms';
         DxButtonModule,
         RouterModule.forChild([{
             path: '',
-            component: LendSpaceSignupComponent
+            component: LendSpaceSignupWrapperComponent
         }]
     )],
-    declarations: [ LendSpaceSignupComponent ]
+    declarations: [ 
+        LendSpaceSignupComponent, 
+        LendSpaceSignupWrapperComponent 
+    ]
 })
 export class LendSpaceSignupModule {}
