@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.less', 
+    styleUrls: ['./app.component.less',
         '../../node_modules/ng2-image-viewer/imageviewer.scss'
     ],
     encapsulation: ViewEncapsulation.None

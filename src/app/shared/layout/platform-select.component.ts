@@ -53,15 +53,16 @@ export class PlatformSelectComponent extends AppComponentBase {
         ) {
             this.module = switchModule.name;
             this.uri = switchModule.uri;
-
-            this._appService.switchModule(this.module, { instance: this.uri });
-
+            let navigate = null;
             let moduleConfig = this._appService.getModuleConfig(switchModule.name);
             if (moduleConfig.defaultPath)
-                this._router.navigate([moduleConfig.defaultPath]);
+                navigate = this._router.navigate([moduleConfig.defaultPath]);
             else
-                this._router.navigate(['app/' + this.module.toLowerCase() + (this.uri ? '/' + this.uri.toLowerCase() : '')]);
-            this._dropDown.close();
+                navigate = this._router.navigate(['app/' + this.module.toLowerCase() + (this.uri ? '/' + this.uri.toLowerCase() : '')]);
+            navigate.then(() => {
+                this._appService.switchModule(this.module, { instance: this.uri });
+                this._dropDown.close();
+            });
         }
     }
 

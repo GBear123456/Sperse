@@ -87,12 +87,12 @@ const routes: Routes = [
             {
                 path: 'personal-finance',
                 loadChildren: 'personal-finance/personal-finance.module#PersonalFinanceModule', //Lazy load account module
-                data: { feature: 'PFM' }
+                data: { feature: 'PFM', localizationSource: 'PFM' }
             },
             {
                 path: 'app',
                 loadChildren: 'app/app.module#AppModule', //Lazy load desktop module
-                data: { feature: 'Admin' }
+                data: { feature: 'Admin', localizationSource: 'Platform' }
             }
         ]
     },

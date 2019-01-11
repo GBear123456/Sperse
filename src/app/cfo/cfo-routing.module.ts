@@ -14,13 +14,15 @@ import { BusinessEntitiesComponent } from './business-entities/business-entities
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
 import { StatementsComponent } from './statements/statements.component';
 import { CfoInstanceStatusGuard } from '@app/cfo/cfo-instance-status-guard';
+import { LocalizationResolver } from '@shared/common/localization-resolver';
 
 @NgModule({
     imports: [
         RouterModule.forChild([
-            { path: '', redirectTo: 'start', pathMatch: 'full' },
+            { path: '', redirectTo: 'start', pathMatch: 'full', canActivate: [LocalizationResolver] },
             {
                 path: '',
+                canActivate: [LocalizationResolver],
                 children: [
                     { path: 'start', component: StartComponent, data: { permission: '', reuse: true } },
                     {
@@ -69,7 +71,8 @@ import { CfoInstanceStatusGuard } from '@app/cfo/cfo-instance-status-guard';
         RouterModule
     ],
     providers: [
-        CfoInstanceStatusGuard
+        CfoInstanceStatusGuard,
+        LocalizationResolver
     ]
 })
 export class CfoRoutingModule { }

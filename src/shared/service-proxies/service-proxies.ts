@@ -25205,6 +25205,61 @@ export class UiCustomizationSettingsServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @sourceName (optional) 
+     * @return Success
+     */
+    loadLocalizationSource(sourceName: string | null | undefined): Observable<LocalizationSourceDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/UiCustomizationSettings/LoadLocalizationSource?";
+        if (sourceName !== undefined)
+            url_ += "sourceName=" + encodeURIComponent("" + sourceName) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLoadLocalizationSource(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLoadLocalizationSource(<any>response_);
+                } catch (e) {
+                    return <Observable<LocalizationSourceDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LocalizationSourceDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processLoadLocalizationSource(response: HttpResponseBase): Observable<LocalizationSourceDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? LocalizationSourceDto.fromJS(resultData200) : new LocalizationSourceDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LocalizationSourceDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -56450,6 +56505,98 @@ export class UiCustomizationFooterSettingsEditDto implements IUiCustomizationFoo
 
 export interface IUiCustomizationFooterSettingsEditDto {
     fixedFooter: boolean | undefined;
+}
+
+export class LocalizationSourceDto implements ILocalizationSourceDto {
+    source!: AbpLocalizationSourceDto | undefined;
+    values!: { [key: string] : string; } | undefined;
+
+    constructor(data?: ILocalizationSourceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.source = data["source"] ? AbpLocalizationSourceDto.fromJS(data["source"]) : <any>undefined;
+            if (data["values"]) {
+                this.values = {};
+                for (let key in data["values"]) {
+                    if (data["values"].hasOwnProperty(key))
+                        this.values[key] = data["values"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): LocalizationSourceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LocalizationSourceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["source"] = this.source ? this.source.toJSON() : <any>undefined;
+        if (this.values) {
+            data["values"] = {};
+            for (let key in this.values) {
+                if (this.values.hasOwnProperty(key))
+                    data["values"][key] = this.values[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface ILocalizationSourceDto {
+    source: AbpLocalizationSourceDto | undefined;
+    values: { [key: string] : string; } | undefined;
+}
+
+export class AbpLocalizationSourceDto implements IAbpLocalizationSourceDto {
+    name!: string | undefined;
+    type!: string | undefined;
+
+    constructor(data?: IAbpLocalizationSourceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.type = data["type"];
+        }
+    }
+
+    static fromJS(data: any): AbpLocalizationSourceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AbpLocalizationSourceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["type"] = this.type;
+        return data; 
+    }
+}
+
+export interface IAbpLocalizationSourceDto {
+    name: string | undefined;
+    type: string | undefined;
 }
 
 export class ActivateUserForContactInput implements IActivateUserForContactInput {
