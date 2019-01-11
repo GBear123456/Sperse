@@ -1,0 +1,32 @@
+<div class="swal-icon swal-icon--warning">
+    <span class="swal-icon--warning__body">
+      <span class="swal-icon--warning__dot"></span>
+    </span>
+</div>
+<h2>You will sign up to LendSpace with the <b>{{data.authenticateResult.email}}</b> email.</h2>
+<form #confirmRegister="ngForm" novalidate>
+    <mat-dialog-content class="mat-typography" *ngIf="data.routerUrl === 'login'">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="agreement" name="agreement" ngModel required>
+            <label class="form-check-label" for="agreement">I consent to receive calls, texts, emails, and pre-recorded messages from
+                LendSpace,
+                its subsidiaries, agents, and/or partners, dialed manually or by autodialer.</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="terms" name="terms"
+                   [(ngModel)]="agreeWithTerms" required>
+            <label class="form-check-label" for="terms">By continuing, I certify I'm a US resident and older than 18 years of age.
+                I understand and agree to the LendSpace <a (click)="openConditionsDialog($event, modalsData.terms)">Terms of Use</a>,
+                <a (click)="openConditionsDialog($event, modalsData.privacy)">Privacy Policy</a> and <a
+                    (click)="openConditionsDialog($event, modalsData.lender)">Lender Terms</a>.</label>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="center">
+        <button class="button-default" mat-button mat-dialog-close>Cancel</button>
+        <button class="button-default"
+                [disabled]="!confirmRegister.form.valid"
+                mat-button
+                [mat-dialog-close]="true"
+                cdkFocusInitial>Yes</button>
+    </mat-dialog-actions>
+</form>
