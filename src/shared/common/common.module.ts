@@ -22,6 +22,7 @@ import { InternationalPhoneNumberModule } from '../../node_modules/ngx-internati
 import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 
@@ -38,6 +39,7 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
         CountryPhoneNumberComponent,
         TitleCasePipe,
         ModalDialogComponent,
+        RegisterConfirmComponent,
         ConditionsModalComponent
     ],
     exports: [
@@ -66,6 +68,7 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
     ],
     entryComponents: [
         ModalDialogComponent,
+        RegisterConfirmComponent,
         ConditionsModalComponent
     ],
     providers: [

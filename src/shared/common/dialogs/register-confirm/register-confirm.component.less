@@ -1,0 +1,81 @@
+:host {
+    .swal-icon.swal-icon--warning {
+        background: #FFF;
+        border: 10px solid #FFD564;
+        //box-shadow: none;
+        //animation: none;
+        //text-align: center;
+
+        //&::before {
+        //    content: "\2713";
+        //
+        //    font-family: serif;
+        //    font-size: 60px;
+        //    color: #8cd4f5;
+        //    position: relative;
+        //    top: -5px;
+        //}
+        //
+        //.swal-icon--warning__body {
+        //    display: none;
+        //}
+    }
+    
+    h2 {
+        font-size: 1.6rem;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    label {
+        a {
+            font-weight: 600;
+            transition: .3s;
+            padding: 0 2px;
+            
+            &:hover {
+                background: #000;
+                color: #fff;
+            }
+        }
+    }
+    
+    .button-default {
+        font-size: 18px;
+        font-weight: 600;
+        position: relative;
+        border-radius: 18px;
+        line-height: 1.6;
+        letter-spacing: 0.3px;
+        margin: 5px;
+        padding: 5px 30px;
+        height: 36px;
+        outline: none !important;
+        transition: .2s;
+        border: 0;
+        box-shadow: none;
+    
+        &[disabled] {
+            cursor: not-allowed;
+            pointer-events: none;
+            background-color: #d4d4d4;
+        }
+    }
+    
+    .button-default {
+        background-color: #FFF;
+        color: #000;
+        
+        &:hover {
+            background: #000;
+            color: #fff;
+            cursor: pointer;
+        }
+    }
+}
+
+::ng-deep {
+    #confirm-register {
+        background: #FDC84D !important;
+    }
+}
