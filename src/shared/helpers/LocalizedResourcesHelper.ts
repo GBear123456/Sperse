@@ -21,7 +21,7 @@ export class LocalizedResourcesHelper {
     }
 
     static loadLocalizedStylesForTheme(theme: string, isRtl: boolean): JQueryPromise<any> {
-        let cssPostfix = isRtl ? '-rtl' : '';        
+        let cssPostfix = isRtl ? '-rtl' : '';
         if (abp.session.userId) {
             $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/' + theme + '/assets/demo/' + theme + '/base/style.bundle' + cssPostfix + '.css'));
             $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/primeng/datatable/css/primeng.datatable' + cssPostfix + '.css'));

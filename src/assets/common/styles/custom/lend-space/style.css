@@ -2,7 +2,7 @@ body.lend-space app-header {
   background: #000;
 }
 body.lend-space .dx-treeview-node-container {
-  background: #FFF!important;
+  background: #FFF !important;
 }
 body.lend-space .dx-menu-adaptive-mode,
 body.lend-space app-header dx-drop-down-box,
@@ -16,13 +16,13 @@ body.lend-space app-header dx-drop-down-box input {
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
-  color: #f0d500!important;
+  color: #f0d500 !important;
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
   border-bottom: none!important;
 }
 body.lend-space app-header dx-nav-bar .dx-item.dx-tab .dx-menu-item-text {
-  color: #FFF!important;
+  color: #FFF !important;
 }
 body.lend-space .m-dropdown__arrow {
   color: #313131 !important;
@@ -62,7 +62,7 @@ body.lend-space .swal-modal .swal-icon.swal-icon--warning:before {
   content: "\2713";
 }
 body.lend-space .swal-modal .swal-icon > div:first-child:before {
-  color: #000!important;
+  color: #000 !important;
 }
 body.lend-space .swal-modal .swal-title {
   color: #000;
@@ -161,7 +161,7 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .close-dialog,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .close-dialog,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .close-dialog {
-  background: #313131!important;
+  background: #313131 !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:before,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .close-dialog:before,
@@ -171,13 +171,13 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .close-dialog:after
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .close-dialog:after,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .close-dialog:after,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .close-dialog:after {
-  background: #FFF!important;
+  background: #FFF !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header {
-  background: #313131!important;
+  background: #313131 !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header dx-text-box,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header dx-text-box,
@@ -189,7 +189,7 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header 
 body.lend-space .cdk-overlay-pane.user-info modal-dialog .mat-dialog-header input,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog .mat-dialog-header input,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-header input {
-  color: #FFF!important;
+  color: #FFF !important;
   background: transparent!important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog .mat-dialog-header button,
@@ -244,7 +244,7 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content 
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active {
-  border-bottom: 1px solid #ffcc00!important;
+  border-bottom: 1px solid #ffcc00 !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
@@ -254,7 +254,7 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content 
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span {
-  color: #ffcc00!important;
+  color: #ffcc00 !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
@@ -266,7 +266,7 @@ body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content 
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content *,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content #content *,
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content #content * {
-  color: #FFF!important;
+  color: #FFF !important;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content * .doc-title,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content #content * .doc-title,
@@ -290,7 +290,7 @@ body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content 
   body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header,
   body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header {
     flex-direction: column;
-    height: 110px !important;
+    height: 110px;
   }
   body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header dx-text-box,
   body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header dx-text-box {
@@ -321,6 +321,6 @@ body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content 
   body.lend-space .cdk-overlay-pane.user-info .close-dialog:before,
   body.lend-space .cdk-overlay-pane.footer-slider .close-dialog:after,
   body.lend-space .cdk-overlay-pane.user-info .close-dialog:after {
-    background: #FFF!important;
+    background: #FFF !important;
   }
 }
