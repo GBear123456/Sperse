@@ -687,3 +687,60 @@ input.form-control {
     text-align: left;
     overflow-y: auto;
 }
+/* Error Modal Design */
+.swal-modal .swal-icon.swal-icon--error {
+  border: 5px solid #E7F9F9;
+  box-shadow: 0 0 20px 20px #F4FCFC;
+}
+.swal-modal .swal-icon.swal-icon--error .swal-icon--error__x-mark:before {
+  content: '!';
+  font-family: serif;
+  font-size: 60px;
+  color: #8CD4F5;
+  position: relative;
+  top: -5px;
+}
+.swal-modal .swal-icon.swal-icon--error .swal-icon--error__x-mark .swal-icon--error__line {
+  display: none !important;
+}
+.swal-modal .swal-icon.swal-icon--warning {
+  border: 5px solid #E7F9F9;
+  box-shadow: 0 0 20px 20px #F4FCFC;
+  animation: none !important;
+}
+.swal-modal .swal-icon.swal-icon--warning:before {
+  content: '!';
+  font-family: serif;
+  font-size: 60px;
+  color: #8CD4F5;
+  position: relative;
+  top: -5px;
+}
+.swal-modal .swal-icon.swal-icon--warning .swal-icon--warning__body,
+.swal-modal .swal-icon.swal-icon--warning .swal-icon--warning__dot {
+  display: none;
+}
+.swal-modal .swal-title {
+  color: #8CD4F5;
+  font-size: 18px;
+  font-weight: normal;
+  white-space: pre-line;
+}
+.swal-modal .swal-button {
+  background-color: #00aeef;
+  color: #ffffff;
+  border-radius: 21px;
+  padding: 10px 35px;
+  box-shadow: none;
+  transition: .2s;
+}
+.swal-modal .swal-button:hover {
+  background: #3dcaff;
+}
+.swal-modal .swal-button.swal-button--cancel {
+  color: #555;
+  background-color: #efefef;
+}
+.swal-modal .swal-button.swal-button--cancel:hover {
+  background: #d7d7d7;
+}
