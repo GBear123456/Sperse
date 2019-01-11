@@ -62,6 +62,39 @@
            letter-spacing: 0.4px;
            padding-left: 17px;
            border: none;
+           background: transparent;
+        }
+
+        .mat-dialog-actions {
+            margin: 0px;
+            .mat-dialog-buttons {
+                height: 46px;
+                align-self: center;
+                display: flex;
+                button {
+                    cursor: pointer;              
+                    outline: none;
+                    &:disabled {
+                        opacity: 0.5;
+                        cursor: not-allowed;
+                    }
+                    &.button-icon {
+                        position: relative;
+                        border-radius: 18px;
+                        margin: 5px;
+                        padding: 0 15px;
+                        height: 36px;
+                        transition: .2s;
+                        border-radius: initial;
+                        margin: auto;
+                        border: 1px solid #eaeef0;
+                        background: #fff;
+                        &:hover {
+                            background: #fff;
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -259,7 +259,7 @@
 
     function loadLoginStylesheet() {
         createStylesheet("./assets/login/style.css");
-        createStylesheet("./assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.css");
+        createStylesheet("./assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css");
     }
 
     function createMetatag(name, content) {
