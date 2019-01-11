@@ -2,7 +2,7 @@
     <div class="row">
         <div class="credit-score-navigation col-md-3">
             <h1>{{ ls.l('CreditScore_CreditScoreTitle') }}</h1>
-            <app-credit-score-navigation></app-credit-score-navigation>
+            <navigation></navigation>
         </div>
         <div class="col-md-9" #content>
             <ng-container *ngFor="let offer of offers$ | async">

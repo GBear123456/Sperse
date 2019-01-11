@@ -1,0 +1,39 @@
+@lend-space-color: #f0d500;
+
+:host {
+    * {
+        font-family: Poppins;
+    }
+    ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    li {
+        display: inline-flex;
+        padding-bottom: 5px;
+        align-items: center;
+        font-size: 16px;
+        font-weight: 400;
+        letter-spacing: 0.2px;
+        margin-bottom: 30px;
+        &.active {
+            font-weight: 500;
+            border-bottom: 4px solid @lend-space-color;
+            a img {
+                opacity: 1;
+            }
+        }
+        a {
+            color: #000;
+            white-space: nowrap;
+            &:hover {
+                text-decoration: none;
+            }
+            img {
+                opacity: 0.55;
+                margin-right: 16px;
+            }
+        }
+    }
+}

@@ -1,27 +1,35 @@
 :host {
     font-family: 'Poppins', sans-serif;
-    
+
     .logo-wrap {
         max-width: 300px;
         margin: 0 auto;
-        
+
         img {
             max-width: 100%;
         }
     }
-    
+
+    .credit-score-navigation h1 {
+        font-size: 46px;
+        margin-bottom: 29px;
+        font-weight: 700;
+        white-space: nowrap;
+        font-family: Poppins;
+    }
+
     .offer-details-wrap {
         padding: 32px 50px 50px;
         width: 100%;
         min-height: 450px;
         background: url(../../../../assets/images/credit-report/credit-monitoring-bg.jpg) 50% 50% no-repeat;
         background-size: cover;
-        
+
         * {
             margin: 0;
             padding: 0;
         }
-        
+
         .title {
             font-size: 37px;
             font-weight: 500;
@@ -31,12 +39,12 @@
             letter-spacing: normal;
             color: rgb(255, 255, 255);
             text-align: left;
-            
+
             b {
                 display: block;
             }
         }
-        
+
         .subtitle {
             font-size: 19px;
             font-weight: bold;
@@ -47,11 +55,11 @@
             color: rgb(255, 255, 255);
             margin-top: 15px;
         }
-        
+
         .items-list {
             list-style-type: none;
             margin-top: 6px;
-            
+
             .item {
                 position: relative;
                 padding: 4px 0 4px 35px;
@@ -62,7 +70,7 @@
                 line-height: 1.36;
                 letter-spacing: 0.2px;
                 color: rgb(255, 255, 255);
-                
+
                 &::before {
                     content: '';
                     position: absolute;
@@ -71,14 +79,14 @@
                     display: block;
                     width: 21px;
                     height: 16px;
-                    
+
                     transform: translateY(-50%);
                     background: url(../../../../assets/common/icons/offers/check.svg) no-repeat;
                     background-size: contain;
                 }
             }
         }
-        
+
         .applyButton {
             font-size: 19px;
             font-weight: bold;
@@ -93,24 +101,24 @@
             background: #ffcc00 url(../../../../assets/common/images/pfm-cc/arrow-right.svg) no-repeat right 20px center;
             cursor: pointer;
             transition: .2s;
-            
+
             &:hover {
                 background-color: lighten(#ffcc00, 10%) !important;
             }
         }
     }
-    
+
     .features {
         margin-top: 40px;
-        
+
         &-list {
             list-style-type: none;
             padding: 0;
         }
-        
+
         .feature-item {
             text-align: center;
-            
+
             img {}
             .feature-title {
                 font-size: 17px;
@@ -124,6 +132,6 @@
                 text-align: center;
             }
         }
-        
+
     }
 }
