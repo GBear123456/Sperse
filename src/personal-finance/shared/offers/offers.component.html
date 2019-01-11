@@ -18,7 +18,8 @@
                             <button class="viewMore" *ngIf="!filter.showAll" (click)="filter.showAll = true">{{ ls.l('Offers_ViewMore') }}</button>
                         </ng-container>
                         <ng-container *ngIf="filter.type === filterType.Radio">
-                            <mat-radio-group [class.navigation]="filter.navigation" (change)="filter.onChange($event)" [value]="filter.value$ | async">
+                            <navigation *ngIf="filter.navigation"></navigation>
+                            <mat-radio-group *ngIf="!filter.navigation" (change)="filter.onChange($event)" [value]="filter.value$ | async">
                                 <mat-radio-button *ngFor="let filterValue of filter.values$ | async" [value]="filterValue.value || filterValue">
                                     {{ filterValue.name || filterValue }}
                                 </mat-radio-button>
