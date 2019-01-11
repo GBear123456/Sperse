@@ -16,6 +16,7 @@ import * as moment from 'moment';
 export class HostLayoutComponent extends AppComponentBase implements OnInit {
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
+    originUrl = location.origin;
 
     constructor(
         injector: Injector,
