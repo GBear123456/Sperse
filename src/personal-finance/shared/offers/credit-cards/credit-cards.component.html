@@ -78,8 +78,8 @@
 
                         <div class="card-item__info">
                             <div class="row" *ngFor="let param of ['annualFee', 'rewardsRate', 'introRewardsBonus', 'regularAPR']">
-                                <div class="text-left col-5">{{ ls.l('Offers_' + param) }}</div>
-                                <div class="text-right col-7" *ngIf="offersService.getParamDisplayValue(card[param]) as displayValue">
+                                <div class="text-left col-6">{{ ls.l('Offers_' + param) }}</div>
+                                <div class="text-right col-6" *ngIf="offersService.getParamDisplayValue(card[param]) as displayValue">
                                     <b [title]="displayValue">{{ displayValue }}</b>
                                 </div>
                             </div>
