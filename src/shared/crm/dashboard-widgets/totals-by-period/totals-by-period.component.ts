@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { Observable, combineLatest, of } from 'rxjs';
@@ -40,7 +40,7 @@ import { BehaviorSubject } from '@node_modules/rxjs';
     styleUrls: ['./totals-by-period.component.less'],
     providers: [ DashboardServiceProxy ]
 })
-export class TotalsByPeriodComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class TotalsByPeriodComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
     totalsData: any[] = [];
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
@@ -140,6 +140,10 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             });
             this.render();
         });
+    }
+
+    ngAfterViewInit() {
+        this.render();
     }
 
     changeCumulative(e) {
