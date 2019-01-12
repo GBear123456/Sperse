@@ -8,65 +8,77 @@
                 <ng-container *ngFor="let filter of filters$ | async">
                     <li>
                         <div class="filterName" *ngIf="filter.name">{{ filter.name }}</div>
-                        <ng-container *ngIf="filter.type === filterType.Checkbox">
-                            <ng-container *ngFor="let filterValue of filter.values$ | async; let i = index">
-                                <mat-checkbox *ngIf="filter.showAll || i < maxDisplayedFilterValues" (change)="filter.onChange && filter.onChange($event)" [value]="filterValue.value || filterValue">
-                                    <span *ngIf="!filter.type">{{ filterValue.name || filterValue }}</span>
-                                    <stars-rating *ngIf="filter.type === 'rating'" [maxRating]="filterValue"></stars-rating>
-                                </mat-checkbox>
-                            </ng-container>
-                            <button class="viewMore" *ngIf="!filter.showAll" (click)="filter.showAll = true">{{ ls.l('Offers_ViewMore') }}</button>
-                        </ng-container>
-                        <ng-container *ngIf="filter.type === filterType.Radio">
-                            <navigation *ngIf="filter.navigation"></navigation>
-                            <mat-radio-group *ngIf="!filter.navigation" (change)="filter.onChange($event)" [value]="filter.value$ | async">
-                                <mat-radio-button *ngFor="let filterValue of filter.values$ | async" [value]="filterValue.value || filterValue">
-                                    {{ filterValue.name || filterValue }}
-                                </mat-radio-button>
-                            </mat-radio-group>
-                        </ng-container>
-                        <ng-container *ngIf="filter.type === filterType.Range">
-                            <div class="sliderContainer">
-                                <div class="minMaxLabels">
-                                    <div class="min">{{ filter.minMaxDisplayFunction ? filter.minMaxDisplayFunction(filter.min) : filter.min }}</div>
-                                    <div class="max">{{ filter.minMaxDisplayFunction ? filter.minMaxDisplayFunction(filter.max) : filter.max }}</div>
-                                </div>
-                                <mat-slider
-                                    [min]="filter.min"
-                                    [max]="filter.max"
-                                    [value]="(filter.value$ | async) || filter.value"
-                                    [class.greyTrackBackground]="!filter.fullBackground"
-                                    [step]="filter.step || 1"
-                                    (input)="changeStep($event, filter.stepsConditions)"
-                                    (change)="filter.onChange && filter.onChange($event)"
-                                    #slider>
-                                </mat-slider>
-                                <ng-container *ngIf="filter.valueDisplayFunction(slider.value) as value; else simpleValue">
-                                    <ng-container *ngTemplateOutlet="value.name ? twoLinesTemplate : oneLineTemplate"></ng-container>
-                                    <ng-template #oneLineTemplate>
-                                        <div class="oneLineSliderValue">{{ value }}</div>
-                                    </ng-template>
-                                    <ng-template #twoLinesTemplate>
-                                        <div class="twoLinesSliderBlock">
-                                            <div class="name">{{ value.name }}</div>
-                                            <div class="description">{{ value.description }}</div>
-                                        </div>
-                                    </ng-template>
+                        <ng-container [ngSwitch]="filter.type">
+                            <ng-container *ngSwitchCase="filterType.Checkbox">
+                                <ng-container *ngFor="let filterValue of filter.values$ | async; let i = index">
+                                    <mat-checkbox *ngIf="filter.showAll || i < maxDisplayedFilterValues" (change)="filter.onChange && filter.onChange($event)" [value]="filterValue.value || filterValue">
+                                        <span *ngIf="!filter.type">{{ filterValue.name || filterValue }}</span>
+                                        <stars-rating *ngIf="filter.type === 'rating'" [maxRating]="filterValue"></stars-rating>
+                                    </mat-checkbox>
                                 </ng-container>
-                                <ng-template #simpleValue><div class="oneLineSliderValue"></div>{{ slider.value }}</ng-template>
-                            </div>
-                        </ng-container>
-                        <ng-container *ngIf="filter.type === filterType.Select">
-                            <mat-select
-                                *ngIf="(filter.values$ | async) as filterValues"
-                                [value]="(filter.value$ | async) || filterValues[0].value || filterValues[0]"
-                                (selectionChange)="filter.onChange && filter.onChange($event)">
-                                <mat-option
-                                    *ngFor="let filterOption of filterValues"
-                                    [value]="filterOption.value || filterOption">
-                                    {{ filterOption.name || filterOption }}
-                                </mat-option>
-                            </mat-select>
+                                <button class="viewMore" *ngIf="!filter.showAll" (click)="filter.showAll = true">{{ ls.l('Offers_ViewMore') }}</button>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="filterType.Radio">
+                                <navigation *ngIf="filter.navigation"></navigation>
+                                <mat-radio-group *ngIf="!filter.navigation" (change)="filter.onChange($event)" [value]="filter.selected$ | async">
+                                    <mat-radio-button *ngFor="let filterValue of filter.values$ | async" [value]="filterValue.value || filterValue">
+                                        {{ filterValue.name || filterValue }}
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="filterType.Range">
+                                <div class="sliderContainer">
+                                    <div class="minMaxLabels">
+                                        <div class="min">{{ filter.minMaxDisplayFunction ? filter.minMaxDisplayFunction(filter.min) : filter.min }}</div>
+                                        <div class="max">{{ filter.minMaxDisplayFunction ? filter.minMaxDisplayFunction(filter.max) : filter.max }}</div>
+                                    </div>
+                                    <mat-slider
+                                        [min]="filter.min"
+                                        [max]="filter.max"
+                                        [value]="(filter.selected$ | async) || filter.value"
+                                        [class.greyTrackBackground]="!filter.fullBackground"
+                                        [step]="filter.step || 1"
+                                        (input)="changeStep($event, filter.stepsConditions)"
+                                        (change)="filter.onChange && filter.onChange($event)"
+                                        #slider>
+                                    </mat-slider>
+                                    <ng-container *ngIf="filter.valueDisplayFunction(slider.value) as value; else simpleValue">
+                                        <ng-container *ngTemplateOutlet="value.name ? twoLinesTemplate : oneLineTemplate"></ng-container>
+                                        <ng-template #oneLineTemplate>
+                                            <div class="oneLineSliderValue">{{ value }}</div>
+                                        </ng-template>
+                                        <ng-template #twoLinesTemplate>
+                                            <div class="twoLinesSliderBlock">
+                                                <div class="name">{{ value.name }}</div>
+                                                <div class="description">{{ value.description }}</div>
+                                            </div>
+                                        </ng-template>
+                                    </ng-container>
+                                    <ng-template #simpleValue><div class="oneLineSliderValue"></div>{{ slider.value }}</ng-template>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="filterType.Select">
+                                <mat-select
+                                    *ngIf="(filter.values$ | async) as filterValues"
+                                    [value]="(filter.selected$ | async) || filterValues[0].value || filterValues[0]"
+                                    (selectionChange)="filter.onChange && filter.onChange($event)">
+                                    <mat-option
+                                        *ngFor="let filterOption of filterValues"
+                                        [value]="filterOption.value || filterOption">
+                                        {{ filterOption.name || filterOption }}
+                                    </mat-option>
+                                </mat-select>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="filterType.Chooser">
+                                <ng-container *ngIf="(filter.values$ | async) as filterValues">
+                                    <chooser-filter
+                                        [options]="filterValues"
+                                        [type]="filter.chooserType"
+                                        [design]="filter.chooserDesign"
+                                        (selectionChange)="filter.onChange && filter.onChange($event)">
+                                    </chooser-filter>
+                                </ng-container>
+                            </ng-container>
                         </ng-container>
                     </li>
                 </ng-container>

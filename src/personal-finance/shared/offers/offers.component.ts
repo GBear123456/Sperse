@@ -42,6 +42,8 @@ import { SelectFilterSetting } from '@root/personal-finance/shared/offers/filter
 import { RadioFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/radio-filter-setting';
 import { CheckboxFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/checkbox-filter-setting';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
+import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal-finance/shared/offers/filters-settings/chooser-filter-setting';
+import { ChooserOption } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -83,7 +85,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                 name: this.ls.l('Offers_Filter_Amount'),
                 min: 100,
                 max: 100000,
-                value$: of(5000),
+                selected$: of(5000),
                 step: 100,
                 stepsConditions: [
                     {
@@ -115,7 +117,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                         description: `(${this.offersService.creditScores[scoreName].min}-${this.offersService.creditScores[scoreName].max})`
                     };
                 },
-                value$: this.creditScore$.pipe(map((creditScore: CreditScore) => {
+                selected$: this.creditScore$.pipe(map((creditScore: CreditScore) => {
                     return this.filtersValues.creditScore || creditScore;
                 })),
                 onChange: (e: MatSliderChange) => {
@@ -149,14 +151,14 @@ export class OffersComponent implements OnInit, OnDestroy {
                         value: Category.AutoLoans
                     }
                 ]),
-                value$: this.category$,
+                selected$: this.category$,
                 onChange: (e: MatSelectChange) => {
                     this.router.navigate(['../' + kebabCase(e.value)], { relativeTo: this.route });
                 }
             }),
             new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_ResidentState'),
-                value$: this.stateCode$,
+                selected$: this.stateCode$,
                 values$: this.store$.pipe(
                     select(StatesStoreSelectors.getState, {
                         countryCode: 'US'
@@ -185,10 +187,123 @@ export class OffersComponent implements OnInit, OnDestroy {
                         value: Category.DebtConsolidation
                     }
                 ]),
-                value$: this.category$,
+                selected$: this.category$,
                 navigation: true,
                 onChange: (e: MatRadioChange) => {
                     this.router.navigate(['../' + kebabCase(e.value)], { relativeTo: this.route });
+                }
+            })
+        ],
+        [CategoryGroupEnum.CreditCards]: [
+            new RangeFilterSetting({
+                name: this.ls.l('Offers_Filter_CreditScore'),
+                min: 350,
+                max: 850,
+                step: 50,
+                fullBackground: true,
+                valueDisplayFunction: (value: number) => {
+                    let scoreName = this.offersService.getCreditScoreName(value);
+                    return {
+                        name: this.ls.l('Offers_CreditScore_' + scoreName),
+                        description: `(${this.offersService.creditScores[scoreName].min}-${this.offersService.creditScores[scoreName].max})`
+                    };
+                },
+                selected$: this.creditScore$.pipe(map((creditScore: CreditScore) => {
+                    return this.filtersValues.creditScore || creditScore;
+                })),
+                onChange: (e: MatSliderChange) => {
+                    if (this.filtersValues.creditScore != e.value) {
+                        this.filtersValues.creditScore = e.value;
+                        this.selectedFilter.next(this.filtersValues);
+                    }
+                }
+            }),
+            new ChooserFilterSetting({
+                name: this.ls.l('Offers_Filter_Category'),
+                chooserDesign: ChooserDesign.Combined,
+                chooserType: ChooserType.Single,
+                values$: of([
+                    /** @todo change values to enums */
+                    {
+                        name: this.ls.l('Offers_Credit'),
+                        value: 'credit',
+                        selected: true
+                    },
+                    {
+                        name: this.ls.l('Offers_Debit'),
+                        value: 'debit'
+                    },
+                    {
+                        name: this.ls.l('Offers_Prepaid'),
+                        value: 'prepaid'
+                    }
+                ]),
+                selected$: of('credit'),
+                onChange: (selectedValues: ChooserOption[]) => {
+                    console.log(selectedValues);
+                }
+            }),
+            new ChooserFilterSetting({
+                name: this.ls.l('Offers_Filter_Type'),
+                chooserDesign: ChooserDesign.Combined,
+                chooserType: ChooserType.Single,
+                values$: of([
+                    /** @todo change values to enums */
+                    {
+                        name: this.ls.l('Offers_Personal'),
+                        value: 'personal'
+                    },
+                    {
+                        name: this.ls.l('Offers_Student'),
+                        value: 'debit',
+                        selected: true
+                    },
+                    {
+                        name: this.ls.l('Offers_Prepaid'),
+                        value: 'prepaid'
+                    }
+                ]),
+                selected$: of('credit'),
+                onChange: (selectedValues: ChooserOption[]) => {
+                    console.log(selectedValues);
+                }
+            }),
+            new CheckboxFilterSetting({
+                name: this.ls.l('Offers_Filter_Rating'),
+                values$: of([ 5, 4, 3, 2, 1 ]),
+                showAll: false
+            }),
+            new CheckboxFilterSetting({
+                name: this.ls.l('Offers_Filter_Brand'),
+                values$: of([ 'American Express', 'Bank of America', 'Barclaycard', 'Capital One', 'Chase' ]),
+                showAll: false
+            }),
+            new ChooserFilterSetting({
+                name: this.ls.l('Offers_Filter_Network'),
+                chooserType: ChooserType.Multi,
+                chooserDesign: ChooserDesign.Separate,
+                values$: of([
+                    /** @todo change values to enums */
+                    {
+                        iconSrc: './assets/common/icons/offers/visa.svg',
+                        value: 'visa',
+                        selected: true
+                    },
+                    {
+                        iconSrc: './assets/common/icons/offers/mastercard.svg',
+                        value: 'mastercard'
+                    },
+                    {
+                        iconSrc: './assets/common/icons/offers/discover.svg',
+                        value: 'discover'
+                    },
+                    {
+                        iconSrc: './assets/common/icons/offers/american-express.svg',
+                        value: 'american-express'
+                    }
+                ]),
+                onChange: (selectedValues: ChooserOption[]) => {
+                    console.log(selectedValues);
                 }
             })
         ],
@@ -373,6 +488,10 @@ export class OffersComponent implements OnInit, OnDestroy {
             case Category.CreditMonitoring:
             case Category.DebtConsolidation: {
                 categoryGroup = CategoryGroupEnum.CreditScore;
+                break;
+            }
+            case Category.CreditCards: {
+                categoryGroup = CategoryGroupEnum.CreditCards;
                 break;
             }
             default: {
