@@ -58,6 +58,7 @@ import { CheckboxFilterSetting } from '@root/personal-finance/shared/offers/filt
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal-finance/shared/offers/filters/filters-settings/chooser-filter-setting';
 import { ChooserOption } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
+import { ScoreFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/score-filter-setting';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -208,25 +209,43 @@ export class OffersComponent implements OnInit, OnDestroy {
             })
         ],
         [CategoryGroupEnum.CreditCards]: [
-            new RangeFilterSetting({
+            new ScoreFilterSetting({
                 name: this.ls.l('Offers_Filter_CreditScore'),
-                min: 350,
-                max: 850,
-                step: 50,
-                fullBackground: true,
-                valueDisplayFunction: (value: number) => {
-                    let scoreName = this.offersService.getCreditScoreName(value);
-                    return {
-                        name: this.ls.l('Offers_CreditScore_' + scoreName),
-                        description: `(${this.offersService.creditScores[scoreName].min}-${this.offersService.creditScores[scoreName].max})`
-                    };
-                },
-                selected$: this.creditScore$.pipe(map((creditScore: CreditScore) => {
-                    return this.filtersValues.creditScore || creditScore;
-                })),
-                onChange: (e: MatSliderChange) => {
-                    if (this.filtersValues.creditScore != e.value) {
-                        this.filtersValues.creditScore = e.value;
+                values$: of([
+                    {
+                        name: 'Excelent',
+                        value: CreditScore.Excellent,
+                        min: 720,
+                        max: 850
+                    },
+                    {
+                        name: 'Good',
+                        value: CreditScore.Good,
+                        min: 690,
+                        max: 719
+                    },
+                    {
+                        name: 'Fair',
+                        value: CreditScore.Fair,
+                        min: 630,
+                        max: 689,
+                        checked: true
+                    },
+                    {
+                        name: 'Bad',
+                        value: CreditScore.Poor,
+                        min: 300,
+                        max: 629
+                    },
+                    {
+                        name: 'Limited or No Score',
+                        value: CreditScore.NotSure
+                    }
+                ]),
+                selected$: of(CreditScore.Fair),
+                onChange: (value: CreditScore) => {
+                    if (this.filtersValues.creditScore != value) {
+                        this.filtersValues.creditScore = <any>value;
                         this.selectedFilter.next(this.filtersValues);
                     }
                 }

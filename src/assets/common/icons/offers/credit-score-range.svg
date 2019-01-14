@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="21" height="148" viewBox="0 0 21 148">
+    <defs>
+        <linearGradient id="b" x1="2.734%" x2="98.311%" y1="50%" y2="50%">
+            <stop offset="0%" stop-color="#ED501A"/>
+            <stop offset="47.835%" stop-color="#F7D930"/>
+            <stop offset="100%" stop-color="#24C26C"/>
+        </linearGradient>
+        <path id="a" d="M127.2 12h-11.15c-.927 4.564-4.962 8-9.8 8-4.838 0-8.873-3.436-9.8-8H83.3c-.927 4.564-4.962 8-9.8 8-4.838 0-8.873-3.436-9.8-8H50.55c-.927 4.564-4.962 8-9.8 8-4.838 0-8.873-3.436-9.8-8H19.8c-.927 4.564-4.962 8-9.8 8-5.523 0-10-4.477-10-10S4.477 0 10 0c4.838 0 8.873 3.436 9.8 8h11.15c.927-4.564 4.962-8 9.8-8 4.838 0 8.873 3.436 9.8 8H63.7c.927-4.564 4.962-8 9.8-8 4.838 0 8.873 3.436 9.8 8h13.15c.927-4.564 4.962-8 9.8-8 4.838 0 8.873 3.436 9.8 8h11.15c.927-4.564 4.962-8 9.8-8 5.523 0 10 4.477 10 10s-4.477 10-10 10c-4.838 0-8.873-3.436-9.8-8z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd" transform="rotate(-90 74 73.5)">
+        <use fill="#B6B6B6" xlink:href="#a"/>
+        <use fill="url(#b)" xlink:href="#a"/>
+        <circle cx="40.75" cy="10" r="7" fill="#FFF"/>
+        <circle cx="73.5" cy="10" r="7" fill="#FEF4B8"/>
+        <circle cx="106.25" cy="10" r="7" fill="#FFF"/>
+        <circle cx="137" cy="10" r="7" fill="#FFF"/>
+        <circle cx="10" cy="10" r="7" fill="#FFF"/>
+    </g>
+</svg>
