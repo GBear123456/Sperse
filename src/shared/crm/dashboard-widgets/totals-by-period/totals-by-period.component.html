@@ -18,14 +18,13 @@
         </div>
     </div>
 </header>
-<div class="chart-wrapper" *ngIf="totalsData && totalsData.length">
+<div class="chart-wrapper" [hidden]="!totalsData || !totalsData.length">
     <dx-chart
         id="bar"
         [barWidth]="1"
-        [size]="{height: 245}"
+        [size]="{height: 245, width: nativeElement ? nativeElement.offsetWidth - 60: 0}"
         [series]="allSeries$ | async"
-        [dataSource]="totalsData"
-        (onDrawn)="render()">
+        [dataSource]="totalsData">
 
         <dxo-size height="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->

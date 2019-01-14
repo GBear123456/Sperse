@@ -15,6 +15,9 @@ footer {
     max-width: 1400px;
     margin: 0 auto;
 }
+.login .main-content .account-forms {
+    padding: 0 15px;
+}
 
 .login {
     background-color: #FFFFFF !important;
@@ -28,6 +31,7 @@ footer {
 
 .login .logo a {
     display: inline-block;
+    margin-right: 0;
 }
 
 .login .content {
@@ -35,8 +39,7 @@ footer {
     border-radius: 7px;
     width: 400px;
     margin: 40px auto 10px auto;
-    padding: 30px;
-    padding-top: 10px;
+    padding: 10px 30px 30px;
     overflow: hidden;
     position: relative;
 }
@@ -65,7 +68,6 @@ footer {
 }
 
 .login .content .form-control {
-    border: none;
     background-color: #dde3ec;
     height: 43px;
     color: #8290a3;
@@ -301,6 +303,7 @@ input.form-control {
 
 .slogan-side img {
     margin: 60px auto;
+    max-width: 100%;
 }
 
 .slogan-side .slogan {
@@ -349,6 +352,26 @@ input.form-control {
     box-shadow: none;
     line-height: 54px;
     position: relative;
+}
+
+@media all and (max-width: 450px) {
+    .login .logo {
+        height: auto !important;
+    }
+    .form-wrapper h1 {
+        margin-top: 35px;
+        margin-bottom: 35px;
+    }
+
+    .col-md-12.form-wrapper,
+    .form-wrapper .login-form {
+        padding: 0 !important;
+    }
+
+    .form-wrapper .form-actions .submit {
+        min-width: 0;
+        width: 95%;
+    }
 }
 
 .form-wrapper .form-actions .submit[disabled] {
@@ -419,8 +442,8 @@ input.form-control {
 .form-wrapper .forget-password {
     padding-top: 10px;
     font-size: 14px;
-    font-weight: 300;
-    color: #888d92;
+    margin-top: 0;
+    color: #6eade9;
 }
 
 .form-wrapper .forget-password:hover {
@@ -743,4 +766,8 @@ input.form-control {
 }
 .swal-modal .swal-button.swal-button--cancel:hover {
   background: #d7d7d7;
+}
+
+body.modal-open {
+    overflow: hidden !important;
 }

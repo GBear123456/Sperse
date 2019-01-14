@@ -49,6 +49,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     chartWidth = 650;
     currency = 'USD';
     clientColor = '#8487e7';
+    nativeElement: any;
 
     periods: TotalsByPeriodModel[] = [
          {
@@ -84,7 +85,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     private isCumulative$: Observable<boolean> = this.isCumulative.asObservable();
 
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
-    private renderTimeout;
+
     private series: any[] = [
         {
             type: 'spline',
@@ -260,15 +261,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     }
 
     render(component?: any) {
-        clearInterval(this.renderTimeout);
-        this.renderTimeout = setInterval(() => {
-            component = component || this.chartComponent
-                && this.chartComponent.instance;
-            if (component) {
-                component.render();
-                clearInterval(this.renderTimeout);
-            }
-        }, 1000);
+        this.nativeElement = this.getElementRef().nativeElement;
     }
 
     ngOnDestroy() {
