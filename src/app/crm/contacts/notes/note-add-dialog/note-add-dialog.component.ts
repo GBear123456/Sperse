@@ -73,7 +73,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             });
 
         this._contactInfo = this.data.contactInfo;
-        if (this.data.contactInfo.primaryOrganizationContactInfo.contactPersons) {
+        if (this.data.contactInfo.primaryOrganizationContactInfo && this.data.contactInfo.primaryOrganizationContactInfo.contactPersons) {
             let orgContact = <any>this._contactInfo.primaryOrganizationContactInfo,
                 contacts = this._contactInfo.primaryOrganizationContactInfo.contactPersons.length ? this._contactInfo.primaryOrganizationContactInfo.contactPersons : [this._contactInfo.personContactInfo];
             this.primaryOrgId = orgContact && orgContact.id;

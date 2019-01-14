@@ -34,6 +34,7 @@
             span {
                 font-weight: 700;
                 position: relative;
+                display: inline-block;
                 z-index: 0;
                 &:after {
                     content: '';
@@ -57,17 +58,15 @@
     }
     .offers {
         background-color: #ffefb2;
-        padding: 40px 50px 40px;
+        padding: 30px;
         margin-bottom: 49px;
         ul {
-            margin-bottom: 19px;
+            margin-bottom: 0px;
             li {
                 position: relative;
                 text-align: center;
                 cursor: pointer;
-                &:nth-child(n + 4) {
-                    margin-top: 40px;
-                }
+                margin-bottom: 40px;
                 .offer-item {
                     background: #fff;
                     height: 144px;
@@ -94,6 +93,9 @@
                 }
             }
         }
+        @media (min-width: 768px) {
+            padding: 41px 50px 18px;
+        }
     }
     .advantages {
         li {
@@ -110,25 +112,32 @@
     }
     .description {
         position: relative;
-        padding-left: 38px;
-        &:before {
-            content: url("../../../../assets/common/icons/offers/info.svg");
-            position: absolute;
-            left: 0;
-            top: 13px;
+        display: flex;
+        flex-direction: column;
+        & > div {
+            display: flex;
+            &:before {
+                content: url("../../../../assets/common/icons/offers/info.svg");
+                top: 16px;
+                position: absolute;
+            }
+            h4 {
+                font-size: 19px;
+                font-weight: 700;
+                margin-left: 10px;
+                margin-left: 33px;
+            }
         }
-        h4 {
-            font-size: 19px;
-            font-weight: 700;
-        }
+
         p {
             font-size: 14px;
             line-height: 1.57;
             color: @grey;
+            margin-left: 33px;
         }
     }
     .trackingScore {
-        padding: 24px 21px 28px 41px;
+        padding: 24px 21px 10px 41px;
         background-color: #f4f5f5;
         display: flex;
         margin-top: 30px;
@@ -147,6 +156,9 @@
             font-size: 15px;
             line-height: 1.47;
             color: @grey;
+        }
+        @media (max-width: 767px) {
+            padding-left: 28px;
         }
     }
 }

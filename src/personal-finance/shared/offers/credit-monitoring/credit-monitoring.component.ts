@@ -17,17 +17,17 @@ export class CreditMonitoringComponent implements OnInit {
         {
             iconSrc: 'curriculum.svg',
             title: 'Identity restoration',
-            text: 'Vestibulum rutrum quam vitae fringilla tincidunt. Suspendisse nec tortor urna. Ut laoreet sodales nisi.'
+            text: this.ls.l('CreditMonitoring_IdentityRestorationText')
         },
         {
             iconSrc: 'hacker.svg',
             title: 'Stop cyber thieves',
-            text: 'Vestibulum rutrum quam vitae fringilla tincidunt. Suspendisse nec tortor urna. Ut laoreet sodales nisi.'
+            text: this.ls.l('CreditMonitoring_StopCyberThievesText')
         },
         {
             iconSrc: 'cash.svg',
             title: '$1,000,000 protection',
-            text: 'Vestibulum rutrum quam vitae fringilla tincidunt. Suspendisse nec tortor urna. Ut laoreet sodales nisi.'
+            text: this.ls.l('CreditMonitoring_MilionProtectionText')
         }
     ];
     constructor(
