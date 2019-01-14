@@ -119,10 +119,10 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                         name: this.ls('PFM', 'Offers_CreditScore'),
                         routerUrl: '/personal-finance/offers/credit-score'
                     },
-                    {
-                        name: this.ls('PFM', 'Offers_CreditRepair'),
-                        routerUrl: '/personal-finance/offers/credit-repair'
-                    },
+                    // {
+                    //     name: this.ls('PFM', 'Offers_CreditRepair'),
+                    //     routerUrl: '/personal-finance/offers/credit-repair'
+                    // },
                     {
                         name: this.ls('PFM', 'Offers_CreditMonitoring'),
                         routerUrl: '/personal-finance/offers/credit-monitoring'

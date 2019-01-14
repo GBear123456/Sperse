@@ -303,6 +303,7 @@ input.form-control {
 
 .slogan-side img {
     margin: 60px auto;
+    max-width: 100%;
 }
 
 .slogan-side .slogan {
@@ -765,4 +766,8 @@ input.form-control {
 }
 .swal-modal .swal-button.swal-button--cancel:hover {
   background: #d7d7d7;
+}
+
+body.modal-open {
+    overflow: hidden !important;
 }

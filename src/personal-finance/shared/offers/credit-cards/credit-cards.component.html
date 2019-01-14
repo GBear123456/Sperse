@@ -63,6 +63,14 @@
             </div>
             <div class="col-md-9 col-sm-8 offer-collection">
                 <div class="row" *ngIf="(cards && cards.length); else noData">
+                    <div class="w-100 mb-5">
+                        <div class="col-12 text-center">
+                            <button class="best-cc-offers" (click)="openOffers(selectedOfferGroup)">
+                                View all cards in this category
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="col-md-4 col-sm-6 card-item" *ngFor="let card of cards" (click)="openOffers(card)">
                         <div class="card-item__img--wrap">
                             <img [src]="card.logoUrl" alt="Credit Card" class="card-item__img img-fluid">
