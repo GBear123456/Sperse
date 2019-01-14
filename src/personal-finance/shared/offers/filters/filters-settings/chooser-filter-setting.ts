@@ -1,7 +1,7 @@
-import { FilterSettingConstructor } from '@root/personal-finance/shared/offers/filters-settings/filter-setting-constructor';
-import { FilterType } from '@root/personal-finance/shared/offers/filter-type.enum';
-import { TypeInterface } from '@root/personal-finance/shared/offers/interfaces/type-interface';
-import { ChooserFilterInterface } from '@root/personal-finance/shared/offers/interfaces/chooser-filter.interface';
+import { FilterSettingConstructor } from 'personal-finance/shared/offers/filters/filters-settings/filter-setting-constructor';
+import { FilterType } from 'personal-finance/shared/offers/filter-type.enum';
+import { TypeInterface } from 'personal-finance/shared/offers/filters/interfaces/type-interface';
+import { ChooserFilterInterface } from 'personal-finance/shared/offers/filters/interfaces/chooser-filter.interface';
 
 export enum ChooserType {
     Single,

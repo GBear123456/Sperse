@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 import {
     ChooserDesign,
     ChooserType
-} from '@root/personal-finance/shared/offers/filters-settings/chooser-filter-setting';
+} from '@root/personal-finance/shared/offers/filters/filters-settings/chooser-filter-setting';
 
 export class ChooserOption {
     name: string;

@@ -58,16 +58,23 @@
                                 </div>
                             </ng-container>
                             <ng-container *ngSwitchCase="filterType.Select">
-                                <mat-select
-                                    *ngIf="(filter.values$ | async) as filterValues"
-                                    [value]="(filter.selected$ | async) || filterValues[0].value || filterValues[0]"
-                                    (selectionChange)="filter.onChange && filter.onChange($event)">
-                                    <mat-option
-                                        *ngFor="let filterOption of filterValues"
-                                        [value]="filterOption.value || filterOption">
-                                        {{ filterOption.name || filterOption }}
-                                    </mat-option>
-                                </mat-select>
+                                <ng-container *ngIf="(filter.values$ | async) as filterValues">
+                                    <mat-select
+                                        [value]="(filter.selected$ | async) || filterValues[0].value"
+                                        (selectionChange)="filter.onChange && filter.onChange($event)" #select>
+                                        <mat-select-trigger *ngIf="filter.templateName === 'rating'">
+                                            <stars-rating [currentRating]="select.value" color="#f0d500"></stars-rating>
+                                        </mat-select-trigger>
+                                        <mat-option
+                                            *ngFor="let filterOption of filterValues"
+                                            [value]="filterOption.value || filterOption">
+                                            <ng-container *ngIf="!filter.templateName">{{ filterOption.name || filterOption }}</ng-container>
+                                            <ng-container *ngIf="filter.templateName === 'rating'">
+                                                 <stars-rating [currentRating]="filterOption.value" color="#f0d500"></stars-rating>
+                                            </ng-container>
+                                        </mat-option>
+                                    </mat-select>
+                                </ng-container>
                             </ng-container>
                             <ng-container *ngSwitchCase="filterType.Chooser">
                                 <ng-container *ngIf="(filter.values$ | async) as filterValues">

@@ -16,7 +16,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
-import { first, filter, finalize, map, publishReplay, refCount, takeUntil, tap, pluck, switchMap, skip, withLatestFrom } from 'rxjs/operators';
+import {
+    first,
+    filter,
+    finalize,
+    map,
+    mergeMap,
+    publishReplay,
+    refCount,
+    takeUntil,
+    tap,
+    pluck,
+    switchMap,
+    skip,
+    withLatestFrom, distinct, toArray
+} from 'rxjs/operators';
 import { kebabCase } from 'lodash';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
@@ -34,15 +48,15 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { CurrencyPipe } from '@angular/common';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
-import { FilterSettingInterface } from '@root/personal-finance/shared/offers/interfaces/filter-setting.interface';
+import { FilterSettingInterface } from '@root/personal-finance/shared/offers/filters/interfaces/filter-setting.interface';
 import { StepConditionInterface } from '@root/personal-finance/shared/offers/interfaces/step-condition.interface';
 import { FilterType } from '@root/personal-finance/shared/offers/filter-type.enum';
-import { RangeFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/range-filter-setting';
-import { SelectFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/select-filter-setting';
-import { RadioFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/radio-filter-setting';
-import { CheckboxFilterSetting } from '@root/personal-finance/shared/offers/filters-settings/checkbox-filter-setting';
+import { RangeFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/range-filter-setting';
+import { SelectFilterModel, SelectFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/select-filter-setting';
+import { RadioFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/radio-filter-setting';
+import { CheckboxFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/checkbox-filter-setting';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
-import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal-finance/shared/offers/filters-settings/chooser-filter-setting';
+import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal-finance/shared/offers/filters/filters-settings/chooser-filter-setting';
 import { ChooserOption } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
 
 @Component({
@@ -73,6 +87,7 @@ export class OffersComponent implements OnInit, OnDestroy {
             field: 'rewardsBonus'
         }
     ];
+    brands$: BehaviorSubject<SelectFilterModel[]> = new BehaviorSubject<SelectFilterModel[]>([]);
     category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route.params);
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
@@ -160,9 +175,7 @@ export class OffersComponent implements OnInit, OnDestroy {
                 name: this.ls.l('Offers_Filter_ResidentState'),
                 selected$: this.stateCode$,
                 values$: this.store$.pipe(
-                    select(StatesStoreSelectors.getState, {
-                        countryCode: 'US'
-                    }),
+                    select(StatesStoreSelectors.getState, { countryCode: 'US' }),
                     map(states => states.map(state => ({ name: state.name, value: state.code })))
                 )
             })
@@ -268,15 +281,15 @@ export class OffersComponent implements OnInit, OnDestroy {
                     console.log(selectedValues);
                 }
             }),
-            new CheckboxFilterSetting({
+            new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_Rating'),
-                values$: of([ 5, 4, 3, 2, 1 ]),
-                showAll: false
+                values$: of([ '5', '4', '3', '2', '1' ].map(value => ({ name: value, value: value }) )),
+                selected$: of('3'),
+                templateName: 'rating'
             }),
-            new CheckboxFilterSetting({
+            new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_Brand'),
-                values$: of([ 'American Express', 'Bank of America', 'Barclaycard', 'Capital One', 'Chase' ]),
-                showAll: false
+                values$: this.brands$
             }),
             new ChooserFilterSetting({
                 name: this.ls.l('Offers_Filter_Network'),
@@ -309,14 +322,18 @@ export class OffersComponent implements OnInit, OnDestroy {
         ],
         [CategoryGroupEnum.Default]: [
             new CheckboxFilterSetting({
-                name: this.ls.l('Offers_Filter_Brand'),
-                values$: of([ 'American Express', 'Bank of America', 'Barclaycard', 'Capital One', 'Chase' ]),
-                showAll: false
-            }),
-            new CheckboxFilterSetting({
                 name: this.ls.l('Offers_Filter_Type'),
                 values$: of([ 'Small business', 'Personal' ]),
                 showAll: false
+            }),
+            new SelectFilterSetting({
+                name: this.ls.l('Offers_Filter_Rating'),
+                values$: of([ '5', '4', '3', '2', '1' ].map(value => ({ name: value, value: value }) )),
+                templateName: 'rating'
+            }),
+            new SelectFilterSetting({
+                name: this.ls.l('Offers_Filter_Brand'),
+                values$: this.brands$
             }),
             new CheckboxFilterSetting({
                 name: this.ls.l('Offers_Filter_Category'),
@@ -326,11 +343,6 @@ export class OffersComponent implements OnInit, OnDestroy {
             new CheckboxFilterSetting({
                 name: this.ls.l('Offers_Filter_Network'),
                 values$: of([ 'AmEx', 'Visa', 'Master', 'Diners Club', 'Cashback' ]),
-                showAll: false
-            }),
-            new CheckboxFilterSetting({
-                name: this.ls.l('Offers_Filter_Rating'),
-                values$: of([ 5, 4, 3, 2, 1 ]),
                 showAll: false
             })
         ]
@@ -413,24 +425,33 @@ export class OffersComponent implements OnInit, OnDestroy {
             takeUntil(this.deactivate$),
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAreLoading = true; }),
             withLatestFrom(this.offersService.memberInfo$),
-            switchMap(([filter, memberInfo]) => this.offerServiceProxy.getAll(
-                memberInfo.testMode,
-                memberInfo.isDirectPostSupported,
-                filter.category,
-                undefined,
-                filter.country,
-                this.getCategoryGroup(filter.category) === CategoryGroupEnum.Loans
-                    ? this.offersService.covertNumberToCreditScore(filter.creditScore)
-                    : undefined,
-                undefined,
-                undefined
-            ).pipe(
-                finalize(() => {
-                    this.offersAreLoading = false;
-                    abp.ui.clearBusy(this.offersListRef.nativeElement);
-                    this.changeDetectorRef.detectChanges();
-                })
-            )),
+            switchMap(
+                ([filter, memberInfo]) => this.offerServiceProxy.getAll(
+                    memberInfo.testMode,
+                    memberInfo.isDirectPostSupported,
+                    filter.category,
+                    undefined,
+                    filter.country,
+                    this.getCategoryGroup(filter.category) === CategoryGroupEnum.Loans
+                        ? this.offersService.covertNumberToCreditScore(filter.creditScore)
+                        : undefined,
+                    undefined,
+                    undefined
+                ).pipe(
+                    finalize(() => {
+                        this.offersAreLoading = false;
+                        abp.ui.clearBusy(this.offersListRef.nativeElement);
+                        this.changeDetectorRef.detectChanges();
+                    }),
+                    tap((offers: OfferDto[]) => {
+                        if (!this.brands$.value.length) {
+                            this.getBrandsFromOffers(of(offers)).subscribe(
+                                (brands: SelectFilterModel[]) => this.brands$.next(brands)
+                            );
+                        }
+                    })
+                )
+            ),
             tap(offers => {
                 this.offersAmount = offers.length;
                 this.changeDetectorRef.detectChanges();
@@ -438,6 +459,10 @@ export class OffersComponent implements OnInit, OnDestroy {
             publishReplay(),
             refCount()
         );
+
+        this.brands$.subscribe(x => {
+            console.log(x);
+        });
 
         /** Insert filters values from credit cards data */
         this.offers$.pipe(takeUntil(this.deactivate$), map((offers: OfferDto[]) => {
@@ -462,12 +487,24 @@ export class OffersComponent implements OnInit, OnDestroy {
         });
     }
 
+    private getBrandsFromOffers(offers: Observable<OfferDto[]>): Observable<SelectFilterModel[]> {
+        return offers.pipe(
+            mergeMap(x => x),
+            pluck('issuingBank'),
+            filter(brand => !!brand),
+            distinct(),
+            map(brand => <SelectFilterModel>({ name: brand, value: brand })),
+            toArray()
+        );
+    }
+
     private getDefaultFilters() {
         return {
             category: undefined,
             type: undefined,
             country: 'US',
-            creditScore: null
+            creditScore: null,
+            brand: null
         };
     }
 
