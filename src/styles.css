@@ -3,6 +3,18 @@
 
 /* You can add global styles to this file, and also import other style files */
 
+/* fix scrolling body when mat dialog is open*/
+html,
+body {
+    position: relative;
+    top: 0 !important;
+    left: 0 !important;
+    overflow: auto;
+}
+.cdk-global-scrollblock {
+    overflow-y: auto !important;
+}
+
 body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     font-family: Montserrat;
 }
