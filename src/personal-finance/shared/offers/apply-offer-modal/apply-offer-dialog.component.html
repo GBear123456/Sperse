@@ -1,6 +1,10 @@
 <mat-dialog-content>
     <ng-container *ngIf="!showBlockedMessage">
-        <div class="nextImageBlock"></div>
+        <div class="nextImageBlock">
+            <ng-container *ngIf="data.logoUrl">
+                <img [src]="data.logoUrl">
+            </ng-container>
+        </div>
         <h2>{{title}}</h2>
         <p>{{subtitle}}</p>
         <ng-container *ngIf="processingSteps[currentStepIndex] as processingStep">

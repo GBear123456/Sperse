@@ -119,11 +119,12 @@ export class OffersService {
         });
         const modalData = {
             processingSteps: [null, null, null, null],
-            completeDelays: [ 250, 250, 250, 250 ],
+            completeDelays: [ 250, 250, 250, 250000 ],
             delayMessages: null,
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: offer.redirectUrl
+            redirectUrl: offer.redirectUrl,
+            logoUrl: offer.logoUrl
         };
         if (!linkIsDirect) {
             modalData.processingSteps = cloneDeep(this.processingSteps);
