@@ -17,6 +17,7 @@
 }
 
 .form-wrapper {
+    padding: 0;
     h1 {
         margin-top: 90px;
         margin-bottom: 75px;
@@ -28,6 +29,7 @@
     .login-form {
         max-width: 520px;
         margin: 0 auto;
+        padding: 0;
     }
     input.form-control {
         font-size: 16px;
@@ -46,6 +48,12 @@
             box-shadow: none;
             line-height: 54px;
             position: relative;
+            
+            @media all and (max-width: 450px) {
+                min-width: 0;
+                width: 95%;
+            }
+            
             &[disabled] {
                 opacity: .7;
                 cursor: not-allowed;
