@@ -1,0 +1,6 @@
+<ul [ngClass]="design">
+    <li *ngFor="let option of options" (click)="chooseOption(option)" [ngClass]="{ selected: option.selected }">
+        <ng-container *ngIf="option.iconSrc"><img [src]="option.iconSrc" [alt]="option.name || option.value"></ng-container>
+        <ng-container *ngIf="!option.iconSrc">{{ option.name }}</ng-container>
+    </li>
+</ul>

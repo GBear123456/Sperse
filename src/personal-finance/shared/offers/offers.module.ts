@@ -27,6 +27,7 @@ import { CreditCardsComponent } from './credit-cards/credit-cards.component';
 import { CreditScoreComponent } from '@root/personal-finance/shared/offers/credit-score/credit-score.component';
 import { NavigationComponent } from '@root/personal-finance/shared/offers/navigation/navigation.component';
 import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/credit-monitoring/credit-monitoring.component';
+import { ChooserFilterComponent } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
 
 @NgModule({
     imports: [
@@ -53,7 +54,8 @@ import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/
         CreditCardsComponent,
         CreditScoreComponent,
         NavigationComponent,
-        CreditMonitoringComponent
+        CreditMonitoringComponent,
+        ChooserFilterComponent
     ],
     providers: [
         OffersService,
