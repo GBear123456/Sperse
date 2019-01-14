@@ -1,5 +1,5 @@
 /** Core imports  */
-import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Injector, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -31,8 +31,12 @@ declare const Quovo: any;
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChildren('content') set contentElements(elements: QueryList<any>) {
+        this.contentElement = elements.first && elements.first.nativeElement;
+    }
+    private contentElement: ElementRef;
     private tokenLoading$: Observable<GetProviderUITokenOutput>;
-    
+
     isStartDisabled = false;
     isInstanceInfoLoaded = false;
 
@@ -67,6 +71,13 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit() {
+        this.sectionName$ = this._activatedRoute.params.pipe(
+            takeUntil(this.destroy$),
+            pluck('sectionName'),
+            /** If section name is in menuItems array - use it, else - default section */
+            map((sectionName: string) => sectionName && this.menuItems.some(item => item.sectionName === sectionName) ? sectionName : this.defaultSection),
+            tap(sectionName => this.currentSectionName = sectionName)
+        );
         if (this.appSession.userId)
             this.checkInstanceChangeProcess();
     }
@@ -76,13 +87,6 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             this.isInstanceInfoLoaded = true;
             this.loadQouvoPfm();
         });
-        this.sectionName$ = this._activatedRoute.params.pipe(
-            takeUntil(this.destroy$),
-            pluck('sectionName'),
-            /** If section name is in menuItems array - use it, else - default section */
-            map((sectionName: string) => sectionName && this.menuItems.some(item => item.sectionName === sectionName) ? sectionName : this.defaultSection),
-            tap(sectionName => this.currentSectionName = sectionName)
-        );
     }
 
     private loadQouvoPfm() {
@@ -142,10 +146,9 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private refreshQuovoSection(sectionName: string) {
-        const element = this.getElementRef().nativeElement.querySelector('.p-content');
-        abp.ui.setBusy(element);
+        abp.ui.setBusy(this.contentElement);
         this.tokenLoading$
-            .pipe(finalize(() => abp.ui.clearBusy(element)))
+            .pipe(finalize(() => abp.ui.clearBusy(this.contentElement)))
             .subscribe(
                 res => {
                     $('.quovo-accounts-module').html('');
@@ -172,15 +175,17 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         this.isStartDisabled = true;
         if (this._cfoService.initialized)
             this.addAccount();
-        else
+        else {
+            abp.ui.setBusy(this.contentElement);
             this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType])
-            .subscribe(
-                () => {
-                    this.checkInstanceChangeProcess();
-                    this.addAccount();
-                },
-                () => this.isStartDisabled = false
-            );
+                .subscribe(
+                    () => {
+                        this.checkInstanceChangeProcess();
+                        this.addAccount();
+                    },
+                    () => this.isStartDisabled = false
+                );
+        }
     }
 
     private addAccount() {
@@ -222,8 +227,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
                         this.refreshQuovoSection(this.currentSectionName);
                     }
                 });
-        }
-        else {
+        } else {
             this.quovoActivityCheck = setTimeout(() => this.checkQouvoActivity(), 30 * 1000);
         }
     }
