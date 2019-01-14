@@ -42,7 +42,7 @@ export class HostResetPasswordComponent extends AppComponentBase implements OnIn
                 if (isEqual(tenantId, {})) tenantId = null; // hack for host tenant
 
                 this._appSessionService.changeTenantIfNeeded(
-                    tenantId
+                    tenantId, false
                 );
 
                 this._profileService.getPasswordComplexitySetting().subscribe(result => {
