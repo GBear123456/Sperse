@@ -441,8 +441,6 @@
                 sessionStorage.setItem(origRefererKey, document.referrer);
             }
         }
-
-        console.log(sessionStorage.getItem(origRefererKey));
     }
 
     function updateCurrentYear() {
