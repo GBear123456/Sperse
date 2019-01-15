@@ -11,7 +11,7 @@ import { kebabCase, lowerCase, startCase } from 'lodash';
 export class NavigationComponent {
     links = [
         Category.CreditScore,
-        Category.CreditRepair,
+        // Category.CreditRepair,
         Category.CreditMonitoring,
         Category.DebtConsolidation
     ].map(category => kebabCase(category));

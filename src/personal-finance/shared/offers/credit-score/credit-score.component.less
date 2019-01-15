@@ -15,6 +15,10 @@
             font-weight: 700;
             white-space: nowrap;
         }
+        
+        @media all and (max-width: 991px) {
+            display: none;
+        }
     }
     .content-header {
         margin-bottom: 27px;
@@ -47,12 +51,22 @@
                     left: 0;
                 }
             }
+            
+            @media all and (max-width: 460px) {
+                font-size: 36px;
+                line-height: 1.4;
+                margin: 15px auto;
+            }
         }
         h3 {
             font-size: 23px;
             letter-spacing: 0.2px;
             span {
                 font-weight: 600;
+                
+                @media all and (max-width: 460px) {
+                    display: block;
+                }
             }
         }
     }

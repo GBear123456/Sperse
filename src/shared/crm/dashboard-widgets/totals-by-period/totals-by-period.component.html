@@ -18,7 +18,7 @@
         </div>
     </div>
 </header>
-<div class="chart-wrapper" [hidden]="!totalsData || !totalsData.length">
+<div class="chart-wrapper" *ngIf="totalsData && totalsData.length">
     <dx-chart
         id="bar"
         [barWidth]="1"
@@ -32,11 +32,6 @@
             argumentField="date"
             ignoreEmptyPoints="true">
         </dxo-common-series-settings>
-
-        <dxo-tooltip enabled="true"
-                     zIndex="1"
-                     [customizeTooltip]="customizeBarTooltip">
-        </dxo-tooltip>
 
         <!-- Bottom axis -->
         <dxo-argument-axis
