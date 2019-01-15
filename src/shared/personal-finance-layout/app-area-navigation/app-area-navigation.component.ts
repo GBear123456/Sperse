@@ -32,6 +32,10 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
     loggedUserId: number;
     currentUrl = this._router.url;
 
+    @HostListener('window:click') onClick() {
+        this.closeAllOpenedMenuItems();
+    }
+
     @HostListener('window:resize') onResize() {
         clearTimeout(this.resizeTimeout);
         this.resizeTimeout = setTimeout(() => this.checkMenuWidth());
@@ -59,7 +63,7 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
     }
 
     checkMenuWidth() {
-        const itemWidth = 9, maxInnerWidth = 1140, logoAndMenuWidth = 400;
+        const itemWidth = 10, maxInnerWidth = 1140, logoAndMenuWidth = 400;
         let menuSpace = Math.round(Math.min(innerWidth, maxInnerWidth) - logoAndMenuWidth);
         let menuItemsLength = 0;
 
