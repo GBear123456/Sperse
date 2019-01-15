@@ -12,5 +12,5 @@ export class CreditScoreItem {
 
 export interface ScoreFilterInterface extends FilterSettingInterface {
     values$: Observable<CreditScoreItem[]>;
-    onChange?: (value: CreditScore) => void;
+    onChange?: (value: CreditScoreItem) => void;
 }

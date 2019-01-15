@@ -59,6 +59,7 @@ import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category
 import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal-finance/shared/offers/filters/filters-settings/chooser-filter-setting';
 import { ChooserOption } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
 import { ScoreFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/score-filter-setting';
+import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -243,9 +244,9 @@ export class OffersComponent implements OnInit, OnDestroy {
                     }
                 ]),
                 selected$: of(CreditScore.Fair),
-                onChange: (value: CreditScore) => {
-                    if (this.filtersValues.creditScore != value) {
-                        this.filtersValues.creditScore = <any>value;
+                onChange: (creditScore: CreditScoreItem) => {
+                    if (this.filtersValues.creditScore != creditScore.value) {
+                        this.filtersValues.creditScore = <any>creditScore.value;
                         this.selectedFilter.next(this.filtersValues);
                     }
                 }
@@ -287,12 +288,12 @@ export class OffersComponent implements OnInit, OnDestroy {
                     },
                     {
                         name: this.ls.l('Offers_Student'),
-                        value: 'debit',
+                        value: 'student',
                         selected: true
                     },
                     {
-                        name: this.ls.l('Offers_Prepaid'),
-                        value: 'prepaid'
+                        name: this.ls.l('Offers_Business'),
+                        value: 'business'
                     }
                 ]),
                 selected$: of('credit'),
