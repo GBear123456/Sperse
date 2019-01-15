@@ -135,7 +135,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
             },
             {
                 name: 'My Finances',
-                routerUrl: '/personal-finance/my-finances',
                 hidden: !this.feature.isEnabled('CFO.Partner'),
                 sublinks: [
                     {

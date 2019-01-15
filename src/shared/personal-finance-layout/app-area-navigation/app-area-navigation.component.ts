@@ -5,6 +5,7 @@ import {
     HostListener,
     AfterViewInit,
     Renderer2,
+    ViewChild,
     ViewChildren,
     QueryList,
     ElementRef,
@@ -24,15 +25,12 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
     @Input() memberAreaLinks: any[];
     @Input() actionsButtons: any[];
     @ViewChildren('sublinks') sublinksRefs: QueryList<ElementRef>;
+    @ViewChild('linksList') linksList: ElementRef;
     responsiveMemberAreaLinks = [];
     inlineMemberAreaLinks = [];
     resizeTimeout: any;
     loggedUserId: number;
     currentUrl = this._router.url;
-
-    @HostListener('window:click') onClick() {
-        this.closeAllOpenedMenuItems();
-    }
 
     @HostListener('window:resize') onResize() {
         clearTimeout(this.resizeTimeout);
@@ -81,14 +79,19 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
         }
     }
 
-    navigationItemClick(e, link) {
-        if (link.sublinks && link.sublinks.length && !link.sublinksHidden) {
-            this.closeAllOpenedMenuItems();
-            setTimeout(() => this.renderer.addClass(e.target.parentElement, 'opened'));
-        } else if (link.routerUrl) {
-            this._router.navigate([link.routerUrl]);
+    navigationItemEnter(e, link) {
+        if (link.sublinks && link.sublinks.length) {
+            setTimeout(() => this.renderer.addClass(e.target, 'opened'));
         } else {
             return;
+        }
+    }
+
+    navigationItemLeave(e) {
+        if (!this.getElementRef().nativeElement.contains(e.relatedTarget) ||
+            this.linksList.nativeElement.contains(e.relatedTarget)
+        ) {
+            this.closeAllOpenedMenuItems();
         }
     }
 

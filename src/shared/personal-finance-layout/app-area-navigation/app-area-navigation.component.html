@@ -1,15 +1,17 @@
-<ul class="app-area-navigation" *ngIf="inlineMemberAreaLinks.length">
-    <li *ngFor="let item of inlineMemberAreaLinks" class="app-list-item" routerLinkActive="active" [hidden]="item.hidden">
-        <a (click)="navigationItemClick($event, item)"
-           routerLinkActive="active"
-           [ngClass]="{
-                active: currentUrl === item.routerUrl,
-                disabled: !item.routerUrl && (!item.sublinks || !item.sublinks.length || item.sublinksHidden)}
-            "
-           [routerLinkActiveOptions]="{exact:true}">
-            {{l(item.name)}} <span *ngIf="item.sublinks && item.sublinks.length && !item.sublinksHidden" class="dropdown-mark"></span>
+<ul class="app-area-navigation" *ngIf="inlineMemberAreaLinks.length" #linksList>
+    <li *ngFor="let item of inlineMemberAreaLinks"
+        class="app-list-item"
+        routerLinkActive="active"
+        [hidden]="item.hidden"
+        (mouseenter)="navigationItemEnter($event, item)"
+        (mouseleave)="navigationItemLeave($event, item)">
+        <a routerLinkActive="active"
+            [routerLink]="item.routerUrl || item.sublinks[0].routerUrl"
+            [ngClass]="{ active: currentUrl === item.routerUrl, disabled: !item.routerUrl && (!item.sublinks || !item.sublinks.length)}"
+            [routerLinkActiveOptions]="{exact:true}">
+            {{l(item.name)}} <span *ngIf="item.sublinks && item.sublinks.length" class="dropdown-mark"></span>
         </a>
-        <ul *ngIf="item.sublinks && item.sublinks.length && !item.sublinksHidden" class="sublinks" #sublinks>
+        <ul *ngIf="item.sublinks && item.sublinks.length" class="sublinks" #sublinks>
             <li *ngFor="let sublink of item.sublinks">
                 <a [routerLink]="sublink.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" #simlink>
                     {{l(sublink.name)}}
@@ -26,14 +28,15 @@
     </button>
     <ul class="app-responsive-menu dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
         <li *ngFor="let item of responsiveMemberAreaLinks" routerLinkActive="active" [hidden]="item.hidden">
-            <a (click)="navigationItemClick($event, item)" routerLinkActive="active"
+            <a routerLinkActive="active"
                [ngClass]="item.class"
                [routerLinkActiveOptions]="{exact:true}"
+               [routerLink]="item.routerUrl"
                class="dropdown-item"
-               [class.disable]="item.disabled || !item.routerUrl && (!item.sublinks || !item.sublinks.length || item.sublinksHidden)">
+               [class.disable]="item.disabled || !item.routerUrl && (!item.sublinks || !item.sublinks.length)">
                 {{l(item.name)}}
             </a>
-            <ul *ngIf="item.sublinks && item.sublinks.length && !item.sublinksHidden" class="responsive-sublinks">
+            <ul *ngIf="item.sublinks && item.sublinks.length" class="responsive-sublinks">
                 <li *ngFor="let sublink of item.sublinks">
                     <a [routerLink]="sublink.routerUrl" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
                         {{l(sublink.name)}}
