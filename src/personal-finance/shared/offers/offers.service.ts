@@ -59,7 +59,7 @@ export class OffersService {
             max: 850
         }
     };
-
+    readonly creditCardsLogoUrl = './assets/common/images/offers/credit-land.png';
     displayedCards: OfferDto[];
     defaultCategoryDisplayName: string = this.ls.l('Offers_Offers');
     constructor(
@@ -111,7 +111,7 @@ export class OffersService {
         }
     }
 
-    applyOffer(offer: OfferDto) {
+    applyOffer(offer: OfferDto, isCreditCard = false) {
         const linkIsDirect = !!offer.redirectUrl;
         const submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.campaignId,
@@ -124,7 +124,7 @@ export class OffersService {
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
             redirectUrl: offer.redirectUrl,
-            logoUrl: offer.logoUrl
+            logoUrl: isCreditCard ? this.creditCardsLogoUrl : offer.logoUrl
         };
         if (!linkIsDirect) {
             modalData.processingSteps = cloneDeep(this.processingSteps);

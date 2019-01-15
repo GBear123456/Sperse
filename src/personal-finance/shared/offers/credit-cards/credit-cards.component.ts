@@ -77,7 +77,7 @@ export class CreditCardsComponent implements OnInit {
     }
 
     openOffers(offer: OfferDto) {
-        this.offersService.applyOffer(offer);
+        this.offersService.applyOffer(offer, true);
     }
 
     getCreditCards(collection = 'Best') {
