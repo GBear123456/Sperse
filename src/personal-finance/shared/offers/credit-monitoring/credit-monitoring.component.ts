@@ -16,17 +16,17 @@ export class CreditMonitoringComponent implements OnInit {
     features = [
         {
             iconSrc: 'curriculum.svg',
-            title: 'Identity restoration',
-            text: this.ls.l('CreditMonitoring_IdentityRestorationText')
+            title: 'Credit Score',
+            text: this.ls.l('CreditMonitoring_CreditScoreText')
         },
         {
             iconSrc: 'hacker.svg',
-            title: 'Stop cyber thieves',
+            title: 'Stop Cyber Thieves',
             text: this.ls.l('CreditMonitoring_StopCyberThievesText')
         },
         {
             iconSrc: 'cash.svg',
-            title: '$1,000,000 protection',
+            title: '$1,000,000 Protection',
             text: this.ls.l('CreditMonitoring_MilionProtectionText')
         }
     ];
