@@ -169,8 +169,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                 ]
             },
             {
-                name: 'Articles',
-                routerUrl: '/personal-finance/articles'
+                name: 'Resources',
+                routerUrl: '/personal-finance/resources'
             }
         ];
     }

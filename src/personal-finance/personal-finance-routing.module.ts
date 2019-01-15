@@ -56,7 +56,7 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                         data: { wrapperDisabled: true }
                     },
                     {
-                        path: 'articles',
+                        path: 'resources',
                         loadChildren: 'personal-finance/pages/articles/articles.module#ArticlesModule',
                         data: { wrapperDisabled: true, isPublic: true }
                     },
