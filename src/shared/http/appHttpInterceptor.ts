@@ -12,7 +12,9 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
 
     addAuthorizationHeaders(header: HttpHeaders): HttpHeaders {
         let headers = super.addAuthorizationHeaders(header);
-        headers = headers.set('InitialReferrer', abp.utils.getCookieValue('InitialReferrer'));
+        let originalReferer = sessionStorage.getItem('OriginalReferer');
+        if (originalReferer)
+            headers = headers.set('OriginalReferer', originalReferer);
         return headers;
     }
 
