@@ -69,7 +69,7 @@
                                         <li *ngIf="isImpersonatedLogin" class="m-nav__separator m-nav__separator--fit"></li>
                                         <li class="m-nav__item">
                                             <a href="javascript:;" class="m-nav__link" (click)="changePassword($event)">
-                                                <img class="user-menu-icon" src="assets/common/images/lend-space-dark/icons/lock-open.svg">
+                                                <i class="user-menu-icon change-password"></i>
                                                 <span class="m-nav__link-title">
                                                     <span class="m-nav__link-wrap">
                                                         <span id="UserProfileChangePasswordLink" class="m-nav__link-text">
@@ -81,7 +81,7 @@
                                         </li>
                                         <li class="m-nav__item">
                                             <a href="javascript:;" class="m-nav__link" (click)="showLoginAttempts($event)">
-                                                <img class="user-menu-icon" src="assets/common/images/lend-space-dark/icons/playlist.svg">
+                                                <i class="user-menu-icon login-attempts"></i>
                                                 <span class="m-nav__link-title">
                                                     <span class="m-nav__link-wrap">
                                                         <span id="ShowLoginAttemptsLink" class="m-nav__link-text">
@@ -93,7 +93,7 @@
                                         </li>
                                         <li class="m-nav__item">
                                             <a class="m-nav__link" (click)="changeProfilePicture($event)">
-                                                <img class="user-menu-icon" src="assets/common/images/lend-space-dark/icons/user-picture.svg">
+                                                <i class="user-menu-icon profile-picture"></i>
                                                 <span class="m-nav__link-title">
                                                     <span class="m-nav__link-wrap">
                                                         <span id="UserProfileChangePictureLink" class="m-nav__link-text">
@@ -105,7 +105,7 @@
                                         </li>
                                         <li class="m-nav__item">
                                             <a href="javascript:;" class="m-nav__link" (click)="changeMySettings($event)">
-                                                <img class="user-menu-icon" src="assets/common/images/lend-space-dark/icons/settings-gear.svg">
+                                                <i class="user-menu-icon settings"></i>
                                                 <span class="m-nav__link-title">
                                                     <span class="m-nav__link-wrap">
                                                         <span id="UserProfileMySettingsLink" class="m-nav__link-text">
@@ -117,7 +117,7 @@
                                         </li>
                                         <li class="m-nav__item">
                                             <a href={{helpLink}} target="_blank" class="m-nav__link">
-                                                <img class="user-menu-icon" src="assets/common/images/lend-space-dark/icons/help.svg">
+                                                <i class="user-menu-icon help"></i>
                                                 <span class="m-nav__link-title">
                                                     <span class="m-nav__link-wrap">
                                                         <span class="m-nav__link-text">
@@ -130,7 +130,7 @@
                                         <li class="m-nav__separator m-nav__separator--fit"></li>
                                         <li class="m-nav__item bottom-logout">
                                             <a class="m-nav__link" href="javascript:;" (click)="logout()">
-                                                <img class="user-menu-icon" src="assets/common/icons/logout.svg">
+                                                <i class="user-menu-icon logout"></i>
                                                 <span class="m-nav__link-title">
                                                     <span class="m-nav__link-wrap">
                                                         <span class="m-nav__link-text">
@@ -142,7 +142,7 @@
                                         </li>
                                         <li *ngIf="hasPlatformPermissions" class="m-nav__item bottom-back">
                                             <a class="m-nav__link" routerLink="/app">
-                                                <img class="user-menu-icon" src="assets/common/images/lend-space-dark/icons/back.svg">
+                                                <i class="user-menu-icon back"></i>
                                                 <span class="m-nav__link-title">
                                                     <span class="m-nav__link-wrap">
                                                         <span class="m-nav__link-text">
