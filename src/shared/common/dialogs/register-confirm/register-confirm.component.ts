@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 
 import { ConditionsModalComponent } from 'shared/common/conditions-modal/conditions-modal.component';
 import { AppConsts } from 'shared/AppConsts';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-register-confirm',
@@ -19,13 +20,13 @@ export class RegisterConfirmComponent implements OnInit {
     };
     constructor(
         private dialog: MatDialog,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        public ls: AppLocalizationService
     ) {
+    
     }
 
-    ngOnInit() {
-        console.log(this.data);
-    }
+    ngOnInit() {}
 
     openConditionsDialog(event, data: any) {
         event.preventDefault();
