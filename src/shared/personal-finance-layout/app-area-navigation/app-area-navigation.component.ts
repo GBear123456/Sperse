@@ -59,7 +59,7 @@ export class AppAreaNavigationComponent extends AppComponentBase implements Afte
     }
 
     checkMenuWidth() {
-        const itemWidth = 10, maxInnerWidth = 1140, logoAndMenuWidth = 400;
+        const itemWidth = 9, maxInnerWidth = 1140, logoAndMenuWidth = 400;
         let menuSpace = Math.round(Math.min(innerWidth, maxInnerWidth) - logoAndMenuWidth);
         let menuItemsLength = 0;
 

@@ -290,7 +290,7 @@
 
         if (window['logoImage']) {
             logoImage.setAttribute('src',
-                tenant && loginInformations.tenant.logoId ?
+                tenant && tenant.logoId ?
                 remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId:
                 getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
             );
