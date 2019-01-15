@@ -16,7 +16,7 @@ export class CreditMonitoringComponent implements OnInit {
     features = [
         {
             iconSrc: 'curriculum.svg',
-            title: 'Credit Score',
+            title: 'ID Protection',
             text: this.ls.l('CreditMonitoring_CreditScoreText')
         },
         {
