@@ -591,7 +591,9 @@ export class OffersComponent implements OnInit, OnDestroy {
     }
 
     applyOffer(offer: OfferDto) {
-        this.offersService.applyOffer(offer);
+        this.category$.pipe(first()).subscribe(
+            (category: Category) => this.offersService.applyOffer(offer, category === Category.CreditCards)
+        );
     }
 
     changeStep(sliderChange: MatSliderChange, stepsConditions: StepConditionInterface[]) {
