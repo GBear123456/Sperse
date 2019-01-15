@@ -18,7 +18,7 @@ export class ApplyOfferDialogComponent implements OnInit {
     subtitle: string;
     constructor(
         private dialogRef: MatDialogRef<ApplyOfferDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) private data: any,
+        @Inject(MAT_DIALOG_DATA) public data: any,
         public ls: AppLocalizationService
     ) {
         this.processingSteps = this.data.processingSteps;

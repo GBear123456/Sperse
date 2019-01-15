@@ -123,7 +123,8 @@ export class OffersService {
             delayMessages: null,
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: offer.redirectUrl
+            redirectUrl: offer.redirectUrl,
+            logoUrl: offer.logoUrl
         };
         if (!linkIsDirect) {
             modalData.processingSteps = cloneDeep(this.processingSteps);
