@@ -60,13 +60,13 @@ export class CreditCardsComponent implements OnInit {
             this.bestCreditCard = _.first(list.filter(item => 'Best' == item.offerCollection));
             this.selectedOfferGroup = _.first(list.filter(item => this.route.snapshot.params.group == item.offerCollection));
             this.creditCardCollection = list.filter(item => !_.contains(this.creditScoreNames, item.offerCollection));
-            this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection)).sort((a, b) => {
-                return itemOfOfferCollections.indexOf(a['offerCollection']) > itemOfOfferCollections.indexOf(b['offerCollection']) ? 1 : -1;
-            });
-            this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort((a, b) => {
-                return itemOfOfferCollections.indexOf(a['offerCollection']) > itemOfOfferCollections.indexOf(b['offerCollection']) ? 1 : -1;
-            });
+            this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection)).sort(this.sortCollection.bind(this, itemOfOfferCollections));
+            this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort(this.sortCollection.bind(this, itemOfOfferCollections));
         });
+    }
+
+    sortCollection(itemOfOfferCollections, a, b) {
+        return itemOfOfferCollections.indexOf(a['offerCollection']) > itemOfOfferCollections.indexOf(b['offerCollection']) ? 1 : -1;
     }
 
     ngOnInit() {
