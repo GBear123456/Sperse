@@ -119,7 +119,7 @@ export class OffersService {
         });
         const modalData = {
             processingSteps: [null, null, null, null],
-            completeDelays: [ 250, 250, 250, 250000 ],
+            completeDelays: [ 250, 250, 250, 250 ],
             delayMessages: null,
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
