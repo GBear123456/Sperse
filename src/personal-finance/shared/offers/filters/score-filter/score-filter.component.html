@@ -1,0 +1,6 @@
+<ul>
+    <li *ngFor="let scoreItem of items" (click)="onChoose(scoreItem)" [ngClass]="{ checked: scoreItem.checked }">
+        <span class="name">{{ scoreItem.name }} </span>
+        <span class="range" *ngIf="scoreItem.min && scoreItem.max">({{ scoreItem.min + '-' + scoreItem.max }})</span>
+    </li>
+</ul>
