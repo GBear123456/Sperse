@@ -18,7 +18,7 @@
         display: flex;
         min-height: 100vh;
         flex-direction: column;
-        padding-top: 70px;
+        padding-top: 69px;
 
         main {
             flex: 1;
@@ -29,7 +29,9 @@
         }
 
         &.dark-layout {
-            background: #262626;
+            &, #main {
+                background-color: #262626;
+            }
         }
 
         .row {
