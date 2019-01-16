@@ -62,16 +62,17 @@ import { ScoreFilterSetting } from '@root/personal-finance/shared/offers/filters
 import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
 
 @Component({
-    templateUrl: './offers.component.html',
-    styleUrls: [ './offers.component.less' ],
+    templateUrl: './offers-layout.component.html',
+    styleUrls: [ './offers-layout.component.less' ],
+    selector: 'offers-layout',
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ CurrencyPipe, NumberAbbrPipe ]
 })
-export class OffersComponent implements OnInit, OnDestroy {
+export class OffersLayoutComponent implements OnInit, OnDestroy {
     @ViewChild('offersList') offersListRef: ElementRef;
     @ViewChild('filtersSideBar') filtersSideBar: ElementRef;
     @ViewChild('sortingSelect') sortingSelect: MatSelect;
-    private offers$: Observable<any>;
+    offers$: Observable<any>;
     displayedOffers$: Observable<any>;
     offersAmount: number;
     offersAreLoading = false;
@@ -90,7 +91,7 @@ export class OffersComponent implements OnInit, OnDestroy {
         }
     ];
     brands$: BehaviorSubject<SelectFilterModel[]> = new BehaviorSubject<SelectFilterModel[]>([]);
-    category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route.params);
+    category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route);
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
     creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.offersService.covertCreditScoreToNumber(score)));
@@ -180,33 +181,6 @@ export class OffersComponent implements OnInit, OnDestroy {
                     select(StatesStoreSelectors.getState, { countryCode: 'US' }),
                     map(states => states.map(state => ({ name: state.name, value: state.code })))
                 )
-            })
-        ],
-        [CategoryGroupEnum.CreditScore]: [
-            new RadioFilterSetting({
-                values$: of([
-                    {
-                        name: this.ls.l('Offers_CreditScore'),
-                        value: Category.CreditScore
-                    },
-                    {
-                        name: this.ls.l('Offers_CreditRepair'),
-                        value: Category.CreditRepair
-                    },
-                    {
-                        name: this.ls.l('Offers_CreditMonitoring'),
-                        value: Category.CreditMonitoring
-                    },
-                    {
-                        name: this.ls.l('Offers_DebtConsolidation'),
-                        value: Category.DebtConsolidation
-                    }
-                ]),
-                selected$: this.category$,
-                navigation: true,
-                onChange: (e: MatRadioChange) => {
-                    this.router.navigate(['../' + kebabCase(e.value)], { relativeTo: this.route });
-                }
             })
         ],
         [CategoryGroupEnum.CreditCards]: [
@@ -413,7 +387,6 @@ export class OffersComponent implements OnInit, OnDestroy {
                     break;
             }
         });
-
         this.selectedFilter$ = combineLatest(this.creditScore$, this.category$)
             .pipe(
                 first(),
@@ -479,10 +452,6 @@ export class OffersComponent implements OnInit, OnDestroy {
             publishReplay(),
             refCount()
         );
-
-        this.brands$.subscribe(x => {
-            console.log(x);
-        });
 
         /** Insert filters values from credit cards data */
         this.offers$.pipe(takeUntil(this.deactivate$), map((offers: OfferDto[]) => {

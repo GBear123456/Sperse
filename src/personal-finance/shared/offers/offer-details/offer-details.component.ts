@@ -70,7 +70,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     }
 
     activate() {
-        this.category$ = this.offersService.getCategoryFromRoute(this.route.params).pipe(first());
+        this.category$ = this.offersService.getCategoryFromRoute(this.route).pipe(first());
         this.category$.subscribe(res => {
             switch (this.selectedCategory = res) {
                 case Category.PersonalLoans:

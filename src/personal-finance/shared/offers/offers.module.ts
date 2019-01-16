@@ -12,7 +12,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 
 /** Application imports */
-import { OffersComponent } from '@root/personal-finance/shared/offers/offers.component';
+import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offers-layout.component';
 import { LayoutModule } from '../layout/layout.module';
 import { StarsRatingComponent } from '@root/personal-finance/shared/offers/stars-rating/stars-rating.component';
 import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
@@ -29,6 +29,9 @@ import { NavigationComponent } from '@root/personal-finance/shared/offers/naviga
 import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/credit-monitoring/credit-monitoring.component';
 import { ChooserFilterComponent } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
 import { ScoreFilterComponent } from '@root/personal-finance/shared/offers/filters/score-filter/score-filter.component';
+import { BusinessLoansComponent } from '@root/personal-finance/shared/offers/business-loans/business-loans.component';
+import { OffersCategoryDetailsComponent } from '@root/personal-finance/shared/offers/offers-category-details/offers-category-details.component';
+import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers/debt-consolidation/debt-consolidation.component';
 
 @NgModule({
     imports: [
@@ -49,7 +52,7 @@ import { ScoreFilterComponent } from '@root/personal-finance/shared/offers/filte
     declarations: [
         ApplyOfferDialogComponent,
         StarsRatingComponent,
-        OffersComponent,
+        OffersLayoutComponent,
         OfferDetailsComponent,
         NumberAbbrPipe,
         CreditCardsComponent,
@@ -57,7 +60,10 @@ import { ScoreFilterComponent } from '@root/personal-finance/shared/offers/filte
         NavigationComponent,
         CreditMonitoringComponent,
         ChooserFilterComponent,
-        ScoreFilterComponent
+        ScoreFilterComponent,
+        BusinessLoansComponent,
+        OffersCategoryDetailsComponent,
+        DebtConsolidationComponent
     ],
     providers: [
         OffersService,
