@@ -255,7 +255,7 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
     }
 
     validatePhoneNumber(value): boolean {
-        return this.phoneRegEx.test(value);
+        return !value || this.phoneRegEx.test(value);
     }
 
     showUploadPhoto($event) {

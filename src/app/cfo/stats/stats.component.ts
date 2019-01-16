@@ -548,8 +548,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
-        this.zendeskService.showWidget();
+        this.rootComponent.overflowHidden(true);        
     }
 
     ngOnDestroy() {
@@ -557,7 +556,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-        this.zendeskService.hideWidget();
+
         super.ngOnDestroy();
     }
 
@@ -766,6 +765,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     activate() {
+        this.zendeskService.showWidget();
         this._filtersService.localizationSourceName = this.localizationSourceName;
         this.initToolbarConfig();
         this.setupFilters();
@@ -785,6 +785,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     deactivate() {
+        this.zendeskService.hideWidget();
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
