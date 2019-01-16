@@ -17,7 +17,6 @@ export class FaviconService {
     updateFavicons(favicons: FaviconDto[], faviconBaseUrl: string) {
         let oldFaviconsLinks = Array.prototype.slice.call(this.document.head.querySelectorAll('link[rel*="icon"]'), 0),
             oldManifest = this.document.head.querySelector('link[rel="manifest"]');
-
         favicons.forEach((item: FaviconDto) => {
             let href = faviconBaseUrl + item.name;
             if (document.head.querySelector('link[href="' + href + '"]'))
@@ -32,7 +31,9 @@ export class FaviconService {
                 link.type = item.type;
                 link.sizes = item.size;
                 link.href = href;
-                this.document.head.appendChild(link);
+                setTimeout(() => {
+                    this.document.head.appendChild(link);
+                }, 1000);
             }
         });
 
