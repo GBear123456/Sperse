@@ -4,6 +4,7 @@
     padding-bottom: 30px;
 
     /deep/ .m-portlet {
+        font-size: 14px!important;
       	-webkit-box-shadow: 0 1px 15px 1px rgba(69,65,78,.08);
       	-moz-box-shadow: 0 1px 15px 1px rgba(69,65,78,.08);
       	box-shadow: 0 1px 15px 1px rgba(69,65,78,.08);
@@ -166,6 +167,12 @@
                 }
             }
 
+        }
+
+        @media (max-width: 1024px) {
+            .m-portlet__head .m-portlet__head-caption .m-portlet__head-title .m-portlet__head-text {
+                font-size: 1.1rem;
+            }
         }
 
         @media (min-width: 1025px) {
