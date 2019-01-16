@@ -172,7 +172,6 @@ export class LoginService {
                 this.facebookLoginStatusChangeCallback(response);
             } else {
                 abp.message.error('Email is required', 'Facebook Login Failed');
-                abp.ui.clearBusy();
             }
         }, { scope: 'email', return_scopes: true, auth_type: 'rerequest' });
     }
@@ -231,15 +230,14 @@ export class LoginService {
                     routerUrl: this._router.routerState.snapshot.url.split('?')[0].split('/').pop()
                 }
             }).afterClosed().subscribe(result => {
-                abp.ui.setBusy();
                 if (result) {
+                    abp.ui.setBusy();
                     this.externalLoginModal.autoRegistration = true;
                     this._tokenAuthService.externalAuthenticate(this.externalLoginModal)
+                        .pipe(finalize(() => abp.ui.clearBusy()))
                         .subscribe((result: ExternalAuthenticateResultModel) => {
                             this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
                         });
-                } else {
-                    abp.ui.clearBusy();
                 }
             });
         } else if (authenticateResult.detectedTenancies.length > 1) {
