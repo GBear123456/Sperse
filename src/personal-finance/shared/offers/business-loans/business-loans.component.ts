@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offers-layout.component';
-import { OfferDto } from '@shared/service-proxies/service-proxies';
-import { Observable } from 'rxjs';
 
 @Component({
     selector: 'business-loans',
@@ -17,9 +15,8 @@ export class BusinessLoansComponent implements OnInit {
         this.ls.l('BusinessLoans_TransparentTerms'),
         this.ls.l('BusinessLoans_RevolvingLines')
     ];
-    offers$: Observable<OfferDto[]>;
     constructor(
-        private ls: AppLocalizationService
+        public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {}
