@@ -154,7 +154,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         if (!this.inviteData.emailAddress || !this.emailAddressComponent.instance.option('isValid'))
             return this.message.warn(this.l('InvalidEmailAddress'));
 
-        if (!this.inviteData.phoneNumber || !this.phoneNumberComponent.instance.option('isValid'))
+        if (this.inviteData.phoneNumber && !this.phoneNumberComponent.instance.option('isValid'))
             return this.message.warn(this.l('PhoneValidationError'));
 
         if (!this.inviteData.assignedRoleNames.length)
@@ -167,8 +167,9 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 if (isConfirmed) {
                     this.startLoading();
                     this.inviteData.contactId = this.contactInfoData.contactInfo.personContactInfo.id;
+                    let phoneNumber = this.inviteData.phoneNumber;
                     this._personContactServiceProxy.createUserForContact(_.extend(_.clone(this.inviteData),
-                        { phoneNumber: this.inviteData.phoneNumber.replace(/\D/g, '') }))
+                        { phoneNumber: phoneNumber && phoneNumber.replace(/\D/g, '') }))
                         .pipe(finalize(() => this.finishLoading())).subscribe(() => {
                             this._contactsService.invalidate();
                         });
