@@ -22,9 +22,7 @@ export class RegisterConfirmComponent implements OnInit {
         private dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any,
         public ls: AppLocalizationService
-    ) {
-    
-    }
+    ) {}
 
     ngOnInit() {}
 
