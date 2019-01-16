@@ -1,5 +1,5 @@
 /** Core imports  */
-import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Injector, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -22,6 +22,7 @@ import {
 import { AccountConnectors } from '@shared/AppEnums';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-intro.component';
+import { IdleCountdownDialog } from './idle-countdown-dialog/idle-countdown-dialog.component';
 
 declare const Quovo: any;
 
@@ -30,6 +31,10 @@ declare const Quovo: any;
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChildren('content') set contentElements(elements: QueryList<any>) {
+        this.contentElement = elements.first && elements.first.nativeElement;
+    }
+    private contentElement: ElementRef;
     private tokenLoading$: Observable<GetProviderUITokenOutput>;
 
     isStartDisabled = false;
@@ -37,6 +42,8 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
 
     defaultSection = 'summary';
     sectionName$: Observable<string>;
+    currentSectionName: string;
+
     menuItems = [
         { name: 'Accounts', sectionName: 'accounts' },
         { name: 'Overview', sectionName: 'summary' },
@@ -46,6 +53,10 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         { name: 'Allocation', sectionName: 'allocation' },
         { name: 'Goals', sectionName: 'goals' }
     ];
+
+    lastQuouvoActivity: Date;
+    quovoActivityCheck;
+    private readonly MAX_IDLE_TIME_MILISECONDS = 13 * 60 * 1000; // 13 min
 
     constructor(
         injector: Injector,
@@ -60,6 +71,13 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit() {
+        this.sectionName$ = this._activatedRoute.params.pipe(
+            takeUntil(this.destroy$),
+            pluck('sectionName'),
+            /** If section name is in menuItems array - use it, else - default section */
+            map((sectionName: string) => sectionName && this.menuItems.some(item => item.sectionName === sectionName) ? sectionName : this.defaultSection),
+            tap(sectionName => this.currentSectionName = sectionName)
+        );
         if (this.appSession.userId)
             this.checkInstanceChangeProcess();
     }
@@ -69,12 +87,6 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             this.isInstanceInfoLoaded = true;
             this.loadQouvoPfm();
         });
-        this.sectionName$ = this._activatedRoute.params.pipe(
-            takeUntil(this.destroy$),
-            pluck('sectionName'),
-            /** If section name is in menuItems array - use it, else - default section */
-            map((sectionName: string) => sectionName && this.menuItems.some(item => item.sectionName === sectionName) ? sectionName : this.defaultSection)
-        );
     }
 
     private loadQouvoPfm() {
@@ -120,19 +132,23 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         let settings = {
             token: token.toString(),
             elementId: 'quovo-accounts-module',
-            moduleName: sectionName
+            moduleName: sectionName,
+            onActivity: () => {
+                this.lastQuouvoActivity = new Date();
+            }
         };
         if (this.appSession.tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace) {
             settings['userCss'] = AppConsts.appBaseHref + 'assets/common/styles/custom/lend-space/lend-space-quovo.css';
         }
         Quovo.embed(settings);
+        this.lastQuouvoActivity = new Date();
+        this.resetQuovoActivityCheck();
     }
 
     private refreshQuovoSection(sectionName: string) {
-        const element = this.getElementRef().nativeElement.querySelector('.p-content');
-        abp.ui.setBusy(element);
+        abp.ui.setBusy(this.contentElement);
         this.tokenLoading$
-            .pipe(finalize(() => abp.ui.clearBusy(element)))
+            .pipe(finalize(() => abp.ui.clearBusy(this.contentElement)))
             .subscribe(
                 res => {
                     $('.quovo-accounts-module').html('');
@@ -159,15 +175,17 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         this.isStartDisabled = true;
         if (this._cfoService.initialized)
             this.addAccount();
-        else
+        else {
+            abp.ui.setBusy(this.contentElement);
             this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType])
-            .subscribe(
-                () => {
-                    this.checkInstanceChangeProcess();
-                    this.addAccount();
-                },
-                () => this.isStartDisabled = false
-            );
+                .subscribe(
+                    () => {
+                        this.checkInstanceChangeProcess();
+                        this.addAccount();
+                    },
+                    () => this.isStartDisabled = false
+                );
+        }
     }
 
     private addAccount() {
@@ -194,8 +212,33 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         this._router.navigate(['/personal-finance/my-finances', sectionName]);
     }
 
+    resetQuovoActivityCheck() {
+        this.stopQuovoActivityCheck();
+        this.checkQouvoActivity();
+    }
+
+    checkQouvoActivity() {
+        let idleTimeMiliseconds = new Date().getTime() - this.lastQuouvoActivity.getTime();
+        if (idleTimeMiliseconds > this.MAX_IDLE_TIME_MILISECONDS) {
+            this.dialog.open(IdleCountdownDialog, { disableClose: true })
+                .afterClosed()
+                .subscribe((result) => {
+                    if (result && result.continue) {
+                        this.refreshQuovoSection(this.currentSectionName);
+                    }
+                });
+        } else {
+            this.quovoActivityCheck = setTimeout(() => this.checkQouvoActivity(), 30 * 1000);
+        }
+    }
+
+    stopQuovoActivityCheck() {
+        clearTimeout(this.quovoActivityCheck);
+    }
+
     ngOnDestroy() {
         super.ngOnDestroy();
+        this.stopQuovoActivityCheck();
     }
 
 }

@@ -1,10 +1,10 @@
 <div class="container">
     <div class="row">
-        <div class="credit-score-navigation col-md-3">
-            <h1>{{ ls.l('CreditScore_CreditScoreTitle') }}</h1>
-            <app-credit-score-navigation></app-credit-score-navigation>
+        <div class="credit-score-navigation col-lg-3">
+            <h1>{{ ls.l('CreditScore_IdProtectionTitle') }}</h1>
+            <navigation></navigation>
         </div>
-        <div class="col-md-9" #content>
+        <div class="col-lg-9" #content>
             <ng-container *ngFor="let offer of offers$ | async">
                 <div class="logo-wrap">
                     <img [src]="offer.logoUrl" [alt]="offer.name">

@@ -7,6 +7,7 @@ import { RootModule } from './root.module';
 import 'moment-timezone';
 import 'moment/locale/en-gb';
 import './polyfills.ts';
+import 'hammerjs';
 
 if (environment.production) {
     enableProdMode();

@@ -10,13 +10,14 @@
         {relationship: "icon", type: "image/png", name: "favicon-16x16.png", size: "16x16"},
         {relationship: "apple-touch-icon", type: "image/png", name: "apple-touch-icon.png", size: "180x180"}
     ];
-    document.cookie = "InitialReferrer=" + document.referrer;
 
     var tenant;
     var remoteServiceUrl = '';
     var appContext, appBootstrap
     var pathParts = location.pathname.split('/').filter(Boolean);
     var cookie = queryString(document.cookie, ';');
+    setOriginalReferer(cookie);
+
     var params = queryString(document.location.search.substr(1), '&');
     if (
         !checkSetDomainToken() && !params.secureId && !params.tenantId && (
@@ -259,7 +260,7 @@
 
     function loadLoginStylesheet() {
         createStylesheet("./assets/login/style.css");
-        createStylesheet("./assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.css");
+        createStylesheet("./assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css");
     }
 
     function createMetatag(name, content) {
@@ -290,7 +291,7 @@
 
         if (window['logoImage']) {
             logoImage.setAttribute('src',
-                tenant && loginInformations.tenant.logoId ?
+                tenant && tenant.logoId ?
                 remoteServiceUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId:
                 getBaseHref() + 'assets/common/images/app-logo-on-dark.png'
             );
@@ -423,6 +424,22 @@
                 button.setAttribute('disabled', '');
 
             return result;
+        }
+    }
+
+    function setOriginalReferer(cookie) {
+        const origRefererKey = 'OriginalReferer';
+        var originalRefererCookie = cookie[origRefererKey];
+
+        if (originalRefererCookie && originalRefererCookie != '') {
+            sessionStorage.setItem(origRefererKey, originalRefererCookie);
+            deleteCookie(origRefererKey, '/');
+        }
+        else {
+            var storedReferer = sessionStorage.getItem(origRefererKey);
+            if (!storedReferer || storedReferer == '') {
+                sessionStorage.setItem(origRefererKey, document.referrer);
+            }
         }
     }
 

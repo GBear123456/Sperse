@@ -1,0 +1,29 @@
+<div class="swal-icon swal-icon--warning">
+    <span class="swal-icon--warning__body">
+      <span class="swal-icon--warning__dot"></span>
+    </span>
+</div>
+<h2>{{ls.l('You_Will_Sign_Up_With', 'Platform', data.authenticateResult.email)}}</h2>
+<form #confirmRegister="ngForm" novalidate>
+    <mat-dialog-content class="mat-typography" *ngIf="data.routerUrl === 'login'">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="agreement" name="agreement" ngModel required>
+            <label class="form-check-label" for="agreement">{{ls.l('I_Consent_To_Receive')}}</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="terms" name="terms"
+                   [(ngModel)]="agreeWithTerms" required>
+            <label class="form-check-label" for="terms">{{ls.l('By_Continuing_I_Certify')}} <a (click)="openConditionsDialog($event, modalsData.terms)">{{ls.l('TermsOfService')}}</a>,
+                <a (click)="openConditionsDialog($event, modalsData.privacy)">{{ls.l('PrivacyPolicy')}}</a> {{ls.l('And')}} <a
+                    (click)="openConditionsDialog($event, modalsData.lender)">{{ls.l('LenderTerms')}}</a>.</label>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="center">
+        <button class="button-default" mat-button mat-dialog-close>{{ls.l('Cancel')}}</button>
+        <button class="button-default"
+                [disabled]="!confirmRegister.form.valid"
+                mat-button
+                [mat-dialog-close]="true"
+                cdkFocusInitial>{{ls.l('Yes')}}</button>
+    </mat-dialog-actions>
+</form>

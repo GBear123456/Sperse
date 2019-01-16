@@ -22,10 +22,9 @@
     <dx-chart
         id="bar"
         [barWidth]="1"
-        [size]="{height: 245}"
+        [size]="{height: 245, width: nativeElement ? nativeElement.offsetWidth - 60: 0}"
         [series]="allSeries$ | async"
-        [dataSource]="totalsData"
-        (onDrawn)="render()">
+        [dataSource]="totalsData">
 
         <dxo-size height="356" [width]="chartWidth"></dxo-size>
         <!-- common settings for charts -->
@@ -33,11 +32,6 @@
             argumentField="date"
             ignoreEmptyPoints="true">
         </dxo-common-series-settings>
-
-        <dxo-tooltip enabled="true"
-                     zIndex="1"
-                     [customizeTooltip]="customizeBarTooltip">
-        </dxo-tooltip>
 
         <!-- Bottom axis -->
         <dxo-argument-axis

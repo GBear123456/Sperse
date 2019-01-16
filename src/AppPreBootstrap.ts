@@ -15,8 +15,6 @@ export class AppPreBootstrap {
         if (abpAjax.defaultError) {
             abpAjax.defaultError.details = AppConsts.defaultErrorMessage;
         }
-
-        this.setInitialReferrer();
         
         let _handleUnAuthorizedRequest = abpAjax['handleUnAuthorizedRequest'];
         abpAjax['handleUnAuthorizedRequest'] = (messagePromise: any, targetUrl?: string) => {
@@ -186,14 +184,5 @@ export class AppPreBootstrap {
             new Date(new Date().getTime() + 365 * 86400000), //1 year
             abp.appPath
         );
-    }
-
-    private static setInitialReferrer() {
-        let utilsService = new UtilsService();
-        let initialReferrer = utilsService.getCookieValue('InitialReferrer');
-
-        if (!initialReferrer || initialReferrer == '') {
-            utilsService.setCookieValue('InitialReferrer', document.referrer);
-        }
     }
 }

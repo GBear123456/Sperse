@@ -202,7 +202,7 @@ export class ToolBarComponent extends AppComponentBase {
             icon: this.getImgURI('flag-icon')
         },
         star: {
-            hint: this.l('Star'),
+            hint: this.ls('CRM','Star'),
             icon: this.getImgURI('star-icon')
         },
         close: {

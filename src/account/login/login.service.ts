@@ -25,6 +25,8 @@ import {
 import * as _ from 'lodash';
 import { finalize, map, publishReplay, refCount } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 
 declare const FB: any; // Facebook API
 declare const gapi: any; // Facebook API
@@ -82,7 +84,8 @@ export class LoginService {
         private _logService: LogService,
         private _accountService: AccountServiceProxy,
         private _authService: AppAuthService,
-        private _applicationServiceProxy: ApplicationServiceProxy
+        private _applicationServiceProxy: ApplicationServiceProxy,
+        public dialog: MatDialog
     ) {
         this.clear();
         let model = JSON.parse(sessionStorage.getItem('authenticateModel'));
@@ -218,18 +221,23 @@ export class LoginService {
 
         } else if (authenticateResult.userNotFound && abp.features.isEnabled('PFM.Applications')) {
             // show confirmation msg about creating user
-            abp.message.confirm(
-                '',
-                `You will sign up to LendSpace with the ${authenticateResult.email} email.`,
-                (result) => {
-                    if (result) {
-                        this.externalLoginModal.autoRegistration = true;
-                        this._tokenAuthService.externalAuthenticate(this.externalLoginModal)
-                            .subscribe((result: ExternalAuthenticateResultModel) => {
-                                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
-                            });
-                    }
-                });
+            this.dialog.open(RegisterConfirmComponent, {
+                width: '600px',
+                id: 'confirm-register',
+                panelClass: ['confirm-register'],
+                data: {
+                    authenticateResult: authenticateResult,
+                    routerUrl: this._router.routerState.snapshot.url.split('?')[0].split('/').pop()
+                }
+            }).afterClosed().subscribe(result => {
+                if (result) {
+                    this.externalLoginModal.autoRegistration = true;
+                    this._tokenAuthService.externalAuthenticate(this.externalLoginModal)
+                        .subscribe((result: ExternalAuthenticateResultModel) => {
+                            this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+                        });
+                }
+            });
         } else if (authenticateResult.detectedTenancies.length > 1) {
             //Select tenant
             this._router.navigate(['account/select-tenant']);

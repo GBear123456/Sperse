@@ -1,6 +1,15 @@
 <div class="close-dialog" (click)="close(true)"></div>
 <div class="mat-dialog-header">
     <input type="text" value="{{data.title}}" readonly>
+    <mat-dialog-actions>
+        <div class="mat-dialog-buttons">
+            <ng-template ngFor let-button [ngForOf]="data.buttons" let-i="index">
+                <button mat-button (click)="button.action($event)" id="{{button.id}}" class="button-layout button-{{button.class}}">
+                    <img [src]="'./assets/common/icons/' + button.iconName" />
+                </button>
+            </ng-template>
+        </div>
+    </mat-dialog-actions>
 </div>
 <mat-dialog-content>
     <ng-content></ng-content>

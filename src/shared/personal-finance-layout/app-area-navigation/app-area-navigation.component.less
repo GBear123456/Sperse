@@ -140,30 +140,37 @@
 
     /** Dark triangle for opened items */
     .app-area-navigation > li.opened,
-    .dropdown.show {
-        &:before {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 12px 15px 12px;
-            border-color: transparent transparent #313131 transparent;
-            top: 45px;
-            left: 0;
-            right: 0;
-            margin: auto;
+    .dropdown {
+        position: relative;
+        &.show {
+            &:before {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 0;
+                border-style: solid;
+                border-width: 0 12px 15px 12px;
+                border-color: transparent transparent #313131 transparent;
+                top: 45px;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
         }
     }
 
     .app-responsive-menu {
+        display: none;
+        position: absolute;
         right: unset!important;
         @media all and (max-width: 767px) {
             right: 0 !important;
             height: calc(~"100vh - 80px");
             overflow: auto;
         }
-
+        &.show {
+            display: block;
+        }
         li {
             ul.responsive-sublinks {
                 padding-left: 0;

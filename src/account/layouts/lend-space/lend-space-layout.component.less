@@ -18,25 +18,27 @@
         display: flex;
         min-height: 100vh;
         flex-direction: column;
-        padding-top: 70px;
-    
+        padding-top: 69px;
+
         main {
             flex: 1;
-            
+
             @media all and (max-width: 420px) {
                 padding: 30px 15px;
             }
         }
-        
+
         &.dark-layout {
-            background: #262626;
+            &, #main {
+                background-color: #262626;
+            }
         }
-    
+
         .row {
             height: 100%;
             align-items: center;
         }
-    
+
         .right-side {
             background: #000 url(../../../assets/common/images/lend-space-dark/bg.jpg) 50% 50% no-repeat;
             background-size: cover;
@@ -49,12 +51,12 @@
                 padding: 30px 15px;
             }
         }
-    
+
         @media all and (max-width: 420px) {
-            height: 100%;
+            height: auto;
         }
     }
-    
+
     /deep/ app-area-navigation {
         a {
             font-family: Poppins !important;

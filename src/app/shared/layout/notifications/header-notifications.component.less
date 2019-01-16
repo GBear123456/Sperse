@@ -5,7 +5,9 @@
 }
 
 .notification-header {
-    width: 520px !important;
+    @media (min-width: 768px) {
+        width: 520px !important;
+    }
 
     /deep/.notification-drop-down-arrow {
         color: #43383b !important;
@@ -35,7 +37,7 @@
 
         .m-card-user__pic {
             float: right;
-    
+
             img {
                 width: 50px;
                 height: 50px;
@@ -44,7 +46,7 @@
         }
     }
 
-    .subscription-info {        
+    .subscription-info {
         margin: 0px 15px;
         color: #fff !important;
         display: block;

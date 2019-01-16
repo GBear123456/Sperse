@@ -45,8 +45,34 @@ user-management-list {
                     }
 
                     .user-menu-icon {
+                        width: 18px;
+                        height: 20px;
                         display: inline-block;
                         margin: 5px 15px 5px 0px;
+                        vertical-align: middle;
+                        background-size: contain!important;
+                        background-repeat: no-repeat!important;
+                        &.change-password {
+                            background: url(../../../../assets/common/images/lend-space-dark/icons/lock-open.svg);
+                        }
+                        &.login-attempts {
+                            background: url(../../../../assets/common/images/lend-space-dark/icons/playlist.svg);
+                        }
+                        &.profile-picture {
+                            background: url(../../../../assets/common/images/lend-space-dark/icons/user-picture.svg);
+                        }
+                        &.settings {
+                            background: url(../../../../assets/common/images/lend-space-dark/icons/settings-gear.svg);
+                        }
+                        &.help {
+                            background: url(../../../../assets/common/images/lend-space-dark/icons/help.svg);
+                        }
+                        &.logout {
+                            background: url(../../../../assets/common/icons/logout.svg);
+                        }
+                        &.back {
+                            background: url(../../../../assets/common/images/lend-space-dark/icons/back.svg);
+                        }
                     }
                     .m-nav__link-title {
                         display: inline-block;
@@ -141,18 +167,6 @@ user-management-list {
         @media all and (max-width: 529px) {
             order: 2;
             margin-left: auto;
-
-            .m-topbar {
-                &__nav {
-                    li {
-                        display: none;
-
-                        &:last-child {
-                            display: inline-block;
-                        }
-                    }
-                }
-            }
         }
     }
 }

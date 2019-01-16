@@ -12,19 +12,23 @@
         flex-direction: column;
         padding: 40px 60px 30px;
         .nextImageBlock {
-            height: 100px;
-            width: 100px;
             display: flex;
-            justify-content: center;
-            border-radius: 50%;
+            border-radius: 60px;
             align-self: center;
+            align-items: center;
             background-clip: padding-box;
             margin-bottom: 20px;
             box-shadow:  0 0 0 10px rgba(255,255,255,.2);
-    
-            background: #fff url(../../../../assets/common/icons/next-arrow.svg) 50% 50% no-repeat;
-            background-size: 68%;
-            
+            background: #fff;
+            padding: 10px 60px;
+            &:before {
+                content: url(../../../../assets/common/icons/next-arrow.svg);
+            }
+            img {
+                margin-left: 25px;
+                max-width: 250px;
+                max-height: 100px;
+            }
         }
         h2 {
             font-family: Poppins;

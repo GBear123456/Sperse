@@ -1,7 +1,7 @@
 <div class="login">
     <div class="header">
         <div class="logo">
-            <a routerLink="/">
+            <a [href]="originUrl">
                 <img *ngIf="!appSession.tenant || !appSession.tenant.logoId"
                      src="./assets/common/images/app-logo-on-dark.png"
                      alt="logo" width="200" height="60"/>

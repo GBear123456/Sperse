@@ -15,6 +15,9 @@ footer {
     max-width: 1400px;
     margin: 0 auto;
 }
+.login .main-content .account-forms {
+    padding: 0 15px;
+}
 
 .login {
     background-color: #FFFFFF !important;
@@ -26,13 +29,17 @@ footer {
     text-align: center;
 }
 
+.login .logo a {
+    display: inline-block;
+    margin-right: 0;
+}
+
 .login .content {
     background-color: #eceef1;
     border-radius: 7px;
     width: 400px;
     margin: 40px auto 10px auto;
-    padding: 30px;
-    padding-top: 10px;
+    padding: 10px 30px 30px;
     overflow: hidden;
     position: relative;
 }
@@ -61,7 +68,6 @@ footer {
 }
 
 .login .content .form-control {
-    border: none;
     background-color: #dde3ec;
     height: 43px;
     color: #8290a3;
@@ -297,6 +303,7 @@ input.form-control {
 
 .slogan-side img {
     margin: 60px auto;
+    max-width: 100%;
 }
 
 .slogan-side .slogan {
@@ -345,6 +352,26 @@ input.form-control {
     box-shadow: none;
     line-height: 54px;
     position: relative;
+}
+
+@media all and (max-width: 450px) {
+    .login .logo {
+        height: auto !important;
+    }
+    .form-wrapper h1 {
+        margin-top: 35px;
+        margin-bottom: 35px;
+    }
+
+    .col-md-12.form-wrapper,
+    .form-wrapper .login-form {
+        padding: 0 !important;
+    }
+
+    .form-wrapper .form-actions .submit {
+        min-width: 0;
+        width: 95%;
+    }
 }
 
 .form-wrapper .form-actions .submit[disabled] {
@@ -415,8 +442,8 @@ input.form-control {
 .form-wrapper .forget-password {
     padding-top: 10px;
     font-size: 14px;
-    font-weight: 300;
-    color: #888d92;
+    margin-top: 0;
+    color: #6eade9;
 }
 
 .form-wrapper .forget-password:hover {
@@ -465,7 +492,7 @@ input.form-control {
 }
 
 .form-control:focus {
-    border-bottom-color: #00aeef;
+    border-bottom: 1px solid #00aeef;
 }
 
 .help-block {
@@ -478,6 +505,194 @@ input.form-control {
     cursor: default;
 }
 
+.modal button.close {
+	-webkit-appearance: none;
+	padding: 0;
+	cursor: pointer;
+	background: 0 0;
+	border: 0;
+	font-size: 46px!important;
+	font-weight: 400!important;
+	text-indent: unset!important;
+	background-image: none!important
+}
+
+.modal .modal-header {
+	padding: 15px 25px;
+	background: #f3f7fa;
+	border-bottom: 1px solid #eaeef0
+}
+
+.modal .modal-header .control-buttons {
+	float: right;
+	margin-top: 0;
+	margin-right: 20px
+}
+
+.modal .modal-header .control-buttons a,
+.modal .modal-header .control-buttons button {
+	background: #fff;
+	border: 1px solid #eaeef0;
+	padding: 4px 5px 6px;
+	min-width: 55px;
+	text-align: center;
+	display: block;
+	float: left;
+	line-height: 1.5;
+	outline: 0;
+	cursor: pointer
+}
+
+.modal .modal-header .control-buttons a {
+	border-radius: 3px 0 0 3px
+}
+
+.modal .modal-header .control-buttons button {
+	border-radius: 0 3px 3px 0;
+	margin-left: -1px
+}
+
+.modal .modal-header .modal-title {
+	margin: 0;
+	line-height: 1.85;
+	font-family: Montserrat;
+	flex: 1 auto;
+	color: #424c56
+}
+
+.modal .modal-dialog {
+	max-width: 100%
+}
+
+.modal .modal-body {
+	position: relative;
+	padding: 15px 25px
+}
+
+.modal .modal-body h3 {
+	font-family: Montserrat;
+	font-weight: 400;
+	font-size: 16px;
+	color: #424c56;
+	margin-bottom: 5px;
+	text-transform: uppercase
+}
+
+.modal .modal-body h3.margin-bottom,
+.modal .modal-body p {
+	margin-bottom: 16px
+}
+
+.modal .modal-body strong {
+	color: #424c56
+}
+
+.modal .modal-body hr {
+	margin: 25px 0
+}
+
+.modal.left .modal-dialog,
+.modal.right .modal-dialog {
+	position: fixed;
+	margin: auto;
+	width: 80%;
+	height: 100%;
+	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0)
+}
+
+.modal.left .modal-content,
+.modal.right .modal-content {
+	height: 100%;
+	overflow-y: auto
+}
+
+.modal.left .modal-body,
+.modal.right .modal-body {
+	padding: 15px 25px 35px
+}
+
+.modal.left.fade .modal-dialog {
+	left: -80%;
+	transition: opacity .3s linear, left .3s ease-out
+}
+
+.modal.left.fade.show .modal-dialog {
+	left: 0
+}
+
+.modal.right.fade .modal-dialog {
+	right: -80%;
+	transition: opacity .3s linear, right .3s ease-out
+}
+
+.modal.right.fade.show .modal-dialog {
+	right: 0
+}
+
+@media (max-width:767px) {
+	.modal.left .modal-dialog,
+	.modal.right .modal-dialog {
+		width: 100%
+	}
+	.modal.left.fade .modal-dialog {
+		left: -100%
+	}
+	.modal.right.fade .modal-dialog {
+		right: -100%
+	}
+	.modal-title {
+		clear: both;
+		padding-top: 15px;
+		text-align: center
+	}
+	#UserNotificationDropdown {
+		margin-right: -60px
+	}
+	#UserNotificationDropdown:after,
+	#UserNotificationDropdown:before {
+		margin-right: 70px
+	}
+}
+
+@media screen {
+	#printSection {
+		display: none
+	}
+}
+
+.visible-on-print {
+	visibility: hidden;
+	height: 0
+}
+
+@media print {
+	code[class*=language-],
+	pre[class*=language-] {
+		text-shadow: none
+	}
+	body * {
+		visibility: hidden
+	}
+	#printSection,
+	#printSection * {
+		visibility: visible;
+		font-size: 14px
+	}
+	#printSection {
+		position: absolute;
+		left: 0;
+		top: 0
+	}
+	.visible-on-print {
+		visibility: visible;
+		text-align: center;
+		height: auto
+	}
+	.visible-on-print p+p {
+		font-size: 28px
+	}
+}
 .modal .modal-content {
     overflow: hidden;
 }
@@ -494,4 +709,65 @@ input.form-control {
     height: 100%;
     text-align: left;
     overflow-y: auto;
+}
+/* Error Modal Design */
+.swal-modal .swal-icon.swal-icon--error {
+  border: 5px solid #E7F9F9;
+  box-shadow: 0 0 20px 20px #F4FCFC;
+}
+.swal-modal .swal-icon.swal-icon--error .swal-icon--error__x-mark:before {
+  content: '!';
+  font-family: serif;
+  font-size: 60px;
+  color: #8CD4F5;
+  position: relative;
+  top: -5px;
+}
+.swal-modal .swal-icon.swal-icon--error .swal-icon--error__x-mark .swal-icon--error__line {
+  display: none !important;
+}
+.swal-modal .swal-icon.swal-icon--warning {
+  border: 5px solid #E7F9F9;
+  box-shadow: 0 0 20px 20px #F4FCFC;
+  animation: none !important;
+}
+.swal-modal .swal-icon.swal-icon--warning:before {
+  content: '!';
+  font-family: serif;
+  font-size: 60px;
+  color: #8CD4F5;
+  position: relative;
+  top: -5px;
+}
+.swal-modal .swal-icon.swal-icon--warning .swal-icon--warning__body,
+.swal-modal .swal-icon.swal-icon--warning .swal-icon--warning__dot {
+  display: none;
+}
+.swal-modal .swal-title {
+  color: #8CD4F5;
+  font-size: 18px;
+  font-weight: normal;
+  white-space: pre-line;
+}
+.swal-modal .swal-button {
+  background-color: #00aeef;
+  color: #ffffff;
+  border-radius: 21px;
+  padding: 10px 35px;
+  box-shadow: none;
+  transition: .2s;
+}
+.swal-modal .swal-button:hover {
+  background: #3dcaff;
+}
+.swal-modal .swal-button.swal-button--cancel {
+  color: #555;
+  background-color: #efefef;
+}
+.swal-modal .swal-button.swal-button--cancel:hover {
+  background: #d7d7d7;
+}
+
+body.modal-open {
+    overflow: hidden !important;
 }

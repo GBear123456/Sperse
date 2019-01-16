@@ -1,51 +1,22 @@
-<div class="container">
-    <div class="row">
-        <div class="credit-score-navigation col-md-3">
-            <h1>{{ ls.l('CreditScore_CreditScoreTitle') }}</h1>
-            <app-credit-score-navigation></app-credit-score-navigation>
-        </div>
-        <div class="col-md-9">
-            <div class="content-header">
-                <div class="logoes">
-                    <img *ngFor="let logo of logoes"
-                         [src]="'./assets/images/credit-report/offers/' + logo + '.png'"
-                         [alt]="logo"
-                         [srcset]="'./assets/images/credit-report/offers/' + logo + '@2x.png 2x, ./assets/images/credit-report/' + logo + '@3x.png 3x'">
-                </div>
-                <h1>{{ ls.l('CreditScore_GetYour') }} <span>{{ ls.l('CreditScore_FreeCreditScores') }}</span></h1>
-                <h3>{{ ls.ls('PFM', 'CreditScore_FromBureau', bureauAmount) }} <span>{{ currentDate }}</span></h3>
-            </div>
-            <div class="offers" #content>
-                <ng-container *ngIf="(offers$ | async) as offers">
-                    <ul class="row">
-                        <li class="col-md-4" *ngFor="let offer of offers" (click)="offersService.applyOffer(offer)">
-                            <div class="offer-item">
-                                <img [src]="offer.logoUrl" [alt]="offer.name">
-                                <button class="applyButton">{{ ls.l('CreditScore_GetOffer') }}</button>
-                            </div>
-                        </li>
-                    </ul>
-                    <app-no-data *ngIf="!offers.length"></app-no-data>
-                </ng-container>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <ul class="advantages">
-                        <li *ngFor="let advantage of advantages">{{ advantage }}</li>
-                    </ul>
-                </div>
-                <div class="description col-md-6">
-                    <h4>{{ ls.l('CreditScore_DescriptionTitle') }}</h4>
-                    <p>{{ ls.l('CreditScore_DescriptionContent') }}</p>
-                </div>
-            </div>
-            <div class="trackingScore">
+<offers-layout>
+    <ng-container leftContent><navigation></navigation></ng-container>
+    <ng-container rightContent>
+        <offers-category-details
+            [offers$]="offersComponent.offers$"
+            [logoes]="logoes"
+            [advantages]="advantages"
+            [descriptionTitle]="descriptionTitle"
+            [descriptionText]="descriptionText">
+            <ng-container header>{{ ls.l('CreditScore_GetYour') }} <span>{{ ls.l('CreditScore_FreeCreditScores') }}</span></ng-container>
+            <ng-container subheader>{{ ls.ls('PFM', 'CreditScore_FromBureau', bureauAmount) }} <span>{{ currentDate }}</span></ng-container>
+            <ng-container bottomBlock>
+                <div class="trackingScore">
                     <div>
                         <h4>{{ ls.l('CreditScore_TrackingTitle') }}</h4>
                         <p>{{ ls.l('CreditScore_TrackingContent')}}</p>
                     </div>
                 </div>
-        </div>
-    </div>
-</div>
-
+            </ng-container>
+        </offers-category-details>
+    </ng-container>
+</offers-layout>

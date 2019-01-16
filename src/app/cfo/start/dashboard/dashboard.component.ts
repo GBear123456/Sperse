@@ -85,8 +85,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.zendeskService.showWidget();
     }
 
-    ngOnDestroy(): void {
-        this.zendeskService.hideWidget();
+    ngOnDestroy(): void {        
         this._dashboardService.unsubscribe();
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
@@ -146,6 +145,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     deactivate() {
+        this.zendeskService.hideWidget();
         this.rootComponent.overflowHidden();
         this.synchProgressComponent.deactivate();
     }

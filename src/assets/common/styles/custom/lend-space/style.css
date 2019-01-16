@@ -277,7 +277,7 @@ body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content 
 @media all and (max-width: 600px) {
   body.lend-space .cdk-overlay-pane.footer-slider,
   body.lend-space .cdk-overlay-pane.user-info {
-    max-width: 100vw !important;
+    max-width: 85vw !important;
   }
   body.lend-space .cdk-overlay-pane.footer-slider mat-dialog-container,
   body.lend-space .cdk-overlay-pane.user-info mat-dialog-container {
@@ -290,7 +290,7 @@ body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content 
   body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header,
   body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header {
     flex-direction: column;
-    height: 110px !important;
+    height: 110px;
   }
   body.lend-space .cdk-overlay-pane.footer-slider .mat-dialog-header dx-text-box,
   body.lend-space .cdk-overlay-pane.user-info .mat-dialog-header dx-text-box {

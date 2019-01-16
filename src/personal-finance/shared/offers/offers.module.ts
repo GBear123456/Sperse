@@ -12,7 +12,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 
 /** Application imports */
-import { OffersComponent } from '@root/personal-finance/shared/offers/offers.component';
+import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offers-layout.component';
 import { LayoutModule } from '../layout/layout.module';
 import { StarsRatingComponent } from '@root/personal-finance/shared/offers/stars-rating/stars-rating.component';
 import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
@@ -25,8 +25,13 @@ import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pip
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CreditCardsComponent } from './credit-cards/credit-cards.component';
 import { CreditScoreComponent } from '@root/personal-finance/shared/offers/credit-score/credit-score.component';
-import { CreditScoreNavigationComponent } from '@root/personal-finance/shared/offers/credit-score-navigation/credit-score-navigation.component';
+import { NavigationComponent } from '@root/personal-finance/shared/offers/navigation/navigation.component';
 import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/credit-monitoring/credit-monitoring.component';
+import { ChooserFilterComponent } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
+import { ScoreFilterComponent } from '@root/personal-finance/shared/offers/filters/score-filter/score-filter.component';
+import { BusinessLoansComponent } from '@root/personal-finance/shared/offers/business-loans/business-loans.component';
+import { OffersCategoryDetailsComponent } from '@root/personal-finance/shared/offers/offers-category-details/offers-category-details.component';
+import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers/debt-consolidation/debt-consolidation.component';
 
 @NgModule({
     imports: [
@@ -47,13 +52,18 @@ import { CreditMonitoringComponent } from '@root/personal-finance/shared/offers/
     declarations: [
         ApplyOfferDialogComponent,
         StarsRatingComponent,
-        OffersComponent,
+        OffersLayoutComponent,
         OfferDetailsComponent,
         NumberAbbrPipe,
         CreditCardsComponent,
         CreditScoreComponent,
-        CreditScoreNavigationComponent,
-        CreditMonitoringComponent
+        NavigationComponent,
+        CreditMonitoringComponent,
+        ChooserFilterComponent,
+        ScoreFilterComponent,
+        BusinessLoansComponent,
+        OffersCategoryDetailsComponent,
+        DebtConsolidationComponent
     ],
     providers: [
         OffersService,

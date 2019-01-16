@@ -1,13 +1,12 @@
 /** Core imports */
-import { Injectable, ComponentFactoryResolver } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Params } from '@angular/router/src/shared';
+import { Injectable } from '@angular/core';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
-import { map, pluck, publishReplay, refCount } from 'rxjs/operators';
+import { map, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -40,7 +39,10 @@ export class OffersService {
             name: 'Retrieving Response'
         }
     ];
-
+    readonly routeToCategoryMapping = {
+        'credit-scores': Category.CreditScore,
+        'id-theft-protection': Category.CreditMonitoring
+    };
     readonly creditScores = {
         'poor': {
             min: 0,
@@ -59,20 +61,20 @@ export class OffersService {
             max: 850
         }
     };
-
+    readonly creditCardsLogoUrl = './assets/common/images/offers/credit-land.png';
     displayedCards: OfferDto[];
     defaultCategoryDisplayName: string = this.ls.l('Offers_Offers');
     constructor(
         private route: ActivatedRoute,
+        private router: Router,
         private ls: AppLocalizationService,
         private offerServiceProxy: OfferServiceProxy,
         private dialog: MatDialog
     ) {}
 
-    getCategoryFromRoute(routeParams: Observable<Params>): Observable<Category> {
-        return routeParams.pipe(
-            pluck('category'),
-            map((category: string) => Category[upperFirst(camelCase(category))])
+    getCategoryFromRoute(route: ActivatedRoute): Observable<Category> {
+        return route.url.pipe(
+            map((urlSegment: UrlSegment) => this.routeToCategoryMapping[urlSegment[0].path] || Category[upperFirst(camelCase(urlSegment[0].path))])
         );
     }
 
@@ -111,7 +113,7 @@ export class OffersService {
         }
     }
 
-    applyOffer(offer: OfferDto) {
+    applyOffer(offer: OfferDto, isCreditCard = false) {
         const linkIsDirect = !!offer.redirectUrl;
         const submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.campaignId,
@@ -123,7 +125,8 @@ export class OffersService {
             delayMessages: null,
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: offer.redirectUrl
+            redirectUrl: offer.redirectUrl,
+            logoUrl: isCreditCard ? this.creditCardsLogoUrl : offer.logoUrl
         };
         if (!linkIsDirect) {
             modalData.processingSteps = cloneDeep(this.processingSteps);
