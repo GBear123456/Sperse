@@ -1,13 +1,12 @@
 /** Core imports */
-import { Injectable, ComponentFactoryResolver } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Params } from '@angular/router/src/shared';
+import { Injectable } from '@angular/core';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
-import { map, pluck, publishReplay, refCount } from 'rxjs/operators';
+import { map, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -64,15 +63,15 @@ export class OffersService {
     defaultCategoryDisplayName: string = this.ls.l('Offers_Offers');
     constructor(
         private route: ActivatedRoute,
+        private router: Router,
         private ls: AppLocalizationService,
         private offerServiceProxy: OfferServiceProxy,
         private dialog: MatDialog
     ) {}
 
-    getCategoryFromRoute(routeParams: Observable<Params>): Observable<Category> {
-        return routeParams.pipe(
-            pluck('category'),
-            map((category: string) => Category[upperFirst(camelCase(category))])
+    getCategoryFromRoute(route: ActivatedRoute): Observable<Category> {
+        return route.url.pipe(
+            map((urlSegment: UrlSegment) => Category[upperFirst(camelCase(urlSegment[0].path))])
         );
     }
 
