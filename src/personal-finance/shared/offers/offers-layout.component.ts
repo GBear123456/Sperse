@@ -32,7 +32,6 @@ import {
     withLatestFrom, distinct, toArray
 } from 'rxjs/operators';
 import { kebabCase } from 'lodash';
-import { MatRadioChange } from '@angular/material/radio';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { MatSliderChange } from '@angular/material/slider';
 
@@ -53,7 +52,6 @@ import { StepConditionInterface } from '@root/personal-finance/shared/offers/int
 import { FilterType } from '@root/personal-finance/shared/offers/filter-type.enum';
 import { RangeFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/range-filter-setting';
 import { SelectFilterModel, SelectFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/select-filter-setting';
-import { RadioFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/radio-filter-setting';
 import { CheckboxFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/checkbox-filter-setting';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
 import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal-finance/shared/offers/filters/filters-settings/chooser-filter-setting';
@@ -507,13 +505,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             case Category.AutoLoans: {
                 this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
                 categoryGroup = CategoryGroupEnum.Loans;
-                break;
-            }
-            case Category.CreditScore:
-            case Category.CreditRepair:
-            case Category.CreditMonitoring:
-            case Category.DebtConsolidation: {
-                categoryGroup = CategoryGroupEnum.CreditScore;
                 break;
             }
             case Category.CreditCards: {

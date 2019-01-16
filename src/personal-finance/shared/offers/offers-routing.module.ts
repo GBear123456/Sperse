@@ -20,11 +20,11 @@ import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers
                 component: CreditCardsComponent
             },
             {
-                path: 'credit-score',
+                path: 'credit-scores',
                 component: CreditScoreComponent
             },
             {
-                path: 'credit-monitoring',
+                path: 'id-theft-protection',
                 component: CreditMonitoringComponent
             },
             {

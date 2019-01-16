@@ -39,7 +39,10 @@ export class OffersService {
             name: 'Retrieving Response'
         }
     ];
-
+    readonly routeToCategoryMapping = {
+        'credit-scores': Category.CreditScore,
+        'id-theft-protection': Category.CreditMonitoring
+    };
     readonly creditScores = {
         'poor': {
             min: 0,
@@ -71,7 +74,7 @@ export class OffersService {
 
     getCategoryFromRoute(route: ActivatedRoute): Observable<Category> {
         return route.url.pipe(
-            map((urlSegment: UrlSegment) => Category[upperFirst(camelCase(urlSegment[0].path))])
+            map((urlSegment: UrlSegment) => this.routeToCategoryMapping[urlSegment[0].path] || Category[upperFirst(camelCase(urlSegment[0].path))])
         );
     }
 
