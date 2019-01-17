@@ -90,7 +90,8 @@ export class RootComponent implements AfterViewInit {
 */
 @Component({
     selector: 'app-root',
-    template: '<router-outlet></router-outlet>'
+    template: '<router-outlet></router-outlet>',
+    styleUrls: ['./root.component.less']
 })
 export class AppRootComponent implements OnInit {
     constructor(@Inject(AppSessionService) private SS,
