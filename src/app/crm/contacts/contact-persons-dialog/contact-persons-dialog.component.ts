@@ -21,7 +21,7 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
         public dialogRef: MatDialogRef<ContactPersonsDialogComponent>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.displayedContactPersons = this.contactPersons = this.data.primaryOrganizationContactInfo.contactPersons.filter(item => item.id != this.data.personContactInfo.id);
+        //this.displayedContactPersons = this.contactPersons = this.data.primaryOrganizationContactInfo.contactPersons.filter(item => item.id != this.data.personContactInfo.id);
     }
 
     selectContactPerson(contactPerson): void {

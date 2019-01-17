@@ -128,15 +128,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.dialog.closeAll();
         this.dialog.open(CompanyDialogComponent, {
             data: {
-                company: this.data.primaryOrganizationContactInfo
+                //company: this.data.primaryOrganizationContactInfo
             },
             panelClass: 'slider',
             maxWidth: '830px'
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.data.primaryOrganizationContactInfo.organization = new OrganizationInfoDto(result.company);
-                this.data.primaryOrganizationContactInfo.fullName = result.company.fullName;
-                this.data['primaryOrganizationContactInfo'].primaryPhoto = result.company.primaryPhoto;
+                // this.data.primaryOrganizationContactInfo.organization = new OrganizationInfoDto(result.company);
+                // this.data.primaryOrganizationContactInfo.fullName = result.company.fullName;
+                // this.data['primaryOrganizationContactInfo'].primaryPhoto = result.company.primaryPhoto;
             }
         });
         if (e.stopPropagation) {
@@ -194,11 +194,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
 
     private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
         let photoBase64;
-        if (isCompany && data.primaryOrganizationContactInfo.primaryPhoto) {
-            photoBase64 = data.primaryOrganizationContactInfo.primaryPhoto.original;
-        } else if (!isCompany && data.personContactInfo.primaryPhoto) {
-            photoBase64 = data.personContactInfo.primaryPhoto.original;
-        }
+        // if (isCompany && data.primaryOrganizationContactInfo.primaryPhoto) {
+        //     photoBase64 = data.primaryOrganizationContactInfo.primaryPhoto.original;
+        // } else if (!isCompany && data.personContactInfo.primaryPhoto) {
+        //     photoBase64 = data.personContactInfo.primaryPhoto.original;
+        // }
         return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
     }
 
@@ -240,14 +240,14 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     updateCompanyField(value, field = 'companyName') {
-        let data = this.data.primaryOrganizationContactInfo;
-        data.organization[field] = value;
-        this.organizationContactService.updateOrganizationInfo(
-            UpdateOrganizationInfoInput.fromJS(
-                _.extend({id: data.id}, data.organization))
-        ).subscribe(() => {
-            data.fullName = value;
-        });
+        // let data = this.data.primaryOrganizationContactInfo;
+        // data.organization[field] = value;
+        // this.organizationContactService.updateOrganizationInfo(
+        //     UpdateOrganizationInfoInput.fromJS(
+        //         _.extend({id: data.id}, data.organization))
+        // ).subscribe(() => {
+        //     data.fullName = value;
+        // });
     }
 
     updatePrimaryContactName(value) {
