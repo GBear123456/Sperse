@@ -77,7 +77,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private bankAccountsService: BankAccountsService
     ) {
         super(injector);
-
+        this._appService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';

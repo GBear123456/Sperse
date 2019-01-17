@@ -77,7 +77,7 @@
         </mat-step>
         <mat-step [stepControl]="dataMapping" [label]="l('Data mapping')"
                   [editable]="selectedStepIndex != FINISH_STEP_INDEX">
-            <app-toolbar [config]="_toolbarConfig" *ngIf="selectedStepIndex == MAPPING_STEP_INDEX"></app-toolbar>
+            <app-toolbar [config]="_toolbarConfig" *ngIf="selectedStepIndex == MAPPING_STEP_INDEX" [localizationSource]="localizationSourceName"></app-toolbar>
             <dx-data-grid id="gridContainer" #mapGrid
                           [dataSource]="mapDataSource"
                           [allowColumnReordering]="false"
@@ -134,7 +134,7 @@
         </mat-step>
         <mat-step [label]="l('Review')"
                   [editable]="selectedStepIndex != FINISH_STEP_INDEX">
-            <app-toolbar [config]="_toolbarConfig" *ngIf="selectedStepIndex == REVIEW_STEP_INDEX"></app-toolbar>
+            <app-toolbar [config]="_toolbarConfig" *ngIf="selectedStepIndex == REVIEW_STEP_INDEX" [localizationSource]="localizationSourceName"></app-toolbar>
             <dx-data-grid id="gridContainer" #reviewGrid
                           [noDataText]="''"
                           [keyExpr]="'uniqueIdent'"

@@ -783,6 +783,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     ) {
         super(injector);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+        this.appService.localizationSourceName = this.localizationSourceName;
 
         this._calculatorService.subscribePeriodChange((value) => {
             this.onCalculatorValueChange(value);

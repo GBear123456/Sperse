@@ -107,6 +107,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         public featureService: FeatureCheckerService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        this._appService.localizationSourceName = this.localizationSourceName;
 
         this.dataSource = {
             store: {

@@ -127,6 +127,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         super(injector);
 
         this.filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
+        this._appService.localizationSourceName = this.localizationSourceName;
 
         if (filtersService.fixed)
             this._categoriesShowed = false;

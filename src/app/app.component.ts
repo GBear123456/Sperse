@@ -29,6 +29,7 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
         public dialog: MatDialog
     ) {
         super(injector);
+        this.appService.localizationSourceName = this.localizationSourceName;
 
         if (appService.isNotHostTenant()) {
             let paymentDialogTimeout;
