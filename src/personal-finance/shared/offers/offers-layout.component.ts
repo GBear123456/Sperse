@@ -59,6 +59,13 @@ import { ChooserOption } from '@root/personal-finance/shared/offers/filters/choo
 import { ScoreFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/score-filter-setting';
 import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
 
+export class FilterValues {
+    category: Category;
+    country: string;
+    creditScore: number;
+    brand: string;
+}
+
 @Component({
     templateUrl: './offers-layout.component.html',
     styleUrls: [ './offers-layout.component.less' ],
@@ -94,7 +101,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
     creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.offersService.covertCreditScoreToNumber(score)));
     stateCode$: Observable<string> = this.offersService.memberInfo$.pipe(pluck('stateCode'));
-    filtersValues = this.getDefaultFilters();
+    filtersValues: FilterValues = this.getDefaultFilters();
     filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
         [CategoryGroupEnum.Loans]: [
             new RangeFilterSetting({
@@ -201,8 +208,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         name: 'Fair',
                         value: CreditScore.Fair,
                         min: 630,
-                        max: 689,
-                        checked: true
+                        max: 689
                     },
                     {
                         name: 'Bad',
@@ -215,10 +221,13 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         value: CreditScore.NotSure
                     }
                 ]),
-                selected$: of(CreditScore.Fair),
+                selected$: this.creditScore$.pipe(map((creditScore: CreditScore) => {
+                    return this.filtersValues.creditScore && this.offersService.covertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
+                })),
                 onChange: (creditScore: CreditScoreItem) => {
-                    if (this.filtersValues.creditScore != creditScore.value) {
-                        this.filtersValues.creditScore = <any>creditScore.value;
+                    const filterValue: number = <any>this.offersService.covertCreditScoreToNumber(creditScore.value);
+                    if (this.filtersValues.creditScore != filterValue) {
+                        this.filtersValues.creditScore = filterValue;
                         this.selectedFilter.next(this.filtersValues);
                     }
                 }
@@ -417,31 +426,36 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAreLoading = true; }),
             withLatestFrom(this.offersService.memberInfo$),
             switchMap(
-                ([filter, memberInfo]) => this.offerServiceProxy.getAll(
-                    memberInfo.testMode,
-                    memberInfo.isDirectPostSupported,
-                    filter.category,
-                    undefined,
-                    filter.country,
-                    this.getCategoryGroup(filter.category) === CategoryGroupEnum.Loans
-                        ? this.offersService.covertNumberToCreditScore(filter.creditScore)
-                        : undefined,
-                    undefined,
-                    undefined
-                ).pipe(
-                    finalize(() => {
-                        this.offersAreLoading = false;
-                        abp.ui.clearBusy(this.offersListRef.nativeElement);
-                        this.changeDetectorRef.detectChanges();
-                    }),
-                    tap((offers: OfferDto[]) => {
-                        if (!this.brands$.value.length) {
-                            this.getBrandsFromOffers(of(offers)).subscribe(
-                                (brands: SelectFilterModel[]) => this.brands$.next(brands)
-                            );
-                        }
-                    })
-                )
+                ([filter, memberInfo]) => {
+                    const categoryGroup = this.getCategoryGroup(filter.category);
+                    const creditScore = categoryGroup === CategoryGroupEnum.Loans
+                          || categoryGroup === CategoryGroupEnum.CreditCards
+                            ? this.offersService.covertNumberToCreditScore(filter.creditScore)
+                            : undefined;
+                    return this.offerServiceProxy.getAll(
+                        memberInfo.testMode,
+                        memberInfo.isDirectPostSupported,
+                        filter.category,
+                        undefined,
+                        filter.country,
+                        creditScore,
+                        undefined,
+                        undefined
+                    ).pipe(
+                        finalize(() => {
+                            this.offersAreLoading = false;
+                            abp.ui.clearBusy(this.offersListRef.nativeElement);
+                            this.changeDetectorRef.detectChanges();
+                        }),
+                        tap((offers: OfferDto[]) => {
+                            if (!this.brands$.value.length) {
+                                this.getBrandsFromOffers(of(offers)).subscribe(
+                                    (brands: SelectFilterModel[]) => this.brands$.next(brands)
+                                );
+                            }
+                        })
+                    );
+                }
             ),
             tap(offers => {
                 this.offersAmount = offers.length;
@@ -488,7 +502,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     private getDefaultFilters() {
         return {
             category: undefined,
-            type: undefined,
             country: 'US',
             creditScore: null,
             brand: null

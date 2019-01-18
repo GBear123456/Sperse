@@ -92,7 +92,9 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="filterType.Score">
                                     <ng-container *ngIf="(filter.values$ | async) as filterValues">
-                                        <score-filter [items]="filterValues" (selectionChange)="filter.onChange && filter.onChange($event)"></score-filter>
+                                        <ng-container *ngIf="(filter.selected$ | async) as selected">
+                                            <score-filter [items]="filterValues" [selected]="selected" (selectionChange)="filter.onChange && filter.onChange($event)"></score-filter>
+                                        </ng-container>
                                     </ng-container>
                                 </ng-container>
                             </ng-container>
