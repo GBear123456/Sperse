@@ -43,6 +43,9 @@ export class OffersService {
         'credit-scores': Category.CreditScore,
         'id-theft-protection': Category.CreditMonitoring
     };
+    readonly categoriesDisplayNames = {
+        [Category.CreditScore]: this.ls.l('CreditScore_CreditScores')
+    };
     readonly creditScores = {
         'poor': {
             min: 0,
@@ -79,7 +82,7 @@ export class OffersService {
     }
 
     getCategoryDisplayName(category: Category): string {
-        return category ? lowerCase(category) : this.defaultCategoryDisplayName;
+        return category ? this.categoriesDisplayNames[category] || lowerCase(category) : this.defaultCategoryDisplayName;
     }
 
     getCreditScoreName(value: number): string {
