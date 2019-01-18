@@ -85,11 +85,11 @@
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" cssClass="tabular" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
-                        <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate"
+                        <dxi-column dataField="PhotoId" caption=" " cellTemplate="photoTemplate"
                                     [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                                     [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
-                            <div [ngStyle]="{'background-image': 'url(' + getPhoto(data.data.Photo) + ')'}" class="img-circle"></div>
+                            <div [ngStyle]="{'background-image': 'url(' + getContactPhotoUrl(data.data.Id, data.data.PhotoId) + ')'}" class="img-circle"></div>
                         </div>
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                         <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
