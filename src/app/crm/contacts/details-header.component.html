@@ -11,14 +11,14 @@
         </div>
         <rating-bar rating="{{ ratingId || 0 }}"></rating-bar>
     </div>
-    <div *ngIf="data?.primaryOrganizationContactInfo" class="organization_info">
+    <div *ngIf="data?.primaryOrganizationContactId" class="organization_info">
         <div class="delimiter"></div>
         <div class="info-icon" (click)="showCompanyDialog($event)">
             <img src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
         </div>
 
         <h2 *ngIf="data && data?.primaryOrganizationContactInfo?.fullName" class="shift-top">
-            <inplace-edit #companyName [data]="getNameInplaceEditData('primaryOrganizationContactInfo')" (valueChanged)="updateCompanyField($event)"></inplace-edit><div class="actions" [hidden]="companyName.isEditModeEnabled"><i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i><i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i></div>
+            <inplace-edit #companyName [data]="getNameInplaceEditData('primaryOrganizationContactInfo')" (valueChanged)="updateCompanyField($event)"></inplace-edit><i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data.personContactInfo.orgRelations.length > 1)" (click)="showCompanyList($event)"></i><div class="actions" [hidden]="companyName.isEditModeEnabled"><i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i><i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i></div>
         </h2>
         <h3 *ngIf="this?.personOrgRelationInfo?.id">
             <inplace-edit [data]="getJobTitleInplaceEditData()" (valueChanged)="updateJobTitle($event)"></inplace-edit>

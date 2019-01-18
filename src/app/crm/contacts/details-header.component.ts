@@ -7,7 +7,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -17,6 +17,7 @@ import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dial
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
+import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 import {
     ContactPhotoDto,
     ContactInfoDto,
@@ -83,7 +84,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         public dialog: MatDialog,
         private _personOrgRelationService: PersonOrgRelationServiceProxy,
-        private organizationContactService: OrganizationContactServiceProxy,
+        private _orgContactService: OrganizationContactServiceProxy,
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
@@ -346,5 +347,28 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                 this.onInvalidate.emit();
         });
         event.stopPropagation();
+    }
+
+    showCompanyList(event) { 
+        this.dialog.closeAll();
+        this.dialog.open(RelationCompaniesDialogComponent, {
+            data: this.data,
+            hasBackdrop: false,
+            position: this.dialogService.calculateDialogPosition(event, event.target)
+        }).afterClosed().subscribe(result => {
+            if (result == 'addCompany')
+                this.addCompanyDialog(event);
+            else if (result)
+                this.displaySelectedCompany(result);
+        });
+        event.stopPropagation();
+    }
+
+    displaySelectedCompany(company) {
+        this.startLoading();
+        this._orgContactService.getOrganizationContactInfo(company.id)
+            .pipe(finalize(() => this.finishLoading())).subscribe((result) => {
+                this.data['primaryOrganizationContactInfo'] = result;
+            });
     }
 }
