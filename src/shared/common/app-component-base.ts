@@ -62,7 +62,7 @@ export abstract class AppComponentBase implements OnDestroy {
     get exportService() {
         if (!this._exportService)
            this._exportService = this._injector.get(ExportService);
-        return this._exportService
+        return this._exportService;
     }
 
     public searchClear = true;

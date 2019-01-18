@@ -49,7 +49,6 @@ export class UserManagementListComponent extends AppComponentBase implements OnI
     isImpersonatedLogin = false;
     shownLoginNameTitle = '';
     hasPlatformPermissions = false;
-    profileThumbnailId: string;
     recentlyLinkedUsers: LinkedUserDto[];
 
     helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
@@ -184,12 +183,11 @@ export class UserManagementListComponent extends AppComponentBase implements OnI
 
     registerToEvents() {
         abp.event.on('profilePictureChanged', (thumbnailId) => {
-            this.profileThumbnailId = this.appSession.user.profileThumbnailId = thumbnailId;
+            this.appSession.user.profilePictureId = thumbnailId;
         });
     }
 
     private handleProfilePictureChange(thumbnailId: string) {
-        this.appSession.user.profilePictureId = thumbnailId;
         abp.event.trigger('profilePictureChanged', thumbnailId);
     }
 
@@ -224,7 +222,5 @@ export class UserManagementListComponent extends AppComponentBase implements OnI
     getCurrentLoginInformations(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
         this.tenant = this.appSession.tenant;
-        this.profileThumbnailId = this.appSession.user &&
-            this.appSession.user.profileThumbnailId;
     }
 }
