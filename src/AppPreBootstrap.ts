@@ -15,7 +15,7 @@ export class AppPreBootstrap {
         if (abpAjax.defaultError) {
             abpAjax.defaultError.details = AppConsts.defaultErrorMessage;
         }
-        
+
         let _handleUnAuthorizedRequest = abpAjax['handleUnAuthorizedRequest'];
         abpAjax['handleUnAuthorizedRequest'] = (messagePromise: any, targetUrl?: string) => {
             if (!targetUrl || targetUrl == '/')
@@ -176,7 +176,6 @@ export class AppPreBootstrap {
         $.extend(true, abp, result);
         abp.clock.provider = this.getCurrentClockProvider(result.clock.provider);
 
-        moment.locale(abp.localization.currentLanguage.name);
         if (abp.clock.provider.supportsMultipleTimezone && moment)
             moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
 

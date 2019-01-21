@@ -4,8 +4,6 @@ import { hmrBootstrap } from './hmr';
 import { environment } from './environments/environment';
 import { RootModule } from './root.module';
 
-import 'moment-timezone';
-import 'moment/locale/en-gb';
 import './polyfills.ts';
 import 'hammerjs';
 
