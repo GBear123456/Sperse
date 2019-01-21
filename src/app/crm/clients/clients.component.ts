@@ -205,13 +205,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     showClientDetails(event) {
-        let clientId = event.data && event.data.Id;
-        if (!clientId)
+        if (!event.data)
             return;
+
+        let orgId = event.data.OrganizationId,
+            clientId = event.data.Id;
 
         this.searchClear = false;
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId],
+        this._router.navigate(['app/crm/client', clientId].concat(orgId ? ['company', orgId]: []),
             { queryParams: { referrer: 'app/crm/clients'} });
     }
 

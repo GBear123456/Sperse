@@ -25,7 +25,7 @@ export class RelationCompaniesDialogComponent extends AppComponentBase {
     }
 
     selectCompany(company): void {
-        this.dialogRef.close(company);
+        this.dialogRef.close(company.organization);
     }
 
     addNewCompany() {
@@ -35,7 +35,7 @@ export class RelationCompaniesDialogComponent extends AppComponentBase {
     filterList(event?) {
         let search = event && event.target.value.toLowerCase() || '';
         this.displayedCompanies = this.data.personContactInfo.orgRelations.filter((item) => {
-            return (item.organization.id != this.data.primaryOrganizationContactId)
+            return (item.organization.id != this.data['organizationContactInfo'].id)
                 && (item.organization.name.toLowerCase().indexOf(search) >= 0)
         });
     }

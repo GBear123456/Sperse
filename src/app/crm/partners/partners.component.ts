@@ -210,7 +210,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
         this.searchClear = false;
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/partner', partnerId],
+        let orgId = event.data.OrganizationId;
+        this._router.navigate(['app/crm/partner', partnerId].concat(orgId ? ['company', orgId]: []),
             { queryParams: { referrer: 'app/crm/partners'} });
     }
 

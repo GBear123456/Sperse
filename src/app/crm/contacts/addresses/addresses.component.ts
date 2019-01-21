@@ -32,17 +32,8 @@ import { PersonOrgRelationType } from '@root/shared/AppEnums';
 })
 export class AddressesComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
+    @Input() contactInfo: ContactInfoDto;
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() set contactInfo(value: ContactInfoDto) {
-        // if (this._contactInfo = value)
-        //     this.contactInfoData = this.isCompany ?
-        //         value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details :
-        //         value.personContactInfo && value.personContactInfo.details;
-
-    }
-    get contactInfo(): ContactInfoDto {
-        return this._contactInfo;
-    }
 
     types: Object = {};
     country: string;
@@ -57,7 +48,6 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     private _clickTimeout;
     private _clickCounter = 0;
     private _itemInEditMode: any;
-    private _contactInfo: ContactInfoDto;
     private _latestFormatedAddress: string;
 
     constructor(injector: Injector,
@@ -120,6 +110,18 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     showDialog(address, event, index) {
+        if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
+            this.showAddressDialog(address, event, index);
+        else
+            this._contactsService.addCompanyDialog(event, this.contactInfo,
+                Math.round(event.target.offsetWidth / 2)
+            ).subscribe(result => {
+                if (result)
+                    this.showAddressDialog(address, event, index);
+            });
+    }
+
+    showAddressDialog(address, event, index) {
         let dialogData = _.pick(address || {isActive: true}, 'id', 'city',
             'comment', 'country', 'isActive', 'isConfirmed',
             'state', 'streetAddress', 'usageTypeId', 'zip');
@@ -150,7 +152,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     createOrganization(address, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            relatedContactId: this._contactInfo.id,
+            relatedContactId: this.contactInfo.id,
             companyName: companyName,
             relationTypeId: PersonOrgRelationType.Employee
         })).subscribe(response => {
@@ -161,20 +163,20 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        // this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
-        //     organization: OrganizationInfoDto.fromJS({
-        //         companyName: companyName
-        //     }),
-        //     id: contactId,
-        //     fullName: companyName,
-        //     details: ContactInfoDetailsDto.fromJS({
-        //         contactId: contactId,
-        //         emails: [],
-        //         phones: [],
-        //         addresses: [],
-        //         links: [],
-        //     })
-        // });
+         this.contactInfo['organizationContactInfo'] = OrganizationContactInfoDto.fromJS({
+             organization: OrganizationInfoDto.fromJS({
+                 companyName: companyName
+             }),
+             id: contactId,
+             fullName: companyName,
+             details: ContactInfoDetailsDto.fromJS({
+                 contactId: contactId,
+                 emails: [],
+                 phones: [],
+                 addresses: [],
+                 links: [],
+             })
+         });
     }
 
     updateDataField(address, data) {

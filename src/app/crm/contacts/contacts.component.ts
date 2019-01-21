@@ -190,12 +190,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this._contactService['data'].contactInfo = result;
         contactId = contactId || result.personContactInfo.id;
 
-        if (result.primaryOrganizationContactInfo && result.primaryOrganizationContactInfo.contactPersons) {
-            result.primaryOrganizationContactInfo.contactPersons.every((contact) => {
-                let isPrimaryContact = (contact.id == contactId);
-                if (isPrimaryContact)
-                    result.personContactInfo = contact;
-                return !isPrimaryContact;
+        if (result.organizationContactInfo && result.organizationContactInfo.contactPersons) {
+            result.organizationContactInfo.contactPersons.map((contact) => {
+                return (contact.id == contactId ? result.personContactInfo: contact);
             });
         }
 
@@ -276,11 +273,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     ? this._orgContactService.getOrganizationContactInfo(companyId)
                     : of(OrganizationContactInfoDto.fromJS({}))
             ).pipe(map((contactInfo) => {
-                contactInfo[0]['primaryOrganizationContactInfo'] = contactInfo[1];
-                if (!companyId)
+                contactInfo[0]['organizationContactInfo'] = contactInfo[1];
+                if (!companyId && contactInfo[0].primaryOrganizationContactId)
                     this._orgContactService.getOrganizationContactInfo(
                         contactInfo[0].primaryOrganizationContactId).subscribe((result) => {
-                            contactInfo[0]['primaryOrganizationContactInfo'] = result;
+                            contactInfo[0]['organizationContactInfo'] = result;
                         });
 
                 return contactInfo[0];
@@ -355,11 +352,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
             (partnerTypes: any) => {
                 this.partnerTypes = partnerTypes && partnerTypes.length ?
-                                    partnerTypes.map(type => {
-                                        type['action'] = this.updatePartnerType.bind(this);
-                                        return type;
-                                    }) :
-                                    [];
+                    partnerTypes.map(type => {
+                        type['action'] = this.updatePartnerType.bind(this);
+                        return type;
+                    }) : [];
             }
         );
     }
@@ -430,8 +426,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             position: this.getDialogPossition(event, -182, 89),
             panelClass: ['related-contacts']
         }).afterClosed().subscribe(result => {
-            this.personContactInfo = this.contactInfo.personContactInfo;
-            if (result == 'addNewContact') this.addNewContact(event);
+            if (result == 'addNewContact') 
+                this.addNewContact(event);
+            else if (result) {
+                this.customerId = result.id;
+                this.fillContactDetails(result);
+                this._contactsService.updateLocation(this.customerId, null, null, 
+                    result.organizationContactInfo && result.organizationContactInfo.id);
+            }
         });
         event.stopPropagation();
     }

@@ -1,5 +1,11 @@
 import { Injectable, Injector } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { Subject } from 'rxjs';
+
+import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 
 @Injectable()
 export class ContactsService {
@@ -14,7 +20,12 @@ export class ContactsService {
         common: []
     };
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector,
+        private _dialogService: DialogService,
+        private _router: Router,
+        private _location: Location,
+        public dialog: MatDialog        
+    ) {
         this.verificationSubject = new Subject<any>();
         this.toolbarSubject = new Subject<any>();
         this.userSubject = new Subject<any>();
@@ -94,5 +105,31 @@ export class ContactsService {
                 sub.unsubscribe();
         });
         list.lendth = 0;
+    }
+
+    addCompanyDialog(event, contactInfo, shiftX?, shiftY?) {
+        this.dialog.closeAll();
+        event.stopPropagation();
+
+        return this.dialog.open(AddCompanyDialogComponent, {
+            data: { 
+                contactId: contactInfo.id,
+                contactInfo: contactInfo,
+                updateLocation: this.updateLocation.bind(this)
+            },
+            hasBackdrop: false,
+            position: this._dialogService.calculateDialogPosition(
+                event, event.target, shiftX, shiftY)
+        }).afterClosed();
+    }
+
+    updateLocation(customerId?, leadId?, partnerId?, companyId?) {
+        this._location.replaceState(this._router.createUrlTree(['app/crm'].concat(
+            customerId ? ['client', customerId]: [],
+            leadId ? ['lead', leadId]: [],
+            partnerId ? ['partner', partnerId]: [],
+            companyId ? ['company', companyId]: [],
+            [location.pathname.split('/').pop()]
+        )).toString(), location.search);
     }
 }

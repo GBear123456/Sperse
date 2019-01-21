@@ -67,6 +67,21 @@ export class AddCompanyDialogComponent extends AppComponentBase {
         $event.component.option('opened', Boolean(this.companies.length));
     }
 
+    applyContactInfo(orgContactId) {
+        if (orgContactId && this.data.contactInfo) {
+            this.orgServiceProxy.getOrganizationContactInfo(orgContactId).subscribe((result) => {
+                this.data.contactInfo.organizationContactInfo = result;
+                this.data.contactInfo.personContactInfo.orgRelations.push({
+                    isActive: true,
+                    jobTitle: this.data.title,
+                    organization: result.organization,
+                    relationType: {id: PersonOrgRelationType.Employee, name: "Employee"}
+                });
+            });
+            this.data.contactInfo.primaryOrganizationContactId = orgContactId;
+        }
+    }
+
     onSave(event) {
         this.startLoading(true);
         this.relationServiceProxy.create(
@@ -79,8 +94,13 @@ export class AddCompanyDialogComponent extends AppComponentBase {
             }
         )).pipe(finalize(() => {
             this.finishLoading(true);
-        })).subscribe((res) => {
-            this.finishLoading(true);
+        })).subscribe((res) => {            
+            this.finishLoading(true);            
+            let orgId = res && res['organizationId'];
+            if (orgId) {
+                this.data.updateLocation(this.data.contactId, null, null, orgId);
+                this.applyContactInfo(orgId);
+            }
             this.dialogRef.close(true);
         });
     }

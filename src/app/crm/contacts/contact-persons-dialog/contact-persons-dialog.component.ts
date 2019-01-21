@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, Inject, Injector } from '@angular/c
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { PersonContactInfoDto, ContactInfoDto } from 'shared/service-proxies/service-proxies';
+import { PersonShortInfoDto, ContactInfoDto, ContactServiceProxy } from 'shared/service-proxies/service-proxies';
+import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'contact-persons-dialog',
@@ -12,29 +13,37 @@ import { PersonContactInfoDto, ContactInfoDto } from 'shared/service-proxies/ser
 })
 export class ContactPersonsDialogComponent extends AppComponentBase {
 
-    contactPersons: PersonContactInfoDto[];
-    displayedContactPersons: PersonContactInfoDto[];
+    displayedPersons: PersonShortInfoDto[];
 
     constructor(
         injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: ContactInfoDto,
+        private _contactService: ContactServiceProxy,
         public dialogRef: MatDialogRef<ContactPersonsDialogComponent>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        //this.displayedContactPersons = this.contactPersons = this.data.primaryOrganizationContactInfo.contactPersons.filter(item => item.id != this.data.personContactInfo.id);
+        
+        this.filterList();
     }
 
     selectContactPerson(contactPerson): void {
-        this.data.personContactInfo = contactPerson;
-        this.dialogRef.close();
+        this.startLoading(true);
+        this._contactService.getContactInfo(contactPerson.id)
+            .pipe(finalize(() => this.finishLoading(true))).subscribe((contactInfo) => {
+                contactInfo['organizationContactInfo'] = this.data['organizationContactInfo'];
+                this.dialogRef.close(contactInfo);
+            });                
     }
 
     addNewContact() {
         this.dialogRef.close('addNewContact');
     }
 
-    filterList(event) {
-        let filter = event.target.value.toUpperCase();
-        this.displayedContactPersons = this.contactPersons.filter(person => person.fullName.toUpperCase().indexOf(filter) > -1);
+    filterList(event?) {
+        let search = event ? event.target.value.toUpperCase(): '';
+        this.displayedPersons = this.data['organizationContactInfo'].contactPersons.filter((person) => {
+            return (person.id != this.data.personContactInfo.id)
+                && (!search || person.fullName.toUpperCase().indexOf(search) > -1)
+        });
     }
 }

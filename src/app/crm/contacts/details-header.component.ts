@@ -38,13 +38,13 @@ import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactGroup } from '@shared/AppEnums';
 import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
-import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
+import { ContactsService } from './contacts.service';
 
 @Component({
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [ AppService, ContactPhotoServiceProxy, DialogService ]
+    providers: [ AppService, ContactPhotoServiceProxy ]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
@@ -83,6 +83,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         public dialog: MatDialog,
+        private _contactsService: ContactsService,
         private _personOrgRelationService: PersonOrgRelationServiceProxy,
         private _orgContactService: OrganizationContactServiceProxy,
         private personContactServiceProxy: PersonContactServiceProxy,
@@ -129,15 +130,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.dialog.closeAll();
         this.dialog.open(CompanyDialogComponent, {
             data: {
-                //company: this.data.primaryOrganizationContactInfo
+                company: this.data['organizationContactInfo']
             },
             panelClass: 'slider',
             maxWidth: '830px'
         }).afterClosed().subscribe(result => {
             if (result) {
-                // this.data.primaryOrganizationContactInfo.organization = new OrganizationInfoDto(result.company);
-                // this.data.primaryOrganizationContactInfo.fullName = result.company.fullName;
-                // this.data['primaryOrganizationContactInfo'].primaryPhoto = result.company.primaryPhoto;
+                 this.data['organizationContactInfo'].organization = new OrganizationInfoDto(result.company);
+                 this.data['organizationContactInfo'].fullName = result.company.fullName;
+                 this.data['organizationContactInfo'].primaryPhoto = result.company.primaryPhoto;
             }
         });
         if (e.stopPropagation) {
@@ -146,6 +147,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     showUploadPhotoDialog(event, isCompany?: boolean) {
+        if (isCompany) {
+            let companyInfo = this.data['organizationContactInfo'];
+            if (!companyInfo || !companyInfo.id)
+                return ;
+        }            
+
         this.dialog.closeAll();
         let data = { ...this.data, ...this.getPhotoSrc(this.data, isCompany) };
         this.dialog.open(UploadPhotoDialogComponent, {
@@ -195,11 +202,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
 
     private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
         let photoBase64;
-        // if (isCompany && data.primaryOrganizationContactInfo.primaryPhoto) {
-        //     photoBase64 = data.primaryOrganizationContactInfo.primaryPhoto.original;
-        // } else if (!isCompany && data.personContactInfo.primaryPhoto) {
-        //     photoBase64 = data.personContactInfo.primaryPhoto.original;
-        // }
+        if (isCompany && data['organizationContactInfo'].primaryPhoto) {
+            photoBase64 = data['organizationContactInfo'].primaryPhoto.original;
+        } else if (!isCompany && data.personContactInfo.primaryPhoto) {
+            photoBase64 = data.personContactInfo.primaryPhoto.original;
+        }
         return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
     }
 
@@ -208,7 +215,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         if (contactInfo)
             return {
                 id: contactInfo.id,
-                value: contactInfo.fullName.trim(),
+                value: (contactInfo.fullName || '').trim(),
                 validationRules: [
                     {type: 'required', message: this.l('FullNameIsRequired')},
                     {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
@@ -241,14 +248,14 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     updateCompanyField(value, field = 'companyName') {
-        // let data = this.data.primaryOrganizationContactInfo;
-        // data.organization[field] = value;
-        // this.organizationContactService.updateOrganizationInfo(
-        //     UpdateOrganizationInfoInput.fromJS(
-        //         _.extend({id: data.id}, data.organization))
-        // ).subscribe(() => {
-        //     data.fullName = value;
-        // });
+        let data = this.data['organizationContactInfo'];
+        data.organization[field] = value;
+        this._orgContactService.updateOrganizationInfo(
+            UpdateOrganizationInfoInput.fromJS(
+                _.extend({id: data.id}, data.organization))
+        ).subscribe(() => {
+            data.fullName = value;
+        });
     }
 
     updatePrimaryContactName(value) {
@@ -337,16 +344,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     addCompanyDialog(event) {
-        this.dialog.closeAll();
-        this.dialog.open(AddCompanyDialogComponent, {
-            data: {contactId: this.data.personContactInfo.person.contactId},
-            hasBackdrop: false,
-            position: this.dialogService.calculateDialogPosition(event, event.target)
-        }).afterClosed().subscribe(result => {
+        this._contactsService.addCompanyDialog(event, this.data).subscribe(result => {
             if (result)
                 this.onInvalidate.emit();
         });
-        event.stopPropagation();
     }
 
     showCompanyList(event) { 
@@ -368,7 +369,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.startLoading();
         this._orgContactService.getOrganizationContactInfo(company.id)
             .pipe(finalize(() => this.finishLoading())).subscribe((result) => {
-                this.data['primaryOrganizationContactInfo'] = result;
+                this.data['organizationContactInfo'] = result;
+                this._contactsService.updateLocation(
+                    this.data.id, null, null, result && result.id);
             });
     }
 }
