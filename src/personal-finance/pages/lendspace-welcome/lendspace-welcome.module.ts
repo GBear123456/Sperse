@@ -3,7 +3,6 @@ import { LendspaceWelcomeComponent } from '@root/personal-finance/pages/lendspac
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LayoutModule } from '@root/personal-finance/shared/layout/layout.module';
-import { StarsRatingComponent } from '@root/personal-finance/shared/offers/stars-rating/stars-rating.component';
 import { RecommendedCardsComponent } from './recommended-cards/recommended-cards.component';
 import { RecommendedLendersComponent } from './recommended-lenders/recommended-lenders.component';
 import { RecommendedArticlesComponent } from './recommended-articles/recommended-articles.component';
@@ -21,7 +20,6 @@ import { ShopNowComponent } from './shop-now/shop-now.component';
     ],
     declarations: [
         LendspaceWelcomeComponent,
-        StarsRatingComponent,
         RecommendedCardsComponent,
         RecommendedLendersComponent,
         RecommendedArticlesComponent,

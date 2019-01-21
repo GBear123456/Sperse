@@ -14,7 +14,6 @@ import { MatSliderModule } from '@angular/material/slider';
 /** Application imports */
 import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offers-layout.component';
 import { LayoutModule } from '../layout/layout.module';
-import { StarsRatingComponent } from '@root/personal-finance/shared/offers/stars-rating/stars-rating.component';
 import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
@@ -51,7 +50,6 @@ import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers
     ],
     declarations: [
         ApplyOfferDialogComponent,
-        StarsRatingComponent,
         OffersLayoutComponent,
         OfferDetailsComponent,
         NumberAbbrPipe,
