@@ -28,10 +28,10 @@ import { PersonOrgRelationType } from '@root/shared/AppEnums';
 export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
     @Input() set contactInfo(value: ContactInfoDto) {
-        if (this._contactInfo = value)
-            this.contactInfoData = this.isCompany
-                ? value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details
-                : value.personContactInfo && value.personContactInfo.details;
+        // if (this._contactInfo = value)
+        //     this.contactInfoData = this.isCompany
+        //         ? value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details
+        //         : value.personContactInfo && value.personContactInfo.details;
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -135,20 +135,20 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
-            organization: OrganizationInfoDto.fromJS({
-                companyName: companyName
-            }),
-            id: contactId,
-            fullName: companyName,
-            details: ContactInfoDetailsDto.fromJS({
-                contactId: contactId,
-                emails: [],
-                phones: [],
-                addresses: [],
-                links: [],
-            })
-        });
+        // this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
+        //     organization: OrganizationInfoDto.fromJS({
+        //         companyName: companyName
+        //     }),
+        //     id: contactId,
+        //     fullName: companyName,
+        //     details: ContactInfoDetailsDto.fromJS({
+        //         contactId: contactId,
+        //         emails: [],
+        //         phones: [],
+        //         addresses: [],
+        //         links: [],
+        //     })
+        // });
     }
 
     updateDataField(field, dataItem, updatedData) {

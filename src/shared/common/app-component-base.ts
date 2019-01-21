@@ -195,6 +195,16 @@ export abstract class AppComponentBase implements OnDestroy {
         return AppConsts.imageUrls.noPhoto;
     }
 
+    getContactPhotoUrl(contactId, photoId, isThumbnail = true): string {
+        if (photoId) {
+            let actionName = isThumbnail ? 'thumbnail' : 'photo';
+            let tenantId = this.appSession.tenantId || 0;
+            return AppConsts.remoteServiceBaseUrl + '/api/contact/' + actionName + '/' + tenantId + '/' + contactId + '/' + photoId;
+        }
+
+        return AppConsts.imageUrls.noPhoto;
+    }
+
     getImageBase64Src(imageBase64: string): string {
         return 'data:image/jpeg;base64,' + imageBase64;
     }

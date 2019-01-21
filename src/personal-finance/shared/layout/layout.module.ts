@@ -14,11 +14,13 @@ import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { UserManagementListComponent } from './user-management-list/user-management-list.component';
+import { StarsRatingComponent } from './stars-rating/stars-rating.component';
 import { PersonalFinanceLayoutService } from '@shared/personal-finance-layout/personal-finance-layout.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 let COMPONENTS = [
-    UserManagementListComponent
+    UserManagementListComponent,
+    StarsRatingComponent
 ];
 
 @NgModule({

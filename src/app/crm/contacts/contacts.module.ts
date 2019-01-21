@@ -91,6 +91,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { CompanyDialogComponent } from './company-dialog/company-dialog.component';
+import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 
 @NgModule({
   declarations: [
@@ -133,7 +134,8 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     PermissionTreeComponent,
     AddContactDialogComponent,
     AddCompanyDialogComponent,
-    CompanyDialogComponent
+    CompanyDialogComponent,
+    RelationCompaniesDialogComponent
   ],
   imports: [
     FormsModule,
@@ -190,7 +192,8 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
     UploadDocumentsDialogComponent,
     AddContactDialogComponent,
     AddCompanyDialogComponent,
-    NoteAddDialogComponent
+    NoteAddDialogComponent,
+    RelationCompaniesDialogComponent
   ],
   providers: [
     ContactsService,

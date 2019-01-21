@@ -36,10 +36,10 @@ export class SocialsComponent extends AppComponentBase {
     @Input() isCompany;
     @Input() contactInfoData: ContactInfoDetailsDto;
     @Input() set contactInfo(value: ContactInfoDto) {
-        if (this._contactInfo = value)
-            this.contactInfoData = this.isCompany ?
-                value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details:
-                value.personContactInfo && value.personContactInfo.details;
+        // if (this._contactInfo = value)
+        //     this.contactInfoData = this.isCompany ?
+        //         value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details:
+        //         value.personContactInfo && value.personContactInfo.details;
 
     }
     get contactInfo(): ContactInfoDto {
@@ -142,20 +142,20 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
-            organization: OrganizationInfoDto.fromJS({
-                companyName: companyName
-            }),
-            id: contactId,
-            fullName: companyName,
-            details: ContactInfoDetailsDto.fromJS({
-                contactId: contactId,
-                emails: [],
-                phones: [],
-                addresses: [],
-                links: [],
-            })
-        });
+        // this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
+        //     organization: OrganizationInfoDto.fromJS({
+        //         companyName: companyName
+        //     }),
+        //     id: contactId,
+        //     fullName: companyName,
+        //     details: ContactInfoDetailsDto.fromJS({
+        //         contactId: contactId,
+        //         emails: [],
+        //         phones: [],
+        //         addresses: [],
+        //         links: [],
+        //     })
+        // });
     }
 
     updateDataField(data, dialogData) {

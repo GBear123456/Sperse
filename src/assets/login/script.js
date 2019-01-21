@@ -91,34 +91,44 @@
     }
 
     function getCurrentLoginInformations() {
-        ajax(remoteServiceUrl + '/api/services/Platform/Session/GetCurrentLoginInformations',
-            {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            }
-        ).then(function(response) {
-            var loginInformations = window.loginInfo = response && response.result;
-            tenant = loginInformations && loginInformations.tenant;
-            if (tenant && tenant.customLayoutType == 'LendSpace') {
-                window.loginPageHandler = undefined;
-                appBootstrap && appBootstrap.call(appContext);
-            } else {
-                window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
+        var generalInfo = window['generalInfo'];
+        if (generalInfo && generalInfo.loginInfo) {
+            handleGetCurrentLoginInformations(generalInfo.loginInfo);
+        }
+        else {
+            ajax(remoteServiceUrl + '/api/services/Platform/Session/GetCurrentLoginInformations',
+                {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                }
+            ).then(function (response) {
+                handleGetCurrentLoginInformations(response);
+            });
+        }
+    }
 
-                loadLoginStylesheet();
-                updateTenantMetadata();
-                ajax('./assets/login/login.html', undefined, true).then(function(loginBody) {
-                    document.body.innerHTML = loginBody;
-                    setTimeout(loginPageAfterInit);
-                });
+    function handleGetCurrentLoginInformations(response) {
+        var loginInformations = window.loginInfo = response && response.result;
+        tenant = loginInformations && loginInformations.tenant;
+        if (tenant && tenant.customLayoutType == 'LendSpace') {
+            window.loginPageHandler = undefined;
+            appBootstrap && appBootstrap.call(appContext);
+        } else {
+            window.history.pushState("", "", location.origin + '/account/login' + document.location.search);
 
-                let customizations = tenant && tenant.tenantCustomizations;
-                if (customizations && customizations.favicons && customizations.favicons.length)
-                    updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
-                else
-                    updateFavicons(DEFAULT_FAVICONS, './');
-            }
-        });
+            loadLoginStylesheet();
+            updateTenantMetadata();
+            ajax('./assets/login/login.html', undefined, true).then(function (loginBody) {
+                document.body.innerHTML = loginBody;
+                setTimeout(loginPageAfterInit);
+            });
+
+            let customizations = tenant && tenant.tenantCustomizations;
+            if (customizations && customizations.favicons && customizations.favicons.length)
+                updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
+            else
+                updateFavicons(DEFAULT_FAVICONS, './');
+        }
     }
 
     function updateFavicons(favicons, faviconBaseUrl) {

@@ -141,40 +141,50 @@ export class AppPreBootstrap {
         });
     }
 
-    static getUserConfiguration(callback: () => void, loadThemeResources: boolean = true): JQueryPromise<any> {
-        const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
-        const token = abp.auth.getToken();
-
-        let requestHeaders = {
-            'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
-        };
-
-        if (cookieLangValue) {
-            requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
+    static getUserConfiguration(callback: () => void, loadThemeResources: boolean = true) {
+        let generalInfo = window['generalInfo'];
+        if (generalInfo && generalInfo.userConfig) {
+            this.handleGetAll(generalInfo.userConfig, callback, loadThemeResources);
         }
+        else {
+            const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
+            const token = abp.auth.getToken();
 
-        if (token) {
-            requestHeaders['Authorization'] = 'Bearer ' + token;
+            let requestHeaders = {
+                'Abp.TenantId': abp.multiTenancy.getTenantIdCookie()
+            };
+
+            if (cookieLangValue) {
+                requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
+            }
+
+            if (token) {
+                requestHeaders['Authorization'] = 'Bearer ' + token;
+            }
+
+            abp.ajax({
+                url: AppConsts.remoteServiceBaseUrl + '/AbpUserConfiguration/GetAll',
+                method: 'GET',
+                headers: requestHeaders
+            }).done(result => {
+                this.handleGetAll(result, callback, loadThemeResources);
+            });
         }
+    }
 
-        return abp.ajax({
-            url: AppConsts.remoteServiceBaseUrl + '/AbpUserConfiguration/GetAll',
-            method: 'GET',
-            headers: requestHeaders
-        }).done(result => {
-            $.extend(true, abp, result);
-            abp.clock.provider = this.getCurrentClockProvider(result.clock.provider);
+    private static handleGetAll(result, callback: () => void, loadThemeResources: boolean = true) {
+        $.extend(true, abp, result);
+        abp.clock.provider = this.getCurrentClockProvider(result.clock.provider);
 
-            if (abp.clock.provider.supportsMultipleTimezone && moment)
-                moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
+        if (abp.clock.provider.supportsMultipleTimezone && moment)
+            moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
 
-            abp.event.trigger('abp.dynamicScriptsInitialized');
+        abp.event.trigger('abp.dynamicScriptsInitialized');
 
-            AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
-            AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));
+        AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
+        AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));
 
-            loadThemeResources ? LocalizedResourcesHelper.loadResources(callback) : callback();
-        });
+        loadThemeResources ? LocalizedResourcesHelper.loadResources(callback) : callback();
     }
 
     private static setEncryptedTokenCookie(encryptedToken: string) {

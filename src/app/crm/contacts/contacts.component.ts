@@ -6,8 +6,8 @@ import { ActivationEnd } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
-import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { finalize, map } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -28,7 +28,9 @@ import {
     UpdatePartnerTypeInput,
     UserServiceProxy,
     CustomerServiceProxy,
-    PersonContactInfoDto
+    PersonContactInfoDto,
+    OrganizationContactServiceProxy,
+    OrganizationContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { VerificationChecklistItemType, VerificationChecklistItem, VerificationChecklistItemStatus } from './verification-checklist/verification-checklist.model';
 import { OperationsWidgetComponent } from './operations-widget.component';
@@ -92,6 +94,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 private _cacheService: CacheService,
                 private _userService: UserServiceProxy,
                 private _contactService: ContactServiceProxy,
+                private _orgContactService: OrganizationContactServiceProxy,
                 private _partnerService: PartnerServiceProxy,
                 private _leadService: LeadServiceProxy,
                 private _pipelineService: PipelineService,
@@ -186,6 +189,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private fillContactDetails(result, contactId = null) {
         this._contactService['data'].contactInfo = result;
         contactId = contactId || result.personContactInfo.id;
+
         if (result.primaryOrganizationContactInfo && result.primaryOrganizationContactInfo.contactPersons) {
             result.primaryOrganizationContactInfo.contactPersons.every((contact) => {
                 let isPrimaryContact = (contact.id == contactId);
@@ -237,7 +241,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             clientId = params['clientId'],
             partnerId = params['partnerId'],
             customerId = clientId || partnerId,
-            leadId = params['leadId'];
+            leadId = params['leadId'],
+            companyId = params['companyId'];
 
         this.params = params;
         this._userService['data'] = {
@@ -247,13 +252,13 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             id: this.customerId = customerId
         };
         this._contactService['data'].leadInfo = {
-            id: leadId
+            id: this.leadId = leadId
         };
 
         if (userId)
             this.loadDataForUser(userId);
         else
-            this.loadDataForClient(customerId, this.leadId = leadId, partnerId);
+            this.loadDataForClient(customerId, leadId, partnerId, companyId);
     }
 
     loadDataForUser(userId) {
@@ -262,10 +267,24 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    loadDataForClient(customerId: number, leadId: number, partnerId: number) {
-        if (customerId) {
+    loadDataForClient(contactId: number, leadId: number, partnerId: number, companyId: number) {
+        if (contactId) {
             this.startLoading(true);
-            let contactInfo$ = this._contactService.getContactInfo(customerId);
+            let contactInfo$ = forkJoin(
+                this._contactService.getContactInfo(contactId), 
+                companyId 
+                    ? this._orgContactService.getOrganizationContactInfo(companyId)
+                    : of(OrganizationContactInfoDto.fromJS({}))
+            ).pipe(map((contactInfo) => {
+                contactInfo[0]['primaryOrganizationContactInfo'] = contactInfo[1];
+                if (!companyId)
+                    this._orgContactService.getOrganizationContactInfo(
+                        contactInfo[0].primaryOrganizationContactId).subscribe((result) => {
+                            contactInfo[0]['primaryOrganizationContactInfo'] = result;
+                        });
+
+                return contactInfo[0];
+            }));
             if (leadId)
                 this.loadLeadsStages();
 

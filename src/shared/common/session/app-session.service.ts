@@ -72,8 +72,10 @@ export class AppSessionService {
                 this._tenant = result.tenant;
                 resolve(true);
             };
-            if (window['loginInfo'])
-                updateLoginInfo(window['loginInfo']);
+
+            let generalInfo = window['generalInfo'];
+            if (generalInfo && generalInfo.loginInfo)
+                updateLoginInfo(generalInfo.loginInfo);
             else
                 this._sessionService.getCurrentLoginInformations().subscribe(updateLoginInfo.bind(this), (err) => {
                     reject(err);

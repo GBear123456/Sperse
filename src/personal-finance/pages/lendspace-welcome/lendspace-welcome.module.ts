@@ -3,6 +3,11 @@ import { LendspaceWelcomeComponent } from '@root/personal-finance/pages/lendspac
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LayoutModule } from '@root/personal-finance/shared/layout/layout.module';
+import { RecommendedCardsComponent } from './recommended-cards/recommended-cards.component';
+import { RecommendedLendersComponent } from './recommended-lenders/recommended-lenders.component';
+import { RecommendedArticlesComponent } from './recommended-articles/recommended-articles.component';
+import { FreeCheckingComponent } from './free-checking/free-checking.component';
+import { ShopNowComponent } from './shop-now/shop-now.component';
 
 @NgModule({
     imports: [
@@ -14,7 +19,12 @@ import { LayoutModule } from '@root/personal-finance/shared/layout/layout.module
         }])
     ],
     declarations: [
-        LendspaceWelcomeComponent
+        LendspaceWelcomeComponent,
+        RecommendedCardsComponent,
+        RecommendedLendersComponent,
+        RecommendedArticlesComponent,
+        FreeCheckingComponent,
+        ShopNowComponent
     ]
 })
 export class LendspaceWelcomeModule {}

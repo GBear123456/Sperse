@@ -7,7 +7,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -17,6 +17,7 @@ import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dial
 import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
+import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 import {
     ContactPhotoDto,
     ContactInfoDto,
@@ -83,7 +84,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         injector: Injector,
         public dialog: MatDialog,
         private _personOrgRelationService: PersonOrgRelationServiceProxy,
-        private organizationContactService: OrganizationContactServiceProxy,
+        private _orgContactService: OrganizationContactServiceProxy,
         private personContactServiceProxy: PersonContactServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
@@ -128,15 +129,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.dialog.closeAll();
         this.dialog.open(CompanyDialogComponent, {
             data: {
-                company: this.data.primaryOrganizationContactInfo
+                //company: this.data.primaryOrganizationContactInfo
             },
             panelClass: 'slider',
             maxWidth: '830px'
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.data.primaryOrganizationContactInfo.organization = new OrganizationInfoDto(result.company);
-                this.data.primaryOrganizationContactInfo.fullName = result.company.fullName;
-                this.data['primaryOrganizationContactInfo'].primaryPhoto = result.company.primaryPhoto;
+                // this.data.primaryOrganizationContactInfo.organization = new OrganizationInfoDto(result.company);
+                // this.data.primaryOrganizationContactInfo.fullName = result.company.fullName;
+                // this.data['primaryOrganizationContactInfo'].primaryPhoto = result.company.primaryPhoto;
             }
         });
         if (e.stopPropagation) {
@@ -194,11 +195,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
 
     private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
         let photoBase64;
-        if (isCompany && data.primaryOrganizationContactInfo.primaryPhoto) {
-            photoBase64 = data.primaryOrganizationContactInfo.primaryPhoto.original;
-        } else if (!isCompany && data.personContactInfo.primaryPhoto) {
-            photoBase64 = data.personContactInfo.primaryPhoto.original;
-        }
+        // if (isCompany && data.primaryOrganizationContactInfo.primaryPhoto) {
+        //     photoBase64 = data.primaryOrganizationContactInfo.primaryPhoto.original;
+        // } else if (!isCompany && data.personContactInfo.primaryPhoto) {
+        //     photoBase64 = data.personContactInfo.primaryPhoto.original;
+        // }
         return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
     }
 
@@ -240,14 +241,14 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     updateCompanyField(value, field = 'companyName') {
-        let data = this.data.primaryOrganizationContactInfo;
-        data.organization[field] = value;
-        this.organizationContactService.updateOrganizationInfo(
-            UpdateOrganizationInfoInput.fromJS(
-                _.extend({id: data.id}, data.organization))
-        ).subscribe(() => {
-            data.fullName = value;
-        });
+        // let data = this.data.primaryOrganizationContactInfo;
+        // data.organization[field] = value;
+        // this.organizationContactService.updateOrganizationInfo(
+        //     UpdateOrganizationInfoInput.fromJS(
+        //         _.extend({id: data.id}, data.organization))
+        // ).subscribe(() => {
+        //     data.fullName = value;
+        // });
     }
 
     updatePrimaryContactName(value) {
@@ -346,5 +347,28 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                 this.onInvalidate.emit();
         });
         event.stopPropagation();
+    }
+
+    showCompanyList(event) { 
+        this.dialog.closeAll();
+        this.dialog.open(RelationCompaniesDialogComponent, {
+            data: this.data,
+            hasBackdrop: false,
+            position: this.dialogService.calculateDialogPosition(event, event.target)
+        }).afterClosed().subscribe(result => {
+            if (result == 'addCompany')
+                this.addCompanyDialog(event);
+            else if (result)
+                this.displaySelectedCompany(result);
+        });
+        event.stopPropagation();
+    }
+
+    displaySelectedCompany(company) {
+        this.startLoading();
+        this._orgContactService.getOrganizationContactInfo(company.id)
+            .pipe(finalize(() => this.finishLoading())).subscribe((result) => {
+                this.data['primaryOrganizationContactInfo'] = result;
+            });
     }
 }
