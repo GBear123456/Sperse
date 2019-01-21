@@ -15799,9 +15799,13 @@ export class OfferServiceProxy {
      * @creditScore (optional) 
      * @isOfferCollection (optional) 
      * @itemOfOfferCollection (optional) 
+     * @cardNetworks (optional) 
+     * @cardType (optional) 
+     * @securingType (optional) 
+     * @targetAudience (optional) 
      * @return Success
      */
-    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<OfferDto[]> {
+    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined, cardNetworks: CardNetworks[] | null | undefined, cardType: CardType | null | undefined, securingType: SecuringType | null | undefined, targetAudience: TargetAudience | null | undefined): Observable<OfferDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (testMode === undefined || testMode === null)
             throw new Error("The parameter 'testMode' must be defined and cannot be null.");
@@ -15823,6 +15827,14 @@ export class OfferServiceProxy {
             url_ += "IsOfferCollection=" + encodeURIComponent("" + isOfferCollection) + "&"; 
         if (itemOfOfferCollection !== undefined)
             url_ += "ItemOfOfferCollection=" + encodeURIComponent("" + itemOfOfferCollection) + "&"; 
+        if (cardNetworks !== undefined)
+            cardNetworks && cardNetworks.forEach(item => { url_ += "CardNetworks=" + encodeURIComponent("" + item) + "&"; });
+        if (cardType !== undefined)
+            url_ += "CardType=" + encodeURIComponent("" + cardType) + "&"; 
+        if (securingType !== undefined)
+            url_ += "SecuringType=" + encodeURIComponent("" + securingType) + "&"; 
+        if (targetAudience !== undefined)
+            url_ += "TargetAudience=" + encodeURIComponent("" + targetAudience) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -18217,7 +18229,7 @@ export class PersonOrgRelationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    create(input: CreatePersonOrgRelationInput | null | undefined): Observable<void> {
+    create(input: CreatePersonOrgRelationInput | null | undefined): Observable<CreatePersonOrgRelationOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -18229,6 +18241,7 @@ export class PersonOrgRelationServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -18239,14 +18252,14 @@ export class PersonOrgRelationServiceProxy {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<CreatePersonOrgRelationOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<CreatePersonOrgRelationOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<void> {
+    protected processCreate(response: HttpResponseBase): Observable<CreatePersonOrgRelationOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18255,14 +18268,17 @@ export class PersonOrgRelationServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreatePersonOrgRelationOutput.fromJS(resultData200) : new CreatePersonOrgRelationOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<CreatePersonOrgRelationOutput>(<any>null);
     }
 
     /**
@@ -51285,6 +51301,42 @@ export interface ICreatePersonOrgRelationInput {
     jobTitle: string;
 }
 
+export class CreatePersonOrgRelationOutput implements ICreatePersonOrgRelationOutput {
+    organizationId!: number | undefined;
+
+    constructor(data?: ICreatePersonOrgRelationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organizationId = data["organizationId"];
+        }
+    }
+
+    static fromJS(data: any): CreatePersonOrgRelationOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreatePersonOrgRelationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organizationId"] = this.organizationId;
+        return data; 
+    }
+}
+
+export interface ICreatePersonOrgRelationOutput {
+    organizationId: number | undefined;
+}
+
 export class UpdatePersonOrgRelationInput implements IUpdatePersonOrgRelationInput {
     id!: number;
     relationshipType!: string;
@@ -58860,6 +58912,31 @@ export enum ItemOfOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+}
+
+export enum CardNetworks {
+    AmEx = "AmEx", 
+    Discover = "Discover", 
+    Mastercard = "Mastercard", 
+    Visa = "Visa", 
+    Store = "Store", 
+}
+
+export enum CardType {
+    Credit = "Credit", 
+    Debit = "Debit", 
+}
+
+export enum SecuringType {
+    Unsecured = "Unsecured", 
+    Secured = "Secured", 
+    Prepaid = "Prepaid", 
+}
+
+export enum TargetAudience {
+    Consumer = "Consumer", 
+    Business = "Business", 
+    Students = "Students", 
 }
 
 export enum Module {
