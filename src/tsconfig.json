@@ -22,7 +22,9 @@
       "@root/*": [ "./*" ],
       "@shared/*": [ "./shared/*" ],
       "@node_modules/*": [ "../node_modules/*" ],
-      "@angular/*": [ "../node_modules/@angular/*" ]
+      "@angular/*": [ "../node_modules/@angular/*" ],
+      "moment": [ "../node_modules/moment/min/moment.min.js" ],
+      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone.min.js" ]
     }
   },
   "include": [
