@@ -1,9 +1,16 @@
 // vars
 
 :host {
+    display: block;
     
     .with-bg {
         background-image: url(../../../../assets/common/images/pfm-cc/car-loans-bg@3x.jpg);
+    }
+    
+    .list-wrap {
+        .row {
+            width: calc(~"100% + 30px");
+        }
     }
     
     .stars {
@@ -11,6 +18,10 @@
         
         ::ng-deep .fa {
             font-size: 1.6rem;
+    
+            @media all and (max-width: 576px) {
+                font-size: 1.2rem;
+            }
         }
     }
     
@@ -42,6 +53,29 @@
             background-image: none;
             border-radius: 0 2px 2px 0;
             text-transform: uppercase;
+        }
+    }
+    
+    @media all and (max-width: 992px) {
+        .recommended-block {
+            margin: 0 auto;
+        }
+    }
+    
+    @media all and (max-width: 576px) {
+        padding: 0 15px;
+        
+        .recommended-lenders {
+            input {
+                width: 60%;
+                font-size: 12px;
+            }
+            
+            button {
+                width: 40%;
+                font-size: 12px;
+                padding: 10px 5px;
+            }
         }
     }
 }

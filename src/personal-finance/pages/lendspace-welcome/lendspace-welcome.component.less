@@ -81,6 +81,7 @@
             color: #000;
             margin-bottom: 0;
             text-transform: uppercase;
+            text-align: left;
         }
     
         .show-all {
@@ -91,6 +92,7 @@
             color: rgb(35, 98, 180);
             transition: .3s;
             text-decoration: none;
+            white-space: nowrap;
         
             &:hover {
                 color: lighten(rgb(35, 98, 180), 12%);
@@ -124,6 +126,19 @@
             top: -26.5px;
             left: 50%;
             transform: translateX(-50%);
+            white-space: nowrap;
+            
+            @media all and (max-width: 1200px) {
+                font-size: 22px;
+                padding: 7px 60px;
+            }
+    
+            @media all and (max-width: 576px) {
+                font-size: 20px;
+                padding: 7px 10px;
+                max-width: 95%;
+                text-align: center;
+            }
         }
     }
 
@@ -250,6 +265,11 @@
                         letter-spacing: normal;
                         text-align: left;
                         margin: 0;
+    
+                        @media all and (max-width: 576px) {
+                            line-height: 1.2;
+                            margin-bottom: 10px;
+                        }
                     }
                     p {
                         font-size: 15px;
@@ -276,6 +296,14 @@
                         line-height: 1.22;
                         letter-spacing: 0.3px;
                         color: #000;
+                    }
+                }
+    
+                @media all and (max-width: 568px) {
+                    padding: 40px 20px;
+                    
+                    .recommended-block {
+                        padding: 30px 15px;
                     }
                 }
             }
