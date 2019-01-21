@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
 import { map, publishReplay, refCount } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 
 /** Application imports */
 import {
@@ -21,6 +22,8 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
+import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
+import { AppStore } from '@app/store';
 
 @Injectable()
 export class OffersService {
@@ -47,20 +50,24 @@ export class OffersService {
         [Category.CreditScore]: this.ls.l('CreditScore_CreditScores')
     };
     readonly creditScores = {
-        'poor': {
+        'notsure': {
             min: 0,
-            max: 649
+            max: 299
+        },
+        'poor': {
+            min: 300,
+            max: 629
         },
         'fair': {
-            min: 650,
-            max: 699
+            min: 630,
+            max: 689
         },
         'good': {
-            min: 700,
-            max: 749
+            min: 690,
+            max: 719
         },
         'excellent': {
-            min: 750,
+            min: 720,
             max: 850
         }
     };
@@ -156,6 +163,39 @@ export class OffersService {
                 },
                 () => applyOfferDialog.close()
             );
+    }
+
+    getCreditScore(category: Category, creditScoreNumber: number): CreditScore {
+        const categoryGroup = this.getCategoryGroup(category);
+        let creditScore = categoryGroup === CategoryGroupEnum.Loans
+            || categoryGroup === CategoryGroupEnum.CreditCards
+            ? this.covertNumberToCreditScore(creditScoreNumber)
+            : undefined;
+        return categoryGroup === CategoryGroupEnum.Loans && creditScore === CreditScore.NotSure
+               ? CreditScore.Poor
+               : creditScore;
+    }
+
+    getCategoryGroup(category: Category): CategoryGroupEnum {
+        let categoryGroup: CategoryGroupEnum;
+        switch (category) {
+            case Category.PersonalLoans:
+            case Category.PaydayLoans:
+            case Category.InstallmentLoans:
+            case Category.BusinessLoans:
+            case Category.AutoLoans: {
+                categoryGroup = CategoryGroupEnum.Loans;
+                break;
+            }
+            case Category.CreditCards: {
+                categoryGroup = CategoryGroupEnum.CreditCards;
+                break;
+            }
+            default: {
+                categoryGroup = CategoryGroupEnum.Default;
+            }
+        }
+        return categoryGroup;
     }
 
     getParamDisplayValue(paramValue: string, valuesToConvert: { [value: string]: string } = null): string {

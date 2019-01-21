@@ -97,7 +97,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     ];
     brands$: BehaviorSubject<SelectFilterModel[]> = new BehaviorSubject<SelectFilterModel[]>([]);
     category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route);
-    categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.getCategoryGroup(category)));
+    categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.offersService.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
     creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.offersService.covertCreditScoreToNumber(score)));
     stateCode$: Observable<string> = this.offersService.memberInfo$.pipe(pluck('stateCode'));
@@ -129,12 +129,14 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             }),
             new RangeFilterSetting({
                 name: this.ls.l('Offers_Filter_CreditScore'),
-                min: 350,
+                min: 300,
                 max: 850,
                 step: 50,
                 fullBackground: true,
                 valueDisplayFunction: (value: number) => {
                     let scoreName = this.offersService.getCreditScoreName(value);
+                    /** @todo remove in future */
+                    scoreName = scoreName === 'notsure' ? 'poor' : scoreName;
                     return {
                         name: this.ls.l('Offers_CreditScore_' + scoreName),
                         description: `(${this.offersService.creditScores[scoreName].min}-${this.offersService.creditScores[scoreName].max})`
@@ -378,6 +380,12 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.categoryGroup$.pipe(
+            filter((categoryGroup: CategoryGroupEnum) => categoryGroup === CategoryGroupEnum.Loans),
+            takeUntil(this.deactivate$)
+        ).subscribe(
+            () => this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'))
+        );
         this.category$.subscribe((category) => {
             if (!category)
                 return this.router.navigate(['/personal-finance/home']);
@@ -427,18 +435,13 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             withLatestFrom(this.offersService.memberInfo$),
             switchMap(
                 ([filter, memberInfo]) => {
-                    const categoryGroup = this.getCategoryGroup(filter.category);
-                    const creditScore = categoryGroup === CategoryGroupEnum.Loans
-                          || categoryGroup === CategoryGroupEnum.CreditCards
-                            ? this.offersService.covertNumberToCreditScore(filter.creditScore)
-                            : undefined;
                     return this.offerServiceProxy.getAll(
                         memberInfo.testMode,
                         memberInfo.isDirectPostSupported,
                         filter.category,
                         undefined,
                         filter.country,
-                        creditScore,
+                        this.offersService.getCreditScore(filter.category, filter.creditScore),
                         undefined,
                         undefined
                     ).pipe(
@@ -506,29 +509,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             creditScore: null,
             brand: null
         };
-    }
-
-    private getCategoryGroup(category: Category): CategoryGroupEnum {
-        let categoryGroup: CategoryGroupEnum;
-        switch (category) {
-            case Category.PersonalLoans:
-            case Category.PaydayLoans:
-            case Category.InstallmentLoans:
-            case Category.BusinessLoans:
-            case Category.AutoLoans: {
-                this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
-                categoryGroup = CategoryGroupEnum.Loans;
-                break;
-            }
-            case Category.CreditCards: {
-                categoryGroup = CategoryGroupEnum.CreditCards;
-                break;
-            }
-            default: {
-                categoryGroup = CategoryGroupEnum.Default;
-            }
-        }
-        return categoryGroup;
     }
 
     private hideTooBigFilters(filters) {
