@@ -2,21 +2,17 @@
 @bg-color: #ffefb2;
 @text-color: #000000;
 @text-color-sec: #4a4a4a;
-@button-bg-color: #fe8600;
-@border-color: #ffcc00;
 @font-family: 'Poppins', sans-serif;
 
 :host {
     display: block;
     height: 100%;
     padding: 20px 0;
-    
-    ::ng-deep *:not(.fa):not(.icon) {
-        font-family: @font-family;
-    }
 
     .container {
         height: 100%;
+        display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
     }
@@ -32,98 +28,19 @@
         letter-spacing: 0.2px;
         margin-bottom: 30px;
     }
-    
-    ::ng-deep button {
-        max-width: 415px;
-        width: 100%;
-        box-shadow: none;
-        border: 0;
-        outline: none;
-        padding: 12px 65px;
-        cursor: pointer;
-    
-        font-size: 17px;
-        font-weight: bold;
-        letter-spacing: 0.1px;
-        text-align: center;
-        color: #fff;
-        transition: .3s;
-        border-radius: 2px;
-        
-        background: @button-bg-color url(../../../assets/common/images/pfm-cc/arrow-right-white.svg) no-repeat right 20px center;
-        
-        @media all and (max-width: 768px) {
-            padding: 10px 15px;
-            background-image: none;
-        }
-        
-        &:hover,
-        &:active,
-        &:focus {
-            background-color: lighten(@button-bg-color, 6%);
-        }
-    }
-    
-    ::ng-deep .with-bg {
-        background: url(../../../assets/common/images/pfm-cc/reccomended-card-bg@3x.jpg) 50% 50% no-repeat;
-        background-size: cover;
-    }
-    
-    ::ng-deep header.section-header {
-        display: flex;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #dfdfdf;
-    
-        h2 {
-            font-size: 15px;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-            color: #000;
-            margin-bottom: 0;
-            text-transform: uppercase;
-        }
-    
-        .show-all {
-            margin-left: auto;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            color: rgb(35, 98, 180);
-            transition: .3s;
-            text-decoration: none;
-        
-            &:hover {
-                color: lighten(rgb(35, 98, 180), 12%);
-            }
-        }
-    }
 
     .category-wrapper {
-        position: relative;
         background: @bg-color;
         padding: 30px 10px 0;
         margin-bottom: 20px;
-        margin-top: 30px;
         @media (min-width: 992px) {
             padding: 67px 78px 47px;
-            margin-bottom: 48px;
+            margin-left: -78px;
+            margin-right: -78px;
+            margin-bottom: 0;
         }
         @media all and (max-width: 1366px) {
             max-width: 100%;
-        }
-        
-        .fin-res-center {
-            position: absolute;
-            background-color: @border-color;
-            color: #000;
-            font-size: 26px;
-            font-weight: bold;
-            text-align: center;
-            padding: 7px 103px;
-            display: block;
-            top: -26.5px;
-            left: 50%;
-            transform: translateX(-50%);
         }
     }
 
@@ -189,107 +106,6 @@
                     }
                 }
             }
-        }
-    }
-    
-    ::ng-deep .block-with-bg {
-        margin: 30px auto;
-        .container {
-            border: 1px solid #dfdfdf;
-            
-            .left-block {
-                padding-top: 20px;
-                
-                .list-wrap {
-                    ul {
-                        list-style-type: none;
-                        padding: 0;
-                        margin-top: 35px;
-                        
-                        li {
-                            display: flex;
-                            flex-flow: column wrap;
-                            align-items: center;
-                            justify-content: center;
-                            margin-bottom: 25px;
-                            
-                            img {
-                                margin-bottom: 10px;
-                            }
-                            
-                            h3 {
-                                font-size: 15px;
-                                font-weight: 600;
-                                text-align: center;
-                                color: #000;
-                                max-width: 128px;
-                            }
-                        }
-                    }
-                }
-            }
-            
-            .right-block {
-                padding: 40px;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                margin-left: auto;
-                
-                .recommended-block {
-                    max-width: 415px;
-                    background: #fff;
-                    border-top: 5px solid #ffcc00;
-                    padding: 30px;
-                    margin-bottom: 16px;
-                    
-                    h2 {
-                        font-size: 25px;
-                        font-weight: bold;
-                        line-height: 1.92;
-                        letter-spacing: normal;
-                        text-align: left;
-                        margin: 0;
-                    }
-                    p {
-                        font-size: 15px;
-                        line-height: 1.27;
-                        letter-spacing: 0.2px;
-                        color: #4a4a4a;
-                        margin-bottom: 20px;
-                    }
-                    
-                    img {
-                        max-width: 100%;
-                    }
-                    
-                    .bank {
-                        font-size: 13px;
-                        font-weight: normal;
-                        letter-spacing: 0.3px;
-                        color: #4a4a4a;
-                    }
-                    
-                    .cardName {
-                        font-size: 18px;
-                        font-weight: 600;
-                        line-height: 1.22;
-                        letter-spacing: 0.3px;
-                        color: #000;
-                    }
-                }
-            }
-        }
-    }
-    
-    .three-block-section {
-        margin: 36px auto 40px;
-        
-        .row {
-            display: flex;
-            flex: 1;
-            //align-items: center;
-            justify-content: space-between;
         }
     }
 }

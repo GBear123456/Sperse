@@ -1,56 +1,35 @@
-<div class="welcome-wrap">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h1 class="title">
-                    {{l('LendSpaceHomeTitle')}}
-                </h1>
-                <p class="subtitle">
-                    {{l('LendSpaceHomeDescription')}}
-                </p>
-            </div>
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1 class="title">
+                {{l('LendSpaceHomeTitle')}}
+            </h1>
+            <p class="subtitle">
+                {{l('LendSpaceHomeDescription')}}
+            </p>
         </div>
     </div>
-
     <div class="category-wrapper">
-        <div class="fin-res-center">Financial Resource Center</div>
-        <div class="container">
-            <ul class="category-list row">
-                <li class="category-item col-sm-6 col-lg-3" *ngFor="let category of categoryItems" [hidden]="category.hidden">
-                    <a class="card" [routerLink]="category.router">
-                        <img class="card-img-top"
-                             [src]="'./assets/common/images/lend-space-dark/categories/' + category.imgName + '.jpg'"
-                             [srcset]="'./assets/common/images/lend-space-dark/categories/' + category.imgName + '@2x.jpg 2x, ./assets/common/images/lend-space-dark/categories/' + category.imgName + '@3x.jpg 3x'"
-                             [alt]="category.title">
-                        <div class="card-body">
-                            <div class="card-custom-wrap">
-                                <div class="img-block">
-                                    <img [src]="'./assets/common/icons/' + category.icon" [alt]="category.title">
-                                </div>
-                                <div class="text-block">
-                                    <p class="m-0">{{category.text}}</p>
-                                    <h2 class="m-0">{{category.title}}</h2>
-                                </div>
+        <ul class="category-list row">
+            <li class="category-item col-sm-6 col-lg-3" *ngFor="let category of categoryItems" [hidden]="category.hidden">
+                <a class="card" [routerLink]="category.router">
+                    <img class="card-img-top"
+                         [src]="'./assets/common/images/lend-space-dark/categories/' + category.imgName + '.jpg'"
+                         [srcset]="'./assets/common/images/lend-space-dark/categories/' + category.imgName + '@2x.jpg 2x, ./assets/common/images/lend-space-dark/categories/' + category.imgName + '@3x.jpg 3x'"
+                         [alt]="category.title">
+                    <div class="card-body">
+                        <div class="card-custom-wrap">
+                            <div class="img-block">
+                                <img [src]="'./assets/common/icons/' + category.icon" [alt]="category.title">
+                            </div>
+                            <div class="text-block">
+                                <p class="m-0">{{category.text}}</p>
+                                <h2 class="m-0">{{category.title}}</h2>
                             </div>
                         </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
+                    </div>
+                </a>
+            </li>
+        </ul>
     </div>
-
-    <recommended-cards></recommended-cards>
-
-    <recommended-lenders></recommended-lenders>
-
-    <div class="three-block-section">
-        <div class="container">
-            <div class="row">
-                <recommended-articles></recommended-articles>
-                <free-checking></free-checking>
-                <shop-now></shop-now>
-            </div>
-        </div>
-    </div>
-
 </div>
