@@ -427,6 +427,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         ? this.offersService.covertNumberToCreditScore(filter.creditScore)
                         : undefined,
                     undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
                     undefined
                 ).pipe(
                     finalize(() => {

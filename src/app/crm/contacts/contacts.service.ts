@@ -24,7 +24,7 @@ export class ContactsService {
         private _dialogService: DialogService,
         private _router: Router,
         private _location: Location,
-        public dialog: MatDialog        
+        public dialog: MatDialog
     ) {
         this.verificationSubject = new Subject<any>();
         this.toolbarSubject = new Subject<any>();
@@ -112,7 +112,7 @@ export class ContactsService {
         event.stopPropagation();
 
         return this.dialog.open(AddCompanyDialogComponent, {
-            data: { 
+            data: {
                 contactId: contactInfo.id,
                 contactInfo: contactInfo,
                 updateLocation: this.updateLocation.bind(this)
@@ -125,10 +125,10 @@ export class ContactsService {
 
     updateLocation(customerId?, leadId?, partnerId?, companyId?) {
         this._location.replaceState(this._router.createUrlTree(['app/crm'].concat(
-            customerId ? ['client', customerId]: [],
-            leadId ? ['lead', leadId]: [],
-            partnerId ? ['partner', partnerId]: [],
-            companyId ? ['company', companyId]: [],
+            customerId ? ['client', customerId] : [],
+            leadId ? ['lead', leadId] : [],
+            partnerId ? ['partner', partnerId] : [],
+            companyId ? ['company', companyId] : [],
             [location.pathname.split('/').pop()]
         )).toString(), location.search);
     }
