@@ -15,14 +15,14 @@ import { AppConsts } from '@shared/AppConsts';
     ],
     animations: [accountModuleAnimation()]
 })
-export class LendSpaceLoginComponent extends HostLoginComponent { 
+export class LendSpaceLoginComponent extends HostLoginComponent {
     openConditionsDialog(type: ConditionsType) {
         let isTerms = (type == ConditionsType.Terms);
-        this.dialog.open(ConditionsModalComponent, { 
+        this.dialog.open(ConditionsModalComponent, {
             panelClass: ['slider', 'footer-slider'],
             data: {
-                title: isTerms ? 'Terms of Use': 'Privacy Policy',
-                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/' + (isTerms ? 'terms': 'policy') + '.html',
+                title: isTerms ? 'Terms of Use' : 'Privacy Policy',
+                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/' + (isTerms ? 'terms' : 'policy') + '.html',
                 downloadDisabled: true
             }
         });
