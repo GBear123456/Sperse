@@ -14,6 +14,7 @@ import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group'
 
 import { MatDialogModule } from '@angular/material/dialog';
 import { ClipboardModule } from 'ngx-clipboard';
+import { ApiWelcomeComponent } from './introduction/api-welcome/api-welcome.component';
 
 @NgModule({
     imports: [
@@ -32,7 +33,8 @@ import { ClipboardModule } from 'ngx-clipboard';
         SwaggerComponent,
         IntroductionComponent,
         SetupStepComponent,
-        EditKeyDialog
+        EditKeyDialog,
+        ApiWelcomeComponent
     ],
     entryComponents: [
         EditKeyDialog
