@@ -95,6 +95,7 @@ import { CompanyDialogComponent } from './company-dialog/company-dialog.componen
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
+import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialog/create-client-dialog.component';
 
 @NgModule({
     declarations: [
@@ -138,7 +139,8 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         AddContactDialogComponent,
         AddCompanyDialogComponent,
         CompanyDialogComponent,
-        RelationCompaniesDialogComponent
+        RelationCompaniesDialogComponent,
+        CreateClientDialogComponent
     ],
     imports: [
         FormsModule,
@@ -196,7 +198,8 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         AddContactDialogComponent,
         AddCompanyDialogComponent,
         NoteAddDialogComponent,
-        RelationCompaniesDialogComponent
+        RelationCompaniesDialogComponent,
+        CreateClientDialogComponent
     ],
     providers: [
         DialogService,
