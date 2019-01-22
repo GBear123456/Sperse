@@ -62,6 +62,17 @@ import { ChooserOption } from '@root/personal-finance/shared/offers/filters/choo
 import { ScoreFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/score-filter-setting';
 import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
 
+export class FilterValues {
+    category: Category;
+    country: string;
+    creditScore: number;
+    brand: string;
+    networks: CardNetworks[];
+    cardType: CardType;
+    securingType: SecuringType;
+    targetAudience: TargetAudience;
+}
+
 @Component({
     templateUrl: './offers-layout.component.html',
     styleUrls: [ './offers-layout.component.less' ],
@@ -93,11 +104,11 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     ];
     brands$: BehaviorSubject<SelectFilterModel[]> = new BehaviorSubject<SelectFilterModel[]>([]);
     category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route);
-    categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.getCategoryGroup(category)));
+    categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.offersService.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
     creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.offersService.covertCreditScoreToNumber(score)));
     stateCode$: Observable<string> = this.offersService.memberInfo$.pipe(pluck('stateCode'));
-    filtersValues = this.getDefaultFilters();
+    filtersValues: FilterValues = this.getDefaultFilters();
     filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
         [CategoryGroupEnum.Loans]: [
             new RangeFilterSetting({
@@ -125,12 +136,14 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             }),
             new RangeFilterSetting({
                 name: this.ls.l('Offers_Filter_CreditScore'),
-                min: 350,
+                min: 300,
                 max: 850,
                 step: 50,
                 fullBackground: true,
                 valueDisplayFunction: (value: number) => {
                     let scoreName = this.offersService.getCreditScoreName(value);
+                    /** @todo remove in future */
+                    scoreName = scoreName === 'notsure' ? 'poor' : scoreName;
                     return {
                         name: this.ls.l('Offers_CreditScore_' + scoreName),
                         description: `(${this.offersService.creditScores[scoreName].min}-${this.offersService.creditScores[scoreName].max})`
@@ -204,7 +217,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         name: 'Fair',
                         value: CreditScore.Fair,
                         min: 630,
-                        max: 689,
+                        max: 689
                     },
                     {
                         name: 'Bad',
@@ -218,11 +231,12 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     }
                 ]),
                 selected$: this.creditScore$.pipe(map((creditScore: CreditScore) => {
-                    return this.filtersValues.creditScore || creditScore;
+                    return this.filtersValues.creditScore && this.offersService.covertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
                 })),
                 onChange: (creditScore: CreditScoreItem) => {
-                    if (this.filtersValues.creditScore != creditScore.value) {
-                        this.filtersValues.creditScore = <any>creditScore.value;
+                    const filterValue: number = <any>this.offersService.covertCreditScoreToNumber(creditScore.value);
+                    if (this.filtersValues.creditScore != filterValue) {
+                        this.filtersValues.creditScore = filterValue;
                         this.selectedFilter.next(this.filtersValues);
                     }
                 }
@@ -326,7 +340,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 onChange: (selectedValues: ChooserOption[]) => {
                     let networks = selectedValues.map(value => (<any>value).value);
                     this.filtersValues.networks = networks;
-                    this.selectedFilter.next(this.filtersValues);                }
+                    this.selectedFilter.next(this.filtersValues);
+                }
             })
         ],
         [CategoryGroupEnum.Default]: [
@@ -386,6 +401,12 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.categoryGroup$.pipe(
+            filter((categoryGroup: CategoryGroupEnum) => categoryGroup === CategoryGroupEnum.Loans),
+            takeUntil(this.deactivate$)
+        ).subscribe(
+            () => this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'))
+        );
         this.category$.subscribe((category) => {
             if (!category)
                 return this.router.navigate(['/personal-finance/home']);
@@ -405,10 +426,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
         this.selectedFilter$ = combineLatest(this.creditScore$, this.category$)
             .pipe(
                 first(),
-            switchMap(([creditScore, category]) => {
-                this.filtersValues.creditScore = this.getCategoryGroup(category) === CategoryGroupEnum.CreditCards
-                    ? this.offersService.covertNumberToCreditScore(creditScore)
-                    : creditScore;
+                switchMap(([creditScore, category]) => {
+                    this.filtersValues.creditScore = creditScore;
                     this.filtersValues.category = category;
                     this.selectedFilter.next(this.filtersValues);
                     return this.selectedFilter.asObservable();
@@ -437,34 +456,32 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             withLatestFrom(this.offersService.memberInfo$),
             switchMap(
                 ([filter, memberInfo]) => this.offerServiceProxy.getAll(
-                        memberInfo.testMode,
-                        memberInfo.isDirectPostSupported,
-                        filter.category,
-                        undefined,
-                        filter.country,
-                        this.getCategoryGroup(filter.category) === CategoryGroupEnum.Loans
-                            ? this.offersService.covertNumberToCreditScore(filter.creditScore)
-                            : filter.creditScore,
-                        undefined,
-                        undefined,
-                        filter.networks,
-                        filter.cardType,
-                        filter.securingType,
-                        filter.targetAudience
-                    ).pipe(
-                        finalize(() => {
-                            this.offersAreLoading = false;
-                            abp.ui.clearBusy(this.offersListRef.nativeElement);
-                            this.changeDetectorRef.detectChanges();
-                        }),
-                        tap((offers: OfferDto[]) => {
-                            if (!this.brands$.value.length) {
-                                this.getBrandsFromOffers(of(offers)).subscribe(
-                                    (brands: SelectFilterModel[]) => this.brands$.next(brands)
-                                );
-                            }
-                        })
-                    )
+                    memberInfo.testMode,
+                    memberInfo.isDirectPostSupported,
+                    filter.category,
+                    undefined,
+                    filter.country,
+                    this.offersService.getCreditScore(filter.category, filter.creditScore),
+                    undefined,
+                    undefined,
+                    filter.networks,
+                    filter.cardType,
+                    filter.securingType,
+                    filter.targetAudience
+                ).pipe(
+                    finalize(() => {
+                        this.offersAreLoading = false;
+                        abp.ui.clearBusy(this.offersListRef.nativeElement);
+                        this.changeDetectorRef.detectChanges();
+                    }),
+                    tap((offers: OfferDto[]) => {
+                        if (!this.brands$.value.length) {
+                            this.getBrandsFromOffers(of(offers)).subscribe(
+                                (brands: SelectFilterModel[]) => this.brands$.next(brands)
+                            );
+                        }
+                    })
+                )
             ),
             tap(offers => {
                 this.offersAmount = offers.length;
@@ -511,37 +528,14 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     private getDefaultFilters() {
         return {
             category: undefined,
-            type: undefined,
             country: 'US',
             creditScore: null,
             brand: null,
             networks: [],
             cardType: undefined,
             securingType: undefined,
-            targetAudience: undefined        };
-    }
-
-    private getCategoryGroup(category: Category): CategoryGroupEnum {
-        let categoryGroup: CategoryGroupEnum;
-        switch (category) {
-            case Category.PersonalLoans:
-            case Category.PaydayLoans:
-            case Category.InstallmentLoans:
-            case Category.BusinessLoans:
-            case Category.AutoLoans: {
-                this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
-                categoryGroup = CategoryGroupEnum.Loans;
-                break;
-            }
-            case Category.CreditCards: {
-                categoryGroup = CategoryGroupEnum.CreditCards;
-                break;
-            }
-            default: {
-                categoryGroup = CategoryGroupEnum.Default;
-            }
-        }
-        return categoryGroup;
+            targetAudience: undefined
+        };
     }
 
     private hideTooBigFilters(filters) {

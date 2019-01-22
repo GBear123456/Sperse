@@ -201,6 +201,32 @@
                 margin-bottom: 30px;
             }
         }
+        
+        .already-registered {
+            text-align: center;
+            
+            h3 {
+                font-weight: 600;
+                font-size: 16px;
+            }
+            
+            .links {
+                margin-bottom: 20px;
+                
+                a {
+                    padding: 0 10px;
+                    text-decoration: underline;
+                    letter-spacing: 1px;
+                    color: @darkGrayColor;
+                    font-weight: normal;
+                    transition: .3s;
+                    
+                    &:hover {
+                        color: lighten(@darkGrayColor, 10%);
+                    }
+                }
+            }
+        }
 
         .privacy-term {
             font-size: 12px;

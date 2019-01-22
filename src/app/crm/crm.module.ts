@@ -56,7 +56,6 @@ import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardMenuComponent } from './dashboard/left-menu/left-menu.component';
-import { CreateClientDialogComponent } from './shared/create-client-dialog/create-client-dialog.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
@@ -127,7 +126,6 @@ import { CommonModule } from '@shared/common/common.module';
     declarations: [
       ClientsComponent,
       PartnersComponent,
-      CreateClientDialogComponent,
       LeadsComponent,
       OrdersComponent,
       DashboardComponent,
@@ -146,7 +144,6 @@ import { CommonModule } from '@shared/common/common.module';
         ZendeskService
     ],
     entryComponents: [
-        CreateClientDialogComponent,
         CreateActivityDialogComponent,
         DeleteAndReassignDialogComponent,
         CrmIntroComponent

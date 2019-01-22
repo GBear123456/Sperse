@@ -30,6 +30,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
+        this._appService.localizationSourceName = this.localizationSourceName;
     }
 
     ngOnInit(): void {

@@ -53,6 +53,7 @@ export class AppService extends AppServiceBase {
     private _tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
     private _subscriptionBarsClosed = {};
     private _subscriptionBarVisible: Boolean;
+    public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
     constructor(injector: Injector) {
         super(

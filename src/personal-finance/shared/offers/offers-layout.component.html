@@ -92,7 +92,9 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="filterType.Score">
                                     <ng-container *ngIf="(filter.values$ | async) as filterValues">
-                                        <score-filter [items]="filterValues" (selectionChange)="filter.onChange && filter.onChange($event)"></score-filter>
+                                        <ng-container *ngIf="(filter.selected$ | async) as selected">
+                                            <score-filter [items]="filterValues" [selected]="selected" (selectionChange)="filter.onChange && filter.onChange($event)"></score-filter>
+                                        </ng-container>
                                     </ng-container>
                                 </ng-container>
                             </ng-container>
@@ -137,7 +139,7 @@
                                 <!-- span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span -->
                             </div>
                             <ul class="descriptionItems">
-                                <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'introRewardsBonus', 'regularApr']">
+                                <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'introRewardsBonus', 'regularAPR']">
                                     <li *ngIf="offerItem[param]">
                                         <h5>{{ ls.l('Offers_' + param) }}</h5>
                                         <p>{{ offersService.getParamDisplayValue(offerItem[param]) }}</p>

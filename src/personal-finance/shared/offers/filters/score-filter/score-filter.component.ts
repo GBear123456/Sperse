@@ -1,17 +1,22 @@
-import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
+import { Component, Output, Input, EventEmitter } from '@angular/core';
 import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
+import { CreditScore } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'score-filter',
     templateUrl: './score-filter.component.html',
     styleUrls: ['./score-filter.component.less']
 })
-export class ScoreFilterComponent implements OnInit {
-    @Input() items: CreditScoreItem[];
+export class ScoreFilterComponent {
     @Output() selectionChange: EventEmitter<CreditScoreItem> = new EventEmitter<CreditScoreItem>();
-    constructor() { }
-
-    ngOnInit() {
+    @Input() items: CreditScoreItem[];
+    @Input() set selected (selectedValue: CreditScore) {
+        this.items.some(item => {
+            if (item.value === selectedValue) {
+                item.checked = true;
+                return true;
+            }
+        });
     }
 
     onChoose(creditScore: CreditScoreItem) {

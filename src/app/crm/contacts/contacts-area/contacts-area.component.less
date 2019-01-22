@@ -1,4 +1,5 @@
 .contacts {
+  max-width: 490px;
   i.icons {
     width: 20px;
     height: 30px;
@@ -115,14 +116,14 @@
   }
 
   & > div {
-    width: 90%;
+    width: 94%;
     margin-bottom: 15px;
   }
 
   li {
     cursor: pointer;
     padding: 5px;
-    padding-right: 35px;
+    padding-right: 50px;
     font-size: 15px;
     font-weight: 300;
     line-height: 1.67;
@@ -137,6 +138,8 @@
            -ms-user-select: none; /* Internet Explorer/Edge */
                user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .phoneExt{

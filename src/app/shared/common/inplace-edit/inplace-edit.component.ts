@@ -42,7 +42,7 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
     }
 
     ngAfterViewInit() {
-        this.valueOriginal = this.data.value;
+        this.valueOriginal = this.data && this.data.value;
     }
 
     deleteItem(event) {

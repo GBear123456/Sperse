@@ -68,6 +68,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private lifeCycleSubject: LifecycleSubjectsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        this._appService.localizationSourceName = this.localizationSourceName;
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
     }
 

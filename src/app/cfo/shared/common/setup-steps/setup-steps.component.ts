@@ -29,6 +29,7 @@ export class SetupStepComponent extends CFOComponentBase {
         public appService: AppService
     ) {
         super(injector);
+        this.appService.localizationSourceName = this.localizationSourceName;
     }
 
     onClick(index: number, elem) {
