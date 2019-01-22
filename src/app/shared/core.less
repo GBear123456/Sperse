@@ -621,6 +621,33 @@ button {
             }
         }
     }
+
+    &[accesskey="narrowHeaderPanel"] {
+        .dx-datagrid-header-panel .dx-toolbar {
+            height: 25px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dx-datagrid-group-panel {
+            height: 40px;
+            margin: 0 15px 0 0 !important;
+            border: none;
+            border-right: 1px dashed #dfdfdf;
+            background-color: #f9fbfc;
+        }
+
+        .dx-datagrid-group-panel .dx-group-panel-message {
+            padding-top: 0px;
+            padding-bottom: 0;
+        }
+
+        .dx-datagrid-group-panel .dx-group-panel-item {
+            padding: 4px 10px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+    }
 }
 
 .modal {
@@ -938,4 +965,13 @@ button {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+}
+
+.blockUI.blockOverlay {
+    background: #fff !important;
+    z-index: 2!important;
+}
+
+body > .blockUI.blockOverlay{
+    top: 74px!important;
 }

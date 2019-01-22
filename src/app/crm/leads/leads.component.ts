@@ -763,7 +763,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             clientId = event.data && event.data.CustomerId;
         if (!leadId || !clientId)
             return;
-                
+
         this.searchClear = false;
         event.component.cancelEditData();
         let orgId = event.data.OrganizationId;
