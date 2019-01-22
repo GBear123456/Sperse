@@ -21,47 +21,12 @@ body, html, *, .btn, .dx-texteditor-input, .dx-widget .dx-texteditor-input {
     font-family: Montserrat;
 }
 
-app-root > ng-component {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
 a {
     cursor: pointer;
 }
 
 [class^='dx']:not(i):not([class*=icon]):not(.dx-expand):not(.dx-theme-marker):not([class^=dx-sort]):not([class*=fa-]):not(.dx-header-filter):not(.dx-treeview-toggle-item-visibility):not(.dx-datagrid-group-opened):not(.dx-datagrid-group-closed):not(.dx-total):not(.tabular):not(.dx-texteditor-input):not([class*="fontName"]) {
     font-family: Montserrat !important;
-}
-
-.wizard-wrap #wizard * {
-    font-family: "lato", sans-serif !important;
-}
-
-#gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-header-panel .dx-toolbar {
-    height: 25px;
-    margin: 0;
-    padding: 0;
-}
-
-#gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-group-panel {
-    height: 40px;
-    margin: 0 15px 0 0 !important;
-    border: none;
-    border-right: 1px dashed #dfdfdf;
-    background-color: #f9fbfc;
-}
-
-#gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-group-panel .dx-group-panel-message {
-    padding-top: 0px;
-    padding-bottom: 0;
-}
-
-#gridContainer[accesskey="narrowHeaderPanel"] .dx-datagrid-group-panel .dx-group-panel-item {
-    padding: 4px 10px;
-    font-size: 13px;
-    letter-spacing: 0.5px;
 }
 
 body.overflow-hidden.modal-open,
@@ -199,9 +164,6 @@ body.overflow-hidden.modal-open,
     background: #a82aba;
 }
 
-.blockUI.blockOverlay {
-    background: #fff !important;
-}
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -210,7 +172,6 @@ body.overflow-hidden.modal-open,
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
-.dxc-tooltip svg path {transform: translate(0, 0) !important; filter: none !important;}
 
 .modal-open .page-container {
     z-index: auto !important;
