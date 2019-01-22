@@ -70,7 +70,7 @@ export class AddCompanyDialogComponent extends AppComponentBase {
     applyContactInfo(orgContactId) {
         if (orgContactId && this.data.contactInfo) {
             this.orgServiceProxy.getOrganizationContactInfo(orgContactId).subscribe((result) => {
-                this.data.contactInfo.organizationContactInfo = result;
+                this.data.contactInfo['organizationContactInfo'] = result;
                 this.data.contactInfo.personContactInfo.orgRelations.push({
                     isActive: true,
                     jobTitle: this.data.title,
