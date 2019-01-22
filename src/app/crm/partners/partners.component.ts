@@ -115,7 +115,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private store$: Store<AppStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
+        this._appService.localizationSourceName = this.localizationSourceName;
         this.dataSource = {
             store: {
                 key: 'Id',

@@ -79,7 +79,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         public _impersonationService: ImpersonationService
     ) {
         super(injector);
-
+        this._appService.localizationSourceName = this.localizationSourceName;
         this.actionMenuItems = [
             {
                 text: this.l('LoginAsThisUser'),

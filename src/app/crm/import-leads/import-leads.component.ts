@@ -224,6 +224,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.setMappingFields(ImportItemInput.fromJS({}));
+        this._appService.localizationSourceName = this.localizationSourceName;
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);

@@ -212,7 +212,15 @@ body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content 
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content h4,
 body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content h4,
 body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content h4,
-body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content h4 {
+body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content h4,
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content small,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content small,
+body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content small,
+body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content small,
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content span,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content span,
+body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content span,
+body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content span {
   color: #FFF;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item,

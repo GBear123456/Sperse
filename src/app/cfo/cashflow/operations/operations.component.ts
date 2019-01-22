@@ -50,6 +50,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
         private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
+        this._appService.localizationSourceName = this.localizationSourceName;
     }
 
     ngOnInit() {
