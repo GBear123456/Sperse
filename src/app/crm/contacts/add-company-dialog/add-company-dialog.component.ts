@@ -8,8 +8,10 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
+import { ContactGroup } from '@shared/AppEnums';
 import { PersonOrgRelationType } from '@shared/AppEnums';
-import { OrganizationContactServiceProxy, CreatePersonOrgRelationInput, PersonOrgRelationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OrganizationContactServiceProxy, CreatePersonOrgRelationInput, 
+    PersonOrgRelationServiceProxy, PersonOrgRelationShortInfo } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: 'add-company-dialog.html',
@@ -67,18 +69,23 @@ export class AddCompanyDialogComponent extends AppComponentBase {
         $event.component.option('opened', Boolean(this.companies.length));
     }
 
-    applyContactInfo(orgContactId) {
-        if (orgContactId && this.data.contactInfo) {
-            this.orgServiceProxy.getOrganizationContactInfo(orgContactId).subscribe((result) => {
-                this.data.contactInfo['organizationContactInfo'] = result;
-                this.data.contactInfo.personContactInfo.orgRelations.push({
+    applyContactInfo(responce) {
+        let contactInfo = this.data.contactInfo;
+        if (responce && contactInfo) {            
+            let orgId = responce.organizationId;
+            this.orgServiceProxy.getOrganizationContactInfo(orgId).subscribe((result) => {
+                contactInfo['organizationContactInfo'] = result;                
+            });
+            contactInfo.primaryOrganizationContactId = orgId;
+            contactInfo.personContactInfo.orgRelations.push(
+                contactInfo.personContactInfo['personOrgRelationInfo'] = PersonOrgRelationShortInfo.fromJS({
+                    id: responce.id,
                     isActive: true,
                     jobTitle: this.data.title,
-                    organization: result.organization,
+                    organization: {id: orgId, name: this.data.company, thumbnail: ""},
                     relationType: {id: PersonOrgRelationType.Employee, name: "Employee"}
-                });
-            });
-            this.data.contactInfo.primaryOrganizationContactId = orgContactId;
+                })
+            );
         }
     }
 
@@ -94,14 +101,15 @@ export class AddCompanyDialogComponent extends AppComponentBase {
             }
         )).pipe(finalize(() => {
             this.finishLoading(true);
-        })).subscribe((res) => {            
-            this.finishLoading(true);            
-            let orgId = res && res['organizationId'];
-            if (orgId) {
-                this.data.updateLocation(this.data.contactId, null, null, orgId);
-                this.applyContactInfo(orgId);
+        })).subscribe((responce) => {
+            this.finishLoading(true);
+            if (responce.organizationId) {
+                let isPartner = this.data.contactInfo.groupId == ContactGroup.Partner;
+                this.data.updateLocation(isPartner ? null: this.data.contactId,
+                    null, isPartner ? this.data.contactId: null, responce.organizationId);
+                this.applyContactInfo(responce);
             }
-            this.dialogRef.close(true);
+            this.dialogRef.close(responce);
         });
     }
 }

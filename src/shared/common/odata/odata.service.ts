@@ -38,7 +38,7 @@ export class ODataService {
 
     processODataFilter(grid, uri, filters, getCheckCustom, searchColumns: any[], searchValue: string, instanceData = null) {
         return this.advancedODataFilter(grid, uri,
-            filters.map((filter) => {
+            (filters || []).map((filter) => {
                 return getCheckCustom && getCheckCustom(filter) ||
                     filter.getODataFilterObject();
             }),
