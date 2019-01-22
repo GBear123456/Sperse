@@ -2,6 +2,7 @@
 @additional-font-color: #757575;
 @border-color: #DFDFDF;
 @blue: #3463ae;
+@text-color: #4a4a4a;
 
 :host {
     * {
@@ -337,12 +338,20 @@
                     &:first-child {
                         border-top: 1px solid @border-color;
                     }
-                    .image img {
-                        max-width: 152px;
-                        max-height: 96px;
-                        cursor: pointer;
+                    .image {
+                        align-self: flex-start;
+                        img {
+                            max-width: 152px;
+                            max-height: 96px;
+                            cursor: pointer;
+                        }
                     }
                     .description {
+                        h5 {
+                            font-size: 13px;
+                            font-weight: normal;
+                            color: @text-color;
+                        }
                         h4 {
                             color: @mainColor;
                             font-size: 19px;
