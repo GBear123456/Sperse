@@ -51302,6 +51302,7 @@ export interface ICreatePersonOrgRelationInput {
 }
 
 export class CreatePersonOrgRelationOutput implements ICreatePersonOrgRelationOutput {
+    id!: number | undefined;
     organizationId!: number | undefined;
 
     constructor(data?: ICreatePersonOrgRelationOutput) {
@@ -51315,6 +51316,7 @@ export class CreatePersonOrgRelationOutput implements ICreatePersonOrgRelationOu
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.organizationId = data["organizationId"];
         }
     }
@@ -51328,12 +51330,14 @@ export class CreatePersonOrgRelationOutput implements ICreatePersonOrgRelationOu
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["organizationId"] = this.organizationId;
         return data; 
     }
 }
 
 export interface ICreatePersonOrgRelationOutput {
+    id: number | undefined;
     organizationId: number | undefined;
 }
 
