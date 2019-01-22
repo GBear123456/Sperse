@@ -94,6 +94,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
         public localizationService: AppLocalizationService,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        this._appService.localizationSourceName = this.localizationSourceName;
 
         _clientService.toolbarSubscribe((config) => {
             this.initToolbarConfig(config);

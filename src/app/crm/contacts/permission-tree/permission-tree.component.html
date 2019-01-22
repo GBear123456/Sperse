@@ -1,5 +1,5 @@
 <div [hidden]="!data.userId">
-    <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
+    <app-toolbar [config]="toolbarConfig" [compact]="true" [localizationSource]="localizationSourceName"></app-toolbar>
     <dx-tree-view dataStructure="plain"
                   [disabled]="!isEditAllowed"
                   [dataSource]="permissionsDataSource"

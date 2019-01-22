@@ -31,7 +31,7 @@
             <a routerLinkActive="active"
                [ngClass]="item.class"
                [routerLinkActiveOptions]="{exact:true}"
-               [routerLink]="item.routerUrl"
+               [routerLink]="item.routerUrl || item.sublinks[0].routerUrl"
                class="dropdown-item"
                [class.disable]="item.disabled || !item.routerUrl && (!item.sublinks || !item.sublinks.length)">
                 {{l(item.name)}}

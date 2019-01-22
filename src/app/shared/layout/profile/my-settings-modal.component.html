@@ -56,9 +56,9 @@
                                 Google Authenticator
                             </h4>
                             <div [hidden]="!isGoogleAuthenticatorEnabled">
-                                <div>
+                                <span>
                                     {{l("ScanQrCodeWithYourMobileApp")}}
-                                </div>
+                                </span>
                                 <div class="text-center">
                                     <img [src]="user.qrCodeSetupImageUrl" />
                                 </div>

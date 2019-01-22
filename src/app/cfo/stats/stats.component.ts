@@ -167,6 +167,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     ) {
         super(injector);
         this.bankAccountsService = bankAccountsService;
+        this._appService.localizationSourceName = this.localizationSourceName;
 
         this._appService.narrowingPageContentWhenFixedFilter = false;
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
