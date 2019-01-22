@@ -33,9 +33,9 @@
         <mat-sidenav mode="side" opened="true" [disableClose]="true" position="start">
             <div class="short-contact">
                 <div class="related-contacts">
-                    <div *ngIf="contactInfo?.organizationContactInfo?.contactPersons?.length > 1; else addNew" class="contact-persons-info" (click)="showContactPersons($event)">
+                    <div *ngIf="contactInfo && contactInfo['organizationContactInfo']?.contactPersons?.length > 1; else addNew" class="contact-persons-info" (click)="showContactPersons($event)">
                         <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">
-                        <span class="similar-contacts-count">{{ contactInfo?.organizationContactInfo.contactPersons.length - 1 }} related contact<span *ngIf="contactInfo?.organizationContactInfo?.contactPersons.length - 1 > 1">s</span></span>
+                        <span class="similar-contacts-count">{{ contactInfo['organizationContactInfo']?.contactPersons.length - 1 }} related contact<span *ngIf="contactInfo['organizationContactInfo']?.contactPersons.length - 1 > 1">s</span></span>
                         <img src="./assets/common/icons/down-arrow-icon.svg" alt="Contact Persons">
                     </div>
 

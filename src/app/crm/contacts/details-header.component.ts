@@ -367,9 +367,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     displaySelectedCompany(company) {
-        this.startLoading();
+        this.startLoading(true);
         this._orgContactService.getOrganizationContactInfo(company.id)
-            .pipe(finalize(() => this.finishLoading())).subscribe((result) => {
+            .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
                 this.data['organizationContactInfo'] = result;
                 this._contactsService.updateLocation(
                     this.data.id, null, null, result && result.id);
