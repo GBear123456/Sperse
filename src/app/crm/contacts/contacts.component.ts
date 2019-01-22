@@ -86,7 +86,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private params: any;
     private rootComponent: any;
     private paramsSubscribe: any = [];
-    private referrerParams: Params;
+    referrerParams: Params;
 
     constructor(injector: Injector,
                 private _dialog: MatDialog,
