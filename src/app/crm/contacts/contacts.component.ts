@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { ActivationEnd } from '@angular/router';
+import { ActivationEnd, Params } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -86,7 +86,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private params: any;
     private rootComponent: any;
     private paramsSubscribe: any = [];
-    private referrerParams;
+    private referrerParams: Params;
 
     constructor(injector: Injector,
                 private _dialog: MatDialog,
@@ -140,7 +140,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             if (this.rightPanelSetting.id == RP_USER_INFO_ID)
                 this.rightPanelSetting.opened = Boolean(userId);
         });
-        _contactsService.invalidateSubscribe((area) => { this.invalidate(area) });
+        _contactsService.invalidateSubscribe((area) => { this.invalidate(area); });
         _contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
     }
 
@@ -192,7 +192,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
         if (result.organizationContactInfo && result.organizationContactInfo.contactPersons) {
             result.organizationContactInfo.contactPersons.map((contact) => {
-                return (contact.id == contactId ? result.personContactInfo: contact);
+                return (contact.id == contactId ? result.personContactInfo : contact);
             });
         }
 
@@ -229,7 +229,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.storeInitialData();
     }
 
-    invalidate(area = undefined) {
+    invalidate(area?: any) {
         !area && this.loadData(this.params);
     }
 
@@ -268,8 +268,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         if (contactId) {
             this.startLoading(true);
             let contactInfo$ = forkJoin(
-                this._contactService.getContactInfo(contactId), 
-                companyId 
+                this._contactService.getContactInfo(contactId),
+                companyId
                     ? this._orgContactService.getOrganizationContactInfo(companyId)
                     : of(OrganizationContactInfoDto.fromJS({}))
             ).pipe(map((contactInfo) => {
@@ -312,7 +312,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    loadLeadData(personContactInfo = undefined) {
+    loadLeadData(personContactInfo?: any) {
         let contactInfo  = this._contactService['data'].contactInfo,
             leadInfo = this._contactService['data'].leadInfo;
         if (!this.leadInfo && contactInfo && leadInfo) {
@@ -330,7 +330,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    private loadLeadsStages(callback = undefined) {
+    private loadLeadsStages(callback?: () => any) {
         if (this.leadStages && this.leadStages.length)
             callback && callback();
         else
@@ -426,12 +426,12 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             position: this.getDialogPossition(event, -182, 89),
             panelClass: ['related-contacts']
         }).afterClosed().subscribe(result => {
-            if (result == 'addNewContact') 
+            if (result == 'addNewContact')
                 this.addNewContact(event);
             else if (result) {
                 this.customerId = result.id;
                 this.fillContactDetails(result);
-                this._contactsService.updateLocation(this.customerId, null, null, 
+                this._contactsService.updateLocation(this.customerId, null, null,
                     result.organizationContactInfo && result.organizationContactInfo.id);
             }
         });
