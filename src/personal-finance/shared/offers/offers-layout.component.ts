@@ -43,7 +43,10 @@ import {
     OfferDto,
     Category,
     OfferServiceProxy,
-    CreditScore
+    CreditScore,    CardNetworks,
+    CardType,
+    SecuringType,
+    TargetAudience
 } from '@shared/service-proxies/service-proxies';
 import { CurrencyPipe } from '@angular/common';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
@@ -202,7 +205,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         value: CreditScore.Fair,
                         min: 630,
                         max: 689,
-                        checked: true
                     },
                     {
                         name: 'Bad',
@@ -215,7 +217,9 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         value: CreditScore.NotSure
                     }
                 ]),
-                selected$: of(CreditScore.Fair),
+                selected$: this.creditScore$.pipe(map((creditScore: CreditScore) => {
+                    return this.filtersValues.creditScore || creditScore;
+                })),
                 onChange: (creditScore: CreditScoreItem) => {
                     if (this.filtersValues.creditScore != creditScore.value) {
                         this.filtersValues.creditScore = <any>creditScore.value;
@@ -228,11 +232,9 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 chooserDesign: ChooserDesign.Combined,
                 chooserType: ChooserType.Single,
                 values$: of([
-                    /** @todo change values to enums */
                     {
                         name: this.ls.l('Offers_Credit'),
                         value: 'credit',
-                        selected: true
                     },
                     {
                         name: this.ls.l('Offers_Debit'),
@@ -243,9 +245,24 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         value: 'prepaid'
                     }
                 ]),
-                selected$: of('credit'),
                 onChange: (selectedValues: ChooserOption[]) => {
-                    console.log(selectedValues);
+                    let cardType, securingType;
+                    switch ((<any>selectedValues[0]).value) {
+                        case 'credit':
+                            cardType = CardType.Credit;
+                            break;
+                        case 'debit':
+                            cardType = CardType.Debit;
+                            break;
+                        case 'prepaid':
+                            securingType = SecuringType.Prepaid;
+                            break;
+                    }
+                    if (this.filtersValues.cardType !== cardType || this.filtersValues.securingType != securingType) {
+                        this.filtersValues.cardType = cardType;
+                        this.filtersValues.securingType = securingType;
+                        this.selectedFilter.next(this.filtersValues);
+                    }
                 }
             }),
             new ChooserFilterSetting({
@@ -253,24 +270,25 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 chooserDesign: ChooserDesign.Combined,
                 chooserType: ChooserType.Single,
                 values$: of([
-                    /** @todo change values to enums */
                     {
                         name: this.ls.l('Offers_Personal'),
-                        value: 'personal'
+                        value: TargetAudience.Consumer
                     },
                     {
                         name: this.ls.l('Offers_Student'),
-                        value: 'student',
-                        selected: true
+                        value: TargetAudience.Students,
                     },
                     {
                         name: this.ls.l('Offers_Business'),
-                        value: 'business'
+                        value: TargetAudience.Business
                     }
                 ]),
-                selected$: of('credit'),
                 onChange: (selectedValues: ChooserOption[]) => {
-                    console.log(selectedValues);
+                    let targetAudience = (<any>selectedValues[0]).value;
+                    if (this.filtersValues.targetAudience !== targetAudience) {
+                        this.filtersValues.targetAudience = targetAudience;
+                        this.selectedFilter.next(this.filtersValues);
+                    }
                 }
             }),
             new SelectFilterSetting({
@@ -288,28 +306,27 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 chooserType: ChooserType.Multi,
                 chooserDesign: ChooserDesign.Separate,
                 values$: of([
-                    /** @todo change values to enums */
                     {
                         iconSrc: './assets/common/icons/offers/visa.svg',
-                        value: 'visa',
-                        selected: true
+                        value: CardNetworks.Visa,
                     },
                     {
                         iconSrc: './assets/common/icons/offers/mastercard.svg',
-                        value: 'mastercard'
+                        value: CardNetworks.Mastercard
                     },
                     {
                         iconSrc: './assets/common/icons/offers/discover.svg',
-                        value: 'discover'
+                        value: CardNetworks.Discover
                     },
                     {
                         iconSrc: './assets/common/icons/offers/american-express.svg',
-                        value: 'american-express'
+                        value: CardNetworks.AmEx
                     }
                 ]),
                 onChange: (selectedValues: ChooserOption[]) => {
-                    console.log(selectedValues);
-                }
+                    let networks = selectedValues.map(value => (<any>value).value);
+                    this.filtersValues.networks = networks;
+                    this.selectedFilter.next(this.filtersValues);                }
             })
         ],
         [CategoryGroupEnum.Default]: [
@@ -388,8 +405,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
         this.selectedFilter$ = combineLatest(this.creditScore$, this.category$)
             .pipe(
                 first(),
-                switchMap(([creditScore, category]) => {
-                    this.filtersValues.creditScore = creditScore;
+            switchMap(([creditScore, category]) => {
+                this.filtersValues.creditScore = this.getCategoryGroup(category) === CategoryGroupEnum.CreditCards
+                    ? this.offersService.covertNumberToCreditScore(creditScore)
+                    : creditScore;
                     this.filtersValues.category = category;
                     this.selectedFilter.next(this.filtersValues);
                     return this.selectedFilter.asObservable();
@@ -418,34 +437,34 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             withLatestFrom(this.offersService.memberInfo$),
             switchMap(
                 ([filter, memberInfo]) => this.offerServiceProxy.getAll(
-                    memberInfo.testMode,
-                    memberInfo.isDirectPostSupported,
-                    filter.category,
-                    undefined,
-                    filter.country,
-                    this.getCategoryGroup(filter.category) === CategoryGroupEnum.Loans
-                        ? this.offersService.covertNumberToCreditScore(filter.creditScore)
-                        : undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined
-                ).pipe(
-                    finalize(() => {
-                        this.offersAreLoading = false;
-                        abp.ui.clearBusy(this.offersListRef.nativeElement);
-                        this.changeDetectorRef.detectChanges();
-                    }),
-                    tap((offers: OfferDto[]) => {
-                        if (!this.brands$.value.length) {
-                            this.getBrandsFromOffers(of(offers)).subscribe(
-                                (brands: SelectFilterModel[]) => this.brands$.next(brands)
-                            );
-                        }
-                    })
-                )
+                        memberInfo.testMode,
+                        memberInfo.isDirectPostSupported,
+                        filter.category,
+                        undefined,
+                        filter.country,
+                        this.getCategoryGroup(filter.category) === CategoryGroupEnum.Loans
+                            ? this.offersService.covertNumberToCreditScore(filter.creditScore)
+                            : filter.creditScore,
+                        undefined,
+                        undefined,
+                        filter.networks,
+                        filter.cardType,
+                        filter.securingType,
+                        filter.targetAudience
+                    ).pipe(
+                        finalize(() => {
+                            this.offersAreLoading = false;
+                            abp.ui.clearBusy(this.offersListRef.nativeElement);
+                            this.changeDetectorRef.detectChanges();
+                        }),
+                        tap((offers: OfferDto[]) => {
+                            if (!this.brands$.value.length) {
+                                this.getBrandsFromOffers(of(offers)).subscribe(
+                                    (brands: SelectFilterModel[]) => this.brands$.next(brands)
+                                );
+                            }
+                        })
+                    )
             ),
             tap(offers => {
                 this.offersAmount = offers.length;
@@ -495,8 +514,11 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             type: undefined,
             country: 'US',
             creditScore: null,
-            brand: null
-        };
+            brand: null,
+            networks: [],
+            cardType: undefined,
+            securingType: undefined,
+            targetAudience: undefined        };
     }
 
     private getCategoryGroup(category: Category): CategoryGroupEnum {
