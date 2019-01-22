@@ -151,7 +151,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             let companyInfo = this.data['organizationContactInfo'];
             if (!companyInfo || !companyInfo.id)
                 return ;
-        }            
+        }
 
         this.dialog.closeAll();
         let data = { ...this.data, ...this.getPhotoSrc(this.data, isCompany) };
@@ -168,8 +168,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                         .subscribe(() => {
                             this.handlePhotoChange(dataField, null, null);
                         });
-                }
-                else {
+                } else {
                     let base64OrigImage = StringHelper.getBase64(result.origImage);
                     let base64ThumbImage = StringHelper.getBase64(result.thumImage);
 
@@ -186,7 +185,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                                 }) :
                                 undefined;
 
-                            this.handlePhotoChange(dataField, primaryPhoto, result)
+                            this.handlePhotoChange(dataField, primaryPhoto, result);
                         });
                 }
         });
@@ -350,7 +349,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    showCompanyList(event) { 
+    showCompanyList(event) {
         this.dialog.closeAll();
         this.dialog.open(RelationCompaniesDialogComponent, {
             data: this.data,
