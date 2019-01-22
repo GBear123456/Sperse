@@ -40,6 +40,7 @@
         display: flex;
         min-height: 750px;
         justify-content: center;
+        position: relative;
         .row {
             width: 100%;
         }
@@ -128,9 +129,11 @@
         }
 
         .p-content {
-            flex: 0 0 80%;
-            padding: 30px 15px 15px 15px;
-            max-width: calc(~"100% - 255px");
+            max-width: initial;
+            position: absolute;
+            left: 20%;
+            width: calc(100vw - (100vw - 100%)/2 - 20%);
+            height: 100%;
 
             @media all and (max-width: 1024px) {
                 max-width: 100%;
