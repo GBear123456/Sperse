@@ -134,18 +134,22 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     showCompanyDialog(e) {
+        let companyInfo = this.data['organizationContactInfo'];
+        if (!companyInfo || !companyInfo.id)
+            return this.addCompanyDialog(e);
+
         this.dialog.closeAll();
         this.dialog.open(CompanyDialogComponent, {
             data: {
-                company: this.data['organizationContactInfo']
+                company: companyInfo
             },
             panelClass: 'slider',
             maxWidth: '830px'
         }).afterClosed().subscribe(result => {
             if (result) {
-                 this.data['organizationContactInfo'].organization = new OrganizationInfoDto(result.company);
-                 this.data['organizationContactInfo'].fullName = result.company.fullName;
-                 this.data['organizationContactInfo'].primaryPhoto = result.company.primaryPhoto;
+                 companyInfo.organization = new OrganizationInfoDto(result.company);
+                 companyInfo.fullName = result.company.fullName;
+                 companyInfo.primaryPhoto = result.company.primaryPhoto;
             }
         });
         if (e.stopPropagation) {
