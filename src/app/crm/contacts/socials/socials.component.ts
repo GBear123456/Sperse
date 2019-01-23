@@ -90,8 +90,10 @@ export class SocialsComponent extends AppComponentBase {
             this._contactsService.addCompanyDialog(event, this.contactInfo,
                 Math.round(event.target.offsetWidth / 2)
             ).subscribe(result => {
-                if (result)
+                if (result) {
+                    this.contactInfoData = ContactInfoDetailsDto.fromJS({contactId: result.organizationId});
                     this.showSocialDialog(data, event, index);
+                }
             });
     }
 

@@ -15803,9 +15803,12 @@ export class OfferServiceProxy {
      * @cardType (optional) 
      * @securingType (optional) 
      * @targetAudience (optional) 
+     * @overallRating (optional) 
+     * @issuingBank (optional) 
+     * @campaignIds (optional) 
      * @return Success
      */
-    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined, cardNetworks: CardNetworks[] | null | undefined, cardType: CardType | null | undefined, securingType: SecuringType | null | undefined, targetAudience: TargetAudience | null | undefined): Observable<OfferDto[]> {
+    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined, cardNetworks: CardNetworks[] | null | undefined, cardType: CardType | null | undefined, securingType: SecuringType | null | undefined, targetAudience: TargetAudience | null | undefined, overallRating: number | null | undefined, issuingBank: string | null | undefined, campaignIds: number[] | null | undefined): Observable<OfferDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (testMode === undefined || testMode === null)
             throw new Error("The parameter 'testMode' must be defined and cannot be null.");
@@ -15835,6 +15838,12 @@ export class OfferServiceProxy {
             url_ += "SecuringType=" + encodeURIComponent("" + securingType) + "&"; 
         if (targetAudience !== undefined)
             url_ += "TargetAudience=" + encodeURIComponent("" + targetAudience) + "&"; 
+        if (overallRating !== undefined)
+            url_ += "OverallRating=" + encodeURIComponent("" + overallRating) + "&"; 
+        if (issuingBank !== undefined)
+            url_ += "IssuingBank=" + encodeURIComponent("" + issuingBank) + "&"; 
+        if (campaignIds !== undefined)
+            campaignIds && campaignIds.forEach(item => { url_ += "CampaignIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -16531,13 +16540,16 @@ export class OrganizationContactServiceProxy {
 
     /**
      * @searchString (optional) 
+     * @groupId (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getOrganizations(searchString: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfo[]> {
+    getOrganizations(searchString: string | null | undefined, groupId: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizations?";
         if (searchString !== undefined)
             url_ += "searchString=" + encodeURIComponent("" + searchString) + "&"; 
+        if (groupId !== undefined)
+            url_ += "groupId=" + encodeURIComponent("" + groupId) + "&"; 
         if (topCount !== undefined)
             url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -48447,6 +48459,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
     creditScore!: GetMemberInfoResponseCreditScore | undefined;
     stateCode!: string | undefined;
     countryCode!: string | undefined;
+    zipCode!: string | undefined;
     isDirectPostSupported!: boolean | undefined;
     testMode!: boolean | undefined;
 
@@ -48464,6 +48477,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
             this.creditScore = data["creditScore"];
             this.stateCode = data["stateCode"];
             this.countryCode = data["countryCode"];
+            this.zipCode = data["zipCode"];
             this.isDirectPostSupported = data["isDirectPostSupported"];
             this.testMode = data["testMode"];
         }
@@ -48481,6 +48495,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
         data["creditScore"] = this.creditScore;
         data["stateCode"] = this.stateCode;
         data["countryCode"] = this.countryCode;
+        data["zipCode"] = this.zipCode;
         data["isDirectPostSupported"] = this.isDirectPostSupported;
         data["testMode"] = this.testMode;
         return data; 
@@ -48491,6 +48506,7 @@ export interface IGetMemberInfoResponse {
     creditScore: GetMemberInfoResponseCreditScore | undefined;
     stateCode: string | undefined;
     countryCode: string | undefined;
+    zipCode: string | undefined;
     isDirectPostSupported: boolean | undefined;
     testMode: boolean | undefined;
 }

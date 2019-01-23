@@ -115,15 +115,18 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
                             memberInfo.testMode,
                             memberInfo.isDirectPostSupported,
                             category,
-                        undefined,
-                      'US',
-                   undefined,
                             undefined,
-            undefined,
+                            'US',
                             undefined,
                             undefined,
                             undefined,
-                            undefined
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            undefined,
+                            []
                         )),
                         publishReplay(),
                         refCount()

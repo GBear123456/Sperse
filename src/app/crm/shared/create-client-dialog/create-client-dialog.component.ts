@@ -155,6 +155,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     ) {
         super(injector);
 
+        this.company = this.data.company;
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.googleAutoComplete = Boolean(window['google']);
         this.saveContextMenuItems = [
@@ -168,9 +169,9 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         this.phoneTypesLoad();
         this.emailTypesLoad();
         this.linkTypesLoad();
-        if (this.data.isInLeadMode) {
+        if (this.data.isInLeadMode)
             this.leadStagesLoad();
-        }
+
         this.initToolbarConfig();
     }
 

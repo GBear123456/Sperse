@@ -11,7 +11,7 @@
     <ul class="contact-company-container" id="related-company-list">
         <li class="contact-company-info" [class.odd]="odd" *ngFor="let company of displayedCompanies; let odd = odd" (click)='selectCompany(company)'>
             <div class="avatar">
-                <img src="{{ getPhoto( company?.primaryPhoto?.thumbnail, 'Organization' )}}" alt="{{l('AltCompanyPhoto')}}">
+                <img src="{{ getPhoto( company?.organization?.thumbnail, 'Organization' )}}" alt="{{l('AltCompanyPhoto')}}">
             </div>
             <div class="company-info">
                 <div class="full-name">
