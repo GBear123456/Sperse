@@ -110,6 +110,7 @@
     "jqvmap": "^1.5.1",
     "js-cookie": "^2.1.4",
     "js-url": "^2.3.0",
+    "json-formatter-js": "^2.2.1",
     "json-loader": "^0.5.7",
     "json2": "*",
     "jstree": "^3.3.4",
@@ -181,6 +182,7 @@
     "videogular2": "^6.3.0",
     "waypoints": "^4.0.1",
     "xlsx": "^0.13.2",
+    "xml-js": "^1.6.9",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

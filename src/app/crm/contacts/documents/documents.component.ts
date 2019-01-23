@@ -1,5 +1,15 @@
 /** Core imports */
-import { AfterViewInit, Component, Injector, HostListener, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    Injector,
+    HostListener,
+    OnInit,
+    OnDestroy,
+    ViewChild,
+    ElementRef,
+    Renderer2
+} from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -11,6 +21,9 @@ import { FileSystemFileEntry } from 'ngx-file-drop';
 import { Observable, of } from 'rxjs';
 import { finalize, flatMap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
+import * as xmlJs from 'xml-js';
+import JSONFormatter from 'json-formatter-js';
+import '@node_modules/ng2-image-viewer/imageviewer.js';
 
 /** Application imports */
 import { UploadDocumentDialogComponent } from '../upload-document-dialog/upload-document-dialog.component';
@@ -24,8 +37,6 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentType } from './document-type.enum';
 import { ContactsService } from '../contacts.service';
 
-import "@node_modules/ng2-image-viewer/imageviewer.js";
-
 @Component({
     templateUrl: './documents.component.html',
     styleUrls: ['./documents.component.less'],
@@ -35,6 +46,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
+    @ViewChild('xmlContainer') xmlContainerElementRef: ElementRef;
 
     private readonly RESERVED_TIME_SECONDS = 30;
 
@@ -62,10 +74,12 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public readonly IMAGE_VIEWER = 1;
     public readonly TEXT_VIEWER  = 2;
     public readonly VIDEO_VIEWER  = 3;
+    public readonly XML_VIEWER  = 4;
 
     private defaultNoDataText = this.ls('Platform', 'NoData');
     public noDataText = '';
     public validTextExtensions: String[] = ['txt', 'text'];
+    public validXmlExtensions: String[] = ['xml'];
     public validVideoExtensions: String[] = ['mp4', 'mov'];
     public viewerToolbarConfig: any = [];
 
@@ -77,7 +91,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         private _contactService: ContactServiceProxy,
         private _clientService: ContactsService,
         private printerService: PrinterService,
-        private cacheService: CacheService
+        private cacheService: CacheService,
+        private renderer: Renderer2
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -446,7 +461,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             viewerType = this.VIDEO_VIEWER;
         } else {
             viewerType = this.currentDocumentInfo.isViewSupportedByWopi ? this.WOPI_VIEWER :
-                (this.validTextExtensions.indexOf(ext) < 0 ?  this.IMAGE_VIEWER : this.TEXT_VIEWER);
+                (this.validTextExtensions.indexOf(ext) >= 0 ?  this.TEXT_VIEWER : (
+                    this.validXmlExtensions.indexOf(ext) >= 0 ? this.XML_VIEWER : this.IMAGE_VIEWER
+                ));
         }
 
         super.startLoading(true);
@@ -480,10 +497,27 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     this.downloadFileBlob(urlInfo.url, (blob) => {
                         let reader = new FileReader();
                         reader.addEventListener('loadend', () => {
-                            let content = StringHelper.getBase64(reader.result);
-                            this.previewContent = viewerType == this.TEXT_VIEWER ? atob(content) : content;
-                            this.showViewerType = viewerType;
                             this.openDocumentMode = true;
+                            let content = StringHelper.getBase64(reader.result);
+                            this.previewContent = viewerType == this.TEXT_VIEWER || this.XML_VIEWER ? atob(content) : content;
+                            if (viewerType === this.XML_VIEWER) {
+                                const json = xmlJs.xml2js(
+                                    this.sanitizeContent(this.previewContent),
+                                    {
+                                        compact: true,
+                                        trim: true,
+                                        ignoreDoctype: true,
+                                        ignoreDeclaration: true,
+                                        ignoreAttributes: true
+                                    }
+                                );
+                                this.xmlContainerElementRef.nativeElement.innerHTML = '';
+                                this.renderer.appendChild(
+                                    this.xmlContainerElementRef.nativeElement,
+                                    new JSONFormatter(json, 2).render()
+                                );
+                            }
+                            this.showViewerType = viewerType;
                         });
                         reader.readAsDataURL(blob);
                         super.finishLoading(true);
@@ -491,6 +525,10 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 });
                 break;
         }
+    }
+
+    sanitizeContent(content: string): string {
+        return content.replace(/&/g, '&amp;');
     }
 
     downloadFileBlob(url, callback) {
