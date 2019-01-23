@@ -370,9 +370,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         event.stopPropagation();
     }
 
-    displaySelectedCompany(company) {
+    displaySelectedCompany(relation) {
         this.startLoading(true);
-        this._orgContactService.getOrganizationContactInfo(company.id)
+        this.personContactInfo.orgRelationId = relation.id;
+        this.initializePersonOrgRelationInfo();
+        this._orgContactService.getOrganizationContactInfo(relation.organization.id)
             .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
                 let isPartner = this.data.groupId == ContactGroup.Partner;
                 this.data['organizationContactInfo'] = result;              

@@ -24,8 +24,8 @@ export class RelationCompaniesDialogComponent extends AppComponentBase {
         this.filterList();
     }
 
-    selectCompany(company): void {
-        this.dialogRef.close(company.organization);
+    selectCompany(relation): void {
+        this.dialogRef.close(relation);
     }
 
     addNewCompany() {
