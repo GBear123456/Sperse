@@ -2572,16 +2572,6 @@ detect-zoom@^1.0.2:
     defined "^1.0.0"
     minimist "^1.1.1"
 
-devextreme-angular@^18.1.4:
-  version "18.1.4"
-  resolved "https://registry.yarnpkg.com/devextreme-angular/-/devextreme-angular-18.1.4.tgz#ea633afe8a3baa62ed09d4762f5f0be5b6a0b68d"
-
-devextreme@^18.1.4:
-  version "18.1.4"
-  resolved "https://registry.yarnpkg.com/devextreme/-/devextreme-18.1.4.tgz#a1552df205bea37f6b50769c7bbcaa3b8fd9e81c"
-  dependencies:
-    jszip "^2.0.0 || ^3.0.0"
-
 di@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/di/-/di-0.0.1.tgz#806649326ceaa7caa3306d75d985ea2748ba913c"
@@ -4745,6 +4735,10 @@ jshint@~2.9.4:
     shelljs "0.3.x"
     strip-json-comments "1.0.x"
 
+json-formatter-js@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/json-formatter-js/-/json-formatter-js-2.2.1.tgz#b101d628e86f028dc9cf9a7e1c83c65e536c9f87"
+
 json-loader@^0.5.7:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/json-loader/-/json-loader-0.5.7.tgz#dca14a70235ff82f0ac9a3abeb60d337a365185d"
@@ -4807,7 +4801,7 @@ jstree@^3.3.4:
   dependencies:
     jquery ">=1.9.1"
 
-"jszip@^2.0.0 || ^3.0.0", jszip@^3.1.5:
+jszip@^3.1.5:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/jszip/-/jszip-3.1.5.tgz#e3c2a6c6d706ac6e603314036d43cd40beefdf37"
   dependencies:
@@ -8777,6 +8771,12 @@ xlsx@^0.13.2:
     crc-32 "~1.2.0"
     exit-on-epipe "~1.0.1"
     ssf "~0.10.2"
+
+xml-js@^1.6.9:
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/xml-js/-/xml-js-1.6.9.tgz#6e516ce53c64ea0043cbc6ee8500e5d693602757"
+  dependencies:
+    sax "^1.2.4"
 
 xml2js@0.4.4:
   version "0.4.4"

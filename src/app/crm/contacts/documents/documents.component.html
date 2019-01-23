@@ -29,8 +29,8 @@
 
             <dxi-column dataField="size" [calculateSortValue]="numerizeFileSizeSortValue" caption="{{l('DocumentSize')}}" [calculateCellValue]="calculateFileSizeValue"></dxi-column>
             <dxi-column dataField="creationTime" caption="{{l('Date')}}" cssClass="tabular" cellTemplate="dateCell" sortOrder="desc"></dxi-column>
-            <dxi-column dataField="fileName" caption="{{l('DocumentReceived')}}"></dxi-column>
             <dxi-column dataField="typeName" caption="{{l('DocumentType')}}" cellTemplate="typeCell" [width]="335" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column dataField="fileName" caption="{{l('FileName')}}"></dxi-column>
 
             <dxi-column
                 alignment="center"
@@ -67,7 +67,7 @@
         </dx-data-grid>
     </div>
 </div>
-<div *ngIf="openDocumentMode" class="documentView">
+<div [hidden]="!openDocumentMode" class="documentView">
     <form *ngIf="showViewerType == WOPI_VIEWER" id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">
         <input name="access_token" value="{{ wopiAccessToken }}" type="hidden" />
         <input name="access_token_ttl" value="{{ wopiAccessTokenTtl }}" type="hidden" />
@@ -80,6 +80,8 @@
         [loadOnInit]="true">
     </app-image-viewer>
     <textarea *ngIf="showViewerType == TEXT_VIEWER" readonly>{{previewContent}}</textarea>
+
+    <div [hidden]="showViewerType !== XML_VIEWER" #xmlContainer></div>
 
     <vg-player *ngIf="showViewerType == VIDEO_VIEWER">
         <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
