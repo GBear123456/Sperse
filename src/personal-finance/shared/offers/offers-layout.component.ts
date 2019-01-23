@@ -71,6 +71,7 @@ export class FilterValues {
     cardType: CardType;
     securingType: SecuringType;
     targetAudience: TargetAudience;
+    rating: number;
 }
 
 @Component({
@@ -307,13 +308,25 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             }),
             new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_Rating'),
-                values$: of([ '5', '4', '3', '2', '1' ].map(value => ({ name: value, value: value }) )),
-                selected$: of('3'),
-                templateName: 'rating'
+                values$: of(['5', '4', '3', '2', '1'].map(value => ({ name: value, value: value }))),
+                selected$: of(this.filtersValues.rating),
+                templateName: 'rating',
+                onChange: (e: MatSelectChange) => {
+                    if (e.value != this.filtersValues.rating) {
+                        this.filtersValues.rating = e.value;
+                        this.selectedFilter.next(this.filtersValues);
+                    }
+                }
             }),
             new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_Brand'),
-                values$: this.brands$
+                values$: this.brands$,
+                onChange: (e: MatSelectChange) => {
+                    if (e.value != this.filtersValues.brand) {
+                        this.filtersValues.brand = e.value;
+                        this.selectedFilter.next(this.filtersValues);
+                    }
+                }
             }),
             new ChooserFilterSetting({
                 name: this.ls.l('Offers_Filter_Network'),
@@ -468,8 +481,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     filter.cardType,
                     filter.securingType,
                     filter.targetAudience,
-                    undefined,
-                    undefined,
+                    filter.overallRating,
+                    filter.brand,
                     []
                 ).pipe(
                     finalize(() => {
@@ -533,11 +546,12 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             category: undefined,
             country: 'US',
             creditScore: null,
-            brand: null,
+            brand: undefined,
             networks: [],
             cardType: undefined,
             securingType: undefined,
-            targetAudience: undefined
+            targetAudience: undefined,
+            rating: undefined
         };
     }
 
