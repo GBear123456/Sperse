@@ -16540,13 +16540,16 @@ export class OrganizationContactServiceProxy {
 
     /**
      * @searchString (optional) 
+     * @groupId (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getOrganizations(searchString: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfo[]> {
+    getOrganizations(searchString: string | null | undefined, groupId: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizations?";
         if (searchString !== undefined)
             url_ += "searchString=" + encodeURIComponent("" + searchString) + "&"; 
+        if (groupId !== undefined)
+            url_ += "groupId=" + encodeURIComponent("" + groupId) + "&"; 
         if (topCount !== undefined)
             url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
