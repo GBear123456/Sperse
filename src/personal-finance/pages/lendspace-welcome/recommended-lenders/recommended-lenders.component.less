@@ -11,6 +11,10 @@
         .row {
             width: calc(~"100% + 30px");
         }
+        
+        .list-item {
+            cursor: pointer;
+        }
     }
     
     .stars {
@@ -27,11 +31,10 @@
     
     
     
-    .inline-form {
+    .zip-form {
         display: flex;
         
-        input {
-            width: 55%;
+        ::ng-deep input {
             border-radius: 2px 0 0 2px;
             border: 1px solid #dfdfdf;
             background-color: #f4f5f5;
@@ -43,16 +46,28 @@
             outline: none;
         }
         
-        button {
+        .submit {
+            display: block;
             width: 45%;
-            padding: 10px 20px;
             text-align: center;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             letter-spacing: 0.1px;
-            background-image: none;
             border-radius: 0 2px 2px 0;
             text-transform: uppercase;
+            text-decoration: none;
+    
+            max-width: 415px;
+            box-shadow: none;
+            border: 0;
+            outline: none;
+            color: #fff;
+            transition: 0.3s;
+            background: #fe8600 none no-repeat right 20px center;
+            
+            &:hover {
+                background-color: lighten(#fe8600, 8%);
+            }
         }
     }
     

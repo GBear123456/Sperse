@@ -64,7 +64,7 @@
                                 <ng-container *ngSwitchCase="filterType.Select">
                                     <ng-container *ngIf="(filter.values$ | async) as filterValues">
                                         <mat-select
-                                            [value]="(filter.selected$ | async) || (filterValues[0] && filterValues[0].value) || filterValues[0]"
+                                            [value]="(filter.selected$ | async)"
                                             (selectionChange)="filter.onChange && filter.onChange($event)" #select>
                                             <mat-select-trigger *ngIf="filter.templateName === 'rating'">
                                                 <stars-rating [currentRating]="select.value" color="#f0d500"></stars-rating>

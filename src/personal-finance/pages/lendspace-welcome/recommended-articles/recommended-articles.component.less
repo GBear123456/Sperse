@@ -4,13 +4,13 @@
     min-height: 260px;
     display: block;
     
-    @media (min-width: 768px) {
-        width: 49%;
-    }
-    
-    @media (min-width: 1200px) {
-        width: 33.3333%;
-    }
+    //@media (min-width: 768px) {
+    //    width: 49%;
+    //}
+    //
+    //@media (min-width: 1200px) {
+    //    width: 33.3333%;
+    //}
     
     .wrap {
         padding: 15px 24px;
@@ -26,7 +26,8 @@
             .article {
                 margin-bottom: 16px;
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
+                cursor: pointer;
                 
                 img {
                     max-width: 100%;
@@ -34,10 +35,14 @@
                     object-fit: cover;
                 }
                 
+                h4 {
+                    font-size: 16px;
+                }
+                
                 p {
                     margin-bottom: 0;
-                    font-size: 16px;
-                    font-weight: 600;
+                    font-size: 14px;
+                    font-weight: normal;
                     line-height: 1.38;
                     letter-spacing: 0.3px;
                     color: #000;

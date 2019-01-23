@@ -5,8 +5,8 @@ import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
-import { Observable } from 'rxjs';
-import { map, publishReplay, refCount } from 'rxjs/operators';
+import { ReplaySubject, Observable } from 'rxjs';
+import { map, pluck, publishReplay, refCount } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 
 /** Application imports */
@@ -27,7 +27,9 @@ import { AppStore } from '@app/store';
 
 @Injectable()
 export class OffersService {
-    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount()); //, finalize(abp.ui.clearBusy)
+    stateCode$: ReplaySubject<string> = new ReplaySubject<string>();
+    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount()); //, finalize(abp.ui
+    // .clearBusy)
     processingSteps = [
         {
             name: 'Verifying Loan Request'
@@ -80,7 +82,11 @@ export class OffersService {
         private ls: AppLocalizationService,
         private offerServiceProxy: OfferServiceProxy,
         private dialog: MatDialog
-    ) {}
+    ) {
+        this.memberInfo$.pipe(pluck('stateCode')).subscribe((stateCode: string) => {
+            this.stateCode$.next(stateCode || 'AL');
+        });
+    }
 
     getCategoryFromRoute(route: ActivatedRoute): Observable<Category> {
         return route.url.pipe(

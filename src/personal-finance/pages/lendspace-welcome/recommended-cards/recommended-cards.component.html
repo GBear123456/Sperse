@@ -3,38 +3,40 @@
         <div class="row">
             <div class="col-lg-4 left-block">
                 <header class="section-header">
-                    <h2>Recommended cards</h2>
-                    <a class="show-all" routerLink="">Show all</a>
+                    <h2>{{ls.l('LendSpaceHome_Recommended_Cards')}}</h2>
+                    <a class="show-all" routerLink="/personal-finance/offers/credit-cards/home">{{ls.l('LendSpaceHome_Show_All')}}</a>
                 </header>
 
                 <div class="list-wrap">
                     <ul class="row">
                         <li class="col-6 col-md-3 col-lg-6" *ngFor="let card of recommendedCards">
-                            <img [src]="'./assets/common/images/pfm-cc/' + card.imgName" [alt]="card.title">
-                            <h3>{{card.title}}</h3>
+                            <a (click)="applyOffer(card)" class="card-item">
+                                <img [src]="'./assets/common/images/pfm-cc/' + card.offerCollection + '.svg'" [alt]="card.name">
+                                <h3>{{card.name}}</h3>
+                            </a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-8 right-block with-bg">
-                <div class="recommended-block">
-                    <h2>Maximize your savings!</h2>
-                    <p>Find credit cards with low fees and cash back rewards</p>
+                <div class="recommended-block" (click)="applyOffer(discoverData)">
+                    <h2>{{ls.l('LendSpaceHome_Max_Savings')}}</h2>
+                    <p>{{ls.l('LendSpaceHome_Find_CC')}}</p>
                     <div class="row">
                         <div class="col-md-6">
-                            <img src="./assets/common/images/pfm-cc/capital-one-card.png" alt="Discover">
+                            <img src="./assets/common/images/pfm-cc/discover.png" alt="Discover">
                         </div>
                         <div class="col-md-6">
-                            <div class="bank">Discover</div>
-                            <div class="cardName">Discover IT</div>
+                            <div class="bank">{{ls.l('LendSpaceHome_Discover')}}</div>
+                            <div class="cardName">{{ls.l('LendSpaceHome_Discover_IT')}}</div>
                             <div class="rating">
-                                <stars-rating currentRating="4" color="#f0d500"></stars-rating>
+                                <stars-rating currentRating="3" color="#f0d500"></stars-rating>
                             </div>
                         </div>
                     </div>
                 </div>
-                <button class="view-offers">
-                    View credit cards offers
+                <button class="view-offers" routerLink="/personal-finance/offers/credit-cards/home">
+                    {{ls.l('LendSpaceHome_View_CCO')}}
                 </button>
             </div>
         </div>

@@ -13,7 +13,7 @@
     </div>
 
     <div class="category-wrapper">
-        <div class="fin-res-center">Financial Resource Center</div>
+        <a class="fin-res-center" routerLink="/personal-finance/resources">{{l('Financial_Resource_Center')}}</a>
         <div class="container">
             <ul class="category-list row">
                 <li class="category-item col-sm-6 col-lg-3" *ngFor="let category of categoryItems" [hidden]="category.hidden">
@@ -43,13 +43,9 @@
 
     <recommended-lenders></recommended-lenders>
 
-    <div class="three-block-section">
-        <div class="container">
-            <div class="row">
-                <recommended-articles></recommended-articles>
-                <free-checking></free-checking>
-                <shop-now></shop-now>
-            </div>
+    <div class="container">
+        <div class="row">
+            <recommended-articles></recommended-articles>
         </div>
     </div>
 

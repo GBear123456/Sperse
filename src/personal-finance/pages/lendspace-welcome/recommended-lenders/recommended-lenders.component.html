@@ -4,20 +4,20 @@
         <div class="row">
             <div class="col-lg-4 left-block">
                 <header class="section-header">
-                    <h2>Recommended lenders</h2>
-                    <a class="show-all" routerLink="">Show all</a>
+                    <h2>{{ls.l('LendSpaceHome_Recommended_Lenders')}}</h2>
+                    <a class="show-all" routerLink="/personal-finance/offers/personal-loans">{{ls.l('LendSpaceHome_Show_All')}}</a>
                 </header>
 
                 <div class="list-wrap">
                     <ul class="row">
-                        <li class="col-12" *ngFor="let lender of recommendedLenders">
-                            <div class="row d-flex align-items-center">
+                        <li class="col-12 list-item" *ngFor="let lender of recommendedLenders">
+                            <div class="row d-flex align-items-center" (click)="applyOffer(lender)">
                                 <div class="col-7">
-                                    <img [src]="'./assets/common/images/pfm-cc/lenders-logo/' + lender.imgName"
-                                         [alt]="lender.title" class="img-fluid mb-0">
+                                    <img [src]="lender.logoUrl"
+                                         [alt]="lender.name" class="img-fluid mb-0">
                                 </div>
                                 <div class="col-5 stars">
-                                    <stars-rating [currentRating]="lender.rating" color="#f0d500"></stars-rating>
+                                    <stars-rating [currentRating]="lender.overallRating" color="#f0d500"></stars-rating>
                                 </div>
                             </div>
                         </li>
@@ -26,13 +26,26 @@
             </div>
             <div class="col-lg-8 right-block with-bg">
                 <div class="recommended-block">
-                    <h2>Car Loans</h2>
-                    <p>for good credit, bad credit or no credit</p>
+                    <h2>{{ls.l('LendSpaceHome_Car_Loans')}}</h2>
+                    <p>{{ls.l('LendSpaceHome_For_Credit')}}</p>
                     <div class="row">
                         <div class="col-12">
-                            <form class="inline-form">
-                                <input type="text" name="zip" placeholder="Enter your zipcode">
-                                <button type="submit" class="submit">Get Approved</button>
+                            <form class="zip-form" #zipForm="ngForm" novalidate (ngSubmit)="getLoans(memberInfo.zipCode)">
+                                <dx-text-box name="zip"
+                                             [inputAttr]="{ id: 'zip' }"
+                                             [valueChangeEvent]="'focusout'"
+                                             min="5"
+                                             [(value)]="memberInfo.zipCode"
+                                             (onInput)="onInput($event, 10, '00000-0000')">
+                                    <dx-validator>
+                                        <dxi-validation-rule type="pattern"
+                                                             [pattern]="zipRegex" message="{{ls.l('ZipcodeFormatError')}}."></dxi-validation-rule>
+                                    </dx-validator>
+                                </dx-text-box>
+                                <dx-button class="submit"
+                                           [text]="ls.l('LendSpaceHome_Find_Lenders')"
+                                           [useSubmitBehavior]="true">
+                                </dx-button>
                             </form>
                         </div>
                     </div>

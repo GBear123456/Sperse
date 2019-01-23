@@ -43,7 +43,8 @@ import {
     OfferDto,
     Category,
     OfferServiceProxy,
-    CreditScore,    CardNetworks,
+    CreditScore,
+    CardNetworks,
     CardType,
     SecuringType,
     TargetAudience
@@ -72,6 +73,7 @@ export class FilterValues {
     securingType: SecuringType;
     targetAudience: TargetAudience;
     rating: number;
+    stateCode: string;
 }
 
 @Component({
@@ -108,7 +110,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.offersService.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
     creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: CreditScore) => this.offersService.covertCreditScoreToNumber(score)));
-    stateCode$: Observable<string> = this.offersService.memberInfo$.pipe(pluck('stateCode'));
     filtersValues: FilterValues = this.getDefaultFilters();
     filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
         [CategoryGroupEnum.Loans]: [
@@ -191,7 +192,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             }),
             new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_ResidentState'),
-                selected$: this.stateCode$,
+                selected$: this.offersService.stateCode$,
                 values$: this.store$.pipe(
                     select(StatesStoreSelectors.getState, { countryCode: 'US' }),
                     map(states => states.map(state => ({ name: state.name, value: state.code })))
@@ -414,6 +415,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        // console.log(this.offersService.stateCode);
         this.categoryGroup$.pipe(
             filter((categoryGroup: CategoryGroupEnum) => categoryGroup === CategoryGroupEnum.Loans),
             takeUntil(this.deactivate$)
@@ -436,12 +438,13 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     break;
             }
         });
-        this.selectedFilter$ = combineLatest(this.creditScore$, this.category$)
+        this.selectedFilter$ = combineLatest(this.creditScore$, this.category$, this.offersService.stateCode$)
             .pipe(
                 first(),
-                switchMap(([creditScore, category]) => {
+                switchMap(([creditScore, category, stateCode]) => {
                     this.filtersValues.creditScore = creditScore;
                     this.filtersValues.category = category;
+                    this.filtersValues.stateCode = stateCode;
                     this.selectedFilter.next(this.filtersValues);
                     return this.selectedFilter.asObservable();
                 })
@@ -551,7 +554,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             cardType: undefined,
             securingType: undefined,
             targetAudience: undefined,
-            rating: undefined
+            rating: undefined,
+            stateCode: 'AL'
         };
     }
 

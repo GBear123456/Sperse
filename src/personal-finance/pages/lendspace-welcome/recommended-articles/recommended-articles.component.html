@@ -1,17 +1,20 @@
 <div class="wrap">
     <header class="section-header">
-        <h2>Recommended articles</h2>
-        <a class="show-all" routerLink="">Show all</a>
+        <h2>{{ls.l('LendSpaceHome_Recommended_Articles')}}</h2>
+        <a class="show-all" routerLink="/personal-finance/resources">{{ls.l('LendSpaceHome_Show_All')}}</a>
     </header>
 
     <div class="list-wrap">
-        <ul class="articles">
-            <li class="row article" *ngFor="let article of articles">
-                <div class="col-5">
-                    <img [src]="'./assets/common/images/pfm-cc/' + article.img" alt="Article Title">
-                </div>
-                <div class="col-7">
-                    <p>{{article.text}}</p>
+        <ul class="articles row">
+            <li class="col-lg-4 col-sm-12 col-md-6 article" *ngFor="let article of articles">
+                <div class="row" (click)="openLink(article.url)">
+                    <div class="col-md-5 col-sm-12">
+                        <img [src]="'./assets/common/images/pfm-cc/' + article.img" alt="Article Title">
+                    </div>
+                    <div class="col-md-7 col-sm-12">
+                        <h4>{{article.title}}</h4>
+                        <p>{{article.text}}</p>
+                    </div>
                 </div>
             </li>
         </ul>
