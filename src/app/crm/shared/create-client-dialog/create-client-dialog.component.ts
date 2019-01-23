@@ -31,7 +31,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import {
     ContactServiceProxy, CreateContactInput, ContactAddressServiceProxy, CreateContactEmailInput,
     CreateContactPhoneInput, ContactPhotoServiceProxy, CreateContactAddressInput, ContactEmailServiceProxy,
-    ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput,
+    ContactPhoneServiceProxy, SimilarContactOutput, ContactPhotoInput, OrganizationContactServiceProxy,
     PersonInfoDto, LeadServiceProxy, CreateLeadInput, CreateContactLinkInput
 } from '@shared/service-proxies/service-proxies';
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
@@ -68,6 +68,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     phonesComponent: any;
     linksComponent: any;
 
+    private lookupTimeout;
     private checkValidTimeout;
     private readonly SAVE_OPTION_DEFAULT = 2;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
@@ -85,6 +86,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     urlRegEx = AppConsts.regexPatterns.url;
     fullNameRegEx = AppConsts.regexPatterns.fullName;
 
+    companies = [];
     company: string;
     title: string;
     notes = '';
@@ -149,8 +151,9 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         private _leadService: LeadServiceProxy,
         private _nameParser: NameParserService,
         private _pipelineService: PipelineService,
-        private dialogService: DialogService,
+        private _dialogService: DialogService,
         private _angularGooglePlaceService: AngularGooglePlaceService,
+        private _orgServiceProxy: OrganizationContactServiceProxy,
         private store$: Store<RootStore.State>
     ) {
         super(injector);
@@ -506,7 +509,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     }
 
     getDialogPossition(event, shiftX) {
-        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+        return this._dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     toggleStages() {
@@ -545,7 +548,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 field ? undefined : person.middleName || undefined,
                 field ? undefined : person.lastName || undefined,
                 field ? undefined : person.nameSuffix || undefined,
-                field ? undefined : this.company || undefined,
+                field ? undefined : undefined, //this.company || 
                 (field == 'emails') && contact.email && [contact.email] || undefined,
                 (field == 'phones') && contact.number && [contact.number] || undefined,
                 isAddress && contact.address || undefined,
@@ -770,9 +773,28 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             this.addButtonVisible['phones'] = false;
     }
 
-    onCompanyKeyUp($event) {
-        this.company = this.getInputElementValue($event);
-        this.checkSimilarCustomers();
+    companyLookupItems($event) {
+        let search = this.company = $event.event.target.value;
+        if (this.companies.length)
+            this.companies = [];
+
+        clearTimeout(this.lookupTimeout);
+        this.lookupTimeout = setTimeout(() => {
+            this._orgServiceProxy.getOrganizations(search, this.data.customerType || ContactGroup.Client, 10).subscribe((res) => {
+                if (search == this.company)
+                    this.companies = res;
+                setTimeout(() => this.companyOptionChanged($event, true));
+            });
+        }, 500);
+    }
+
+    companyOptionChanged($event, forced) {
+        if (!this.company || !this.companies.length || forced)
+            $event.component.option('opened', Boolean(this.companies.length));
+    }
+    
+    onCustomCompanyCreate(e) { 
+        setTimeout(() => this.company = e.text);
     }
 
     onCommentKeyUp($event) {
