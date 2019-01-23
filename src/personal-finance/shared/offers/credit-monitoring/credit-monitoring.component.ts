@@ -52,7 +52,10 @@ export class CreditMonitoringComponent implements OnInit {
                     undefined,
                     undefined,
                     undefined,
-                    undefined
+                    undefined,
+                    undefined,
+                    undefined,
+                    []
                 ).pipe(
                     finalize(() => abp.ui.clearBusy(this.contentElementRef.nativeElement))
                 )

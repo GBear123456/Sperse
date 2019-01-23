@@ -54,7 +54,10 @@ export class CreditCardsComponent implements OnInit {
                         [],
                         undefined,
                         undefined,
-                        undefined
+                        undefined,
+                        undefined,
+                        undefined,
+                        []
                     )),
                 finalize(() => abp.ui.clearBusy())
             );
@@ -100,7 +103,10 @@ export class CreditCardsComponent implements OnInit {
                 undefined,
                 undefined,
                 undefined,
-                undefined
+                undefined,
+                undefined,
+                undefined,
+                []
             )),
             finalize(() => abp.ui.clearBusy())
         ).subscribe((offers: OfferDto[]) => {

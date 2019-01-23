@@ -467,7 +467,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     filter.networks,
                     filter.cardType,
                     filter.securingType,
-                    filter.targetAudience
+                    filter.targetAudience,
+                    undefined,
+                    undefined,
+                    []
                 ).pipe(
                     finalize(() => {
                         this.offersAreLoading = false;
