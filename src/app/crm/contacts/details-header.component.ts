@@ -374,9 +374,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this.startLoading(true);
         this._orgContactService.getOrganizationContactInfo(company.id)
             .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
-                this.data['organizationContactInfo'] = result;
+                let isPartner = this.data.groupId == ContactGroup.Partner;
+                this.data['organizationContactInfo'] = result;              
                 this._contactsService.updateLocation(
-                    this.data.id, null, null, result && result.id);
+                    isPartner ? null: this.data.id, this.data['leadId'], 
+                    isPartner ? this.data.id: null, result && result.id);
             });
     }
 }

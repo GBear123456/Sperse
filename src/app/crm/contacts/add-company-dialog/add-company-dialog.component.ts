@@ -100,13 +100,14 @@ export class AddCompanyDialogComponent extends AppComponentBase {
                 jobTitle: this.data.title
             }
         )).pipe(finalize(() => {
+            this.data.id = undefined;
             this.finishLoading(true);
         })).subscribe((responce) => {
             this.finishLoading(true);
             if (responce.organizationId) {
                 let isPartner = this.data.contactInfo.groupId == ContactGroup.Partner;
-                this.data.updateLocation(isPartner ? null: this.data.contactId,
-                    null, isPartner ? this.data.contactId: null, responce.organizationId);
+                this.data.updateLocation(isPartner ? null: this.data.contactId, this.data.contactInfo['leadId'],
+                    isPartner ? this.data.contactId: null, responce.organizationId);
                 this.applyContactInfo(responce);
             }
             this.dialogRef.close(responce);

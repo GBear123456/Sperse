@@ -213,7 +213,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     private fillLeadDetails(result) {
         this._contactService['data'].leadInfo = this.leadInfo = result;
-        this.leadId = result.id;
+        this.leadId = this.contactInfo['leadId'] = result.id;
 
         this.loadLeadsStages(() => {
             if (this.leadInfo.stage)
@@ -322,13 +322,13 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    loadLeadData(personContactInfo?: any, callback?) {
+    loadLeadData(personContactInfo?: any, lastLeadCallback?) {
         let contactInfo  = this._contactService['data'].contactInfo,
             leadInfo = this._contactService['data'].leadInfo;
-        if (!this.leadInfo && contactInfo && leadInfo) {
-            this.startLoading(true);
+        if ((!this.leadInfo && contactInfo && leadInfo) || lastLeadCallback) {
+            !lastLeadCallback && this.startLoading(true);
             let leadId = leadInfo.id,
-                leadInfo$ = leadId ? this._leadService.getLeadInfo(leadId) :
+                leadInfo$ = leadId && !lastLeadCallback ? this._leadService.getLeadInfo(leadId) :
                     this._leadService.getLast(contactInfo.id);
 
             leadInfo$.pipe(finalize(() => {
@@ -336,7 +336,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             })).subscribe(result => {
                 this.fillLeadDetails(result);
                 personContactInfo && this.InitNavLinks(personContactInfo);
-                callback && callback();
+                lastLeadCallback && lastLeadCallback();
             });
         }
     }
@@ -647,9 +647,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             disableClose: true,
             closeOnNavigation: false,
             data: {
+                isInLeadMode: Boolean(this.leadId),
                 company: companyInfo && companyInfo.fullName,
-                refreshParent: () => {},
-                customerType: this.customerType || ContactGroup.Client
+                customerType: this.customerType || ContactGroup.Client,
+                refreshParent: () => {}
             }
         }).afterClosed().subscribe(() => {
             this._orgContactService.getOrganizationContactInfo(companyInfo.id).subscribe((result) => {
