@@ -32,7 +32,7 @@ export class AddCompanyDialogComponent extends AppComponentBase {
     }
 
     lookupCompanies(search?: string) {
-        return this.orgServiceProxy.getOrganizations(search, undefined, 10);
+        return this.orgServiceProxy.getOrganizations(search, this.data.contactInfo.groupId, 10);
     }
 
     lookupItems($event) {

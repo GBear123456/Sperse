@@ -45,20 +45,27 @@
         <dx-scroll-view showScrollbar="onHover">
             <div class="field">
                 <label class="company-label">{{l('Company')}}</label>
-                <dx-text-box #companyComponent
-                             name="company"
-                             [placeholder]="l('CompanyName')"
-                             [width]="'270px'"
-                             [valueChangeEvent]="'keyup'"
-                             (onKeyUp)="onCompanyKeyUp($event)"
-                             [(value)]="company">
-                </dx-text-box>
+                <dx-select-box #companyComponent
+                    name="company"
+                    width="270px"
+                    displayExpr="name"
+                    valueExpr="name"
+                    [acceptCustomValue]="true"
+                    [placeholder]="l('CompanyName')"
+                    [(value)]="company"
+                    [dataSource]="companies"
+                    [searchEnabled]="true"
+                    [searchTimeout]="0"
+                    (onInput)="companyLookupItems($event)"
+                    (onOptionChanged)="companyOptionChanged($event)"
+                    (onCustomItemCreating)="onCustomCompanyCreate($event)">
+                </dx-select-box>
                 <dx-text-box #titleComponent
-                             name="title"
-                             [placeholder]="l('Job title')"
-                             [valueChangeEvent]="'keyup'"
-                             [width]="'270px'"
-                             [(value)]="title">
+                    name="title"
+                    [placeholder]="l('Job title')"
+                    [valueChangeEvent]="'keyup'"
+                    [width]="'270px'"
+                    [(value)]="title">
                 </dx-text-box>
                 <span [class]="(company || title) && 'clear-contact' || 'hidden'" (click)="company = title = ''"><i class="minus-icon"></i></span>
             </div>
