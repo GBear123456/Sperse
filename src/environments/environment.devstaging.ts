@@ -4,5 +4,5 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.devstaging.json',
     appBaseUrl: 'http://localhost:7200',
-    appBaseHref: 'https://testui.blob.core.windows.net/current/'
+    appBaseHref: 'https://testuicdn.azureedge.net/current/'
 };
