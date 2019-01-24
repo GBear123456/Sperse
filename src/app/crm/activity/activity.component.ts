@@ -521,6 +521,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     activate() {
+        this._filtersService.fixed = false;
         this._appService.hideSubscriptionCallback = () => {
             if (!this.showPipeline)
                 this.repaint();

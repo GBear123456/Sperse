@@ -4,7 +4,6 @@
     </app-headline>
     <div [hidden]="showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-    
             <dx-scheduler
                 height="calc(100vh - 210px)"
                 [dataSource]="dataSource"
@@ -17,7 +16,7 @@
                 [textExpr]="'Title'"
                 [allDayExpr]="'AllDay'"
                 [startDateExpr]="'StartDate'"
-                [endDateExpr]="'EndDate'"        
+                [endDateExpr]="'EndDate'"
                 [remoteFiltering]="false"
                 [descriptionExpr]="'Description'"
                 [startDateTimeZoneExpr]="'fieldTimeZone'"
@@ -37,7 +36,7 @@
                     </div>
                 </div>
             </dx-scheduler>
-    
+
         </div>
     </div>
 
