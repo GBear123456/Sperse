@@ -22,7 +22,6 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
         public dialogRef: MatDialogRef<ContactPersonsDialogComponent>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        
         this.filterList();
     }
 
@@ -32,7 +31,7 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
             .pipe(finalize(() => this.finishLoading(true))).subscribe((contactInfo) => {
                 contactInfo['organizationContactInfo'] = this.data['organizationContactInfo'];
                 this.dialogRef.close(contactInfo);
-            });                
+            });
     }
 
     addNewContact() {
@@ -40,10 +39,10 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
     }
 
     filterList(event?) {
-        let search = event ? event.target.value.toUpperCase(): '';
+        let search = event ? event.target.value.toUpperCase() : '';
         this.displayedPersons = this.data['organizationContactInfo'].contactPersons.filter((person) => {
             return (person.id != this.data.personContactInfo.id)
-                && (!search || person.fullName.toUpperCase().indexOf(search) > -1)
+                && (!search || person.fullName.toUpperCase().indexOf(search) > -1);
         });
     }
 }

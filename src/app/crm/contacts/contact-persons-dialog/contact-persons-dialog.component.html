@@ -21,9 +21,9 @@
                 <div class="job-title">
                     <h6>{{contactPerson?.jobTitle}}</h6>
                 </div>
-                <div class="rating">
-                    <mat-progress-bar ng-reflect-color="#2fb8f0" color="#2fb8f0" value="{{ data.ratingId * 10}}"></mat-progress-bar>
-                    <span class="rating_int">{{data.ratingId}}/10</span>
+                <div class="rating" *ngIf="contactPerson.ratingId !== null">
+                    <mat-progress-bar ng-reflect-color="#2fb8f0" color="#2fb8f0" value="{{ contactPerson.ratingId * 10}}"></mat-progress-bar>
+                    <span class="rating_int">{{ contactPerson.ratingId }}/10</span>
                 </div>
             </div>
             <div class="person-info-actions">
