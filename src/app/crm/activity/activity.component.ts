@@ -97,7 +97,6 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-        this._appService.localizationSourceName = this.localizationSourceName;
 
         this.headlineConfig.buttons.forEach((button) => {
             button.lable = this.l(button.lable);

@@ -73,7 +73,6 @@ import { InplaceEditComponent } from './inplace-edit/inplace-edit.component';
 import { DatePickerDirective } from './timing/date-picker.component';
 import { PeriodComponent } from './period/period.component';
 import { DateTimeService } from './timing/date-time.service';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { RatingBarComponent } from './rating-bar/rating-bar.component';
@@ -223,7 +222,6 @@ import { TypesListComponent } from '@app/crm/shared/types-list/types-list.compon
     ],
     providers: [
         DateTimeService,
-        AppLocalizationService,
         ImportWizardService
     ],
     entryComponents: [

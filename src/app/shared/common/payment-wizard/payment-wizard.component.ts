@@ -56,7 +56,6 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
     ) {
         super(injector);
         this.module = data.module;
-        this.appService.localizationSourceName = this.localizationSourceName;
     }
 
     ngOnInit() {

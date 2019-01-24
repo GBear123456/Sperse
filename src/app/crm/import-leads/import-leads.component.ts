@@ -224,7 +224,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.setMappingFields(ImportItemInput.fromJS({}));
-        this._appService.localizationSourceName = this.localizationSourceName;
         this.initFieldsConfig();
         this.userId = abp.session.userId;
         this.selectedClientKeys.push(this.userId);
@@ -491,6 +490,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     activate() {
+        this.localizationService.localizationSourceName = this.localizationSourceName;
         this.rootComponent.overflowHidden(true);
 
         this.getStages();
@@ -499,6 +499,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     deactivate() {
+        this.localizationService.localizationSourceName = undefined;
         this.rootComponent.overflowHidden();
         this._importLeadsService.setupImportCheck();
     }

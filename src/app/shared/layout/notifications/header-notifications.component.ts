@@ -38,7 +38,6 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         private _appService: AppService
     ) {
         super(injector);
-        this._appService.localizationSourceName = this.localizationSourceName;
     }
 
     ngOnInit(): void {

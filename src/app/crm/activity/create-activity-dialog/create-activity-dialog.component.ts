@@ -3,7 +3,7 @@ import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu'; 
+import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
 import { finalize } from 'rxjs/operators';

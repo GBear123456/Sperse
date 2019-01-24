@@ -94,7 +94,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isAdminModule = (appService.getModule() == appService.getDefaultModule());
-        this.appService.localizationSourceName = this.localizationSourceName;
 
         this.addContextMenuItems = [
             {text: this.l('AddFiles'), selected: false, icon: 'files'},
