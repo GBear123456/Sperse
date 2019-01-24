@@ -4,6 +4,7 @@
     const TwoFactorRememberClientToken = 'TwoFactorRememberClientToken';
     const AbpLocalizationCultureName = 'Abp.Localization.CultureName';
     const EncryptedAuthToken = 'enc_auth_token';
+    const origRefererKey = 'OriginalReferer';
     const DEFAULT_FAVICONS = [
         {relationship: "icon", type: "image/x-icon", name: "favicon.ico", size: "32x32"},
         {relationship: "icon", type: "image/png", name: "favicon-32x32.png", size: "32x32"},
@@ -13,7 +14,7 @@
 
     var tenant;
     var remoteServiceUrl = '';
-    var appContext, appBootstrap
+    var appContext, appBootstrap;
     var pathParts = location.pathname.split('/').filter(Boolean);
     var cookie = queryString(document.cookie, ';');
     setOriginalReferer(cookie);
@@ -70,6 +71,7 @@
 
             for (var header in headers)
                 xhr.setRequestHeader(header, headers[header]);
+            xhr.setRequestHeader(origRefererKey, sessionStorage.getItem(origRefererKey));
 
             xhr.onload = function() {
                 if (xhr.status === 200)
@@ -324,7 +326,8 @@
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json",
-                        "Accept": "application/json"
+                        "Accept": "application/json",
+                        [origRefererKey]: sessionStorage.getItem(origRefererKey) 
                     },
                     error: function(request) {
                         abp.ui.clearBusy();
@@ -428,7 +431,6 @@
     }
 
     function setOriginalReferer(cookie) {
-        const origRefererKey = 'OriginalReferer';
         var originalRefererCookie = cookie[origRefererKey];
 
         if (originalRefererCookie && originalRefererCookie != '') {
