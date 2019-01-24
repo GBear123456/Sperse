@@ -1,0 +1,6 @@
+<p class="sperse-api" [ngClass]="{ 'small' : small }">
+    <img class="logo-api" alt="API Logo" src="./assets/common/icons/api.svg" />
+    <span>API</span>
+</p>
+<p class="welcome-api">{{ ls.l('API_Intro_Welcome') }}</p>
+<button *ngIf="canManageApiKeys" class="btn btn-layout" (click)="addApiKey()">{{ ls.l('API_Intro_GenerateKey') }}</button>
