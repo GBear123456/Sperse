@@ -15799,9 +15799,16 @@ export class OfferServiceProxy {
      * @creditScore (optional) 
      * @isOfferCollection (optional) 
      * @itemOfOfferCollection (optional) 
+     * @cardNetworks (optional) 
+     * @cardType (optional) 
+     * @securingType (optional) 
+     * @targetAudience (optional) 
+     * @overallRating (optional) 
+     * @issuingBank (optional) 
+     * @campaignIds (optional) 
      * @return Success
      */
-    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<OfferDto[]> {
+    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined, cardNetworks: CardNetworks[] | null | undefined, cardType: CardType | null | undefined, securingType: SecuringType | null | undefined, targetAudience: TargetAudience | null | undefined, overallRating: number | null | undefined, issuingBank: string | null | undefined, campaignIds: number[] | null | undefined): Observable<OfferDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (testMode === undefined || testMode === null)
             throw new Error("The parameter 'testMode' must be defined and cannot be null.");
@@ -15823,6 +15830,20 @@ export class OfferServiceProxy {
             url_ += "IsOfferCollection=" + encodeURIComponent("" + isOfferCollection) + "&"; 
         if (itemOfOfferCollection !== undefined)
             url_ += "ItemOfOfferCollection=" + encodeURIComponent("" + itemOfOfferCollection) + "&"; 
+        if (cardNetworks !== undefined)
+            cardNetworks && cardNetworks.forEach(item => { url_ += "CardNetworks=" + encodeURIComponent("" + item) + "&"; });
+        if (cardType !== undefined)
+            url_ += "CardType=" + encodeURIComponent("" + cardType) + "&"; 
+        if (securingType !== undefined)
+            url_ += "SecuringType=" + encodeURIComponent("" + securingType) + "&"; 
+        if (targetAudience !== undefined)
+            url_ += "TargetAudience=" + encodeURIComponent("" + targetAudience) + "&"; 
+        if (overallRating !== undefined)
+            url_ += "OverallRating=" + encodeURIComponent("" + overallRating) + "&"; 
+        if (issuingBank !== undefined)
+            url_ += "IssuingBank=" + encodeURIComponent("" + issuingBank) + "&"; 
+        if (campaignIds !== undefined)
+            campaignIds && campaignIds.forEach(item => { url_ += "CampaignIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -16519,13 +16540,16 @@ export class OrganizationContactServiceProxy {
 
     /**
      * @searchString (optional) 
+     * @groupId (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getOrganizations(searchString: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfo[]> {
+    getOrganizations(searchString: string | null | undefined, groupId: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizations?";
         if (searchString !== undefined)
             url_ += "searchString=" + encodeURIComponent("" + searchString) + "&"; 
+        if (groupId !== undefined)
+            url_ += "groupId=" + encodeURIComponent("" + groupId) + "&"; 
         if (topCount !== undefined)
             url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -18217,7 +18241,7 @@ export class PersonOrgRelationServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    create(input: CreatePersonOrgRelationInput | null | undefined): Observable<void> {
+    create(input: CreatePersonOrgRelationInput | null | undefined): Observable<CreatePersonOrgRelationOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -18229,6 +18253,7 @@ export class PersonOrgRelationServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -18239,14 +18264,14 @@ export class PersonOrgRelationServiceProxy {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<CreatePersonOrgRelationOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<CreatePersonOrgRelationOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<void> {
+    protected processCreate(response: HttpResponseBase): Observable<CreatePersonOrgRelationOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18255,14 +18280,17 @@ export class PersonOrgRelationServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreatePersonOrgRelationOutput.fromJS(resultData200) : new CreatePersonOrgRelationOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<CreatePersonOrgRelationOutput>(<any>null);
     }
 
     /**
@@ -48431,6 +48459,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
     creditScore!: GetMemberInfoResponseCreditScore | undefined;
     stateCode!: string | undefined;
     countryCode!: string | undefined;
+    zipCode!: string | undefined;
     isDirectPostSupported!: boolean | undefined;
     testMode!: boolean | undefined;
 
@@ -48448,6 +48477,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
             this.creditScore = data["creditScore"];
             this.stateCode = data["stateCode"];
             this.countryCode = data["countryCode"];
+            this.zipCode = data["zipCode"];
             this.isDirectPostSupported = data["isDirectPostSupported"];
             this.testMode = data["testMode"];
         }
@@ -48465,6 +48495,7 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
         data["creditScore"] = this.creditScore;
         data["stateCode"] = this.stateCode;
         data["countryCode"] = this.countryCode;
+        data["zipCode"] = this.zipCode;
         data["isDirectPostSupported"] = this.isDirectPostSupported;
         data["testMode"] = this.testMode;
         return data; 
@@ -48475,6 +48506,7 @@ export interface IGetMemberInfoResponse {
     creditScore: GetMemberInfoResponseCreditScore | undefined;
     stateCode: string | undefined;
     countryCode: string | undefined;
+    zipCode: string | undefined;
     isDirectPostSupported: boolean | undefined;
     testMode: boolean | undefined;
 }
@@ -51283,6 +51315,46 @@ export interface ICreatePersonOrgRelationInput {
     organizationName: string | undefined;
     relationshipType: string;
     jobTitle: string;
+}
+
+export class CreatePersonOrgRelationOutput implements ICreatePersonOrgRelationOutput {
+    id!: number | undefined;
+    organizationId!: number | undefined;
+
+    constructor(data?: ICreatePersonOrgRelationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.organizationId = data["organizationId"];
+        }
+    }
+
+    static fromJS(data: any): CreatePersonOrgRelationOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreatePersonOrgRelationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["organizationId"] = this.organizationId;
+        return data; 
+    }
+}
+
+export interface ICreatePersonOrgRelationOutput {
+    id: number | undefined;
+    organizationId: number | undefined;
 }
 
 export class UpdatePersonOrgRelationInput implements IUpdatePersonOrgRelationInput {
@@ -58860,6 +58932,31 @@ export enum ItemOfOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+}
+
+export enum CardNetworks {
+    AmEx = "AmEx", 
+    Discover = "Discover", 
+    Mastercard = "Mastercard", 
+    Visa = "Visa", 
+    Store = "Store", 
+}
+
+export enum CardType {
+    Credit = "Credit", 
+    Debit = "Debit", 
+}
+
+export enum SecuringType {
+    Unsecured = "Unsecured", 
+    Secured = "Secured", 
+    Prepaid = "Prepaid", 
+}
+
+export enum TargetAudience {
+    Consumer = "Consumer", 
+    Business = "Business", 
+    Students = "Students", 
 }
 
 export enum Module {

@@ -59,6 +59,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         super(injector);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+        this._appService.localizationSourceName = this.localizationSourceName;
 
         this.actionMenuItems = [
             {

@@ -81,6 +81,8 @@ import { CreateUserDialogComponent } from './users/create-user-dialog/create-use
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { ContactsModule } from '../crm/contacts/contacts.module';
 import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-select.component.ts/modules-editions-select.component';
+import { OfferEditComponent } from './offer-edit/offer-edit.component';
+import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 
 @NgModule({
     imports: [
@@ -126,7 +128,8 @@ import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-s
         AutoCompleteModule,
         EditorModule,
         InputMaskModule,
-        PaymentInfoModule
+        PaymentInfoModule,
+        ItemDetailsLayoutModule
     ],
     declarations: [
         UsersComponent,
@@ -171,7 +174,8 @@ import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-s
         EditTenantModalComponent,
         ModulesEditionsSelectComponent,
         TenantFeaturesModalComponent,
-        CreateUserDialogComponent
+        CreateUserDialogComponent,
+        OfferEditComponent
     ],
     entryComponents: [
         CreateUserDialogComponent

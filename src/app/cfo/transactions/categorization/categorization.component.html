@@ -5,7 +5,7 @@
             <span class="close" (click)="close.emit(null)"></span>
             <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection(true)">{{'Clear'}}</span>
         </h3>
-        <app-toolbar [config]="toolbarConfig" [compact]="true" ></app-toolbar>
+        <app-toolbar [config]="toolbarConfig" [compact]="true" [localizationSource]="localizationSourceName"></app-toolbar>
     </div>
     <dx-tree-list width="{{width}}"
                   height="{{height}}"

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, UrlMatcher } from '@angular/router';
 
 import { ContactsComponent } from './contacts.component';
 import { DocumentsComponent } from './documents/documents.component';
@@ -86,6 +86,55 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     {path: 'lead-information', component: LeadInformationComponent },
                     {path: 'questionnaire', component: QuestionnaireComponent },
                     {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
+                    {path: 'referral-history', component: ReferralHistoryComponent },
+                    {path: 'activity-logs', component: ActivityLogsComponent },
+                    {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }
+                ]
+            },
+            {
+                path: 'client/:clientId/company/:companyId',
+                component: ContactsComponent,
+                children: [
+                    {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    {path: 'contact-information', component: ContactInformationComponent },
+                    {path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
+                    {path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
+                    {path: 'lead-information', component: LeadInformationComponent },
+                    {path: 'questionnaire', component: QuestionnaireComponent },
+                    {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
+                    {path: 'referral-history', component: ReferralHistoryComponent },
+                    {path: 'activity-logs', component: ActivityLogsComponent },
+                    {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }
+                ]
+            },
+            {
+                path: 'client/:clientId/lead/:leadId/company/:companyId',
+                component: ContactsComponent,
+                children: [
+                    {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    {path: 'contact-information', component: ContactInformationComponent },
+                    {path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
+                    {path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
+                    {path: 'lead-information', component: LeadInformationComponent },
+                    {path: 'questionnaire', component: QuestionnaireComponent },
+                    {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
+                    {path: 'referral-history', component: ReferralHistoryComponent },
+                    {path: 'activity-logs', component: ActivityLogsComponent },
+                    {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }
+                ]
+            },
+            {
+                path: 'partner/:partnerId/company/:companyId',
+                component: ContactsComponent,
+                children: [
+                    {path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    {path: 'contact-information', component: ContactInformationComponent },
+                    {path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
+                    {path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
+                    {path: 'lead-information', component: LeadInformationComponent },
+                    {path: 'questionnaire', component: QuestionnaireComponent },
+                    {path: 'documents', component: DocumentsComponent, data: {rightPanelOpened: false} },
+                    {path: 'application-status', component: ApplicationStatusComponent },
                     {path: 'referral-history', component: ReferralHistoryComponent },
                     {path: 'activity-logs', component: ActivityLogsComponent },
                     {path: 'notes', component: NotesComponent, data: {rightPanelOpened: false}  }

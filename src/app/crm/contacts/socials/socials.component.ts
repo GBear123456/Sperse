@@ -23,7 +23,7 @@ import {
     ContactLinkTypesStoreSelectors
 } from '@app/store';
 import { PersonOrgRelationType } from '@root/shared/AppEnums';
-
+import { ContactsService } from '../contacts.service';
 import * as _ from 'underscore';
 
 @Component({
@@ -34,27 +34,17 @@ import * as _ from 'underscore';
 })
 export class SocialsComponent extends AppComponentBase {
     @Input() isCompany;
+    @Input() contactInfo: ContactInfoDto;
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() set contactInfo(value: ContactInfoDto) {
-        // if (this._contactInfo = value)
-        //     this.contactInfoData = this.isCompany ?
-        //         value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details:
-        //         value.personContactInfo && value.personContactInfo.details;
-
-    }
-    get contactInfo(): ContactInfoDto {
-        return this._contactInfo;
-    }
 
     isEditAllowed = false;
 
     LINK_TYPES = {};
 
-    private _contactInfo: ContactInfoDto;
-
     constructor(injector: Injector,
                 public dialog: MatDialog,
                 private store$: Store<RootStore.State>,
+                private _contactsService: ContactsService,
                 private _contactLinkService: ContactLinkServiceProxy,
                 private _organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService
@@ -94,6 +84,20 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     showEditDialog(data, event, index) {
+        if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
+            this.showSocialDialog(data, event, index);
+        else
+            this._contactsService.addCompanyDialog(event, this.contactInfo,
+                Math.round(event.target.offsetWidth / 2)
+            ).subscribe(result => {
+                if (result) {
+                    this.contactInfoData = ContactInfoDetailsDto.fromJS({contactId: result.organizationId});
+                    this.showSocialDialog(data, event, index);
+                }
+            });
+    }
+
+    showSocialDialog(data, event, index) {
         let dialogData = {
             field: 'url',
             id: data && data.id,
@@ -131,7 +135,7 @@ export class SocialsComponent extends AppComponentBase {
     createOrganization(data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            relatedContactId: this._contactInfo.id,
+            relatedContactId: this.contactInfo.id,
             companyName: companyName,
             relationTypeId: PersonOrgRelationType.Employee
         })).subscribe(response => {
@@ -142,20 +146,20 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        // this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
-        //     organization: OrganizationInfoDto.fromJS({
-        //         companyName: companyName
-        //     }),
-        //     id: contactId,
-        //     fullName: companyName,
-        //     details: ContactInfoDetailsDto.fromJS({
-        //         contactId: contactId,
-        //         emails: [],
-        //         phones: [],
-        //         addresses: [],
-        //         links: [],
-        //     })
-        // });
+        this.contactInfo['organizationContactInfo'] = OrganizationContactInfoDto.fromJS({
+            organization: OrganizationInfoDto.fromJS({
+                companyName: companyName
+            }),
+            id: contactId,
+            fullName: companyName,
+            details: ContactInfoDetailsDto.fromJS({
+                contactId: contactId,
+                emails: [],
+                phones: [],
+                addresses: [],
+                links: [],
+            })
+        });
     }
 
     updateDataField(data, dialogData) {

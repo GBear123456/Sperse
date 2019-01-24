@@ -5,18 +5,36 @@ import { OnInit, AfterViewInit, Component, Inject, Injector, ViewChild, ElementR
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { Store, select } from '@ngrx/store';
+import { map, mergeAll, pluck, toArray } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CreateNoteInput, NotesServiceProxy, ContactPhoneDto,
-UserServiceProxy, CreateContactPhoneInput, ContactPhoneServiceProxy, ContactInfoDto } from '@shared/service-proxies/service-proxies';
+import {
+    CreateNoteInput,
+    NotesServiceProxy,
+    ContactPhoneDto,
+    UserServiceProxy,
+    CreateContactPhoneInput,
+    ContactPhoneServiceProxy,
+    ContactInfoDto,
+    PersonOrgRelationShortInfo,
+    PersonShortInfoDto,
+    OrganizationShortInfo,
+    OrganizationContactServiceProxy,
+    PersonContactServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 import { AppStore, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors } from '@app/store';
 import { ContactGroup, NoteType } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+
+class PhoneNumber {
+    id: any;
+    phoneNumber: any;
+}
 
 @Component({
     templateUrl: './note-add-dialog.component.html',
@@ -48,8 +66,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     types = [];
     users = [];
-    contacts = [];
-    phones = [];
+    contacts: (OrganizationShortInfo|PersonShortInfoDto)[] = [];
+    phones: PhoneNumber[];
 
     constructor(
         injector: Injector,
@@ -62,7 +80,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private _userService: UserServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
-        private clientService: ContactsService
+        private clientService: ContactsService,
+        private personServiceProxy: PersonContactServiceProxy,
+        private orgContactService: OrganizationContactServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         if (_notesService['types'])
@@ -73,13 +93,16 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             });
 
         this._contactInfo = this.data.contactInfo;
-        // if (this.data.contactInfo.primaryOrganizationContactInfo && this.data.contactInfo.primaryOrganizationContactInfo.contactPersons) {
-        //     let orgContact = <any>this._contactInfo.primaryOrganizationContactInfo,
-        //         contacts = this._contactInfo.primaryOrganizationContactInfo.contactPersons.length ? this._contactInfo.primaryOrganizationContactInfo.contactPersons : [this._contactInfo.personContactInfo];
-        //     this.primaryOrgId = orgContact && orgContact.id;
-        //     this.contacts = orgContact ? contacts.concat(orgContact) : contacts;
-        //     this.onContactChanged({value: this.contacts[0].id});
-        // }
+        const relatedOrganizations: any[] = this._contactInfo.personContactInfo.orgRelations
+            .map((organizationRelation: PersonOrgRelationShortInfo) => {
+                organizationRelation.organization['fullName'] = organizationRelation.organization.name;
+                return organizationRelation.organization;
+            });
+        const relatedPersons: PersonShortInfoDto[] = this._contactInfo['organizationContactInfo']
+                             ? this._contactInfo['organizationContactInfo'].contactPersons
+                             : [];
+        this.contacts = relatedPersons.concat(relatedOrganizations);
+        this.onContactChanged({value: this.contacts[0].id});
 
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
@@ -176,13 +199,21 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     onContactChanged($event) {
         let contact = this.getContactById($event.value);
-        this.phones = contact.details.phones.map((phone) => {
-            return {
+        const contactPhones$ = (contact instanceof OrganizationShortInfo
+            ? this.orgContactService.getOrganizationContactInfo(contact.id).pipe(pluck('details'), pluck('phones'))
+            : this.personServiceProxy.getPersonContactInfo(contact.id).pipe(pluck('details'), pluck('phones')));
+
+        contactPhones$.pipe(
+            mergeAll(),
+            map((phone: ContactPhoneDto) => ({
                 id: phone.id,
                 phoneNumber: this._phoneFormatPipe.transform(phone.phoneNumber, undefined)
-            };
+            })),
+            toArray()
+        ).subscribe(phones => {
+            this.phones = phones;
+            this.phone = this.phones[0] && this.phones[0].id;
         });
-        this.phone = this.phones.length && this.phones[0].id;
         this.contactId = contact.id;
         this.type = this.contactId == this.primaryOrgId ?
             NoteType.CompanyNote :

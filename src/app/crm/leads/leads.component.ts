@@ -137,7 +137,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private lifeCycleSubjectsService: LifecycleSubjectsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
+        this._appService.localizationSourceName = this.localizationSourceName;
         this.dataSource = {
             uri: this.dataSourceURI,
             requireTotalCount: true,
@@ -759,14 +759,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     showLeadDetails(event) {
-        let leadId = event.data && event.data.Id;
-        let clientId = event.data && event.data.CustomerId;
+        let leadId = event.data && event.data.Id,
+            clientId = event.data && event.data.CustomerId;
         if (!leadId || !clientId)
             return;
 
         this.searchClear = false;
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId, 'lead', leadId, 'contact-information'],
+        let orgId = event.data.OrganizationId;
+        this._router.navigate(['app/crm/client', clientId, 'lead', leadId].concat(orgId ? ['company', orgId]: []),
             { queryParams: { referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType } });
     }
 

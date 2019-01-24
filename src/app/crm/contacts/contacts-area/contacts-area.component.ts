@@ -27,16 +27,8 @@ import { PersonOrgRelationType } from '@root/shared/AppEnums';
 })
 export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     @Input() isCompany = false;
-    @Input() set contactInfo(value: ContactInfoDto) {
-        // if (this._contactInfo = value)
-        //     this.contactInfoData = this.isCompany
-        //         ? value.primaryOrganizationContactInfo && value.primaryOrganizationContactInfo.details
-        //         : value.personContactInfo && value.personContactInfo.details;
-    }
-    get contactInfo(): ContactInfoDto {
-        return this._contactInfo;
-    }
     @Input() showContactType: string;
+    @Input() contactInfo: ContactInfoDto;
     @Input() contactInfoData: ContactInfoDetailsDto;
 
     isEditAllowed = false;
@@ -46,7 +38,6 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
-    private _contactInfo: ContactInfoDto;
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
@@ -81,6 +72,20 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     }
 
     showDialog(field, data, event, index) {
+        if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
+            this.showContactDialog(field, data, event, index);
+        else
+            this._contactsService.addCompanyDialog(event, this.contactInfo,
+                Math.round(event.target.offsetWidth / 2)
+            ).subscribe(result => {
+                if (result) {
+                    this.contactInfoData = ContactInfoDetailsDto.fromJS({contactId: result.organizationId});
+                    this.showContactDialog(field, data, event, index);
+                }
+            });
+    }
+
+    showContactDialog(field, data, event, index) {
         let dialogData = {
             field: field,
             id: data && data.id,
@@ -124,7 +129,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     createOrganization(field, data, dialogData) {
         let companyName = AppConsts.defaultCompanyName;
         this._organizationContactService.createOrganization(CreateOrganizationInput.fromJS({
-            relatedContactId: this._contactInfo.id,
+            relatedContactId: this.contactInfo.id,
             companyName: companyName,
             relationTypeId: PersonOrgRelationType.Employee
         })).subscribe(response => {
@@ -135,20 +140,20 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     }
 
     initializeOrganizationInfo(companyName, contactId) {
-        // this._contactInfo.primaryOrganizationContactInfo = OrganizationContactInfoDto.fromJS({
-        //     organization: OrganizationInfoDto.fromJS({
-        //         companyName: companyName
-        //     }),
-        //     id: contactId,
-        //     fullName: companyName,
-        //     details: ContactInfoDetailsDto.fromJS({
-        //         contactId: contactId,
-        //         emails: [],
-        //         phones: [],
-        //         addresses: [],
-        //         links: [],
-        //     })
-        // });
+         this.contactInfo['organizationContactInfo'] = OrganizationContactInfoDto.fromJS({
+             organization: OrganizationInfoDto.fromJS({
+                 companyName: companyName
+             }),
+             id: contactId,
+             fullName: companyName,
+             details: ContactInfoDetailsDto.fromJS({
+                 contactId: contactId,
+                 emails: [],
+                 phones: [],
+                 addresses: [],
+                 links: [],
+             })
+         });
     }
 
     updateDataField(field, dataItem, updatedData) {

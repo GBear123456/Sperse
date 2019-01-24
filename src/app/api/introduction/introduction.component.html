@@ -3,26 +3,15 @@
     <div class="content">
         <setup-steps></setup-steps>
         <div class="api-into portlet light no-padding margin-bottom-0">
-            <div *ngIf="!apiKeys" class="portlet-body">
-                <div>
-                    <p class="sperse-api">
-                        <img class="logo-api" alt="API Logo" src="./assets/common/icons/api.svg" /><span>API</span>
-                    </p>
-                    <p class="welcome-api">{{ l('API_Intro_Welcome') }}</p>
-
-                    <button *ngIf="canManageApiKeys" class="btn btn-layout" (click)="addApiKey()">{{ l('API_Intro_GenerateKey') }}</button>
-                </div>
-            </div>
+            <api-welcome (onAddApiKey)="addApiKey()" [small]="apiKeys"></api-welcome>
             <div *ngIf="apiKeys">
-                <h1 class="text-left">{{l('ApiKeys')}}</h1>
-                <button *ngIf="canManageApiKeys" class="btn btn-layout pull-right" (click)="addApiKey()">{{ l('API_Intro_GenerateKey') }}</button>
                 <dx-data-grid id="gridContainer"
                               keyExpr="id"
                               [dataSource]="apiKeys">
                     <dxi-column dataField="name" caption="{{l('ApiKey_Name')}}"></dxi-column>
-                    <dxi-column dataField="key" caption="{{l('ApiKey_Key')}}" cellTemplate="keyTemplate"></dxi-column>
-                    <dxi-column dataField="expirationDate" caption="{{l('ApiKey_ExpirationDate')}}" dataType="date"></dxi-column>
-                    <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" dataType="date"></dxi-column>
+                    <dxi-column dataField="key" caption="{{l('ApiKey_Key')}}" cellTemplate="keyTemplate" [width]="400"></dxi-column>
+                    <dxi-column dataField="expirationDate" caption="{{l('ApiKey_ExpirationDate')}}" dataType="date" [width]="150"></dxi-column>
+                    <dxi-column dataField="creationTime" caption="{{l('CreationTime')}}" dataType="date" [width]="150"></dxi-column>
                     <dxi-column dataField="userName" caption="{{l('UserName')}}"></dxi-column>
                     <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" [visible]="canManageApiKeys" cellTemplate="editDeleteTemplate"></dxi-column>
                     <div *dxTemplate="let data of 'editDeleteTemplate'">

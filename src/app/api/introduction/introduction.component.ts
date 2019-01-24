@@ -23,7 +23,6 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
 
     public apiKeys: ApiKeyInfo[];
     private elementForBlocking: Element;
-    private canManageApiKeys: boolean = this.permission.isGranted('Pages.API.ManageKeys');
 
     constructor(injector: Injector,
         public dialog: MatDialog,

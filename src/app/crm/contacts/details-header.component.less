@@ -1,23 +1,4 @@
 :host {
-    header {
-        height: 82px;
-        background: #f3f7fa;
-        display: flex;
-        border-bottom: 1px solid #e5e9ec;
-        box-shadow: -2px 2px 6px 0 rgba(0, 0, 0, 0.1);
-        align-items: center;
-
-        mat-progress-spinner {
-            width: 44px;
-            height: 44px;
-            margin: 5px 0px 5px 0px;
-
-            /deep/ path {
-                stroke: #00aeef;
-            }
-        }
-    }
-
      /deep/ inplace-edit {
          .inplace-edit-view-mode {
              height: 30px;
@@ -136,6 +117,20 @@
     .organization_info {
         white-space: nowrap;
 
+        .add-new-company {
+            width: 250px;
+            display: inline-block;
+            font-size: 16px;
+            padding: 10px;
+            a {
+                color: #00aeef;
+            }
+        }
+
+        .company-details {
+            display: inline;
+        }
+
         .delimiter {
             display: inline-block;
             width: 1px;
@@ -173,6 +168,12 @@
             &.shift-top {
                 position: relative;
                 bottom: 10px;
+
+                .fa-angle-down {
+                    vertical-align: text-top;
+                    margin-left: 10px;
+                    cursor: pointer;
+                }
             }
             padding-left: 15px;
             display: inline-block;

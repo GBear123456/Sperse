@@ -1,0 +1,32 @@
+<header>
+    <h5 class="dialog-title">
+        {{l('Related Companies')}}
+        <a (click)="addNewCompany()" class="float-right add-new-contact">{{l('Add Company')}}</a>
+    </h5>
+    <div class="search-wrapper clearfix">
+        <input type="text" id="search-related-contacts" class="search-related-contacts" placeholder="Search contacts..." (keyup)="filterList($event)">
+    </div>
+</header>
+<mat-dialog-content>
+    <ul class="contact-company-container" id="related-company-list">
+        <li class="contact-company-info" [class.odd]="odd" *ngFor="let company of displayedCompanies; let odd = odd" (click)='selectCompany(company)'>
+            <div class="avatar">
+                <img src="{{ getPhoto( company?.organization?.thumbnail, 'Organization' )}}" alt="{{l('AltCompanyPhoto')}}">
+            </div>
+            <div class="company-info">
+                <div class="full-name">
+                    <h1 *ngIf="company?.organization?.name">{{ company?.organization?.name }}</h1>
+                </div>
+                <div class="relation-type">
+                    <span>{{company?.relationType?.name}}</span>
+                </div>
+                <div class="job-title">
+                    <h6>{{company?.jobTitle}}</h6>
+                </div>
+            </div>
+            <div class="person-info-actions">
+                <a class="action-link action-link-edit"></a>
+            </div>
+        </li>
+    </ul>
+</mat-dialog-content>

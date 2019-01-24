@@ -2,6 +2,7 @@
 @additional-font-color: #757575;
 @border-color: #DFDFDF;
 @blue: #3463ae;
+@text-color: #4a4a4a;
 
 :host {
     * {
@@ -56,14 +57,13 @@
                 transition: transform 0.3s ease-in-out;
                 background: #fff;
                 z-index: 1;
-                margin-top: 80px;
+                margin-top: 65px;
+                border-bottom: 2px solid @border-color;
                 &.md-hidden {
                     transform: translateX(-200%);
                 }
             }
             @media (min-width: 1200px) {
-                flex: 0 0 21%;
-                max-width: 21%;
                 padding-left: 29px;
                 padding-right: 29px;
             }
@@ -322,8 +322,6 @@
         }
         .offersList {
             @media (min-width: 1200px) {
-                flex: 0 0 79%;
-                max-width: 79%;
                 padding-left: 29px;
                 padding-right: 29px;
             }
@@ -337,12 +335,20 @@
                     &:first-child {
                         border-top: 1px solid @border-color;
                     }
-                    .image img {
-                        max-width: 152px;
-                        max-height: 96px;
-                        cursor: pointer;
+                    .image {
+                        align-self: flex-start;
+                        img {
+                            max-width: 152px;
+                            max-height: 96px;
+                            cursor: pointer;
+                        }
                     }
                     .description {
+                        h5 {
+                            font-size: 13px;
+                            font-weight: normal;
+                            color: @text-color;
+                        }
                         h4 {
                             color: @mainColor;
                             font-size: 19px;

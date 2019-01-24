@@ -231,8 +231,10 @@ export class LoginService {
                 }
             }).afterClosed().subscribe(result => {
                 if (result) {
+                    abp.ui.setBusy();
                     this.externalLoginModal.autoRegistration = true;
                     this._tokenAuthService.externalAuthenticate(this.externalLoginModal)
+                        .pipe(finalize(() => abp.ui.clearBusy()))
                         .subscribe((result: ExternalAuthenticateResultModel) => {
                             this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
                         });

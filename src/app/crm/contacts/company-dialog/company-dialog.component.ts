@@ -183,8 +183,7 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
                         .subscribe(() => {
                             this.handlePhotoChange(null);
                         });
-                }
-                else {
+                } else {
                     let base64OrigImage = StringHelper.getBase64(result.origImage);
                     let base64ThumbImage = StringHelper.getBase64(result.thumImage);
 

@@ -13,7 +13,7 @@
         <div class="form-check">
             <input type="checkbox" class="form-check-input" id="terms" name="terms"
                    [(ngModel)]="agreeWithTerms" required>
-            <label class="form-check-label" for="terms">{{ls.l('By_Continuing_I_Certify')}} <a (click)="openConditionsDialog($event, modalsData.terms)">{{ls.l('TermsOfService')}}</a>,
+            <label class="form-check-label" for="terms">{{ls.l('By_Continuing_I_Certify')}} <a (click)="openConditionsDialog($event, modalsData.terms)">{{ls.l('TermsOfUse')}}</a>,
                 <a (click)="openConditionsDialog($event, modalsData.privacy)">{{ls.l('PrivacyPolicy')}}</a> {{ls.l('And')}} <a
                     (click)="openConditionsDialog($event, modalsData.lender)">{{ls.l('LenderTerms')}}</a>.</label>
         </div>

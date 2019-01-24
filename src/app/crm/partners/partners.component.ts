@@ -115,7 +115,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private store$: Store<AppStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
+        this._appService.localizationSourceName = this.localizationSourceName;
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -210,7 +210,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
         this.searchClear = false;
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/partner', partnerId],
+        let orgId = event.data.OrganizationId;
+        this._router.navigate(['app/crm/partner', partnerId].concat(orgId ? ['company', orgId]: []),
             { queryParams: { referrer: 'app/crm/partners'} });
     }
 
