@@ -3,6 +3,24 @@
     padding-left: 15px;
     font-weight: 500;
 
+    display: flex;
+    align-items: center;
+    &:before {
+        margin-right: 17px;
+        max-height: 32px;
+    }
+    &.doc:before,
+    &.docx:before {
+        content: url('../../../../assets/common/icons/documents/doc.svg');
+    }
+    &.pdf:before {
+        content: url('../../../../assets/common/icons/documents/pdf.svg');
+    }
+    &.xlsx:before,
+    &.xls:before {
+        content: url('../../../../assets/common/icons/documents/xls.svg');
+    }
+
     .file-size {
         padding-left: 5px;
         color: #677380;

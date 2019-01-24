@@ -167,7 +167,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                         action: this.closeDocument.bind(this)
                     },
                     {
-                        html: '<div class="file-name">' + this.currentDocumentInfo.fileName +
+                        html: '<div class="file-name ' + this.getFileExtensionByFileName(this.currentDocumentInfo.fileName) + '">' + this.currentDocumentInfo.fileName +
                             '<span class="file-size">(' + this._fileSizePipe.transform(this.currentDocumentInfo.size) + ')</span></div>'
                     }
                 ]
@@ -200,7 +200,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                                 const printSrc = this.showViewerType == this.IMAGE_VIEWER ?
                                     this.imageViewer.images[0] :
                                     viewedDocument.textContent;
-                                const format = <any>this.currentDocumentInfo.fileName.split('.').pop();
+                                const format = <any>this.getFileExtensionByFileName(this.currentDocumentInfo.fileName);
                                 this.printerService.printDocument(printSrc, format);
                             }
                         }
@@ -450,6 +450,10 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this.actionRecordData = null;
     }
 
+    getFileExtensionByFileName(fileName: string): string {
+        return fileName && fileName.split('.').pop();
+    }
+
     viewDocument(type: DocumentType = DocumentType.Current) {
         let currentDocumentIndex = this.visibleDocuments.indexOf(this.currentDocumentInfo);
         if (type !== DocumentType.Current) {
@@ -464,8 +468,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
         this.currentDocumentURL = '';
         this.showViewerType = undefined;
-        let ext = this.currentDocumentInfo.fileName.split('.').pop(),
-            viewerType;
+        let ext = this.getFileExtensionByFileName(this.currentDocumentInfo.fileName), viewerType;
 
         if (this.validVideoExtensions.indexOf(ext) >= 0) {
             viewerType = this.VIDEO_VIEWER;
