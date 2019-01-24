@@ -46,7 +46,7 @@ export class NotesComponent extends AppComponentBase implements OnInit {
         _clientService.invalidateSubscribe((area) => {
             if (area == 'notes')
                 this.loadData().subscribe(
-                    (notes: NoteInfoDto) => this.dataSource = notes
+                    (notes: NoteInfoDto[]) => this.dataSource = notes
                 );
         });
     }
