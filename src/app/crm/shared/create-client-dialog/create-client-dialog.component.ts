@@ -548,7 +548,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 field ? undefined : person.middleName || undefined,
                 field ? undefined : person.lastName || undefined,
                 field ? undefined : person.nameSuffix || undefined,
-                field ? undefined : undefined, //this.company || 
+                field ? undefined : undefined, //this.company ||
                 (field == 'emails') && contact.email && [contact.email] || undefined,
                 (field == 'phones') && contact.number && [contact.number] || undefined,
                 isAddress && contact.address || undefined,
@@ -788,12 +788,12 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         }, 500);
     }
 
-    companyOptionChanged($event, forced) {
+    companyOptionChanged($event, forced = false) {
         if (!this.company || !this.companies.length || forced)
             $event.component.option('opened', Boolean(this.companies.length));
     }
-    
-    onCustomCompanyCreate(e) { 
+
+    onCustomCompanyCreate(e) {
         setTimeout(() => this.company = e.text);
     }
 
