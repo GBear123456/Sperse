@@ -10,7 +10,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { PersonOrgRelationType } from '@shared/AppEnums';
-import { OrganizationContactServiceProxy, CreatePersonOrgRelationInput, 
+import { OrganizationContactServiceProxy, CreatePersonOrgRelationInput,
     PersonOrgRelationServiceProxy, PersonOrgRelationShortInfo } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -71,10 +71,10 @@ export class AddCompanyDialogComponent extends AppComponentBase {
 
     applyContactInfo(responce) {
         let contactInfo = this.data.contactInfo;
-        if (responce && contactInfo) {            
+        if (responce && contactInfo) {
             let orgId = responce.organizationId;
             this.orgServiceProxy.getOrganizationContactInfo(orgId).subscribe((result) => {
-                contactInfo['organizationContactInfo'] = result;                
+                contactInfo['organizationContactInfo'] = result;
             });
             contactInfo.primaryOrganizationContactId = orgId;
             contactInfo.personContactInfo.orgRelations.push(
@@ -82,8 +82,8 @@ export class AddCompanyDialogComponent extends AppComponentBase {
                     id: responce.id,
                     isActive: true,
                     jobTitle: this.data.title,
-                    organization: {id: orgId, name: this.data.company, thumbnail: ""},
-                    relationType: {id: PersonOrgRelationType.Employee, name: "Employee"}
+                    organization: {id: orgId, name: this.data.company, thumbnail: ''},
+                    relationType: {id: PersonOrgRelationType.Employee, name: 'Employee'}
                 })
             );
         }
@@ -106,8 +106,8 @@ export class AddCompanyDialogComponent extends AppComponentBase {
             this.finishLoading(true);
             if (responce.organizationId) {
                 let isPartner = this.data.contactInfo.groupId == ContactGroup.Partner;
-                this.data.updateLocation(isPartner ? null: this.data.contactId, this.data.contactInfo['leadId'],
-                    isPartner ? this.data.contactId: null, responce.organizationId);
+                this.data.updateLocation(isPartner ? null : this.data.contactId, this.data.contactInfo['leadId'],
+                    isPartner ? this.data.contactId : null, responce.organizationId);
                 this.applyContactInfo(responce);
             }
             this.dialogRef.close(responce);

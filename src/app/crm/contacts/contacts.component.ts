@@ -188,6 +188,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     private fillContactDetails(result, contactId = null) {
         this._contactService['data'].contactInfo = result;
+        this._contactsService.contactInfoUpdate(result);
+
         contactId = contactId || result.personContactInfo.id;
 
         if (result.organizationContactInfo && result.organizationContactInfo.contactPersons) {
@@ -271,6 +273,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 this._orgContactService.getOrganizationContactInfo(
                     contactInfo[0]['primaryOrganizationContactId']).subscribe((result) => {
                         contactInfo[0]['organizationContactInfo'] = result;
+                        this._contactsService.organizationInfoUpdate(result);
                     });
 
             return contactInfo[0];
@@ -278,7 +281,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadDataForUser(userId, companyId) {
-        this.getContactInfoWithCompany(companyId,
+        this.getContactInfoWithCompany(
+            companyId,
             this._contactService.getContactInfoForUser(userId)
         ).subscribe((res) => {
             this.fillContactDetails(res, res['id']);
@@ -323,7 +327,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadLeadData(personContactInfo?: any, lastLeadCallback?) {
-        let contactInfo  = this._contactService['data'].contactInfo,
+        let contactInfo = this._contactService['data'].contactInfo,
             leadInfo = this._contactService['data'].leadInfo;
         if ((!this.leadInfo && contactInfo && leadInfo) || lastLeadCallback) {
             !lastLeadCallback && this.startLoading(true);
@@ -445,7 +449,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 let isPartner = this.customerType == ContactGroup.Partner;
                 this.loadLeadData(result.personContactInfo, () => {
                     this._contactsService.updateLocation(
-                        (isPartner ? null: this.customerId), this.leadId, (isPartner ? this.customerId: null),
+                        (isPartner ? null : this.customerId), this.leadId, (isPartner ? this.customerId : null),
                         result.organizationContactInfo && result.organizationContactInfo.id);
                 });
             }
@@ -638,8 +642,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     addNewContact(event) {
         if (this.personContactInfo.userId)
             return;
-        
-        let companyInfo = this.contactInfo['organizationContactInfo']; 
+
+        let companyInfo = this.contactInfo['organizationContactInfo'];
 
         this._dialog.closeAll();
         this._dialog.open(CreateClientDialogComponent, {

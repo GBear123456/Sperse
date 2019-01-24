@@ -19,7 +19,7 @@ import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import { FileSystemFileEntry } from 'ngx-file-drop';
 import { Observable, of } from 'rxjs';
-import { finalize, flatMap } from 'rxjs/operators';
+import { finalize, flatMap, tap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as xmlJs from 'xml-js';
 import JSONFormatter from 'json-formatter-js';
@@ -36,6 +36,7 @@ import { PrinterService } from '@shared/common/printer/printer.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentType } from './document-type.enum';
 import { ContactsService } from '../contacts.service';
+import { UploadDocumentsDialogComponent } from '@app/crm/contacts/documents/upload-documents-dialog/upload-documents-dialog.component';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -84,7 +85,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public viewerToolbarConfig: any = [];
 
     constructor(injector: Injector,
-        public dialog: MatDialog,
+        private dialog: MatDialog,
         private _fileSizePipe: FileSizePipe,
         private _documentService: DocumentServiceProxy,
         private _documentTypeService: DocumentTypeServiceProxy,
@@ -110,7 +111,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 action: this.deleteDocument.bind(this)
             }
         ];
-
+        this.data = this._contactService['data'];
         _clientService.invalidateSubscribe((area) => {
             if (area == 'documents') {
                 this._documentService['data'] = undefined;
@@ -275,7 +276,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngOnInit() {
-        this.data = this._contactService['data'];
         this.loadDocumentTypes();
     }
 
@@ -306,22 +306,32 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     loadDocuments(callback = null) {
         this.startLoading();
         let documentData = this._documentService['data'], groupId = this.data.contactInfo.id;
-        if (!callback && documentData && documentData.groupId == groupId) {
-            setTimeout(() => {
-                this.dataSource = documentData.source;
-                this.finishLoading();
-            });
-        } else {
-            this._documentService.getAll(groupId).pipe(
-                finalize(() => this.finishLoading())
-            ).subscribe((result: DocumentInfo[]) => {
-                this._documentService['data'] = {
-                    groupId: groupId,
-                    source: this.dataSource = result
-                };
-                callback && callback();
-            });
-        }
+        const dataSource$: Observable<DocumentInfo[]> = !callback && documentData && documentData.groupId == groupId
+                            ? of(documentData.source)
+                            : this._documentService.getAll(groupId).pipe(tap((documents: DocumentInfo[]) => {
+                                this._documentService['data'] = {
+                                    groupId: groupId,
+                                    source: documents
+                                };
+                            }));
+        dataSource$.pipe(finalize(() => this.finishLoading())).subscribe((documents: DocumentInfo[]) => {
+            this.dataSource = documents;
+            if (!this.dataSource || !this.dataSource.length) {
+                setTimeout(() => this.openDocumentAddAddDialog());
+            }
+        });
+    }
+
+    openDocumentAddAddDialog() {
+        this.dialog.open(UploadDocumentsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: false,
+            hasBackdrop: false,
+            closeOnNavigation: true,
+            data: {
+                contactId: this.data.contactInfo.id
+            }
+        });
     }
 
     onToolbarPreparing($event) {

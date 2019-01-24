@@ -237,7 +237,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     }
 
     getJobTitleInplaceEditData() {
-        let orgRelationInfo = this.personContactInfo 
+        let orgRelationInfo = this.personContactInfo
             && this.personContactInfo['personOrgRelationInfo'];
         if (orgRelationInfo)
             return {
@@ -381,10 +381,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         this._orgContactService.getOrganizationContactInfo(relation.organization.id)
             .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
                 let isPartner = this.data.groupId == ContactGroup.Partner;
-                this.data['organizationContactInfo'] = result;              
+                this.data['organizationContactInfo'] = result;
                 this._contactsService.updateLocation(
-                    isPartner ? null: this.data.id, this.data['leadId'], 
-                    isPartner ? this.data.id: null, result && result.id);
+                    isPartner ? null : this.data.id, this.data['leadId'],
+                    isPartner ? this.data.id : null, result && result.id);
             });
     }
 }

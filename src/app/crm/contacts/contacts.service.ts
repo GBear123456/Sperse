@@ -2,10 +2,11 @@ import { Injectable, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Subject } from 'rxjs';
+import { ReplaySubject, Subject } from 'rxjs';
 
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
+import { ContactInfoDto, OrganizationContactInfoDto } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class ContactsService {
@@ -16,6 +17,8 @@ export class ContactsService {
     private organizationUnitsSave: Subject<any>;
     private invalidateSubject: Subject<any>;
     private leadInfoSubject: Subject<any>;
+    private contactInfoSubject: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>();
+    private organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>();
     private subscribers: any = {
         common: []
     };
@@ -42,7 +45,7 @@ export class ContactsService {
         return sub;
     }
 
-    verificationSubscribe(callback, ident = undefined) {
+    verificationSubscribe(callback, ident?: string) {
         return this.subscribe(this.verificationSubject.asObservable().subscribe(callback), ident);
     }
 
@@ -50,7 +53,7 @@ export class ContactsService {
         this.verificationSubject.next();
     }
 
-    toolbarSubscribe(callback, ident = undefined) {
+    toolbarSubscribe(callback, ident?: string) {
         return this.subscribe(this.toolbarSubject.asObservable().subscribe(callback), ident);
     }
 
@@ -58,7 +61,7 @@ export class ContactsService {
         this.toolbarSubject.next(config);
     }
 
-    userSubscribe(callback, ident = undefined) {
+    userSubscribe(callback, ident?: string) {
         return this.subscribe(this.userSubject.asObservable().subscribe(callback), ident);
     }
 
@@ -66,7 +69,23 @@ export class ContactsService {
         this.userSubject.next(userId);
     }
 
-    orgUnitsSubscribe(callback, ident = undefined) {
+    contactInfoSubscribe(callback, ident?: string) {
+        return this.subscribe(this.contactInfoSubject.asObservable().subscribe(callback), ident);
+    }
+
+    contactInfoUpdate(contactInfo: ContactInfoDto) {
+        this.contactInfoSubject.next(contactInfo);
+    }
+
+    organizationInfoSubscribe(callback, ident?: string) {
+        return this.subscribe((this.organizationContactInfo.asObservable().subscribe(callback)), ident);
+    }
+
+    organizationInfoUpdate(organizationInfo: OrganizationContactInfoDto) {
+        this.organizationContactInfo.next(organizationInfo);
+    }
+
+    orgUnitsSubscribe(callback, ident?: string) {
         return this.subscribe(this.organizationUnits.asObservable().subscribe(callback), ident);
     }
 
@@ -74,7 +93,7 @@ export class ContactsService {
         this.organizationUnits.next(userData);
     }
 
-    orgUnitsSaveSubscribe(callback, ident = undefined) {
+    orgUnitsSaveSubscribe(callback, ident?: string) {
         return this.subscribe(this.organizationUnitsSave.asObservable().subscribe(callback), ident);
     }
 
@@ -82,15 +101,15 @@ export class ContactsService {
         this.organizationUnitsSave.next(data);
     }
 
-    invalidateSubscribe(callback, ident = undefined) {
+    invalidateSubscribe(callback, ident?: string) {
         return this.subscribe(this.invalidateSubject.asObservable().subscribe(callback), ident);
     }
 
-    invalidate(area = undefined) {
+    invalidate(area?: string) {
         this.invalidateSubject.next(area);
     }
 
-    loadLeadInfoSubscribe(callback, ident = undefined) {
+    loadLeadInfoSubscribe(callback, ident?: string) {
         return this.subscribe(this.leadInfoSubject.asObservable().subscribe(callback), ident);
     }
 

@@ -106,7 +106,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
-                top: '157px',
+                top: '75px',
                 right: '-100vw'
             });
         });
@@ -126,7 +126,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         this.slider.classList.add('hide');
         this.dialogRef.updateSize('0px', '0px');
         this.dialogRef.updatePosition({
-            top: '157px',
+            top: '75px',
             right: '-100vw'
         });
     }
@@ -137,7 +137,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             this.dialogRef.updateSize(undefined, '100vh');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
-                    top: '157px',
+                    top: '75px',
                     right: '0px'
                 });
             }, 100);
