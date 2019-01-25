@@ -15,14 +15,14 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                 canActivateChild: [ CreditReportsRouteGuard ],
                 children: [
                     {
-                        path: 'home',
+                        path: 'start',
                         loadChildren: 'personal-finance/pages/lendspace-welcome/lendspace-welcome.module#LendspaceWelcomeModule',
                         data: {
                             wrapperDisabled: true
                         }
                     },
                     {
-                        path: 'home2',
+                        path: 'home',
                         loadChildren: 'personal-finance/pages/lendspace-welcome2/lendspace-welcome2.module#LendspaceWelcome2Module',
                         data: {
                             wrapperDisabled: true
