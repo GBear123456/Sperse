@@ -25080,66 +25080,6 @@ export class TransactionsServiceProxy {
 }
 
 @Injectable()
-export class UiServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    test(): Observable<void> {
-        let url_ = this.baseUrl + "/api/ui/test";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processTest(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processTest(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processTest(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class UiCustomizationSettingsServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -27360,8 +27300,8 @@ export class WorkflowActionServiceProxy {
      * @rule (optional) 
      * @return Success
      */
-    addRuleAsync(rule: WorkflowRuleDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/WorkflowAction/AddRuleAsync";
+    addRule(rule: WorkflowRuleDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/WorkflowAction/AddRule";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(rule);
@@ -27376,11 +27316,11 @@ export class WorkflowActionServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAddRuleAsync(response_);
+            return this.processAddRule(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAddRuleAsync(<any>response_);
+                    return this.processAddRule(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -27389,7 +27329,7 @@ export class WorkflowActionServiceProxy {
         }));
     }
 
-    protected processAddRuleAsync(response: HttpResponseBase): Observable<void> {
+    protected processAddRule(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -29450,7 +29390,6 @@ export interface IUserInfo {
 
 export class SignUpMemberRequest implements ISignUpMemberRequest {
     firstName!: string;
-    middleName!: string | undefined;
     lastName!: string;
     email!: string;
     postalCode!: string | undefined;
@@ -29469,7 +29408,6 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
     init(data?: any) {
         if (data) {
             this.firstName = data["firstName"];
-            this.middleName = data["middleName"];
             this.lastName = data["lastName"];
             this.email = data["email"];
             this.postalCode = data["postalCode"];
@@ -29488,7 +29426,6 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["firstName"] = this.firstName;
-        data["middleName"] = this.middleName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
         data["postalCode"] = this.postalCode;
@@ -29500,7 +29437,6 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
 
 export interface ISignUpMemberRequest {
     firstName: string;
-    middleName: string | undefined;
     lastName: string;
     email: string;
     postalCode: string | undefined;
@@ -46620,6 +46556,7 @@ export class LeadInfoDto implements ILeadInfoDto {
     applicationId!: string | undefined;
     siteId!: string | undefined;
     siteUrl!: string | undefined;
+    primaryLeadRequestId!: number | undefined;
 
     constructor(data?: ILeadInfoDto) {
         if (data) {
@@ -46648,6 +46585,7 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.applicationId = data["applicationId"];
             this.siteId = data["siteId"];
             this.siteUrl = data["siteUrl"];
+            this.primaryLeadRequestId = data["primaryLeadRequestId"];
         }
     }
 
@@ -46676,6 +46614,7 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["applicationId"] = this.applicationId;
         data["siteId"] = this.siteId;
         data["siteUrl"] = this.siteUrl;
+        data["primaryLeadRequestId"] = this.primaryLeadRequestId;
         return data; 
     }
 }
@@ -46697,6 +46636,7 @@ export interface ILeadInfoDto {
     applicationId: string | undefined;
     siteId: string | undefined;
     siteUrl: string | undefined;
+    primaryLeadRequestId: number | undefined;
 }
 
 export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
