@@ -8,7 +8,7 @@
             (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
             target="#{{saveButtonId}}">
         </dx-context-menu>
-        <app-toolbar [config]="toolbarConfig" [localizationSource]="localizationSourceName"></app-toolbar>
+        <app-toolbar [config]="toolbarConfig"></app-toolbar>
         <crm-static-list #stagesList
                          [width]="'210px'"
                          [selectedKeys]="[data.appointment.StageId]"

@@ -33,7 +33,6 @@ export class TopBarComponent extends AppComponentBase {
          public router: Router
     ) {
         super(injector);
-        this._appService.localizationSourceName = this.localizationSourceName;
 
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {

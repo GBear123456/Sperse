@@ -783,7 +783,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     ) {
         super(injector);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this.appService.localizationSourceName = this.localizationSourceName;
 
         this._calculatorService.subscribePeriodChange((value) => {
             this.onCalculatorValueChange(value);
@@ -5661,7 +5660,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.component.shouldSkipNextReady = false;
         } else {
             e.component.shouldSkipNextReady = true;
-            e.component.columnOption("command:select", "width", 28);
+            e.component.columnOption('command:select', 'width', 28);
             e.component.updateDimensions();
         }
     }
@@ -5704,6 +5703,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     activate() {
+        this.localizationService.localizationSourceName = this.localizationSourceName;
         this._filtersService.localizationSourceName = this.localizationSourceName;
         this.initToolbarConfig();
         this.setupFilters(this.filters);
@@ -5724,6 +5724,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     deactivate() {
+        this.localizationService.localizationSourceName = undefined;
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this.appService.updateToolbar(null);
         this._filtersService.unsubscribe();
@@ -5732,6 +5733,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     getBankAccountName(bankAccount) {
-        return (bankAccount.accountName || "(no name)") + ": " + bankAccount.accountNumber;
+        return (bankAccount.accountName || '(no name)') + ': ' + bankAccount.accountNumber;
     }
 }

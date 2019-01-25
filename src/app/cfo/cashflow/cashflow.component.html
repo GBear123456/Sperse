@@ -18,7 +18,7 @@
 
 <div class="cashflow" *ngIf="cashflowData && cashflowData.length">
     <div class="sort-options" [hidden]="!contentReady">
-        <app-toolbar [config]="categoryToolbarConfig" [compact]="true" [localizationSource]="localizationSourceName"></app-toolbar>
+        <app-toolbar [config]="categoryToolbarConfig" [compact]="true"></app-toolbar>
     </div>
 
     <dx-resizable *ngIf="statsDetailResult !== undefined" class="cashflow-wrap"
@@ -215,7 +215,7 @@
     </div>
 
     <div id="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">
-        <app-toolbar [(config)]="footerToolbarConfig" [localizationSource]="localizationSourceName"></app-toolbar>
+        <app-toolbar [(config)]="footerToolbarConfig"></app-toolbar>
     </div>
 
 </div>

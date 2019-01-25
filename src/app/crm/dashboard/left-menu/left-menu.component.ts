@@ -23,7 +23,6 @@ export class DashboardMenuComponent extends AppComponentBase {
         public appService: AppService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.appService.localizationSourceName = this.localizationSourceName;
 
         this.items = [
             {

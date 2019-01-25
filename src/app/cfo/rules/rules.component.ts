@@ -50,7 +50,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         private _ClassificationService: ClassificationServiceProxy
     ) {
         super(injector);
-        this._appService.localizationSourceName = this.localizationSourceName;
 
         this.initToolbarConfig();
         this.filtersService.localizationSourceName = this.localizationSourceName;

@@ -4,5 +4,5 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.staging.json',
     appBaseUrl: 'https://testadmin.sperse.com',
-    appBaseHref: 'https://testui.blob.core.windows.net/current/'
+    appBaseHref: 'https://testuicdn.azureedge.net/current/'
 };

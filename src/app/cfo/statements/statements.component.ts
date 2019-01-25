@@ -77,7 +77,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private bankAccountsService: BankAccountsService
     ) {
         super(injector);
-        this._appService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
@@ -474,6 +473,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     activate() {
+        this.localizationService.localizationSourceName = this.localizationSourceName;
         this._filtersService.localizationSourceName = this.localizationSourceName;
         this.initToolbarConfig();
         this._filtersService.setup(this.filters);
@@ -493,6 +493,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     deactivate() {
+        this.localizationService.localizationSourceName = undefined;
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();

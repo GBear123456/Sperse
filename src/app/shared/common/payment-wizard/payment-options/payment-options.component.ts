@@ -89,7 +89,6 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy
     ) {
         super(injector);
-        this.appService.localizationSourceName = this.localizationSourceName;
     }
 
     ngOnInit() {

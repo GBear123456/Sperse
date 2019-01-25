@@ -127,7 +127,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         super(injector);
 
         this.filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-        this._appService.localizationSourceName = this.localizationSourceName;
 
         if (filtersService.fixed)
             this._categoriesShowed = false;
@@ -1076,6 +1075,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     activate() {
+        this.localizationService.localizationSourceName = this.localizationSourceName;
         this.filtersService.localizationSourceName = this.localizationSourceName;
         this.initFiltering();
         this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, true);
@@ -1095,6 +1095,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     deactivate() {
+        this.localizationService.localizationSourceName = undefined;
         this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
