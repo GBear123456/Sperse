@@ -79,7 +79,7 @@
     }
 
     .leftBlock {
-        border-right: 2px solid #dfdfdf;
+        padding-right: 0;
         @media (max-width: 767px) {
              right: 0;
              left: 0;
@@ -97,133 +97,138 @@
                 transform: translateX(-200%);
             }
         }
-        h1 {
-            font-size: 46px;
-            font-weight: bold;
-            line-height: 57px;
-            text-align: left;
-            margin-bottom: 45px;
-            text-transform: capitalize;
-        }
-        h3 {
-            font-size: 18px;
-            font-weight: bold;
-            letter-spacing: 0.2px;
-            line-height: 24px;
-            margin-bottom: 25px;
-
-            .amount-count {
-                float: right;
-                display: block;
+        .fixed {
+            border-right: 2px solid #dfdfdf;
+            padding-right: 40px;
+            position: fixed;
+            h1 {
+                font-size: 46px;
+                font-weight: bold;
+                line-height: 57px;
+                text-align: left;
+                margin-bottom: 45px;
+                text-transform: capitalize;
             }
-        }
+            h3 {
+                font-size: 18px;
+                font-weight: bold;
+                letter-spacing: 0.2px;
+                line-height: 24px;
+                margin-bottom: 25px;
 
-        .available-amount {
-            display: flex;
-            max-width: 100%;
-            align-items: center;
-            justify-content: space-between;
-        }
+                .amount-count {
+                    float: right;
+                    display: block;
+                }
+            }
 
-        .creditCardsList {
-            font-size: 16px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            line-height: 20px;
-            /deep/ mat-radio-button {
-                display: block;
-                margin-bottom: 15px;
-                img {
-                    max-width: 105px;
-                    max-height: 44px;
-                }
-                .mat-radio-container {
-                    .mat-radio-outer-circle {
-                        border-color: @border-color;
-                    }
-                    .mat-ripple .mat-ripple-element {
-                        display: none;
-                    }
-                }
-                .mat-radio-label {
-                    max-width: 100%;
-                }
-                .mat-radio-label-content {
-                    display: flex;
-                    align-items: center;
-                    max-width: 100%;
-                    .cardInfo {
-                        margin-left: 16px;
-                        font-size: 18px;
-                        line-height: 1.25;
-                        overflow: hidden;
-                        //flex-basis: 200px;
-                        h4, h5 {
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            max-width: 185px;
-                        }
-                        h4 {
-                            font-size: 13px;
-                            font-weight: 500;
-                            margin-bottom: 0;
-                            color: @additional-font-color;
-                            text-transform: capitalize;
-                            letter-spacing: 0.3px;
-                            margin-bottom: 0;
-                        }
-                        h5 {
-                            font-weight: 600;
-                            margin-bottom: 0;
-                            letter-spacing: 0.3px;
-                        }
-                    }
-                    .imageContainer {
-                        border: 3px solid transparent;
-                        border-radius: 4px;
-                        height: 66px;
-                        width: 90px;
-                        min-width: 90px;
-                        display: flex;
-                        align-items: center;
+            .available-amount {
+                display: flex;
+                max-width: 100%;
+                align-items: center;
+                justify-content: space-between;
+            }
 
-                        img {
-                            object-fit: cover;
-                            max-width: 100%;
-                        }
-                    }
-                }
-                &.mat-radio-checked {
-                    .imageContainer {
-                        border: 3px solid #ffcc00;
+            .creditCardsList {
+                font-size: 16px;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+                line-height: 20px;
+                /deep/ mat-radio-button {
+                    display: block;
+                    margin-bottom: 15px;
+                    img {
+                        max-width: 105px;
+                        max-height: 44px;
                     }
                     .mat-radio-container {
                         .mat-radio-outer-circle {
-                            border-color: #fc0;
+                            border-color: @border-color;
                         }
-                        .mat-radio-inner-circle {
-                            transform: scale(1);
-                            background-color: #fc0;
-                        }
-                        &:before {
-                            content: url('../../../../assets/common/icons/check-black.svg');
-                            width: 12px;
-                            height: 17px;
-                            position: absolute;
-                            left: 0;
-                            right: 0;
-                            margin: auto;
-                            font-size: 11px;
-                            bottom: 0;
-                            top: 0;
-                            color: #000;
-                            z-index: 1;
+                        .mat-ripple .mat-ripple-element {
+                            display: none;
                         }
                     }
+                    .mat-radio-label {
+                        max-width: 100%;
+                    }
                     .mat-radio-label-content {
+                        display: flex;
+                        align-items: center;
+                        max-width: 100%;
                         .cardInfo {
+                            margin-left: 16px;
+                            font-size: 18px;
+                            line-height: 1.25;
+                            overflow: hidden;
+                            //flex-basis: 200px;
+                            h4, h5 {
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                max-width: 185px;
+                            }
+                            h4 {
+                                font-size: 13px;
+                                font-weight: 500;
+                                margin-bottom: 0;
+                                color: @additional-font-color;
+                                text-transform: capitalize;
+                                letter-spacing: 0.3px;
+                                margin-bottom: 0;
+                            }
                             h5 {
-                                font-weight: 700;
+                                font-weight: 600;
+                                margin-bottom: 0;
+                                letter-spacing: 0.3px;
+                            }
+                        }
+                        .imageContainer {
+                            border: 3px solid transparent;
+                            border-radius: 4px;
+                            height: 66px;
+                            width: 90px;
+                            min-width: 90px;
+                            display: flex;
+                            align-items: center;
+
+                            img {
+                                object-fit: cover;
+                                max-width: 100%;
+                            }
+                        }
+                    }
+                    &.mat-radio-checked {
+                        .imageContainer {
+                            border: 3px solid #ffcc00;
+                        }
+                        .mat-radio-container {
+                            .mat-radio-outer-circle {
+                                border-color: #fc0;
+                            }
+                            .mat-radio-inner-circle {
+                                transform: scale(1);
+                                background-color: #fc0;
+                            }
+                            &:before {
+                                content: url('../../../../assets/common/icons/check-black.svg');
+                                width: 12px;
+                                height: 17px;
+                                position: absolute;
+                                left: 0;
+                                right: 0;
+                                margin: auto;
+                                font-size: 11px;
+                                bottom: 0;
+                                top: 0;
+                                color: #000;
+                                z-index: 1;
+                            }
+                        }
+                        .mat-radio-label-content {
+                            .cardInfo {
+                                h5 {
+                                    font-weight: 700;
+                                }
                             }
                         }
                     }
