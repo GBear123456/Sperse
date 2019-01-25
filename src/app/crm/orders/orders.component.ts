@@ -70,8 +70,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 private store$: Store<CrmStore.State>
                 ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        this._appService.localizationSourceName = this.localizationSourceName;
+        
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
         this.dataSource = {

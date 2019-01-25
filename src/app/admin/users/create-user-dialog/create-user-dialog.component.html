@@ -9,7 +9,7 @@
             (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
             target="#{{saveButtonId}}">
         </dx-context-menu>
-        <app-toolbar [config]="toolbarConfig" [localizationSource]="localizationSourceName"></app-toolbar>
+        <app-toolbar [config]="toolbarConfig"></app-toolbar>
         <mat-sidenav class="main_sidenav" mode="side" position="end" opened="true">
           <mat-tab-group>
             <mat-tab label="{{l('UserInformations') | uppercase}}">

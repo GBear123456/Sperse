@@ -107,7 +107,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         public featureService: FeatureCheckerService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this._appService.localizationSourceName = this.localizationSourceName;
 
         this.dataSource = {
             store: {
@@ -366,6 +365,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initToolbarConfig() {
+
         this._appService.updateToolbar([
             {
                 location: 'before', items: [
@@ -628,6 +628,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     activate() {
         super.activate();
+        this.localizationService.localizationSourceName = this.localizationSourceName;
         this.lifeCycleSubjectsService.activate.next();
         this._filtersService.localizationSourceName =
             this.localizationSourceName;
@@ -647,6 +648,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     deactivate() {
         super.deactivate();
+        this.localizationService.localizationSourceName = undefined;
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
         this.subRouteParams.unsubscribe();

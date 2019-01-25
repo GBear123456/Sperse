@@ -137,7 +137,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private lifeCycleSubjectsService: LifecycleSubjectsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this._appService.localizationSourceName = this.localizationSourceName;
         this.dataSource = {
             uri: this.dataSourceURI,
             requireTotalCount: true,
@@ -835,6 +834,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     activate() {
         super.activate();
+        this.localizationService.localizationSourceName = this.localizationSourceName;
         this.lifeCycleSubjectsService.activate.next();
         this._filtersService.localizationSourceName =
             this.localizationSourceName;
@@ -851,6 +851,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     deactivate() {
         super.deactivate();
+        this.localizationService.localizationSourceName = undefined;
         this._filtersService.localizationSourceName =
             AppConsts.localization.defaultLocalizationSourceName;
 

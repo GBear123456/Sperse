@@ -21,19 +21,12 @@ export class ToolBarComponent extends AppComponentBase {
     }
     @HostBinding('style.display') display: string;
     public items = [];
-    @Input()
-    set localizationSource(value: string) {
-        this._localizationSource = value;
-        this.supportedButtons = this.getSupportedButtons();
-    }
-    private _localizationSource = AppConsts.localization.defaultLocalizationSourceName;
+
     public responsiveItems = [];
     public options = {};
-    private supportedButtons = {};
 
     constructor(injector: Injector) {
         super(injector);
-        this.supportedButtons = this.getSupportedButtons();
     }
     @HostListener('window:resize') onResize() {
         this.initToolbarItems();
@@ -45,194 +38,194 @@ export class ToolBarComponent extends AppComponentBase {
                 accessKey: 'search'
             },
             filters: {
-                hint: this.ls(this._localizationSource, 'Filters'),
+                hint: this.l('Filters'),
                 accessKey: 'filters'
             },
             expandTree: {
-                text: this.ls(this._localizationSource, 'Expand'),
+                text: this.l('Expand'),
                 icon: this.getImgURI('expand-tree-icon')
             },
             find: {
-                hint: this.ls(this._localizationSource, 'Find'),
-                text: this.ls(this._localizationSource, 'Find'),
+                hint: this.l('Find'),
+                text: this.l('Find'),
                 icon: this.getImgURI('find-icon')
             },
             sort: {
-                hint: this.ls(this._localizationSource, 'Sort'),
-                text: this.ls(this._localizationSource, 'Sort'),
+                hint: this.l('Sort'),
+                text: this.l('Sort'),
                 icon: this.getImgURI('sort-icon-down')
             },
             follow: {
                 icon: this.getImgURI('follow-icon')
             },
             back: {
-                hint: this.ls(this._localizationSource, 'Back'),
+                hint: this.l('Back'),
                 icon: this.getImgURI('back-arrow')
             },
             assign: {
-                text: this.ls(this._localizationSource, 'Assign'),
+                text: this.l('Assign'),
                 icon: this.getImgURI('assign-icon')
             },
             status: {
-                text: this.ls(this._localizationSource, 'Status'),
+                text: this.l('Status'),
                 icon: this.getImgURI('status-icon')
             },
             stage: {
-                text: this.ls(this._localizationSource, 'Stage'),
+                text: this.l('Stage'),
                 icon: this.getImgURI('status-icon')
             },
             partnerType: {
                 accessKey: 'PartnerType',
-                text: this.ls(this._localizationSource, 'Type'),
+                text: this.l('Type'),
                 icon: this.getImgURI('status-icon')
             },
             delete: {
-                text: this.ls(this._localizationSource, 'Delete'),
+                text: this.l('Delete'),
                 icon: this.getImgURI('delete-icon')
             },
             discard: {
-                text: this.ls(this._localizationSource, 'Discard'),
+                text: this.l('Discard'),
                 icon: this.getImgURI('delete-icon')
             },
             cancel: {
-                text: this.ls(this._localizationSource, 'Cancel'),
+                text: this.l('Cancel'),
                 icon: this.getImgURI('close')
             },
             folder: {
-                hint: this.ls(this._localizationSource, 'Folder'),
+                hint: this.l('Folder'),
                 icon: this.getImgURI('folder')
             },
             pen: {
-                hint: this.ls(this._localizationSource, 'Pen'),
+                hint: this.l('Pen'),
                 icon: this.getImgURI('pen')
             },
             more: {
-                text: this.ls(this._localizationSource, 'More')
+                text: this.l('More')
             },
             box: {
                 accessKey: 'box',
-                hint: this.ls(this._localizationSource, 'Box'),
+                hint: this.l('Box'),
                 icon: this.getImgURI('box-icon')
             },
             pipeline: {
                 accessKey: 'pipeline',
-                hint: this.ls(this._localizationSource, 'Pipeline'),
+                hint: this.l('Pipeline'),
                 icon: this.getImgURI('funnel-icon')
             },
             grid: {
                 accessKey: 'grid',
-                hint: this.ls(this._localizationSource, 'Grid'),
+                hint: this.l('Grid'),
                 icon: this.getImgURI('table-icon')
             },
             prev: {
-                hint: this.ls(this._localizationSource, 'Previous'),
+                hint: this.l('Previous'),
                 icon: 'chevronprev'
             },
             next: {
-                hint: this.ls(this._localizationSource, 'Next'),
+                hint: this.l('Next'),
                 icon: 'chevronnext'
             },
             columnChooser: {
-                hint: this.ls(this.localizationSource, 'ColumnChooser'),
+                hint: this.l('ColumnChooser'),
                 icon: 'column-chooser'
             },
             download: {
-                hint: this.ls(this._localizationSource, 'Download'),
+                hint: this.l('Download'),
                 icon: this.getImgURI('download-icon')
             },
             refresh: {
-                hint: this.ls(this.localizationSource, 'Refresh'),
+                hint: this.l('Refresh'),
                 icon: 'icon icon-refresh'
             },
             edit: {
-                text: this.ls(this._localizationSource, 'Edit'),
+                text: this.l('Edit'),
                 icon: this.getImgURI('edit-pencil-icon')
             },
             rules: {
-                text: this.ls(this._localizationSource, 'CashflowToolbar_User_Preferences'),
+                text: this.l('CashflowToolbar_User_Preferences'),
                 icon: this.getImgURI('preferences-icon')
             },
             expand: {
-                text: this.ls(this._localizationSource, 'Expand'),
+                text: this.l('Expand'),
                 icon: this.getImgURI('expand-all-icon')
             },
             expandRows: {
-                text: this.ls(this._localizationSource, 'Expand rows'),
+                text: this.l('Expand rows'),
                 icon: this.getImgURI('expand-rows-icon')
             },
             expandCols: {
-                text: this.ls(this._localizationSource, 'Expand cols'),
+                text: this.l('Expand cols'),
                 icon: this.getImgURI('expand-cols-icon')
             },
             flag: {
-                hint: this.ls(this._localizationSource, 'Flags'),
+                hint: this.l('Flags'),
                 icon: this.getImgURI('flag-icon')
             },
             print: {
-                hint: this.ls(this._localizationSource, 'Print'),
+                hint: this.l('Print'),
                 icon: this.getImgURI('print-icon')
             },
             comments: {
-                hint: this.ls(this._localizationSource, 'Show/Hide Comments'),
+                hint: this.l('Show/Hide Comments'),
                 icon: this.getImgURI('comments-icon')
             },
             fullscreen: {
-                hint: this.ls(this._localizationSource, 'Fullpage'),
+                hint: this.l('Fullpage'),
                 icon: this.getImgURI('expand-fullscreen-icon')
             },
             slider: {
-                hint: this.ls(this._localizationSource, 'Slider')
+                hint: this.l('Slider')
             },
             forecastModelAdd: {
-                hint: this.ls(this._localizationSource, 'CreateForecastModel'),
+                hint: this.l('CreateForecastModel'),
                 icon: this.getImgURI('add-button')
             },
             showCompactRowsHeight: {
-                hint: this.ls(this._localizationSource, 'CompactView'),
+                hint: this.l('CompactView'),
                 icon: this.getImgURI('ic_format_line_spacing')
             },
             reportPeriod: {
                 icon: this.getImgURI('report-period'),
-                text: this.ls(this._localizationSource, 'CashflowToolbar_Report_Period')
+                text: this.l('CashflowToolbar_Report_Period')
             },
             addEntity: {
-                hint: this.ls(this._localizationSource, 'AddAccountingType'),
+                hint: this.l('AddAccountingType'),
                 icon: this.getImgURI('add-button')
             },
             tags: {
-                text: this.ls(this._localizationSource, 'Tags'),
+                text: this.l('Tags'),
                 icon: this.getImgURI('pen')
             },
             tagsSmall: {
-                hint: this.ls(this._localizationSource, 'Tags'),
+                hint: this.l('Tags'),
                 icon: this.getImgURI('pen')
             },
             lists: {
-                text: this.ls(this._localizationSource, 'Lists'),
+                text: this.l('Lists'),
                 icon: this.getImgURI('folder')
             },
             listsSmall: {
-                hint: this.ls(this._localizationSource, 'Lists'),
+                hint: this.l('Lists'),
                 icon: this.getImgURI('folder')
             },
             rating: {
-                text: this.ls(this._localizationSource, 'Rating'),
+                text: this.l('Rating'),
                 icon: this.getImgURI('flag-icon')
             },
             star: {
-                hint: this.ls(this._localizationSource, 'Star'),
+                hint: this.l('Star'),
                 icon: this.getImgURI('star-icon')
             },
             close: {
-                hint: this.ls(this._localizationSource, 'Close'),
+                hint: this.l('Close'),
                 icon: this.getImgURI('close')
             },
             rotateRight: {
-                hint: this.ls(this._localizationSource, 'Rotate right'),
+                hint: this.l('Rotate right'),
                 icon: this.getImgURI('rotate-right-icon')
             },
             rotateLeft: {
-                hint: this.ls(this._localizationSource, 'Rotate left'),
+                hint: this.l('Rotate left'),
                 icon: this.getImgURI('rotate-left-icon')
             }
         };
@@ -319,7 +312,7 @@ export class ToolBarComponent extends AppComponentBase {
     }
 
     initToolbarItems() {
-        this.supportedButtons = this.getSupportedButtons();
+        let supportedButtons = this.getSupportedButtons();
         let items = [];
         if (this._config)
             this._config.forEach((group) => {
@@ -327,7 +320,7 @@ export class ToolBarComponent extends AppComponentBase {
                 group.items.forEach((item, index) => {
                     this.initDropDownMenu(item);
                     let isLast = count == index + 1;
-                    let internalConfig = this.supportedButtons[item.name];
+                    let internalConfig = supportedButtons[item.name];
                     let mergedConfig = _.extend(internalConfig || {}, item.options);
 
                     items.push({

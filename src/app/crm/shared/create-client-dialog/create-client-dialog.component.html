@@ -38,7 +38,7 @@
         [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 
     <div class="toolbar-wraper">
-        <app-toolbar [config]="toolbarConfig" width="700px" [localizationSource]="localizationSourceName"></app-toolbar>
+        <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
     </div>   
     <div *ngIf="similarCustomersAvailable()" class="similar-clients-message" (click)="showSimilarCustomers($event)">{{l('SimilarRecordsFound')}}</div>
     <div class="form-content">
