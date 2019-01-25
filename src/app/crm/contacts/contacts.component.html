@@ -36,7 +36,7 @@
         </operations-widget>
     </ng-container>
     <ng-container aboveNavigation>
-        <div class="short-contact">
+        <div class="short-contact" *ngIf="!isUserProfile">
             <div class="related-contacts">
                 <div *ngIf="contactInfo && contactInfo['organizationContactInfo']?.contactPersons?.length > 1; else addNew" class="contact-persons-info" (click)="showContactPersons($event)">
                     <img src="./assets/common/icons/similar-contacts.svg" alt="Contact Persons">

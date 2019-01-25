@@ -98,7 +98,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 organizationRelation.organization['fullName'] = organizationRelation.organization.name;
                 return organizationRelation.organization;
             });
-        const relatedPersons: PersonShortInfoDto[] = this._contactInfo['organizationContactInfo']
+        const relatedPersons: PersonShortInfoDto[] = this._contactInfo['organizationContactInfo'] &&
+                                                     this._contactInfo['organizationContactInfo'].contactPersons
                              ? this._contactInfo['organizationContactInfo'].contactPersons
                              : [];
         this.contacts = relatedPersons.concat(relatedOrganizations);

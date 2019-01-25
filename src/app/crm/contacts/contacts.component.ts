@@ -261,6 +261,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             this.loadDataForClient(customerId, leadId, partnerId, companyId);
     }
 
+    get isUserProfile() {
+        return this.customerType === ContactGroup.UserProfile;
+    }
+
     getContactInfoWithCompany(companyId, contactInfo$) {
         return forkJoin(
             contactInfo$,
@@ -640,7 +644,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     addNewContact(event) {
-        if (this.personContactInfo.userId)
+        if (this.isUserProfile)
             return;
 
         let companyInfo = this.contactInfo['organizationContactInfo'];
@@ -651,7 +655,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                isInLeadMode: Boolean(this.leadId),
+                isInLeadMode: this.contactInfo.statusId == ContactStatus.Prospective,
                 company: companyInfo && companyInfo.fullName,
                 customerType: this.customerType || ContactGroup.Client,
                 refreshParent: () => {}
