@@ -87,10 +87,10 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
             this._creditReportService
                 .downloadCreditReport(this.creditReportResult.creditReport.creditReportId)
                 .subscribe(result => {
-                    var bytes = this.base64ToArrayBuffer(result);
+                    let bytes = this.base64ToArrayBuffer(result);
 
-                    var blob = new Blob([bytes], { type: "application/pdf" });
-                    var url = window.URL.createObjectURL(blob);
+                    let blob = new Blob([bytes], { type: 'application/pdf' });
+                    let url = window.URL.createObjectURL(blob);
                     this.pdfUrl = this._sanitizer.bypassSecurityTrustUrl(url);
 
                     element.firstChild.textContent = this.l('downloadPdf');
@@ -106,11 +106,11 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
     }
 
     base64ToArrayBuffer(base64) {
-        var binaryString = window.atob(base64);
-        var binaryLen = binaryString.length;
-        var bytes = new Uint8Array(binaryLen);
-        for (var i = 0; i < binaryLen; i++) {
-            var ascii = binaryString.charCodeAt(i);
+        let binaryString = window.atob(base64);
+        let binaryLen = binaryString.length;
+        let bytes = new Uint8Array(binaryLen);
+        for (let i = 0; i < binaryLen; i++) {
+            let ascii = binaryString.charCodeAt(i);
             bytes[i] = ascii;
         }
         return bytes;

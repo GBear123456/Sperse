@@ -4,25 +4,29 @@
     </div>
     <div class="row">
         <div class="col-md-7 col-lg-4 leftBlock sm-hidden" #offersList>
-            <h1>{{ categoryDisplayName$ | async }}</h1>
-            <h3 #availableCards class="available-amount">
-                <ng-container *ngIf="cardsAmount">
-                    <span>{{ ls.l('Offers_Available') }} {{ categoryDisplayName$ | async }}</span>
-                    <span class="amount-count">({{ cardsAmount }})</span>
-                </ng-container>
-            </h3>
-            <div class="creditCardsList" #creditCardsList>
-                <mat-radio-group (change)="creditCardChanged($event)" [value]="selectedCardId$ | async">
-                    <mat-radio-button *ngFor="let creditCard of creditCards$ | async" [value]="creditCard.campaignId">
-                        <div class="imageContainer">
-                            <img [src]="creditCard.logoUrl" [alt]="creditCard.name">
-                        </div>
-                        <div class="cardInfo">
-                            <h4 *ngIf="creditCard.issuingBank" [title]="creditCard.issuingBank">{{ creditCard.issuingBank }}</h4>
-                            <h5 [title]="creditCard.name.length > 16 ? creditCard.name : ''">{{ creditCard.name }}</h5>
-                        </div>
-                    </mat-radio-button>
-                </mat-radio-group>
+            <div class="fixed">
+                <h1>{{ categoryDisplayName$ | async }}</h1>
+                <h3 #availableCards class="available-amount">
+                    <ng-container *ngIf="cardsAmount">
+                        <span>{{ ls.l('Offers_Available') }} {{ categoryDisplayName$ | async }}</span>
+                        <span class="amount-count">({{ cardsAmount }})</span>
+                    </ng-container>
+                </h3>
+                <div class="creditCardsList" #creditCardsList>
+                    <dx-scroll-view [height]="scrollHeight">
+                        <mat-radio-group (change)="creditCardChanged($event)" [value]="selectedCardId$ | async">
+                            <mat-radio-button *ngFor="let creditCard of creditCards$ | async" [value]="creditCard.campaignId">
+                                <div class="imageContainer">
+                                    <img [src]="creditCard.logoUrl" [alt]="creditCard.name">
+                                </div>
+                                <div class="cardInfo">
+                                    <h4 *ngIf="creditCard.issuingBank" [title]="creditCard.issuingBank">{{ creditCard.issuingBank }}</h4>
+                                    <h5 [title]="creditCard.name.length > 16 ? creditCard.name : ''">{{ creditCard.name }}</h5>
+                                </div>
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </dx-scroll-view>
+                </div>
             </div>
         </div>
         <div class="col-lg-8 rightBlock" #detailsContainer>
