@@ -22,6 +22,13 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                         }
                     },
                     {
+                        path: 'home2',
+                        loadChildren: 'personal-finance/pages/lendspace-welcome2/lendspace-welcome2.module#LendspaceWelcome2Module',
+                        data: {
+                            wrapperDisabled: true
+                        }
+                    },
+                    {
                         path: 'signup',
                         loadChildren: 'personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.module#WizardPageModule'
                     },
