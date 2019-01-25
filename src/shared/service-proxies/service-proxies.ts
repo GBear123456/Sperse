@@ -1624,6 +1624,62 @@ export class ApplicationServiceProxy {
      * @request (optional) 
      * @return Success
      */
+    validateMemberSignUp(request: SignUpMemberRequest | null | undefined): Observable<ValidateMemberSignUpOutput> {
+        let url_ = this.baseUrl + "/api/services/PFM/Application/ValidateMemberSignUp";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processValidateMemberSignUp(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processValidateMemberSignUp(<any>response_);
+                } catch (e) {
+                    return <Observable<ValidateMemberSignUpOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ValidateMemberSignUpOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processValidateMemberSignUp(response: HttpResponseBase): Observable<ValidateMemberSignUpOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ValidateMemberSignUpOutput.fromJS(resultData200) : new ValidateMemberSignUpOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ValidateMemberSignUpOutput>(<any>null);
+    }
+
+    /**
+     * @request (optional) 
+     * @return Success
+     */
     signUpMember(request: SignUpMemberRequest | null | undefined): Observable<SignUpMemberResponse> {
         let url_ = this.baseUrl + "/api/services/PFM/Application/SignUpMember";
         url_ = url_.replace(/[?&]$/, "");
@@ -29444,6 +29500,94 @@ export interface ISignUpMemberRequest {
     isUSCitizen: boolean;
 }
 
+export class ValidateMemberSignUpOutput implements IValidateMemberSignUpOutput {
+    setting!: PasswordComplexitySetting | undefined;
+
+    constructor(data?: IValidateMemberSignUpOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.setting = data["setting"] ? PasswordComplexitySetting.fromJS(data["setting"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ValidateMemberSignUpOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ValidateMemberSignUpOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["setting"] = this.setting ? this.setting.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IValidateMemberSignUpOutput {
+    setting: PasswordComplexitySetting | undefined;
+}
+
+export class PasswordComplexitySetting implements IPasswordComplexitySetting {
+    requireDigit!: boolean | undefined;
+    requireLowercase!: boolean | undefined;
+    requireNonAlphanumeric!: boolean | undefined;
+    requireUppercase!: boolean | undefined;
+    requiredLength!: number | undefined;
+
+    constructor(data?: IPasswordComplexitySetting) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.requireDigit = data["requireDigit"];
+            this.requireLowercase = data["requireLowercase"];
+            this.requireNonAlphanumeric = data["requireNonAlphanumeric"];
+            this.requireUppercase = data["requireUppercase"];
+            this.requiredLength = data["requiredLength"];
+        }
+    }
+
+    static fromJS(data: any): PasswordComplexitySetting {
+        data = typeof data === 'object' ? data : {};
+        let result = new PasswordComplexitySetting();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["requireDigit"] = this.requireDigit;
+        data["requireLowercase"] = this.requireLowercase;
+        data["requireNonAlphanumeric"] = this.requireNonAlphanumeric;
+        data["requireUppercase"] = this.requireUppercase;
+        data["requiredLength"] = this.requiredLength;
+        return data; 
+    }
+}
+
+export interface IPasswordComplexitySetting {
+    requireDigit: boolean | undefined;
+    requireLowercase: boolean | undefined;
+    requireNonAlphanumeric: boolean | undefined;
+    requireUppercase: boolean | undefined;
+    requiredLength: number | undefined;
+}
+
 export class SignUpMemberResponse implements ISignUpMemberResponse {
     authenticateResult!: AuthenticateResultModel | undefined;
 
@@ -43292,58 +43436,6 @@ export class HostBillingSettingsEditDto implements IHostBillingSettingsEditDto {
 export interface IHostBillingSettingsEditDto {
     legalName: string | undefined;
     address: string | undefined;
-}
-
-export class PasswordComplexitySetting implements IPasswordComplexitySetting {
-    requireDigit!: boolean | undefined;
-    requireLowercase!: boolean | undefined;
-    requireNonAlphanumeric!: boolean | undefined;
-    requireUppercase!: boolean | undefined;
-    requiredLength!: number | undefined;
-
-    constructor(data?: IPasswordComplexitySetting) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.requireDigit = data["requireDigit"];
-            this.requireLowercase = data["requireLowercase"];
-            this.requireNonAlphanumeric = data["requireNonAlphanumeric"];
-            this.requireUppercase = data["requireUppercase"];
-            this.requiredLength = data["requiredLength"];
-        }
-    }
-
-    static fromJS(data: any): PasswordComplexitySetting {
-        data = typeof data === 'object' ? data : {};
-        let result = new PasswordComplexitySetting();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["requireDigit"] = this.requireDigit;
-        data["requireLowercase"] = this.requireLowercase;
-        data["requireNonAlphanumeric"] = this.requireNonAlphanumeric;
-        data["requireUppercase"] = this.requireUppercase;
-        data["requiredLength"] = this.requiredLength;
-        return data; 
-    }
-}
-
-export interface IPasswordComplexitySetting {
-    requireDigit: boolean | undefined;
-    requireLowercase: boolean | undefined;
-    requireNonAlphanumeric: boolean | undefined;
-    requireUppercase: boolean | undefined;
-    requiredLength: number | undefined;
 }
 
 export class UserLockOutSettingsEditDto implements IUserLockOutSettingsEditDto {
