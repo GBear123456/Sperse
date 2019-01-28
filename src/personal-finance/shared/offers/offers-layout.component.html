@@ -10,11 +10,11 @@
     </header>
     <div class="row main">
         <div class="filter-side-bar md-hidden col-lg-4" #filtersSideBar>
-            <div #leftRef>
+            <div #leftRef class="sticky">
                 <ng-content select="[leftContent]"></ng-content>
             </div>
             <!--Default left section-->
-            <div *ngIf="leftRef.childNodes.length === 0">
+            <div *ngIf="leftRef.childNodes.length === 0" class="sticky">
                 <h2 class="text-left">{{ ls.l('Refine_Your_Search')}}</h2>
                 <ul class="filters">
                     <ng-container *ngFor="let filter of filters$ | async">
@@ -129,8 +129,7 @@
                     </div>
                 </div>
                 <ul class="credit-cards-list">
-                    <li class="row" *ngFor="let offerItem of displayedOffers$ | async | slice:0:visibleOffers; let i = index"
-                        [ngClass]="{'recommend': i < 3}">
+                    <li class="row" *ngFor="let offerItem of displayedOffers$ | async | slice:0:visibleOffers; let i = index" [ngClass]="{'recommend': i < 3}">
                         <ng-container *ngIf="i == 0">
                             <div class="best-offer">
                                 {{ls.l('Top_Deal_Found')}}
@@ -153,8 +152,9 @@
                             </div>
                         </div>
                         <div class="description col-12 col-md-6 col-lg-7">
-                            <h4 (click)="applyOffer(offerItem)"><span *ngIf="offerItem.issuingBank">{{ offerItem.issuingBank + ' - ' }}</span>{{offerItem.name }}</h4>
-                            <p>Loan Amount $50,000</p>
+                            <small *ngIf="offerItem.issuingBank" class="bank-name">{{ offerItem.issuingBank }}</small>
+                            <h4 (click)="applyOffer(offerItem)">{{ offerItem.name }}</h4>
+                            <!-- <p>Loan Amount $50,000</p> -->
                             <!-- <div class="rating" *ngIf="offerItem.overallRating">
                                 <stars-rating [currentRating]="offerItem.overallRating" color="#f0d500"></stars-rating>
                                 span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span
@@ -165,16 +165,15 @@
                                         <p>{{ ls.l('Offers_' + param) }}: {{ offersService.getParamDisplayValue(offerItem[param]) }}</p>
                                     </li>
                                 </ng-container>
-                                <li><p>Loan Term: 24-72 Months</p></li>
-                                <li><p>Credit Score: Fair/Good/Excellent</p></li>
+                                <!-- <li><p>Loan Term: 24-72 Months</p></li>
+                                <li><p>Credit Score: Fair/Good/Excellent</p></li> -->
                             </ul>
                         </div>
                     </li>
                 </ul>
 
                 <button (click)="showNextItems()" class="load-more-items"
-                        *ngIf="itemsCount > 5">{{ls.l('Load_More_Offers_Found')}}</button>
-
+                        *ngIf="itemsCount > 6">{{ls.l('Load_More_Offers_Found')}}</button>
                 <app-no-data *ngIf="!offersAreLoading && offersAmount === 0"></app-no-data>
             </div>
         </div>

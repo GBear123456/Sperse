@@ -39,7 +39,7 @@
 
             + p {
                 font-size: 18px;
-                max-width: 840px;
+                // max-width: 840px;
                 margin: 0 auto;
             }
         }
@@ -58,6 +58,12 @@
         }
 
         .filter-side-bar {
+
+            .sticky {
+                position: -webkit-sticky;
+                position: sticky;
+                top: 90px;
+            }
 
             h2 {
                 margin-top: 40px;
@@ -510,13 +516,18 @@
                     // }
 
                     .description {
+                        .bank-name {
+                            font-size: 95%;
+                            color: #656565;
+                        }
+
                         h4 {
                             color: @mainColor;
                             font-size: 24px;
                             font-weight: 700;
                             letter-spacing: 0.24px;
                             line-height: 23px;
-                            margin-bottom: 0;
+                            margin: 10px auto;
                             cursor: pointer;
 
                             + p {
@@ -524,6 +535,7 @@
                                 font-weight: 500;
                             }
                         }
+
                         .rating {
                             color: @blue;
                             font-size: 14px;
@@ -536,6 +548,7 @@
                                 margin-right: 8.39px;
                             }
                         }
+
                         .descriptionItems {
                             display: flex;
                             flex-direction: column;
@@ -568,7 +581,7 @@
                                     font-size: 15px;
                                     line-height: 1.4;
                                     letter-spacing: 0.2px;
-                                    color: #000000;
+                                    color: #000;
                                     margin-bottom: 0;
                                 }
                             }
