@@ -8,17 +8,15 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ImportLeadsComponent } from './import-leads/import-leads.component';
 import { ImportListComponent } from './import-leads/import-list.component';
 import { ActivityComponent } from './activity/activity.component';
-import { LocalizationResolver } from '@shared/common/localization-resolver';
 
 @NgModule({
     imports: [
         RouterModule.forChild([
             {
-                path: '', redirectTo: '/app/crm/dashboard', pathMatch: 'full', canActivate: [LocalizationResolver]
+                path: '', redirectTo: '/app/crm/dashboard', pathMatch: 'full'
             },
             {
                 path: '',
-                canActivate: [LocalizationResolver],
                 children: [
                     { path: 'start', component: DashboardComponent, data: { permission: 'Pages.Detect.Route' } },
                     { path: 'dashboard', component: DashboardComponent, data: { permission: 'Pages.CRM', reuse: true } },
@@ -35,8 +33,7 @@ import { LocalizationResolver } from '@shared/common/localization-resolver';
     ],
     exports: [
         RouterModule
-    ],
-    providers: [LocalizationResolver]
+    ]
 })
 export class CrmRoutingModule {
   constructor() { }

@@ -26,7 +26,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { RootStore } from '@root/store';
 import { CountriesStoreActions, CountriesStoreSelectors, OrganizationTypeStoreActions, OrganizationTypeSelectors } from '@app/store';
 import { StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoDto, ContactPhotoServiceProxy, CreateContactPhotoInput } from '@shared/service-proxies/service-proxies';
+import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, CreateContactPhotoInput } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { NoteType } from '@root/shared/AppEnums';
@@ -194,26 +194,20 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
                             thumbnail: base64ThumbImage
                         })
                     ).subscribe(() => {
-                        let primaryPhoto = base64OrigImage
-                            ? ContactPhotoDto.fromJS({
-                                original: base64OrigImage,
-                                thumbnail: base64ThumbImage
-                            })
-                            : null;
-                        this.handlePhotoChange(primaryPhoto);
+                        this.handlePhotoChange(base64OrigImage);
                     });
                 }
             });
         event.stopPropagation();
     }
 
-    private handlePhotoChange(photo: ContactPhotoDto) {
+    private handlePhotoChange(photo: string) {
         this.company.primaryPhoto = photo;
         this.changeDetectorRef.detectChanges();
     }
 
     private getCompanyPhoto(company): { source?: string } {
-        return company.primaryPhoto ? { source: 'data:image/jpeg;base64,' + this.company.primaryPhoto.original } : {};
+        return company.primaryPhoto ? { source: 'data:image/jpeg;base64,' + this.company.primaryPhoto } : {};
     }
 
     onInput(e, maxLength: number, mask?: string) {

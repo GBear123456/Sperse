@@ -4,6 +4,7 @@ import { AppRootComponent } from 'root.components';
 import { RouteGuard } from '@shared/common/auth/route-guard';
 
 import { Observable, of } from 'rxjs';
+import { LocalizationResolver } from '@shared/common/localization-resolver';
 
 @Injectable()
 export class CustomReuseStrategy implements RouteReuseStrategy {
@@ -78,7 +79,7 @@ const routes: Routes = [
     {
         path: '',
         canActivate: [ RouteGuard ],
-        canActivateChild: [ RouteGuard ],
+        canActivateChild: [RouteGuard, LocalizationResolver ],
         children: [
             {
                 path: 'account',
@@ -110,7 +111,8 @@ const routes: Routes = [
     ],
     exports: [
         RouterModule
-    ]
+    ],
+    providers: [LocalizationResolver]
 })
 
 export class RootRoutingModule implements AfterViewInit {

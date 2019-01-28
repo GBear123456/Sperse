@@ -4,7 +4,6 @@ import { PersonalFinanceComponent } from './personal-finance.component';
 import { CreditReportsRouteGuard } from './shared/common/auth/auth-route-guard';
 import { LoggedOutCreditReportGuard } from '@root/personal-finance/shared/common/auth/logged-out-credit-report-guard';
 import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/auth/logged-in-credit-report-guard';
-import { LocalizationResolver } from '@shared/common/localization-resolver';
 
 @NgModule({
     imports: [
@@ -12,7 +11,7 @@ import { LocalizationResolver } from '@shared/common/localization-resolver';
             {
                 path: '',
                 component: PersonalFinanceComponent,
-                canActivate: [ CreditReportsRouteGuard, LocalizationResolver ],
+                canActivate: [ CreditReportsRouteGuard],
                 canActivateChild: [ CreditReportsRouteGuard ],
                 children: [
                     {
@@ -98,6 +97,6 @@ import { LocalizationResolver } from '@shared/common/localization-resolver';
         ])
     ],
     exports: [ RouterModule ],
-    providers: [LoggedOutCreditReportGuard, LoggedInCreditReportGuard, LocalizationResolver ]
+    providers: [LoggedOutCreditReportGuard, LoggedInCreditReportGuard ]
 })
 export class PersonalFinanceRoutingModule { }

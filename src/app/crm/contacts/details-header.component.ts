@@ -19,7 +19,6 @@ import { CreateClientDialogComponent } from '../shared/create-client-dialog/crea
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 import {
-    ContactPhotoDto,
     ContactInfoDto,
     PersonContactInfoDto,
     ContactPhotoServiceProxy,
@@ -188,21 +187,14 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                             originalImage: base64OrigImage,
                             thumbnail: base64ThumbImage
                         })).subscribe((result) => {
-                            let primaryPhoto = base64OrigImage
-                                ? ContactPhotoDto.fromJS({
-                                    original: base64OrigImage,
-                                    thumbnail: base64ThumbImage
-                                }) :
-                                undefined;
-
-                            this.handlePhotoChange(dataField, primaryPhoto, result);
+                            this.handlePhotoChange(dataField, base64OrigImage, result);
                         });
                 }
         });
         event.stopPropagation();
     }
 
-    private handlePhotoChange(dataField: string, photo: ContactPhotoDto, thumbnailId: string) {
+    private handlePhotoChange(dataField: string, photo: string, thumbnailId: string) {
         this.data[dataField].primaryPhoto = photo;
 
         if (this.data[dataField].userId == abp.session.userId)
@@ -212,9 +204,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
         let photoBase64;
         if (isCompany && data['organizationContactInfo'].primaryPhoto) {
-            photoBase64 = data['organizationContactInfo'].primaryPhoto.original;
+            photoBase64 = data['organizationContactInfo'].primaryPhoto;
         } else if (!isCompany && data.personContactInfo.primaryPhoto) {
-            photoBase64 = data.personContactInfo.primaryPhoto.original;
+            photoBase64 = data.personContactInfo.primaryPhoto;
         }
         return photoBase64 ? { source: 'data:image/jpeg;base64,' + photoBase64 } : {};
     }
