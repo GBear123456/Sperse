@@ -15799,9 +15799,13 @@ export class OfferServiceProxy {
      * @creditScore (optional) 
      * @isOfferCollection (optional) 
      * @itemOfOfferCollection (optional) 
+     * @loanAmount (optional) 
+     * @overallRating (optional) 
+     * @issuingBank (optional) 
+     * @campaignIds (optional) 
      * @return Success
      */
-    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined): Observable<OfferDto[]> {
+    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined, loanAmount: number | null | undefined, overallRating: number | null | undefined, issuingBank: string | null | undefined, campaignIds: number[] | null | undefined): Observable<OfferDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (testMode === undefined || testMode === null)
             throw new Error("The parameter 'testMode' must be defined and cannot be null.");
@@ -15823,6 +15827,14 @@ export class OfferServiceProxy {
             url_ += "IsOfferCollection=" + encodeURIComponent("" + isOfferCollection) + "&"; 
         if (itemOfOfferCollection !== undefined)
             url_ += "ItemOfOfferCollection=" + encodeURIComponent("" + itemOfOfferCollection) + "&"; 
+        if (loanAmount !== undefined)
+            url_ += "LoanAmount=" + encodeURIComponent("" + loanAmount) + "&"; 
+        if (overallRating !== undefined)
+            url_ += "OverallRating=" + encodeURIComponent("" + overallRating) + "&"; 
+        if (issuingBank !== undefined)
+            url_ += "IssuingBank=" + encodeURIComponent("" + issuingBank) + "&"; 
+        if (campaignIds !== undefined)
+            campaignIds && campaignIds.forEach(item => { url_ += "CampaignIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -28807,6 +28819,7 @@ export interface IDebtInformation {
 
 export class LoanInformation implements ILoanInformation {
     requestedLoanAmount!: number;
+    approvedLoanAmount!: number | undefined;
     loanReason!: LoanInformationLoanReason | undefined;
 
     constructor(data?: ILoanInformation) {
@@ -28821,6 +28834,7 @@ export class LoanInformation implements ILoanInformation {
     init(data?: any) {
         if (data) {
             this.requestedLoanAmount = data["requestedLoanAmount"];
+            this.approvedLoanAmount = data["approvedLoanAmount"];
             this.loanReason = data["loanReason"];
         }
     }
@@ -28835,6 +28849,7 @@ export class LoanInformation implements ILoanInformation {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["requestedLoanAmount"] = this.requestedLoanAmount;
+        data["approvedLoanAmount"] = this.approvedLoanAmount;
         data["loanReason"] = this.loanReason;
         return data; 
     }
@@ -28842,6 +28857,7 @@ export class LoanInformation implements ILoanInformation {
 
 export interface ILoanInformation {
     requestedLoanAmount: number;
+    approvedLoanAmount: number | undefined;
     loanReason: LoanInformationLoanReason | undefined;
 }
 
@@ -48201,6 +48217,11 @@ export class OfferDto implements IOfferDto {
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
     offerCollection!: OfferDtoOfferCollection | undefined;
+    minAmount!: number | undefined;
+    maxAmount!: number | undefined;
+    minLoanTerm!: string | undefined;
+    maxLoanTerm!: string | undefined;
+    creditScores!: CreditScores[] | undefined;
 
     constructor(data?: IOfferDto) {
         if (data) {
@@ -48225,6 +48246,15 @@ export class OfferDto implements IOfferDto {
             this.introRewardsBonus = data["introRewardsBonus"];
             this.regularAPR = data["regularAPR"];
             this.offerCollection = data["offerCollection"];
+            this.minAmount = data["minAmount"];
+            this.maxAmount = data["maxAmount"];
+            this.minLoanTerm = data["minLoanTerm"];
+            this.maxLoanTerm = data["maxLoanTerm"];
+            if (data["creditScores"] && data["creditScores"].constructor === Array) {
+                this.creditScores = [];
+                for (let item of data["creditScores"])
+                    this.creditScores.push(item);
+            }
         }
     }
 
@@ -48249,6 +48279,15 @@ export class OfferDto implements IOfferDto {
         data["introRewardsBonus"] = this.introRewardsBonus;
         data["regularAPR"] = this.regularAPR;
         data["offerCollection"] = this.offerCollection;
+        data["minAmount"] = this.minAmount;
+        data["maxAmount"] = this.maxAmount;
+        data["minLoanTerm"] = this.minLoanTerm;
+        data["maxLoanTerm"] = this.maxLoanTerm;
+        if (this.creditScores && this.creditScores.constructor === Array) {
+            data["creditScores"] = [];
+            for (let item of this.creditScores)
+                data["creditScores"].push(item);
+        }
         return data; 
     }
 }
@@ -48266,11 +48305,15 @@ export interface IOfferDto {
     introRewardsBonus: string | undefined;
     regularAPR: string | undefined;
     offerCollection: OfferDtoOfferCollection | undefined;
+    minAmount: number | undefined;
+    maxAmount: number | undefined;
+    minLoanTerm: string | undefined;
+    maxLoanTerm: string | undefined;
+    creditScores: CreditScores[] | undefined;
 }
 
 export class OfferDetailsDto implements IOfferDetailsDto {
     description!: string | undefined;
-    creditScores!: CreditScores[] | undefined;
     introAPR!: string | undefined;
     details!: string[] | undefined;
     pros!: string[] | undefined;
@@ -48287,6 +48330,11 @@ export class OfferDetailsDto implements IOfferDetailsDto {
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
     offerCollection!: OfferDetailsDtoOfferCollection | undefined;
+    minAmount!: number | undefined;
+    maxAmount!: number | undefined;
+    minLoanTerm!: string | undefined;
+    maxLoanTerm!: string | undefined;
+    creditScores!: CreditScores2[] | undefined;
 
     constructor(data?: IOfferDetailsDto) {
         if (data) {
@@ -48300,11 +48348,6 @@ export class OfferDetailsDto implements IOfferDetailsDto {
     init(data?: any) {
         if (data) {
             this.description = data["description"];
-            if (data["creditScores"] && data["creditScores"].constructor === Array) {
-                this.creditScores = [];
-                for (let item of data["creditScores"])
-                    this.creditScores.push(item);
-            }
             this.introAPR = data["introAPR"];
             if (data["details"] && data["details"].constructor === Array) {
                 this.details = [];
@@ -48333,6 +48376,15 @@ export class OfferDetailsDto implements IOfferDetailsDto {
             this.introRewardsBonus = data["introRewardsBonus"];
             this.regularAPR = data["regularAPR"];
             this.offerCollection = data["offerCollection"];
+            this.minAmount = data["minAmount"];
+            this.maxAmount = data["maxAmount"];
+            this.minLoanTerm = data["minLoanTerm"];
+            this.maxLoanTerm = data["maxLoanTerm"];
+            if (data["creditScores"] && data["creditScores"].constructor === Array) {
+                this.creditScores = [];
+                for (let item of data["creditScores"])
+                    this.creditScores.push(item);
+            }
         }
     }
 
@@ -48346,11 +48398,6 @@ export class OfferDetailsDto implements IOfferDetailsDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["description"] = this.description;
-        if (this.creditScores && this.creditScores.constructor === Array) {
-            data["creditScores"] = [];
-            for (let item of this.creditScores)
-                data["creditScores"].push(item);
-        }
         data["introAPR"] = this.introAPR;
         if (this.details && this.details.constructor === Array) {
             data["details"] = [];
@@ -48379,13 +48426,21 @@ export class OfferDetailsDto implements IOfferDetailsDto {
         data["introRewardsBonus"] = this.introRewardsBonus;
         data["regularAPR"] = this.regularAPR;
         data["offerCollection"] = this.offerCollection;
+        data["minAmount"] = this.minAmount;
+        data["maxAmount"] = this.maxAmount;
+        data["minLoanTerm"] = this.minLoanTerm;
+        data["maxLoanTerm"] = this.maxLoanTerm;
+        if (this.creditScores && this.creditScores.constructor === Array) {
+            data["creditScores"] = [];
+            for (let item of this.creditScores)
+                data["creditScores"].push(item);
+        }
         return data; 
     }
 }
 
 export interface IOfferDetailsDto {
     description: string | undefined;
-    creditScores: CreditScores[] | undefined;
     introAPR: string | undefined;
     details: string[] | undefined;
     pros: string[] | undefined;
@@ -48402,6 +48457,11 @@ export interface IOfferDetailsDto {
     introRewardsBonus: string | undefined;
     regularAPR: string | undefined;
     offerCollection: OfferDetailsDtoOfferCollection | undefined;
+    minAmount: number | undefined;
+    maxAmount: number | undefined;
+    minLoanTerm: string | undefined;
+    maxLoanTerm: string | undefined;
+    creditScores: CreditScores2[] | undefined;
 }
 
 export class SubmitApplicationInput implements ISubmitApplicationInput {
@@ -48571,6 +48631,10 @@ export class ExtendOfferDto implements IExtendOfferDto {
     details!: string[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
+    minAmount!: number | undefined;
+    maxAmount!: number | undefined;
+    minLoanTerm!: string | undefined;
+    maxLoanTerm!: string | undefined;
     flags!: Flags | undefined;
 
     constructor(data?: IExtendOfferDto) {
@@ -48626,6 +48690,10 @@ export class ExtendOfferDto implements IExtendOfferDto {
                 for (let item of data["cons"])
                     this.cons.push(item);
             }
+            this.minAmount = data["minAmount"];
+            this.maxAmount = data["maxAmount"];
+            this.minLoanTerm = data["minLoanTerm"];
+            this.maxLoanTerm = data["maxLoanTerm"];
             this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
         }
     }
@@ -48681,6 +48749,10 @@ export class ExtendOfferDto implements IExtendOfferDto {
             for (let item of this.cons)
                 data["cons"].push(item);
         }
+        data["minAmount"] = this.minAmount;
+        data["maxAmount"] = this.maxAmount;
+        data["minLoanTerm"] = this.minLoanTerm;
+        data["maxLoanTerm"] = this.maxLoanTerm;
         data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
         return data; 
     }
@@ -48717,6 +48789,10 @@ export interface IExtendOfferDto {
     details: string[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
+    minAmount: number | undefined;
+    maxAmount: number | undefined;
+    minLoanTerm: string | undefined;
+    maxLoanTerm: string | undefined;
     flags: Flags | undefined;
 }
 
@@ -58375,6 +58451,7 @@ export enum Module {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export enum InstanceType73 {
@@ -58396,6 +58473,7 @@ export enum ModuleType {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export enum InstanceType76 {
@@ -58494,6 +58572,7 @@ export enum Module2 {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export enum DefaultTimezoneScope {
@@ -58528,6 +58607,7 @@ export enum ModuleType2 {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export enum IsTenantAvailableOutputState {
@@ -58951,6 +59031,14 @@ export enum OfferDetailsDtoOfferCollection {
     NoCredit = "NoCredit", 
 }
 
+export enum CreditScores2 {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
+}
+
 export enum SubmitApplicationInputSystemType {
     EPCVIP = "EPCVIP", 
 }
@@ -59122,6 +59210,7 @@ export enum PackageConfigDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export enum PricingTableFeatureDefinitionMeasurementUnit {
@@ -59147,6 +59236,7 @@ export enum RoleListDtoModuleId {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export enum TenantLoginInfoDtoCustomLayoutType {
@@ -59220,6 +59310,7 @@ export enum ModuleSubscriptionInfoDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export enum CompleteTenantRegistrationInputPaymentPeriodType {
@@ -59256,6 +59347,7 @@ export enum InviteUserInputModuleType {
     CFO = "CFO", 
     CRM = "CRM", 
     HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export class SwaggerException extends Error {
