@@ -6,17 +6,17 @@ import { FormsModule } from '@angular/forms';
 
 /** Third party modules */
 import { MatTabsModule } from '@angular/material/tabs';
-
 import { DxMenuModule } from 'devextreme-angular/ui/menu';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxNavBarModule } from 'devextreme-angular/ui/nav-bar';
-
 import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
-import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, PaginatorModule } from 'primeng/primeng';
+import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/fileupload';
 import { TableModule } from 'primeng/table';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { PaginatorModule } from 'primeng/paginator';
 
 /** Application imports */
 import { LayoutCommonModule } from './layout-common.module';
@@ -25,14 +25,19 @@ import { HeaderComponent } from './header.component';
 import { SideBarComponent } from './side-bar.component';
 import { TopBarComponent } from './top-bar.component';
 import { FiltersModule } from '@shared/filters/filters.module';
-import { UtilsModule } from '@shared/utils/utils.module'
+import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
+import { UserManagementListComponent } from '@root/personal-finance/shared/layout/user-management-list/user-management-list.component';
+import { UserDropdownMenuComponent } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu.component';
+import { UserManagementService } from '@root/personal-finance/shared/layout/user-management-list/user-management.service';
 
 let COMPONENTS = [
     PlatformSelectComponent,
     HeaderComponent,
     TopBarComponent,
-    SideBarComponent
+    SideBarComponent,
+    UserManagementListComponent,
+    UserDropdownMenuComponent
 ];
 
 @NgModule({
@@ -65,7 +70,8 @@ let COMPONENTS = [
     declarations: COMPONENTS,
     exports: COMPONENTS,
     providers: [
-        LayoutService
+        LayoutService,
+        UserManagementService
     ]
 })
 export class LayoutModule {}

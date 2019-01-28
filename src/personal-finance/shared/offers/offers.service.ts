@@ -7,7 +7,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
 import { ReplaySubject, Observable } from 'rxjs';
 import { map, pluck, publishReplay, refCount } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
 
 /** Application imports */
 import {
@@ -23,7 +22,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
-import { AppStore } from '@app/store';
 
 @Injectable()
 export class OffersService {

@@ -6,6 +6,7 @@ import { Component, Injector, HostBinding, ViewChild, ViewContainerRef,
 import { AppConsts } from 'shared/AppConsts';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { PersonalFinanceLayoutService } from './personal-finance-layout.service';
+import { AbpSessionService } from '@abp/session/abp-session.service';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -57,7 +58,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
 
     constructor(
         injector: Injector,
-        private _pfmLayoutService: PersonalFinanceLayoutService
+        private _pfmLayoutService: PersonalFinanceLayoutService,
+        private abpSessionService: AbpSessionService
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
         _pfmLayoutService.headerContentSubscribe((component) => {
@@ -79,6 +81,10 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         this.loggedUserId = abp.session.userId;
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
         this.showDefaultHeader = this.isMemberArea() || this.hasPfmAppFeature;
+    }
+
+    get notificationEnabled(): boolean {
+        return (!this.abpSessionService.tenantId || this.feature.isEnabled('Notification'));
     }
 
     private getAppAreaLinks() {

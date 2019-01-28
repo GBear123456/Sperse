@@ -43,66 +43,13 @@
                         @media (max-width: 768px) {
                             padding: 0 8px !important;
                         }
-                        .header-profile-picture {
-                            width: 40px;
-                            height: 40px;
-                            object-fit: cover;
-                        }
                     }
                 }
 
-                .user-info-drop-down-arrow {
-                    color: #43383b;
-                }
-
-                .m-card-user {
-                    .m-card-user__details {
-                        padding: 0 15px 0 0;
-                    }
-
-                    .m-card-user__pic {
-                        padding: 0;
-                        vertical-align: baseline;
-                    }
-                }
-
-                .m-dropdown__header {
-                    padding: 30px 25px 26px;
-                }
-
-                .user-info {
-                    color: #fff;
-                    font-size: 1.1rem;
-                    font-weight: 400;
-                    display: block;
-                    word-break: break-word;
-
-                    &.fullName {
-                        font-weight: 600;
-                        text-transform: capitalize;
-                        font-size: 22px;
-                        line-height: 26px;
-                    }
-
-                    &.email {
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                        text-align: left;
-                        height: 20px;
-                    }
-
-                    &.tenantName {
-                        text-align: left;
-                        margin-top: 15px;
-                        font-size: 22px;
-                        font-weight: 600;
-                    }
-                }
             }
         }
 
-        &.navbar-fixed-top,
+        /deep/ &.navbar-fixed-top,
         &.navbar-static-top {
             z-index: 3;
         }
@@ -141,29 +88,6 @@
             }
         }
 
-        span.username {
-            max-width: 150px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            direction: rtl;
-            text-align: left;
-            display: none !important;
-        }
-
-        li.username-header {
-            color: #FFF;
-            text-align: center;
-            height: 35px;
-            padding-top: 10px;
-            font-weight: 500;
-            overflow: hidden;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            direction: rtl;
-        }
-
         .dropdown-language {
             display: none !important;
         }
@@ -172,7 +96,7 @@
 
 /deep/ body.lend-space {
     .page-header .page-top {
-        i[aria-label="Notifications"] {
+        /deep/ i[aria-label="Notifications"] {
             display: inline-block!important;
             background: url('../../../assets/common/images/lend-space-dark/notification.svg') no-repeat!important;
             width: 17px!important;
@@ -182,55 +106,27 @@
             }
         }
 
-        .m-nav__item {
-            .m-nav__link-title {                    
-                display: inline-block;
-
-                .m-nav__link-text {
-                    font-family: Poppins;
-                    font-size: 15px;
-                    font-weight: 500;
-                    font-style: normal;
-                    font-stretch: normal;
-                    line-height: 1.67;
-                    letter-spacing: normal;
-                }
-            }
-            &.bottom-logout {
-                width: 121px!important;
-            }
+        /deep/ .m-nav__item {
             .m-nav__link {
                 white-space: nowrap;
-            }
-
-            .header-profile-picture {
-                &[src*="avatar"] {
-                    padding: 8px;
-                    background: #f0d500;
-                }
-            }
-
-            .user-menu-icon {
-                display: inline-block;
-                margin: 5px 15px 5px 0px;
             }
 
             .m-nav__link-icon:before {
                     content: none;
             }
-            .m-nav__link-icon.flaticon-more-v6 {  
+            .m-nav__link-icon.flaticon-more-v6 {
                 background: url(../../../assets/common/images/lend-space-dark/icons/lock-open.svg) no-repeat;
             }
-            .m-nav__link-icon.flaticon-list { 
+            .m-nav__link-icon.flaticon-list {
                 background: url(../../../assets/common/images/lend-space-dark/icons/playlist.svg) no-repeat;
             }
-            .m-nav__link-icon.flaticon-profile-1 { 
+            .m-nav__link-icon.flaticon-profile-1 {
                 background: url(../../../assets/common/images/lend-space-dark/icons/user-picture.svg) no-repeat;
             }
-            .m-nav__link-icon.flaticon-cogwheel { 
+            .m-nav__link-icon.flaticon-cogwheel {
                 background: url(../../../assets/common/images/lend-space-dark/icons/settings-gear.svg) no-repeat;
             }
-            .m-nav__link-icon.flaticon-info { 
+            .m-nav__link-icon.flaticon-info {
                 background: url(../../../assets/common/images/lend-space-dark/icons/help.svg) no-repeat;
             }
         }

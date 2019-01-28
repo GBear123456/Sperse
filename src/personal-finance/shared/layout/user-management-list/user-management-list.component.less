@@ -15,21 +15,12 @@ user-management-list {
             box-shadow: none!important;
 
             .m-topbar__nav.m-nav {
-                margin: 0px !important;
                 display: flex;
                 align-items: center;
                 // padding-top: 6px;
 
-                .m-nav__item {
+                /deep/ .m-nav__item {
                     padding: 0 14px !important;
-
-                    &.bottom-logout {
-                        display: inline-block;
-                        width: 121px;
-                        .m-nav__link-text {
-                            color: #3463ae;
-                        }
-                    }
                     &.bottom-back {
                         display: inline-block;
                         padding: 0px!important;
@@ -44,14 +35,7 @@ user-management-list {
                         white-space: nowrap;
                     }
 
-                    .user-menu-icon {
-                        width: 18px;
-                        height: 20px;
-                        display: inline-block;
-                        margin: 5px 15px 5px 0px;
-                        vertical-align: middle;
-                        background-size: contain!important;
-                        background-repeat: no-repeat!important;
+                    .m-nav__link-icon {
                         &.change-password {
                             background: url(../../../../assets/common/images/lend-space-dark/icons/lock-open.svg);
                         }
@@ -74,19 +58,6 @@ user-management-list {
                             background: url(../../../../assets/common/images/lend-space-dark/icons/back.svg);
                         }
                     }
-                    .m-nav__link-title {
-                        display: inline-block;
-
-                        .m-nav__link-text {
-                            font-family: Poppins;
-                            font-size: 15px;
-                            font-weight: 500;
-                            font-style: normal;
-                            font-stretch: normal;
-                            line-height: 1.67;
-                            letter-spacing: normal;
-                        }
-                    }
                     .m-nav__separator {
                         height: 1px;
                         background: #f4f5f8;
@@ -96,71 +67,6 @@ user-management-list {
                         padding: 0 8px !important;
                     }
                 }
-            }
-
-            .m-card-user {
-                .m-card-user__details {
-                    padding: 0 15px 0 0;
-                }
-
-                .m-card-user__pic {
-                    padding: 0;
-                    vertical-align: baseline;
-                }
-            }
-            .m-dropdown__arrow {
-                color: #AF47C0;
-                display: none;
-            }
-            .m-dropdown__header {
-                padding: 30px 25px 26px;
-                background: linear-gradient(to right, #AF47C0 60%, #3B58C1);
-                box-shadow: inset 2px 5px 12px 2px #AF47C0;
-            }
-
-            .user-info {
-                color: #fff;
-                font-size: 1.1rem;
-                font-weight: 400;
-                display: block;
-                word-break: break-word;
-
-                &.fullName {
-                    font-weight: 600;
-                    text-transform: capitalize;
-                    font-size: 22px;
-                    line-height: 26px;
-                }
-
-                &.email {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    text-align: left;
-                    height: 20px;
-                }
-
-                &.tenantName {
-                    display: none;
-                    text-align: left;
-                    margin-top: 15px;
-                    font-size: 22px;
-                    font-weight: 600;
-                }
-            }
-
-            .header-profile-picture,
-            /deep/ #header_notification_bar .header-profile-picture{
-                width: 41px;
-                height: 41px;
-                max-width: 41px!important;
-                &[src*="avatar"] {
-                    padding: 8px;
-                    background: #f0d500;
-                }
-            }
-
-            /deep/ #header_notification_bar {
             }
         }
 

@@ -3,7 +3,6 @@ import { Component, Injector, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { filter, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 /** Application imports */
@@ -14,25 +13,18 @@ import { LinkedAccountService } from '@app/shared/layout/linked-account.service'
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType,
-    TenantLoginInfoDto, UserLinkServiceProxy, UpdateProfilePictureInput, CommonUserInfoServiceProxy
+    ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType, UserLinkServiceProxy, CommonUserInfoServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { UserManagementService } from '@root/personal-finance/shared/layout/user-management-list/user-management.service';
+import { UserDropdownMenuItemType } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
+import { UserDropdownMenuItemModel } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { LayoutService } from '@app/shared/layout/layout.service';
-import { UserHelper } from '../helpers/UserHelper';
-import { LinkedAccountsModalComponent } from './linked-accounts-modal.component';
-import { LoginAttemptsModalComponent } from './login-attempts-modal.component';
-import { ChangePasswordModalComponent } from './profile/change-password-modal.component';
-import { MySettingsModalComponent } from './profile/my-settings-modal.component';
-import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
-import { StringHelper } from '@shared/helpers/StringHelper';
-import { Observable } from 'rxjs';
-import { isEqual } from 'lodash';
 
 @Component({
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.less'],
     selector: 'app-header',
-    providers: [CommonUserInfoServiceProxy]
+    providers: [ CommonUserInfoServiceProxy ]
 })
 export class HeaderComponent extends AppComponentBase implements OnInit {
 
@@ -40,20 +32,80 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
     isImpersonatedLogin = false;
-    shownLoginNameTitle = '';
-    shownLoginInfo: { fullName, email, tenantName?};
-    userCompany$: Observable<string>;
-
-    helpLink = location.protocol + '//' + abp.setting.values['Integrations:Zendesk:AccountUrl'];
     tenancyName = '';
     userName = '';
-    profileThumbnailId: string;
     recentlyLinkedUsers: LinkedUserDto[];
     unreadChatMessageCount = 0;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     chatConnected = false;
-    tenant: TenantLoginInfoDto = new TenantLoginInfoDto();
-
+    dropdownMenuItems: UserDropdownMenuItemModel[] = [
+        {
+            name: this.l('BackToMyAccount'),
+            visible: this.isImpersonatedLogin,
+            id: 'UserProfileBackToMyAccountButton',
+            iconClass: 'fa fa-reply font-danger',
+            onClick: this.userManagementService.backToMyAccount.bind(this)
+        },
+        {
+            name: this.l('ManageLinkedAccounts'),
+            iconClass: 'flaticon-user-settings',
+            visible: this.isImpersonatedLogin,
+            id: 'ManageLinkedAccountsLink',
+            onClick: (e) => this.userManagementService.showLinkedAccounts(e),
+            submenuItems: {
+                items: this.recentlyLinkedUsers,
+                id: 'RecentlyUsedLinkedUsers',
+                onItemClick: (linkedUser) => this.userManagementService.switchToLinkedUser(linkedUser),
+                onItemDisplay: (linkedUser) => this.userManagementService.getShownUserName(linkedUser)
+            }
+        },
+        {
+            name: this.l('ChangePassword'),
+            id: 'UserProfileChangePasswordLink',
+            iconClass: 'flaticon-more-v6',
+            onClick: (e) => this.userManagementService.changePassword(e)
+        },
+        {
+            name: this.l('LoginAttempts'),
+            id: 'ShowLoginAttemptsLink',
+            iconClass: 'flaticon-list',
+            onClick: (e) => this.userManagementService.showLoginAttempts(e)
+        },
+        {
+            name: this.l('ChangeProfilePicture'),
+            id: 'UserProfileChangePictureLink',
+            iconClass: 'flaticon-profile-1',
+            onClick: (e) => this.userManagementService.changeProfilePicture(e)
+        },
+        {
+            name: this.l('MySettings'),
+            id: 'UserProfileMySettingsLink',
+            iconClass: 'flaticon-cogwheel',
+            onClick: (e) => this.userManagementService.changeMySettings(e)
+        },
+        {
+            name: this.l('VisualSettings'),
+            visible: !this.isGranted('Pages.Administration.UiCustomization'),
+            iconClass: 'flaticon-medical',
+            onClick: () => this._router.navigate(['app/admin/ui-customization'])
+        },
+        {
+            name: this.l('Help'),
+            iconClass: 'flaticon-info',
+            onClick: () => {
+                window.open(this.userManagementService.helpLink, '_blank');
+            }
+        },
+        {
+            type: UserDropdownMenuItemType.Separator,
+        },
+        {
+            name: this.l('Logout'),
+            onClick: this.userManagementService.logout.bind(this),
+            cssClass: 'bottom-logout',
+            iconSrc: 'assets/common/icons/logout.svg'
+        }
+    ];
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -63,8 +115,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _authService: AppAuthService,
         private _impersonationService: ImpersonationService,
         private _linkedAccountService: LinkedAccountService,
-        public _layoutService: LayoutService,
-        private _commonUserInfoService:  CommonUserInfoServiceProxy
+        private userManagementService: UserManagementService,
+        public layoutService: LayoutService
     ) {
         super(injector);
     }
@@ -74,22 +126,17 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         this.currentLanguage = this.localization.currentLanguage;
         this.isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;
 
-
         let tenant = this.appSession.tenant;
         if (tenant && tenant.customLayoutType && tenant.customLayoutType != TenantLoginInfoDtoCustomLayoutType.Default)
             this.customLayoutType = _.kebabCase(tenant.customLayoutType);
-        this.shownLoginNameTitle = this.isImpersonatedLogin ? this.l('YouCanBackToYourAccount') : '';
-        this.getCurrentLoginInformations();
-        this.getRecentlyLinkedUsers();
-        this.userCompany$ = this._commonUserInfoService.getCompany().pipe(map(x => isEqual(x, {}) ? null : x));
+        this.userManagementService.getRecentlyLinkedUsers().subscribe(
+            recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
+        );
 
         this.registerToEvents();
     }
 
     registerToEvents() {
-        abp.event.on('profilePictureChanged', (thumbnailId) => {
-            this.profileThumbnailId = thumbnailId;
-        });
 
         abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
             this.unreadChatMessageCount = messageCount;
@@ -116,123 +163,9 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    getCurrentLoginInformations(): void {
-        this.shownLoginInfo = this.appSession.getShownLoginInfo();
-        this.tenant = this.appSession.tenant;
-        this.profileThumbnailId = this.appSession.user.profileThumbnailId;
-    }
-
-    getShownUserName(linkedUser: LinkedUserDto): string {
-        return UserHelper.getShownUserName(linkedUser.username, linkedUser.tenantId, linkedUser.tenancyName);
-    }
-
-    getRecentlyLinkedUsers(): void {
-        this._userLinkServiceProxy.getRecentlyUsedLinkedUsers().subscribe(result => {
-            this.recentlyLinkedUsers = result.items;
-        });
-    }
-
-    showLoginAttempts(e): void {
-        this.dialog.open(LoginAttemptsModalComponent, {
-            panelClass: ['slider', 'user-info'],
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {}
-        });
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        }
-    }
-
-    showLinkedAccounts(e): void {
-        this.dialog.open(LinkedAccountsModalComponent, {
-            panelClass: ['slider', 'user-info'],
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {}
-        });
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        }
-    }
-
-    changePassword(e): void {
-        this.dialog.open(ChangePasswordModalComponent, {
-            panelClass: ['slider', 'user-info'],
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {}
-        });
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        }
-    }
-
-    changeProfilePicture(e): void {
-        this.dialog.open(UploadPhotoDialogComponent, {
-            data: {
-                source: this.getProfilePictureUrl(this.appSession.user.profilePictureId),
-                maxSizeBytes: AppConsts.maxImageSize
-            },
-            hasBackdrop: true
-        }).afterClosed()
-            .pipe(filter(result => result))
-            .subscribe((result) => {
-                if (result.clearPhoto) {
-                    this._profileServiceProxy.clearProfilePicture()
-                        .subscribe(() => {
-                            this.handleProfilePictureChange(null);
-                        });
-                } else {
-                    const base64OrigImage = StringHelper.getBase64(result.origImage),
-                        base64ThumbImage = StringHelper.getBase64(result.thumImage);
-                    this._profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
-                        originalImage: base64OrigImage,
-                        thumbnail: base64ThumbImage
-                    })).subscribe(thumbnailId => {
-                        this.handleProfilePictureChange(thumbnailId);
-                    });
-                }
-            });
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        }
-    }
-
-    private handleProfilePictureChange(thumbnailId: string) {
-        this.appSession.user.profilePictureId = thumbnailId;
-        abp.event.trigger('profilePictureChanged', thumbnailId);
-    }
-
-    changeMySettings(e): void {
-        this.dialog.open(MySettingsModalComponent, {
-            panelClass: ['slider', 'user-info'],
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {}
-        });
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        }
-    }
-
-    logout(): void {
-        this._authService.logout(true, this.feature.isEnabled('PFM.Applications') ? location.origin + '/personal-finance' : undefined);
-    }
-
-    backToMyAccount(): void {
-        this._impersonationService.backToImpersonator();
-    }
-
-    switchToLinkedUser(linkedUser: LinkedUserDto): void {
-        this._linkedAccountService.switchToAccount(linkedUser.id, linkedUser.tenantId);
-    }
 
     get chatEnabled(): boolean {
         return (!this._abpSessionService.tenantId || this.feature.isEnabled('App.ChatFeature'));
     }
 
-    get notificationEnabled(): boolean {
-        return (!this._abpSessionService.tenantId || this.feature.isEnabled('Notification'));
-    }
 }

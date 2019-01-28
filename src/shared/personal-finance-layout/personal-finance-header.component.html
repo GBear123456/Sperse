@@ -13,13 +13,13 @@
         </a>
     </div>
 
-    <app-area-navigation *ngIf="hasPfmAppFeature"
-        id="header-app-menu"
-        [memberAreaLinks]="appAreaLinks"
-        [actionsButtons]="actionsButtons">
-    </app-area-navigation>
-
     <ng-template ad-header-host></ng-template>
+
+    <app-area-navigation *ngIf="hasPfmAppFeature"
+                         id="header-app-menu"
+                         [memberAreaLinks]="appAreaLinks"
+                         [actionsButtons]="actionsButtons">
+    </app-area-navigation>
 
     <member-area-navigation
         *ngIf="!hasPfmAppFeature"

@@ -17,9 +17,13 @@ import { UserManagementListComponent } from './user-management-list/user-managem
 import { StarsRatingComponent } from './stars-rating/stars-rating.component';
 import { PersonalFinanceLayoutService } from '@shared/personal-finance-layout/personal-finance-layout.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { UserDropdownMenuComponent } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu.component';
+import { UserManagementService } from '@root/personal-finance/shared/layout/user-management-list/user-management.service';
+import { ImpersonationService } from '@admin/users/impersonation.service';
 
 let COMPONENTS = [
     UserManagementListComponent,
+    UserDropdownMenuComponent,
     StarsRatingComponent
 ];
 
@@ -48,7 +52,9 @@ let COMPONENTS = [
     entryComponents: COMPONENTS,
     providers: [
         InstanceServiceProxy,
-        TenantSubscriptionServiceProxy
+        TenantSubscriptionServiceProxy,
+        UserManagementService,
+        ImpersonationService
     ]
 })
 export class LayoutModule {

@@ -1,0 +1,129 @@
+import { Component, OnInit, Input, Injector } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { AbpSessionService } from '@abp/session/abp-session.service';
+import { ImpersonationService } from '@admin/users/impersonation.service';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { isEqual } from 'lodash';
+import {
+    CommonUserInfoServiceProxy,
+    LinkedUserDto
+} from '@shared/service-proxies/service-proxies';
+import { UserManagementService } from '@root/personal-finance/shared/layout/user-management-list/user-management.service';
+import { UserDropdownMenuItemModel } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
+import { UserDropdownMenuItemType } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
+
+@Component({
+    selector: 'user-dropdown-menu',
+    templateUrl: './user-dropdown-menu.component.html',
+    styleUrls: [ './user-dropdown-menu.component.less'],
+    providers: [ CommonUserInfoServiceProxy, ImpersonationService ]
+})
+export class UserDropdownMenuComponent extends AppComponentBase implements OnInit {
+    private impersonationService: ImpersonationService;
+    private commonUserInfoService: CommonUserInfoServiceProxy;
+    profileThumbnailId = this.appSession.user.profileThumbnailId;
+    isImpersonatedLogin = this.abpSessionService.impersonatorUserId > 0;
+    shownLoginInfo: { fullName, email, tenantName?};
+    userCompany$: Observable<string>;
+    recentlyLinkedUsers: LinkedUserDto[];
+    hasPlatformPermissions = false;
+    menuItemTypes = UserDropdownMenuItemType;
+
+    @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = [
+        {
+            name: this.l('BackToMyAccount'),
+            visible: this.isImpersonatedLogin,
+            id: 'UserProfileBackToMyAccountButton',
+            iconSrc: 'assets/common/images/lend-space-dark/icons/back.svg',
+            onClick: this.userManagementService.backToMyAccount.bind(this)
+        },
+        {
+            name: this.l('ManageLinkedAccounts'),
+            iconClass: 'flaticon-user-settings',
+            visible: this.isImpersonatedLogin,
+            id: 'ManageLinkedAccountsLink',
+            onClick: (e) => this.userManagementService.showLinkedAccounts(e),
+            submenuItems: {
+                items: this.recentlyLinkedUsers,
+                id: 'RecentlyUsedLinkedUsers',
+                onItemClick: (linkedUser) => this.userManagementService.switchToLinkedUser(linkedUser),
+                onItemDisplay: (linkedUser) => this.userManagementService.getShownUserName(linkedUser)
+            }
+        },
+        {
+            type: UserDropdownMenuItemType.Separator,
+            visible: this.isImpersonatedLogin
+        },
+        {
+            name: this.l('ChangePassword'),
+            id: 'UserProfileChangePasswordLink',
+            iconClass: 'change-password',
+            onClick: (e) => this.userManagementService.changePassword(e)
+        },
+        {
+            name: this.l('LoginAttempts'),
+            id: 'ShowLoginAttemptsLink',
+            iconClass: 'login-attempts',
+            onClick: (e) => this.userManagementService.showLoginAttempts(e)
+        },
+        {
+            name: this.l('ChangeProfilePicture'),
+            id: 'UserProfileChangePictureLink',
+            iconClass: 'profile-picture',
+            onClick: (e) => this.userManagementService.changeProfilePicture(e)
+        },
+        {
+            name: this.l('MySettings'),
+            id: 'UserProfileMySettingsLink',
+            iconClass: 'settings',
+            onClick: (e) => this.userManagementService.changeMySettings(e)
+        },
+        {
+            name: this.l('Help'),
+            iconClass: 'help',
+            onClick: () => {
+                window.open(this.userManagementService.helpLink, '_blank');
+            }
+        },
+        {
+            type: UserDropdownMenuItemType.Separator
+        },
+        {
+            name: this.l('Logout'),
+            onClick: this.userManagementService.logout.bind(this),
+            cssClass: 'bottom-logout',
+            iconClass: 'logout'
+        },
+        {
+            name: this.l('BackToPlatform'),
+            visible: this.hasPlatformPermissions,
+            cssClass: 'bottom-back',
+            onClick: () => {
+                this._router.navigate(['/app']);
+            }
+        }
+    ];
+
+    constructor(
+        injector: Injector,
+        public userManagementService: UserManagementService,
+        private abpSessionService: AbpSessionService
+    ) {
+        super(injector);
+        this.impersonationService = injector.get(ImpersonationService);
+        this.commonUserInfoService = injector.get(CommonUserInfoServiceProxy);
+        this.hasPlatformPermissions =
+            (this.feature.isEnabled('CFO') && this.permission.isGranted('Pages.CFO')) ||
+            (this.feature.isEnabled('CRM') && this.permission.isGranted('Pages.CRM')) ||
+            (this.feature.isEnabled('Admin') && this.permission.isGranted('Pages.Administration.Users'));
+    }
+
+    ngOnInit() {
+        this.shownLoginInfo = this.appSession.getShownLoginInfo();
+        this.userCompany$ = this.commonUserInfoService.getCompany().pipe(map(x => isEqual(x, {}) ? null : x));
+        this.userManagementService.getRecentlyLinkedUsers().subscribe(
+            recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
+        );
+    }
+}
