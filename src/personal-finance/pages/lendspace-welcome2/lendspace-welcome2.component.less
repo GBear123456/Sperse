@@ -117,67 +117,73 @@
             background-color: #f3f3f3;
             justify-content:space-between;
             border: 1px solid #999;
-        }
-        .why-list .why-item{
-            padding:25px;
-            border:1px solid #999;
-            background-color: #FFF;
-            width:510px;
-            margin-bottom:20px;
-            transition:.2s;
-            display: flex;
-        }
-        .why-list .why-item *{
-            transition:.2s
-        }
-        .why-list .why-item h3{
-            color:#333;
-            font-size:28px;
-            font-weight:700;
-            margin:14px 0;
-        }
-        .why-list .why-item p{
-            color:#333;
-            font-size:12px;
-            font-weight:400;
-        }
-        .why-list .why-item .img-wrapper{
-            width:40%;
-            height:100%;
-            transition:.2s;
-            background-size:contain!important
-        }
-        .why-list .why-item .text-wrapper{
-            width:60%;
-            min-height:215px;
-            padding-left: 20px;
-            position: relative;
-            h3 {
-                margin-top: 0px;
-            }  
-            button {
-                position: absolute;
-                bottom: 0px;
+           .why-item{
+                padding:25px;
+                border:1px solid #999;
+                background-color: #FFF;
+                width:510px;
+                margin-bottom:20px;
+                transition:.2s;
+                display: flex;
+
+                &.hover, &:hover {
+                    h3, p {
+                        color:#000!important;
+                    }
+                }
+
+                * {
+                    transition:.2s
+                }
+                h3{
+                    color:#333;
+                    font-size:28px;
+                    font-weight:700;
+                    margin:14px 0;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    width: 302px;
+                }
+                p {
+                    color:#333;
+                    font-size:12px;
+                    font-weight:400;
+                }
+                .img-wrapper{
+                    width:40%;
+                    height:100%;
+                    transition:.2s;
+                    background-size:contain!important;
+
+                    &.credit-scores{
+                        background:url(../../../assets/common/images/lend-space-dark/welcome/vector-level.png) no-repeat center;
+                    }
+                    &.credit-cards{
+                        background:url(../../../assets/common/images/lend-space-dark/welcome/vector-card.png) no-repeat center;
+                    }
+                    &.personal-loans{
+                        background:url(../../../assets/common/images/lend-space-dark/welcome/vector-money.jpg) no-repeat center;
+                    }
+                    &.personal-finance{
+                        background:url(../../../assets/common/images/lend-space-dark/welcome/vector-graph.png) no-repeat center;
+                    }
+                }
+                .text-wrapper{
+                    width:60%;
+                    min-height:215px;
+                    padding-left: 20px;
+                    position: relative;
+                    h3 {
+                        margin-top: 0px;
+                    }  
+                    button {
+                        position: absolute;
+                        bottom: 0px;
+                    }
+                }
             }
         }
-        .why-list .why-item .img-wrapper { 
-            &.credit-scores{
-                background:url(../../../assets/common/images/lend-space-dark/welcome/vector-level.png) no-repeat center;
-            }
-            &.credit-cards{
-                background:url(../../../assets/common/images/lend-space-dark/welcome/vector-card.png) no-repeat center;
-            }
-            &.personal-loans{
-                background:url(../../../assets/common/images/lend-space-dark/welcome/vector-money.jpg) no-repeat center;
-            }
-            &.personal-finance{
-                background:url(../../../assets/common/images/lend-space-dark/welcome/vector-graph.png) no-repeat center;
-            }
-        }
-        .why-list .why-item.hover h3, .why-list .why-item.hover p, .why-list .why-item:hover h3, .why-list .why-item:hover p{
-            /* font-weight:500; */
-            color:#000!important;
-        }
+
         @media all and (max-width:1200px){
             .why-list {
                 justify-content: center!important;
@@ -195,29 +201,49 @@
             }
         }
 
+        @media all and (max-width:640px){
+            .container {
+                min-width: 95%;
+                .dark-sub-title {
+                    display: none;
+                }
+                ul {
+                    justify-content: space-between!important;
+                    li.why-item {
+                        width: 48%;
+                        overflow: hidden;
+                        position: relative;
+                        .img-wrapper {
+                            position: absolute;
+                            height: 200px!important;
+                            margin: 0px 25%;
+                        }
+                        .text-wrapper {
+                            width: 100%!important;
+                            text-align: center;
+                            p {
+                                display: none;
+                            }
+                            button {
+                                top: 110px;
+                                position: relative!important;
+                            }
+                        }
+                        &:last-child {
+                            .img-wrapper {
+                                margin: 25px 32%;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         @media all and (max-width:500px){
-            .why-item {
-                position: relative;
-                .img-wrapper {
-                    position: absolute;
-                    height: 200px!important;
-                    margin: 0px 25%;
-                }
-                .text-wrapper {
+            ul {
+                justify-content: center!important;
+                .why-item {
                     width: 100%!important;
-                    text-align: center;
-                    p {
-                        display: none;
-                    }
-                    button {
-                        top: 110px;
-                        position: relative!important;
-                    }
-                }
-                &:last-child {
-                    .img-wrapper {
-                        margin: 25px 32%;
-                    }
                 }
             }
         }
