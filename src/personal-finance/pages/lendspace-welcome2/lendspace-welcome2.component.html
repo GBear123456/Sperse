@@ -1,47 +1,23 @@
 <div class="jumbotron jumbotron-fluid d-flex top">
     <div class="container align-self-center">
-        <h1><b>Your Loan Should Always<br>Be the Best Possible Rate.</b></h1>
-        <h3>If You Need a Loan Below are the<br><b>Top Ways  to Get Money Fast!</b></h3>
-        <button class="yellow" (click)="navigate(['personal-finance/offers/personal-loans'])">Compare the Rates</button>
+        <h1><b>{{l('Welcome_TopTitle1')}}<br>{{l('Welcome_TopTitle2')}}</b></h1>
+        <h3>{{l('Welcome_BottomTitle1')}}<br><b>{{l('Welcome_BottomTitle2')}}</b></h3>
+        <button class="yellow" (click)="navigate(['personal-finance/offers/personal-loans'])">{{l('Welcome_CompareRates')}}</button>
     </div>
 </div>
 <section class="why-us">
     <div class="container">
-        <h2 class="dark-title">Find Multiple Offers Within Moments!</h2>
-        <h3 class="dark-sub-title">Simply click on the section to see your credit scores or see the best credit card offers  available to you.</h3>
+        <h2 class="dark-title">{{l('Welcome_FindMultipleOffers')}}</h2>
+        <h3 class="dark-sub-title">{{l('Welcome_SelectOption')}}</h3>
         <div class="table-box">
             <ul class="list-unstyled d-flex flex-wrap why-list">
                 <!---->
-                <li class="why-item" onclick="">
-                    <div class="img-wrapper credit-score"></div>                                                
+                <li class="why-item" *ngFor="let category of categoryItems" [hidden]="category.hidden">
+                    <div class="img-wrapper {{kebabCase(category.name)}}"></div>
                     <div class="text-wrapper">
-                        <h3 _ngcontent-c8="">Credit Scores</h3>
-                        <p _ngcontent-c8="">Credit is important. In addition to free credit score, with LendSpace you will be able to see what might be affecting your credit scores and reports.</p>
-                        <button class="yellow lock" (click)="navigate(['personal-finance/offers/credit-scores'])">Get My Score</button>
-                    </div>
-                </li>
-                <li class="why-item" onclick="">
-                    <div class="img-wrapper credit-cards"></div>
-                    <div class="text-wrapper">
-                        <h3 _ngcontent-c8="">Credit Cards</h3>
-                        <p _ngcontent-c8="">Finding the right credit card can help you build your credit and accumulate credit history.</p>
-                        <button class="yellow lock" (click)="navigate(['personal-finance/offers/credit-cards/home/Best'])">See Offers</button>
-                    </div>
-                </li>
-                <li class="why-item" onclick="">
-                    <div class="img-wrapper personal-loans"></div>
-                    <div class="text-wrapper">
-                        <h3 _ngcontent-c8="">Personal Loans</h3>
-                        <p _ngcontent-c8="">Sometimes you need money now. Finding the right personal loan can be difficult. We are here to make it easier on you.</p>
-                        <button class="yellow lock" (click)="navigate(['personal-finance/offers/personal-loans'])">See Offers</button>
-                    </div>
-                </li>
-                <li class="why-item" onclick="">
-                    <div class="img-wrapper business-loans"></div>
-                    <div class="text-wrapper">
-                        <h3 _ngcontent-c8="">Personal Finance</h3>
-                        <p _ngcontent-c8="">Have a dream of opening your own business? We believe in you. LendSpace will connect you with lenders who believe in you too.</p>
-                        <button class="yellow lock" (click)="navigate(['personal-finance/my-finances'])">See Offers</button>
+                        <h3 _ngcontent-c8="">{{l('Welcome_' + category.name)}}</h3>
+                        <p _ngcontent-c8="">{{l('Welcome_' + category.name + 'Desc')}}</p>
+                        <button class="yellow lock" (click)="navigate([category.router])">{{l('Welcome_' + category.button)}}</button>
                     </div>
                 </li>
             </ul>
@@ -50,29 +26,13 @@
 </section>
 <section class="get-free" id="get-free">
     <div class="h-100 wrapper">
-        <div class="left-panel">
-              <div class="top">
-                  <h1 _ngcontent-c8="">Free Checking<br>For Life!</h1>
-                  <h3 >Free of Monthly Fees<br>Get Your Free Checking<br>Account Today</h3>
-                  <button class="yellow lock">Start My Account Now</button>
-              </div>
-              <div class="bottom">
-                  <div class="icons-wrapper">
-                      <i class="electro-finance"></i><i class="best-buy"></i>
-                  </div>  
-                  <div class="text-box">
-                      <h1>Finance Your<br>Shopping</h1>
-                      <h3>Bad Credit?<br>No Problem!</h3>
-                      <button class="yellow lock">Start Shopping Now</button>
-                  </div>
-              </div>
-        </div>
+        <campaign-offers></campaign-offers>
 
         <div class="right-panel">
             <div class="top">
-                <h1 >It's Time to Maximize<br>Your Savings!</h1>
-                <h3 >Find Credit Cards with low fees and cash back<br>rewards, that that will help you to maximize your<br>money and spend wisely.</h3>
-                <a class="btn btn-outline" (click)="navigate(['personal-finance/offers/credit-cards/home/Best'])">View All Credit Cards Offers</a>
+                <h1>{{l('Welcome_TimeToMaximize')}}<br>{{l('Welcome_YourSavings')}}</h1>
+                <h3>{{l('Welcome_FindCreditCards')}}<br>{{l('Welcome_FindCreditCards2')}}<br>{{l('Welcome_FindCreditCards3')}}</h3>
+                <a class="btn btn-outline" (click)="navigate(['personal-finance/offers/credit-cards/home/Best'])">{{l('Welcome_ViewAllCreditCards')}}</a>
             </div>
             <div class="bottom"></div>
         </div>

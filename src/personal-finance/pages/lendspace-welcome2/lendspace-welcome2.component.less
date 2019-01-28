@@ -14,7 +14,7 @@
         align-items: center;
     }
 
-    button.yellow {
+    /deep/ button.yellow {
         outline: none;
         cursor: pointer;
         padding: 10px 20px;
@@ -161,7 +161,7 @@
             }
         }
         .why-list .why-item .img-wrapper { 
-            &.credit-score{
+            &.credit-scores{
                 background:url(../../../assets/common/images/lend-space-dark/welcome/vector-level.png) no-repeat center;
             }
             &.credit-cards{
@@ -170,7 +170,7 @@
             &.personal-loans{
                 background:url(../../../assets/common/images/lend-space-dark/welcome/vector-money.jpg) no-repeat center;
             }
-            &.business-loans{
+            &.personal-finance{
                 background:url(../../../assets/common/images/lend-space-dark/welcome/vector-graph.png) no-repeat center;
             }
         }
@@ -253,77 +253,10 @@
             & > div {
                 width: 50%;
             }
-            & > .left-panel {
-                display: flex;
-                justify-content: center;
-                flex-direction: column;
+
+            campaign-offers {
+                width: 50%;
                 flex-flow: column;
-            }
-            & > .left-panel > div {
-                width: 100%;
-                height: 450px;
-            }
-            .left-panel {
-                .top {
-                    padding-left: 8%;
-                    padding-top: 50px;
-                    position: relative;
-                    background: url(../../../assets/common/images/lend-space-dark/welcome/bottom-left.jpg) no-repeat 0px/cover;
-                }
-                .top {
-                     h1 {
-                        font-size: 40px;
-                        font-weight: 700;
-                    }
-                    h3 {
-                        font-size: 26px;
-                        font-weight: 500;
-                    }
-                    button {
-                        width: 340px;
-                        position: absolute;
-                        bottom: 30px;
-                    }
-                }
-                .bottom {
-                    position: relative;
-                    padding-left: 8%;
-                    padding-top: 30px;
-                    background: linear-gradient(to right,#000 1%,transparent),url(../../../assets/common/images/lend-space-dark/welcome/bottom-left-2.jpg) no-repeat 0px/cover;
-
-                    .text-box {    
-                        padding-bottom: 40px;
-                        position:absolute;
-                        bottom: 0px;
-
-                        h1 {
-                            color: #FFF;
-                            font-size: 40px;
-                            font-weight: 800;
-                        }
-                        h3 {
-                            color: #FFF;
-                            font-size: 26px;
-                            font-weight: 400;
-                            padding-bottom: 40px;
-                        }
-                        button {
-                            width: 340px;
-                        }
-                    }
-                    i {
-                        height: 100px;
-                        display: inline-block;
-                    }
-                    .electro-finance {
-                        width: 200px;
-                        background: url(../../../assets/common/images/lend-space-dark/welcome/electro-finance.png) no-repeat center;
-                    }
-                    .best-buy {
-                        width: 130px;
-                        background: url(../../../assets/common/images/lend-space-dark/welcome/best-buy.png) no-repeat center;
-                    }
-                }
             }
 
             .right-panel {
@@ -351,7 +284,7 @@
         @media all and (max-width:1200px){
             .wrapper {
                 flex-direction: column;    
-                & > div {
+                & > div, campaign-offers {
                     width: 100%;
                 }
             }
@@ -363,16 +296,6 @@
                 }
                 h3 {
                     font-size: 18px;
-                }
-            }
-        }
-        @media all and (max-width:600px){
-            .left-panel {
-                .top {
-                    background-position: -100px 0px!important;        
-                }
-                .bottom {
-                    background: linear-gradient(to right, #000 1%, transparent), url(../../../assets/common/images/lend-space-dark/welcome/bottom-left-2.jpg) no-repeat -100px / cover!important;
                 }
             }
         }

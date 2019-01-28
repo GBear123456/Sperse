@@ -8,6 +8,7 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { CreditReportsRouteGuard } from './auth/auth-route-guard';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PackagesComponent } from './packages/packages.component';
+import { CampaignOffersComponent } from './campaign-offers/campaign-offers.component';
 
 @NgModule({
     imports: [
@@ -17,10 +18,12 @@ import { PackagesComponent } from './packages/packages.component';
         CommonModule
     ],
     declarations: [
-        PackagesComponent
+        PackagesComponent,
+        CampaignOffersComponent
     ],
     exports: [
-        PackagesComponent
+        PackagesComponent,
+        CampaignOffersComponent
     ],
     providers: [
         AppLocalizationService
