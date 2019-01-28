@@ -25,4 +25,4 @@ import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
         InstanceServiceProxy
     ]
 })
-export class PersonalFinanceModule { }
+export class PersonalFinanceModule {}

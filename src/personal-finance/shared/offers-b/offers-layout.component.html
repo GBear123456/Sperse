@@ -1,27 +1,18 @@
 <div class="container wrapper">
-    <header class="text-center" *ngIf="(category$ | async) as prefix">
-        <ng-container *ngIf="prefix != 'BusinessLoans'; else BusinessLoans">
-            <h1>{{ls.l('OfferTopTitle')}}</h1>
-            <p>{{ls.l('OfferTopDescription')}}</p>
-        </ng-container>
-        <ng-template #BusinessLoans>
-            <h1 class="text-left">{{ categoryDisplayName$ | async }}</h1>
-        </ng-template>
+    <header>
+        <h1>{{ categoryDisplayName$ | async }}</h1>
     </header>
     <div class="row main">
-        <div class="filter-side-bar md-hidden col-lg-4" #filtersSideBar>
+        <div class="filter-side-bar md-hidden col-lg-3" #filtersSideBar>
             <div #leftRef>
                 <ng-content select="[leftContent]"></ng-content>
             </div>
             <!--Default left section-->
             <div *ngIf="leftRef.childNodes.length === 0">
-                <h2 class="text-left">{{ ls.l('Refine_Your_Search')}}</h2>
                 <ul class="filters">
                     <ng-container *ngFor="let filter of filters$ | async">
-                        <li [ngClass]="{'slider-filter': filter.type === 2}">
-                            <div class="filterName" *ngIf="filter.name">
-                                {{ filter.name }}
-                            </div>
+                        <li>
+                            <div class="filterName" *ngIf="filter.name">{{ filter.name }}</div>
                             <ng-container [ngSwitch]="filter.type">
                                 <ng-container *ngSwitchCase="filterType.Checkbox">
                                     <ng-container *ngFor="let filterValue of filter.values$ | async; let i = index">
@@ -112,69 +103,55 @@
                 </ul>
             </div>
         </div>
-
-        <div class="offersList col-sm-12 col-lg-8" #offersList>
+        <div class="offersList col-sm-12 col-lg-9" #offersList>
             <div #rightRef>
                 <ng-content select="[rightContent]"></ng-content>
             </div>
             <!--Default right section-->
             <div *ngIf="rightRef.childNodes.length === 0">
-                <div class="subHeader"  *ngIf="(category$ | async) as prefix" [ngClass]="prefix">
-                    <h2 class="text-center">
-                        {{ ls.l(prefix + '_Right_Title') }}
-                    </h2>
+                <div class="subHeader" [hidden]="!offersAreLoading && offersAmount === 0">
+                    <div class="foundCount" [class.hidden]="offersAreLoading">
+                        {{ ls.l('Offers_WeFound') }} <span>{{ offersAmount }}</span> {{ categoryDisplayName$ | async }}
+                    </div>
+                    <!-- div class="sortBy">
+                        <span class="label">{{ ls.l('Offers_SortBy') }}</span>
+                        <mat-select (selectionChange)="selectedSorting.next($event.value);" [value]="sortings[0].field" #sortingSelect>
+                            <mat-option *ngFor="let sorting of sortings" [value]="sorting.field">
+                                {{ sorting.name }}
+                            </mat-option>
+                        </mat-select>
+                    </div -->
                     <div class="mobileButtons">
                         <button class="btn btn-secondary sortingButton" (click)="toggleSorting($event)"></button>
                         <button class="btn-btn-secondary filteringButton" (click)="toggleFiltering($event)"></button>
                     </div>
                 </div>
                 <ul class="credit-cards-list">
-                    <li class="row" *ngFor="let offerItem of displayedOffers$ | async | slice:0:visibleOffers; let i = index"
-                        [ngClass]="{'recommend': i < 3}">
-                        <ng-container *ngIf="i == 0">
-                            <div class="best-offer">
-                                {{ls.l('Top_Deal_Found')}}
-                            </div>
-                        </ng-container>
-                        <div class="corner-block" [ngClass]="{'secondary': i > 2}">
-                            <span class="number">
-                                {{i+1}}
-                            </span>
+                    <li class="row" *ngFor="let offerItem of displayedOffers$ | async">
+                        <div class="image col-12 col-md-4 col-lg-3">
+                            <img [src]="offerItem.logoUrl" [alt]="offerItem.name" (click)="applyOffer(offerItem)">
                         </div>
-                        <div class="left-side col-12 col-md-6 col-lg-5">
-                            <div class="img-wrap">
-                                <img [src]="offerItem.logoUrl" [alt]="offerItem.name" (click)="applyOffer(offerItem)">
-                            </div>
-
-                            <div class="actions-wrap">
-                                <button class="applyButton" (click)="applyOffer(offerItem)">
-                                    <span>{{ ls.l(buttonCaption) }}</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="description col-12 col-md-6 col-lg-7">
+                        <div class="description col-12 col-md-8 col-lg-6">
                             <h4 (click)="applyOffer(offerItem)"><span *ngIf="offerItem.issuingBank">{{ offerItem.issuingBank + ' - ' }}</span>{{offerItem.name }}</h4>
-                            <p>Loan Amount $50,000</p>
-                            <!-- <div class="rating" *ngIf="offerItem.overallRating">
+                            <div class="rating" *ngIf="offerItem.overallRating">
                                 <stars-rating [currentRating]="offerItem.overallRating" color="#f0d500"></stars-rating>
-                                span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span
-                            </div> -->
+                                <!-- span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span -->
+                            </div>
                             <ul class="descriptionItems">
                                 <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'introRewardsBonus', 'regularAPR']">
                                     <li *ngIf="offerItem[param]">
-                                        <p>{{ ls.l('Offers_' + param) }}: {{ offersService.getParamDisplayValue(offerItem[param]) }}</p>
+                                        <h5>{{ ls.l('Offers_' + param) }}</h5>
+                                        <p>{{ offersService.getParamDisplayValue(offerItem[param]) }}</p>
                                     </li>
                                 </ng-container>
-                                <li><p>Loan Term: 24-72 Months</p></li>
-                                <li><p>Credit Score: Fair/Good/Excellent</p></li>
                             </ul>
+                        </div>
+                        <div class="actions col-12 offset-md-3 col-md-9 offset-lg-0 col-lg-3 ">
+                            <button class="applyButton" (click)="applyOffer(offerItem)"><span>{{ ls.l(buttonCaption) }}</span></button>
+                            <!--<button class="viewMore" (click)="viewCardDetails(offerItem)">{{ ls.l('View_details') }}</button>-->
                         </div>
                     </li>
                 </ul>
-
-                <button (click)="showNextItems()" class="load-more-items"
-                        *ngIf="itemsCount > 5">{{ls.l('Load_More_Offers_Found')}}</button>
-
                 <app-no-data *ngIf="!offersAreLoading && offersAmount === 0"></app-no-data>
             </div>
         </div>

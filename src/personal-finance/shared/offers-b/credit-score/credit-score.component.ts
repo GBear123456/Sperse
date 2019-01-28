@@ -6,7 +6,7 @@ import * as moment from 'moment';
 
 /** Application imports */
 import { AppLocalizationService } from 'app/shared/common/localization/app-localization.service';
-import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offers-layout.component';
+import { OffersLayoutComponent } from '@root/personal-finance/shared/offers-b/offers-layout.component';
 
 @Component({
     templateUrl: './credit-score.component.html',
@@ -14,7 +14,7 @@ import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offe
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreditScoreComponent {
-    @ViewChild(OffersLayoutComponent) offersLayoutComponent: OffersLayoutComponent;
+    @ViewChild(OffersLayoutComponent) offersComponent: OffersLayoutComponent;
     bureauAmount = '3';
     logoes: string[] = [
         'transunion',

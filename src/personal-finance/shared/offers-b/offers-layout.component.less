@@ -30,42 +30,26 @@
         padding-bottom: 21px;
         h1 {
             color: @mainColor;
-            font-size: 42px;
+            font-size: 46px;
             font-weight: 700;
             line-height: 57px;
             text-align: center;
             margin-bottom: 7px;
             text-transform: capitalize;
-
-            + p {
-                font-size: 18px;
-                max-width: 840px;
-                margin: 0 auto;
+            @media (min-width: 768px) {
+                text-align: left;
             }
         }
     }
 
     .main {
         position: relative;
-        // padding: 15px;
-        border: 1px solid #999;
-        margin: 0;
-
         @media (min-width: 1200px) {
-            // margin-left: -29px;
-            // margin-right: -29px;
-            // padding: 2px;
+            margin-left: -29px;
+            margin-right: -29px;
         }
 
         .filter-side-bar {
-
-            h2 {
-                margin-top: 40px;
-                margin-bottom: 26px;
-                font-size: 30px;
-                font-weight: bold;
-            }
-
             @media (max-width: 991px) {
                 position: absolute;
                 transform: translateX(0);
@@ -79,8 +63,8 @@
                 }
             }
             @media (min-width: 1200px) {
-                padding-left: 15px;
-                padding-right: 15px;
+                padding-left: 29px;
+                padding-right: 29px;
             }
             /deep/ dx-scroll-view {
                 margin-left: -15px;
@@ -92,33 +76,13 @@
             }
 
             .filters li {
-                position: relative;
-                margin-bottom: 24px;
-
-                &.slider-filter {
-                    padding: 30px 15px !important;
-                    background: #f3f3f3;
-                    border: 1px solid #999;
-                    border-radius: 2px;
-
-                    .filterName {
-                        margin-bottom: 5px;
-                    }
-                }
-
-                .oneLineSliderValue {
-                    position: absolute;
-                    top: -31px;
-                    right: 0;
-                }
-
                 &:not(:first-child) {
                     padding-top: 15px;
                 }
                 .filterName {
                     color: @mainColor;
-                    font-size: 18px;
-                    font-weight: 400;
+                    font-size: 13px;
+                    font-weight: 700;
                     letter-spacing: 0.4px;
                     line-height: 16px;
                     margin-bottom: 14px;
@@ -168,7 +132,7 @@
                         }
                     }
                     &:last-of-type .mat-checkbox-layout {
-                        margin-bottom: 0;
+                        margin-bottom: 0px;
                     }
                 }
                 .sliderContainer {
@@ -176,11 +140,11 @@
                     .minMaxLabels {
                         .min, .max {
                             position: absolute;
-                            bottom: -15px;
-                            font-size: 16px;
-                            font-weight: 500;
+                            top: -3px;
+                            font-size: 12px;
+                            font-weight: 400;
                             letter-spacing: 0.2px;
-                            color: @mainColor;
+                            color: @additional-font-color;
                         }
                         .min {
                             left: 0;
@@ -217,16 +181,15 @@
                                     width: 28px;
                                     height: 28px;
                                     box-shadow: 0 3px 10px 0 rgba(23, 28, 29, 0.21);
-                                    border: 4px solid #666;
-                                    background-color: #ffcc00;
+                                    background-color: #ffffff;
                                 }
                             }
                         };
 
                         &.greyTrackBackground .mat-slider-track-wrapper {
-                            background: #ffcc00;
+                            background: #ed9d1a;
                             .mat-slider-track-background {
-                                background-color: #666 !important;
+                                background-color: #b6b6b6 !important;
                             }
                         }
                     }
@@ -235,9 +198,6 @@
                         font-weight: 500;
                         letter-spacing: 0.2px;
                         color: #000;
-                        @media all and (min-width: 1200px) {
-                            font-size: 24px;
-                        }
                     }
                     .twoLinesSliderBlock {
                         color: @additional-font-color;
@@ -255,20 +215,18 @@
 
                 }
                 /deep/ mat-select {
-                    border: 1px solid #999;
-                    padding: 16px 14px;
-                    background-color: #f3f3f3;
+                    border: 1px solid #dfdfdf;
+                    padding: 8px 14px;
                     .mat-select-value-text {
-                        font-size: 17px;
+                        font-size: 14px;
                         font-weight: 600;
                         letter-spacing: 0.2px;
                         color: #000;
                         font-family: Poppins;
-                        background-color: #f3f3f3;
                     }
                     .mat-select-arrow {
                         border: 0;
-                        background: url('../../../assets/common/icons/arrow-down-fill.png');
+                        background: url('../../../assets/common/icons/arrow-down-grey.svg');
                         width: 12px;
                         height: 8px;
                     }
@@ -280,15 +238,7 @@
             justify-content: space-between;
             align-items: center;
             position: relative;
-            // padding-bottom: 33px;
-
-            h2 {
-                margin-top: 40px;
-                margin-bottom: 20px;
-                font-size: 30px;
-                font-weight: bold;
-            }
-
+            padding-bottom: 33px;
             .foundCount {
                 color: @mainColor;
                 font-size: 28px;
@@ -376,153 +326,28 @@
             }
             ul.credit-cards-list {
                 & > li {
-                    border: 1px solid #666;
-                    padding: 35px 40px;
+                    border-bottom: 1px solid @border-color;
+                    padding: 35px 0;
                     display: flex;
                     align-items: center;
                     position: relative;
-                    margin-bottom: 8px;
-                    position: relative;
-
-                    &.recommend {
-                        background-color: #f3f3f3;
+                    &:first-child {
+                        border-top: 1px solid @border-color;
                     }
-
-                    .best-offer {
-                        font-size: 20px;
-                        color: #fff;
-                        background: #33cc00;
-                        position: absolute;
-                        right: 0;
-                        top: 0;
-                        padding: 6px 22px;
-                        font-weight: 700;
+                    .image img {
+                        max-width: 152px;
+                        max-height: 96px;
+                        cursor: pointer;
                     }
-
-                    .corner-block {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 90px;
-                        height: 90px;
-                        font-size: 24px;
-                        font-weight: bold;
-                        overflow: hidden;
-
-                        .number {
-                            width: 50px;
-                            height: 50px;
-                            line-height: 50px;
-                            text-align: center;
-                            display: block;
-                            position: absolute;
-                            top: 0;
-                        }
-
-                        &::before {
-                            content: '';
-                            display: block;
-                            width: 90px;
-                            height: 90px;
-
-                            border-left: 90px solid #ffcc00;
-                            border-right: 90px solid transparent;
-                            border-top: 90px solid #ffcc00;
-                            // box-shadow: 0 0 0 1px #333;
-
-                            transform: translateX(-50%);
-                        }
-
-                        &.secondary {
-                            .number {
-                                color: #fff;
-                            }
-
-                            &::before {
-                                content: '';
-                                display: block;
-                                width: 90px;
-                                height: 90px;
-
-                                border-left: 90px solid #333;
-                                border-right: 90px solid transparent;
-                                border-top: 90px solid #333;
-                                // box-shadow: 0 0 0 1px #333;
-
-                                transform: translateX(-50%);
-                            }
-                        }
-                    }
-
-                    .left-side {
-                        text-align: center;
-
-                        .img-wrap,
-                        .actions-wrap {
-                            padding: 15px 0;
-                        }
-
-                        .img-wrap {
-                            max-width: 230px;
-                            width: 100%;
-                            margin: 0 auto;
-
-                            img {
-                                cursor: pointer;
-                                max-width: 100%;
-                                max-height: 70px;
-                            }
-                        }
-
-                        .actions-wrap {
-                            button {
-                                border: 1px solid #b1770b;
-                                border-radius: 3px;
-                                background-image: linear-gradient(0deg, #fdb337, #f3ea80);
-
-                                font-size: 20px;
-                                font-weight: bold;
-                                color: #333;
-                                display: flex;
-                                align-items: center;
-                                margin: 0 auto;
-
-                                &.applyButton {
-                                    padding: 10px 20px;
-                                    width: 100%;
-                                    max-width: 180px;
-
-                                    &::after {
-                                        content: url(../../../assets/common/icons/lock.png);
-                                        margin-left: auto;
-                                    }
-                                }
-
-                                &:hover {
-                                    background-image: linear-gradient(0deg, #f3ea80, #fdb337);
-                                }
-                            }
-                        }
-                    }
-
-                    // &:first-child {
-                        // border-top: 1px solid @border-color;
-                    // }
-
                     .description {
                         h4 {
                             color: @mainColor;
-                            font-size: 24px;
+                            font-size: 19px;
                             font-weight: 700;
                             letter-spacing: 0.24px;
                             line-height: 23px;
                             margin-bottom: 0;
                             cursor: pointer;
-
-                            + p {
-                                font-size: 16px;
-                                font-weight: 500;
-                            }
                         }
                         .rating {
                             color: @blue;
@@ -538,38 +363,25 @@
                         }
                         .descriptionItems {
                             display: flex;
-                            flex-direction: column;
                             li {
-                                display: flex;
-                                align-items: center;
-                                padding-bottom: 5px;
-
-                                &::before {
-                                    content: url(../../../assets/common/icons/check-mark.png);
-                                    display: inline-block;
-                                    margin-right: 5px;
+                                display: inline-block;
+                                &:not(:last-child) {
+                                    margin-right: 15px;
                                 }
-
-                                // &:not(:last-child) {
-                                //     margin-right: 15px;
-                                // }
-
-                                // h5 {
-                                //     font-size: 13px;
-                                //     font-weight: 500;
-                                //     line-height: 1.62;
-                                //     letter-spacing: 0.2px;
-                                //     color: @additional-font-color;
-                                //     margin-bottom: 0;
-                                // }
-
+                                h5 {
+                                    font-size: 13px;
+                                    font-weight: 500;
+                                    line-height: 1.62;
+                                    letter-spacing: 0.2px;
+                                    color: @additional-font-color;
+                                    margin-bottom: 0;
+                                }
                                 p {
                                     font-weight: 600;
                                     font-size: 15px;
                                     line-height: 1.4;
                                     letter-spacing: 0.2px;
                                     color: #000000;
-                                    margin-bottom: 0;
                                 }
                             }
                         }
@@ -599,24 +411,5 @@
 
     /deep/ .blockOverlay {
         z-index: 1 !important;
-    }
-
-    .load-more-items {
-        border: 1px solid #b1770b;
-        border-radius: 4px;
-        background-image: linear-gradient(0deg, #fdb337, #f3ea80);
-
-        font-size: 24px;
-        font-weight: bold;
-        color: #333;
-        display: flex;
-        align-items: center;
-        margin: 20px auto;
-        padding: 10px 60px;
-        transition: .3s;
-
-        &:hover {
-            background-image: linear-gradient(0deg, #f3ea80, #fdb337);
-        }
     }
 }
