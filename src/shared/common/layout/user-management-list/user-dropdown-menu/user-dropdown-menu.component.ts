@@ -1,17 +1,17 @@
 import { Component, OnInit, Input, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppComponentBase } from 'shared/common/app-component-base';
 import { AbpSessionService } from '@abp/session/abp-session.service';
-import { ImpersonationService } from '@admin/users/impersonation.service';
+import { ImpersonationService } from 'app/admin/users/impersonation.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { isEqual } from 'lodash';
 import {
     CommonUserInfoServiceProxy,
     LinkedUserDto
-} from '@shared/service-proxies/service-proxies';
-import { UserManagementService } from '@root/personal-finance/shared/layout/user-management-list/user-management.service';
-import { UserDropdownMenuItemModel } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
-import { UserDropdownMenuItemType } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
+} from 'shared/service-proxies/service-proxies';
+import { UserManagementService } from 'shared/common/layout/user-management-list/user-management.service';
+import { UserDropdownMenuItemModel } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
+import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 
 @Component({
     selector: 'user-dropdown-menu',

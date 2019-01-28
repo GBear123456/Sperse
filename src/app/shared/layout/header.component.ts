@@ -7,17 +7,14 @@ import * as _ from 'lodash';
 
 /** Application imports */
 import { AbpSessionService } from '@abp/session/abp-session.service';
-import { ImpersonationService } from '@app/admin/users/impersonation.service';
-import { AppAuthService } from '@shared/common/auth/app-auth.service';
-import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType, UserLinkServiceProxy, CommonUserInfoServiceProxy
+    ChangeUserLanguageDto, LinkedUserDto, ProfileServiceProxy, TenantLoginInfoDtoCustomLayoutType, CommonUserInfoServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { UserManagementService } from '@root/personal-finance/shared/layout/user-management-list/user-management.service';
-import { UserDropdownMenuItemType } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
-import { UserDropdownMenuItemModel } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
+import { UserManagementService } from '@root/shared/common/layout/user-management-list/user-management.service';
+import { UserDropdownMenuItemType } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
+import { UserDropdownMenuItemModel } from '@root/shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { LayoutService } from '@app/shared/layout/layout.service';
 
 @Component({
@@ -31,7 +28,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     customLayoutType = '';
     languages: abp.localization.ILanguageInfo[];
     currentLanguage: abp.localization.ILanguageInfo;
-    isImpersonatedLogin = false;
+    isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;
     tenancyName = '';
     userName = '';
     recentlyLinkedUsers: LinkedUserDto[];
@@ -43,7 +40,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             name: this.l('BackToMyAccount'),
             visible: this.isImpersonatedLogin,
             id: 'UserProfileBackToMyAccountButton',
-            iconClass: 'fa fa-reply font-danger',
+            iconSrc: 'assets/common/images/lend-space-dark/icons/back.svg',
             onClick: this.userManagementService.backToMyAccount.bind(this)
         },
         {
@@ -111,11 +108,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private dialog: MatDialog,
         private _abpSessionService: AbpSessionService,
         private _profileServiceProxy: ProfileServiceProxy,
-        private _userLinkServiceProxy: UserLinkServiceProxy,
-        private _authService: AppAuthService,
-        private _impersonationService: ImpersonationService,
-        private _linkedAccountService: LinkedAccountService,
-        private userManagementService: UserManagementService,
+        public userManagementService: UserManagementService,
         public layoutService: LayoutService
     ) {
         super(injector);
@@ -124,7 +117,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     ngOnInit() {
         this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled === false);
         this.currentLanguage = this.localization.currentLanguage;
-        this.isImpersonatedLogin = this._abpSessionService.impersonatorUserId > 0;
 
         let tenant = this.appSession.tenant;
         if (tenant && tenant.customLayoutType && tenant.customLayoutType != TenantLoginInfoDtoCustomLayoutType.Default)

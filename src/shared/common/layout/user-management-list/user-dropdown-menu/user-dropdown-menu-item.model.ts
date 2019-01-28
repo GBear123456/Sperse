@@ -1,5 +1,5 @@
-import { SubmenuItems } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/submenu-items.model';
-import { UserDropdownMenuItemType } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
+import { SubmenuItems } from 'shared/common/layout/user-management-list/user-dropdown-menu/submenu-items.model';
+import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 
 export class UserDropdownMenuItemModel {
     name?: string;

@@ -13,17 +13,14 @@ import { AutoCompleteModule, EditorModule, FileUploadModule as PrimeNgFileUpload
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 import { InstanceServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
-import { UserManagementListComponent } from './user-management-list/user-management-list.component';
+import { UserManagementListComponent } from '../../../shared/common/layout/user-management-list/user-management-list.component';
 import { StarsRatingComponent } from './stars-rating/stars-rating.component';
 import { PersonalFinanceLayoutService } from '@shared/personal-finance-layout/personal-finance-layout.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { UserDropdownMenuComponent } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu.component';
-import { UserManagementService } from '@root/personal-finance/shared/layout/user-management-list/user-management.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
+import { UserManagementModule } from '@shared/common/layout/user-management-list/user-management.module';
 
 let COMPONENTS = [
-    UserManagementListComponent,
-    UserDropdownMenuComponent,
     StarsRatingComponent
 ];
 
@@ -45,7 +42,8 @@ let COMPONENTS = [
         AutoCompleteModule,
         EditorModule,
         PrimeNgFileUploadModule,
-        InputMaskModule
+        InputMaskModule,
+        UserManagementModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,
@@ -53,7 +51,6 @@ let COMPONENTS = [
     providers: [
         InstanceServiceProxy,
         TenantSubscriptionServiceProxy,
-        UserManagementService,
         ImpersonationService
     ]
 })

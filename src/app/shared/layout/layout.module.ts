@@ -27,17 +27,13 @@ import { TopBarComponent } from './top-bar.component';
 import { FiltersModule } from '@shared/filters/filters.module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
-import { UserManagementListComponent } from '@root/personal-finance/shared/layout/user-management-list/user-management-list.component';
-import { UserDropdownMenuComponent } from '@root/personal-finance/shared/layout/user-management-list/user-dropdown-menu/user-dropdown-menu.component';
-import { UserManagementService } from '@root/personal-finance/shared/layout/user-management-list/user-management.service';
+import { UserManagementModule } from '@shared/common/layout/user-management-list/user-management.module';
 
 let COMPONENTS = [
     PlatformSelectComponent,
     HeaderComponent,
     TopBarComponent,
-    SideBarComponent,
-    UserManagementListComponent,
-    UserDropdownMenuComponent
+    SideBarComponent
 ];
 
 @NgModule({
@@ -65,13 +61,13 @@ let COMPONENTS = [
         PrimeNgFileUploadModule,
         ProgressBarModule,
         TableModule,
-        PaginatorModule
+        PaginatorModule,
+        UserManagementModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,
     providers: [
-        LayoutService,
-        UserManagementService
+        LayoutService
     ]
 })
 export class LayoutModule {}
