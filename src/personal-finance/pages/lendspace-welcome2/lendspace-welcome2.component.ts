@@ -1,5 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
 
 import { kebabCase } from 'lodash';
 
@@ -40,7 +41,7 @@ export class LendspaceWelcome2Component extends AppComponentBase {
     ];
 
     constructor(injector: Injector) {
-        super(injector);
+        super(injector, AppConsts.localization.PFMLocalizationSourceName);
     }
 
     navigate(route) {

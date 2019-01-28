@@ -215,23 +215,28 @@
                         position: relative;
                         .img-wrapper {
                             position: absolute;
-                            height: 200px!important;
-                            margin: 0px 25%;
+                            height: 150px!important;
+                            margin: 30px 28%;
                         }
                         .text-wrapper {
                             width: 100%!important;
                             text-align: center;
+                            h3 {
+                                width: auto;
+                            }
                             p {
                                 display: none;
                             }
                             button {
-                                top: 110px;
-                                position: relative!important;
+                                top: 160px;
+                                left: 0px;
+                                position: absolute;
+                                height: 55px;
                             }
                         }
                         &:last-child {
                             .img-wrapper {
-                                margin: 25px 32%;
+                                margin: 40px 32%;
                             }
                         }
                     }
@@ -239,11 +244,18 @@
             }
         }
 
-        @media all and (max-width:500px){
+        @media all and (max-width:615px){
             ul {
                 justify-content: center!important;
-                .why-item {
+                li.why-item {
                     width: 100%!important;
+                    .text-wrapper {
+                        button {
+                            top: 110px!important;
+                            position: relative!important;
+                        }
+                    }
+
                 }
             }
         }
