@@ -54,11 +54,15 @@
         }
     }
 
-    // .main {
-    //     position: relative;
-    //     border: 1px solid #999;
-    //     margin: 0;
-    // }
+    .main {
+        position: relative;
+        border: 1px solid #999;
+        margin: 0;
+
+        @media all and (max-width: 992px) {
+            border: 0;
+        }
+    }
 
     .offer-details-wrap {
         padding: 32px 50px 50px;
@@ -160,7 +164,6 @@
         .feature-item {
             text-align: center;
 
-            img {}
             .feature-title {
                 font-size: 17px;
                 font-weight: 600;
@@ -174,5 +177,25 @@
             }
         }
 
+    }
+
+    .container.wrapper {
+        margin-bottom: 45px;
+    }
+
+    .campaign-wrapper{
+        display: flex;
+        justify-content: center;
+
+        campaign-offers {
+            width: 100%;
+            flex-flow: row;
+            margin-bottom: -55px;
+
+            @media all and (max-width:1200px){
+                flex-flow: column;
+                margin-bottom: -30px;
+            }
+        }
     }
 }

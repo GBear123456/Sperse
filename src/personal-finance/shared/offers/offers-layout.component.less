@@ -26,6 +26,18 @@
         }
     }
 
+    .container.wrapper {
+        margin-bottom: 45px;
+    }
+
+    campaign-offers {
+        margin-bottom: -30px;
+
+        @media (min-width: 1200px) {
+            margin-bottom: -55px;
+        }
+    }
+
     header {
         padding-bottom: 21px;
         h1 {
@@ -642,6 +654,22 @@
             padding: 10px 25px;
         }
     }
+
+    .campaign-wrapper{
+        display: flex;
+        justify-content: center;
+
+        campaign-offers {
+            width: 100%;
+            flex-flow: row;
+            margin-bottom: -55px;
+
+            @media all and (max-width: 1200px){
+                flex-flow: column;
+                margin-bottom: -30px;
+            }
+        }
+    }
 }
 
 /deep/ .description {
@@ -656,3 +684,6 @@
     }
 }
 
+:host-context(.wrapper) {
+    padding-bottom: 0;
+}

@@ -32,6 +32,7 @@ import { ScoreFilterComponent } from '@root/personal-finance/shared/offers/filte
 import { BusinessLoansComponent } from '@root/personal-finance/shared/offers/business-loans/business-loans.component';
 import { OffersCategoryDetailsComponent } from '@root/personal-finance/shared/offers/offers-category-details/offers-category-details.component';
 import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers/debt-consolidation/debt-consolidation.component';
+import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 
 @NgModule({
     imports: [
@@ -47,7 +48,8 @@ import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers
         RoundProgressModule,
         NoDataModule,
         OffersRoutingModule,
-        LayoutModule
+        LayoutModule,
+        PersonalFinanceCommonModule
     ],
     declarations: [
         ApplyOfferDialogComponent,

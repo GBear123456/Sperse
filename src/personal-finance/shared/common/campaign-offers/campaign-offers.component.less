@@ -32,7 +32,7 @@
         padding-top: 30px;
         background: linear-gradient(to right,#000 1%,transparent),url(../../../../assets/common/images/lend-space-dark/welcome/bottom-left-2.jpg) no-repeat 0px/cover;
 
-        .text-box {    
+        .text-box {
             padding-bottom: 40px;
             position:absolute;
             bottom: 0px;
@@ -66,9 +66,36 @@
         }
     }
 
+    button.yellow {
+        outline: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 22px;
+        background: linear-gradient(#f1e76b, #fdb234);
+        border: 1px solid #cdab69;
+        margin-bottom: 0;
+        font-weight: 600;
+        color: #333333;
+        &.lock {
+            min-width: 220px;
+            padding-right: 50px;
+            background: url(../../../../assets/common/images/lend-space-dark/welcome/lock.png) no-repeat 92%, linear-gradient(#f1e76b, #fdb234);
+
+            &:hover {
+                background: url(../../../../assets/common/images/lend-space-dark/welcome/lock.png) no-repeat 92%, linear-gradient(#fdb234, #f1e76b);
+            }
+        }
+
+        &:hover {
+            background: linear-gradient(#fdb234, #f1e76b);
+        }
+    }
+
     @media all and (max-width:600px){
         .top {
-            background-position: -100px 0px!important;        
+            background-position: -100px 0px!important;
         }
         .bottom {
             background: linear-gradient(to right, #000 1%, transparent), url(../../../../assets/common/images/lend-space-dark/welcome/bottom-left-2.jpg) no-repeat -100px / cover!important;
