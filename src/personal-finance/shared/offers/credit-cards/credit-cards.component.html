@@ -44,13 +44,13 @@
             </div>
         </section>
 
-        <section class="results-by-category">
+        <section class="results-by-category" #resultByCategory>
             <ng-container *ngIf="filteredGroup && filteredGroup.length">
                 <h2>Top results by category</h2>
 
                 <div class="row">
                     <div class="col-md-3 col-sm-4 offer-navigation">
-                        <ul class="offer-navigation__list">
+                        <ul class="offer-navigation__list" #offerNavigationList>
                             <li class="offer-navigation__item" *ngFor="let menuItem of filteredGroup">
                                 <a class="offer-navigation__link"
                                    [routerLink]="'/personal-finance/offers/credit-cards/home/' + menuItem.offerCollection"

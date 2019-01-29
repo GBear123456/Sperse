@@ -1,20 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    Inject,
+    ViewChild,
+    Renderer2
+} from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { finalize, map, switchMap } from 'rxjs/operators';
+import { debounceTime, finalize, map, switchMap, takeUntil, throttle } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import * as _ from 'underscore';
 
 import { OfferDto, Category, ItemOfOfferCollection, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { fromEvent } from '@node_modules/rxjs';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'pfm-credit-cards-home',
     templateUrl: './credit-cards.component.html',
-    styleUrls: ['./credit-cards.component.less']
+    styleUrls: ['./credit-cards.component.less'],
+    providers: [ LifecycleSubjectsService ]
 })
-export class CreditCardsComponent implements OnInit {
+export class CreditCardsComponent implements OnInit, OnDestroy {
+    private _offerNavigationList: ElementRef;
+    @ViewChild('offerNavigationList') set offerNavigationList (navigationList: ElementRef) {
+        this._offerNavigationList = navigationList;
+    }
+    private _resultByCategory: ElementRef;
+    @ViewChild('resultByCategory') set resultByCategory (resultByCategory: ElementRef) {
+        this._resultByCategory = resultByCategory;
+    }
     cardOffersList$: Observable<OfferDto[]>;
     creditScoreNames = ['Excellent', 'Good', 'Fair', 'Bad', 'NoCredit'];
     creditCardCollection: OfferDto[] = [];
@@ -36,7 +56,10 @@ export class CreditCardsComponent implements OnInit {
         private route: ActivatedRoute,
         private offerServiceProxy: OfferServiceProxy,
         private offersService: OffersService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        private lifecycleSubjectService: LifecycleSubjectsService,
+        private renderer: Renderer2,
+        @Inject(DOCUMENT) private document: any
     ) {
         abp.ui.setBusy();
         this.cardOffersList$ =
@@ -67,6 +90,26 @@ export class CreditCardsComponent implements OnInit {
             this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection)).sort(this.sortCollection.bind(this, itemOfOfferCollections));
             this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort(this.sortCollection.bind(this, itemOfOfferCollections));
         });
+
+        fromEvent(this.document.body, 'scroll')
+            .pipe(
+                takeUntil(this.lifecycleSubjectService.destroy$),
+                /** To avoid a lot of calls */
+                debounceTime(15),
+            ).subscribe(() => this.onScroll());
+    }
+
+    onScroll() {
+        if (this._offerNavigationList) {
+            const offersCreditCardsNavigationBoundingRect = this._offerNavigationList.nativeElement.getBoundingClientRect();
+            const resultByCategoryRect = this._resultByCategory.nativeElement.getBoundingClientRect();
+            if (offersCreditCardsNavigationBoundingRect.top < 90) {
+                this.renderer.addClass(this._offerNavigationList.nativeElement, 'fixed');
+            }
+            if (offersCreditCardsNavigationBoundingRect.top < resultByCategoryRect.top) {
+                this.renderer.removeClass(this._offerNavigationList.nativeElement, 'fixed');
+            }
+        }
     }
 
     sortCollection(itemOfOfferCollections, a, b) {
@@ -106,5 +149,9 @@ export class CreditCardsComponent implements OnInit {
         ).subscribe((offers: OfferDto[]) => {
             this.cards = offers;
         });
+    }
+
+    ngOnDestroy() {
+        this.lifecycleSubjectService.destroy.next();
     }
 }

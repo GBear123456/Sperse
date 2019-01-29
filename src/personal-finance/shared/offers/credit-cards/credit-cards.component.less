@@ -12,17 +12,17 @@
     ::ng-deep app-no-data {
         padding-top: 35px;
     }
-    
+
     * {
         font-family: @font-family;
     }
-    
+
     color: @text-color;
-    
+
     a {
         text-decoration: none !important;
     }
-    
+
     h2 {
         font-size: 28px;
         font-weight: bold;
@@ -30,84 +30,84 @@
         color: @headings-color;
         margin-bottom: 18px;
     }
-    
+
     button {
         box-shadow: none;
         border: 0;
         outline: none;
         padding: 5px 65px;
         cursor: pointer;
-    
+
         font-size: 26px;
         font-weight: bold;
         text-align: center;
         color: @headings-color;
         transition: .3s;
-    
+
         background: @button-bg-color url(../../../../assets/common/images/pfm-cc/arrow-right.svg) no-repeat right 20px center;
-        
+
         @media all and (max-width: 768px) {
             padding: 5px 15px;
             background-image: none;
         }
-    
+
         &:hover,
         &:active,
         &:focus {
             background-color: lighten(@button-bg-color, 8%);
         }
     }
-    
+
     .header {
         padding-bottom: 50px;
-        
+
         h1 {
             font-size: 46px;
             font-weight: bold;
             text-align: center;
             color: @headings-color;
         }
-        
+
         .description {
             font-size: 18px;
             line-height: 1.5;
             text-align: center;
-    
+
             max-width: 920px;
             margin: 0 auto;
         }
     }
-    
+
     .cards {
         background: @offer-cc-bg-color;
         padding: 30px 40px 25px;
-        
+
         .heading {
             text-align: center;
             margin-bottom: 20px;
-            
+
             h2 {
                 font-size: 18px;
                 font-weight: 500;
                 line-height: 1.67;
                 letter-spacing: normal;
                 text-align: center;
-        
+
                 margin-bottom: 0;
             }
         }
-        
+
         &-list {
             padding: 0;
             display: flex;
             list-style-type: none;
         }
-        
+
         &-item {
             margin: 15px 0;
             cursor: pointer;
         }
-        
+
         &-item-wrap {
             background: #fff;
             min-height: 144px;
@@ -116,12 +116,12 @@
             flex-direction: column;
             justify-content: space-evenly;
             transition: .3s;
-            
+
             &:hover,
             &.active {
                 background-color: darken(#fff, 8%);
             }
-            
+
             h3 {
                 font-size: 17px;
                 font-weight: 600;
@@ -130,20 +130,20 @@
             }
         }
     }
-    
+
     .credit-score {
         margin-top: 80px;
-        
+
         .gradient {
             height: 7px;
             background-image: linear-gradient(to left, #ed501a, #f7d930 48%, #24c26c);
         }
-        
+
         &-wrap {
             background: #f4f5f5;
             padding: 36px 30px 33px;
         }
-        
+
         &-list {
             padding: 0;
             margin: 0;
@@ -152,10 +152,10 @@
             align-items: center;
             justify-content: space-evenly;
         }
-        
+
         &-item {
             margin-bottom: 10px;
-            
+
             a {
                 display: block;
                 text-align: center;
@@ -164,12 +164,12 @@
                 padding: 15px;
                 border-radius: 4px;
                 border: 1px solid #dfdfdf;
-    
+
                 font-size: 18px;
                 font-weight: 500;
                 letter-spacing: 0.1px;
                 transition: .3s;
-    
+
                 &:hover,
                 &.active {
                     background-color: darken(#fff, 8%);
@@ -177,28 +177,32 @@
             }
         }
     }
-    
+
     .results-by-category {
         margin-top: 80px;
-        
-        
+
+
     }
-    
+
     .offer-navigation {
         * {
             transition: .3s;
         }
-        
+
         &__list {
             list-style-type: none;
             margin: 0;
             padding: 0;
+            &.fixed {
+                position: fixed;
+                top: 90px;
+            }
         }
-        
+
         &__item {
             padding: 11px 0;
         }
-        
+
         &__link {
             padding: 8px 0;
             font-size: 18px;
@@ -206,19 +210,19 @@
             letter-spacing: 0.1px;
             color: @text-color;
             border-bottom: 4px solid transparent;
-            
+
             &.active,
             &:hover {
                 color: #000;
                 font-weight: bold;
                 border-bottom-color: #f0d500;
-                
+
                 .offer-navigation__img {
                     opacity: 1;
                 }
             }
         }
-        
+
         &__img {
             width: 24px;
             max-width: 100%;
@@ -226,53 +230,53 @@
             margin-right: 5px;
         }
     }
-    
+
     .card-item {
         padding: 0 33px;
         margin-bottom: 20px;
         cursor: pointer;
-        
+
         &__bank {
             font-size: 13px;
             font-weight: normal;
             color: @text-color;
             margin-top: 15px;
         }
-        
+
         &__img {
             &--wrap {
                 text-align: center;
             }
         }
-        
+
         &__card-name {
             font-size: 22px;
             font-weight: 600;
             letter-spacing: 0.3px;
             color: @headings-color;
             margin-bottom: 0;
-    
+
             //white-space: nowrap;
             //overflow: hidden;
             //text-overflow: ellipsis;
         }
-        
+
         &__rating {
             padding: 13px 0;
         }
-        
+
         &__reviews {
             font-size: 14px;
             font-weight: 500;
             line-height: 1.79;
             letter-spacing: 0.2px;
             color: #3463ae;
-            
+
             &:hover {
                 color: lighten(#3463ae, 8%);
             }
         }
-    
+
         &__info {
             .text-left {
                 font-size: 13px;
@@ -288,7 +292,7 @@
                 letter-spacing: 0.2px;
                 color: #000;
                 padding-left: 0;
-                
+
                 b {
                     //overflow: hidden;
                     //text-overflow: ellipsis;
@@ -298,17 +302,17 @@
             }
         }
     }
-    
+
     @media all and (max-width: 768px) {
         .container {
             max-width: 100%;
             width: 100%;
         }
-        
+
         .credit-score-item {
             flex: 0 0 25%;
             max-width: 25%;
-            
+
             a {
                 padding: 10px 8px;
             }
@@ -327,7 +331,7 @@
             max-width: 50%;
         }
     }
-    
+
     @media (max-width: 576px) {
         .credit-score-item {
             flex: 0 0 100%;
