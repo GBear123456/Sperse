@@ -34,7 +34,7 @@ export class LendspaceWelcome2Component extends AppComponentBase {
         },
         {
             name: 'PersonalFinance',
-            button: 'SeeOffers',
+            button: 'AddAccounts',
             router: 'personal-finance/my-finances',
             hidden: !this.feature.isEnabled('CFO.Partner'),
         }
