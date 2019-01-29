@@ -9,6 +9,7 @@ import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
     providers: [OfferServiceProxy]
 })
 export class CampaignOffersComponent extends AppComponentBase {
+    offersUrls: string[] = [];
 
     constructor(injector: Injector,
         private offerServiceProxy: OfferServiceProxy
@@ -22,8 +23,12 @@ export class CampaignOffersComponent extends AppComponentBase {
                 undefined, undefined, undefined, undefined,
                 undefined, [3009, 3011]
             ).subscribe((offers) => {
-console.log(offers);
+                this.offersUrls = offers.map((item) => item.redirectUrl);
             });
         });
+    }
+
+    open(url) { 
+        window.open(url, '_blank');
     }
 }
