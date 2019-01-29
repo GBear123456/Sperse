@@ -443,6 +443,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         filter.country,
                         this.offersService.getCreditScore(filter.category, filter.creditScore),
                         undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
                         undefined
                     ).pipe(
                         finalize(() => {

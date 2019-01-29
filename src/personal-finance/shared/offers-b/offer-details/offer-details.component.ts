@@ -112,7 +112,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
                     of(this.offersService.displayedCards) :
                         combineLatest(this.category$, this.offersService.memberInfo$).pipe(
                         switchMap(([category, memberInfo]) => this.offerServiceProxy.getAll(memberInfo.testMode, memberInfo.isDirectPostSupported,
-                                                    category, undefined, 'US', undefined, undefined, undefined)),
+                            category, undefined, 'US', undefined, undefined, undefined, undefined, undefined, undefined, undefined)),
                         publishReplay(),
                         refCount()
                     )
