@@ -150,7 +150,7 @@
                         <div class="description col-12 col-md-6 col-lg-7">
                             <small *ngIf="offerItem.issuingBank" class="bank-name">{{ offerItem.issuingBank }}</small>
                             <h4 (click)="applyOffer(offerItem)">{{ offerItem.name }}</h4>
-                            <!-- <p>Loan Amount $50,000</p> -->
+                            <p *ngIf="offerItem.minLoanAmount || offerItem.maxLoanAmount">{{ ls.l('Offers_LoanAmount') }}: {{offersService.formatLoanAmountValues(offerItem.minLoanAmount, offerItem.maxLoanAmount)}}</p>
                             <!-- <div class="rating" *ngIf="offerItem.overallRating">
                                 <stars-rating [currentRating]="offerItem.overallRating" color="#f0d500"></stars-rating>
                                 span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span
@@ -161,8 +161,10 @@
                                         <p>{{ ls.l('Offers_' + param) }}: {{ offersService.getParamDisplayValue(offerItem[param]) }}</p>
                                     </li>
                                 </ng-container>
-                                <!-- <li><p>Loan Term: 24-72 Months</p></li>
-                                <li><p>Credit Score: Fair/Good/Excellent</p></li> -->
+                                <li *ngIf="offerItem.minLoanTermMonths || offerItem.maxLoanTermMonths">
+                                    <p>{{ ls.l('Offers_LoanTerm') }}: {{ offersService.formatLoanTermsValues(offerItem.minLoanTermMonths, offerItem.maxLoanTermMonths) }}</p>
+                                </li>
+                                <li><p>{{ ls.l('Offers_CreditScore') }}: {{ offersService.formatCreditScores(offerItem.creditScores) }}</p></li>
                             </ul>
                         </div>
                     </li>

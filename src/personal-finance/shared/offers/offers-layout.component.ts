@@ -64,6 +64,7 @@ export class FilterValues {
     country: string;
     creditScore: number;
     brand: string;
+    loanAmount: number;
 }
 
 @Component({
@@ -178,7 +179,13 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 selected$: of(10000),
                 step: 500,
                 minMaxDisplayFunction: (value: number) => this.numberAbbrPipe.transform(value, '$'),
-                valueDisplayFunction: (value: number) => this.currencyPipe.transform(value, 'USD', 'symbol', '0.0-0')
+                valueDisplayFunction: (value: number) => this.currencyPipe.transform(value, 'USD', 'symbol', '0.0-0'),
+                onChange: (e: MatSliderChange) => {
+                    if (this.filtersValues.loanAmount != e.value) {
+                        this.filtersValues.loanAmount = e.value;
+                        this.selectedFilter.next(this.filtersValues);
+                    }
+                }
             }),
 
             new RangeFilterSetting({
@@ -384,7 +391,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     filterType = FilterType;
     maxDisplayedFilterValues = 5;
     selectedFilter = new BehaviorSubject(this.filtersValues);
-    private selectedFilter$: Observable<any>;
+    private selectedFilter$: Observable<FilterValues>;
 
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
@@ -477,7 +484,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         this.offersService.getCreditScore(filter.category, filter.creditScore),
                         undefined,
                         undefined,
-                        undefined,
+                        filter.loanAmount,
                         undefined,
                         undefined,
                         undefined
@@ -545,7 +552,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             category: undefined,
             country: 'US',
             creditScore: null,
-            brand: null
+            brand: null,
+            loanAmount: 10000
         };
     }
 

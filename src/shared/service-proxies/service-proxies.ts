@@ -1624,6 +1624,62 @@ export class ApplicationServiceProxy {
      * @request (optional) 
      * @return Success
      */
+    validateMemberSignUp(request: SignUpMemberRequest | null | undefined): Observable<ValidateMemberSignUpOutput> {
+        let url_ = this.baseUrl + "/api/services/PFM/Application/ValidateMemberSignUp";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processValidateMemberSignUp(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processValidateMemberSignUp(<any>response_);
+                } catch (e) {
+                    return <Observable<ValidateMemberSignUpOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ValidateMemberSignUpOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processValidateMemberSignUp(response: HttpResponseBase): Observable<ValidateMemberSignUpOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ValidateMemberSignUpOutput.fromJS(resultData200) : new ValidateMemberSignUpOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ValidateMemberSignUpOutput>(<any>null);
+    }
+
+    /**
+     * @request (optional) 
+     * @return Success
+     */
     signUpMember(request: SignUpMemberRequest | null | undefined): Observable<SignUpMemberResponse> {
         let url_ = this.baseUrl + "/api/services/PFM/Application/SignUpMember";
         url_ = url_.replace(/[?&]$/, "");
@@ -27580,6 +27636,7 @@ export class ResetPasswordInput implements IResetPasswordInput {
     returnUrl!: string | undefined;
     singleSignIn!: string | undefined;
     c!: string | undefined;
+    sendConfirmationEmail!: boolean | undefined;
 
     constructor(data?: IResetPasswordInput) {
         if (data) {
@@ -27598,6 +27655,7 @@ export class ResetPasswordInput implements IResetPasswordInput {
             this.returnUrl = data["returnUrl"];
             this.singleSignIn = data["singleSignIn"];
             this.c = data["c"];
+            this.sendConfirmationEmail = data["sendConfirmationEmail"];
         }
     }
 
@@ -27616,6 +27674,7 @@ export class ResetPasswordInput implements IResetPasswordInput {
         data["returnUrl"] = this.returnUrl;
         data["singleSignIn"] = this.singleSignIn;
         data["c"] = this.c;
+        data["sendConfirmationEmail"] = this.sendConfirmationEmail;
         return data; 
     }
 }
@@ -27627,6 +27686,7 @@ export interface IResetPasswordInput {
     returnUrl: string | undefined;
     singleSignIn: string | undefined;
     c: string | undefined;
+    sendConfirmationEmail: boolean | undefined;
 }
 
 export class ResetPasswordOutput implements IResetPasswordOutput {
@@ -29139,12 +29199,12 @@ export interface IUserInfo {
 
 export class SignUpMemberRequest implements ISignUpMemberRequest {
     firstName!: string;
-    middleName!: string | undefined;
     lastName!: string;
     email!: string;
     postalCode!: string | undefined;
     phoneNumber!: string | undefined;
     isUSCitizen!: boolean;
+    pendingPasswordReset!: boolean | undefined;
 
     constructor(data?: ISignUpMemberRequest) {
         if (data) {
@@ -29158,12 +29218,12 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
     init(data?: any) {
         if (data) {
             this.firstName = data["firstName"];
-            this.middleName = data["middleName"];
             this.lastName = data["lastName"];
             this.email = data["email"];
             this.postalCode = data["postalCode"];
             this.phoneNumber = data["phoneNumber"];
             this.isUSCitizen = data["isUSCitizen"];
+            this.pendingPasswordReset = data["pendingPasswordReset"];
         }
     }
 
@@ -29177,24 +29237,112 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["firstName"] = this.firstName;
-        data["middleName"] = this.middleName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
         data["postalCode"] = this.postalCode;
         data["phoneNumber"] = this.phoneNumber;
         data["isUSCitizen"] = this.isUSCitizen;
+        data["pendingPasswordReset"] = this.pendingPasswordReset;
         return data; 
     }
 }
 
 export interface ISignUpMemberRequest {
     firstName: string;
-    middleName: string | undefined;
     lastName: string;
     email: string;
     postalCode: string | undefined;
     phoneNumber: string | undefined;
     isUSCitizen: boolean;
+    pendingPasswordReset: boolean | undefined;
+}
+
+export class ValidateMemberSignUpOutput implements IValidateMemberSignUpOutput {
+    setting!: PasswordComplexitySetting | undefined;
+
+    constructor(data?: IValidateMemberSignUpOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.setting = data["setting"] ? PasswordComplexitySetting.fromJS(data["setting"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ValidateMemberSignUpOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ValidateMemberSignUpOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["setting"] = this.setting ? this.setting.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IValidateMemberSignUpOutput {
+    setting: PasswordComplexitySetting | undefined;
+}
+
+export class PasswordComplexitySetting implements IPasswordComplexitySetting {
+    requireDigit!: boolean | undefined;
+    requireLowercase!: boolean | undefined;
+    requireNonAlphanumeric!: boolean | undefined;
+    requireUppercase!: boolean | undefined;
+    requiredLength!: number | undefined;
+
+    constructor(data?: IPasswordComplexitySetting) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.requireDigit = data["requireDigit"];
+            this.requireLowercase = data["requireLowercase"];
+            this.requireNonAlphanumeric = data["requireNonAlphanumeric"];
+            this.requireUppercase = data["requireUppercase"];
+            this.requiredLength = data["requiredLength"];
+        }
+    }
+
+    static fromJS(data: any): PasswordComplexitySetting {
+        data = typeof data === 'object' ? data : {};
+        let result = new PasswordComplexitySetting();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["requireDigit"] = this.requireDigit;
+        data["requireLowercase"] = this.requireLowercase;
+        data["requireNonAlphanumeric"] = this.requireNonAlphanumeric;
+        data["requireUppercase"] = this.requireUppercase;
+        data["requiredLength"] = this.requiredLength;
+        return data; 
+    }
+}
+
+export interface IPasswordComplexitySetting {
+    requireDigit: boolean | undefined;
+    requireLowercase: boolean | undefined;
+    requireNonAlphanumeric: boolean | undefined;
+    requireUppercase: boolean | undefined;
+    requiredLength: number | undefined;
 }
 
 export class SignUpMemberResponse implements ISignUpMemberResponse {
@@ -43411,58 +43559,6 @@ export interface IHostBillingSettingsEditDto {
     address: string | undefined;
 }
 
-export class PasswordComplexitySetting implements IPasswordComplexitySetting {
-    requireDigit!: boolean | undefined;
-    requireLowercase!: boolean | undefined;
-    requireNonAlphanumeric!: boolean | undefined;
-    requireUppercase!: boolean | undefined;
-    requiredLength!: number | undefined;
-
-    constructor(data?: IPasswordComplexitySetting) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.requireDigit = data["requireDigit"];
-            this.requireLowercase = data["requireLowercase"];
-            this.requireNonAlphanumeric = data["requireNonAlphanumeric"];
-            this.requireUppercase = data["requireUppercase"];
-            this.requiredLength = data["requiredLength"];
-        }
-    }
-
-    static fromJS(data: any): PasswordComplexitySetting {
-        data = typeof data === 'object' ? data : {};
-        let result = new PasswordComplexitySetting();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["requireDigit"] = this.requireDigit;
-        data["requireLowercase"] = this.requireLowercase;
-        data["requireNonAlphanumeric"] = this.requireNonAlphanumeric;
-        data["requireUppercase"] = this.requireUppercase;
-        data["requiredLength"] = this.requiredLength;
-        return data; 
-    }
-}
-
-export interface IPasswordComplexitySetting {
-    requireDigit: boolean | undefined;
-    requireLowercase: boolean | undefined;
-    requireNonAlphanumeric: boolean | undefined;
-    requireUppercase: boolean | undefined;
-    requiredLength: number | undefined;
-}
-
 export class UserLockOutSettingsEditDto implements IUserLockOutSettingsEditDto {
     isEnabled!: boolean | undefined;
     maxFailedAccessAttemptsBeforeLockout!: number | undefined;
@@ -48217,10 +48313,10 @@ export class OfferDto implements IOfferDto {
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
     offerCollection!: OfferDtoOfferCollection | undefined;
-    minAmount!: number | undefined;
-    maxAmount!: number | undefined;
-    minLoanTerm!: string | undefined;
-    maxLoanTerm!: string | undefined;
+    minLoanAmount!: number | undefined;
+    maxLoanAmount!: number | undefined;
+    minLoanTermMonths!: number | undefined;
+    maxLoanTermMonths!: number | undefined;
     creditScores!: CreditScores[] | undefined;
 
     constructor(data?: IOfferDto) {
@@ -48246,10 +48342,10 @@ export class OfferDto implements IOfferDto {
             this.introRewardsBonus = data["introRewardsBonus"];
             this.regularAPR = data["regularAPR"];
             this.offerCollection = data["offerCollection"];
-            this.minAmount = data["minAmount"];
-            this.maxAmount = data["maxAmount"];
-            this.minLoanTerm = data["minLoanTerm"];
-            this.maxLoanTerm = data["maxLoanTerm"];
+            this.minLoanAmount = data["minLoanAmount"];
+            this.maxLoanAmount = data["maxLoanAmount"];
+            this.minLoanTermMonths = data["minLoanTermMonths"];
+            this.maxLoanTermMonths = data["maxLoanTermMonths"];
             if (data["creditScores"] && data["creditScores"].constructor === Array) {
                 this.creditScores = [];
                 for (let item of data["creditScores"])
@@ -48279,10 +48375,10 @@ export class OfferDto implements IOfferDto {
         data["introRewardsBonus"] = this.introRewardsBonus;
         data["regularAPR"] = this.regularAPR;
         data["offerCollection"] = this.offerCollection;
-        data["minAmount"] = this.minAmount;
-        data["maxAmount"] = this.maxAmount;
-        data["minLoanTerm"] = this.minLoanTerm;
-        data["maxLoanTerm"] = this.maxLoanTerm;
+        data["minLoanAmount"] = this.minLoanAmount;
+        data["maxLoanAmount"] = this.maxLoanAmount;
+        data["minLoanTermMonths"] = this.minLoanTermMonths;
+        data["maxLoanTermMonths"] = this.maxLoanTermMonths;
         if (this.creditScores && this.creditScores.constructor === Array) {
             data["creditScores"] = [];
             for (let item of this.creditScores)
@@ -48305,10 +48401,10 @@ export interface IOfferDto {
     introRewardsBonus: string | undefined;
     regularAPR: string | undefined;
     offerCollection: OfferDtoOfferCollection | undefined;
-    minAmount: number | undefined;
-    maxAmount: number | undefined;
-    minLoanTerm: string | undefined;
-    maxLoanTerm: string | undefined;
+    minLoanAmount: number | undefined;
+    maxLoanAmount: number | undefined;
+    minLoanTermMonths: number | undefined;
+    maxLoanTermMonths: number | undefined;
     creditScores: CreditScores[] | undefined;
 }
 
@@ -48330,10 +48426,10 @@ export class OfferDetailsDto implements IOfferDetailsDto {
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
     offerCollection!: OfferDetailsDtoOfferCollection | undefined;
-    minAmount!: number | undefined;
-    maxAmount!: number | undefined;
-    minLoanTerm!: string | undefined;
-    maxLoanTerm!: string | undefined;
+    minLoanAmount!: number | undefined;
+    maxLoanAmount!: number | undefined;
+    minLoanTermMonths!: number | undefined;
+    maxLoanTermMonths!: number | undefined;
     creditScores!: CreditScores2[] | undefined;
 
     constructor(data?: IOfferDetailsDto) {
@@ -48376,10 +48472,10 @@ export class OfferDetailsDto implements IOfferDetailsDto {
             this.introRewardsBonus = data["introRewardsBonus"];
             this.regularAPR = data["regularAPR"];
             this.offerCollection = data["offerCollection"];
-            this.minAmount = data["minAmount"];
-            this.maxAmount = data["maxAmount"];
-            this.minLoanTerm = data["minLoanTerm"];
-            this.maxLoanTerm = data["maxLoanTerm"];
+            this.minLoanAmount = data["minLoanAmount"];
+            this.maxLoanAmount = data["maxLoanAmount"];
+            this.minLoanTermMonths = data["minLoanTermMonths"];
+            this.maxLoanTermMonths = data["maxLoanTermMonths"];
             if (data["creditScores"] && data["creditScores"].constructor === Array) {
                 this.creditScores = [];
                 for (let item of data["creditScores"])
@@ -48426,10 +48522,10 @@ export class OfferDetailsDto implements IOfferDetailsDto {
         data["introRewardsBonus"] = this.introRewardsBonus;
         data["regularAPR"] = this.regularAPR;
         data["offerCollection"] = this.offerCollection;
-        data["minAmount"] = this.minAmount;
-        data["maxAmount"] = this.maxAmount;
-        data["minLoanTerm"] = this.minLoanTerm;
-        data["maxLoanTerm"] = this.maxLoanTerm;
+        data["minLoanAmount"] = this.minLoanAmount;
+        data["maxLoanAmount"] = this.maxLoanAmount;
+        data["minLoanTermMonths"] = this.minLoanTermMonths;
+        data["maxLoanTermMonths"] = this.maxLoanTermMonths;
         if (this.creditScores && this.creditScores.constructor === Array) {
             data["creditScores"] = [];
             for (let item of this.creditScores)
@@ -48457,10 +48553,10 @@ export interface IOfferDetailsDto {
     introRewardsBonus: string | undefined;
     regularAPR: string | undefined;
     offerCollection: OfferDetailsDtoOfferCollection | undefined;
-    minAmount: number | undefined;
-    maxAmount: number | undefined;
-    minLoanTerm: string | undefined;
-    maxLoanTerm: string | undefined;
+    minLoanAmount: number | undefined;
+    maxLoanAmount: number | undefined;
+    minLoanTermMonths: number | undefined;
+    maxLoanTermMonths: number | undefined;
     creditScores: CreditScores2[] | undefined;
 }
 
@@ -48631,10 +48727,10 @@ export class ExtendOfferDto implements IExtendOfferDto {
     details!: string[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
-    minAmount!: number | undefined;
-    maxAmount!: number | undefined;
-    minLoanTerm!: string | undefined;
-    maxLoanTerm!: string | undefined;
+    minLoanAmount!: number | undefined;
+    maxLoanAmount!: number | undefined;
+    minLoanTermMonths!: number | undefined;
+    maxLoanTermMonths!: number | undefined;
     flags!: Flags | undefined;
 
     constructor(data?: IExtendOfferDto) {
@@ -48690,10 +48786,10 @@ export class ExtendOfferDto implements IExtendOfferDto {
                 for (let item of data["cons"])
                     this.cons.push(item);
             }
-            this.minAmount = data["minAmount"];
-            this.maxAmount = data["maxAmount"];
-            this.minLoanTerm = data["minLoanTerm"];
-            this.maxLoanTerm = data["maxLoanTerm"];
+            this.minLoanAmount = data["minLoanAmount"];
+            this.maxLoanAmount = data["maxLoanAmount"];
+            this.minLoanTermMonths = data["minLoanTermMonths"];
+            this.maxLoanTermMonths = data["maxLoanTermMonths"];
             this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
         }
     }
@@ -48749,10 +48845,10 @@ export class ExtendOfferDto implements IExtendOfferDto {
             for (let item of this.cons)
                 data["cons"].push(item);
         }
-        data["minAmount"] = this.minAmount;
-        data["maxAmount"] = this.maxAmount;
-        data["minLoanTerm"] = this.minLoanTerm;
-        data["maxLoanTerm"] = this.maxLoanTerm;
+        data["minLoanAmount"] = this.minLoanAmount;
+        data["maxLoanAmount"] = this.maxLoanAmount;
+        data["minLoanTermMonths"] = this.minLoanTermMonths;
+        data["maxLoanTermMonths"] = this.maxLoanTermMonths;
         data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
         return data; 
     }
@@ -48789,10 +48885,10 @@ export interface IExtendOfferDto {
     details: string[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
-    minAmount: number | undefined;
-    maxAmount: number | undefined;
-    minLoanTerm: string | undefined;
-    maxLoanTerm: string | undefined;
+    minLoanAmount: number | undefined;
+    maxLoanAmount: number | undefined;
+    minLoanTermMonths: number | undefined;
+    maxLoanTermMonths: number | undefined;
     flags: Flags | undefined;
 }
 

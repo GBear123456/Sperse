@@ -29,14 +29,14 @@
         &.lock {
             min-width: 220px;
             padding-right: 50px;
-            background: url(../../../assets/common/images/lend-space-dark/welcome/lock.png) no-repeat 92%, linear-gradient(#f1e76b, #fdb234);        
+            background: url(../../../assets/common/images/lend-space-dark/welcome/lock.png) no-repeat 92%, linear-gradient(#f1e76b, #fdb234);
         }
     }
     .jumbotron {
         margin-bottom:0;
 
         & > div {
-            padding-bottom: 50px;    
+            padding-bottom: 50px;
             text-align: right;
         }
         h1 {
@@ -46,7 +46,7 @@
         h3 {
             font-size: 20px;
             padding-top: 10px;
-            padding-bottom: 40px;    
+            padding-bottom: 40px;
             width: 315px;
             margin-left: auto;
         }
@@ -80,13 +80,24 @@
         }
 
         @media all and (max-width:600px){
+            padding: 0;
+            height: 540px;
+
             .container.align-self-center {
-                max-width: 300px;
+                max-width: 100%;
+                padding-left: 15px;
+                background: rgba(255,255,255,.65);
+                display: flex;
+                align-items: flex-end;
+
                 h1 {
-                    font-size: 34px;
+                    font-size: 28px;
                 }
+
                 h3 {
                     font-size: 16px;
+                    width: auto;
+                    max-width: 100%;
                 }
             }
             &.top {
@@ -104,6 +115,10 @@
             font-size:45px;
             font-weight:700;
             color:#333333!important;
+
+            @media all and (max-width: 600px) {
+                font-size: 30px;
+            }
         }
         .dark-sub-title {
             font-size:18px;
@@ -185,7 +200,7 @@
                     position: relative;
                     h3 {
                         margin-top: 0px;
-                    }  
+                    }
                     button {
                         position: absolute;
                         bottom: 0px;
@@ -231,8 +246,11 @@
                         .text-wrapper {
                             width: 100%!important;
                             text-align: center;
+                            padding: 0;
+
                             h3 {
                                 width: auto;
+                                font-size: 20px;
                             }
                             p {
                                 display: none;
@@ -240,8 +258,8 @@
                             button {
                                 top: 160px;
                                 left: 0px;
-                                position: absolute;
                                 height: 55px;
+                                font-size: 20px;
                             }
                         }
                         &:last-child {
@@ -292,6 +310,11 @@
                 color: #dcdcdc;
                 border:2px solid #dcdcdc;
             }
+
+            @media all and (max-width: 600px) {
+                width: 95%;
+                margin: 30px auto 0;
+            }
         }
 
         .wrapper{
@@ -308,30 +331,34 @@
             }
 
             .right-panel {
-                .top {    
+                .top {
                     text-align: center;
                     height: 360px;
 
-                    h1 {    
+                    h1 {
                         color: #FFF;
                         font-size: 42px;
                         font-weight: 700;
                         padding-top: 40px;
                     }
                 }
-                .bottom {    
+                .bottom {
                     width: 100%;
                     height: 540px;
                     background: url(../../../assets/common/images/lend-space-dark/welcome/bottom-right.png) no-repeat center/contain;
                     background-position: bottom;
                     background-size: auto 600px;
+
+                    @media all and (max-width: 600px) {
+                        background-size: auto 570px;
+                    }
                 }
             }
         }
 
         @media all and (max-width:1200px){
             .wrapper {
-                flex-direction: column;    
+                flex-direction: column;
                 & > div, campaign-offers {
                     width: 100%;
                 }
