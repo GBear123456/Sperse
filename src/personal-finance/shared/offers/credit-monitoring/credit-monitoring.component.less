@@ -25,13 +25,14 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        @media all and (max-width: 991px) {
-            display: none;
-        }
+        // @media all and (max-width: 991px) {
+        //     display: none;
+        // }
     }
 
     header {
         padding-bottom: 21px;
+
         h1 {
             color: #000;
             font-size: 42px;
@@ -41,6 +42,10 @@
             margin-bottom: 7px;
             text-transform: capitalize;
 
+            @media all and(max-width: 768px) {
+                font-size: 30px;
+            }
+
             + p {
                 font-size: 18px;
                 max-width: 840px;
@@ -49,11 +54,11 @@
         }
     }
 
-    .main {
-        position: relative;
-        border: 1px solid #999;
-        margin: 0;
-    }
+    // .main {
+    //     position: relative;
+    //     border: 1px solid #999;
+    //     margin: 0;
+    // }
 
     .offer-details-wrap {
         padding: 32px 50px 50px;
