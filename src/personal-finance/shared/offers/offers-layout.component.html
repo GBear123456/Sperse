@@ -9,7 +9,7 @@
         </ng-template>
     </header>
     <div class="row main">
-        <div class="filter-side-bar md-hidden col-lg-4" #filtersSideBar>
+        <div class="filter-side-bar col-md-12 col-lg-4" #filtersSideBar>
             <div #leftRef class="sticky">
                 <ng-content select="[leftContent]"></ng-content>
             </div>
@@ -123,10 +123,6 @@
                     <h2 class="text-center">
                         {{ ls.l(prefix + '_Right_Title') }}
                     </h2>
-                    <div class="mobileButtons">
-                        <button class="btn btn-secondary sortingButton" (click)="toggleSorting($event)"></button>
-                        <button class="btn-btn-secondary filteringButton" (click)="toggleFiltering($event)"></button>
-                    </div>
                 </div>
                 <ul class="credit-cards-list">
                     <li class="row" *ngFor="let offerItem of displayedOffers$ | async | slice:0:visibleOffers; let i = index" [ngClass]="{'recommend': i < 3}">
