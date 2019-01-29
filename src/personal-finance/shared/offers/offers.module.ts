@@ -1,7 +1,7 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { MatSelectModule } from '@angular/material/select';
@@ -67,7 +67,8 @@ import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers
     ],
     providers: [
         OffersService,
-        OfferServiceProxy
+        OfferServiceProxy,
+        CurrencyPipe
     ],
     entryComponents: [
         ApplyOfferDialogComponent
