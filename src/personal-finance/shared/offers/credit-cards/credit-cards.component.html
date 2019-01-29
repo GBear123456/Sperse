@@ -11,7 +11,7 @@
                 <h2>To help you find the ideal card for you, the LendSpace team has assembled the</h2>
                 <button *ngIf="bestCreditCard"
                         (click)="openOffers(bestCreditCard)"
-                        class="best-cc-offers">
+                        class="applyButton">
                     {{ls.l('OfferCollection_' + bestCreditCard.offerCollection)}} Offers for 2019!
                 </button>
             </div>
@@ -66,7 +66,7 @@
                         <div class="row" *ngIf="(cards && cards.length); else noCards">
                             <div class="w-100 mb-5">
                                 <div class="col-12 text-center">
-                                    <button class="best-cc-offers" (click)="openOffers(selectedOfferGroup)">
+                                    <button class="applyButton" (click)="openOffers(selectedOfferGroup)">
                                         View all cards in this category
                                     </button>
                                 </div>
@@ -97,7 +97,7 @@
 
                             <div class="w-100 mt-5">
                                 <div class="col-12 text-center">
-                                    <button class="best-cc-offers" (click)="openOffers(selectedOfferGroup)">
+                                    <button class="applyButton" (click)="openOffers(selectedOfferGroup)">
                                         View all cards in this category
                                     </button>
                                 </div>

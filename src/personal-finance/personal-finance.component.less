@@ -525,8 +525,7 @@
     /deep/ a.applyButton {
 
         text-align: center;
-        width: 143px;
-        padding: 7px 0;
+        padding: 7px;
         border: 1px solid #b1770b;
         border-radius: 3px;
         background-image: linear-gradient(0deg, #fdb337, #f3ea80);
@@ -537,6 +536,7 @@
         align-items: center;
         justify-content: center;
         margin: 0 auto 7px;
+        cursor: pointer;
 
         &:hover {
             background-image: linear-gradient(0deg, #f3ea80, #fdb337);
@@ -563,6 +563,11 @@
                 right: 26px;
                 position: absolute;
             }
+        }
+        &::after {
+            content: url(../assets/common/icons/lock.png);
+            margin-left: 10px;
+            height: 24px;
         }
     }
 
