@@ -156,12 +156,15 @@
                                 span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span
                             </div> -->
                             <ul class="descriptionItems">
-                                <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'introRewardsBonus', 'regularAPR']">
+                                <li *ngIf="offerItem.annualFee && (pagePrefix == 'CreditCards')" >
+                                    <p>{{ ls.l('Offers_annualFee') }}: {{ offersService.getParamDisplayValue(offerItem.annualFee) }}</p>
+                                </li>
+                                <ng-container *ngFor="let param of ['rewardsRate', 'introRewardsBonus', 'regularAPR']">
                                     <li *ngIf="offerItem[param]">
                                         <p>{{ ls.l('Offers_' + param) }}: {{ offersService.getParamDisplayValue(offerItem[param]) }}</p>
                                     </li>
                                 </ng-container>
-                                <li *ngIf="offerItem.minLoanTermMonths || offerItem.maxLoanTermMonths">
+                                <li *ngIf="(offerItem.minLoanTermMonths || offerItem.maxLoanTermMonths) && (pagePrefix != 'CreditCards')">
                                     <p>{{ ls.l('Offers_LoanTerm') }}: {{ offersService.formatLoanTermsValues(offerItem.minLoanTermMonths, offerItem.maxLoanTermMonths) }}</p>
                                 </li>
                                 <li><p>{{ ls.l('Offers_CreditScore') }}: {{ offersService.formatCreditScores(offerItem.creditScores) }}</p></li>

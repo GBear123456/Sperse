@@ -222,6 +222,9 @@ export class OffersService {
         if (!scores.length)
             return 'Any';
 
+        if (scores.length >= 4)
+            return 'Any';
+
         return scores.join('/');
     }
 
