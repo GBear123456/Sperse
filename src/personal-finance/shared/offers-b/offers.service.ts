@@ -17,7 +17,8 @@ import {
     SubmitApplicationInput,
     SubmitApplicationOutput,
     OfferServiceProxy,
-    GetMemberInfoResponse
+    GetMemberInfoResponse,
+    OfferDtoCampaignProviderType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers-b/interfaces/credit-score.interface';
@@ -71,7 +72,7 @@ export class OffersService {
             max: 850
         }
     };
-    readonly creditCardsLogoUrl = './assets/common/images/offers/credit-land.png';
+    readonly creditLandLogoUrl = './assets/common/images/offers/credit-land.png';
     displayedCards: OfferDto[];
     defaultCategoryDisplayName: string = this.ls.l('Offers_Offers');
     constructor(
@@ -123,7 +124,7 @@ export class OffersService {
         }
     }
 
-    applyOffer(offer: OfferDto, isCreditCard = false) {
+    applyOffer(offer: OfferDto) {
         const linkIsDirect = !!offer.redirectUrl;
         const submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.campaignId,
@@ -136,7 +137,7 @@ export class OffersService {
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
             redirectUrl: offer.redirectUrl,
-            logoUrl: isCreditCard ? this.creditCardsLogoUrl : offer.logoUrl
+            logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand ? this.creditLandLogoUrl : offer.logoUrl
         };
         if (!linkIsDirect) {
             modalData.processingSteps = cloneDeep(this.processingSteps);

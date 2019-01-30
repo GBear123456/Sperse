@@ -2572,16 +2572,6 @@ detect-zoom@^1.0.2:
     defined "^1.0.0"
     minimist "^1.1.1"
 
-devextreme-angular@^18.1.4:
-  version "18.1.4"
-  resolved "https://registry.yarnpkg.com/devextreme-angular/-/devextreme-angular-18.1.4.tgz#ea633afe8a3baa62ed09d4762f5f0be5b6a0b68d"
-
-devextreme@^18.1.4:
-  version "18.1.4"
-  resolved "https://registry.yarnpkg.com/devextreme/-/devextreme-18.1.4.tgz#a1552df205bea37f6b50769c7bbcaa3b8fd9e81c"
-  dependencies:
-    jszip "^2.0.0 || ^3.0.0"
-
 di@^0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/di/-/di-0.0.1.tgz#806649326ceaa7caa3306d75d985ea2748ba913c"

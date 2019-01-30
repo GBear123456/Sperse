@@ -102,7 +102,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
     }
 
     openOffers(offer: OfferDto) {
-        this.offersService.applyOffer(offer, true);
+        this.offersService.applyOffer(offer);
     }
 
     getCreditCards(collection = 'Best') {
