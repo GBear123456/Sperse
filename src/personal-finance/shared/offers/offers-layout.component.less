@@ -66,7 +66,7 @@
                 margin: 0 auto;
                 @media all and(max-width: 992px) {
                     font-size: 16px;
-                }    
+                }
             }
         }
     }
@@ -444,6 +444,10 @@
                     margin-bottom: 8px;
                     position: relative;
 
+                    @media all and (max-width: 400px) {
+                        padding: 35px 15px;
+                    }
+
                     &.recommend {
                         background-color: #f3f3f3;
                     }
@@ -457,6 +461,11 @@
                         top: 0;
                         padding: 6px 22px;
                         font-weight: 700;
+
+                        @media all and (max-width: 400px) {
+                            font-size: 16px;
+                            padding: 6px 14px;
+                        }
                     }
 
                     .corner-block {
@@ -527,6 +536,10 @@
                             width: 100%;
                             margin: 0 auto;
 
+                            @media all and (max-width: 400px) {
+                                margin-top: 15px;
+                            }
+
                             img {
                                 cursor: pointer;
                                 max-width: 100%;
@@ -566,6 +579,11 @@
                         .bank-name {
                             font-size: 95%;
                             color: #656565;
+                            display: block;
+
+                            @media all and (max-width: 768px) {
+                                text-align: center;
+                            }
                         }
 
                         h4 {
