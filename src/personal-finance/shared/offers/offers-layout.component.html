@@ -15,8 +15,8 @@
             </div>
             <!--Default left section-->
             <div *ngIf="leftRef.childNodes.length === 0" class="sticky">
-                <h2 class="text-left">{{ ls.l('Refine_Your_Search')}}</h2>
-                <ul class="filters">
+                <h2 class="text-left filters-toogle" (click)="hideFilters = !hideFilters">{{ ls.l('Refine_Your_Search') }}<i class="mat-select-arrow" [ngClass]="{collapsed: hideFilters}"></i></h2>
+                <ul class="filters" [ngClass]="{collapsed: hideFilters}">
                     <ng-container *ngFor="let filter of filters$ | async">
                         <li [ngClass]="{'slider-filter': filter.type === 2}">
                             <div class="filterName" *ngIf="filter.name">

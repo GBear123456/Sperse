@@ -80,6 +80,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     @ViewChild('sortingSelect') sortingSelect: MatSelect;
     offers$: Observable<any>;
     displayedOffers$: Observable<any>;
+
+    hideFilters = true;
     offersAmount: number;
     offersAreLoading = false;
     sortings = [
