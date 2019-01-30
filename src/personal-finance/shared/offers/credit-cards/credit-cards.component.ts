@@ -10,14 +10,13 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { debounceTime, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
+import { finalize, map, switchMap } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import * as _ from 'underscore';
 
 import { OfferDto, Category, ItemOfOfferCollection, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { fromEvent } from '@node_modules/rxjs';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
@@ -27,10 +26,6 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     providers: [ LifecycleSubjectsService ]
 })
 export class CreditCardsComponent implements OnInit, OnDestroy {
-    private _offerNavigationList: ElementRef;
-    @ViewChild('offerNavigationList') set offerNavigationList (navigationList: ElementRef) {
-        this._offerNavigationList = navigationList;
-    }
     private _resultByCategory: ElementRef;
     @ViewChild('resultByCategory') set resultByCategory (resultByCategory: ElementRef) {
         this._resultByCategory = resultByCategory;
@@ -90,26 +85,6 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
             this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection)).sort(this.sortCollection.bind(this, itemOfOfferCollections));
             this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort(this.sortCollection.bind(this, itemOfOfferCollections));
         });
-
-        fromEvent(this.document.body, 'scroll')
-            .pipe(
-                takeUntil(this.lifecycleSubjectService.destroy$),
-                /** To avoid a lot of calls */
-                debounceTime(15)
-            ).subscribe(() => this.onScroll());
-    }
-
-    onScroll() {
-        if (this._offerNavigationList) {
-            const offersCreditCardsNavigationBoundingRect = this._offerNavigationList.nativeElement.getBoundingClientRect();
-            const resultByCategoryRect = this._resultByCategory.nativeElement.getBoundingClientRect();
-            if (offersCreditCardsNavigationBoundingRect.top < 90 && window.innerWidth > 577) {
-                this.renderer.addClass(this._offerNavigationList.nativeElement, 'fixed');
-            }
-            if (offersCreditCardsNavigationBoundingRect.top < resultByCategoryRect.top || window.innerWidth <= 577) {
-                this.renderer.removeClass(this._offerNavigationList.nativeElement, 'fixed');
-            }
-        }
     }
 
     sortCollection(itemOfOfferCollections, a, b) {
