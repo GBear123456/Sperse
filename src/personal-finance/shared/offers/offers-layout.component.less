@@ -560,11 +560,9 @@
                         }
                     }
 
-                    // &:first-child {
-                        // border-top: 1px solid @border-color;
-                    // }
-
                     .description {
+                        align-self: flex-start !important;
+
                         .bank-name {
                             font-size: 95%;
                             color: #656565;
@@ -576,7 +574,7 @@
                             font-weight: 700;
                             letter-spacing: 0.24px;
                             line-height: 23px;
-                            margin: 10px auto;
+                            margin: 20px auto 10px;
                             cursor: pointer;
 
                             @media all and(max-width: 768px) {
@@ -588,6 +586,10 @@
                                 font-size: 16px;
                                 font-weight: 500;
                             }
+                        }
+
+                        small + h4 {
+                            margin-top: 10px !important;
                         }
 
                         .rating {
@@ -710,18 +712,6 @@
                 margin-bottom: -30px;
             }
         }
-    }
-}
-
-/deep/ .description {
-    align-self: flex-start !important;
-
-    h4 {
-        margin-top: 20px !important;
-    }
-
-    small + h4 {
-        margin-top: 10px !important;
     }
 }
 

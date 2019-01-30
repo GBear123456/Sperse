@@ -95,7 +95,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this.lifecycleSubjectService.destroy$),
                 /** To avoid a lot of calls */
-                debounceTime(15),
+                debounceTime(15)
             ).subscribe(() => this.onScroll());
     }
 
@@ -103,10 +103,10 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         if (this._offerNavigationList) {
             const offersCreditCardsNavigationBoundingRect = this._offerNavigationList.nativeElement.getBoundingClientRect();
             const resultByCategoryRect = this._resultByCategory.nativeElement.getBoundingClientRect();
-            if (offersCreditCardsNavigationBoundingRect.top < 90) {
+            if (offersCreditCardsNavigationBoundingRect.top < 90 && window.innerWidth > 577) {
                 this.renderer.addClass(this._offerNavigationList.nativeElement, 'fixed');
             }
-            if (offersCreditCardsNavigationBoundingRect.top < resultByCategoryRect.top) {
+            if (offersCreditCardsNavigationBoundingRect.top < resultByCategoryRect.top || window.innerWidth <= 577) {
                 this.renderer.removeClass(this._offerNavigationList.nativeElement, 'fixed');
             }
         }
