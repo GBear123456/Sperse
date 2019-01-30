@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { Category } from '@shared/service-proxies/service-proxies';
-
-import { kebabCase, lowerCase, startCase } from 'lodash';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'navigation',
@@ -9,14 +7,19 @@ import { kebabCase, lowerCase, startCase } from 'lodash';
     styleUrls: [ './navigation.component.less' ]
 })
 export class NavigationComponent {
+    constructor(private ls: AppLocalizationService) {}
     links = [
-        'CreditScores',
-        // Category.CreditRepair,
-        'IDTheftProtection',
-        Category.DebtConsolidation
-    ].map(category => kebabCase(category));
-
-    getLinkName(name: string): string {
-        return startCase(lowerCase(name));
-    }
+        {
+            name: this.ls.l('CreditScore_CreditScores'),
+            url: 'credit-scores'
+        },
+        {
+            name: this.ls.l('Offers_IdTheftProtection'),
+            url: 'id-theft-protection'
+        },
+        {
+            name: this.ls.l('Offers_DebtConsolidation'),
+            url: 'debt-consolidation'
+        }
+    ];
 }
