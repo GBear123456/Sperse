@@ -46,8 +46,6 @@
 
         <section class="results-by-category" #resultByCategory>
             <ng-container *ngIf="filteredGroup && filteredGroup.length">
-                <h2>Top results by category</h2>
-
                 <div class="row">
                     <div class="col-md-3 col-sm-4 offer-navigation">
                         <ul class="offer-navigation__list" #offerNavigationList>
@@ -63,6 +61,7 @@
                         </ul>
                     </div>
                     <div class="col-md-9 col-sm-8 offer-collection">
+                        <h2>Top results by category</h2>
                         <div class="row" *ngIf="(cards && cards.length); else noCards">
                             <div class="w-100 mb-5">
                                 <div class="col-12 text-center">

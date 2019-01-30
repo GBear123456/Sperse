@@ -10,7 +10,7 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { debounceTime, finalize, map, switchMap, takeUntil, throttle } from 'rxjs/operators';
+import { debounceTime, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import * as _ from 'underscore';
 
@@ -120,6 +120,9 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         this.offerCollection$.subscribe(collectionName => {
             this.getCreditCards(collectionName.group);
             this.selectedOfferGroup = this.creditCardCollection.filter(item => item.offerCollection == collectionName.group)[0];
+            if (this._resultByCategory) {
+                this.document.body.scrollBy(0, this._resultByCategory.nativeElement.getBoundingClientRect().top - 100);
+            }
         });
     }
 
