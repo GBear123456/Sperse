@@ -82,7 +82,8 @@ export class AppConsts {
         ein: /^\d{2}\-?\d{7}$/,
         duns: /^\d{2}\-?\d{3}-?\d{4}$/,
         siteUrl: /^(http:\/\/| https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
-        zipUsPattern: /^\d{5}(?:-\d{4})?$/
+        zipUsPattern: /^\d{5}(?:-\d{4})?$/,
+        notSupportedDocuments: /\.(ade|adp|apk|bat|chm|cmd|com|cpl|dll|dmg|exe|hta|ins|isp|jar|js|jse|lib|lnk|mde|msc|msi|msp|mst|nsh|pif|scr|sct|shb|sys|vb|vbe|vbs|vxd|wsc|wsf|wsh|cab)$/i
     };
 
     static readonly imageUrls = {
@@ -110,6 +111,8 @@ export class AppConsts {
     static readonly generalDictionariesCacheLifetime = 2 * 60 * 60 * 1000;
 
     static readonly maxImageSize = 5242880;
+
+    static readonly maxDocumentSizeBytes = 1024 * 1024 * 100;
 
     /* Custom tenant domains */
     static readonly LENDSPACE_DOMAIN = 'https://www.lendspace.com';

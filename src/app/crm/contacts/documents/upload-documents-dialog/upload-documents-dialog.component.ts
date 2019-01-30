@@ -131,6 +131,19 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
                 this.updateUploadProgress.bind(this, index),
                 Math.round(input.size / 10000)
             );
+
+        if (AppConsts.regexPatterns.notSupportedDocuments.test(input.name)) {
+            this.notify.error(this.l('FileIsNotSupported'));
+            this.finishUploading(progressInterval, index);
+            return;
+        }
+
+        if (input.size > AppConsts.maxDocumentSizeBytes) {
+            this.notify.error(this.l('FilesizeLimitWarn', this.convertBytesToMegabytes(AppConsts.maxDocumentSizeBytes)));
+            this.finishUploading(progressInterval, index);
+            return;
+        }
+
         this.uploadSubscribers.push(
             this._documentService.upload(UploadDocumentInput.fromJS({
                 contactId: this.data.contactId,
@@ -138,17 +151,28 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
                 size: input.size,
                 fileBase64: input.fileBase64
             })).pipe(finalize(() => {
-                this.uploadedCount++;
-                clearInterval(progressInterval);
-                this.finishUploadProgress(index);
-                if (this.uploadedCount >= this.totalCount) {
-                    this.totalCount = 0;
-                    this.uploadedCount = 0;
-                }
+                this.finishUploading(progressInterval, index);
             })).subscribe(() => {
                 this._clientService.invalidate('documents');
             })
         );
+    }
+
+    finishUploading(progressInterval, index) {
+        this.uploadedCount++;
+        clearInterval(progressInterval);
+        this.finishUploadProgress(index);
+        if (this.uploadedCount >= this.totalCount) {
+            this.totalCount = 0;
+            this.uploadedCount = 0;
+        }
+    }
+
+    convertBytesToMegabytes(bytes: number) {
+        if (bytes == 0)
+            return 0;
+
+        return (bytes / Math.pow(1024, Math.floor(Math.log(bytes) / Math.log(1024)))).toFixed(0);
     }
 
     cancelUpload(index) {
