@@ -67,6 +67,9 @@
                 @media all and(max-width: 992px) {
                     font-size: 16px;
                 }
+                @media all and(max-width: 540px) {
+                    font-size: 14px;
+                }
             }
         }
     }
@@ -87,7 +90,7 @@
                 }
                 @media all and(max-width: 540px) {
                     font-size: 16px;
-                    margin: 10px 0px;
+                    margin: 15px 0px 20px;
                 }
                 @media all and (max-width: 992px) {
                     cursor: pointer;
@@ -365,7 +368,7 @@
                 }
 
                 @media all and(max-width: 540px) {
-                    font-size: 16px;
+                    font-size: 14px;
                 }
             }
 
@@ -428,12 +431,10 @@
             }
         }
         .offersList {
-            padding-left: 29px;
-            padding-right: 29px;
-            // @media (min-width: 1200px) {
-            //     padding-left: 29px;
-            //     padding-right: 29px;
-            // }
+            padding: 0 29px;
+            @media all and (max-width: 540px) {
+                padding: 0 15px;
+            }
             ul.credit-cards-list {
                 & > li {
                     border: 1px solid #666;
