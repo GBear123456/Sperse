@@ -4,5 +4,8 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.staging.json',
     appBaseUrl: 'https://testadmin.sperse.com',
-    appBaseHref: 'https://testuicdn.azureedge.net/current/'
+    appBaseHref: 'https://testuicdn.azureedge.net/current/',
+
+    /* Custom tenant domains */
+    LENDSPACE_DOMAIN: 'https://test.lendspace.com'
 };

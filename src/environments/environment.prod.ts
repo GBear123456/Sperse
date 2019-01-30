@@ -4,5 +4,8 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.prod.json',
     appBaseUrl: 'https://app.sperse.com',
-    appBaseHref: 'https://sperseproduicdn.azureedge.net/current/'
+    appBaseHref: 'https://sperseproduicdn.azureedge.net/current/',
+
+    /* Custom tenant domains */
+    LENDSPACE_DOMAIN: 'https://www.lendspace.com'
 };

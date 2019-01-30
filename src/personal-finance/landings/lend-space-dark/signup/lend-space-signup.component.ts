@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 /** Application imports */
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { AppConsts } from 'shared/AppConsts';
+import { environment } from 'environments/environment';
 import { ApplicationServiceProxy, SignUpMemberRequest } from '@shared/service-proxies/service-proxies';
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
@@ -37,9 +38,9 @@ export class LendSpaceSignupComponent extends AppComponentBase {
     isAgreedToRecieveCalls = false;
     registerData: SignUpMemberRequest = new SignUpMemberRequest();
     modalsData = {
-        terms: { title: 'Terms of Use', bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/terms.html', downloadDisabled: true },
-        privacy: { title: 'Privacy Policy', bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/policy.html', downloadDisabled: true },
-        lender: { title: 'Lender Terms', bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/lender.html', downloadDisabled: true }
+        terms: { title: 'Terms of Use', bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/terms.html', downloadDisabled: true },
+        privacy: { title: 'Privacy Policy', bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/policy.html', downloadDisabled: true },
+        lender: { title: 'Lender Terms', bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/lender.html', downloadDisabled: true }
     };
     isRoutProcessed = false;
     constructor(

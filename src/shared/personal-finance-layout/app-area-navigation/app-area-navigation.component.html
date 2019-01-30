@@ -49,7 +49,7 @@
 
 <ul class="right-actions" *ngIf="!loggedUserId">
     <li class="right-actions--item" *ngFor="let link of actionsButtons">
-        <a [routerLink]="link.routerUrl" class="left-menu--link"
+        <a [href]="link.routerUrl" class="left-menu--link"
            [ngClass]="link.class"
            [class.disable]="link.disabled">
             <span>{{l(link.name)}}</span>

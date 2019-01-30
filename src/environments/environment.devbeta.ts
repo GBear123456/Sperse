@@ -4,5 +4,8 @@ export const environment = {
     hmr: false,
     appConfig: 'appconfig.devbeta.json',
     appBaseUrl: 'http://localhost:7200',
-    appBaseHref: 'https://sperseuicdn.azureedge.net/current/'
+    appBaseHref: 'https://sperseuicdn.azureedge.net/current/',
+
+    /* Custom tenant domains */
+    LENDSPACE_DOMAIN: 'http://localhost:9000'
 };

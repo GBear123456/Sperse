@@ -3,7 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 
 import { ConditionsModalComponent } from 'shared/common/conditions-modal/conditions-modal.component';
-import { AppConsts } from 'shared/AppConsts';
+import { environment } from 'environments/environment';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -14,9 +14,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class RegisterConfirmComponent implements OnInit {
     agreeWithTerms = true;
     modalsData = {
-        terms: { title: 'Terms of Use', bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/terms.html', downloadDisabled: true },
-        privacy: { title: 'Privacy Policy', bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/policy.html', downloadDisabled: true },
-        lender: { title: 'Lender Terms', bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/lender.html', downloadDisabled: true }
+        terms: { title: 'Terms of Use', bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/terms.html', downloadDisabled: true },
+        privacy: { title: 'Privacy Policy', bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/policy.html', downloadDisabled: true },
+        lender: { title: 'Lender Terms', bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/lender.html', downloadDisabled: true }
     };
     constructor(
         private dialog: MatDialog,

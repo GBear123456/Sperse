@@ -6,6 +6,7 @@ import { Component, Injector, HostBinding, ViewChild, ViewContainerRef,
 import { AppConsts } from 'shared/AppConsts';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { PersonalFinanceLayoutService } from './personal-finance-layout.service';
+import { environment } from 'environments/environment';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -51,8 +52,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         }
     ];
     actionsButtons = [
-        {name: 'SIGN UP', class: 'member-signup', routerUrl: '/personal-finance/sign-up', disabled: false},
-        {name: 'Member Login', class: 'member-login', routerUrl: '/account/login', disabled: false}
+        {name: 'SIGN UP', class: 'member-signup', routerUrl: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false},
+        {name: 'Member Login', class: 'member-login', routerUrl: environment.LENDSPACE_DOMAIN + '/login', disabled: false}
     ];
 
     constructor(
@@ -182,6 +183,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         if (this.loggedUserId)
             this._router.navigate(['/personal-finance/home']);
         else
-            window.open(AppConsts.LENDSPACE_DOMAIN, '_self');
+            window.open(environment.LENDSPACE_DOMAIN, '_self');
     }
 }
