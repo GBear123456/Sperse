@@ -4,6 +4,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     OnInit,
+    Inject,
     Injector,
     OnDestroy,
     ElementRef,
@@ -12,6 +13,7 @@ import {
     ChangeDetectorRef
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
@@ -415,7 +417,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         private store$: Store<RootStore.State>,
         private currencyPipe: CurrencyPipe,
-        private numberAbbrPipe: NumberAbbrPipe
+        private numberAbbrPipe: NumberAbbrPipe,
+        @Inject(DOCUMENT) private document
     ) {
         this.visibleOffers = this.defaultVisibleOffers;
     }
@@ -495,6 +498,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                             this.offersAreLoading = false;
                             abp.ui.clearBusy(this.offersListRef.nativeElement);
                             this.changeDetectorRef.detectChanges();
+                            this.document.body.scrollTo(0, 0);
                         }),
                         tap((offers: OfferDto[]) => {
                             if (!this.brands$.value.length) {
