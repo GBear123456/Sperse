@@ -214,31 +214,11 @@ export class OffersService {
         return valuesToConvert && valuesToConvert[loweredParamValue] || paramValue;
     }
 
-    formatCreditScores(creditScores: CreditScores[]): string {
-        if (!creditScores || !creditScores.length)
-            return 'Any';
-
-        let scores = creditScores.filter(x => x != CreditScores.NotSure);
-        if (!scores.length)
-            return 'Any';
-
-        if (scores.length >= 4)
-            return 'Any';
-
-        return scores.join('/');
-    }
-
     formatLoanAmountValues(minAmount: number = null, maxAmount: number = null): string {
         let minAmountStr = minAmount ? this.currencyPipe.transform(minAmount, 'USD', 'symbol', '0.0-2') : null;
         let maxAmountStr = this.currencyPipe.transform(maxAmount, 'USD', 'symbol', '0.0-2')
 
         return this.formatFromTo(minAmountStr, maxAmountStr);
-    }
-
-    formatLoanTermsValues(minTerm: number = null, maxTerm: number = null) {
-        let result = this.formatFromTo(minTerm, maxTerm);
-        if (result) result += ' Month(s)';
-        return result;
     }
 
     private formatFromTo(from, to): string {

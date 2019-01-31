@@ -28637,7 +28637,7 @@ export class TrackingInformation implements ITrackingInformation {
     userAgent!: string;
     siteId!: string | undefined;
     siteUrl!: string;
-    clickId!: string;
+    clickId!: string | undefined;
 
     constructor(data?: ITrackingInformation) {
         if (data) {
@@ -28702,7 +28702,7 @@ export interface ITrackingInformation {
     userAgent: string;
     siteId: string | undefined;
     siteUrl: string;
-    clickId: string;
+    clickId: string | undefined;
 }
 
 export class PersonalInformation implements IPersonalInformation {
@@ -48275,10 +48275,8 @@ export class OfferDto implements IOfferDto {
     offerCollection!: OfferDtoOfferCollection | undefined;
     minLoanAmount!: number | undefined;
     maxLoanAmount!: number | undefined;
-    minLoanTermMonths!: number | undefined;
-    maxLoanTermMonths!: number | undefined;
     campaignProviderType!: OfferDtoCampaignProviderType | undefined;
-    creditScores!: CreditScores[] | undefined;
+    details!: string[] | undefined;
 
     constructor(data?: IOfferDto) {
         if (data) {
@@ -48305,13 +48303,11 @@ export class OfferDto implements IOfferDto {
             this.offerCollection = data["offerCollection"];
             this.minLoanAmount = data["minLoanAmount"];
             this.maxLoanAmount = data["maxLoanAmount"];
-            this.minLoanTermMonths = data["minLoanTermMonths"];
-            this.maxLoanTermMonths = data["maxLoanTermMonths"];
             this.campaignProviderType = data["campaignProviderType"];
-            if (data["creditScores"] && data["creditScores"].constructor === Array) {
-                this.creditScores = [];
-                for (let item of data["creditScores"])
-                    this.creditScores.push(item);
+            if (data["details"] && data["details"].constructor === Array) {
+                this.details = [];
+                for (let item of data["details"])
+                    this.details.push(item);
             }
         }
     }
@@ -48339,13 +48335,11 @@ export class OfferDto implements IOfferDto {
         data["offerCollection"] = this.offerCollection;
         data["minLoanAmount"] = this.minLoanAmount;
         data["maxLoanAmount"] = this.maxLoanAmount;
-        data["minLoanTermMonths"] = this.minLoanTermMonths;
-        data["maxLoanTermMonths"] = this.maxLoanTermMonths;
         data["campaignProviderType"] = this.campaignProviderType;
-        if (this.creditScores && this.creditScores.constructor === Array) {
-            data["creditScores"] = [];
-            for (let item of this.creditScores)
-                data["creditScores"].push(item);
+        if (this.details && this.details.constructor === Array) {
+            data["details"] = [];
+            for (let item of this.details)
+                data["details"].push(item);
         }
         return data; 
     }
@@ -48366,16 +48360,14 @@ export interface IOfferDto {
     offerCollection: OfferDtoOfferCollection | undefined;
     minLoanAmount: number | undefined;
     maxLoanAmount: number | undefined;
-    minLoanTermMonths: number | undefined;
-    maxLoanTermMonths: number | undefined;
     campaignProviderType: OfferDtoCampaignProviderType | undefined;
-    creditScores: CreditScores[] | undefined;
+    details: string[] | undefined;
 }
 
 export class OfferDetailsDto implements IOfferDetailsDto {
     description!: string | undefined;
     introAPR!: string | undefined;
-    details!: string[] | undefined;
+    creditScores!: CreditScores[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
     campaignId!: number | undefined;
@@ -48392,10 +48384,8 @@ export class OfferDetailsDto implements IOfferDetailsDto {
     offerCollection!: OfferDetailsDtoOfferCollection | undefined;
     minLoanAmount!: number | undefined;
     maxLoanAmount!: number | undefined;
-    minLoanTermMonths!: number | undefined;
-    maxLoanTermMonths!: number | undefined;
     campaignProviderType!: OfferDetailsDtoCampaignProviderType | undefined;
-    creditScores!: CreditScores2[] | undefined;
+    details!: string[] | undefined;
 
     constructor(data?: IOfferDetailsDto) {
         if (data) {
@@ -48410,10 +48400,10 @@ export class OfferDetailsDto implements IOfferDetailsDto {
         if (data) {
             this.description = data["description"];
             this.introAPR = data["introAPR"];
-            if (data["details"] && data["details"].constructor === Array) {
-                this.details = [];
-                for (let item of data["details"])
-                    this.details.push(item);
+            if (data["creditScores"] && data["creditScores"].constructor === Array) {
+                this.creditScores = [];
+                for (let item of data["creditScores"])
+                    this.creditScores.push(item);
             }
             if (data["pros"] && data["pros"].constructor === Array) {
                 this.pros = [];
@@ -48439,13 +48429,11 @@ export class OfferDetailsDto implements IOfferDetailsDto {
             this.offerCollection = data["offerCollection"];
             this.minLoanAmount = data["minLoanAmount"];
             this.maxLoanAmount = data["maxLoanAmount"];
-            this.minLoanTermMonths = data["minLoanTermMonths"];
-            this.maxLoanTermMonths = data["maxLoanTermMonths"];
             this.campaignProviderType = data["campaignProviderType"];
-            if (data["creditScores"] && data["creditScores"].constructor === Array) {
-                this.creditScores = [];
-                for (let item of data["creditScores"])
-                    this.creditScores.push(item);
+            if (data["details"] && data["details"].constructor === Array) {
+                this.details = [];
+                for (let item of data["details"])
+                    this.details.push(item);
             }
         }
     }
@@ -48461,10 +48449,10 @@ export class OfferDetailsDto implements IOfferDetailsDto {
         data = typeof data === 'object' ? data : {};
         data["description"] = this.description;
         data["introAPR"] = this.introAPR;
-        if (this.details && this.details.constructor === Array) {
-            data["details"] = [];
-            for (let item of this.details)
-                data["details"].push(item);
+        if (this.creditScores && this.creditScores.constructor === Array) {
+            data["creditScores"] = [];
+            for (let item of this.creditScores)
+                data["creditScores"].push(item);
         }
         if (this.pros && this.pros.constructor === Array) {
             data["pros"] = [];
@@ -48490,13 +48478,11 @@ export class OfferDetailsDto implements IOfferDetailsDto {
         data["offerCollection"] = this.offerCollection;
         data["minLoanAmount"] = this.minLoanAmount;
         data["maxLoanAmount"] = this.maxLoanAmount;
-        data["minLoanTermMonths"] = this.minLoanTermMonths;
-        data["maxLoanTermMonths"] = this.maxLoanTermMonths;
         data["campaignProviderType"] = this.campaignProviderType;
-        if (this.creditScores && this.creditScores.constructor === Array) {
-            data["creditScores"] = [];
-            for (let item of this.creditScores)
-                data["creditScores"].push(item);
+        if (this.details && this.details.constructor === Array) {
+            data["details"] = [];
+            for (let item of this.details)
+                data["details"].push(item);
         }
         return data; 
     }
@@ -48505,7 +48491,7 @@ export class OfferDetailsDto implements IOfferDetailsDto {
 export interface IOfferDetailsDto {
     description: string | undefined;
     introAPR: string | undefined;
-    details: string[] | undefined;
+    creditScores: CreditScores[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
     campaignId: number | undefined;
@@ -48522,10 +48508,8 @@ export interface IOfferDetailsDto {
     offerCollection: OfferDetailsDtoOfferCollection | undefined;
     minLoanAmount: number | undefined;
     maxLoanAmount: number | undefined;
-    minLoanTermMonths: number | undefined;
-    maxLoanTermMonths: number | undefined;
     campaignProviderType: OfferDetailsDtoCampaignProviderType | undefined;
-    creditScores: CreditScores2[] | undefined;
+    details: string[] | undefined;
 }
 
 export class SubmitApplicationInput implements ISubmitApplicationInput {
@@ -59105,14 +59089,6 @@ export enum OfferDetailsDtoOfferCollection {
 
 export enum OfferDetailsDtoCampaignProviderType {
     CreditLand = "CreditLand", 
-}
-
-export enum CreditScores2 {
-    NotSure = "NotSure", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Poor = "Poor", 
 }
 
 export enum SubmitApplicationInputSystemType {
