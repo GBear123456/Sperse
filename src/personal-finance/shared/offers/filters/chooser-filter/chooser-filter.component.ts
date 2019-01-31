@@ -8,6 +8,7 @@ export class ChooserOption {
     name: string;
     iconSrc?: string;
     selected?: boolean;
+    value: any;
 }
 
 @Component({
