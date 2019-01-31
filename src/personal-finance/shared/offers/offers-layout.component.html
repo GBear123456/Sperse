@@ -125,7 +125,7 @@
                     </h2>
                 </div>
                 <ul class="credit-cards-list">
-                    <li class="row" *ngFor="let offerItem of displayedOffers$ | async | slice:0:visibleOffers; let i = index" [ngClass]="{'recommend': i < 3}">
+                    <li class="row" *ngFor="let offerItem of displayedOffers$ | async | slice:0:visibleOffersCount; let i = index" [ngClass]="{'recommend': i < 3}">
                         <ng-container *ngIf="i == 0">
                             <div class="best-offer">
                                 {{ls.l('Top_Deal_Found')}}
@@ -173,8 +173,7 @@
                     </li>
                 </ul>
 
-                <button (click)="showNextItems()" class="load-more-items"
-                        *ngIf="itemsCount > 6">{{ls.l('Load_More_Offers_Found')}}</button>
+                <button (click)="showNextItems()" class="load-more-items" *ngIf="offersCount > visibleOffersCount">{{ls.l('Load_More_Offers_Found')}}</button>
                 <app-no-data *ngIf="!offersAreLoading && offersAmount === 0"></app-no-data>
             </div>
         </div>

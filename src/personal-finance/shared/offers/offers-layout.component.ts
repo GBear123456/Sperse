@@ -84,7 +84,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     displayedOffers$: Observable<any>;
 
     hideFilters = true;
-    offersAmount: number;
+    offersCount: number;
     offersAreLoading = false;
     sortings = [
         {
@@ -100,9 +100,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             field: 'rewardsBonus'
         }
     ];
-    defaultVisibleOffers = 6;
-    visibleOffers: number;
-    itemsCount: number;
+    readonly defaultVisibleOffersCount = 6;
+    visibleOffersCount = this.defaultVisibleOffersCount;
     brands$: BehaviorSubject<SelectFilterModel[]> = new BehaviorSubject<SelectFilterModel[]>([]);
     category$: Observable<Category> = this.offersService.getCategoryFromRoute(this.route);
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: Category) => this.offersService.getCategoryGroup(category)));
@@ -401,8 +400,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     private deactivateSubject: Subject<null> = new Subject<null>();
     private deactivate$: Observable<null> = this.deactivateSubject.asObservable();
 
-    selectedSorting: BehaviorSubject<string> = new BehaviorSubject(this.sortings[0].field);
-    private selectedSorting$ = this.selectedSorting.asObservable();
     buttonCaption = 'Apply';
     pagePrefix: any;
 
@@ -420,9 +417,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
         private currencyPipe: CurrencyPipe,
         private numberAbbrPipe: NumberAbbrPipe,
         @Inject(DOCUMENT) private document
-    ) {
-        this.visibleOffers = this.defaultVisibleOffers;
-    }
+    ) {}
 
     ngOnInit() {
         this.categoryGroup$.pipe(
@@ -512,34 +507,16 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 }
             ),
             tap(offers => {
-                this.offersAmount = offers.length;
+                this.offersCount = offers.length;
                 this.changeDetectorRef.detectChanges();
             }),
             publishReplay(),
             refCount()
         );
 
-        /** Insert filters values from credit cards data */
-        this.offers$.pipe(takeUntil(this.deactivate$), map((offers: OfferDto[]) => {
-            /** @todo uncomment in future when data will be good for filtering */
-            //this.fullFillFilterValues(offers);
-        }));
-        this.createFiltersObject();
-        this.displayedOffers$ =
-            //combineLatest(
-                this.offers$; //,
-                //this.selectedFilter$,
-                //this.selectedSorting$
-            //).pipe(
-                //takeUntil(this.deactivate$),
-                // map(([offers, filtersValues, sortingField]) => this.sortCards(
-                //     this.filterOffers(offers, filtersValues),
-                //     sortingField
-                // ))
-            //);
+        this.displayedOffers$ = this.offers$;
         this.displayedOffers$.pipe(takeUntil(this.deactivate$)).subscribe((displayedCreditCards: OfferDto[]) => {
             this.offersService.displayedCards = displayedCreditCards;
-            this.itemsCount = displayedCreditCards.length;
         });
     }
 
@@ -576,10 +553,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             }
         });
         return filters;
-    }
-
-    private createFiltersObject() {
-        // this.filters.forEach(filter => this.filtersValues[filter.field] = {});
     }
 
     viewCardDetails(card: OfferDto) {
@@ -621,6 +594,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     }
 
     showNextItems() {
-        this.visibleOffers += this.defaultVisibleOffers;
+        this.visibleOffersCount += this.defaultVisibleOffersCount;
     }
 }
