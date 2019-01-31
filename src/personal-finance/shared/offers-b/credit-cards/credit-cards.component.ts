@@ -5,7 +5,14 @@ import { finalize, map, switchMap } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
 import * as _ from 'underscore';
 
-import { OfferDto, Category, ItemOfOfferCollection, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    OfferDto,
+    OfferServiceProxy,
+    GetAllInput,
+    OfferFilterCategory,
+    GetMemberInfoResponse,
+    GetAllInputItemOfOfferCollection
+} from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers-b/offers.service';
 
@@ -42,25 +49,18 @@ export class CreditCardsComponent implements OnInit {
         this.cardOffersList$ =
             this.offersService.memberInfo$.pipe(
                 switchMap((memberInfo) =>
-                    this.offerServiceProxy.getAll(
-                        memberInfo.testMode,
-                        memberInfo.isDirectPostSupported,
-                        Category.CreditCards,
-                        undefined,
-                        'US',
-                        undefined,
-                        true,
-                        undefined,
-                        undefined,
-                        undefined,
-                        undefined,
-                        undefined
-                    )),
+                    this.offerServiceProxy.getAll(GetAllInput.fromJS({
+                        testMode: memberInfo.testMode,
+                        isDirectPostagfasdf: memberInfo.isDirectPostSupported,
+                        category: OfferFilterCategory,
+                        country: 'US',
+                        isOfferCollection: true
+                    }))),
                 finalize(() => abp.ui.clearBusy())
             );
 
         this.cardOffersList$.subscribe(list => {
-            const itemOfOfferCollections = _.values(ItemOfOfferCollection);
+            const itemOfOfferCollections = _.values(GetAllInputItemOfOfferCollection);
             this.bestCreditCard = _.first(list.filter(item => 'Best' == item.offerCollection));
             this.selectedOfferGroup = _.first(list.filter(item => this.route.snapshot.params.group == item.offerCollection));
             this.creditCardCollection = list.filter(item => !_.contains(this.creditScoreNames, item.offerCollection));
@@ -88,20 +88,14 @@ export class CreditCardsComponent implements OnInit {
         abp.ui.setBusy();
 
         this.offersService.memberInfo$.pipe(
-            switchMap(memberInfo => this.offerServiceProxy.getAll(
-                memberInfo.testMode,
-                memberInfo.isDirectPostSupported,
-                Category.CreditCards,
-                undefined,
-                'US',
-                undefined,
-                false,
-                ItemOfOfferCollection[collection],
-                undefined,
-                undefined,
-                undefined,
-                undefined
-            )),
+            switchMap((memberInfo: GetMemberInfoResponse) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
+                testMode: memberInfo.testMode,
+                isDirectPostSupported: memberInfo.isDirectPostSupported,
+                category: OfferFilterCategory.CreditCards,
+                country: 'US',
+                isOfferCollection: false,
+                itemOfOfferCollection: GetAllInputItemOfOfferCollection[collection]
+            }))),
             finalize(() => abp.ui.clearBusy())
         ).subscribe((offers: OfferDto[]) => {
             this.cards = offers;

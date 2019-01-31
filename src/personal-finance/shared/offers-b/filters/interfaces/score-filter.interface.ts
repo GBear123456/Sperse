@@ -1,10 +1,10 @@
 import { FilterSettingInterface } from 'personal-finance/shared/offers/filters/interfaces/filter-setting.interface';
 import { Observable } from 'rxjs';
-import { CreditScore } from '@shared/service-proxies/service-proxies';
+import { GetMemberInfoResponseCreditScore } from '@shared/service-proxies/service-proxies';
 
 export class CreditScoreItem {
     name: string;
-    value: CreditScore;
+    value: GetMemberInfoResponseCreditScore;
     min?: number;
     max?: number;
     checked?: boolean;

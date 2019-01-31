@@ -1,6 +1,7 @@
 import { Component, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
+    GetAllInput,
     OfferServiceProxy,
     SubmitApplicationInput
 } from '@shared/service-proxies/service-proxies';
@@ -19,13 +20,11 @@ export class CampaignOffersComponent extends AppComponentBase {
     ) {
         super(injector);
         offerServiceProxy.getMemberInfo().subscribe((memberInfo) => {
-            offerServiceProxy.getAll(
-                memberInfo.testMode,
-                memberInfo.isDirectPostSupported,
-                undefined, undefined, undefined, undefined,
-                undefined, undefined, undefined, undefined,
-                undefined, [3174, 3179]
-            ).subscribe((offers) => {
+            offerServiceProxy.getAll(GetAllInput.fromJS({
+                testMode: memberInfo.testMode,
+                isDirectPostSupported: memberInfo.isDirectPostSupported,
+                campaignIds: [3174, 3179]
+            })).subscribe((offers) => {
                 this.offers = offers.map((item) => {
                     return {
                         url: item.redirectUrl,
