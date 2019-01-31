@@ -11,7 +11,7 @@ import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { Observable, combineLatest } from 'rxjs';
-import { finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { delay, finalize, map, switchMap, takeUntil, tap, skip, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 import { OfferDto, Category, ItemOfOfferCollection, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -74,6 +74,8 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
                         undefined,
                         undefined
                     )),
+                publishReplay(),
+                refCount(),
                 finalize(() => abp.ui.clearBusy())
             );
 
@@ -92,14 +94,16 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.offerCollection$.pipe(
+        const creditCards$ = this.offerCollection$.pipe(
             takeUntil(this.lifecycleSubjectService.destroy$),
             tap(collectionName => this.selectedOfferGroup = this.creditCardCollection.filter(item => item.offerCollection == collectionName.group)[0]),
-            switchMap(collectionName => this.getCreditCards(collectionName.group))
-        ).subscribe((offers: OfferDto[]) => {
-            this.cards = offers;
-            setTimeout(() => this.scrollToTopCards(), 25);
-        });
+            switchMap(collectionName => this.getCreditCards(collectionName.group)),
+            publishReplay(),
+            refCount()
+        );
+
+        creditCards$.subscribe((offers: OfferDto[]) => this.cards = offers);
+        creditCards$.pipe(skip(1), delay(25)).subscribe(() => this.scrollToTopCards());
     }
 
     scrollToTopCards() {
