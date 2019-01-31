@@ -21,7 +21,7 @@ export class CampaignOffersComponent extends AppComponentBase {
                 memberInfo.isDirectPostSupported,
                 undefined, undefined, undefined, undefined,
                 undefined, undefined, undefined, undefined,
-                undefined, [3173, 3174]
+                undefined, [3174, 3179]
             ).subscribe((offers) => {
                 this.offersUrls = offers.map((item) => item.redirectUrl);
             });
