@@ -1,5 +1,5 @@
 /** Core imports */
-import {Component, Injector, OnInit, Input, EventEmitter, Output} from '@angular/core';
+import { Component, Injector, OnInit, Input, EventEmitter, Output } from '@angular/core';
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
@@ -116,7 +116,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         if (this.listComponent) {
             let elements = this.listComponent.element()
                 .getElementsByClassName('filtered');
-            while(elements.length)
+            while (elements.length)
                 elements[0].classList.remove('filtered');
         }
     }

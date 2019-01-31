@@ -8,6 +8,12 @@
                   [autoExpandAll]="true"
                   [(selectedRowKeys)]="items.element.value"
                   scrolling="{mode: 'virtual', showScrollbar: 'always'}">
-        <dxi-column [dataField]="items.element.nameField"></dxi-column>
+        <dxi-column [dataField]="items.element.nameField" cellTemplate="checkBoxTemplate"></dxi-column>
+        <div *dxTemplate="let cell of 'checkBoxTemplate'">
+            <ng-container *ngIf="items.element.templateFunc; else simple">
+                <div [innerHTML]="items.element.templateFunc(cell.data)"></div>
+            </ng-container>
+            <ng-template #simple>{{ cell.data.name }}</ng-template>
+        </div>
     </dx-tree-list>
 </div>

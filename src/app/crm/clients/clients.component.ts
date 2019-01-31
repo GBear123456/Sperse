@@ -349,7 +349,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 {
                                     dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
                                     nameField: 'name',
-                                    keyExpr: 'id'
+                                    keyExpr: 'id',
+                                    templateFunc: (itemData) => {
+                                        return `<div class="star-item">
+                                                    <span class="star star-${itemData.name.toLowerCase()}"></span>
+                                                    <span>${itemData.name}</span>
+                                                </div>`;
+                                    }
                                 })
                         }
                     })

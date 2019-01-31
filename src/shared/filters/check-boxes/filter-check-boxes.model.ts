@@ -9,6 +9,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
     keyExpr: any;
     parentExpr?: any = 'parentId';
     nameField: string;
+    templateFunc?: (itemData) => string;
 
     public constructor(init?: Partial<FilterCheckBoxesModel>) {
         super();

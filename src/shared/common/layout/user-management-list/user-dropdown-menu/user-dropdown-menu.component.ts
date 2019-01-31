@@ -36,7 +36,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
             visible: this.isImpersonatedLogin,
             id: 'UserProfileBackToMyAccountButton',
             iconSrc: 'assets/common/images/lend-space-dark/icons/back.svg',
-            onClick: this.userManagementService.backToMyAccount.bind(this)
+            onClick: () => this.userManagementService.backToMyAccount()
         },
         {
             name: this.l('ManageLinkedAccounts'),

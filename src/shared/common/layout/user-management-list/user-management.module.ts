@@ -3,6 +3,7 @@ import { UserDropdownMenuComponent } from '@shared/common/layout/user-management
 import { UserManagementListComponent } from '@shared/common/layout/user-management-list/user-management-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { CommonModule } from '@angular/common';
+import { ImpersonationService } from '@admin/users/impersonation.service';
 
 @NgModule({
     declarations: [
@@ -17,6 +18,7 @@ import { CommonModule } from '@angular/common';
         UserDropdownMenuComponent,
     ],
     providers: [
+        ImpersonationService,
         UserManagementService
     ],
     entryComponents: [

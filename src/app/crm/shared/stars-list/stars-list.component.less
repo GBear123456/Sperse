@@ -3,14 +3,14 @@
     width: 180px!important;
     height: 315px!important;
     overflow: hidden;
-    
+
     .title {
         float: left;
-        font-size: 18px;        
+        font-size: 18px;
         font-weight: 500;
         padding-top: 5px;
     }
-   
+
     .actions {
         padding-bottom: 10px;
     }
@@ -23,7 +23,7 @@
         color: #00AEEF;
         padding: 10px 5px;
         float: right;
-        
+
         &:hover {
             color: lighten(#00AEEF, 20%);
         }
@@ -31,15 +31,15 @@
         &.disabled {
             color: #999;
             cursor: unset;
-            pointer-events: none; 
+            pointer-events: none;
         }
-    }        
+    }
 
     /deep/ .dx-widget {
        .dx-placeholder {
             font-weight: 400;
         }
-        .dx-item-content {  
+        .dx-item-content {
             text-align: left;
         }
         .dx-icon-clear {
@@ -57,42 +57,12 @@
 
         .item-row {
             display: flex;
-            justify-content: space-between;            
+            justify-content: space-between;
 
             a.dx-link-filter {
                 width: 30px;
                 background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
             }
-
-            .star {
-                display: inline-block;
-                width: 25px;
-                height: 25px;
-                margin-bottom: 2px;
-                -webkit-mask-image: url(../../../../assets/common/icons/star-icon.svg);
-                -webkit-mask-repeat: no-repeat;
-                -webkit-mask-size: 25px;
-        
-                &.star-yellow {
-                    background-color: rgb(230, 230, 0);
-                }
-        
-                &.star-blue {
-                    background-color: blue;
-                }
-        
-                &.star-green {
-                    background-color: green;
-                }
-        
-                &.star-purple {
-                    background-color: purple;
-                }
-        
-                &.star-red {
-                    background-color: red;
-                }
-            }        
         }
     }
 }

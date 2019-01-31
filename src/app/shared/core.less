@@ -975,3 +975,55 @@ button {
 body > .blockUI.blockOverlay{
     top: 74px!important;
 }
+
+.star {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-bottom: 2px;
+    -webkit-mask-image: url(../../assets/common/icons/star-icon.svg);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: 25px;
+
+    &.star-yellow {
+        background-color: rgb(230, 230, 0);
+    }
+
+    &.star-blue {
+        background-color: blue;
+    }
+
+    &.star-green {
+        background-color: green;
+    }
+
+    &.star-purple {
+        background-color: purple;
+    }
+
+    &.star-red {
+        background-color: red;
+    }
+}
+
+body.lend-space .star {
+    &.star-green {
+        background: linear-gradient(#24c26c, #5ac860);
+    }
+
+    &.star-blue {
+        background: linear-gradient(#82cc57, #b1d049);
+    }
+
+    &.star-yellow {
+        background: linear-gradient(#f3ae2a, #f18a25);
+    }
+
+    &.star-red {
+        background: linear-gradient(#dad53b, #f6ce2d);
+    }
+
+    &.star-purple {
+        background-color: #dfdfdf;
+    }
+}
