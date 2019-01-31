@@ -68,6 +68,7 @@ export class FilterValues {
     creditScore: number;
     brand: string;
     loanAmount: number;
+    annualIncome: number;
 }
 
 @Component({
@@ -199,7 +200,13 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 selected$: of(55000),
                 step: 500,
                 minMaxDisplayFunction: (value: number) => this.numberAbbrPipe.transform(value, '$'),
-                valueDisplayFunction: (value: number) => this.currencyPipe.transform(value, 'USD', 'symbol', '0.0-0')
+                valueDisplayFunction: (value: number) => this.currencyPipe.transform(value, 'USD', 'symbol', '0.0-0'),
+                onChange: (e: MatSliderChange) => {
+                    if (this.filtersValues.annualIncome != e.value) {
+                        this.filtersValues.annualIncome = e.value;
+                        this.selectedFilter.next(this.filtersValues);
+                    }
+                }
             }),
 
             // new RangeFilterSetting({
@@ -483,7 +490,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         category: filter.category,
                         country: filter.country,
                         creditScore: this.offersService.getCreditScore(filter.category, filter.creditScore),
-                        loansAmount: filter.loanAmount
+                        loanAmount: filter.loanAmount,
+                        annualIncome: filter.annualIncome
                     })).pipe(
                         finalize(() => {
                             this.offersAreLoading = false;
@@ -532,7 +540,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             country: 'US',
             creditScore: null,
             brand: null,
-            loanAmount: 10000
+            loanAmount: 10000,
+            annualIncome: 55000
         };
     }
 
