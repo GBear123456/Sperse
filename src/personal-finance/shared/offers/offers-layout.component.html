@@ -159,8 +159,8 @@
                                 <li *ngIf="offerItem.annualFee && (pagePrefix == 'CreditCards')" >
                                     <p>{{ ls.l('Offers_annualFee') }}: {{ offersService.getParamDisplayValue(offerItem.annualFee) }}</p>
                                 </li>
-                                <li *ngIf="offerItem.regularAPR && pagePrefix == 'CreditCards'">
-                                    <p>{{ ls.l('Offers_' + param) }}: {{ offersService.getParamDisplayValue(offerItem.regularAPR) }}</p>
+                                <li *ngIf="offerItem.regularAPR && (pagePrefix == 'CreditCards')">
+                                    <p>{{ ls.l('Offers_regularAPR') }}: {{ offersService.getParamDisplayValue(offerItem.regularAPR) }}</p>
                                 </li>
                                 <ng-container *ngFor="let item of offerItem.details">
                                     <li>
