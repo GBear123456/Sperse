@@ -12,8 +12,8 @@ export class NavigationComponent {
     links = [
         'CreditScores',
         // Category.CreditRepair,
-        'IDTheftProtection',
-        Category.DebtConsolidation
+        Category.DebtConsolidation,
+        'IDTheftProtection'
     ].map(category => kebabCase(category));
 
     getLinkName(name: string): string {

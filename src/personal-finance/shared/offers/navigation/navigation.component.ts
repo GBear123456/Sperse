@@ -14,12 +14,12 @@ export class NavigationComponent {
             url: 'credit-scores'
         },
         {
-            name: this.ls.l('Offers_IdTheftProtection'),
-            url: 'id-theft-protection'
-        },
-        {
             name: this.ls.l('Offers_DebtConsolidation'),
             url: 'debt-consolidation'
+        },
+        {
+            name: this.ls.l('Offers_IdTheftProtection'),
+            url: 'id-theft-protection'
         }
     ];
 }

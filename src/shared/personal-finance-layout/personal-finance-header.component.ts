@@ -125,12 +125,12 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                     //     routerUrl: '/personal-finance/offers/credit-repair'
                     // },
                     {
-                        name: this.ls('PFM', 'Offers_IdTheftProtection'),
-                        routerUrl: '/personal-finance/offers/id-theft-protection'
-                    },
-                    {
                         name: this.ls('PFM', 'Offers_DebtConsolidation'),
                         routerUrl: '/personal-finance/offers/debt-consolidation'
+                    },
+                    {
+                        name: this.ls('PFM', 'Offers_IdTheftProtection'),
+                        routerUrl: '/personal-finance/offers/id-theft-protection'
                     }
                 ]
             },
