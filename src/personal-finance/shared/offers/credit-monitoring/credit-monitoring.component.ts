@@ -38,7 +38,7 @@ export class CreditMonitoringComponent implements OnInit {
         @Inject(DOCUMENT) private document
     ) {}
 
-    ngOnInit() {        
+    ngOnInit() {
         abp.ui.setBusy(this.contentElementRef.nativeElement);
         this.offers$ = this.offersService.memberInfo$.pipe(
             switchMap((memberInfo: GetMemberInfoResponse) =>

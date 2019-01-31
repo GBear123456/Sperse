@@ -10,8 +10,8 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { finalize, map, switchMap } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
+import { finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 import { OfferDto, Category, ItemOfOfferCollection, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -92,23 +92,27 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.offerCollection$.subscribe(collectionName => {
-            this.getCreditCards(collectionName.group);
-            this.selectedOfferGroup = this.creditCardCollection.filter(item => item.offerCollection == collectionName.group)[0];
-            if (this._resultByCategory) {
-                this.document.body.scrollBy(0, this._resultByCategory.nativeElement.getBoundingClientRect().top - 100);
-            }
+        this.offerCollection$.pipe(
+            takeUntil(this.lifecycleSubjectService.destroy$),
+            tap(collectionName => this.selectedOfferGroup = this.creditCardCollection.filter(item => item.offerCollection == collectionName.group)[0]),
+            switchMap(collectionName => this.getCreditCards(collectionName.group))
+        ).subscribe((offers: OfferDto[]) => {
+            this.cards = offers;
+            setTimeout(() => this.scrollToTopCards(), 25);
         });
+    }
+
+    scrollToTopCards() {
+        this.document.body.scrollBy(0, this._resultByCategory.nativeElement.getBoundingClientRect().top - 100);
     }
 
     openOffers(offer: OfferDto) {
         this.offersService.applyOffer(offer);
     }
 
-    getCreditCards(collection = 'Best') {
+    getCreditCards(collection = 'Best'): Observable<OfferDto[]> {
         abp.ui.setBusy();
-
-        this.offersService.memberInfo$.pipe(
+        return this.offersService.memberInfo$.pipe(
             switchMap(memberInfo => this.offerServiceProxy.getAll(
                 memberInfo.testMode,
                 memberInfo.isDirectPostSupported,
@@ -124,9 +128,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
                 undefined
             )),
             finalize(() => abp.ui.clearBusy())
-        ).subscribe((offers: OfferDto[]) => {
-            this.cards = offers;
-        });
+        );
     }
 
     ngOnDestroy() {
