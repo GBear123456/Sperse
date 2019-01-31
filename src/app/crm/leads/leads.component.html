@@ -51,11 +51,11 @@
                         <dxo-editing mode="popup" [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true"></dxo-editing>
                         <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column dataField="Id" caption="{{l('Id')}}" cssClass="tabular" [visible]="false" sortOrder="desc"></dxi-column>
-                        <dxi-column dataField="PhotoId" caption=" " cellTemplate="photoTemplate"
+                        <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
                             [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'photoTemplate'">
-                            <div [ngStyle]="{'background-image': 'url(' + getContactPhotoUrl(data.data.CustomerId, data.data.PhotoId) + ')'}" class="img-circle"></div>
+                            <div [ngStyle]="{'background-image': 'url(' + getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                         </div>
                         <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                         <dxi-column dataField="CompanyName" caption="{{l('Customer.CompanyName')}}"></dxi-column>
@@ -100,7 +100,7 @@
                         [dragulaName]="'leadStages'"
                         [dataSource]="pipelineDataSource"
                         [lockMarginalEntities]="true"
-                        [selectFields]="['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'PhotoId']"
+                        [selectFields]="['Id', 'CustomerId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'PhotoPublicId']"
                         [pipelinePurposeId]="pipelinePurposeId"
                         [filterModelStages]="filterModelStages"
                         [(selectedLeads)]="selectedLeads"

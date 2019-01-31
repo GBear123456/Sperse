@@ -167,8 +167,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                         action: this.closeDocument.bind(this)
                     },
                     {
-                        html: '<div class="file-name ' + this.getFileExtensionByFileName(this.currentDocumentInfo.fileName) + '">' + this.currentDocumentInfo.fileName +
-                            '<span class="file-size">(' + this._fileSizePipe.transform(this.currentDocumentInfo.size) + ')</span></div>'
+                        html: `<div class="file-name ${this.getFileExtensionByFileName(this.currentDocumentInfo.fileName)}" title="${this.currentDocumentInfo.fileName} ${this._fileSizePipe.transform(this.currentDocumentInfo.size)}">
+                                    ${this.currentDocumentInfo.fileName.split('.').shift()}
+                               </div>`
                     }
                 ]
             },
