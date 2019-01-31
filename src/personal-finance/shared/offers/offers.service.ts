@@ -235,7 +235,7 @@ export class OffersService {
 
     formatLoanAmountValues(minAmount: number = null, maxAmount: number = null): string {
         let minAmountStr = minAmount ? this.currencyPipe.transform(minAmount, 'USD', 'symbol', '0.0-2') : null;
-        let maxAmountStr = this.currencyPipe.transform(maxAmount, 'USD', 'symbol', '0.0-2')
+        let maxAmountStr = this.currencyPipe.transform(maxAmount, 'USD', 'symbol', '0.0-2');
 
         return this.formatFromTo(minAmountStr, maxAmountStr);
     }

@@ -448,6 +448,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         undefined,
                         undefined,
                         undefined,
+                        undefined,
+                        undefined,
+                        undefined,
+                        undefined,
                         undefined
                     ).pipe(
                         finalize(() => {

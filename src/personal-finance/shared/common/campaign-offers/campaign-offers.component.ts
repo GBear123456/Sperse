@@ -19,9 +19,20 @@ export class CampaignOffersComponent extends AppComponentBase {
             offerServiceProxy.getAll(
                 memberInfo.testMode,
                 memberInfo.isDirectPostSupported,
-                undefined, undefined, undefined, undefined,
-                undefined, undefined, undefined, undefined,
-                undefined, [3174, 3179]
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                [3174, 3179]
             ).subscribe((offers) => {
                 this.offersUrls = offers.map((item) => item.redirectUrl);
             });

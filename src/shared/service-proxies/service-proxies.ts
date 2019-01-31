@@ -1624,7 +1624,7 @@ export class ApplicationServiceProxy {
      * @request (optional) 
      * @return Success
      */
-    validateMemberSignUp(request: SignUpMemberRequest | null | undefined): Observable<ValidateMemberSignUpOutput> {
+    validateMemberSignUp(request: SignUpMemberRequest | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/PFM/Application/ValidateMemberSignUp";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1636,7 +1636,6 @@ export class ApplicationServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
@@ -1647,14 +1646,14 @@ export class ApplicationServiceProxy {
                 try {
                     return this.processValidateMemberSignUp(<any>response_);
                 } catch (e) {
-                    return <Observable<ValidateMemberSignUpOutput>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ValidateMemberSignUpOutput>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processValidateMemberSignUp(response: HttpResponseBase): Observable<ValidateMemberSignUpOutput> {
+    protected processValidateMemberSignUp(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -1663,17 +1662,14 @@ export class ApplicationServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ValidateMemberSignUpOutput.fromJS(resultData200) : new ValidateMemberSignUpOutput();
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ValidateMemberSignUpOutput>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -15855,6 +15851,7 @@ export class OfferServiceProxy {
      * @creditScore (optional) 
      * @isOfferCollection (optional) 
      * @itemOfOfferCollection (optional) 
+     * @loanAmount (optional) 
      * @cardNetworks (optional) 
      * @cardType (optional) 
      * @securingType (optional) 
@@ -15864,7 +15861,7 @@ export class OfferServiceProxy {
      * @campaignIds (optional) 
      * @return Success
      */
-    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined, cardNetworks: CardNetworks[] | null | undefined, cardType: CardType | null | undefined, securingType: SecuringType | null | undefined, targetAudience: TargetAudience | null | undefined, overallRating: number | null | undefined, issuingBank: string | null | undefined, campaignIds: number[] | null | undefined): Observable<OfferDto[]> {
+    getAll(testMode: boolean, isDirectPostSupported: boolean, category: Category | null | undefined, type: Type | null | undefined, country: string | null | undefined, creditScore: CreditScore | null | undefined, isOfferCollection: boolean | null | undefined, itemOfOfferCollection: ItemOfOfferCollection | null | undefined, loanAmount: number | null | undefined, cardNetworks: CardNetworks[] | null | undefined, cardType: CardType | null | undefined, securingType: SecuringType | null | undefined, targetAudience: TargetAudience | null | undefined, overallRating: number | null | undefined, issuingBank: string | null | undefined, campaignIds: number[] | null | undefined): Observable<OfferDto[]> {
         let url_ = this.baseUrl + "/api/services/PFM/Offer/GetAll?";
         if (testMode === undefined || testMode === null)
             throw new Error("The parameter 'testMode' must be defined and cannot be null.");
@@ -15886,6 +15883,8 @@ export class OfferServiceProxy {
             url_ += "IsOfferCollection=" + encodeURIComponent("" + isOfferCollection) + "&"; 
         if (itemOfOfferCollection !== undefined)
             url_ += "ItemOfOfferCollection=" + encodeURIComponent("" + itemOfOfferCollection) + "&"; 
+        if (loanAmount !== undefined)
+            url_ += "LoanAmount=" + encodeURIComponent("" + loanAmount) + "&"; 
         if (cardNetworks !== undefined)
             cardNetworks && cardNetworks.forEach(item => { url_ += "CardNetworks=" + encodeURIComponent("" + item) + "&"; });
         if (cardType !== undefined)
@@ -27353,14 +27352,14 @@ export class WorkflowActionServiceProxy {
     }
 
     /**
-     * @rule (optional) 
+     * @ruleDto (optional) 
      * @return Success
      */
-    addRule(rule: WorkflowRuleDto | null | undefined): Observable<void> {
+    addRule(ruleDto: AddWorkflowRuleDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/WorkflowAction/AddRule";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(rule);
+        const content_ = JSON.stringify(ruleDto);
 
         let options_ : any = {
             body: content_,
@@ -27402,6 +27401,114 @@ export class WorkflowActionServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @ruleDto (optional) 
+     * @return Success
+     */
+    editRule(ruleDto: EditWorkflowRuleDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/WorkflowAction/EditRule";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(ruleDto);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processEditRule(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processEditRule(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processEditRule(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getRules(): Observable<WorkflowRuleDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/WorkflowAction/GetRules";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRules(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRules(<any>response_);
+                } catch (e) {
+                    return <Observable<WorkflowRuleDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<WorkflowRuleDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRules(response: HttpResponseBase): Observable<WorkflowRuleDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(WorkflowRuleDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<WorkflowRuleDto[]>(<any>null);
     }
 
     /**
@@ -28892,6 +28999,7 @@ export class TrackingInformation implements ITrackingInformation {
     userAgent!: string;
     siteId!: string | undefined;
     siteUrl!: string;
+    clickId!: string | undefined;
 
     constructor(data?: ITrackingInformation) {
         if (data) {
@@ -28915,6 +29023,7 @@ export class TrackingInformation implements ITrackingInformation {
             this.userAgent = data["userAgent"];
             this.siteId = data["siteId"];
             this.siteUrl = data["siteUrl"];
+            this.clickId = data["clickId"];
         }
     }
 
@@ -28938,6 +29047,7 @@ export class TrackingInformation implements ITrackingInformation {
         data["userAgent"] = this.userAgent;
         data["siteId"] = this.siteId;
         data["siteUrl"] = this.siteUrl;
+        data["clickId"] = this.clickId;
         return data; 
     }
 }
@@ -28954,6 +29064,7 @@ export interface ITrackingInformation {
     userAgent: string;
     siteId: string | undefined;
     siteUrl: string;
+    clickId: string | undefined;
 }
 
 export class PersonalInformation implements IPersonalInformation {
@@ -29451,6 +29562,7 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
     postalCode!: string | undefined;
     phoneNumber!: string | undefined;
     isUSCitizen!: boolean;
+    pendingPasswordReset!: boolean | undefined;
 
     constructor(data?: ISignUpMemberRequest) {
         if (data) {
@@ -29469,6 +29581,7 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
             this.postalCode = data["postalCode"];
             this.phoneNumber = data["phoneNumber"];
             this.isUSCitizen = data["isUSCitizen"];
+            this.pendingPasswordReset = data["pendingPasswordReset"];
         }
     }
 
@@ -29487,6 +29600,7 @@ export class SignUpMemberRequest implements ISignUpMemberRequest {
         data["postalCode"] = this.postalCode;
         data["phoneNumber"] = this.phoneNumber;
         data["isUSCitizen"] = this.isUSCitizen;
+        data["pendingPasswordReset"] = this.pendingPasswordReset;
         return data; 
     }
 }
@@ -29498,94 +29612,7 @@ export interface ISignUpMemberRequest {
     postalCode: string | undefined;
     phoneNumber: string | undefined;
     isUSCitizen: boolean;
-}
-
-export class ValidateMemberSignUpOutput implements IValidateMemberSignUpOutput {
-    setting!: PasswordComplexitySetting | undefined;
-
-    constructor(data?: IValidateMemberSignUpOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.setting = data["setting"] ? PasswordComplexitySetting.fromJS(data["setting"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): ValidateMemberSignUpOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new ValidateMemberSignUpOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["setting"] = this.setting ? this.setting.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface IValidateMemberSignUpOutput {
-    setting: PasswordComplexitySetting | undefined;
-}
-
-export class PasswordComplexitySetting implements IPasswordComplexitySetting {
-    requireDigit!: boolean | undefined;
-    requireLowercase!: boolean | undefined;
-    requireNonAlphanumeric!: boolean | undefined;
-    requireUppercase!: boolean | undefined;
-    requiredLength!: number | undefined;
-
-    constructor(data?: IPasswordComplexitySetting) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.requireDigit = data["requireDigit"];
-            this.requireLowercase = data["requireLowercase"];
-            this.requireNonAlphanumeric = data["requireNonAlphanumeric"];
-            this.requireUppercase = data["requireUppercase"];
-            this.requiredLength = data["requiredLength"];
-        }
-    }
-
-    static fromJS(data: any): PasswordComplexitySetting {
-        data = typeof data === 'object' ? data : {};
-        let result = new PasswordComplexitySetting();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["requireDigit"] = this.requireDigit;
-        data["requireLowercase"] = this.requireLowercase;
-        data["requireNonAlphanumeric"] = this.requireNonAlphanumeric;
-        data["requireUppercase"] = this.requireUppercase;
-        data["requiredLength"] = this.requiredLength;
-        return data; 
-    }
-}
-
-export interface IPasswordComplexitySetting {
-    requireDigit: boolean | undefined;
-    requireLowercase: boolean | undefined;
-    requireNonAlphanumeric: boolean | undefined;
-    requireUppercase: boolean | undefined;
-    requiredLength: number | undefined;
+    pendingPasswordReset: boolean | undefined;
 }
 
 export class SignUpMemberResponse implements ISignUpMemberResponse {
@@ -43438,6 +43465,58 @@ export interface IHostBillingSettingsEditDto {
     address: string | undefined;
 }
 
+export class PasswordComplexitySetting implements IPasswordComplexitySetting {
+    requireDigit!: boolean | undefined;
+    requireLowercase!: boolean | undefined;
+    requireNonAlphanumeric!: boolean | undefined;
+    requireUppercase!: boolean | undefined;
+    requiredLength!: number | undefined;
+
+    constructor(data?: IPasswordComplexitySetting) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.requireDigit = data["requireDigit"];
+            this.requireLowercase = data["requireLowercase"];
+            this.requireNonAlphanumeric = data["requireNonAlphanumeric"];
+            this.requireUppercase = data["requireUppercase"];
+            this.requiredLength = data["requiredLength"];
+        }
+    }
+
+    static fromJS(data: any): PasswordComplexitySetting {
+        data = typeof data === 'object' ? data : {};
+        let result = new PasswordComplexitySetting();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["requireDigit"] = this.requireDigit;
+        data["requireLowercase"] = this.requireLowercase;
+        data["requireNonAlphanumeric"] = this.requireNonAlphanumeric;
+        data["requireUppercase"] = this.requireUppercase;
+        data["requiredLength"] = this.requiredLength;
+        return data; 
+    }
+}
+
+export interface IPasswordComplexitySetting {
+    requireDigit: boolean | undefined;
+    requireLowercase: boolean | undefined;
+    requireNonAlphanumeric: boolean | undefined;
+    requireUppercase: boolean | undefined;
+    requiredLength: number | undefined;
+}
+
 export class UserLockOutSettingsEditDto implements IUserLockOutSettingsEditDto {
     isEnabled!: boolean | undefined;
     maxFailedAccessAttemptsBeforeLockout!: number | undefined;
@@ -48196,6 +48275,10 @@ export class OfferDto implements IOfferDto {
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
     offerCollection!: OfferDtoOfferCollection | undefined;
+    minLoanAmount!: number | undefined;
+    maxLoanAmount!: number | undefined;
+    campaignProviderType!: OfferDtoCampaignProviderType | undefined;
+    details!: string[] | undefined;
 
     constructor(data?: IOfferDto) {
         if (data) {
@@ -48220,6 +48303,14 @@ export class OfferDto implements IOfferDto {
             this.introRewardsBonus = data["introRewardsBonus"];
             this.regularAPR = data["regularAPR"];
             this.offerCollection = data["offerCollection"];
+            this.minLoanAmount = data["minLoanAmount"];
+            this.maxLoanAmount = data["maxLoanAmount"];
+            this.campaignProviderType = data["campaignProviderType"];
+            if (data["details"] && data["details"].constructor === Array) {
+                this.details = [];
+                for (let item of data["details"])
+                    this.details.push(item);
+            }
         }
     }
 
@@ -48244,6 +48335,14 @@ export class OfferDto implements IOfferDto {
         data["introRewardsBonus"] = this.introRewardsBonus;
         data["regularAPR"] = this.regularAPR;
         data["offerCollection"] = this.offerCollection;
+        data["minLoanAmount"] = this.minLoanAmount;
+        data["maxLoanAmount"] = this.maxLoanAmount;
+        data["campaignProviderType"] = this.campaignProviderType;
+        if (this.details && this.details.constructor === Array) {
+            data["details"] = [];
+            for (let item of this.details)
+                data["details"].push(item);
+        }
         return data; 
     }
 }
@@ -48261,13 +48360,16 @@ export interface IOfferDto {
     introRewardsBonus: string | undefined;
     regularAPR: string | undefined;
     offerCollection: OfferDtoOfferCollection | undefined;
+    minLoanAmount: number | undefined;
+    maxLoanAmount: number | undefined;
+    campaignProviderType: OfferDtoCampaignProviderType | undefined;
+    details: string[] | undefined;
 }
 
 export class OfferDetailsDto implements IOfferDetailsDto {
     description!: string | undefined;
-    creditScores!: CreditScores[] | undefined;
     introAPR!: string | undefined;
-    details!: string[] | undefined;
+    creditScores!: CreditScores[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
     campaignId!: number | undefined;
@@ -48282,6 +48384,10 @@ export class OfferDetailsDto implements IOfferDetailsDto {
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
     offerCollection!: OfferDetailsDtoOfferCollection | undefined;
+    minLoanAmount!: number | undefined;
+    maxLoanAmount!: number | undefined;
+    campaignProviderType!: OfferDetailsDtoCampaignProviderType | undefined;
+    details!: string[] | undefined;
 
     constructor(data?: IOfferDetailsDto) {
         if (data) {
@@ -48295,16 +48401,11 @@ export class OfferDetailsDto implements IOfferDetailsDto {
     init(data?: any) {
         if (data) {
             this.description = data["description"];
+            this.introAPR = data["introAPR"];
             if (data["creditScores"] && data["creditScores"].constructor === Array) {
                 this.creditScores = [];
                 for (let item of data["creditScores"])
                     this.creditScores.push(item);
-            }
-            this.introAPR = data["introAPR"];
-            if (data["details"] && data["details"].constructor === Array) {
-                this.details = [];
-                for (let item of data["details"])
-                    this.details.push(item);
             }
             if (data["pros"] && data["pros"].constructor === Array) {
                 this.pros = [];
@@ -48328,6 +48429,14 @@ export class OfferDetailsDto implements IOfferDetailsDto {
             this.introRewardsBonus = data["introRewardsBonus"];
             this.regularAPR = data["regularAPR"];
             this.offerCollection = data["offerCollection"];
+            this.minLoanAmount = data["minLoanAmount"];
+            this.maxLoanAmount = data["maxLoanAmount"];
+            this.campaignProviderType = data["campaignProviderType"];
+            if (data["details"] && data["details"].constructor === Array) {
+                this.details = [];
+                for (let item of data["details"])
+                    this.details.push(item);
+            }
         }
     }
 
@@ -48341,16 +48450,11 @@ export class OfferDetailsDto implements IOfferDetailsDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["description"] = this.description;
+        data["introAPR"] = this.introAPR;
         if (this.creditScores && this.creditScores.constructor === Array) {
             data["creditScores"] = [];
             for (let item of this.creditScores)
                 data["creditScores"].push(item);
-        }
-        data["introAPR"] = this.introAPR;
-        if (this.details && this.details.constructor === Array) {
-            data["details"] = [];
-            for (let item of this.details)
-                data["details"].push(item);
         }
         if (this.pros && this.pros.constructor === Array) {
             data["pros"] = [];
@@ -48374,15 +48478,22 @@ export class OfferDetailsDto implements IOfferDetailsDto {
         data["introRewardsBonus"] = this.introRewardsBonus;
         data["regularAPR"] = this.regularAPR;
         data["offerCollection"] = this.offerCollection;
+        data["minLoanAmount"] = this.minLoanAmount;
+        data["maxLoanAmount"] = this.maxLoanAmount;
+        data["campaignProviderType"] = this.campaignProviderType;
+        if (this.details && this.details.constructor === Array) {
+            data["details"] = [];
+            for (let item of this.details)
+                data["details"].push(item);
+        }
         return data; 
     }
 }
 
 export interface IOfferDetailsDto {
     description: string | undefined;
-    creditScores: CreditScores[] | undefined;
     introAPR: string | undefined;
-    details: string[] | undefined;
+    creditScores: CreditScores[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
     campaignId: number | undefined;
@@ -48397,6 +48508,10 @@ export interface IOfferDetailsDto {
     introRewardsBonus: string | undefined;
     regularAPR: string | undefined;
     offerCollection: OfferDetailsDtoOfferCollection | undefined;
+    minLoanAmount: number | undefined;
+    maxLoanAmount: number | undefined;
+    campaignProviderType: OfferDetailsDtoCampaignProviderType | undefined;
+    details: string[] | undefined;
 }
 
 export class SubmitApplicationInput implements ISubmitApplicationInput {
@@ -48558,10 +48673,10 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     zeroPercentageInterestTransfers!: string | undefined;
     durationForZeroPercentageTransfersInMonths!: number | undefined;
     flags!: Flags | undefined;
+    states!: string[] | undefined;
     description!: string | undefined;
-    creditScores!: CreditScores2[] | undefined;
     introAPR!: string | undefined;
-    details!: string[] | undefined;
+    creditScores!: CreditScores2[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
     campaignId!: number | undefined;
@@ -48578,6 +48693,12 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     introRewardsBonus!: string | undefined;
     regularAPR!: string | undefined;
     offerCollection!: OfferDetailsForEditDtoOfferCollection | undefined;
+    minLoanAmount!: number | undefined;
+    maxLoanAmount!: number | undefined;
+    minLoanTermMonths!: number | undefined;
+    maxLoanTermMonths!: number | undefined;
+    campaignProviderType!: OfferDetailsForEditDtoCampaignProviderType | undefined;
+    details!: string[] | undefined;
     status!: OfferDetailsForEditDtoStatus | undefined;
     type!: OfferDetailsForEditDtoType | undefined;
 
@@ -48610,17 +48731,17 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             this.zeroPercentageInterestTransfers = data["zeroPercentageInterestTransfers"];
             this.durationForZeroPercentageTransfersInMonths = data["durationForZeroPercentageTransfersInMonths"];
             this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
+            if (data["states"] && data["states"].constructor === Array) {
+                this.states = [];
+                for (let item of data["states"])
+                    this.states.push(item);
+            }
             this.description = data["description"];
+            this.introAPR = data["introAPR"];
             if (data["creditScores"] && data["creditScores"].constructor === Array) {
                 this.creditScores = [];
                 for (let item of data["creditScores"])
                     this.creditScores.push(item);
-            }
-            this.introAPR = data["introAPR"];
-            if (data["details"] && data["details"].constructor === Array) {
-                this.details = [];
-                for (let item of data["details"])
-                    this.details.push(item);
             }
             if (data["pros"] && data["pros"].constructor === Array) {
                 this.pros = [];
@@ -48646,6 +48767,16 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             this.introRewardsBonus = data["introRewardsBonus"];
             this.regularAPR = data["regularAPR"];
             this.offerCollection = data["offerCollection"];
+            this.minLoanAmount = data["minLoanAmount"];
+            this.maxLoanAmount = data["maxLoanAmount"];
+            this.minLoanTermMonths = data["minLoanTermMonths"];
+            this.maxLoanTermMonths = data["maxLoanTermMonths"];
+            this.campaignProviderType = data["campaignProviderType"];
+            if (data["details"] && data["details"].constructor === Array) {
+                this.details = [];
+                for (let item of data["details"])
+                    this.details.push(item);
+            }
             this.status = data["status"];
             this.type = data["type"];
         }
@@ -48678,17 +48809,17 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
         data["zeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
         data["durationForZeroPercentageTransfersInMonths"] = this.durationForZeroPercentageTransfersInMonths;
         data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
+        if (this.states && this.states.constructor === Array) {
+            data["states"] = [];
+            for (let item of this.states)
+                data["states"].push(item);
+        }
         data["description"] = this.description;
+        data["introAPR"] = this.introAPR;
         if (this.creditScores && this.creditScores.constructor === Array) {
             data["creditScores"] = [];
             for (let item of this.creditScores)
                 data["creditScores"].push(item);
-        }
-        data["introAPR"] = this.introAPR;
-        if (this.details && this.details.constructor === Array) {
-            data["details"] = [];
-            for (let item of this.details)
-                data["details"].push(item);
         }
         if (this.pros && this.pros.constructor === Array) {
             data["pros"] = [];
@@ -48714,6 +48845,16 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
         data["introRewardsBonus"] = this.introRewardsBonus;
         data["regularAPR"] = this.regularAPR;
         data["offerCollection"] = this.offerCollection;
+        data["minLoanAmount"] = this.minLoanAmount;
+        data["maxLoanAmount"] = this.maxLoanAmount;
+        data["minLoanTermMonths"] = this.minLoanTermMonths;
+        data["maxLoanTermMonths"] = this.maxLoanTermMonths;
+        data["campaignProviderType"] = this.campaignProviderType;
+        if (this.details && this.details.constructor === Array) {
+            data["details"] = [];
+            for (let item of this.details)
+                data["details"].push(item);
+        }
         data["status"] = this.status;
         data["type"] = this.type;
         return data; 
@@ -48739,10 +48880,10 @@ export interface IOfferDetailsForEditDto {
     zeroPercentageInterestTransfers: string | undefined;
     durationForZeroPercentageTransfersInMonths: number | undefined;
     flags: Flags | undefined;
+    states: string[] | undefined;
     description: string | undefined;
-    creditScores: CreditScores2[] | undefined;
     introAPR: string | undefined;
-    details: string[] | undefined;
+    creditScores: CreditScores2[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
     campaignId: number | undefined;
@@ -48759,6 +48900,12 @@ export interface IOfferDetailsForEditDto {
     introRewardsBonus: string | undefined;
     regularAPR: string | undefined;
     offerCollection: OfferDetailsForEditDtoOfferCollection | undefined;
+    minLoanAmount: number | undefined;
+    maxLoanAmount: number | undefined;
+    minLoanTermMonths: number | undefined;
+    maxLoanTermMonths: number | undefined;
+    campaignProviderType: OfferDetailsForEditDtoCampaignProviderType | undefined;
+    details: string[] | undefined;
     status: OfferDetailsForEditDtoStatus | undefined;
     type: OfferDetailsForEditDtoType | undefined;
 }
@@ -48794,7 +48941,13 @@ export class ExtendOfferDto implements IExtendOfferDto {
     details!: string[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
+    minLoanAmount!: number | undefined;
+    maxLoanAmount!: number | undefined;
+    minLoanTermMonths!: number | undefined;
+    maxLoanTermMonths!: number | undefined;
+    campaignProviderType!: ExtendOfferDtoCampaignProviderType | undefined;
     flags!: Flags2 | undefined;
+    states!: string[] | undefined;
 
     constructor(data?: IExtendOfferDto) {
         if (data) {
@@ -48849,7 +49002,17 @@ export class ExtendOfferDto implements IExtendOfferDto {
                 for (let item of data["cons"])
                     this.cons.push(item);
             }
+            this.minLoanAmount = data["minLoanAmount"];
+            this.maxLoanAmount = data["maxLoanAmount"];
+            this.minLoanTermMonths = data["minLoanTermMonths"];
+            this.maxLoanTermMonths = data["maxLoanTermMonths"];
+            this.campaignProviderType = data["campaignProviderType"];
             this.flags = data["flags"] ? Flags2.fromJS(data["flags"]) : <any>undefined;
+            if (data["states"] && data["states"].constructor === Array) {
+                this.states = [];
+                for (let item of data["states"])
+                    this.states.push(item);
+            }
         }
     }
 
@@ -48904,7 +49067,17 @@ export class ExtendOfferDto implements IExtendOfferDto {
             for (let item of this.cons)
                 data["cons"].push(item);
         }
+        data["minLoanAmount"] = this.minLoanAmount;
+        data["maxLoanAmount"] = this.maxLoanAmount;
+        data["minLoanTermMonths"] = this.minLoanTermMonths;
+        data["maxLoanTermMonths"] = this.maxLoanTermMonths;
+        data["campaignProviderType"] = this.campaignProviderType;
         data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
+        if (this.states && this.states.constructor === Array) {
+            data["states"] = [];
+            for (let item of this.states)
+                data["states"].push(item);
+        }
         return data; 
     }
 }
@@ -48940,7 +49113,13 @@ export interface IExtendOfferDto {
     details: string[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
+    minLoanAmount: number | undefined;
+    maxLoanAmount: number | undefined;
+    minLoanTermMonths: number | undefined;
+    maxLoanTermMonths: number | undefined;
+    campaignProviderType: ExtendOfferDtoCampaignProviderType | undefined;
     flags: Flags2 | undefined;
+    states: string[] | undefined;
 }
 
 export class ExtendFromCSVOutput implements IExtendFromCSVOutput {
@@ -58477,14 +58656,62 @@ export interface IGetLatestWebLogsOutput {
     latestWebLogLines: string[] | undefined;
 }
 
-export class WorkflowRuleDto implements IWorkflowRuleDto {
-    id!: number | undefined;
+export class AddWorkflowRuleDto implements IAddWorkflowRuleDto {
     triggerIdentifier!: string;
     actionIdentifier!: string;
     configurationOptions!: string;
     isActive!: boolean | undefined;
 
-    constructor(data?: IWorkflowRuleDto) {
+    constructor(data?: IAddWorkflowRuleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.triggerIdentifier = data["triggerIdentifier"];
+            this.actionIdentifier = data["actionIdentifier"];
+            this.configurationOptions = data["configurationOptions"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): AddWorkflowRuleDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddWorkflowRuleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["triggerIdentifier"] = this.triggerIdentifier;
+        data["actionIdentifier"] = this.actionIdentifier;
+        data["configurationOptions"] = this.configurationOptions;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IAddWorkflowRuleDto {
+    triggerIdentifier: string;
+    actionIdentifier: string;
+    configurationOptions: string;
+    isActive: boolean | undefined;
+}
+
+export class EditWorkflowRuleDto implements IEditWorkflowRuleDto {
+    id!: number;
+    triggerIdentifier!: string;
+    actionIdentifier!: string;
+    configurationOptions!: string;
+    isActive!: boolean | undefined;
+
+    constructor(data?: IEditWorkflowRuleDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -58503,9 +58730,9 @@ export class WorkflowRuleDto implements IWorkflowRuleDto {
         }
     }
 
-    static fromJS(data: any): WorkflowRuleDto {
+    static fromJS(data: any): EditWorkflowRuleDto {
         data = typeof data === 'object' ? data : {};
-        let result = new WorkflowRuleDto();
+        let result = new EditWorkflowRuleDto();
         result.init(data);
         return result;
     }
@@ -58521,11 +58748,67 @@ export class WorkflowRuleDto implements IWorkflowRuleDto {
     }
 }
 
-export interface IWorkflowRuleDto {
-    id: number | undefined;
+export interface IEditWorkflowRuleDto {
+    id: number;
     triggerIdentifier: string;
     actionIdentifier: string;
     configurationOptions: string;
+    isActive: boolean | undefined;
+}
+
+export class WorkflowRuleDto implements IWorkflowRuleDto {
+    id!: number | undefined;
+    triggerIdentifier!: string | undefined;
+    actionIdentifier!: string | undefined;
+    configurationType!: string | undefined;
+    configurationOptions!: string | undefined;
+    isActive!: boolean | undefined;
+
+    constructor(data?: IWorkflowRuleDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.triggerIdentifier = data["triggerIdentifier"];
+            this.actionIdentifier = data["actionIdentifier"];
+            this.configurationType = data["configurationType"];
+            this.configurationOptions = data["configurationOptions"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): WorkflowRuleDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new WorkflowRuleDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["triggerIdentifier"] = this.triggerIdentifier;
+        data["actionIdentifier"] = this.actionIdentifier;
+        data["configurationType"] = this.configurationType;
+        data["configurationOptions"] = this.configurationOptions;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IWorkflowRuleDto {
+    id: number | undefined;
+    triggerIdentifier: string | undefined;
+    actionIdentifier: string | undefined;
+    configurationType: string | undefined;
+    configurationOptions: string | undefined;
     isActive: boolean | undefined;
 }
 
@@ -59701,6 +59984,10 @@ export enum OfferDtoOfferCollection {
     NoCredit = "NoCredit", 
 }
 
+export enum OfferDtoCampaignProviderType {
+    CreditLand = "CreditLand", 
+}
+
 export enum CreditScores {
     NotSure = "NotSure", 
     Excellent = "Excellent", 
@@ -59728,6 +60015,10 @@ export enum OfferDetailsDtoOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+}
+
+export enum OfferDetailsDtoCampaignProviderType {
+    CreditLand = "CreditLand", 
 }
 
 export enum SubmitApplicationInputSystemType {
@@ -59904,6 +60195,10 @@ export enum OfferDetailsForEditDtoOfferCollection {
     NoCredit = "NoCredit", 
 }
 
+export enum OfferDetailsForEditDtoCampaignProviderType {
+    CreditLand = "CreditLand", 
+}
+
 export enum OfferDetailsForEditDtoStatus {
     PendingReview = "PendingReview", 
     Active = "Active", 
@@ -59962,6 +60257,10 @@ export enum ExtendOfferDtoOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+}
+
+export enum ExtendOfferDtoCampaignProviderType {
+    CreditLand = "CreditLand", 
 }
 
 export class Flags2 implements IFlags2 {

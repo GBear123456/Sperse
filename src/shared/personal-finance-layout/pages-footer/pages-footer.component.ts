@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { environment } from 'environments/environment';
 

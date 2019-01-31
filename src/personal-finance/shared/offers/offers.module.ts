@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
@@ -37,6 +38,7 @@ import { PersonalFinanceCommonModule } from '../../shared/common/personal-financ
         FormsModule,
         CommonModule,
         MatSelectModule,
+        MatDialogModule,
         MatRadioModule,
         MatCheckboxModule,
         MatSliderModule,

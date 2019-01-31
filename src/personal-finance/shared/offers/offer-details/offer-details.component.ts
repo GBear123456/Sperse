@@ -167,6 +167,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
                             undefined,
                             undefined,
                             undefined,
+                            undefined,
                             []
                         )),
                         publishReplay(),

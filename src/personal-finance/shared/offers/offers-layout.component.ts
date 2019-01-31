@@ -77,6 +77,7 @@ export class FilterValues {
     rating: number;
     stateCode: string;
     loanAmount: number;
+    overallRating: number;
 }
 
 enum CreditCardCategory {
@@ -533,6 +534,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     this.offersService.getCreditScore(filter.category, filter.creditScore),
                     undefined,
                     undefined,
+                    undefined,
                     filter.networks,
                     filter.cardType,
                     filter.securingType,
@@ -592,7 +594,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             targetAudience: undefined,
             rating: undefined,
             stateCode: 'AL',
-            loanAmount: 10000
+            loanAmount: 10000,
+            overallRating: undefined
         };
     }
 
