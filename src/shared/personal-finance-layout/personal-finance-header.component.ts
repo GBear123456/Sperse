@@ -7,6 +7,7 @@ import { AppConsts } from 'shared/AppConsts';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { PersonalFinanceLayoutService } from './personal-finance-layout.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
+import { environment } from 'environments/environment';
 
 @Directive({
     selector: '[ad-header-host]'
@@ -52,8 +53,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         }
     ];
     actionsButtons = [
-        {name: 'SIGN UP', class: 'member-signup', routerUrl: '/personal-finance/sign-up', disabled: false},
-        {name: 'Member Login', class: 'member-login', routerUrl: '/account/login', disabled: false}
+        {name: 'SIGN UP', class: 'member-signup', routerUrl: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false},
+        {name: 'Member Login', class: 'member-login', routerUrl: environment.LENDSPACE_DOMAIN + '/login', disabled: false}
     ];
 
     constructor(
@@ -130,12 +131,12 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                     //     routerUrl: '/personal-finance/offers/credit-repair'
                     // },
                     {
-                        name: this.ls('PFM', 'Offers_IdTheftProtection'),
-                        routerUrl: '/personal-finance/offers/id-theft-protection'
-                    },
-                    {
                         name: this.ls('PFM', 'Offers_DebtConsolidation'),
                         routerUrl: '/personal-finance/offers/debt-consolidation'
+                    },
+                    {
+                        name: this.ls('PFM', 'Offers_IdTheftProtection'),
+                        routerUrl: '/personal-finance/offers/id-theft-protection'
                     }
                 ]
             },
@@ -188,6 +189,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         if (this.loggedUserId)
             this._router.navigate(['/personal-finance/home']);
         else
-            window.open(AppConsts.LENDSPACE_DOMAIN, '_self');
+            window.open(environment.LENDSPACE_DOMAIN, '_self');
     }
 }

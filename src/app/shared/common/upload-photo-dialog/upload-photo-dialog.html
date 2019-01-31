@@ -28,11 +28,7 @@
     </file-drop>
 </mat-dialog-content>
 <mat-dialog-actions>
-    <div>
-        <button mat-button class="button-layout button-default" [disabled]="clearDisabled" (click)="clearPhoto()">{{ l('Clear') }}</button>
-    </div>
-    <div>
-        <button mat-button mat-dialog-close class="button-layout button-default">{{ l('Cancel') }}</button>
-        <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{ l('Save') }}</button>
-    </div>
+    <button mat-button class="button-layout button-default clear" [disabled]="clearDisabled" (click)="clearPhoto()">{{ l('Clear') }}</button>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{ l('Cancel') }}</button>
+    <button mat-button class="button-layout button-primary" (click)="onSave($event)">{{ l('Save') }}</button>
 </mat-dialog-actions>

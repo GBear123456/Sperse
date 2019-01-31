@@ -1,0 +1,193 @@
+:host {
+    display: flex;
+    justify-content: center;
+
+    & > div {
+        width: 100%;
+        height: 450px;
+    }
+    .top {
+        padding-left: 8%;
+        padding-top: 50px;
+        position: relative;
+        background: url(../../../../assets/common/images/lend-space-dark/welcome/bottom-left.jpg) no-repeat 0px/cover;
+
+        h1 {
+            font-size: 40px;
+            font-weight: 700;
+        }
+        h3 {
+            font-size: 26px;
+            font-weight: 500;
+        }
+        button {
+            width: 340px;
+            position: absolute;
+            bottom: 30px;
+        }
+    }
+    .bottom {
+        position: relative;
+        padding-left: 8%;
+        padding-top: 30px;
+        background: linear-gradient(to right,#000 1%,transparent),url(../../../../assets/common/images/lend-space-dark/welcome/bottom-left-2.jpg) no-repeat 0px/cover;
+
+        .text-box {
+            padding-bottom: 40px;
+            position:absolute;
+            bottom: 0px;
+
+            h1 {
+                color: #FFF;
+                font-size: 40px;
+                font-weight: 800;
+            }
+            h3 {
+                color: #FFF;
+                font-size: 26px;
+                font-weight: 400;
+                padding-bottom: 40px;
+            }
+            button {
+                width: 340px;
+            }
+        }
+        i {
+            height: 100px;
+            display: inline-block;
+        }
+        .electro-finance {
+            width: 200px;
+            background: url(../../../../assets/common/images/lend-space-dark/welcome/electro-finance.png) no-repeat center;
+        }
+        .best-buy {
+            width: 130px;
+            background: url(../../../../assets/common/images/lend-space-dark/welcome/best-buy.png) no-repeat center;
+        }
+    }
+
+    button.yellow {
+        outline: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 22px;
+        background: linear-gradient(#f1e76b, #fdb234);
+        border: 1px solid #cdab69;
+        margin-bottom: 0;
+        font-weight: 600;
+        color: #333333;
+        &.lock {
+            min-width: 220px;
+            padding-right: 50px;
+            background: url(../../../../assets/common/images/lend-space-dark/welcome/lock.png) no-repeat 92%, linear-gradient(#f1e76b, #fdb234);
+
+            &:hover {
+                background: url(../../../../assets/common/images/lend-space-dark/welcome/lock.png) no-repeat 92%, linear-gradient(#fdb234, #f1e76b);
+            }
+        }
+
+        &:hover {
+            background: linear-gradient(#fdb234, #f1e76b);
+        }
+    }
+
+    @media all and (max-width:600px){
+        .top,
+        .bottom {
+            padding: 15px;
+        }
+        .top {
+            background-position: right -280px center;
+        }
+        .bottom {
+            background: linear-gradient(to right, #000 1%, transparent), url(../../../../assets/common/images/lend-space-dark/welcome/bottom-left-2.jpg) no-repeat -100px / cover!important;
+        }
+    }
+
+    @media all and (max-width: 400px) {
+        .top,
+        .bottom {
+            text-align: center;
+            height: 400px;
+
+            &::before {
+                content: '';
+                position: absolute;
+                display: block;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                background-color: rgba(255, 255, 255, .4);
+            }
+
+            * {
+                z-index: 1;
+                position: relative;
+            }
+
+            h1 {
+                margin-top: 50px;
+                font-size: 35px;
+            }
+
+            h3 {
+                font-size: 24px;
+            }
+
+            button {
+                width: auto !important;
+                max-width: 100%;
+                position: relative;
+                bottom: unset;
+                margin-top: 10px;
+                font-size: 15px;
+                text-transform: uppercase;
+            }
+        }
+
+        .top {
+            h1 {
+                margin-top: 25px;
+                margin-bottom: 60px;
+            }
+        }
+
+        .bottom {
+            &::before {
+                background-color: rgba(0, 0, 0, .4);
+            }
+
+            .icons-wrapper {
+                display: flex;
+
+                i {
+                    max-width: 28%;
+                    background-size: contain;
+                    margin: 0;
+
+                    &.electro-finance {
+                        max-width: 42%;
+                    }
+                }
+            }
+
+            .text-box {
+                position: relative;
+
+                h1 {
+                    margin-top: 5px;
+                }
+
+                h3 {
+                    padding-bottom: 5px;
+                }
+            }
+        }
+        .top {
+            background-position: right -250px center;
+        }
+    }
+}

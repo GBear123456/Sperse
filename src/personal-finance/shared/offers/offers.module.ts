@@ -1,7 +1,7 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { MatSelectModule } from '@angular/material/select';
@@ -15,9 +15,12 @@ import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offe
 import { LayoutModule } from '../layout/layout.module';
 import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { OffersRoutingModule } from '@root/personal-finance/shared/offers/offers-routing.module';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
+import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CreditCardsComponent } from './credit-cards/credit-cards.component';
 import { CreditScoreComponent } from '@root/personal-finance/shared/offers/credit-score/credit-score.component';
 import { NavigationComponent } from '@root/personal-finance/shared/offers/navigation/navigation.component';
@@ -27,6 +30,7 @@ import { ScoreFilterComponent } from '@root/personal-finance/shared/offers/filte
 import { BusinessLoansComponent } from '@root/personal-finance/shared/offers/business-loans/business-loans.component';
 import { OffersCategoryDetailsComponent } from '@root/personal-finance/shared/offers/offers-category-details/offers-category-details.component';
 import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers/debt-consolidation/debt-consolidation.component';
+import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
 
 @NgModule({
     imports: [
@@ -41,9 +45,11 @@ import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers
         RoundProgressModule,
         NoDataModule,
         OffersRoutingModule,
-        LayoutModule
+        LayoutModule,
+        PersonalFinanceCommonModule
     ],
     declarations: [
+        ApplyOfferDialogComponent,
         OffersLayoutComponent,
         OfferDetailsComponent,
         NumberAbbrPipe,
@@ -56,6 +62,14 @@ import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers
         BusinessLoansComponent,
         OffersCategoryDetailsComponent,
         DebtConsolidationComponent
+    ],
+    providers: [
+        OffersService,
+        OfferServiceProxy,
+        CurrencyPipe
+    ],
+    entryComponents: [
+        ApplyOfferDialogComponent
     ]
 })
 export class OffersModule {

@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="row">
+        <div class="credit-score-navigation col-lg-3">
+            <h1>{{ ls.l('CreditScore_IdProtectionTitle') }}</h1>
+            <navigation></navigation>
+        </div>
+        <div class="col-lg-9" #content>
+            <ng-container *ngFor="let offer of offers$ | async">
+                <div class="logo-wrap">
+                    <img [src]="offer.logoUrl" [alt]="offer.name">
+                </div>
+
+                <div class="offer-details-wrap">
+                    <h2 class="title">Every 3.5 seconds <b>an identity is stolen</b></h2>
+                    <p class="subtitle">CreditID123 protects your identity with:</p>
+                    <ul class="items-list">
+                        <li class="item">Real time social security number monitoring</li>
+                        <li class="item">Credit card fraud detection</li>
+                        <li class="item">24/7 access to your credit report and score</li>
+                        <li class="item">Instant email alerts for suspicious activity</li>
+                        <li class="item">$1,000,000 theft policy</li>
+                    </ul>
+                    <button class="applyButton"
+                            (click)="offersService.applyOffer(offer)">
+                        {{ ls.l('GetOffer') }}
+                    </button>
+                </div>
+
+                <div class="features">
+                    <ul class="features-list row">
+                        <li class="col-md-4" *ngFor="let feature of features">
+                            <div class="feature-item">
+                                <img [src]="'./assets/images/credit-report/svgicons/' + feature.iconSrc" [alt]="feature.title">
+                                <h3 class="feature-title">{{feature.title}}</h3>
+                                <p class="feature-text">{{feature.text}}</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

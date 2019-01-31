@@ -14,7 +14,7 @@ import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offe
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreditScoreComponent {
-    @ViewChild(OffersLayoutComponent) offersComponent: OffersLayoutComponent;
+    @ViewChild(OffersLayoutComponent) offersLayoutComponent: OffersLayoutComponent;
     bureauAmount = '3';
     logoes: string[] = [
         'transunion',

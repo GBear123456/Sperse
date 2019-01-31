@@ -523,14 +523,25 @@
 
     /deep/ button.applyButton,
     /deep/ a.applyButton {
+
         text-align: center;
-        border-radius: 2px;
-        background-color: #ffcc00 !important;
-        width: 143px;
-        margin-bottom: 7px;
-        border: none;
-        padding: 7px 0;
-        margin-bottom: 0;
+        padding: 7px;
+        border: 1px solid #b1770b;
+        border-radius: 3px;
+        background-image: linear-gradient(0deg, #fdb337, #f3ea80);
+        font-size: 18px;
+        font-weight: 500;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 7px;
+        cursor: pointer;
+
+        &:hover {
+            background-image: linear-gradient(0deg, #f3ea80, #fdb337);
+        }
+
         span {
             display: block;
             color: #1f1700;
@@ -552,6 +563,11 @@
                 right: 26px;
                 position: absolute;
             }
+        }
+        &::after {
+            content: url(../assets/common/icons/lock.png);
+            margin-left: 10px;
+            height: 24px;
         }
     }
 

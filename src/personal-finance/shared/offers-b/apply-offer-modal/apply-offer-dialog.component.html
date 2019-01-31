@@ -1,0 +1,22 @@
+<mat-dialog-content>
+    <ng-container *ngIf="!showBlockedMessage">
+        <div class="nextImageBlock">
+            <ng-container *ngIf="data.logoUrl">
+                <img [src]="data.logoUrl">
+            </ng-container>
+        </div>
+        <h2>{{title}}</h2>
+        <p>{{subtitle}}</p>
+        <ng-container *ngIf="processingSteps[currentStepIndex] as processingStep">
+            <div class="alert alert-success text-center" *ngIf="delayMessages && delayMessages[currentStepIndex + 1]">
+                <strong>{{ delayMessages[currentStepIndex + 1] }}</strong>
+            </div>
+            <div class="process-step alert alert-info">
+                <div class="spinner fa-spin"></div>
+                <h4>{{ processingStep.name }}</h4>
+            </div>
+        </ng-container>
+    </ng-container>
+
+    <div class="blockedMessage" *ngIf="showBlockedMessage">{{ ls.l('Offers_TurnOffPopupBlockerMessage') }}</div>
+</mat-dialog-content>

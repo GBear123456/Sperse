@@ -1,0 +1,420 @@
+@main-font-color: #000;
+@additional-font-color: #4a4a4a;
+@grey-font-color: #757575;
+@border-color: #DFDFDF;
+@main-padding: 40px;
+
+:host {
+    .container {
+        position: relative;
+    }
+    .mobileButtons {
+        text-align: center;
+        button {
+            border-color: #ebedf2;
+            background-color: #f4f5f8;
+        }
+        @media (min-width: 992px) {
+            display: none;
+        }
+    }
+
+    * {
+        font-family: Poppins;
+        color: @main-font-color;
+    }
+    .content-wrap {
+        padding-top: 0;
+        padding-bottom: 0;
+    };
+    ul {
+        padding-left: 0;
+        list-style: none;
+    }
+    button {
+        cursor: pointer;
+        border: none;
+        background: none;
+    }
+    hr {
+        border-top: 2px solid @border-color;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    h5.title {
+        color: #171C1D;
+        font-size: 15px;
+        font-weight: bold;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        text-align: left;
+        font-weight: 700;
+    }
+
+    .row {
+        @media (min-width: 992px) {
+            margin-right: -@main-padding;
+            margin-left: -@main-padding;
+        }
+    }
+
+    .left-details,
+    .right-details,
+    .leftBlock,
+    .rightBlock,
+    .bankDetails,
+    .actions {
+        @media (min-width: 992px) {
+            padding-right: @main-padding;
+            padding-left: @main-padding;
+        }
+    }
+
+    .leftBlock,
+    .rightBlock {
+        padding-top: 10px;
+        padding-bottom: 58px;
+    }
+
+    .leftBlock {
+        border-right: 2px solid #dfdfdf;
+        @media (max-width: 767px) {
+             right: 0;
+             left: 0;
+             border-right: none;
+        }
+        @media (max-width: 991px) {
+            position: absolute;
+            transform: translateX(0);
+            transition: transform 0.3s ease-in-out;
+            background: #fff;
+            z-index: 1;
+            bottom: 0;
+            top: 40px;
+            &.sm-hidden {
+                transform: translateX(-200%);
+            }
+        }
+        h1 {
+            font-size: 46px;
+            font-weight: bold;
+            line-height: 57px;
+            text-align: left;
+            margin-bottom: 45px;
+            text-transform: capitalize;
+        }
+        h3 {
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 0.2px;
+            line-height: 24px;
+            margin-bottom: 25px;
+
+            .amount-count {
+                float: right;
+                display: block;
+            }
+        }
+
+        .available-amount {
+            display: flex;
+            max-width: 100%;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .creditCardsList {
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            line-height: 20px;
+            /deep/ mat-radio-button {
+                display: block;
+                margin-bottom: 15px;
+                img {
+                    max-width: 105px;
+                    max-height: 44px;
+                }
+                .mat-radio-container {
+                    .mat-radio-outer-circle {
+                        border-color: @border-color;
+                    }
+                    .mat-ripple .mat-ripple-element {
+                        display: none;
+                    }
+                }
+                .mat-radio-label {
+                    max-width: 100%;
+                }
+                .mat-radio-label-content {
+                    display: flex;
+                    align-items: center;
+                    max-width: 100%;
+                    .cardInfo {
+                        margin-left: 16px;
+                        font-size: 18px;
+                        line-height: 1.25;
+                        overflow: hidden;
+                        //flex-basis: 200px;
+                        h4, h5 {
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            max-width: 185px;
+                        }
+                        h4 {
+                            font-size: 13px;
+                            font-weight: 500;
+                            margin-bottom: 0;
+                            color: @additional-font-color;
+                            text-transform: capitalize;
+                            letter-spacing: 0.3px;
+                            margin-bottom: 0;
+                        }
+                        h5 {
+                            font-weight: 600;
+                            margin-bottom: 0;
+                            letter-spacing: 0.3px;
+                        }
+                    }
+                    .imageContainer {
+                        border: 3px solid transparent;
+                        border-radius: 4px;
+                        height: 66px;
+                        width: 90px;
+                        min-width: 90px;
+                        display: flex;
+                        align-items: center;
+
+                        img {
+                            object-fit: cover;
+                            max-width: 100%;
+                        }
+                    }
+                }
+                &.mat-radio-checked {
+                    .imageContainer {
+                        border: 3px solid #ffcc00;
+                    }
+                    .mat-radio-container {
+                        .mat-radio-outer-circle {
+                            border-color: #fc0;
+                        }
+                        .mat-radio-inner-circle {
+                            transform: scale(1);
+                            background-color: #fc0;
+                        }
+                        &:before {
+                            content: url('../../../../assets/common/icons/check-black.svg');
+                            width: 12px;
+                            height: 17px;
+                            position: absolute;
+                            left: 0;
+                            right: 0;
+                            margin: auto;
+                            font-size: 11px;
+                            bottom: 0;
+                            top: 0;
+                            color: #000;
+                            z-index: 1;
+                        }
+                    }
+                    .mat-radio-label-content {
+                        .cardInfo {
+                            h5 {
+                                font-weight: 700;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .rightBlock {
+        .bankHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .bankDetails {
+                display: flex;
+                align-items: center;
+                @media (max-width: 767px) {
+                    justify-content: center;
+                    margin: 15px 0;
+                }
+                img {
+                    max-width: 76px;
+                    max-height: 31px;
+                    margin-right: 16px;
+                }
+                .cardInfo {
+                    letter-spacing: 0.2px;
+                    h4 {
+                        font-size: 15px;
+                        font-weight: 500;
+                        color: @additional-font-color;
+                        text-transform: capitalize;
+                    }
+                    h5 {
+                        font-size: 28px;
+                        font-weight: bold;
+                        margin-bottom: 0;
+                    }
+                }
+            }
+            .actions {
+                text-align: center;
+                .applyButton {
+                    width: 100%;
+                }
+            }
+        }
+        .cardDetails {
+            margin-top: 35px;
+            .left-details {
+                padding-right: 20px;
+            }
+            .right-details {
+                padding-left: 20px;
+            }
+            .detailsBlock {
+                h4 {
+                    margin-bottom: 0;
+                    font-size: 15px;
+                    font-weight: 500;
+                }
+                h5.title {
+                    margin-bottom: 18px;
+                    font-weight: 700;
+                }
+                .details-list li {
+                    position: relative;
+                    padding-left: 22px;
+                    font-size: 16px;
+                    line-height: 1.31;
+                    letter-spacing: 0.2px;
+                    color: #3e4a54;
+                    margin-bottom: 20px;
+                    &:before {
+                        content: '';
+                        border-radius: 50%;
+                        width: 6px;
+                        height: 6px;
+                        display: block;
+                        background-color: #5d666a;
+                        position: absolute;
+                        left: 7px;
+                        top: 7px;
+
+                    }
+                }
+            }
+            .aprVariable ul {
+                display: flex;
+                justify-content: space-between;
+                margin-right: -15px;
+                margin-left: -15px;
+                padding-left: 0;
+                .title {
+                    margin-bottom: 20px;
+                }
+                li {
+                    font-size: 16px;
+                    padding-left: 15px;
+                    padding-right: 15px;
+                    letter-spacing: 0.2px;
+                    h5 {
+                        font-weight: 500;
+                        color: @grey-font-color;
+                        font-size: 15px;
+
+                    }
+                    p {
+                        font-weight: 600;
+                    }
+                }
+            }
+            .rightSideBar {
+                padding: 30px;
+                background-color: rgba(62, 74, 84, 0.05);
+                .prosAndCons {
+                    font-size: 16px;
+                    letter-spacing: 0.23px;
+                    .title {
+                        margin-bottom: 6px;
+                    }
+                    ul {
+                        padding-left: 9px;
+                        li {
+                            position: relative;
+                            font-size: 16px;
+                            letter-spacing: 0.2px;
+                            color: @additional-font-color;
+                            padding-left: 23px;
+                        }
+                        &.pros li:before,
+                        &.cons li:before {
+                            width: 12px;
+                            height: 12px;
+                            display: block;
+                            position: absolute;
+                            left: 0;
+                        }
+                        &.pros li:before {
+                            content: url('../../../../assets/common/icons/like-icon.svg');
+                        }
+                        &.cons li:before {
+                            content: url('../../../../assets/common/icons/dislike-icon.svg');
+                        }
+                    }
+                }
+                .recommendedCreditScore {
+                    text-align: center;
+                    position: relative;
+                    margin-bottom: 3rem;
+                    round-progress {
+                        display: inline-block;
+                    }
+                    .details {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        bottom: -17px;
+                        .score {
+                            font-size: 20px;
+                            font-weight: bold;
+                            letter-spacing: 0.2px;
+                            text-align: center;
+                        }
+                        .scoreName {
+                            font-size: 11px;
+                            font-weight: 600;
+                            line-height: normal;
+                            letter-spacing: 0.3px;
+                            color: @grey-font-color;
+                            text-transform: uppercase;
+                        }
+                    }
+                }
+                .otherParams {
+                    li {
+                        h5.title {
+                            margin-bottom: 2px;
+                        }
+                        p {
+                            font-size: 16px;
+                            letter-spacing: 0.2px;
+                            color: #3e4a54;
+                            margin-bottom: 14px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /deep/ .blockOverlay {
+        z-index: 1 !important;
+    }
+}

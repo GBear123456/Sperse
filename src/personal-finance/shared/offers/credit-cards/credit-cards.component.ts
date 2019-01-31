@@ -1,20 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    Inject,
+    ViewChild,
+    Renderer2
+} from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { finalize, map, switchMap } from 'rxjs/operators';
 import { Observable, combineLatest } from 'rxjs';
+import { delay, finalize, map, switchMap, takeUntil, tap, skip, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 import { OfferDto, Category, ItemOfOfferCollection, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'pfm-credit-cards-home',
     templateUrl: './credit-cards.component.html',
-    styleUrls: ['./credit-cards.component.less']
+    styleUrls: ['./credit-cards.component.less'],
+    providers: [ LifecycleSubjectsService ]
 })
-export class CreditCardsComponent implements OnInit {
+export class CreditCardsComponent implements OnInit, OnDestroy {
+    private _resultByCategory: ElementRef;
+    @ViewChild('resultByCategory') set resultByCategory (resultByCategory: ElementRef) {
+        this._resultByCategory = resultByCategory;
+    }
     cardOffersList$: Observable<OfferDto[]>;
     creditScoreNames = ['Excellent', 'Good', 'Fair', 'Bad', 'NoCredit'];
     creditCardCollection: OfferDto[] = [];
@@ -36,32 +51,19 @@ export class CreditCardsComponent implements OnInit {
         private route: ActivatedRoute,
         private offerServiceProxy: OfferServiceProxy,
         private offersService: OffersService,
-        public ls: AppLocalizationService
-    ) {
-        abp.ui.setBusy();
-        this.cardOffersList$ =
-            this.offersService.memberInfo$.pipe(
-                switchMap((memberInfo) =>
-                    this.offerServiceProxy.getAll(
-                        memberInfo.testMode,
-                        memberInfo.isDirectPostSupported,
-                        Category.CreditCards,
-                        undefined,
-                        'US',
-                        undefined,
-                        true,
-                        undefined,
-                        [],
-                        undefined,
-                        undefined,
-                        undefined,
-                        undefined,
-                        undefined,
-                        []
-                    )),
-                finalize(() => abp.ui.clearBusy())
-            );
+        public ls: AppLocalizationService,
+        private lifecycleSubjectService: LifecycleSubjectsService,
+        private renderer: Renderer2,
+        @Inject(DOCUMENT) private document: any
+    ) {}
 
+    sortCollection(itemOfOfferCollections, a, b) {
+        return itemOfOfferCollections.indexOf(a['offerCollection']) > itemOfOfferCollections.indexOf(b['offerCollection']) ? 1 : -1;
+    }
+
+    ngOnInit() {
+
+        this.cardOffersList$ = this.getCreditCards().pipe(publishReplay(), refCount());
         this.cardOffersList$.subscribe(list => {
             const itemOfOfferCollections = _.values(ItemOfOfferCollection);
             this.bestCreditCard = _.first(list.filter(item => 'Best' == item.offerCollection));
@@ -70,27 +72,31 @@ export class CreditCardsComponent implements OnInit {
             this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection)).sort(this.sortCollection.bind(this, itemOfOfferCollections));
             this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort(this.sortCollection.bind(this, itemOfOfferCollections));
         });
+
+        /** @todo avoid two request on init, use frontend filtering for the first time */
+        const creditCards$ = this.offerCollection$.pipe(
+            takeUntil(this.lifecycleSubjectService.destroy$),
+            tap(collectionName => this.selectedOfferGroup = this.creditCardCollection.filter(item => item.offerCollection == collectionName.group)[0]),
+            switchMap(collectionName => this.getCreditCards(collectionName.group || ItemOfOfferCollection.Best, false)),
+            publishReplay(),
+            refCount()
+        );
+
+        creditCards$.subscribe((offers: OfferDto[]) => this.cards = offers);
+        creditCards$.pipe(skip(1), delay(25)).subscribe(() => this.scrollToTopCards());
     }
 
-    sortCollection(itemOfOfferCollections, a, b) {
-        return itemOfOfferCollections.indexOf(a['offerCollection']) > itemOfOfferCollections.indexOf(b['offerCollection']) ? 1 : -1;
-    }
-
-    ngOnInit() {
-        this.offerCollection$.subscribe(collectionName => {
-            this.getCreditCards(collectionName.group);
-            this.selectedOfferGroup = this.creditCardCollection.filter(item => item.offerCollection == collectionName.group)[0];
-        });
+    scrollToTopCards() {
+        this.document.body.scrollBy(0, this._resultByCategory.nativeElement.getBoundingClientRect().top - 100);
     }
 
     openOffers(offer: OfferDto) {
-        this.offersService.applyOffer(offer, true);
+        this.offersService.applyOffer(offer);
     }
 
-    getCreditCards(collection = 'Best') {
+    getCreditCards(collection?: ItemOfOfferCollection, isOfferCollection = true): Observable<OfferDto[]> {
         abp.ui.setBusy();
-
-        this.offersService.memberInfo$.pipe(
+        return this.offersService.memberInfo$.pipe(
             switchMap(memberInfo => this.offerServiceProxy.getAll(
                 memberInfo.testMode,
                 memberInfo.isDirectPostSupported,
@@ -98,8 +104,8 @@ export class CreditCardsComponent implements OnInit {
                 undefined,
                 'US',
                 undefined,
-                false,
-                ItemOfOfferCollection[collection],
+                isOfferCollection,
+                collection ? ItemOfOfferCollection[collection] : undefined,
                 undefined,
                 undefined,
                 undefined,
@@ -109,8 +115,10 @@ export class CreditCardsComponent implements OnInit {
                 []
             )),
             finalize(() => abp.ui.clearBusy())
-        ).subscribe((offers: OfferDto[]) => {
-            this.cards = offers;
-        });
+        );
+    }
+
+    ngOnDestroy() {
+        this.lifecycleSubjectService.destroy.next();
     }
 }

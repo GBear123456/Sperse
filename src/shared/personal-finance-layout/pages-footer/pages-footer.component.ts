@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConditionsType } from '@shared/AppEnums';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
-import { AppConsts } from '@shared/AppConsts';
+import { environment } from 'environments/environment';
 
 @Component({
     selector: 'app-pages-footer',
@@ -16,7 +16,7 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class PagesFooterComponent extends AppComponentBase {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
-    domain = AppConsts.LENDSPACE_DOMAIN;
+    domain = environment.LENDSPACE_DOMAIN;
 
     appMenuItems = [
         {
@@ -24,7 +24,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Terms of Use',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Terms of Use',
-                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/terms.html',
+                bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/terms.html',
                 downloadDisabled: true
             })
         },
@@ -33,7 +33,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Privacy Policy',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Privacy Policy',
-                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/policy.html',
+                bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/policy.html',
                 downloadDisabled: true
             })
         },
@@ -42,7 +42,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Lender Terms',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Lender Terms',
-                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/lender.html',
+                bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/lender.html',
                 downloadDisabled: true
             })
         },
@@ -51,7 +51,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'Disclosures',
             action: this.openConditionsDialog.bind(this, {
                 title: 'Disclosures',
-                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/disclosures.html',
+                bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/disclosures.html',
                 downloadDisabled: true
             })
         },
@@ -60,7 +60,7 @@ export class PagesFooterComponent extends AppComponentBase {
             name: 'About Us',
             action: this.openConditionsDialog.bind(this, {
                 title: 'About Us',
-                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/about.html',
+                bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/about.html',
                 downloadDisabled: true
             })
         }

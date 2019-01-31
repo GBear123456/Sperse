@@ -16,12 +16,15 @@ import {
     SubmitApplicationInput,
     SubmitApplicationOutput,
     OfferServiceProxy,
-    GetMemberInfoResponse
+    GetMemberInfoResponse,
+    CreditScores,
+    OfferDtoCampaignProviderType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
+import { CurrencyPipe } from '@angular/common';
 
 @Injectable()
 export class OffersService {
@@ -79,6 +82,7 @@ export class OffersService {
         private router: Router,
         private ls: AppLocalizationService,
         private offerServiceProxy: OfferServiceProxy,
+        private currencyPipe: CurrencyPipe,
         private dialog: MatDialog
     ) {
         this.memberInfo$.pipe(pluck('stateCode')).subscribe((stateCode: string) => {
@@ -127,7 +131,7 @@ export class OffersService {
         }
     }
 
-    applyOffer(offer: OfferDto, isCreditCard = false) {
+    applyOffer(offer: OfferDto) {
         const linkIsDirect = !!offer.redirectUrl;
         const submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.campaignId,
@@ -140,7 +144,7 @@ export class OffersService {
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
             redirectUrl: offer.redirectUrl,
-            logoUrl: isCreditCard ? this.creditCardsLogoUrl : offer.logoUrl
+            logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand ? this.creditCardsLogoUrl : offer.logoUrl
         };
         if (!linkIsDirect) {
             modalData.processingSteps = cloneDeep(this.processingSteps);
@@ -213,5 +217,43 @@ export class OffersService {
         };
         valuesToConvert = { ...defaultValuesToConvert, ...valuesToConvert };
         return valuesToConvert && valuesToConvert[loweredParamValue] || paramValue;
+    }
+
+    formatCreditScores(creditScores: CreditScores[]): string {
+        if (!creditScores || !creditScores.length)
+            return 'Any';
+
+        let scores = creditScores.filter(x => x != CreditScores.NotSure);
+        if (!scores.length)
+            return 'Any';
+
+        if (scores.length >= 4)
+            return 'Any';
+
+        return scores.join('/');
+    }
+
+    formatLoanAmountValues(minAmount: number = null, maxAmount: number = null): string {
+        let minAmountStr = minAmount ? this.currencyPipe.transform(minAmount, 'USD', 'symbol', '0.0-2') : null;
+        let maxAmountStr = this.currencyPipe.transform(maxAmount, 'USD', 'symbol', '0.0-2')
+
+        return this.formatFromTo(minAmountStr, maxAmountStr);
+    }
+
+    formatLoanTermsValues(minTerm: number = null, maxTerm: number = null) {
+        let result = this.formatFromTo(minTerm, maxTerm);
+        if (result) result += ' Month(s)';
+        return result;
+    }
+
+    private formatFromTo(from, to): string {
+        if (from && to)
+            return from + ' - ' + to;
+        if (from)
+            return 'from ' + from;
+        if (to)
+            return 'to ' + to;
+
+        return null;
     }
 }

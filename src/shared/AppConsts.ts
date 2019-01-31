@@ -114,6 +114,4 @@ export class AppConsts {
 
     static readonly maxDocumentSizeBytes = 1024 * 1024 * 100;
 
-    /* Custom tenant domains */
-    static readonly LENDSPACE_DOMAIN = 'https://www.lendspace.com';
 }

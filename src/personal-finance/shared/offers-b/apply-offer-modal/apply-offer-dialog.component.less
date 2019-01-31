@@ -1,0 +1,102 @@
+:host {
+    display: block;
+    position: relative;
+    background-color: #fff;
+    background-clip: padding-box;
+    outline: 0;
+    .mat-dialog-content {
+        background: #fdc84d;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        padding: 40px 60px 30px;
+        .nextImageBlock {
+            display: flex;
+            border-radius: 60px;
+            align-self: center;
+            align-items: center;
+            background-clip: padding-box;
+            margin-bottom: 20px;
+            box-shadow:  0 0 0 10px rgba(255,255,255,.2);
+            background: #fff;
+            padding: 10px 60px;
+            &:before {
+                content: url(../../../../assets/common/icons/next-arrow.svg);
+            }
+            img {
+                margin-left: 25px;
+                max-width: 250px;
+                max-height: 100px;
+            }
+        }
+        h2 {
+            font-family: Poppins;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        p {
+            font-family: Poppins;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            &.alert-info {
+                margin-bottom: 4px;
+                padding: 7px 20px;
+            }
+            &.alert-success {
+                color: #3c763d;
+                background-color: #dff0d8;
+                border-color: #d6e9c6;
+                transition: all .55s ease;
+                opacity: 1;
+                transform: translateY(0px);
+                margin-bottom: 4px;
+                padding: 10px;
+            }
+        }
+        .alert-info {
+            color: #31708f;
+            background-color: #fff;
+            border-color: #fff;
+        }
+        .process-step {
+            display: flex;
+            padding-left: 20px;
+            h4 {
+                margin-top: 4px;
+                margin-bottom: 0;
+                font-size: 18px;
+                text-align: left;
+            }
+            .spinner {
+                height: 27px;
+                width: 27px;
+                margin-right: 30px;
+                background: url('../../../../assets/common/icons/offers/spinner.svg') no-repeat;
+            }
+        }
+    }
+
+    .blockedMessage {
+        padding: 30px;
+        text-align: center;
+        font-size: 30px;
+        font-family: Poppins;
+        font-weight: 600;
+    }
+}
+/deep/ .cdk-overlay-container {
+    .cdk-overlay-pane.apply-offer-dialog {
+        .mat-dialog-container {
+            overflow: visible;
+            padding: 0px;
+            margin: 0px;
+        }
+    }
+}

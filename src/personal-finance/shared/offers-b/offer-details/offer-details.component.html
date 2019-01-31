@@ -1,0 +1,107 @@
+<div class="container">
+    <div class="mobileButtons" *ngIf="creditCards$ | async">
+        <button class="btn btn-secondary" (click)="toggleOffersList($event)">{{ ls.l('Offers_OpenOffersList') }}</button>
+    </div>
+    <div class="row">
+        <div class="col-md-7 col-lg-4 leftBlock sm-hidden" #offersList>
+            <h1>{{ categoryDisplayName$ | async }}</h1>
+            <h3 #availableCards class="available-amount">
+                <ng-container *ngIf="cardsAmount">
+                    <span>{{ ls.l('Offers_Available') }} {{ categoryDisplayName$ | async }}</span>
+                    <span class="amount-count">({{ cardsAmount }})</span>
+                </ng-container>
+            </h3>
+            <div class="creditCardsList" #creditCardsList>
+                <mat-radio-group (change)="creditCardChanged($event)" [value]="selectedCardId$ | async">
+                    <mat-radio-button *ngFor="let creditCard of creditCards$ | async" [value]="creditCard.campaignId">
+                        <div class="imageContainer">
+                            <img [src]="creditCard.logoUrl" [alt]="creditCard.name">
+                        </div>
+                        <div class="cardInfo">
+                            <h4 [title]="categoryDisplayName$ | async">{{ categoryDisplayName$ | async }}</h4>
+                            <h5 [title]="creditCard.name.length > 16 ? creditCard.name : ''">{{ creditCard.name }}</h5>
+                        </div>
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+        <div class="col-lg-8 rightBlock" #detailsContainer>
+            <ng-container *ngIf="(selectedCardDetails$ | async) as cardDetails">
+                <div class="bankHeader row">
+                    <div class="bankDetails col-md-8">
+                        <img [src]="cardDetails.logoUrl" [alt]="cardDetails.name">
+                        <div class="cardInfo">
+                            <h4 *ngIf="cardDetails.issuingBank">{{ cardDetails.issuingBank }}</h4>
+                            <h5>{{ cardDetails.name }}</h5>
+                        </div>
+                    </div>
+                    <div class="actions col-6 offset-3 offset-md-0 col-md-4">
+                        <a (click)="applyOffer(cardDetails)" class="applyButton withArrow pull-right"><span>{{ ls.l(buttonCaption) }}</span></a>
+                    </div>
+                </div>
+                <hr>
+                <div class="cardDetails row">
+                    <div class="col-sm-5 col-xl-7 left-details">
+                        <div class="detailsBlock">
+                            <h5 class="title">{{ ls.l('Offers_Details') }}</h5>
+                            <ul class="details-list" *ngIf="cardDetails.details">
+                                <li *ngFor="let detail of cardDetails.details">{{ detail }}</li>
+                            </ul>
+                        </div>
+                        <hr>
+                        <div class="aprVariable">
+                            <h5 class="title">{{ ls.l('Offers_APR_Variable') }}</h5>
+                            <ul class="row">
+                                <li class="col-xl-4" *ngFor="let prop of ['regularAPR']">
+                                    <h5>{{ ls.l('Offers_' + prop) }}</h5>
+                                    <p>{{ offersService.getParamDisplayValue(cardDetails[prop]) }}</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-7 col-xl-5 right-details">
+                        <div class="rightSideBar">
+                            <div class="prosAndCons">
+                                <ng-container *ngIf="cardDetails.pros.length">
+                                    <h5 class="title">{{ ls.l('Offers_Pros') }}</h5>
+                                    <ul class="pros"><li *ngFor="let pro of cardDetails.pros">{{ pro }}</li></ul>
+                                </ng-container>
+                                <ng-container *ngIf="cardDetails.cons.length">
+                                    <h5 class="title">{{ ls.l('Offers_Cons') }}</h5>
+                                    <ul class="cons"><li *ngFor="let con of cardDetails.cons">{{ con }}</li></ul>
+                                </ng-container>
+                            </div>
+                            <ng-container *ngIf="getCreditScore(cardDetails.creditScores) as creditScore">
+                                <hr>
+                                <div class="recommendedCreditScore">
+                                    <h5 class="title">{{ ls.l('Offers_RecommendedCreditScore') }}</h5>
+                                    <round-progress
+                                        [max]="offersService.creditScores['excellent'].max"
+                                        [current]="creditScore.max"
+                                        [radius]="65"
+                                        color="#24c26c"
+                                        [semicircle]="true"
+                                        [stroke]="5">
+                                    </round-progress>
+                                    <div class="details">
+                                        <div class="score">{{ creditScore.min }}-{{ creditScore.max }}</div>
+                                        <div class="scoreName">{{ creditScore.name }}</div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <hr>
+                            <div class="otherParams">
+                                <ul>
+                                    <li *ngFor="let otherParam of ['rewardsRate', 'annualFee', 'introAPR']">
+                                        <h5 class="title">{{ ls.l('Offers_' + otherParam) }}</h5>
+                                        <p>{{ offersService.getParamDisplayValue(cardDetails[otherParam]) }}</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

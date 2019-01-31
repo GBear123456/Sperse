@@ -37,4 +37,4 @@ import { OffersService } from '@root/personal-finance/shared/offers/offers.servi
         ApplyOfferDialogComponent
     ]
 })
-export class PersonalFinanceModule { }
+export class PersonalFinanceModule {}

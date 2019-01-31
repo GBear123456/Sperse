@@ -1,0 +1,37 @@
+<div class="content-header">
+    <div class="logoes">
+        <img *ngFor="let logo of logoes"
+             [src]="'./assets/images/credit-report/offers/' + logo + '.png'"
+             [alt]="logo"
+             [srcset]="'./assets/images/credit-report/offers/' + logo + '@2x.png 2x, ./assets/images/credit-report/' + logo + '@3x.png 3x'">
+    </div>
+    <h1><ng-content select="[header]"></ng-content></h1>
+    <h3><ng-content select="[subheader]"></ng-content></h3>
+</div>
+<div class="offers">
+    <ng-container *ngIf="(offers$ | async) as offers">
+        <ul class="row">
+            <li class="col-md-4" *ngFor="let offer of offers" (click)="offersService.applyOffer(offer)">
+                <div class="offer-item">
+                    <img [src]="offer.logoUrl" [alt]="offer.name">
+                    <button class="applyButton">{{ ls.l('CreditScore_GetOffer') }}</button>
+                </div>
+            </li>
+        </ul>
+        <app-no-data *ngIf="!offers.length"></app-no-data>
+    </ng-container>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <ul class="advantages">
+            <li *ngFor="let advantage of advantages">{{ advantage }}</li>
+        </ul>
+    </div>
+    <div class="description col-md-6">
+        <div>
+            <h4>{{ descriptionTitle }}</h4>
+        </div>
+        <p>{{ descriptionText }}</p>
+    </div>
+</div>
+<ng-content select="[bottomBlock]"></ng-content>

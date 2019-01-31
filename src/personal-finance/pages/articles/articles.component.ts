@@ -1,7 +1,7 @@
 import {Component, Injector, OnInit} from '@angular/core';
 import {AppComponentBase} from '@shared/common/app-component-base';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { AppConsts } from '@shared/AppConsts';
+import { environment } from 'environments/environment';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -23,7 +23,7 @@ export class ArticlesComponent extends AppComponentBase implements OnInit {
         this.startLoading(true);
         this.articles$ = from(
             $.ajax({
-                url: AppConsts.LENDSPACE_DOMAIN + '/documents/articles.html',
+                url: environment.LENDSPACE_DOMAIN + '/documents/articles.html',
                 method: 'GET'
             })
         ).pipe(

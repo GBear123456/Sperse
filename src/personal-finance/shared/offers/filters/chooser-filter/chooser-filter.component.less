@@ -18,9 +18,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            &:hover,
             &.selected {
                 background-color: #ffcc00;
                 border: none;
+            }
+            &:hover {
+                background-color: #e0b400;
             }
         }
 
@@ -37,6 +41,9 @@
                 flex: 1 0 40%;
                 &.selected {
                     border: 2.9px solid #ffcc00;
+                }
+                &:hover {
+                    border: 2.9px solid #e0b400;
                 }
             }
         }

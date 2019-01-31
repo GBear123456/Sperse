@@ -6,7 +6,7 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { HostLoginComponent } from '../host/host-login.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ConditionsType } from '@shared/AppEnums';
-import { AppConsts } from '@shared/AppConsts';
+import { environment } from 'environments/environment';
 
 @Component({
     templateUrl: './lend-space-login.component.html',
@@ -22,7 +22,7 @@ export class LendSpaceLoginComponent extends HostLoginComponent {
             panelClass: ['slider', 'footer-slider'],
             data: {
                 title: isTerms ? 'Terms of Use' : 'Privacy Policy',
-                bodyUrl: AppConsts.LENDSPACE_DOMAIN + '/documents/' + (isTerms ? 'terms' : 'policy') + '.html',
+                bodyUrl: environment.LENDSPACE_DOMAIN + '/documents/' + (isTerms ? 'terms' : 'policy') + '.html',
                 downloadDisabled: true
             }
         });
