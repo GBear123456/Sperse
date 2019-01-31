@@ -76,6 +76,12 @@ export class FilterValues {
     stateCode: string;
 }
 
+enum CreditCardCategory {
+    Credit,
+    Debit,
+    Prepaid
+}
+
 @Component({
     templateUrl: './offers-layout.component.html',
     styleUrls: [ './offers-layout.component.less' ],
@@ -250,29 +256,29 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 values$: of([
                     {
                         name: this.ls.l('Offers_Credit'),
-                        value: 'credit',
+                        value: CreditCardCategory.Credit
                     },
                     {
                         name: this.ls.l('Offers_Debit'),
-                        value: 'debit'
+                        value: CreditCardCategory.Debit
                     },
                     {
                         name: this.ls.l('Offers_Prepaid'),
-                        value: 'prepaid'
+                        value: CreditCardCategory.Prepaid
                     }
                 ]),
                 onChange: (selectedValues: ChooserOption[]) => {
                     let cardType, securingType;
-                    switch ((<any>selectedValues[0]).value) {
-                        case 'credit':
-                            cardType = CardType.Credit;
-                            break;
-                        case 'debit':
-                            cardType = CardType.Debit;
-                            break;
-                        case 'prepaid':
-                            securingType = SecuringType.Prepaid;
-                            break;
+                    switch (selectedValues[0].value) {
+                        case CreditCardCategory.Credit:
+                                cardType = CardType.Credit;
+                                break;
+                        case CreditCardCategory.Debit:
+                                cardType = CardType.Debit;
+                                break;
+                        case CreditCardCategory.Prepaid:
+                                securingType = SecuringType.Prepaid;
+                                break;
                     }
                     if (this.filtersValues.cardType !== cardType || this.filtersValues.securingType != securingType) {
                         this.filtersValues.cardType = cardType;
@@ -300,7 +306,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     }
                 ]),
                 onChange: (selectedValues: ChooserOption[]) => {
-                    let targetAudience = (<any>selectedValues[0]).value;
+                    let targetAudience = selectedValues[0].value;
                     if (this.filtersValues.targetAudience !== targetAudience) {
                         this.filtersValues.targetAudience = targetAudience;
                         this.selectedFilter.next(this.filtersValues);
@@ -352,7 +358,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     }
                 ]),
                 onChange: (selectedValues: ChooserOption[]) => {
-                    let networks = selectedValues.map(value => (<any>value).value);
+                    let networks = selectedValues.map(value => value.value);
                     this.filtersValues.networks = networks;
                     this.selectedFilter.next(this.filtersValues);
                 }
