@@ -513,7 +513,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                         reader.addEventListener('loadend', () => {
                             this.openDocumentMode = true;
                             let content = StringHelper.getBase64(reader.result);
-                            this.previewContent = viewerType == this.TEXT_VIEWER || this.XML_VIEWER ? atob(content) : content;
+                            this.previewContent = (viewerType == this.TEXT_VIEWER || viewerType == this.XML_VIEWER ? atob(content) : content);
                             if (viewerType === this.XML_VIEWER) {
                                 const json = xmlJs.xml2js(
                                     this.sanitizeContent(this.previewContent),
