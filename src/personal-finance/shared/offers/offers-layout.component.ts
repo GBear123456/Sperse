@@ -480,6 +480,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     return this.offerServiceProxy.getAll(GetAllInput.fromJS({
                         testMode: memberInfo.testMode,
                         isDirectPostSupported: memberInfo.isDirectPostSupported,
+                        category: filter.category,
                         country: filter.country,
                         creditScore: this.offersService.getCreditScore(filter.category, filter.creditScore),
                         loansAmount: filter.loanAmount

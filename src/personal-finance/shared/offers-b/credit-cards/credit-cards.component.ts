@@ -52,7 +52,7 @@ export class CreditCardsComponent implements OnInit {
                     this.offerServiceProxy.getAll(GetAllInput.fromJS({
                         testMode: memberInfo.testMode,
                         isDirectPostagfasdf: memberInfo.isDirectPostSupported,
-                        category: OfferFilterCategory,
+                        category: OfferFilterCategory.CreditCards,
                         country: 'US',
                         isOfferCollection: true
                     }))),
