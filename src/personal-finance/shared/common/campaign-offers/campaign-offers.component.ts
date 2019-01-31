@@ -1,6 +1,9 @@
 import { Component, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    OfferServiceProxy,
+    SubmitApplicationInput
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'campaign-offers',
@@ -9,7 +12,7 @@ import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
     providers: [OfferServiceProxy]
 })
 export class CampaignOffersComponent extends AppComponentBase {
-    offersUrls: string[] = [];
+    offers: any[] = [];
 
     constructor(injector: Injector,
         private offerServiceProxy: OfferServiceProxy
@@ -23,12 +26,24 @@ export class CampaignOffersComponent extends AppComponentBase {
                 undefined, undefined, undefined, undefined,
                 undefined, [3174, 3179]
             ).subscribe((offers) => {
-                this.offersUrls = offers.map((item) => item.redirectUrl);
+                this.offers = offers.map((item) => {
+                    return {
+                        url: item.redirectUrl,
+                        campaignId: item.campaignId,
+                        systemType: item.systemType
+                    };
+                });
             });
         });
     }
 
-    open(url) {
-        window.open(url, '_blank');
+    open(offer) {
+        window.open(offer.url, '_blank');
+        const submitApplicationInput = SubmitApplicationInput.fromJS({
+            campaignId: offer.campaignId,
+            systemType: offer.systemType
+        });
+        this.offerServiceProxy.submitApplication(submitApplicationInput)
+            .subscribe(() => {});
     }
 }
