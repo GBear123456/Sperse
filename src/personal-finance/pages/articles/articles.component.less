@@ -4,11 +4,11 @@
     padding-bottom: 30px;
 
     /deep/ .m-portlet {
-        font-size: 14px!important;
-      	-webkit-box-shadow: 0 1px 15px 1px rgba(69,65,78,.08);
-      	-moz-box-shadow: 0 1px 15px 1px rgba(69,65,78,.08);
-      	box-shadow: 0 1px 15px 1px rgba(69,65,78,.08);
-      	background-color: #fff;
+        font-size: 14px !important;
+        -webkit-box-shadow: 0 1px 15px 1px rgba(69, 65, 78, .08);
+        -moz-box-shadow: 0 1px 15px 1px rgba(69, 65, 78, .08);
+        box-shadow: 0 1px 15px 1px rgba(69, 65, 78, .08);
+        background-color: #fff;
 
         .m-portlet__head {
             border-bottom: 1px solid #ebedf2;
@@ -44,6 +44,10 @@
                     padding: .6em 1.4em;
                     font-size: .85rem;
                     border-radius: 20px;
+                    &:hover {
+                        background: #ffcc00 !important;
+                        border: 1px solid #ffcc00;
+                    }
                 }
             }
         }
@@ -69,30 +73,34 @@
                     display: table-cell;
                     vertical-align: top;
                     padding-left: 1.43rem;
-                    padding-top: .3rem
-                }
+                    padding-top: .3rem;
+                    .m-widget5__title {
+                        font-size: 1.1rem;
+                        font-weight: 500
+                    }
 
-                .m-widget5__content .m-widget5__title {
-                    font-size: 1.1rem;
-                    font-weight: 500
-                }
+                    .m-widget5__desc {
+                        font-size: .85rem
+                    }
 
-                .m-widget5__content .m-widget5__desc {
-                    font-size: .85rem
-                }
+                    .m-widget5__info {
+                        margin-top: .71rem;
+                        font-size: 1rem
+                    }
 
-                .m-widget5__content .m-widget5__info {
-                    margin-top: .71rem;
-                    font-size: 1rem
-                }
+                    .m-widget5__info .m-widget5__info-author {
+                        font-weight: 500;
+                        margin-right: .71rem
+                    }
 
-                .m-widget5__content .m-widget5__info .m-widget5__info-author {
-                    font-weight: 500;
-                    margin-right: .71rem
-                }
+                    .m-widget5__info .m-widget5__info-date {
+                        font-weight: 500
+                    }
 
-                .m-widget5__content .m-widget5__info .m-widget5__info-date {
-                    font-weight: 500
+                    .read-more:hover {
+                        color: #fff !important;
+                        background: #f93;
+                    }
                 }
 
                 .m-widget5__stats1 {
