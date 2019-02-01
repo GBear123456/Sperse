@@ -48290,6 +48290,7 @@ export class GetAllInput implements IGetAllInput {
     category!: GetAllInputCategory | undefined;
     type!: GetAllInputType | undefined;
     country!: string | undefined;
+    state!: string | undefined;
     creditScore!: GetAllInputCreditScore | undefined;
     isOfferCollection!: boolean | undefined;
     itemOfOfferCollection!: GetAllInputItemOfOfferCollection | undefined;
@@ -48315,6 +48316,7 @@ export class GetAllInput implements IGetAllInput {
             this.category = data["category"];
             this.type = data["type"];
             this.country = data["country"];
+            this.state = data["state"];
             this.creditScore = data["creditScore"];
             this.isOfferCollection = data["isOfferCollection"];
             this.itemOfOfferCollection = data["itemOfOfferCollection"];
@@ -48344,6 +48346,7 @@ export class GetAllInput implements IGetAllInput {
         data["category"] = this.category;
         data["type"] = this.type;
         data["country"] = this.country;
+        data["state"] = this.state;
         data["creditScore"] = this.creditScore;
         data["isOfferCollection"] = this.isOfferCollection;
         data["itemOfOfferCollection"] = this.itemOfOfferCollection;
@@ -48366,6 +48369,7 @@ export interface IGetAllInput {
     category: GetAllInputCategory | undefined;
     type: GetAllInputType | undefined;
     country: string | undefined;
+    state: string | undefined;
     creditScore: GetAllInputCreditScore | undefined;
     isOfferCollection: boolean | undefined;
     itemOfOfferCollection: GetAllInputItemOfOfferCollection | undefined;
