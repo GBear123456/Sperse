@@ -68,6 +68,7 @@ export class FilterValues {
     creditScore: number;
     brand: string;
     loanAmount: number;
+    state: string;
     annualIncome: number;
 }
 
@@ -192,7 +193,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     }
                 }
             }),
-
             new RangeFilterSetting({
                 name: this.ls.l('Annual_Income_Filter'),
                 min: 500,
@@ -234,15 +234,21 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             //         }
             //     }
             // }),
-
             new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_ResidentState'),
                 selected$: this.stateCode$,
                 values$: this.store$.pipe(
                     select(StatesStoreSelectors.getState, { countryCode: 'US' }),
                     filter(states => !!states.length),
-                    map(states => states.map(state => ({ name: state.name, value: state.code })))
-                )
+                    map(states => [ { name: 'All USA', value: undefined } ].concat(states.map(state => ({ name: state.name, value: state.code }))))
+                ),
+                onChange: (e: MatSelectChange) => {
+                    const value = e.value.name ? e.value.value : e.value;
+                    if (this.filtersValues.state != value) {
+                        this.filtersValues.state = value;
+                        this.selectedFilter.next(this.filtersValues);
+                    }
+                }
             })
         ],
         [CategoryGroupEnum.CreditCards]: [
@@ -491,7 +497,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         country: filter.country,
                         creditScore: this.offersService.getCreditScore(filter.category, filter.creditScore),
                         loanAmount: filter.loanAmount,
-                        annualIncome: filter.annualIncome
+                        annualIncome: filter.annualIncome,
+                        state: filter.state
                     })).pipe(
                         finalize(() => {
                             this.offersAreLoading = false;
@@ -541,7 +548,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             creditScore: null,
             brand: null,
             loanAmount: 10000,
-            annualIncome: 55000
+            annualIncome: 55000,
+            state: undefined
         };
     }
 
