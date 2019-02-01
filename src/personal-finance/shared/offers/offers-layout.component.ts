@@ -239,7 +239,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 selected$: this.stateCode$,
                 values$: this.store$.pipe(
                     select(StatesStoreSelectors.getState, { countryCode: 'US' }),
-                    filter(states => !!states.length),
+                    filter(states => states && states.length),
                     map(states => [ { name: 'All USA', value: undefined } ].concat(states.map(state => ({ name: state.name, value: state.code }))))
                 ),
                 onChange: (e: MatSelectChange) => {
