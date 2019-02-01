@@ -505,13 +505,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                             abp.ui.clearBusy(this.offersListRef.nativeElement);
                             this.changeDetectorRef.detectChanges();
                             this.document.body.scrollTo(0, 0);
-                        }),
-                        tap((offers: OfferDto[]) => {
-                            if (!this.brands$.value.length) {
-                                this.getBrandsFromOffers(of(offers)).subscribe(
-                                    (brands: SelectFilterModel[]) => this.brands$.next(brands)
-                                );
-                            }
                         })
                     );
                 }
@@ -523,7 +516,9 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             publishReplay(),
             refCount()
         );
-
+        this.getBrandsFromOffers(this.offers$).subscribe(
+            (brands: SelectFilterModel[]) => this.brands$.next(brands)
+        );
         this.displayedOffers$ = this.offers$;
         this.displayedOffers$.pipe(takeUntil(this.deactivate$)).subscribe((displayedCreditCards: OfferDto[]) => {
             this.offersService.displayedCards = displayedCreditCards;
@@ -532,12 +527,14 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
 
     private getBrandsFromOffers(offers: Observable<OfferDto[]>): Observable<SelectFilterModel[]> {
         return offers.pipe(
+            first(),
             mergeMap(x => x),
             pluck('issuingBank'),
             filter(brand => !!brand),
             distinct(),
             map(brand => <SelectFilterModel>({ name: brand, value: brand })),
-            toArray()
+            toArray(),
+            map(brands => [{ name: 'All', value: undefined }].concat(brands.sort((brandA, brandB) => brandA.name > brandB.name ? 1 : -1 )))
         );
     }
 
