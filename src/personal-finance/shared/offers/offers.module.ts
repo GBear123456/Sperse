@@ -1,7 +1,7 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 /** Third party imports */
 import { MatSelectModule } from '@angular/material/select';
@@ -17,8 +17,6 @@ import { LayoutModule } from '../layout/layout.module';
 import { StarsRatingComponent } from '@root/personal-finance/shared/offers/stars-rating/stars-rating.component';
 import { DxScrollViewModule } from '@root/node_modules/devextreme-angular';
 import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offer-details/offer-details.component';
-import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { OffersRoutingModule } from '@root/personal-finance/shared/offers/offers-routing.module';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
@@ -66,11 +64,6 @@ import { PersonalFinanceCommonModule } from '../../shared/common/personal-financ
         BusinessLoansComponent,
         OffersCategoryDetailsComponent,
         DebtConsolidationComponent
-    ],
-    providers: [
-        OffersService,
-        OfferServiceProxy,
-        CurrencyPipe
     ],
     entryComponents: [
         ApplyOfferDialogComponent
