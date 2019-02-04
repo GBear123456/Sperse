@@ -173,9 +173,7 @@ export class OffersService {
             || categoryGroup === CategoryGroupEnum.CreditCards
             ? this.covertNumberToCreditScore(creditScoreNumber)
             : undefined;
-        return categoryGroup === CategoryGroupEnum.Loans && creditScore === GetMemberInfoResponseCreditScore.NotSure
-               ? GetMemberInfoResponseCreditScore.Poor
-               : creditScore;
+        return creditScore;
     }
 
     getCategoryGroup(category: OfferFilterCategory): CategoryGroupEnum {

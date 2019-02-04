@@ -240,7 +240,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 values$: this.store$.pipe(
                     select(StatesStoreSelectors.getState, { countryCode: 'US' }),
                     filter(states => states && states.length),
-                    map(states => [ { name: 'All USA', value: undefined } ].concat(states.map(state => ({ name: state.name, value: state.code }))))
+                    map(states => [ { name: 'All USA', value: 'all' } ].concat(states.map(state => ({ name: state.name, value: state.code }))))
                 ),
                 onChange: (e: MatSelectChange) => {
                     const value = e.value.name ? e.value.value : e.value;
@@ -498,7 +498,9 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         creditScore: this.offersService.getCreditScore(filter.category, filter.creditScore),
                         loanAmount: filter.loanAmount,
                         annualIncome: filter.annualIncome,
-                        state: filter.state
+                        state: filter.state ? 
+                            (filter.state == 'all' ? undefined: filter.state)  : 
+                                memberInfo.stateCode
                     })).pipe(
                         finalize(() => {
                             this.offersAreLoading = false;
