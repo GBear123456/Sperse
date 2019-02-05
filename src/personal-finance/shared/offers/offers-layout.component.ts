@@ -502,10 +502,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     if (categoryGroup === CategoryGroupEnum.Loans) {
                         input.loanAmount = filter.loanAmount;
                         input.annualIncome = filter.annualIncome;
-                        input.state = filter.state ? 
-                            (filter.state == 'all' ? undefined: filter.state)  : 
+                        input.state = filter.state ?
+                            (filter.state == 'all' ? undefined : filter.state) :
                                 memberInfo.stateCode;
-                    } 
+                    }
 
                     if (categoryGroup === CategoryGroupEnum.Loans || categoryGroup === CategoryGroupEnum.CreditCards)
                         input.creditScore = GetAllInputCreditScore[this.offersService.getCreditScore(filter.category, filter.creditScore)];
