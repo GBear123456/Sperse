@@ -48635,6 +48635,7 @@ export interface IOfferDetailsDto {
 export class SubmitApplicationInput implements ISubmitApplicationInput {
     systemType!: SubmitApplicationInputSystemType;
     campaignId!: number;
+    campaignUrl!: string | undefined;
 
     constructor(data?: ISubmitApplicationInput) {
         if (data) {
@@ -48649,6 +48650,7 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         if (data) {
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
+            this.campaignUrl = data["campaignUrl"];
         }
     }
 
@@ -48663,6 +48665,7 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
+        data["campaignUrl"] = this.campaignUrl;
         return data; 
     }
 }
@@ -48670,6 +48673,7 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
 export interface ISubmitApplicationInput {
     systemType: SubmitApplicationInputSystemType;
     campaignId: number;
+    campaignUrl: string | undefined;
 }
 
 export class SubmitApplicationOutput implements ISubmitApplicationOutput {
@@ -48717,9 +48721,20 @@ export interface ISubmitApplicationOutput {
 }
 
 export class GetMemberInfoResponse implements IGetMemberInfoResponse {
-    creditScore!: GetMemberInfoResponseCreditScore | undefined;
+    applicantId!: string | undefined;
+    clickId!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    emailAddress!: string | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    zipCode!: string | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
     stateCode!: string | undefined;
     countryCode!: string | undefined;
+    doB!: moment.Moment | undefined;
+    creditScore!: GetMemberInfoResponseCreditScore | undefined;
     isDirectPostSupported!: boolean | undefined;
     testMode!: boolean | undefined;
 
@@ -48734,9 +48749,20 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
 
     init(data?: any) {
         if (data) {
-            this.creditScore = data["creditScore"];
+            this.applicantId = data["applicantId"];
+            this.clickId = data["clickId"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.zipCode = data["zipCode"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
             this.stateCode = data["stateCode"];
             this.countryCode = data["countryCode"];
+            this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
+            this.creditScore = data["creditScore"];
             this.isDirectPostSupported = data["isDirectPostSupported"];
             this.testMode = data["testMode"];
         }
@@ -48751,9 +48777,20 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["creditScore"] = this.creditScore;
+        data["applicantId"] = this.applicantId;
+        data["clickId"] = this.clickId;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["zipCode"] = this.zipCode;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
         data["stateCode"] = this.stateCode;
         data["countryCode"] = this.countryCode;
+        data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
+        data["creditScore"] = this.creditScore;
         data["isDirectPostSupported"] = this.isDirectPostSupported;
         data["testMode"] = this.testMode;
         return data; 
@@ -48761,9 +48798,20 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
 }
 
 export interface IGetMemberInfoResponse {
-    creditScore: GetMemberInfoResponseCreditScore | undefined;
+    applicantId: string | undefined;
+    clickId: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    emailAddress: string | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    zipCode: string | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
     stateCode: string | undefined;
     countryCode: string | undefined;
+    doB: moment.Moment | undefined;
+    creditScore: GetMemberInfoResponseCreditScore | undefined;
     isDirectPostSupported: boolean | undefined;
     testMode: boolean | undefined;
 }
@@ -48806,6 +48854,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
     minAnnualIncome!: number | undefined;
     maxAnnualIncome!: number | undefined;
     campaignProviderType!: ExtendOfferDtoCampaignProviderType | undefined;
+    parameterHandlerType!: ExtendOfferDtoParameterHandlerType | undefined;
     flags!: Flags | undefined;
     states!: string[] | undefined;
 
@@ -48869,6 +48918,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
             this.minAnnualIncome = data["minAnnualIncome"];
             this.maxAnnualIncome = data["maxAnnualIncome"];
             this.campaignProviderType = data["campaignProviderType"];
+            this.parameterHandlerType = data["parameterHandlerType"];
             this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
             if (data["states"] && data["states"].constructor === Array) {
                 this.states = [];
@@ -48936,6 +48986,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
         data["minAnnualIncome"] = this.minAnnualIncome;
         data["maxAnnualIncome"] = this.maxAnnualIncome;
         data["campaignProviderType"] = this.campaignProviderType;
+        data["parameterHandlerType"] = this.parameterHandlerType;
         data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
         if (this.states && this.states.constructor === Array) {
             data["states"] = [];
@@ -48984,6 +49035,7 @@ export interface IExtendOfferDto {
     minAnnualIncome: number | undefined;
     maxAnnualIncome: number | undefined;
     campaignProviderType: ExtendOfferDtoCampaignProviderType | undefined;
+    parameterHandlerType: ExtendOfferDtoParameterHandlerType | undefined;
     flags: Flags | undefined;
     states: string[] | undefined;
 }
@@ -58700,6 +58752,7 @@ export enum OfferAttribute {
     MinAnnualIncome = "MinAnnualIncome", 
     MaxAnnualIncome = "MaxAnnualIncome", 
     States = "States", 
+    ParameterHandlerType = "ParameterHandlerType", 
 }
 
 export enum Module {
@@ -59403,6 +59456,10 @@ export enum ExtendOfferDtoOfferCollection {
 
 export enum ExtendOfferDtoCampaignProviderType {
     CreditLand = "CreditLand", 
+}
+
+export enum ExtendOfferDtoParameterHandlerType {
+    Default = "Default", 
 }
 
 export class Flags implements IFlags {
