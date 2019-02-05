@@ -45,6 +45,7 @@ import {
     OfferDto,
     OfferFilterCategory,
     OfferServiceProxy,
+    GetAllInputCreditScore,
     GetMemberInfoResponseCreditScore,
     GetAllInput
 } from '@shared/service-proxies/service-proxies';
@@ -503,11 +504,11 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                         input.annualIncome = filter.annualIncome;
                         input.state = filter.state ? 
                             (filter.state == 'all' ? undefined: filter.state)  : 
-                                memberInfo.stateCode
+                                memberInfo.stateCode;
                     } 
 
-                    if (categoryGroup === CategoryGroupEnum.Loans || categoryGroup === CategoryGroupEnum.CreditCards) 
-                        input.creditScore = this.offersService.getCreditScore(filter.category, filter.creditScore);
+                    if (categoryGroup === CategoryGroupEnum.Loans || categoryGroup === CategoryGroupEnum.CreditCards)
+                        input.creditScore = GetAllInputCreditScore[this.offersService.getCreditScore(filter.category, filter.creditScore)];
 
                     return this.offerServiceProxy.getAll(input).pipe(
                         finalize(() => {
