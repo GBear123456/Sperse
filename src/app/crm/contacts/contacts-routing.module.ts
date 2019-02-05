@@ -59,7 +59,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     { path: 'activity-logs', component: ActivityLogsComponent },
-                    { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } }
+                    { path: 'notes', component: SubscriptionsComponent, data: { rightPanelOpened: false } }
                 ]
             },
             {
@@ -92,7 +92,9 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
-                    { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } }
+                    { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
             },
             {
@@ -108,7 +110,9 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
-                    { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } }
+                    { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
             },
             {
@@ -124,7 +128,9 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
-                    { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } }
+                    { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
             },
             {
