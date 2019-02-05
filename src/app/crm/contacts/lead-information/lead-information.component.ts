@@ -47,6 +47,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
                     items: [
                         { name: 'applicantId', readonly: true },
                         { name: 'applicationId', readonly: true },
+                        { name: 'clickId', readonly: true },
                         { name: 'siteId', readonly: true },
                         { name: 'siteUrl', readonly: true },
                         { name: 'clientIp', readonly: true },

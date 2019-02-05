@@ -46751,6 +46751,7 @@ export class LeadInfoDto implements ILeadInfoDto {
     userAgent!: string | undefined;
     applicantId!: string | undefined;
     applicationId!: string | undefined;
+    clickId!: string | undefined;
     siteId!: string | undefined;
     siteUrl!: string | undefined;
 
@@ -46779,6 +46780,7 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.userAgent = data["userAgent"];
             this.applicantId = data["applicantId"];
             this.applicationId = data["applicationId"];
+            this.clickId = data["clickId"];
             this.siteId = data["siteId"];
             this.siteUrl = data["siteUrl"];
         }
@@ -46807,6 +46809,7 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["userAgent"] = this.userAgent;
         data["applicantId"] = this.applicantId;
         data["applicationId"] = this.applicationId;
+        data["clickId"] = this.clickId;
         data["siteId"] = this.siteId;
         data["siteUrl"] = this.siteUrl;
         return data; 
@@ -46828,6 +46831,7 @@ export interface ILeadInfoDto {
     userAgent: string | undefined;
     applicantId: string | undefined;
     applicationId: string | undefined;
+    clickId: string | undefined;
     siteId: string | undefined;
     siteUrl: string | undefined;
 }
