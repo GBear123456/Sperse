@@ -3,7 +3,7 @@ import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostL
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid'; 
+import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DevExpress from 'devextreme/bundles/dx.all';
 import config from 'devextreme/core/config';
@@ -798,6 +798,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     ngOnInit() {
         super.ngOnInit();
+        this.initLocalization();
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
         this.requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Monthly;
@@ -5702,9 +5703,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    activate() {
+    private initLocalization() {
         this.localizationService.localizationSourceName = this.localizationSourceName;
         this._filtersService.localizationSourceName = this.localizationSourceName;
+    }
+
+    activate() {
+        this.initLocalization();
         this.initToolbarConfig();
         this.setupFilters(this.filters);
         this.initFiltering();
