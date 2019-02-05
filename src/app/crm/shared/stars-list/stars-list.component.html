@@ -23,7 +23,7 @@
                 <div *dxTemplate="let data of 'item'">
                     <div class="item-row" data-id="{{data.id}}">
                         <div [class]="'star star-' + data.colorType"></div>
-                        <span>{{ data.name }}</span>
+                        <span>{{ l(data.name) }}</span>
                         <a *ngIf="filterModel" class="dx-link dx-link-filter" title="{{l('Filter')}}" (click)="applyFilter($event, data)"></a>
                     </div>
                 </div>
