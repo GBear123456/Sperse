@@ -1,6 +1,5 @@
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
-import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, Injector } from '@angular/core';
 
 @Component({
     templateUrl : './cfo-modal-dialog.component.html',
@@ -10,10 +9,8 @@ export class CFOModalDialogComponent extends AppModalDialogComponent {
     instanceId: number;
     instanceType: string;
 
-    constructor(injector: Injector
-    ) {
+    constructor(injector: Injector) {
         super(injector);
-
         this.instanceType = this.data.instanceType;
         this.instanceId = this.data.instanceId;
     }

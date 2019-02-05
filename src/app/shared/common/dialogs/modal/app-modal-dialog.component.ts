@@ -1,6 +1,5 @@
 import { Component, Injector, Output, EventEmitter } from '@angular/core';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-modal-dialog',
