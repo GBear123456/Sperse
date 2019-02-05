@@ -142,7 +142,7 @@ export class OffersService {
             delayMessages: null,
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + this.memberInfoApplyOfferParams,
+            redirectUrl: !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams,
             logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand ? this.creditCardsLogoUrl : offer.logoUrl
         };
         if (!linkIsDirect) {
@@ -237,7 +237,13 @@ export class OffersService {
             xi_resid: memberInfo.applicantId,
             xi_oclkid: memberInfo.clickId
         };
-        return new HttpParams({ fromObject: options }).toString();
+        let params = new HttpParams();
+        for (let key in options) {
+            if (options[key]) {
+                params = params.set(key, options[key]);
+            }
+        }
+        return params.toString();
     }
 
     private formatFromTo(from, to): string {
