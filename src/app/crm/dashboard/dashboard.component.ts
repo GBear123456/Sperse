@@ -72,7 +72,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     }
 
     refresh(refreshLeadsAndClients = true) {
-        this.startLoading(false, this.loadingContainer);
         this.periodChanged(this.selectedPeriod);
         this.recentClientsComponent.refresh();
         if (refreshLeadsAndClients) {
@@ -107,9 +106,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
     ngAfterViewInit(): void {
         this.loadingContainer = this.getElementRef().nativeElement.getElementsByClassName('widgets-wrapper')[0];
         this.startLoading(false, this.loadingContainer);
-
         this.activate();
-
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
