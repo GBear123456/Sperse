@@ -1,34 +1,15 @@
-<header>
-    <h5 class="dialog-title">
-        {{l('RelatedContacts')}}
-        <a (click)="addNewContact()" class="float-right add-new-contact">{{l('AddRelatedContact')}}</a>
-    </h5>
-    <div class="search-wrapper clearfix">
-        <input type="text" id="search-related-contacts" class="search-related-contacts" placeholder="Search contacts..." (keyup)="filterList($event)">
-    </div>
-</header>
-<mat-dialog-content>
-    <ul class="contact-persons-container" id="related-contact-list">
-        <li class="contact-person-info" [class.odd]="odd" *ngFor="let contactPerson of displayedPersons; let odd = odd" (click)='selectContactPerson(contactPerson)'>
-            <div class="avatar">
-                <img src="{{ getPhoto(contactPerson?.thumbnail )}}" alt="{{l('AltPersonPhoto')}}">
-            </div>
-            <div class="personal-info">
-                <div class="full-name">
-                    <h1 *ngIf="contactPerson?.fullName">{{ contactPerson?.fullName }}</h1>
-                    <h1 *ngIf="!contactPerson?.fullName" class="no-name">{{ l('ClientNoName') }}</h1>
-                </div>
-                <div class="job-title">
-                    <h6>{{contactPerson?.jobTitle}}</h6>
-                </div>
-                <div class="rating" *ngIf="contactPerson.ratingId !== null">
-                    <mat-progress-bar ng-reflect-color="#2fb8f0" color="#2fb8f0" value="{{ contactPerson.ratingId * 10}}"></mat-progress-bar>
-                    <span class="rating_int">{{ contactPerson.ratingId }}/10</span>
-                </div>
-            </div>
-            <div class="person-info-actions">
-                <a class="action-link action-link-edit"></a>
-            </div>
-        </li>
-    </ul>
-</mat-dialog-content>
+<contact-list-dialog>
+    <ng-template #contactLayoutTemplate let-contact="contact">
+        <div class="full-name">
+            <h1 *ngIf="contact?.fullName">{{ contact?.fullName }}</h1>
+            <h1 *ngIf="!contact?.fullName" class="no-name">{{ l('ClientNoName') }}</h1>
+        </div>
+        <div class="job-title">
+            <h6>{{contact?.jobTitle}}</h6>
+        </div>
+        <div class="rating" *ngIf="contact.ratingId !== null">
+            <mat-progress-bar ng-reflect-color="#2fb8f0" color="#2fb8f0" value="{{ contact.ratingId * 10}}"></mat-progress-bar>
+            <span class="rating_int">{{ contact.ratingId }}/10</span>
+        </div>
+    </ng-template>
+</contact-list-dialog>
