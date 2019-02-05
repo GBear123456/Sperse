@@ -4,6 +4,8 @@ import { Component, OnInit, AfterViewInit, Injector, OnDestroy, ViewChild } from
 /** Third party imports */
 import { Observable, combineLatest, of } from 'rxjs';
 import {
+    distinct,
+    distinctUntilChanged,
     finalize,
     first,
     switchMap,
@@ -13,7 +15,6 @@ import {
     mergeAll,
     mergeMap,
     pluck,
-    distinct,
     publishReplay,
     refCount,
     withLatestFrom
@@ -33,6 +34,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { BehaviorSubject } from '@node_modules/rxjs';
+import { CacheService } from '@node_modules/ng2-cache-service';
+import { AbpSessionService } from '@abp/session/abp-session.service';
 
 @Component({
     selector: 'totals-by-period',
@@ -50,7 +53,6 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     currency = 'USD';
     clientColor = '#8487e7';
     nativeElement: any;
-
     periods: TotalsByPeriodModel[] = [
          {
              key: GroupBy.Daily,
@@ -81,9 +83,14 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             value: false
         }
     ];
-    private isCumulative: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.selectItems[0].value);
-    private isCumulative$: Observable<boolean> = this.isCumulative.asObservable();
 
+    private cumulativeOptionCacheKey = 'CRM_Dashboard_TotalsByPeriod_IsCumulative_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
+    private isCumulative: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+        this.cacheService.get(this.cumulativeOptionCacheKey) !== null ?
+            !!+this.cacheService.get(this.cumulativeOptionCacheKey) :
+            this.selectItems[0].value
+    );
+    private isCumulative$: Observable<boolean> = this.isCumulative.asObservable().pipe(distinctUntilChanged());
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
 
     private series: any[] = [
@@ -103,7 +110,9 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         private _dashboardServiceProxy: DashboardServiceProxy,
         private _dashboardWidgetsService: DashboardWidgetsService,
         private store$: Store<CrmStore.State>,
-        private _pipelineService: PipelineService
+        private _pipelineService: PipelineService,
+        private cacheService: CacheService,
+        private sessionService: AbpSessionService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -119,7 +128,12 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             refCount()
         );
 
-        this.totalsData$.subscribe(data => {
+        /** Save is cumulative change to cache */
+        this.isCumulative$.pipe(takeUntil(this.destroy$)).subscribe(
+            isCumulative => this.cacheService.set(this.cumulativeOptionCacheKey, +isCumulative)
+        );
+
+        this.totalsData$.pipe(takeUntil(this.destroy$)).subscribe(data => {
             /** Move leadStageCount object property inside data object to correctly display the widget */
             this.totalsData = data.map(dataItem => {
                 return { ...dataItem, ...dataItem['leadStageCount'] };
