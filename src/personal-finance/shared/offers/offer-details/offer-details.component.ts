@@ -36,11 +36,12 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import {
-    Category,
+    OfferFilterCategory,
     OfferServiceProxy,
     OfferDto,
     OfferDetailsDto,
-    CreditScores
+    CreditScores,
+    GetAllInput
 } from '@shared/service-proxies/service-proxies';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
 import { RootComponent } from '@root/root.components';
@@ -60,7 +61,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     selectedCardId: ReplaySubject<number> = new ReplaySubject<number>(1);
     selectedCardId$: Observable<number> = this.selectedCardId.asObservable();
     selectedCardDetails$: Observable<OfferDetailsDto>;
-    category$: Observable<Category>;
+    category$: Observable<OfferFilterCategory>;
     selectedCategory: string;
     categoryDisplayName$: Observable<string>;
     private deactivateSubject: Subject<null> = new Subject<null>();
@@ -103,13 +104,13 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         this.category$ = this.offersService.getCategoryFromRoute(this.route).pipe(first());
         this.category$.subscribe(res => {
             switch (this.selectedCategory = res) {
-                case Category.PersonalLoans:
+                case OfferFilterCategory.PersonalLoans:
                     this.buttonCaption = 'ApplyNow';
                     break;
-                case Category.CreditCards:
+                case OfferFilterCategory.CreditCards:
                     this.buttonCaption = 'ViewOffers';
                     break;
-                case Category.CreditScore:
+                case OfferFilterCategory.CreditScore:
                     this.buttonCaption = 'GetOffer';
                     break;
             }
@@ -152,24 +153,12 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
         return (this.offersService.displayedCards && this.offersService.displayedCards.length ?
                     of(this.offersService.displayedCards) :
                         combineLatest(this.category$, this.offersService.memberInfo$).pipe(
-                        switchMap(([category, memberInfo]) => this.offerServiceProxy.getAll(
-                            memberInfo.testMode,
-                            memberInfo.isDirectPostSupported,
-                            category,
-                            undefined,
-                            'US',
-                            undefined,
-                            undefined,
-                            undefined,
-                            undefined,
-                            undefined,
-                            undefined,
-                            undefined,
-                            undefined,
-                            undefined,
-                            undefined,
-                            []
-                        )),
+                        switchMap(([category, memberInfo]) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
+                            testMode: memberInfo.testMode,
+                            isDirectPostSupported: memberInfo.isDirectPostSupported,
+                            category: category,
+                            country: 'US'
+                        }))),
                         publishReplay(),
                         refCount()
                     )

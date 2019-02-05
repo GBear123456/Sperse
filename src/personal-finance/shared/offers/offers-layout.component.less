@@ -108,8 +108,10 @@
             }
 
             .sticky {
-                position: sticky;
-                top: 90px;
+                @media (min-width: 992px) {
+                    position: sticky;
+                    top: 90px;
+                }
             }
 
             h2 {

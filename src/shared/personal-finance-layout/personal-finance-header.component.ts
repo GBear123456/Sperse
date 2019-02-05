@@ -55,7 +55,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
     ];
     actionsButtons = [
         {name: 'SIGN UP', class: 'member-signup', routerUrl: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false},
-        {name: 'Member Login', class: 'member-login', routerUrl: environment.LENDSPACE_DOMAIN + '/login', disabled: false}
+        {name: 'Member Login', class: 'member-login', routerUrl: environment.LENDSPACE_DOMAIN + '/login.html', disabled: false}
     ];
 
     constructor(

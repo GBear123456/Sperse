@@ -1,6 +1,6 @@
 import { Component, Output, Input, EventEmitter } from '@angular/core';
 import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
-import { CreditScore } from '@shared/service-proxies/service-proxies';
+import { GetMemberInfoResponseCreditScore } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'score-filter',
@@ -10,7 +10,7 @@ import { CreditScore } from '@shared/service-proxies/service-proxies';
 export class ScoreFilterComponent {
     @Output() selectionChange: EventEmitter<CreditScoreItem> = new EventEmitter<CreditScoreItem>();
     @Input() items: CreditScoreItem[];
-    @Input() set selected (selectedValue: CreditScore) {
+    @Input() set selected (selectedValue: GetMemberInfoResponseCreditScore) {
         this.items.some(item => {
             if (item.value === selectedValue) {
                 item.checked = true;

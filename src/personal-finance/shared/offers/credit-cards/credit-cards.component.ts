@@ -14,7 +14,14 @@ import { Observable, combineLatest } from 'rxjs';
 import { delay, finalize, map, switchMap, takeUntil, tap, skip, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'underscore';
 
-import { OfferDto, Category, ItemOfOfferCollection, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    OfferDto,
+    OfferServiceProxy,
+    GetAllInputItemOfOfferCollection,
+    GetMemberInfoResponse,
+    OfferFilterCategory,
+    GetAllInput
+} from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -65,7 +72,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
 
         this.cardOffersList$ = this.getCreditCards().pipe(publishReplay(), refCount());
         this.cardOffersList$.subscribe(list => {
-            const itemOfOfferCollections = _.values(ItemOfOfferCollection);
+            const itemOfOfferCollections = _.values(GetAllInputItemOfOfferCollection);
             this.bestCreditCard = _.first(list.filter(item => 'Best' == item.offerCollection));
             this.selectedOfferGroup = _.first(list.filter(item => this.route.snapshot.params.group == item.offerCollection));
             this.creditCardCollection = list.filter(item => !_.contains(this.creditScoreNames, item.offerCollection));
@@ -77,7 +84,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         const creditCards$ = this.offerCollection$.pipe(
             takeUntil(this.lifecycleSubjectService.destroy$),
             tap(collectionName => this.selectedOfferGroup = this.creditCardCollection.filter(item => item.offerCollection == collectionName.group)[0]),
-            switchMap(collectionName => this.getCreditCards(collectionName.group || ItemOfOfferCollection.Best, false)),
+            switchMap(collectionName => this.getCreditCards(collectionName.group || GetAllInputItemOfOfferCollection.Best, false)),
             publishReplay(),
             refCount()
         );
@@ -94,27 +101,17 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         this.offersService.applyOffer(offer);
     }
 
-    getCreditCards(collection?: ItemOfOfferCollection, isOfferCollection = true): Observable<OfferDto[]> {
+    getCreditCards(collection?: GetAllInputItemOfOfferCollection, isOfferCollection = true): Observable<OfferDto[]> {
         abp.ui.setBusy();
         return this.offersService.memberInfo$.pipe(
-            switchMap(memberInfo => this.offerServiceProxy.getAll(
-                memberInfo.testMode,
-                memberInfo.isDirectPostSupported,
-                Category.CreditCards,
-                undefined,
-                'US',
-                undefined,
-                isOfferCollection,
-                collection ? ItemOfOfferCollection[collection] : undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                []
-            )),
+            switchMap((memberInfo: GetMemberInfoResponse) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
+                testMode: memberInfo.testMode,
+                isDirectPostSupported: memberInfo.isDirectPostSupported,
+                category: OfferFilterCategory.CreditCards,
+                country: 'US',
+                isOfferCollection: isOfferCollection,
+                itemOfOfferCollection: collection ? GetAllInputItemOfOfferCollection[collection] : undefined
+            }))),
             finalize(() => abp.ui.clearBusy())
         );
     }

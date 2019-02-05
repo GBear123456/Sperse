@@ -11,8 +11,8 @@ import { map, pluck, publishReplay, refCount } from 'rxjs/operators';
 /** Application imports */
 import {
     OfferDto,
-    Category,
-    CreditScore,
+    OfferFilterCategory,
+    GetMemberInfoResponseCreditScore,
     SubmitApplicationInput,
     SubmitApplicationOutput,
     OfferServiceProxy,
@@ -28,7 +28,7 @@ import { CurrencyPipe } from '@angular/common';
 
 @Injectable()
 export class OffersService {
-    stateCode$: ReplaySubject<string> = new ReplaySubject<string>();
+    state$: ReplaySubject<string> = new ReplaySubject<string>();
     memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount()); //, finalize(abp.ui
     // .clearBusy)
     processingSteps = [
@@ -46,11 +46,11 @@ export class OffersService {
         }
     ];
     readonly routeToCategoryMapping = {
-        'credit-scores': Category.CreditScore,
-        'id-theft-protection': Category.CreditMonitoring
+        'credit-scores': OfferFilterCategory.CreditScore,
+        'id-theft-protection': OfferFilterCategory.CreditMonitoring
     };
     readonly categoriesDisplayNames = {
-        [Category.CreditScore]: this.ls.l('CreditScore_CreditScores')
+        [OfferFilterCategory.CreditScore]: this.ls.l('CreditScore_CreditScores')
     };
     readonly creditScores = {
         'notsure': {
@@ -86,17 +86,17 @@ export class OffersService {
         private dialog: MatDialog
     ) {
         this.memberInfo$.pipe(pluck('stateCode')).subscribe((stateCode: string) => {
-            this.stateCode$.next(stateCode || 'AL');
+            this.state$.next(stateCode || 'all');
         });
     }
 
-    getCategoryFromRoute(route: ActivatedRoute): Observable<Category> {
+    getCategoryFromRoute(route: ActivatedRoute): Observable<OfferFilterCategory> {
         return route.url.pipe(
-            map((urlSegment: UrlSegment) => this.routeToCategoryMapping[urlSegment[0].path] || Category[upperFirst(camelCase(urlSegment[0].path))])
+            map((urlSegment: UrlSegment) => this.routeToCategoryMapping[urlSegment[0].path] || OfferFilterCategory[upperFirst(camelCase(urlSegment[0].path))])
         );
     }
 
-    getCategoryDisplayName(category: Category): string {
+    getCategoryDisplayName(category: OfferFilterCategory): string {
         return category ? this.categoriesDisplayNames[category] || lowerCase(category) : this.defaultCategoryDisplayName;
     }
 
@@ -108,17 +108,17 @@ export class OffersService {
         }
     }
 
-    covertCreditScoreToNumber(score: CreditScore): number {
+    covertCreditScoreToNumber(score: GetMemberInfoResponseCreditScore): number {
         const creditScoreObj: CreditScoreInterface = this.getCreditScoreObject(score);
         return creditScoreObj ? creditScoreObj.max : 700;
     }
 
-    covertNumberToCreditScore(scoreNumber: number): CreditScore {
+    covertNumberToCreditScore(scoreNumber: number): GetMemberInfoResponseCreditScore {
         let scoreName = capitalize(this.getCreditScoreName(scoreNumber));
-        return CreditScore[scoreName] ? CreditScore[scoreName] : CreditScore.NotSure;
+        return GetMemberInfoResponseCreditScore[scoreName] ? GetMemberInfoResponseCreditScore[scoreName] : GetMemberInfoResponseCreditScore.NotSure;
     }
 
-    getCreditScoreObject(creditScore: CreditScore): CreditScoreInterface {
+    getCreditScoreObject(creditScore: GetMemberInfoResponseCreditScore): CreditScoreInterface {
         if (creditScore) {
             const scoreName = (creditScore as string).toLowerCase();
             if (this.creditScores[scoreName]) {
@@ -173,29 +173,27 @@ export class OffersService {
             );
     }
 
-    getCreditScore(category: Category, creditScoreNumber: number): CreditScore {
+    getCreditScore(category: OfferFilterCategory, creditScoreNumber: number): GetMemberInfoResponseCreditScore {
         const categoryGroup = this.getCategoryGroup(category);
         let creditScore = categoryGroup === CategoryGroupEnum.Loans
             || categoryGroup === CategoryGroupEnum.CreditCards
             ? this.covertNumberToCreditScore(creditScoreNumber)
             : undefined;
-        return categoryGroup === CategoryGroupEnum.Loans && creditScore === CreditScore.NotSure
-               ? CreditScore.Poor
-               : creditScore;
+        return creditScore;
     }
 
-    getCategoryGroup(category: Category): CategoryGroupEnum {
+    getCategoryGroup(category: OfferFilterCategory): CategoryGroupEnum {
         let categoryGroup: CategoryGroupEnum;
         switch (category) {
-            case Category.PersonalLoans:
-            case Category.PaydayLoans:
-            case Category.InstallmentLoans:
-            case Category.BusinessLoans:
-            case Category.AutoLoans: {
+            case OfferFilterCategory.PersonalLoans:
+            case OfferFilterCategory.PaydayLoans:
+            case OfferFilterCategory.InstallmentLoans:
+            case OfferFilterCategory.BusinessLoans:
+            case OfferFilterCategory.AutoLoans: {
                 categoryGroup = CategoryGroupEnum.Loans;
                 break;
             }
-            case Category.CreditCards: {
+            case OfferFilterCategory.CreditCards: {
                 categoryGroup = CategoryGroupEnum.CreditCards;
                 break;
             }
@@ -219,31 +217,11 @@ export class OffersService {
         return valuesToConvert && valuesToConvert[loweredParamValue] || paramValue;
     }
 
-    formatCreditScores(creditScores: CreditScores[]): string {
-        if (!creditScores || !creditScores.length)
-            return 'Any';
-
-        let scores = creditScores.filter(x => x != CreditScores.NotSure);
-        if (!scores.length)
-            return 'Any';
-
-        if (scores.length >= 4)
-            return 'Any';
-
-        return scores.join('/');
-    }
-
     formatLoanAmountValues(minAmount: number = null, maxAmount: number = null): string {
         let minAmountStr = minAmount ? this.currencyPipe.transform(minAmount, 'USD', 'symbol', '0.0-2') : null;
         let maxAmountStr = this.currencyPipe.transform(maxAmount, 'USD', 'symbol', '0.0-2');
 
         return this.formatFromTo(minAmountStr, maxAmountStr);
-    }
-
-    formatLoanTermsValues(minTerm: number = null, maxTerm: number = null) {
-        let result = this.formatFromTo(minTerm, maxTerm);
-        if (result) result += ' Month(s)';
-        return result;
     }
 
     private formatFromTo(from, to): string {

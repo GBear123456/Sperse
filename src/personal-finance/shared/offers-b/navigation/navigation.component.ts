@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Category } from '@shared/service-proxies/service-proxies';
+import { OfferFilterCategory } from '@shared/service-proxies/service-proxies';
 
 import { kebabCase, lowerCase, startCase } from 'lodash';
 
@@ -12,7 +12,7 @@ export class NavigationComponent {
     links = [
         'CreditScores',
         // Category.CreditRepair,
-        Category.DebtConsolidation,
+        OfferFilterCategory.DebtConsolidation,
         'IDTheftProtection'
     ].map(category => kebabCase(category));
 

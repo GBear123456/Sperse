@@ -17,7 +17,7 @@ import { GetStateCodeFromZipService } from '@shared/utils/get-state-code-from-zi
 })
 export class RecommendedLendersComponent implements OnInit {
     set stateCode(value: string ) {
-        this.offersService.stateCode$.next(value);
+        this.offersService.state$.next(value);
     }
     memberInfo: GetMemberInfoResponse = new GetMemberInfoResponse();
     zipRegex = AppConsts.regexPatterns.zipUsPattern;
