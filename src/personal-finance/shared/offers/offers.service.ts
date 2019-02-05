@@ -1,12 +1,13 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { HttpParams } from '@angular/common/http';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
-import { map, publishReplay, refCount } from 'rxjs/operators';
+import { first, map, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -17,7 +18,6 @@ import {
     SubmitApplicationOutput,
     OfferServiceProxy,
     GetMemberInfoResponse,
-    CreditScores,
     OfferDtoCampaignProviderType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -28,7 +28,8 @@ import { CurrencyPipe } from '@angular/common';
 
 @Injectable()
 export class OffersService {
-    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount()); //, finalize(abp.ui.clearBusy)
+    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
+    memberInfoApplyOfferParams: string;
     processingSteps = [
         {
             name: 'Verifying Loan Request'
@@ -82,7 +83,11 @@ export class OffersService {
         private offerServiceProxy: OfferServiceProxy,
         private currencyPipe: CurrencyPipe,
         private dialog: MatDialog
-    ) {}
+    ) {
+        this.memberInfo$.pipe(first()).subscribe(
+            (memberInfo: GetMemberInfoResponse) => this.memberInfoApplyOfferParams = this.getApplyOffersParams(memberInfo)
+        );
+    }
 
     getCategoryFromRoute(route: ActivatedRoute): Observable<OfferFilterCategory> {
         return route.url.pipe(
@@ -137,7 +142,7 @@ export class OffersService {
             delayMessages: null,
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: offer.redirectUrl,
+            redirectUrl: !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + this.memberInfoApplyOfferParams,
             logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand ? this.creditCardsLogoUrl : offer.logoUrl
         };
         if (!linkIsDirect) {
@@ -216,6 +221,23 @@ export class OffersService {
         let maxAmountStr = this.currencyPipe.transform(maxAmount, 'USD', 'symbol', '0.0-2');
 
         return this.formatFromTo(minAmountStr, maxAmountStr);
+    }
+
+    private getApplyOffersParams(memberInfo: GetMemberInfoResponse): string {
+        const options = {
+            fname: memberInfo.firstName,
+            lname: memberInfo.lastName,
+            email: memberInfo.emailAddress,
+            dob: memberInfo.doB.utc().format('Y-MM-DD'),
+            phone: memberInfo.phoneNumber,
+            haddress1: memberInfo.streetAddress,
+            city: memberInfo.city,
+            hpostal: memberInfo.zipCode,
+            state: memberInfo.stateCode,
+            xi_resid: memberInfo.applicantId,
+            xi_oclkid: memberInfo.clickId
+        };
+        return new HttpParams({ fromObject: options }).toString();
     }
 
     private formatFromTo(from, to): string {

@@ -1,13 +1,13 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { HttpParams } from '@angular/common/http';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
 import { Observable } from 'rxjs';
-import { map, publishReplay, refCount } from 'rxjs/operators';
-import { Store } from '@ngrx/store';
+import { first, map, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -21,13 +21,15 @@ import {
     OfferDtoCampaignProviderType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { CreditScoreInterface } from '@root/personal-finance/shared/offers-b/interfaces/credit-score.interface';
-import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers-b/apply-offer-modal/apply-offer-dialog.component';
-import { CategoryGroupEnum } from '@root/personal-finance/shared/offers-b/category-group.enum';
+import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
+import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
+import { CategoryGroupEnum } from '@root/personal-finance/shared/offers/category-group.enum';
+import { CurrencyPipe } from '@angular/common';
 
 @Injectable()
 export class OffersService {
-    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount()); //, finalize(abp.ui.clearBusy)
+    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
+    memberInfoApplyOfferParams: string;
     processingSteps = [
         {
             name: 'Verifying Loan Request'
@@ -71,7 +73,7 @@ export class OffersService {
             max: 850
         }
     };
-    readonly creditLandLogoUrl = './assets/common/images/offers/credit-land.png';
+    readonly creditCardsLogoUrl = './assets/common/images/offers/credit-land.png';
     displayedCards: OfferDto[];
     defaultCategoryDisplayName: string = this.ls.l('Offers_Offers');
     constructor(
@@ -79,8 +81,13 @@ export class OffersService {
         private router: Router,
         private ls: AppLocalizationService,
         private offerServiceProxy: OfferServiceProxy,
+        private currencyPipe: CurrencyPipe,
         private dialog: MatDialog
-    ) {}
+    ) {
+        this.memberInfo$.pipe(first()).subscribe(
+            (memberInfo: GetMemberInfoResponse) => this.memberInfoApplyOfferParams = this.getApplyOffersParams(memberInfo)
+        );
+    }
 
     getCategoryFromRoute(route: ActivatedRoute): Observable<OfferFilterCategory> {
         return route.url.pipe(
@@ -135,8 +142,8 @@ export class OffersService {
             delayMessages: null,
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: offer.redirectUrl,
-            logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand ? this.creditLandLogoUrl : offer.logoUrl
+            redirectUrl: !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + this.memberInfoApplyOfferParams,
+            logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand ? this.creditCardsLogoUrl : offer.logoUrl
         };
         if (!linkIsDirect) {
             modalData.processingSteps = cloneDeep(this.processingSteps);
@@ -168,12 +175,10 @@ export class OffersService {
     getCreditScore(category: OfferFilterCategory, creditScoreNumber: number): GetMemberInfoResponseCreditScore {
         const categoryGroup = this.getCategoryGroup(category);
         let creditScore = categoryGroup === CategoryGroupEnum.Loans
-            || categoryGroup === CategoryGroupEnum.CreditCards
+        || categoryGroup === CategoryGroupEnum.CreditCards
             ? this.covertNumberToCreditScore(creditScoreNumber)
             : undefined;
-        return categoryGroup === CategoryGroupEnum.Loans && creditScore === GetMemberInfoResponseCreditScore.NotSure
-               ? GetMemberInfoResponseCreditScore.Poor
-               : creditScore;
+        return creditScore;
     }
 
     getCategoryGroup(category: OfferFilterCategory): CategoryGroupEnum {
@@ -209,5 +214,40 @@ export class OffersService {
         };
         valuesToConvert = { ...defaultValuesToConvert, ...valuesToConvert };
         return valuesToConvert && valuesToConvert[loweredParamValue] || paramValue;
+    }
+
+    formatLoanAmountValues(minAmount: number = null, maxAmount: number = null): string {
+        let minAmountStr = minAmount ? this.currencyPipe.transform(minAmount, 'USD', 'symbol', '0.0-2') : null;
+        let maxAmountStr = this.currencyPipe.transform(maxAmount, 'USD', 'symbol', '0.0-2');
+
+        return this.formatFromTo(minAmountStr, maxAmountStr);
+    }
+
+    private getApplyOffersParams(memberInfo: GetMemberInfoResponse): string {
+        const options = {
+            fname: memberInfo.firstName,
+            lname: memberInfo.lastName,
+            email: memberInfo.emailAddress,
+            dob: memberInfo.doB.utc().format('Y-MM-DD'),
+            phone: memberInfo.phoneNumber,
+            haddress1: memberInfo.streetAddress,
+            city: memberInfo.city,
+            hpostal: memberInfo.zipCode,
+            state: memberInfo.stateCode,
+            xi_resid: memberInfo.applicantId,
+            xi_oclkid: memberInfo.clickId
+        };
+        return new HttpParams({ fromObject: options }).toString();
+    }
+
+    private formatFromTo(from, to): string {
+        if (from && to)
+            return from + ' - ' + to;
+        if (from)
+            return 'from ' + from;
+        if (to)
+            return 'to ' + to;
+
+        return null;
     }
 }
