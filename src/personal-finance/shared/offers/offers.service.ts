@@ -132,17 +132,18 @@ export class OffersService {
 
     applyOffer(offer: OfferDto) {
         const linkIsDirect = !!offer.redirectUrl;
-        const submitApplicationInput = SubmitApplicationInput.fromJS({
+        let submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.campaignId,
             systemType: offer.systemType
         });
+        let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
         const modalData = {
             processingSteps: [null, null, null, null],
             completeDelays: [ 250, 250, 250, 250 ],
             delayMessages: null,
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams,
+            redirectUrl: redirectUrl,
             logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand ? this.creditCardsLogoUrl : offer.logoUrl
         };
         if (!linkIsDirect) {
@@ -151,6 +152,8 @@ export class OffersService {
             modalData.subtitle = 'Offers_WaitLoanRequestProcessing';
             modalData.completeDelays = [ 1000, 1000, 1000, null ];
             modalData.delayMessages = <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
+        } else {
+            submitApplicationInput.redirectUrl = redirectUrl;
         }
 
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
@@ -230,7 +233,7 @@ export class OffersService {
             fname: memberInfo.firstName,
             lname: memberInfo.lastName,
             email: memberInfo.emailAddress,
-            dob: memberInfo.doB.utc().format('Y-MM-DD'),
+            dob: memberInfo.doB && memberInfo.doB.utc().format('Y-MM-DD'),
             phone: memberInfo.phoneNumber,
             haddress1: memberInfo.streetAddress,
             city: memberInfo.city,
