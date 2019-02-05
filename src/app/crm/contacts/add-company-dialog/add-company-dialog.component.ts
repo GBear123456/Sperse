@@ -77,6 +77,8 @@ export class AddCompanyDialogComponent extends AppComponentBase {
                 contactInfo['organizationContactInfo'] = result;
             });
             contactInfo.primaryOrganizationContactId = orgId;
+            if (!contactInfo.personContactInfo.orgRelations)
+                contactInfo.personContactInfo.orgRelations = [];
             contactInfo.personContactInfo.orgRelations.push(
                 contactInfo.personContactInfo['personOrgRelationInfo'] = PersonOrgRelationShortInfo.fromJS({
                     id: responce.id,

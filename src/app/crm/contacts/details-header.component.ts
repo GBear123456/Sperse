@@ -357,7 +357,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             hasBackdrop: false,
             position: this.dialogService.calculateDialogPosition(event, event.target)
         }).afterClosed().subscribe(result => {
-            if (result == 'addCompany')
+            if (result == 'addContact')
                 this.addCompanyDialog(event);
             else if (result)
                 this.displaySelectedCompany(result);
@@ -365,11 +365,11 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         event.stopPropagation();
     }
 
-    displaySelectedCompany(relation) {
+    displaySelectedCompany(contact) {
         this.startLoading(true);
-        this.personContactInfo.orgRelationId = relation.id;
+        this.personContactInfo.orgRelationId = contact.relation.id;
         this.initializePersonOrgRelationInfo();
-        this._orgContactService.getOrganizationContactInfo(relation.organization.id)
+        this._orgContactService.getOrganizationContactInfo(contact.id)
             .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
                 let isPartner = this.data.groupId == ContactGroup.Partner;
                 this.data['organizationContactInfo'] = result;

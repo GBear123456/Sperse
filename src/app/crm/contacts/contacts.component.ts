@@ -445,17 +445,23 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             position: this.getDialogPossition(event, -182, 89),
             panelClass: ['related-contacts']
         }).afterClosed().subscribe(result => {
-            if (result == 'addNewContact')
+            if (result == 'addContact')
                 this.addNewContact(event);
             else if (result) {
-                this.customerId = result.id;
-                this.fillContactDetails(result);
-                let isPartner = this.customerType == ContactGroup.Partner;
-                this.loadLeadData(result.personContactInfo, () => {
-                    this._contactsService.updateLocation(
-                        (isPartner ? null : this.customerId), this.leadId, (isPartner ? this.customerId : null),
-                        result.organizationContactInfo && result.organizationContactInfo.id);
-                });
+                this.startLoading(true);
+                this._contactService.getContactInfo(result.id)
+                    .pipe(finalize(() => this.finishLoading(true))).subscribe((contactInfo) => {
+                        let orgContactInfo = contactInfo['organizationContactInfo'] = this.contactInfo['organizationContactInfo'];
+                        this.customerId = contactInfo.id;
+                        this.fillContactDetails(contactInfo);
+                        let isPartner = this.customerType == ContactGroup.Partner;
+                        this.loadLeadData(contactInfo.personContactInfo, () => {
+                            this._contactsService.updateLocation(
+                                (isPartner ? null : this.customerId), this.leadId, 
+                                (isPartner ? this.customerId : null),
+                                orgContactInfo && orgContactInfo.id);
+                        });
+                    });
             }
         });
         event.stopPropagation();

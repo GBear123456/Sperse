@@ -93,6 +93,7 @@ import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
 import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { CompanyDialogComponent } from './company-dialog/company-dialog.component';
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
+import { ContactListDialogComponent } from './contact-list-dialog/contact-list-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialog/create-client-dialog.component';
@@ -140,7 +141,8 @@ import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialo
         AddCompanyDialogComponent,
         CompanyDialogComponent,
         RelationCompaniesDialogComponent,
-        CreateClientDialogComponent
+        CreateClientDialogComponent,
+        ContactListDialogComponent
     ],
     imports: [
         FormsModule,
