@@ -147,14 +147,14 @@
                     margin-right: auto;
                 }
             }
-            @media (max-width: 767px) {
-                width: 110px;
+            @media (max-width: 575px) {
+                width: 100%;
                 margin-left: 0 ;
                 margin-right: 0;
+                &:not(:last-child) {
+                    margin-bottom: 10px;
+                }
             }
-        }
-        @media (max-width: 767px) {
-            flex-wrap: nowrap;
         }
     }
 }
