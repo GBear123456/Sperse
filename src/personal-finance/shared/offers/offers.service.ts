@@ -225,6 +225,8 @@ export class OffersService {
 
     private getApplyOffersParams(memberInfo: GetMemberInfoResponse): string {
         const options = {
+            xi_resid: memberInfo.applicantId,
+            xi_oclkid: memberInfo.clickId,
             fname: memberInfo.firstName,
             lname: memberInfo.lastName,
             email: memberInfo.emailAddress,
@@ -233,9 +235,7 @@ export class OffersService {
             haddress1: memberInfo.streetAddress,
             city: memberInfo.city,
             hpostal: memberInfo.zipCode,
-            state: memberInfo.stateCode,
-            xi_resid: memberInfo.applicantId,
-            xi_oclkid: memberInfo.clickId
+            state: memberInfo.stateCode
         };
         let params = new HttpParams();
         for (let key in options) {
