@@ -490,18 +490,26 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             withLatestFrom(this.offersService.memberInfo$),
             switchMap(
                 ([filter, memberInfo]) => {
-                    return this.offerServiceProxy.getAll(GetAllInput.fromJS({
+                    const categoryGroup = this.offersService.getCategoryGroup(filter.category);
+                    let input = GetAllInput.fromJS({
                         testMode: memberInfo.testMode,
                         isDirectPostSupported: memberInfo.isDirectPostSupported,
                         category: filter.category,
-                        country: filter.country,
-                        creditScore: this.offersService.getCreditScore(filter.category, filter.creditScore),
-                        loanAmount: filter.loanAmount,
-                        annualIncome: filter.annualIncome,
-                        state: filter.state ? 
+                        country: filter.country
+                    });
+
+                    if (categoryGroup === CategoryGroupEnum.Loans) {
+                        input.loanAmount = filter.loanAmount;
+                        input.annualIncome = filter.annualIncome;
+                        input.state = filter.state ? 
                             (filter.state == 'all' ? undefined: filter.state)  : 
                                 memberInfo.stateCode
-                    })).pipe(
+                    } 
+
+                    if (categoryGroup === CategoryGroupEnum.Loans || categoryGroup === CategoryGroupEnum.CreditCards) 
+                        input.creditScore = this.offersService.getCreditScore(filter.category, filter.creditScore);
+
+                    return this.offerServiceProxy.getAll(input).pipe(
                         finalize(() => {
                             this.offersAreLoading = false;
                             abp.ui.clearBusy(this.offersListRef.nativeElement);
