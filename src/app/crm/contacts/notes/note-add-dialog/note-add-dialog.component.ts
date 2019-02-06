@@ -5,6 +5,7 @@ import { OnInit, AfterViewInit, Component, Inject, Injector, ViewChild, ElementR
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { Store, select } from '@ngrx/store';
+import { of } from 'rxjs';
 import { map, mergeAll, pluck, toArray } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -93,18 +94,25 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             });
 
         this._contactInfo = this.data.contactInfo;
-        const relatedOrganizations: any[] = this._contactInfo.personContactInfo.orgRelations
+        const relatedOrganizations: any[] = this._contactInfo.personContactInfo.orgRelations ?
+            this._contactInfo.personContactInfo.orgRelations
             .map((organizationRelation: PersonOrgRelationShortInfo) => {
                 organizationRelation.organization['fullName'] = organizationRelation.organization.name;
                 return organizationRelation.organization;
-            });
+            }) : [];
         const relatedPersons: PersonShortInfoDto[] = this._contactInfo['organizationContactInfo'] &&
                                                      this._contactInfo['organizationContactInfo'].contactPersons
                              ? this._contactInfo['organizationContactInfo'].contactPersons
-                             : [];
+                             : [{
+                id: this._contactInfo.id,
+                fullName: this._contactInfo.personContactInfo.fullName,
+                jobTitle: this._contactInfo.personContactInfo.jobTitle,
+                ratingId: this._contactInfo.ratingId,
+                thumbnail: this._contactInfo.personContactInfo.primaryPhoto,
+                phones: this._contactInfo.personContactInfo.details.phones
+            }];
         this.contacts = relatedPersons.concat(relatedOrganizations);
         this.onContactChanged({value: this.contacts[0].id});
-
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
@@ -200,7 +208,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     onContactChanged($event) {
         let contact = this.getContactById($event.value);
-        const contactPhones$ = (contact instanceof OrganizationShortInfo
+        const contactPhones$ = contact.phones ? of(contact.phones) :
+            (contact instanceof OrganizationShortInfo
             ? this.orgContactService.getOrganizationContactInfo(contact.id).pipe(pluck('details'), pluck('phones'))
             : this.personServiceProxy.getPersonContactInfo(contact.id).pipe(pluck('details'), pluck('phones')));
 

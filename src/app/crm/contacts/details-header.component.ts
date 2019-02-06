@@ -1,5 +1,14 @@
 /** Core imports */
-import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    Injector,
+    Input,
+    Output,
+    ViewChild,
+    EventEmitter,
+    OnDestroy
+} from '@angular/core';
 
 /** Third party import */
 import { MatDialog } from '@angular/material/dialog';
@@ -7,7 +16,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
-import { filter, finalize } from 'rxjs/operators';
+import { filter, finalize, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -39,14 +48,15 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactGroup } from '@shared/AppEnums';
 import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
 import { ContactsService } from './contacts.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [ AppService, ContactPhotoServiceProxy ]
+    providers: [ AppService, ContactPhotoServiceProxy, LifecycleSubjectsService ]
 })
-export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
+export class DetailsHeaderComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
 
     @Input()
@@ -79,6 +89,26 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
 
     isAdminModule;
+    defaultContextMenuItems = [
+        {
+            text: this.l('AddFiles'),
+            selected: false,
+            icon: 'files',
+            contactGroups: [ ContactGroup.Client, ContactGroup.Partner, ContactGroup.UserProfile ]
+        },
+        {
+            text: this.l('AddNotes'),
+            selected: false,
+            icon: 'note',
+            contactGroups: [ ContactGroup.Client, ContactGroup.Partner, ContactGroup.UserProfile ]
+        },
+        {
+            text: this.l('AddContact'),
+            selected: false,
+            icon: 'add-contact',
+            contactGroups: [ ContactGroup.Client, ContactGroup.Partner ]
+        }
+    ];
     addContextMenuItems = [];
     addButtonTitle = '';
 
@@ -93,24 +123,26 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
         private nameParserService: NameParserService,
         private appService: AppService,
         private dialogService: DialogService,
-        private _cacheService: CacheService
+        private _cacheService: CacheService,
+        private lifeCycleService: LifecycleSubjectsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.isAdminModule = (appService.getModule() == appService.getDefaultModule());
-
-        this.addContextMenuItems = [
-            {text: this.l('AddFiles'), selected: false, icon: 'files'},
-            {text: this.l('AddNotes'), selected: false, icon: 'note'},
-            {text: this.l('AddContact'), selected: false, icon: 'add-contact'}
-        ];
-        this.addOptionsInit();
     }
 
     ngOnInit(): void {
         this._personContactInfoBehaviorSubject.subscribe(data => {
             this.initializePersonOrgRelationInfo(data);
         });
+        this._contactInfoBehaviorSubject
+            .pipe(filter(Boolean), takeUntil(this.lifeCycleService.destroy$))
+            .subscribe(
+                contactInfo => {
+                    this.addContextMenuItems = this.defaultContextMenuItems.filter(menuItem => menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0);
+                    this.addOptionsInit();
+                }
+            );
     }
 
     initializePersonOrgRelationInfo(data?) {
@@ -308,7 +340,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
             return this.addContextComponent
                 .instance.option('visible', true);
 
-        if (this.addContextMenuItems[this.ADD_CONTACT_OPTION].selected)
+        if (this.addContextMenuItems[this.ADD_CONTACT_OPTION] && this.addContextMenuItems[this.ADD_CONTACT_OPTION].selected)
             setTimeout(() => {
                 this.dialog.open(CreateClientDialogComponent, {
                     panelClass: 'slider',
@@ -320,7 +352,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                     }
                 });
             });
-        else if (this.addContextMenuItems[this.ADD_FILES_OPTION].selected)
+        else if (this.addContextMenuItems[this.ADD_FILES_OPTION] && this.addContextMenuItems[this.ADD_FILES_OPTION].selected)
             setTimeout(() => {
                 this.dialog.open(UploadDocumentsDialogComponent, {
                     panelClass: 'slider',
@@ -332,7 +364,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                     }
                 });
             });
-        else if (this.addContextMenuItems[this.ADD_NOTES_OPTION].selected)
+        else if (this.addContextMenuItems[this.ADD_NOTES_OPTION] && this.addContextMenuItems[this.ADD_NOTES_OPTION].selected)
             setTimeout(() => {
                 this.dialog.open(NoteAddDialogComponent, {
                     panelClass: 'slider',
@@ -377,5 +409,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit {
                     isPartner ? null : this.data.id, this.data['leadId'],
                     isPartner ? this.data.id : null, result && result.id);
             });
+    }
+
+    ngOnDestroy() {
+        this.lifeCycleService.destroy.next();
     }
 }
