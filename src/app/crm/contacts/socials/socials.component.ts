@@ -189,6 +189,7 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     deleteLink(id) {
+        this.dialog.closeAll();
         this._contactLinkService.deleteContactLink(
             this.contactInfoData.contactId, id).subscribe(result => {
             if (!result) {
