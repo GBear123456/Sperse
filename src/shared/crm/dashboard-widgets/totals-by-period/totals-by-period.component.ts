@@ -90,7 +90,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             !!+this.cacheService.get(this.cumulativeOptionCacheKey) :
             this.selectItems[0].value
     );
-    private isCumulative$: Observable<boolean> = this.isCumulative.asObservable().pipe(distinctUntilChanged());
+    isCumulative$: Observable<boolean> = this.isCumulative.asObservable().pipe(distinctUntilChanged());
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
 
     private series: any[] = [
