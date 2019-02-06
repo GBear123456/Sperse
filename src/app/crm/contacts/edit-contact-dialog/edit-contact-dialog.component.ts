@@ -8,7 +8,15 @@ import { filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AppStore, ContactLinkTypesStoreActions, ContactLinkTypesStoreSelectors, EmailUsageTypesStoreActions, EmailUsageTypesStoreSelectors, PhoneUsageTypesStoreActions, PhoneUsageTypesStoreSelectors } from '@app/store';
+import {
+    AppStore,
+    ContactLinkTypesStoreActions,
+    ContactLinkTypesStoreSelectors,
+    EmailUsageTypesStoreActions,
+    EmailUsageTypesStoreSelectors,
+    PhoneUsageTypesStoreActions,
+    PhoneUsageTypesStoreSelectors
+} from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import {
@@ -110,7 +118,7 @@ export class EditContactDialog extends AppComponentBase {
     onTypeChanged(event) {
         let type = _.findWhere(this.types, {id: event.value});
         if (type.isSocialNetwork)
-          this.data.isSocialNetwork = true;
+            this.data.isSocialNetwork = true;
     }
 
     onSave(event) {
@@ -151,6 +159,6 @@ export class EditContactDialog extends AppComponentBase {
 
     getUsageTypeHint(item) {
         return item && (['emailAddress', 'phoneNumber'].indexOf(this.data.field) >= 0) ?
-            this.l('ContactInformation_' + this.capitalize(this.data.field.slice(0, 5)) + 'TypeTooltip_' + item.id): '';
+            this.l('ContactInformation_' + this.capitalize(this.data.field.slice(0, 5)) + 'TypeTooltip_' + item.id) : '';
     }
 }

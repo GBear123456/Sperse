@@ -5,7 +5,6 @@ import { Component, Injector, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
-import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
@@ -62,7 +61,7 @@ export class SocialsComponent extends AppComponentBase {
             filter(types => !!types)
         ).subscribe(types => {
             types.forEach((entity) => {
-                this.LINK_TYPES[entity.id] = entity.name.replace(/ /g,'');
+                this.LINK_TYPES[entity.id] = entity.name.replace(/ /g, '');
             });
         });
     }
@@ -108,7 +107,7 @@ export class SocialsComponent extends AppComponentBase {
             url: data && data.url,
             usageTypeId: data && data.linkTypeId ? data.linkTypeId : AppConsts.otherLinkTypeId,
             isConfirmed: Boolean(data && data.isConfirmed),
-            isActive: Boolean(data ? data.isActive: true),
+            isActive: Boolean(data ? data.isActive : true),
             comment: data && data.comment,
             deleteItem: (event) => {
                 this.deleteLink(data.id);
@@ -223,6 +222,6 @@ export class SocialsComponent extends AppComponentBase {
     }
 
     normalizeLink(link) {
-        return ((/http[s]{0,1}:\/\//g).test(link) ? link: 'http://' + link);
+        return ((/http[s]{0,1}:\/\//g).test(link) ? link : 'http://' + link);
     }
 }

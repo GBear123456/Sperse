@@ -1,102 +1,106 @@
 <h2 mat-dialog-title (mousedown)="mouseDown($event)">{{l('ContactInfoDialogTitle', l(action), data.name)}}</h2>
 <mat-dialog-content>
-  <dx-validation-group (onInitialized)="initValidationGroup($event)">
-    <label>{{l('Type')}}</label>
-    <dx-select-box
-      name="usageType"
-      [dataSource]="types"
-      displayExpr="name"
-      valueExpr="id"
-      [disabled]="!isEditAllowed"
-      [(value)]="data.usageTypeId"
-      (onValueChanged)="onTypeChanged($event)"
-      fieldTemplate="fieldTemplate"
-      itemTemplate="itemTemplate">
-      <div *dxTemplate="let item of 'fieldTemplate'">
-        <div class="type-item-wrapper">
-          <dx-text-box class="{{data.field}} type-{{item?.id}}"
-            [value]="item?.name"
-            [readOnly]="true"
-            [hint]="getUsageTypeHint(item)">
-          </dx-text-box>
+    <dx-validation-group (onInitialized)="initValidationGroup($event)">
+        <label>{{l('Type')}}</label>
+        <dx-select-box
+            name="usageType"
+            [dataSource]="types"
+            displayExpr="name"
+            valueExpr="id"
+            [disabled]="!isEditAllowed"
+            [(value)]="data.usageTypeId"
+            (onValueChanged)="onTypeChanged($event)"
+            fieldTemplate="fieldTemplate"
+            itemTemplate="itemTemplate">
+            <div *dxTemplate="let item of 'fieldTemplate'">
+                <div class="type-item-wrapper">
+                    <img class="socialIcon" src="./assets/common/icons/social/{{ item.name }}.svg" onError="this.src='./assets/common/icons/social/OtherLink.svg';" width="25px" height="25px">
+                    <dx-text-box class="{{data.field}} type-{{item?.id}}"
+                                 [value]="item?.name"
+                                 [readOnly]="true"
+                                 [hint]="getUsageTypeHint(item)">
+                    </dx-text-box>
+                </div>
+            </div>
+            <div *dxTemplate="let item of 'itemTemplate'">
+                <div title="{{getUsageTypeHint(item)}}">{{item.name}}</div>
+            </div>
+            <dx-validator>
+                <dxi-validation-rule type="required" message="{{l('TypeRequired')}}"></dxi-validation-rule>
+            </dx-validator>
+        </dx-select-box>
+        <br>
+
+        <div *ngIf="data.field == 'url'">
+            <label>{{l('Link')}}</label>
+            <dx-text-box
+                name="email"
+                [disabled]="!isEditAllowed"
+                [(value)]="data.url">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{l('LinkIsRequired')}}."></dxi-validation-rule>
+                    <dxi-validation-rule type="pattern" [pattern]="urlRegEx" message="{{l('LinkIsNotValid')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-text-box>
         </div>
-      </div>
-      <div *dxTemplate="let item of 'itemTemplate'">
-          <div title="{{getUsageTypeHint(item)}}">{{item.name}}</div>
-      </div>
-      <dx-validator>
-        <dxi-validation-rule type="required" message="{{l('TypeRequired')}}"></dxi-validation-rule>
-      </dx-validator>
-    </dx-select-box><br>
 
-    <div *ngIf="data.field == 'url'">
-      <label>{{l('Link')}}</label>
-      <dx-text-box 
-        name="email"
-        [disabled]="!isEditAllowed"
-        [(value)]="data.url">
-        <dx-validator>
-          <dxi-validation-rule type="required" message="{{l('LinkIsRequired')}}."></dxi-validation-rule>
-          <dxi-validation-rule type="pattern" [pattern]="urlRegEx" message="{{l('LinkIsNotValid')}}."></dxi-validation-rule>
-        </dx-validator>
-      </dx-text-box>
-    </div>
+        <div *ngIf="data.field == 'emailAddress'">
+            <label>{{l('Email')}}</label>
+            <dx-text-box
+                name="email"
+                [disabled]="!isEditAllowed"
+                [(value)]="data.emailAddress">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
+                    <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-text-box>
+        </div>
 
-    <div *ngIf="data.field == 'emailAddress'">
-      <label>{{l('Email')}}</label>
-      <dx-text-box 
-        name="email"
-        [disabled]="!isEditAllowed"
-        [(value)]="data.emailAddress">
-        <dx-validator>
-          <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
-          <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
-        </dx-validator>
-      </dx-text-box>
-    </div>
+        <div *ngIf="data.field == 'phoneNumber'">
+            <label>{{l('Phone')}}</label>
+            <country-phone-number [(phoneNumber)]="data.phoneNumber" #countryPhoneNumber></country-phone-number>
+        </div>
 
-    <div *ngIf="data.field == 'phoneNumber'">
-      <label>{{l('Phone')}}</label>
-      <country-phone-number [(phoneNumber)]="data.phoneNumber" #countryPhoneNumber></country-phone-number>
-    </div>
+        <div *ngIf="data.field == 'phoneNumber'">
+            <label>{{l('Extension')}}</label>
+            <dx-number-box
+                name="phoneExtension"
+                [disabled]="!isEditAllowed"
+                [(value)]="data.phoneExtension">
+                <dx-validator>
+                    <dxi-validation-rule type="stringLength" [max]="5" message="{{l('PhoneExtensionExceedsMaxSize')}}"></dxi-validation-rule>
+                </dx-validator>
+            </dx-number-box>
+            <br>
+        </div>
 
-    <div *ngIf="data.field == 'phoneNumber'">
-      <label>{{l('Extension')}}</label>
-      <dx-number-box
-        name="phoneExtension"
-        [disabled]="!isEditAllowed"
-        [(value)]="data.phoneExtension">
-        <dx-validator>
-          <dxi-validation-rule type="stringLength" [max]="5" message="{{l('PhoneExtensionExceedsMaxSize')}}"></dxi-validation-rule>
-        </dx-validator>
-      </dx-number-box><br>
-    </div>
+        <label>{{l('Comment')}}</label>
+        <dx-text-box
+            name="comment"
+            [disabled]="!isEditAllowed"
+            [(value)]="data.comment">
+        </dx-text-box>
+        <br>
 
-    <label>{{l('Comment')}}</label>
-    <dx-text-box 
-      name="comment"
-      [disabled]="!isEditAllowed"
-      [(value)]="data.comment">
-    </dx-text-box><br>
-
-    <p>
-      <dx-check-box
-        text="{{l('ActiveContact')}}"
-        [disabled]="!isEditAllowed"
-        [(value)]="data.isActive">
-      </dx-check-box>
-      <dx-check-box
-        text="{{l('ConfirmedContact')}}"
-        [disabled]="!isEditAllowed"
-        [(value)]="data.isConfirmed">
-      </dx-check-box>
-    </p>
-  </dx-validation-group>
+        <p>
+            <dx-check-box
+                text="{{l('ActiveContact')}}"
+                [disabled]="!isEditAllowed"
+                [(value)]="data.isActive">
+            </dx-check-box>
+            <dx-check-box
+                text="{{l('ConfirmedContact')}}"
+                [disabled]="!isEditAllowed"
+                [(value)]="data.isConfirmed">
+            </dx-check-box>
+        </p>
+    </dx-validation-group>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button *ngIf="isEditAllowed && (action=='Edit')" mat-button class="button-layout button-clean-red" (click)="data.deleteItem($event)">
-    <i class="delete fa fa-times" aria-hidden="true"></i>{{l('Delete')}}
-  </button>
-  <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
-  <button *ngIf="isEditAllowed" mat-button class="button-layout button-primary" (click)="onSave($event)">{{action == 'Edit' ? l('Update'): action}}</button>
+    <button *ngIf="isEditAllowed && (action=='Edit')" mat-button class="button-layout button-clean-red" (click)="data.deleteItem($event)">
+        <i class="delete fa fa-times" aria-hidden="true"></i>{{l('Delete')}}
+    </button>
+    <button mat-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+    <button *ngIf="isEditAllowed" mat-button class="button-layout button-primary" (click)="onSave($event)">{{action == 'Edit' ? l('Update'): action}}</button>
 </mat-dialog-actions>
