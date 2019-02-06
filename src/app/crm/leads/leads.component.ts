@@ -155,7 +155,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
         this.searchColumns = [
             {name: 'CompanyName', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'Email', strategy: ODataSearchStrategy.Equals},
+            {name: 'Email', strategy: ODataSearchStrategy.Contains},
             {name: 'City', strategy: ODataSearchStrategy.StartsWith},
             {name: 'State', strategy: ODataSearchStrategy.StartsWith},
             {name: 'StateId', strategy: ODataSearchStrategy.Equals}
@@ -254,6 +254,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }),
                 new FilterModel({
                     component: FilterInputsComponent,
+                    operator: 'contains',
                     caption: 'Email',
                     items: {Email: new FilterItemModel()}
                 }),
