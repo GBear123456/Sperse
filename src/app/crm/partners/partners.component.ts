@@ -129,8 +129,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
         this.searchColumns = [
             {name: 'CompanyName', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'Email', strategy: ODataSearchStrategy.Equals},
-            {name: 'Phone', strategy: ODataSearchStrategy.Equals},
+            {name: 'Email', strategy: ODataSearchStrategy.Contains},
+            {name: 'Phone', strategy: ODataSearchStrategy.Contains},
             {name: 'City', strategy: ODataSearchStrategy.StartsWith},
             {name: 'State', strategy: ODataSearchStrategy.StartsWith},
             {name: 'StateId', strategy: ODataSearchStrategy.Equals}
@@ -237,6 +237,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     }),
                     new FilterModel({
                         component: FilterInputsComponent,
+                        operator: 'contains',
                         caption: 'email',
                         items: { Email: new FilterItemModel() }
                     }),
@@ -276,6 +277,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     }),
                     new FilterModel({
                         component: FilterInputsComponent,
+                        operator: 'contains',
                         caption: 'phone',
                         items: { Phone: new FilterItemModel() }
                     }),
