@@ -49,6 +49,7 @@
                         authData.twoFactorRememberClientToken,
                         authData.returnUrl
                     );
+                    window['generalInfo'] = undefined;
                     document.cookie = authDataKey + '=; domain=' +
                         location.origin.split('.').slice(-2).join('.');
                     return true;

@@ -98,7 +98,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         },
         {
             name: this.l('Logout'),
-            onClick: this.userManagementService.logout.bind(this),
+            onClick: (e) => this.userManagementService.logout(),
             cssClass: 'bottom-logout',
             iconSrc: 'assets/common/icons/logout.svg'
         }
