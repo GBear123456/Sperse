@@ -25147,66 +25147,6 @@ export class TransactionsServiceProxy {
 }
 
 @Injectable()
-export class UiServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    test(): Observable<void> {
-        let url_ = this.baseUrl + "/api/ui/test";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processTest(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processTest(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processTest(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
 export class UiCustomizationSettingsServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -46807,6 +46747,8 @@ export class LeadInfoDto implements ILeadInfoDto {
     applicationId!: string | undefined;
     siteId!: string | undefined;
     siteUrl!: string | undefined;
+    refererUrl!: string | undefined;
+    entryUrl!: string | undefined;
     primaryLeadRequestId!: number | undefined;
 
     constructor(data?: ILeadInfoDto) {
@@ -46836,6 +46778,8 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.applicationId = data["applicationId"];
             this.siteId = data["siteId"];
             this.siteUrl = data["siteUrl"];
+            this.refererUrl = data["refererUrl"];
+            this.entryUrl = data["entryUrl"];
             this.primaryLeadRequestId = data["primaryLeadRequestId"];
         }
     }
@@ -46865,6 +46809,8 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["applicationId"] = this.applicationId;
         data["siteId"] = this.siteId;
         data["siteUrl"] = this.siteUrl;
+        data["refererUrl"] = this.refererUrl;
+        data["entryUrl"] = this.entryUrl;
         data["primaryLeadRequestId"] = this.primaryLeadRequestId;
         return data; 
     }
@@ -46887,6 +46833,8 @@ export interface ILeadInfoDto {
     applicationId: string | undefined;
     siteId: string | undefined;
     siteUrl: string | undefined;
+    refererUrl: string | undefined;
+    entryUrl: string | undefined;
     primaryLeadRequestId: number | undefined;
 }
 
