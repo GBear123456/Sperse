@@ -7,8 +7,10 @@ import {
     OnInit,
     OnDestroy,
     ViewChild,
+    ViewChildren,
     ElementRef,
-    Renderer2
+    Renderer2,
+    QueryList
 } from '@angular/core';
 
 /** Third party imports */
@@ -48,7 +50,11 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
     @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
     @ViewChild('xmlContainer') xmlContainerElementRef: ElementRef;
-
+    @ViewChild('documentViewContainer') documentViewContainerElementRef: ElementRef;
+    private _frameHolderElementRef: HTMLElement;
+    @ViewChildren('frameHolder') set frameHolderElements(elements: QueryList<ElementRef>) {
+        this._frameHolderElementRef = elements.first && elements.first.nativeElement;
+    }
     private readonly RESERVED_TIME_SECONDS = 30;
 
     private visibleDocuments: DocumentInfo[];
@@ -574,30 +580,31 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     showOfficeOnline(wopiRequestInfo: WopiRequestOutcoming) {
-        this.openDocumentMode = true;
         this.showViewerType = this.WOPI_VIEWER;
         this.wopiUrlsrc = wopiRequestInfo.wopiUrlsrc;
         this.wopiAccessToken = wopiRequestInfo.accessToken;
         this.wopiAccessTokenTtl = wopiRequestInfo.accessTokenTtl.toString();
         setTimeout(() => {
-            this.submitWopiRequest();
-        }, 500);
+            this._frameHolderElementRef.innerHTML = '';
+            this.openDocumentMode = true;
+        });
+        setTimeout(() => this.submitWopiRequest(), 500);
     }
 
     submitWopiRequest() {
-        let frameholder = document.getElementById('frameholder');
         let office_frame = document.createElement('iframe');
         office_frame.name = 'office_frame';
         office_frame.id = 'office_frame';
         office_frame.title = 'Office Online Frame';
         office_frame.setAttribute('allowfullscreen', 'true');
         office_frame.setAttribute('frameBorder', '0');
-        office_frame.onload = function(event) {
+        office_frame.onload = (event) => {
             let eventTarget = <HTMLFormElement>event.target;
-            eventTarget.width = screen.width - 350;
-            eventTarget.height = screen.height - 390;
+            const documentViewContainerRect = this.documentViewContainerElementRef.nativeElement.getBoundingClientRect();
+            eventTarget.width = window.innerWidth - documentViewContainerRect.left;
+            eventTarget.height = window.innerHeight - documentViewContainerRect.top - 1;
         };
-        frameholder.appendChild(office_frame);
+        this._frameHolderElementRef.appendChild(office_frame);
         let officeForm = <HTMLFormElement>document.getElementById('office_form');
         officeForm.submit();
     }
