@@ -100,7 +100,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     category$: Observable<OfferFilterCategory> = this.offersService.getCategoryFromRoute(this.route);
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: OfferFilterCategory) => this.offersService.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
-    creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: GetMemberInfoResponseCreditScore) => this.offersService.covertCreditScoreToNumber(score)));
+    creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: GetMemberInfoResponseCreditScore) => this.offersService.convertCreditScoreToNumber(score)));
     stateCode$: Observable<string> = this.offersService.memberInfo$.pipe(pluck('stateCode'));
     filtersValues: FilterValues = this.getDefaultFilters();
     filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
@@ -226,10 +226,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     }
                 ]),
                 selected$: this.creditScore$.pipe(map((creditScore: GetMemberInfoResponseCreditScore) => {
-                    return this.filtersValues.creditScore && this.offersService.covertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
+                    return this.filtersValues.creditScore && this.offersService.convertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
                 })),
                 onChange: (creditScore: CreditScoreItem) => {
-                    const filterValue: number = <any>this.offersService.covertCreditScoreToNumber(creditScore.value);
+                    const filterValue: number = <any>this.offersService.convertCreditScoreToNumber(creditScore.value);
                     if (this.filtersValues.creditScore != filterValue) {
                         this.filtersValues.creditScore = filterValue;
                         this.selectedFilter.next(this.filtersValues);

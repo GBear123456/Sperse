@@ -107,12 +107,12 @@ export class OffersService {
         }
     }
 
-    covertCreditScoreToNumber(score: GetMemberInfoResponseCreditScore): number {
+    convertCreditScoreToNumber(score: GetMemberInfoResponseCreditScore): number {
         const creditScoreObj: CreditScoreInterface = this.getCreditScoreObject(score);
         return creditScoreObj ? creditScoreObj.max : 700;
     }
 
-    covertNumberToCreditScore(scoreNumber: number): GetMemberInfoResponseCreditScore {
+    convertNumberToCreditScore(scoreNumber: number): GetMemberInfoResponseCreditScore {
         let scoreName = capitalize(this.getCreditScoreName(scoreNumber));
         return GetMemberInfoResponseCreditScore[scoreName] ? GetMemberInfoResponseCreditScore[scoreName] : GetMemberInfoResponseCreditScore.NotSure;
     }
@@ -176,7 +176,7 @@ export class OffersService {
         const categoryGroup = this.getCategoryGroup(category);
         let creditScore = categoryGroup === CategoryGroupEnum.Loans
         || categoryGroup === CategoryGroupEnum.CreditCards
-            ? this.covertNumberToCreditScore(creditScoreNumber)
+            ? this.convertNumberToCreditScore(creditScoreNumber)
             : undefined;
         return creditScore;
     }
