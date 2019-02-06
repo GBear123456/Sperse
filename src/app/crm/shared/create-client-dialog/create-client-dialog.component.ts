@@ -314,8 +314,8 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         return country && country['code'];
     }
 
-    getStateCode(name) {
-        let state = _.findWhere(this.states, {name: name});
+    getStateCode(name: string, countryName: string) {
+        let state = _.findWhere(this.states[countryName], {name: name});
         return state && state['code'];
     }
 
@@ -464,7 +464,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 return {
                     streetAddress: streetAddress,
                     city: address.city,
-                    stateId: this.getStateCode(address.state),
+                    stateId: this.getStateCode(address.state, address.country),
                     zip: address.zip,
                     countryId: this.getCountryCode(address.country),
                     isActive: true,
@@ -553,7 +553,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 (field == 'phones') && contact.number && [contact.number] || undefined,
                 isAddress && contact.address || undefined,
                 isAddress && contact.city || undefined,
-                isAddress && this.getStateCode(contact.state) || undefined,
+                isAddress && this.getStateCode(contact.state, contact.country) || undefined,
                 isAddress && contact.zip || undefined,
                 isAddress && this.getCountryCode(contact.country) || undefined,
                 this.data.customerType).subscribe(response => {
@@ -614,11 +614,11 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         });
     }
 
-    loadStatesDataSource(countryCode: string, index = 0) {
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
-        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode }))
+    loadStatesDataSource(country: { name: string, code: string }) {
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(country.code));
+        this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: country.code }))
             .subscribe(result => {
-                setTimeout(() => this.states[index] = result);
+                setTimeout(() => this.states[country.name] = result);
             });
     }
 
@@ -659,7 +659,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         this.checkAddressControls(index);
         let country = _.findWhere(this.countries, {name: event.value});
         if (country) {
-            this.loadStatesDataSource(country['code'], index);
+            this.loadStatesDataSource(country);
         }
     }
 

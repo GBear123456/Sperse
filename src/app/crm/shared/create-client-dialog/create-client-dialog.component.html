@@ -39,7 +39,7 @@
 
     <div class="toolbar-wraper">
         <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
-    </div>   
+    </div>
     <div *ngIf="similarCustomersAvailable()" class="similar-clients-message" (click)="showSimilarCustomers($event)">{{l('SimilarRecordsFound')}}</div>
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
@@ -69,7 +69,7 @@
                 </dx-text-box>
                 <span [class]="(company || title) && 'clear-contact' || 'hidden'" (click)="company = title = ''"><i class="minus-icon"></i></span>
             </div>
-            <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">                
+            <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">
                 <div class="field email">
                     <label class="email-label">{{l('Email')}}</label>
                     <div *ngFor="let email of contacts.emails; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
@@ -189,7 +189,7 @@
                         <dx-text-box #linksComponent
                                      name="link"
                                      [width]="'410px'"
-                                     [(value)]="link.url"                      
+                                     [(value)]="link.url"
                                      (onValueChanged)="onFieldChanged($event, 'links', i)"
                                      (onInitialized)="onComponentInitialized($event, 'links')">
                             <dx-validator>
@@ -251,7 +251,7 @@
                             (onValueChanged)="checkAddressControls(i)">
                         </dx-text-box>
                         <dx-select-box
-                            [dataSource]="states[i]"
+                            [dataSource]="states[address.country]"
                             displayExpr="name"
                             valueExpr="name"
                             name="state"
@@ -301,7 +301,7 @@
                     [(value)]="notes">
                 </dx-text-area>
                 <span class="{{notes && 'clear-contact' || 'hidden'}}" (click)="notes = ''"><i class="minus-icon"></i></span>
-            </div>            
+            </div>
         </dx-scroll-view>
     </div>
 </app-modal-dialog>
