@@ -310,6 +310,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     stage['total'] = stages[stage.id];
                     stage['full'] = stage['total']
                         <= stage['leads'].length;
+                } else {
+                    stage['total'] = 0;
+                    stage['full'] = false;
                 }
             });
         });

@@ -71,12 +71,12 @@
         </dx-data-grid>
     </div>
 </div>
-<div [hidden]="!openDocumentMode" class="documentView">
+<div [hidden]="!openDocumentMode" class="documentView" #documentViewContainer>
     <form *ngIf="showViewerType == WOPI_VIEWER" id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">
         <input name="access_token" value="{{ wopiAccessToken }}" type="hidden" />
         <input name="access_token_ttl" value="{{ wopiAccessTokenTtl }}" type="hidden" />
     </form>
-    <span *ngIf="showViewerType == WOPI_VIEWER" id="frameholder" class="wopi-frame-holder"></span>
+    <span *ngIf="showViewerType == WOPI_VIEWER" #frameHolder class="wopi-frame-holder"></span>
 
     <app-image-viewer *ngIf="showViewerType == IMAGE_VIEWER"
         [images]="[previewContent]"

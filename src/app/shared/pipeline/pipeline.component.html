@@ -6,7 +6,7 @@
         <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage?.id}}" (click)="hideStageHighlighting()">
             <ng-container *ngFor="let lead of stage.leads">
                   <div class="card" [ngClass]="{locked: lead?.locked}" [accessKey]="lead?.Id" (click)="onCardClickInternal(lead, $event)" [attr.stage]="lead?.StageId" count="">
-                        <div class="container-fluid">                                        
+                        <div class="container-fluid">
                             <div class="row">
                                 <div class="full-name">
                                     <span *ngIf="lead?.Name || lead?.Title">{{ lead?.Name || lead?.Title }}</span>

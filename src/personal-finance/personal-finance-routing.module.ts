@@ -73,11 +73,6 @@ import { LoggedInCreditReportGuard } from '@root/personal-finance/shared/common/
                         data: { preload: false }
                     },
                     {
-                        path: 'offers-b',
-                        loadChildren: 'personal-finance/shared/offers-b/offers.module#OffersModuleB',
-                        data: { preload: false }
-                    },
-                    {
                         path: 'credit-report',
                         canActivate: [ LoggedOutCreditReportGuard ],
                         loadChildren: 'personal-finance/pages/credit-report/credit-report.module#CreditReportModule'
