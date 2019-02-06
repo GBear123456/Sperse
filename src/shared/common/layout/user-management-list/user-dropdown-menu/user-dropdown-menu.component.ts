@@ -91,7 +91,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
         },
         {
             name: this.l('Logout'),
-            onClick: this.userManagementService.logout.bind(this),
+            onClick: (e) => this.userManagementService.logout(),
             cssClass: 'bottom-logout',
             iconClass: 'logout'
         },

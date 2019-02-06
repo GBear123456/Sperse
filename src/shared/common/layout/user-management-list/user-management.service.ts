@@ -28,6 +28,7 @@ import { LinkedAccountService } from 'app/shared/layout/linked-account.service';
 import { Observable } from '@node_modules/rxjs';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AbpSessionService } from '@abp/session/abp-session.service';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class UserManagementService {
@@ -147,7 +148,7 @@ export class UserManagementService {
     }
 
     logout(): void {
-        this.authService.logout(true, this.feature.isEnabled('PFM.Applications') ? location.origin + '/personal-finance' : undefined);
+        this.authService.logout(true, this.feature.isEnabled('PFM.Applications') ? environment.LENDSPACE_DOMAIN : undefined);
     }
 
     switchToLinkedUser(linkedUser: LinkedUserDto): void {
