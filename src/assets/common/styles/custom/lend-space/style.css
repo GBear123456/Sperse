@@ -332,6 +332,106 @@ body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content 
     background: #FFF!important;
   }
 }
+body.lend-space .notification-header {
+  font-family: Poppins;
+}
+body.lend-space .notification-header .m-dropdown__header {
+  background: #313131;
+  padding: 20px 35px;
+}
+body.lend-space .notification-header .m-dropdown__header .tenantName {
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  color: #fff;
+}
+body.lend-space .notification-header .m-dropdown__header .fullName {
+  font-family: Poppins;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: #f0d500;
+}
+body.lend-space .notification-header .m-dropdown__body {
+  padding: 25px 35px 25px 0;
+}
+body.lend-space .notification-header .m-dropdown__body hr {
+  visibility: hidden;
+}
+body.lend-space .notification-header .m-dropdown__body .row {
+  padding-left: 35px;
+}
+@media (min-width: 768px) {
+  body.lend-space .notification-header {
+    width: 433px !important;
+  }
+}
+body.lend-space .notification-header a,
+body.lend-space .notification-modal a {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  color: #3463ae;
+}
+body.lend-space .m-scrollable {
+  font-family: Poppins;
+}
+body.lend-space .m-scrollable .mCSB_container {
+  padding-left: 35px;
+}
+body.lend-space .m-scrollable .m-list-timeline__items:before {
+  display: none;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item:before {
+  display: none;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__badge {
+  left: -22px;
+  height: 10px;
+  flex: 0;
+  display: none;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__badge:before {
+  background-color: #ffcc00;
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__icon {
+  display: none;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__text {
+  font-size: 13px;
+  font-weight: 400;
+  color: #4a4a4a;
+  padding-right: 0;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__time {
+  width: auto;
+  color: rgba(117, 117, 117, 0.8);
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 5px;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__text {
+  color: #000000;
+  font-weight: 600;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__time {
+  color: #4a4a4a;
+  font-weight: 500;
+}
+body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__badge {
+  display: block;
+}
+body.lend-space .m-scrollable .m-nav__separator {
+  visibility: hidden;
+  margin: 10px;
+}
 .yellow .page-header {
   box-shadow: none!important;
 }
