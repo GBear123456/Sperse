@@ -59,7 +59,8 @@ export class ImportWizardService {
                             if (<ImportStatus>importStatus.statusId == ImportStatus.InProgress)
                                 this.activeImportId = importId;
                         }
-                    }
+                    } else
+                        this.finishStatusCheck();
                     callback(res);
                 });
             });
