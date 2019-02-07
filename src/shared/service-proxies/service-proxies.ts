@@ -41783,7 +41783,7 @@ export class UploadDocumentInput implements IUploadDocumentInput {
     contactId!: number;
     fileName!: string;
     size!: number;
-    fileBase64!: string;
+    file!: string;
 
     constructor(data?: IUploadDocumentInput) {
         if (data) {
@@ -41800,7 +41800,7 @@ export class UploadDocumentInput implements IUploadDocumentInput {
             this.contactId = data["contactId"];
             this.fileName = data["fileName"];
             this.size = data["size"];
-            this.fileBase64 = data["fileBase64"];
+            this.file = data["file"];
         }
     }
 
@@ -41817,7 +41817,7 @@ export class UploadDocumentInput implements IUploadDocumentInput {
         data["contactId"] = this.contactId;
         data["fileName"] = this.fileName;
         data["size"] = this.size;
-        data["fileBase64"] = this.fileBase64;
+        data["file"] = this.file;
         return data; 
     }
 }
@@ -41827,7 +41827,7 @@ export interface IUploadDocumentInput {
     contactId: number;
     fileName: string;
     size: number;
-    fileBase64: string;
+    file: string;
 }
 
 export class UpdateTypeInput implements IUpdateTypeInput {

@@ -31,7 +31,7 @@ import '@node_modules/ng2-image-viewer/imageviewer.js';
 import { UploadDocumentDialogComponent } from '../upload-document-dialog/upload-document-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy, UploadDocumentInput,
+import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy,
 DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming, GetUrlOutput } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
@@ -361,65 +361,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         if (this.openDocumentMode) {
             this.closeDocument();
         }
-    }
-
-    fileDropped($event) {
-        let files = $event.files;
-        if (files.length)
-            this.uploadDroppedFile(files[0]);
-    }
-
-    uploadDroppedFile(droppedFile) {
-        let fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
-        fileEntry.file((file: File) => this.openShowUploadDocumentDialog(file));
-    }
-
-    updateUploadProgress(data) {
-        let elm = document.querySelector('file-drop .content');
-        if (elm && data.progress < 90 || data.progress > 95)
-            elm['style'].background = 'linear-gradient(to right, #e9f7fb ' + (data.progress++) + '%, #F8F7FC 0%)';
-    }
-
-    uploadFile(input) {
-        let data = {progress: 0},
-            progressInterval = setInterval(
-                this.updateUploadProgress.bind(this, data),
-                Math.round(input.size / 10000)
-            );
-        this._documentService.upload(UploadDocumentInput.fromJS({
-            contactId: this.data.contactInfo.id,
-            typeId: input.typeId,
-            fileName: input.name,
-            size: input.size,
-            fileBase64: input.fileBase64
-        })).pipe(finalize(() => {
-            clearInterval(progressInterval);
-            this.updateUploadProgress({progress: 100});
-            setTimeout(() => {
-                this.updateUploadProgress({progress: 0});
-            }, 5000);
-        })).subscribe(() => {
-            this.loadDocuments(Function);
-        });
-    }
-
-    showUploadDocumentDialog($event) {
-        this.openShowUploadDocumentDialog();
-        $event.stopPropagation();
-    }
-
-    openShowUploadDocumentDialog(file?: File) {
-        this.dialog.open(UploadDocumentDialogComponent, {
-            hasBackdrop: true,
-            data: {
-                file: file
-            }
-        }).afterClosed().subscribe((result) => {
-            if (result)
-                this.uploadFile(result);
-
-            this.loadDocumentTypes();
-        });
     }
 
     showActionsMenu(data, target) {

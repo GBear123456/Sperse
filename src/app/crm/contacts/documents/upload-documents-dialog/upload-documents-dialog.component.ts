@@ -127,29 +127,28 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
     }
 
     uploadFile(input, index) {
-        let progressInterval = setInterval(
-                this.updateUploadProgress.bind(this, index),
-                Math.round(input.size / 10000)
-            );
-
         if (AppConsts.regexPatterns.notSupportedDocuments.test(input.name)) {
             this.notify.error(this.l('FileIsNotSupported'));
-            this.finishUploading(progressInterval, index);
+            this.totalCount = 0;
             return;
         }
 
         if (input.size > AppConsts.maxDocumentSizeBytes) {
             this.notify.error(this.l('FilesizeLimitWarn', this.convertBytesToMegabytes(AppConsts.maxDocumentSizeBytes)));
-            this.finishUploading(progressInterval, index);
+            this.totalCount = 0;
             return;
         }
 
+        let progressInterval = setInterval(
+            this.updateUploadProgress.bind(this, index),
+            Math.round(input.size / 10000)
+        );
         this.uploadSubscribers.push(
             this._documentService.upload(UploadDocumentInput.fromJS({
                 contactId: this.data.contactId,
                 fileName: input.name,
                 size: input.size,
-                fileBase64: input.fileBase64
+                file: input.fileBase64
             })).pipe(finalize(() => {
                 this.finishUploading(progressInterval, index);
             })).subscribe(() => {
