@@ -210,8 +210,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         let contact = this.getContactById($event.value);
         const contactPhones$ = contact.phones ? of(contact.phones) :
             (contact instanceof OrganizationShortInfo
-            ? this.orgContactService.getOrganizationContactInfo(contact.id).pipe(pluck('details'), pluck('phones'))
-            : this.personServiceProxy.getPersonContactInfo(contact.id).pipe(pluck('details'), pluck('phones')));
+                ? this.orgContactService.getOrganizationContactInfo(contact.id)
+                : this.personServiceProxy.getPersonContactInfo(contact.id)
+            ).pipe(map(res => res.details && res.details.phones || []));
 
         contactPhones$.pipe(
             mergeAll(),
