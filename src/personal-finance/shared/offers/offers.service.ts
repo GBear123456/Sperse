@@ -1,12 +1,15 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { HttpParams } from '@angular/common/http';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
+
 import { ReplaySubject, Observable } from 'rxjs';
-import { map, pluck, publishReplay, refCount } from 'rxjs/operators';
+import { map, first, pluck, publishReplay, refCount } from 'rxjs/operators';
+
 
 /** Application imports */
 import {
@@ -17,7 +20,6 @@ import {
     SubmitApplicationOutput,
     OfferServiceProxy,
     GetMemberInfoResponse,
-    CreditScores,
     OfferDtoCampaignProviderType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -29,8 +31,8 @@ import { CurrencyPipe } from '@angular/common';
 @Injectable()
 export class OffersService {
     state$: ReplaySubject<string> = new ReplaySubject<string>();
-    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount()); //, finalize(abp.ui
-    // .clearBusy)
+    memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
+    memberInfoApplyOfferParams: string;
     processingSteps = [
         {
             name: 'Verifying Loan Request'
@@ -85,9 +87,14 @@ export class OffersService {
         private currencyPipe: CurrencyPipe,
         private dialog: MatDialog
     ) {
+
         this.memberInfo$.pipe(pluck('stateCode')).subscribe((stateCode: string) => {
             this.state$.next(stateCode || 'all');
         });
+
+        this.memberInfo$.pipe(first()).subscribe(
+            (memberInfo: GetMemberInfoResponse) => this.memberInfoApplyOfferParams = this.getApplyOffersParams(memberInfo)
+        );
     }
 
     getCategoryFromRoute(route: ActivatedRoute): Observable<OfferFilterCategory> {
@@ -108,12 +115,12 @@ export class OffersService {
         }
     }
 
-    covertCreditScoreToNumber(score: GetMemberInfoResponseCreditScore): number {
+    convertCreditScoreToNumber(score: GetMemberInfoResponseCreditScore): number {
         const creditScoreObj: CreditScoreInterface = this.getCreditScoreObject(score);
         return creditScoreObj ? creditScoreObj.max : 700;
     }
 
-    covertNumberToCreditScore(scoreNumber: number): GetMemberInfoResponseCreditScore {
+    convertNumberToCreditScore(scoreNumber: number): GetMemberInfoResponseCreditScore {
         let scoreName = capitalize(this.getCreditScoreName(scoreNumber));
         return GetMemberInfoResponseCreditScore[scoreName] ? GetMemberInfoResponseCreditScore[scoreName] : GetMemberInfoResponseCreditScore.NotSure;
     }
@@ -133,17 +140,18 @@ export class OffersService {
 
     applyOffer(offer: OfferDto) {
         const linkIsDirect = !!offer.redirectUrl;
-        const submitApplicationInput = SubmitApplicationInput.fromJS({
+        let submitApplicationInput = SubmitApplicationInput.fromJS({
             campaignId: offer.campaignId,
             systemType: offer.systemType
         });
+        let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
         const modalData = {
             processingSteps: [null, null, null, null],
             completeDelays: [ 250, 250, 250, 250 ],
             delayMessages: null,
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
-            redirectUrl: offer.redirectUrl,
+            redirectUrl: redirectUrl,
             logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand ? this.creditCardsLogoUrl : offer.logoUrl
         };
         if (!linkIsDirect) {
@@ -152,6 +160,8 @@ export class OffersService {
             modalData.subtitle = 'Offers_WaitLoanRequestProcessing';
             modalData.completeDelays = [ 1000, 1000, 1000, null ];
             modalData.delayMessages = <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
+        } else {
+            submitApplicationInput.redirectUrl = redirectUrl;
         }
 
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
@@ -177,7 +187,7 @@ export class OffersService {
         const categoryGroup = this.getCategoryGroup(category);
         let creditScore = categoryGroup === CategoryGroupEnum.Loans
             || categoryGroup === CategoryGroupEnum.CreditCards
-            ? this.covertNumberToCreditScore(creditScoreNumber)
+            ? this.convertNumberToCreditScore(creditScoreNumber)
             : undefined;
         return creditScore;
     }
@@ -222,6 +232,29 @@ export class OffersService {
         let maxAmountStr = this.currencyPipe.transform(maxAmount, 'USD', 'symbol', '0.0-2');
 
         return this.formatFromTo(minAmountStr, maxAmountStr);
+    }
+
+    private getApplyOffersParams(memberInfo: GetMemberInfoResponse): string {
+        const options = {
+            xi_resid: memberInfo.applicantId,
+            xi_oclkid: memberInfo.clickId,
+            fname: memberInfo.firstName,
+            lname: memberInfo.lastName,
+            email: memberInfo.emailAddress,
+            dob: memberInfo.doB && memberInfo.doB.utc().format('Y-MM-DD'),
+            phone: memberInfo.phoneNumber,
+            haddress1: memberInfo.streetAddress,
+            city: memberInfo.city,
+            hpostal: memberInfo.zipCode,
+            state: memberInfo.stateCode
+        };
+        let params = new HttpParams();
+        for (let key in options) {
+            if (options[key]) {
+                params = params.set(key, options[key]);
+            }
+        }
+        return params.toString();
     }
 
     private formatFromTo(from, to): string {
