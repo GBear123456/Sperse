@@ -126,8 +126,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     category$: Observable<OfferFilterCategory> = this.offersService.getCategoryFromRoute(this.route);
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: OfferFilterCategory) => this.offersService.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
-    creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: GetMemberInfoResponseCreditScore) => this.offersService.covertCreditScoreToNumber(score)));
+
     state$: Observable<string> = this.offersService.memberInfo$.pipe(pluck('stateCode'));
+    creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: GetMemberInfoResponseCreditScore) => this.offersService.convertCreditScoreToNumber(score)));
+
     filtersValues: FilterValues = this.getDefaultFilters();
     filtersSettings: { [filterGroup: string]: FilterSettingInterface[] } = {
         [CategoryGroupEnum.Loans]: [
@@ -185,10 +187,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     }
                 ]),
                 selected$: this.creditScore$.pipe(map((creditScore: GetMemberInfoResponseCreditScore) => {
-                    return this.filtersValues.creditScore && this.offersService.covertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
+                    return this.filtersValues.creditScore && this.offersService.convertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
                 })),
                 onChange: (e: MatSelectChange) => {
-                    const filterValue: number = <any>this.offersService.covertCreditScoreToNumber(e.value);
+                    const filterValue: number = <any>this.offersService.convertCreditScoreToNumber(e.value);
                     if (this.filtersValues.creditScore != filterValue) {
                         this.filtersValues.creditScore = filterValue;
                         this.selectedFilter.next(this.filtersValues);
@@ -302,10 +304,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     }
                 ]),
                 selected$: this.creditScore$.pipe(map((creditScore: GetMemberInfoResponseCreditScore) => {
-                    return this.filtersValues.creditScore && this.offersService.covertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
+                    return this.filtersValues.creditScore && this.offersService.convertNumberToCreditScore(this.filtersValues.creditScore) || creditScore;
                 })),
                 onChange: (creditScore: CreditScoreItem) => {
-                    const filterValue: number = <any>this.offersService.covertCreditScoreToNumber(creditScore.value);
+                    const filterValue: number = <any>this.offersService.convertCreditScoreToNumber(creditScore.value);
                     if (this.filtersValues.creditScore != filterValue) {
                         this.filtersValues.creditScore = filterValue;
                         this.selectedFilter.next(this.filtersValues);
@@ -551,16 +553,16 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     if (categoryGroup === CategoryGroupEnum.Loans) {
                         input.loanAmount = filter.loanAmount;
                         input.annualIncome = filter.annualIncome;
-                        input.state = filter.state ? 
-                            (filter.state == 'all' ? undefined: filter.state)  : 
+                        input.state = filter.state ?
+                            (filter.state == 'all' ? undefined : filter.state) :
                                 memberInfo.stateCode;
-                    } 
+                    }
 
                     if (categoryGroup === CategoryGroupEnum.CreditCards) {
                         input.cardNetworks = filter.cardNetworks;
                         input.cardType = filter.cardType;
                         input.securingType = filter.securingType;
-                        input.targetAudience = filter.targetAudience;                              
+                        input.targetAudience = filter.targetAudience;
                         input.overallRating = filter.overallRating;
                         input.issuingBank = filter.issuingBank;
                     }
