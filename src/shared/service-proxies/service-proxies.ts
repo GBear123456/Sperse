@@ -16251,7 +16251,7 @@ export class OfferManagementServiceProxy {
      * @value (optional) 
      * @return Success
      */
-    setAttribute(offerFilter: OfferFilter, offerAttribute: OfferAttribute, value: string | null | undefined): Observable<void> {
+    setAttribute(offerFilter: OfferFilter, offerAttribute: OfferAttribute, value: string | null | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/SetAttribute?";
         if (offerAttribute === undefined || offerAttribute === null)
             throw new Error("The parameter 'offerAttribute' must be defined and cannot be null.");
@@ -16269,6 +16269,7 @@ export class OfferManagementServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -16279,14 +16280,14 @@ export class OfferManagementServiceProxy {
                 try {
                     return this.processSetAttribute(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<number>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<number>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSetAttribute(response: HttpResponseBase): Observable<void> {
+    protected processSetAttribute(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16295,14 +16296,17 @@ export class OfferManagementServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<number>(<any>null);
     }
 
     /**
@@ -46745,6 +46749,7 @@ export class LeadInfoDto implements ILeadInfoDto {
     userAgent!: string | undefined;
     applicantId!: string | undefined;
     applicationId!: string | undefined;
+    clickId!: string | undefined;
     siteId!: string | undefined;
     siteUrl!: string | undefined;
     refererUrl!: string | undefined;
@@ -46776,6 +46781,7 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.userAgent = data["userAgent"];
             this.applicantId = data["applicantId"];
             this.applicationId = data["applicationId"];
+            this.clickId = data["clickId"];
             this.siteId = data["siteId"];
             this.siteUrl = data["siteUrl"];
             this.refererUrl = data["refererUrl"];
@@ -46807,6 +46813,7 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["userAgent"] = this.userAgent;
         data["applicantId"] = this.applicantId;
         data["applicationId"] = this.applicationId;
+        data["clickId"] = this.clickId;
         data["siteId"] = this.siteId;
         data["siteUrl"] = this.siteUrl;
         data["refererUrl"] = this.refererUrl;
@@ -46831,6 +46838,7 @@ export interface ILeadInfoDto {
     userAgent: string | undefined;
     applicantId: string | undefined;
     applicationId: string | undefined;
+    clickId: string | undefined;
     siteId: string | undefined;
     siteUrl: string | undefined;
     refererUrl: string | undefined;
@@ -48665,6 +48673,7 @@ export interface IOfferDetailsDto {
 export class SubmitApplicationInput implements ISubmitApplicationInput {
     systemType!: SubmitApplicationInputSystemType;
     campaignId!: number;
+    redirectUrl!: string | undefined;
 
     constructor(data?: ISubmitApplicationInput) {
         if (data) {
@@ -48679,6 +48688,7 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         if (data) {
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
+            this.redirectUrl = data["redirectUrl"];
         }
     }
 
@@ -48693,6 +48703,7 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         data = typeof data === 'object' ? data : {};
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
+        data["redirectUrl"] = this.redirectUrl;
         return data; 
     }
 }
@@ -48700,6 +48711,7 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
 export interface ISubmitApplicationInput {
     systemType: SubmitApplicationInputSystemType;
     campaignId: number;
+    redirectUrl: string | undefined;
 }
 
 export class SubmitApplicationOutput implements ISubmitApplicationOutput {
@@ -48747,10 +48759,20 @@ export interface ISubmitApplicationOutput {
 }
 
 export class GetMemberInfoResponse implements IGetMemberInfoResponse {
-    creditScore!: GetMemberInfoResponseCreditScore | undefined;
+    applicantId!: string | undefined;
+    clickId!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    emailAddress!: string | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    zipCode!: string | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
     stateCode!: string | undefined;
     countryCode!: string | undefined;
-    zipCode!: string | undefined;
+    doB!: moment.Moment | undefined;
+    creditScore!: GetMemberInfoResponseCreditScore | undefined;
     isDirectPostSupported!: boolean | undefined;
     testMode!: boolean | undefined;
 
@@ -48765,10 +48787,20 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
 
     init(data?: any) {
         if (data) {
-            this.creditScore = data["creditScore"];
+            this.applicantId = data["applicantId"];
+            this.clickId = data["clickId"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.zipCode = data["zipCode"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
             this.stateCode = data["stateCode"];
             this.countryCode = data["countryCode"];
-            this.zipCode = data["zipCode"];
+            this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
+            this.creditScore = data["creditScore"];
             this.isDirectPostSupported = data["isDirectPostSupported"];
             this.testMode = data["testMode"];
         }
@@ -48783,10 +48815,20 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["creditScore"] = this.creditScore;
+        data["applicantId"] = this.applicantId;
+        data["clickId"] = this.clickId;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["zipCode"] = this.zipCode;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
         data["stateCode"] = this.stateCode;
         data["countryCode"] = this.countryCode;
-        data["zipCode"] = this.zipCode;
+        data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
+        data["creditScore"] = this.creditScore;
         data["isDirectPostSupported"] = this.isDirectPostSupported;
         data["testMode"] = this.testMode;
         return data; 
@@ -48794,10 +48836,20 @@ export class GetMemberInfoResponse implements IGetMemberInfoResponse {
 }
 
 export interface IGetMemberInfoResponse {
-    creditScore: GetMemberInfoResponseCreditScore | undefined;
+    applicantId: string | undefined;
+    clickId: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    emailAddress: string | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    zipCode: string | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
     stateCode: string | undefined;
     countryCode: string | undefined;
-    zipCode: string | undefined;
+    doB: moment.Moment | undefined;
+    creditScore: GetMemberInfoResponseCreditScore | undefined;
     isDirectPostSupported: boolean | undefined;
     testMode: boolean | undefined;
 }
@@ -49313,6 +49365,7 @@ export class OfferFilter implements IOfferFilter {
     overallRating!: number | undefined;
     issuingBank!: string | undefined;
     campaignIds!: number[] | undefined;
+    campaignUrls!: string[] | undefined;
 
     constructor(data?: IOfferFilter) {
         if (data) {
@@ -49350,6 +49403,11 @@ export class OfferFilter implements IOfferFilter {
                 this.campaignIds = [];
                 for (let item of data["campaignIds"])
                     this.campaignIds.push(item);
+            }
+            if (data["campaignUrls"] && data["campaignUrls"].constructor === Array) {
+                this.campaignUrls = [];
+                for (let item of data["campaignUrls"])
+                    this.campaignUrls.push(item);
             }
         }
     }
@@ -49389,6 +49447,11 @@ export class OfferFilter implements IOfferFilter {
             for (let item of this.campaignIds)
                 data["campaignIds"].push(item);
         }
+        if (this.campaignUrls && this.campaignUrls.constructor === Array) {
+            data["campaignUrls"] = [];
+            for (let item of this.campaignUrls)
+                data["campaignUrls"].push(item);
+        }
         return data; 
     }
 }
@@ -49412,6 +49475,7 @@ export interface IOfferFilter {
     overallRating: number | undefined;
     issuingBank: string | undefined;
     campaignIds: number[] | undefined;
+    campaignUrls: string[] | undefined;
 }
 
 export class ExtendFromCSVOutput implements IExtendFromCSVOutput {
