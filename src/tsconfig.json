@@ -24,7 +24,7 @@
       "@node_modules/*": [ "../node_modules/*" ],
       "@angular/*": [ "../node_modules/@angular/*" ],
       "moment": [ "../node_modules/moment/min/moment.min.js" ],
-      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone.min.js" ]
+      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ]
     }
   },
   "include": [
