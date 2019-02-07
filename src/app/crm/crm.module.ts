@@ -73,6 +73,7 @@ import { CommonModule } from '@shared/common/common.module';
 
 @NgModule({
     imports: [
+      CrmRoutingModule,
       FormsModule,
       ngCommon.CommonModule,
       CommonModule,
@@ -117,7 +118,6 @@ import { CommonModule } from '@shared/common/common.module';
       CRMDashboardWidgetsModule,
       ContactsModule,
       FileUploadModule,
-      CrmRoutingModule,
       UtilsModule,
       PipelineModule,
       SharedIntroStepsModule,

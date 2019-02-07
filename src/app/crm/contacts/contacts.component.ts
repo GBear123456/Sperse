@@ -83,7 +83,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         opened: false
     };
 
-    private params: any;
+    params: any;
     private rootComponent: any;
     private paramsSubscribe: any = [];
     referrerParams: Params;

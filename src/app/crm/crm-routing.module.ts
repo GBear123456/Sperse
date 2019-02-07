@@ -12,13 +12,10 @@ import { ActivityComponent } from './activity/activity.component';
 @NgModule({
     imports: [
         RouterModule.forChild([
-            {
-                path: '', redirectTo: '/app/crm/dashboard', pathMatch: 'full'
-            },
+            { path: '', redirectTo: '/app/crm/dashboard', pathMatch: 'full' },
             {
                 path: '',
                 children: [
-                    { path: 'start', component: DashboardComponent, data: { permission: 'Pages.Detect.Route' } },
                     { path: 'dashboard', component: DashboardComponent, data: { permission: 'Pages.CRM', reuse: true } },
                     { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.CRM.Customers', reuse: true } },
                     { path: 'partners', component: PartnersComponent, data: { permission: 'Pages.CRM.Partners', reuse: true } },
@@ -35,6 +32,4 @@ import { ActivityComponent } from './activity/activity.component';
         RouterModule
     ]
 })
-export class CrmRoutingModule {
-  constructor() { }
-}
+export class CrmRoutingModule { }
