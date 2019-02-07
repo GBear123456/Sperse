@@ -24,6 +24,35 @@
          }
      }
 
+     .vertical-delimiter {
+        width: 30px;
+        height: 0px;
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        align-self: flex-start;
+        &:before {
+            content: '';
+            position: absolute;
+            border-left: 1px solid #dfdfdf;
+            display: block;
+            height: 82px;
+            left: 15px;
+            top: -15px;
+        }
+    }
+
+     .refresh-button {
+        width: 44px;
+        height: 44px;
+        margin: 5px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        vertical-align: bottom;
+        background: url("../../../assets/common/icons/refresh-btn.svg") no-repeat center;
+    }
+
     .full_name {
         font-family: Montserrat;
         display: flex;
@@ -272,7 +301,7 @@
 
     .header_buttons {
         margin-left: auto;
-        margin-right: 100px;
+        margin-right: 75px;
 
         #addEntity {
             min-width: 187px;

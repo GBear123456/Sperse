@@ -79,6 +79,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
+    @Output() onRefresh: EventEmitter<any> = new EventEmitter();
 
     private _contactInfoBehaviorSubject = new BehaviorSubject<ContactInfoDto>(ContactInfoDto.fromJS({}));
     private _personContactInfoBehaviorSubject = new BehaviorSubject<PersonContactInfoDto>(PersonContactInfoDto.fromJS({}));
@@ -191,7 +192,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         if (isCompany) {
             let companyInfo = this.data['organizationContactInfo'];
             if (!companyInfo || !companyInfo.id)
-                return ;
+                return;
         }
 
         this.dialog.closeAll();
@@ -411,7 +412,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             });
     }
 
+
     ngOnDestroy() {
         this.lifeCycleService.destroy.next();
+    }
+
+    refresh(event) {
+        this.onRefresh.emit(event);
     }
 }
