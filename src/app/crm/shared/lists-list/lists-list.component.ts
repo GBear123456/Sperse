@@ -40,11 +40,12 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     private _prevClickDate = new Date();
     selectedLists = [];
-    list: any;
+    list: any = [];
 
     lastNewAdded: any;
     addNewTimeout: any;
     listComponent: any;
+
     tooltipVisible = false;
 
     constructor(
@@ -59,8 +60,11 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     toggle() {
-        if (this.tooltipVisible = !this.tooltipVisible)
+        if (this.tooltipVisible = !this.tooltipVisible) { 
+            if (this.listComponent)
+                setTimeout(() => this.listComponent.repaint());
             this.highlightSelectedFilters();
+        }
     }
 
     apply(isRemove: boolean = false, selectedKeys = undefined) {
@@ -82,7 +86,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 else
                     this.process(isRemove);
             }
-            setTimeout(() => { this.listComponent.option('searchPanel.text', undefined); }, 500);
+            this.listComponent.clearFilter(); 
         }
         this.tooltipVisible = false;
     }
@@ -123,6 +127,12 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     refresh() {
         this.store$.pipe(select(ListsStoreSelectors.getLists)).subscribe(lists => {
+            if (this.list && this.list.length)
+                this.selectedLists = this.selectedItems.map((item) => {
+                    let selected = _.findWhere(lists, {name: item.name});
+                    return selected && selected.id;
+                }).filter(Boolean);
+
             this.list = lists;
         });
     }

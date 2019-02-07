@@ -109,7 +109,7 @@ export class AppService extends AppServiceBase {
                 api: require('./api/module.config.json'),
                 crm: require('./crm/module.config.json'),
                 cfo: require('./cfo/module.config.json'),
-                pfm: require('../personal-finance/module.config.json')
+                pfm: require('./pfm/module.config.json')
             },
         );
 

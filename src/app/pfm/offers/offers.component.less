@@ -1,0 +1,53 @@
+:host {
+    display: block;
+    position: relative;
+    top: 74px;
+
+    &.fullscreen {
+        top: 0px !important;
+    }
+
+    .nav-link {
+        position: relative;
+        white-space: nowrap;
+    }
+
+    .main-wrapper {
+        max-width: 100vw;
+        display: flex;
+
+        /deep/ #gridContainer .dx-datagrid-rowsview {
+            .dx-datagrid-content tr td.tabular,
+            .dx-datagrid-content tr td.tabular * {
+                font-family: 'Lato' !important;
+            }
+        }
+    }
+
+    /deep/ #gridContainer {
+        .dx-datagrid-header-panel {
+            .dx-toolbar-items-container {
+                .dx-toolbar-before {
+                    width: auto !important;
+                }
+            }
+
+            .dx-toolbar .dx-toolbar-center {
+                margin: 0 !important;
+            }
+
+            .dx-toolbar-items-container {
+                height: 72px;
+                margin-bottom: 0;
+            }
+        }
+
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                td {
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}
