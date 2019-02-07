@@ -1,0 +1,42 @@
+<div>
+    <app-headline [config]="headlineConfig">
+    </app-headline>
+    <offer-categories [width]="'310px'"
+                     [title]="l('Categories')"
+                     [filterModel]="filterModelStages"
+                     [targetSelector]="'[aria-label=Category]'"
+                     [list]="categories">
+    </offer-categories>
+    <div class="main-wrapper">
+        <dx-data-grid id="gridContainer"
+                      [dataSource]="dataSource"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      [hoverStateEnabled]="true"
+                      [pager]="defaultGridPagerConfig">
+            <dxo-selection selectAllMode="page"
+                           showCheckBoxesMode="always"
+                           mode="multiple">
+            </dxo-selection>
+
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-paging [pageSize]="20"></dxo-paging>
+
+            <dxi-column dataField="Name" caption="{{l('Offer_Name')}}"></dxi-column>
+            <dxi-column dataField="CardNetwork" caption="" [width]="150"></dxi-column>
+            <dxi-column dataField="Categories" caption="" [width]="300" cellTemplate="categoriesCell"></dxi-column>
+            <dxi-column dataField="Status" caption="{{l('Offer_Status')}}" [width]="180"></dxi-column>
+            <dxi-column dataField="Created" caption="{{l('Offer_Created')}}" [width]="180" cellTemplate="dateCell"></dxi-column>
+
+            <div *dxTemplate="let cellData of 'dateCell'">
+                {{cellData.value | date: 'MM/dd/yyyy'}}
+            </div>
+            <div *dxTemplate="let cellData of 'categoriesCell'">
+                <span *ngFor="let category of cellData.value">
+                    {{category.Name}};
+                </span>
+            </div>
+        </dx-data-grid>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+{
+  "code": "PFM",
+  "name": "PFM",
+  "search": false,
+  "requiredFeature": "PFM",
+  "requiredPermission": "Pages.PFM",
+  "localizationSource": "PFM",
+  "navigation": [
+    [ "Offers", "Pages.PFM.ManageOffers", "icon-home", "/app/pfm/offers" ]
+  ]
+}
