@@ -8,6 +8,7 @@
                         [personContactInfo]="personContactInfo"
                         [ratingId]="ratingId"
                         (onInvalidate)="invalidate()"
+                        (onRefresh)="loadData(params)"
                         (onContactSelected)="onContactSelected($event)">
         </details-header>
     </ng-container>

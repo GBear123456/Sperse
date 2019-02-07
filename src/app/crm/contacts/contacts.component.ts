@@ -279,6 +279,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                         contactInfo[0]['organizationContactInfo'] = result;
                         this._contactsService.organizationInfoUpdate(result);
                     });
+            else
+                this._contactsService.organizationInfoUpdate(OrganizationContactInfoDto.fromJS({}));
 
             return contactInfo[0];
         }));
@@ -457,7 +459,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                         let isPartner = this.customerType == ContactGroup.Partner;
                         this.loadLeadData(contactInfo.personContactInfo, () => {
                             this._contactsService.updateLocation(
-                                (isPartner ? null : this.customerId), this.leadId, 
+                                (isPartner ? null : this.customerId), this.leadId,
                                 (isPartner ? this.customerId : null),
                                 orgContactInfo && orgContactInfo.id);
                         });

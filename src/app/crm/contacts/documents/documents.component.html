@@ -85,7 +85,7 @@
     </app-image-viewer>
     <textarea *ngIf="showViewerType == TEXT_VIEWER" readonly>{{previewContent}}</textarea>
 
-    <div [hidden]="showViewerType !== XML_VIEWER" #xmlContainer></div>
+    <div [hidden]="showViewerType !== XML_VIEWER" class="xmlContainer" #xmlContainer></div>
 
     <vg-player *ngIf="showViewerType == VIDEO_VIEWER">
         <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>

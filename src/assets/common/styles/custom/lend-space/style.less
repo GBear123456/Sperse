@@ -264,6 +264,113 @@ body.lend-space {
             }
         }
     }
+
+    .notification-header {
+        font-family: Poppins;
+        .m-dropdown__header {
+            background: #313131;
+            padding: 20px 35px;
+            .tenantName {
+                font-size: 16px;
+                letter-spacing: 0.2px;
+                color: #fff;
+            }
+            .fullName {
+                font-family: Poppins;
+                font-size: 18px;
+                font-weight: 500;
+                letter-spacing: 0.1px;
+                color: #f0d500;
+            }
+        }
+        .m-dropdown__body {
+            padding: 25px 35px 25px 0;
+            hr {
+                visibility: hidden;
+            }
+            .row {
+                padding-left: 35px;
+            }
+        }
+        @media (min-width: 768px) {
+            width: 433px !important;
+        }
+    }
+
+    .notification-header,
+    .notification-modal {
+        & a {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            color: #3463ae;
+        }
+    }
+
+    .m-scrollable {
+        font-family: Poppins;
+        .mCSB_container {
+            padding-left: 35px;
+        }
+        .m-list-timeline__items {
+            &:before {
+                display: none;
+            }
+            .m-list-timeline__item {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                &:before {
+                    display: none;
+                }
+                .m-list-timeline__badge {
+                    left: -22px;
+                    height: 10px;
+                    flex: 0;
+                    display: none;
+                    &:before {
+                        background-color: #ffcc00;
+                        width: 10px;
+                        height: 10px;
+                        margin-top: -5px;
+                    }
+                }
+                .m-list-timeline__icon {
+                    display: none;
+                }
+                .m-list-timeline__text {
+                    font-size: 13px;
+                    font-weight: 400;
+                    color: #4a4a4a;
+                    padding-right: 0;
+                }
+                .m-list-timeline__time {
+                    width: auto;
+                    color: rgba(117, 117, 117, 0.8);
+                    font-size: 12px;
+                    font-weight: 400;
+                    margin-top: 5px;
+                }
+                &.user-notification-item-unread {
+                    .m-list-timeline__text {
+                        color: #000000;
+                        font-weight: 600;
+                    }
+                    .m-list-timeline__time {
+                        color: #4a4a4a;
+                        font-weight: 500;
+                    }
+                    .m-list-timeline__badge {
+                        display: block;
+                    }
+                }
+            }
+        }
+        .m-nav__separator {
+            visibility: hidden;
+            margin: 10px;
+        }
+    }
 }
 .yellow .page-header {
     box-shadow: none!important;
@@ -274,21 +381,21 @@ personal-finance-header.pfm-app.yellow {
 .yellow .app-area-navigation li a{
     color:#333!important
 }
-.yellow .app-area-navigation .sublinks li a{ 
+.yellow .app-area-navigation .sublinks li a{
     color:#FFF!important
 }
 .yellow .app-area-navigation li span.dropdown-mark{
     border-color: #333!important
 }
-.yellow .app-area-navigation li.active span.dropdown-mark, 
+.yellow .app-area-navigation li.active span.dropdown-mark,
 .yellow .app-area-navigation li:hover span.dropdown-mark{
     border-color: #000!important;
 }
-.yellow .app-area-navigation li a.active, 
-.yellow .app-area-navigation li a:hover, 
-.yellow .app-area-navigation li.active > a, 
-.yellow .app-responsive-menu li a.active, 
-.yellow .app-responsive-menu li a:hover, 
+.yellow .app-area-navigation li a.active,
+.yellow .app-area-navigation li a:hover,
+.yellow .app-area-navigation li.active > a,
+.yellow .app-responsive-menu li a.active,
+.yellow .app-responsive-menu li a:hover,
 .yellow .app-responsive-menu li.active > a{
     color:#000!important;
     background:transparent!important;

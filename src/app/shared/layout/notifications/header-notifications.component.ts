@@ -172,7 +172,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
 
     openAllNotifications(e): void {
         this._dialog.open(NotificationsComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'notification-modal'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}
