@@ -137,7 +137,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     ngOnInit(): void {
         super.ngOnInit();
-
+        this.initLocalization();
         this.initHeadlineConfig();
 
         this.dataSource = {
@@ -1074,9 +1074,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         super.ngOnDestroy();
     }
 
-    activate() {
+    private initLocalization() {
         this.localizationService.localizationSourceName = this.localizationSourceName;
         this.filtersService.localizationSourceName = this.localizationSourceName;
+    }
+
+    activate() {
+        this.initLocalization();
         this.initFiltering();
         this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, true);
         this.initToolbarConfig();
