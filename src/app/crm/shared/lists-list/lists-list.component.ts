@@ -127,7 +127,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     refresh() {
         this.store$.pipe(select(ListsStoreSelectors.getLists)).subscribe(lists => {
-            if (this.list.length)
+            if (this.list && this.list.length)
                 this.selectedLists = this.selectedItems.map((item) => {
                     let selected = _.findWhere(lists, {name: item.name});
                     return selected && selected.id;

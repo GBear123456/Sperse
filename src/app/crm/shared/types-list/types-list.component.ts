@@ -120,7 +120,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
 
     refresh() {
         this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe((types: any) => {
-            if (this.list.length)
+            if (this.list && this.list.length)
                 this.selectedTypes = this.selectedItems.map((item) => {
                     let selected = _.findWhere(types, {name: item.name});
                     return selected && selected.id;

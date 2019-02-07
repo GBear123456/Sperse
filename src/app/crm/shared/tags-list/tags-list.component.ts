@@ -142,7 +142,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     refresh() {
         this.store$.pipe(select(TagsStoreSelectors.getTags)).subscribe((tags: ContactTagInfoDto[]) => {
-            if (this.list.length)
+            if (this.list && this.list.length)
                 this.selectedTags = this.selectedItems.map((item) => {
                     let selected = _.findWhere(tags, {name: item.name});
                     return selected && selected.id;
