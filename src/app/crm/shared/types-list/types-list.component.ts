@@ -37,7 +37,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     get selectedItems() {
         return this.selectedTypes.map(item => {
             return _.findWhere(this.list, {id: item});
-        });
+        }).filter(Boolean);
     }
     @Output() onSelectedChanged: EventEmitter<any> = new EventEmitter();
 
@@ -64,8 +64,11 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     }
 
     toggle() {
-        if (this.tooltipVisible = !this.tooltipVisible)
+        if (this.tooltipVisible = !this.tooltipVisible) { 
+            if (this.listComponent)
+                setTimeout(() => this.listComponent.repaint());
             this.highlightSelectedFilters();
+        }
     }
 
     apply(isRemove: boolean = false, selectedKeys = undefined) {
@@ -85,7 +88,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
                 else
                     this.process(isRemove);
             }
-            setTimeout(() => { this.listComponent.option('searchPanel.text', undefined); }, 500);
+            this.listComponent.clearFilter(); 
         }
         this.tooltipVisible = false;
     }
@@ -116,10 +119,15 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
-        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes))
-            .subscribe((result: any) => {
-                this.list = result;
-            });
+        this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe((types: any) => {
+            if (this.list.length)
+                this.selectedTypes = this.selectedItems.map((item) => {
+                    let selected = _.findWhere(types, {name: item.name});
+                    return selected && selected.id;
+                }).filter(Boolean);
+
+            this.list = types;
+        });
     }
 
     reset() {

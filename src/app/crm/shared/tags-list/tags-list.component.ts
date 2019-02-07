@@ -35,12 +35,12 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     get selectedItems() {
         return this.selectedTags.map(item => {
             return ContactTagInput.fromJS(_.findWhere(this.list, {id: item}));
-        });
+        }).filter(Boolean);
     }
     @Output() onSelectedChanged: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
-    private selectedTags = [];
+    selectedTags = [];
 
     list: any = [];
 
@@ -61,8 +61,11 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     toggle() {
-        if (this.tooltipVisible = !this.tooltipVisible)
+        if (this.tooltipVisible = !this.tooltipVisible) {
+            if (this.listComponent)
+                setTimeout(() => this.listComponent.repaint());
             this.highlightSelectedFilters();
+        }
     }
 
     apply(isRemove: boolean = false, selectedKeys = undefined) {
@@ -83,7 +86,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 else
                     this.process(isRemove);
             }
-            setTimeout(() => { this.listComponent.option('searchPanel.text', undefined); }, 500);
+            this.listComponent.clearFilter(); 
         }
         this.tooltipVisible = false;
     }
@@ -139,6 +142,11 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
 
     refresh() {
         this.store$.pipe(select(TagsStoreSelectors.getTags)).subscribe((tags: ContactTagInfoDto[]) => {
+            if (this.list.length)
+                this.selectedTags = this.selectedItems.map((item) => {
+                    let selected = _.findWhere(tags, {name: item.name});
+                    return selected && selected.id;
+                }).filter(Boolean);
             this.list = tags;
         });
     }
