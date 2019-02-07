@@ -218,7 +218,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     ngOnInit(): void {
         super.ngOnInit();
-
+        this.initLocalization();
         this.bankAccountsService.load();
         let forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         let syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
@@ -472,9 +472,13 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         super.ngOnDestroy();
     }
 
-    activate() {
+    private initLocalization() {
         this.localizationService.localizationSourceName = this.localizationSourceName;
         this._filtersService.localizationSourceName = this.localizationSourceName;
+    }
+
+    activate() {
+        this.initLocalization();
         this.initToolbarConfig();
         this._filtersService.setup(this.filters);
         this.initFiltering();
