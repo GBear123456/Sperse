@@ -11,9 +11,9 @@
     <ul class="contact-list-container" id="contact-list">
         <li class="contact-list-info" [class.odd]="odd" *ngFor="let contact of displayList; let odd = odd" (click)='selectContact(contact)'>
             <div class="avatar">
-                <img src="{{ getPhoto( company?.thumbnail, photoType ) }}" alt="{{l('AltContactPhoto')}}">
+                <img src="{{ getPhoto( contact?.thumbnail, photoType ) }}" alt="{{l('AltContactPhoto')}}">
             </div>
-            <div class="contact-info">              
+            <div class="contact-info">
                 <ng-container *ngTemplateOutlet="contactLayoutTemplate; context: { contact: contact }"></ng-container>
             </div>
             <div class="contact-info-actions">
