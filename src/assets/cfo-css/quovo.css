@@ -138,3 +138,24 @@
     letter-spacing: 0.3px;
     color: #dadee1;
 }
+
+@media (max-width: 992px) {
+    .quovo-connect-content {
+        width: 700px;
+    }
+}
+
+@media (max-width: 786px) {
+    .quovo-connect-content {
+        width: 100%;
+        height: 100%;
+    }
+
+    #quovo-connect-modal.quovo-connect .search h2::after,
+    #quovo-connect-modal.quovo-connect .search .search-group i {
+        display: none;
+    }
+    #quovo-connect-modal.quovo-connect .search h2 {
+        margin-bottom: 10px;
+    }
+}
