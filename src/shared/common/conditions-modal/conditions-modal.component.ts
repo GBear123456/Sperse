@@ -1,5 +1,5 @@
 /** Core imports */
-import { ViewChild, Component, ChangeDetectionStrategy, OnInit, Injector, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Injector, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -78,7 +78,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
             })
         ).pipe(
             map((html) => {
-                return this.sanitizer.bypassSecurityTrustHtml(html)
+                return this.sanitizer.bypassSecurityTrustHtml(html);
             })
         );
     }

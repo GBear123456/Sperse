@@ -334,16 +334,18 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                 ]),
                 onChange: (selectedValues: ChooserOption[]) => {
                     let cardType, securingType;
-                    switch (selectedValues[0].value) {
-                        case CreditCardCategory.Credit:
+                    if (selectedValues[0]) {
+                        switch (selectedValues[0].value) {
+                            case CreditCardCategory.Credit:
                                 cardType = GetAllInputCardType.Credit;
                                 break;
-                        case CreditCardCategory.Debit:
+                            case CreditCardCategory.Debit:
                                 cardType = GetAllInputCardType.Debit;
                                 break;
-                        case CreditCardCategory.Prepaid:
+                            case CreditCardCategory.Prepaid:
                                 securingType = GetAllInputSecuringType.Prepaid;
                                 break;
+                        }
                     }
                     if (this.filtersValues.cardType !== cardType || this.filtersValues.securingType != securingType) {
                         this.filtersValues.cardType = cardType;
@@ -371,7 +373,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
                     }
                 ]),
                 onChange: (selectedValues: ChooserOption[]) => {
-                    let targetAudience = selectedValues[0].value;
+                    let targetAudience = selectedValues[0] && selectedValues[0].value;
                     if (this.filtersValues.targetAudience !== targetAudience) {
                         this.filtersValues.targetAudience = targetAudience;
                         this.selectedFilter.next(this.filtersValues);
