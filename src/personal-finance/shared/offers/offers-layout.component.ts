@@ -51,7 +51,8 @@ import {
     GetAllInputTargetAudience,
     GetAllInputCreditScore,
     GetMemberInfoResponseCreditScore,
-    GetAllInput
+    GetAllInput,
+    GetMemberInfoResponse
 } from '@shared/service-proxies/service-proxies';
 import { CurrencyPipe } from '@angular/common';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
@@ -76,7 +77,6 @@ export class FilterValues {
     cardType: GetAllInputCardType;
     securingType: GetAllInputSecuringType;
     targetAudience: GetAllInputTargetAudience;
-    rating: number;
     loanAmount: number;
     state: string;
     annualIncome: number;
@@ -380,12 +380,12 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             }),
             new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_Rating'),
-                values$: of(['5', '4', '3', '2', '1'].map(value => ({ name: value, value: value }))),
-                selected$: of(this.filtersValues.rating),
+                values$: of(['All', '5', '4', '3', '2', '1'].map(value => ({ name: value, value: value.toLowerCase() }))),
+                selected$: of('all'),
                 templateName: 'rating',
                 onChange: (e: MatSelectChange) => {
-                    if (e.value != this.filtersValues.rating) {
-                        this.filtersValues.rating = e.value;
+                    if (e.value != this.filtersValues.overallRating) {
+                        this.filtersValues.overallRating = e.value === 'all' ? undefined : e.value;
                         this.selectedFilter.next(this.filtersValues);
                     }
                 }
@@ -393,9 +393,10 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             new SelectFilterSetting({
                 name: this.ls.l('Offers_Filter_Brand'),
                 values$: this.brands$,
+                selected$: of('all'),
                 onChange: (e: MatSelectChange) => {
                     if (e.value != this.filtersValues.issuingBank) {
-                        this.filtersValues.issuingBank = e.value;
+                        this.filtersValues.issuingBank = e.value === 'all' ? undefined : e.value;
                         this.selectedFilter.next(this.filtersValues);
                     }
                 }
@@ -541,7 +542,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             tap(() => { abp.ui.setBusy(this.offersListRef.nativeElement); this.offersAreLoading = true; }),
             withLatestFrom(this.offersService.memberInfo$),
             switchMap(
-                ([filter, memberInfo]) => {
+                ([filter, memberInfo]: [FilterValues, GetMemberInfoResponse]) => {
                     const categoryGroup = this.offersService.getCategoryGroup(filter.category);
                     let input = GetAllInput.fromJS({
                         testMode: memberInfo.testMode,
@@ -605,7 +606,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             distinct(),
             map(brand => <SelectFilterModel>({ name: brand, value: brand })),
             toArray(),
-            map(brands => [{ name: 'All', value: undefined }].concat(brands.sort((brandA, brandB) => brandA.name > brandB.name ? 1 : -1 )))
+            map(brands => [{ name: 'All', value: 'all' }].concat(brands.sort((brandA, brandB) => brandA.name > brandB.name ? 1 : -1 )))
         );
     }
 
@@ -619,7 +620,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
             cardType: undefined,
             securingType: undefined,
             targetAudience: undefined,
-            rating: undefined,
             state: undefined,
             loanAmount: 10000,
             overallRating: undefined,
