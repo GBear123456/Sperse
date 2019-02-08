@@ -99,13 +99,13 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
         this.totalCount = files.length;
 
         Array.prototype.forEach.call(files, (file, index) => {
+            this.files.push({
+                type: this.getFileTypeByExt(file.name),
+                name: file.name,
+                progress: 0
+            });
             let fileReader: FileReader = new FileReader();
             fileReader.onloadend = (loadEvent: any) => {
-                this.files.push({
-                    type: this.getFileTypeByExt(file.name),
-                    name: file.name,
-                    progress: 0
-                });
                 this.uploadFile({
                     name: file.name,
                     size: file.size,
@@ -128,14 +128,14 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
 
     uploadFile(input, index) {
         if (AppConsts.regexPatterns.notSupportedDocuments.test(input.name)) {
-            this.notify.error(this.l('FileIsNotSupported'));
-            this.totalCount = 0;
+            this.notify.error(this.l('FileTypeIsNotAllowed'));
+            this.updateUploadedCounter();
             return;
         }
 
         if (input.size > AppConsts.maxDocumentSizeBytes) {
-            this.notify.error(this.l('FilesizeLimitWarn', this.convertBytesToMegabytes(AppConsts.maxDocumentSizeBytes)));
-            this.totalCount = 0;
+            this.notify.error(this.l('FilesizeLimitWarn', AppConsts.maxDocumentSizeMB));
+            this.updateUploadedCounter();
             return;
         }
 
@@ -158,27 +158,26 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
     }
 
     finishUploading(progressInterval, index) {
-        this.uploadedCount++;
         clearInterval(progressInterval);
         this.finishUploadProgress(index);
+        this.updateUploadedCounter();
+    }
+
+    updateUploadedCounter() {
+        this.uploadedCount++;
         if (this.uploadedCount >= this.totalCount) {
             this.totalCount = 0;
             this.uploadedCount = 0;
         }
     }
 
-    convertBytesToMegabytes(bytes: number) {
-        if (bytes == 0)
-            return 0;
-
-        return (bytes / Math.pow(1024, Math.floor(Math.log(bytes) / Math.log(1024)))).toFixed(0);
-    }
-
     cancelUpload(index) {
         let file = this.files[index];
-        if (file && file.progress < 100 && this.uploadSubscribers[index]) {
-            this.uploadSubscribers[index].unsubscribe();
-            this.uploadSubscribers.splice(index, 1);
+        if (file && file.progress < 100) {
+            if (this.uploadSubscribers[index]) {
+                this.uploadSubscribers[index].unsubscribe();
+                this.uploadSubscribers.splice(index, 1);
+            }
             this.files.splice(index, 1);
             this.totalCount = this.files.length;
         }
