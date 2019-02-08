@@ -18,7 +18,7 @@ export class ContactsService {
     private invalidateSubject: Subject<any>;
     private leadInfoSubject: Subject<any>;
     private contactInfoSubject: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>();
-    private organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>();
+    organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>();
     private subscribers: any = {
         common: []
     };
