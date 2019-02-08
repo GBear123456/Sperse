@@ -112,6 +112,7 @@ export class AppConsts {
 
     static readonly maxImageSize = 5242880;
 
-    static readonly maxDocumentSizeBytes = 1024 * 1024 * 100;
+    static readonly maxDocumentSizeMB = 100;
+    static readonly maxDocumentSizeBytes = 1024 * 1024 * AppConsts.maxDocumentSizeMB;
 
 }
