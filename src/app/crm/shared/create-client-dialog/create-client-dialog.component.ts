@@ -433,7 +433,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 phoneExtension: val.ext,
                 isActive: true,
                 usageTypeId: val.type
-            } as CreateContactPhoneInput: undefined;
+            } as CreateContactPhoneInput : undefined;
         }).filter(Boolean);
     }
 
@@ -767,7 +767,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         setTimeout(() => {
             let field = 'phones';
             this.contacts[field][i].code = component.getCountryCode();
-            this.addButtonVisible[field] = !component.isEmpty() && 
+            this.addButtonVisible[field] = !component.isEmpty() &&
                 component.isValid() && !this.checkDuplicateContact(field);
             this.checkSimilarCustomers(field, i);
         });

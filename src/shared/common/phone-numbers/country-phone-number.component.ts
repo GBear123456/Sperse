@@ -38,7 +38,7 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
 
     getCountryCode() {
         let country = this.intPhoneNumber.selectedCountry;
-        return country && country.dialCode ? '+' + country.dialCode: '';
+        return country && country.dialCode ? '+' + country.dialCode : '';
     }
 
     keyUp(event) {
