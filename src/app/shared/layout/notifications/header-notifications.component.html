@@ -33,8 +33,8 @@
                                 {{shownLoginInfo.fullName}}
                             </span>
                         </div>
-                        <div class="m-card-user__pic">
-                            <img alt="" class="header-profile-picture m--img-rounded m--marginless m--img-centered" [src]="getProfilePictureUrl(profileThumbnailId)" />
+                        <div class="m-card-user__pic" *ngIf="appSession?.user?.profileThumbnailId">
+                            <img alt="" class="header-profile-picture m--img-rounded m--marginless m--img-centered" [src]="getProfilePictureUrl(appSession.user.profileThumbnailId)" />
                         </div>
                     </div>
                 </div>

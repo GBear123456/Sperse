@@ -22,11 +22,15 @@ export class ChooserFilterComponent {
     @Input() type: ChooserType = ChooserType.Single;
     @Input() design: ChooserDesign = ChooserDesign.Combined;
     @Output() selectionChange: EventEmitter<ChooserOption[]> = new EventEmitter<ChooserOption[]>();
-    chooseOption(option: ChooserOption ) {
+    chooseOption(choosenOption: ChooserOption ) {
         if (this.type === ChooserType.Single) {
-            this.options.forEach(option => option.selected = false);
+            this.options.forEach(option => {
+                if (option !== choosenOption) {
+                    option.selected = false;
+                }
+            });
         }
-        option.selected = !option.selected;
+        choosenOption.selected = !choosenOption.selected;
         this.selectionChange.emit(this.options.filter(option => option.selected));
     }
 }
