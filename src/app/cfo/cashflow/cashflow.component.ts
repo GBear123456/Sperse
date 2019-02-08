@@ -2550,7 +2550,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 dataSource.expandHeaderItem('row', childPath);
 
                 this.pivotGrid.instance.getDataSource().load().then((d) => {
-                    var dataSourceChild = this.getDataSourceItemByPath(dataSource.getData().rows, childPath.slice());
+                    let dataSourceChild = this.getDataSourceItemByPath(dataSource.getData().rows, childPath.slice());
                     if (currentDepth != stopDepth)
                         this.expandRows(dataSourceChild, stopDepth, childPath, currentDepth + 1);
                 });
@@ -2560,7 +2560,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     getDataSourceItemByPath(dataSourceItems: any[], path: any[]) {
         let pathValue = path.shift();
-        for (let i = 0; i < dataSourceItems.length; i++){
+        for (let i = 0; i < dataSourceItems.length; i++) {
             let item = dataSourceItems[i];
             if (item.value == pathValue) {
                 if (path.length == 0)
@@ -2571,7 +2571,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 return this.getDataSourceItemByPath(item.children, path);
             }
-        };
+        }
     }
 
     /**
@@ -3945,7 +3945,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     bindCollapseActionOnWhiteSpaceColumn(cellObj) {
         let rowSpan = cellObj.cellElement.rowSpan || 1;
-        let totalCell = $(cellObj.cellElement).parent().nextAll().eq(rowSpan-1).first().find('td.dx-total');
+        let totalCell = $(cellObj.cellElement).parent().nextAll().eq(rowSpan - 1).first().find('td.dx-total');
         totalCell.trigger('click');
     }
 

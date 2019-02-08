@@ -311,6 +311,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     ngOnInit() {
         super.ngOnInit();
+        this.initLocalization();
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
         this.requestFilter.startDate = moment().utc().subtract(2, 'year');
@@ -764,10 +765,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         };
     }
 
-    activate() {
-        this.zendeskService.showWidget();
+    private initLocalization() {
         this.localizationService.localizationSourceName = this.localizationSourceName;
         this._filtersService.localizationSourceName = this.localizationSourceName;
+    }
+
+    activate() {
+        this.zendeskService.showWidget();
+        this.initLocalization();
         this.initToolbarConfig();
         this.setupFilters();
         this.initFiltering();
