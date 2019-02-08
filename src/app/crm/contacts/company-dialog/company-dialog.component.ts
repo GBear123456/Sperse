@@ -15,7 +15,7 @@ import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-mo
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { MaskPipe } from 'ngx-mask';
-import { DxSelectBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
+import { DxSelectBoxComponent, DxDateBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -40,6 +40,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
     providers: [ContactPhotoServiceProxy, MaskPipe]
 })
 export class CompanyDialogComponent extends AppModalDialogComponent implements OnInit {
+    @ViewChild(DxDateBoxComponent) calendarComponent: DxDateBoxComponent;
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
     states$: Observable<CountryStateDto[]>;
@@ -80,6 +81,7 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
     };
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
+    currentDate = new Date();
 
     constructor(
         injector: Injector,
@@ -121,7 +123,9 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
     }
 
     save() {
-        if (this.validators.toArray().some(validator => !validator.instance.validate().isValid)) {
+        if (this.validators.toArray().some(validator => !validator.instance.validate().isValid)
+            || !this.calendarComponent.instance.option('isValid')
+        ) {
             return false;
         }
 
@@ -216,5 +220,15 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
             inputElement.value = inputElement.value.slice(0, maxLength);
         if (mask)
             inputElement.value = this.maskPipe.transform(inputElement.value, mask);
+    }
+
+    calendarOnKeyDown($event) {
+        if (isNaN($event.event.key) && $event.event.key != '/' && 
+          [8/*Backspace*/, 46 /*Delete*/, 37 /*ArrowLeft*/, 39 /*ArrowRight*/, 
+              38/*ArrowUp*/, 40/*ArrowDown*/].indexOf($event.event.keyCode) < 0
+        ) {
+            $event.event.stopPropagation();
+            $event.event.preventDefault();
+        }
     }
 }

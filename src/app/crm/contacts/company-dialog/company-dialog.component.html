@@ -117,14 +117,16 @@
                         <label for="foundedIn">{{l('Company_FoundedIn')}}</label>
                         <dx-date-box
                             name="foundedIn"
+                            [max]="currentDate"
                             [(value)]="company.formedDate"
+                            (onKeyDown)="calendarOnKeyDown($event)"
                             type="date">
                         </dx-date-box>
                         <span [class]="company.formedDate && 'clear-contact' || 'hidden'" (click)="company.formedDate = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field ein">
                         <label for="ein">{{l('Company_EIN')}}</label>
-                        <dx-text-box name="ein"
+                        <dx-text-box name="ein"                                    
                                      [inputAttr]="{ id: 'ein' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.ein"
