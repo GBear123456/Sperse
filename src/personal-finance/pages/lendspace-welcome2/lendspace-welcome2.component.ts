@@ -1,7 +1,7 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-
 import { kebabCase } from 'lodash';
 
 @Component({
@@ -10,7 +10,7 @@ import { kebabCase } from 'lodash';
   styleUrls: ['./lendspace-welcome2.component.less']
 })
 
-export class LendspaceWelcome2Component extends AppComponentBase {
+export class LendspaceWelcome2Component extends AppComponentBase implements OnInit {
     kebabCase = kebabCase;
 
     categoryItems = [
@@ -40,8 +40,12 @@ export class LendspaceWelcome2Component extends AppComponentBase {
         }
     ];
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector, @Inject(DOCUMENT) private document: any) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
+    }
+
+    ngOnInit() {
+        this.document.body.scrollTo(0, 0);
     }
 
     navigate(route) {

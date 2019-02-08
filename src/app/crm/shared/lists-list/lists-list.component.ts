@@ -60,7 +60,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     toggle() {
-        if (this.tooltipVisible = !this.tooltipVisible) { 
+        if (this.tooltipVisible = !this.tooltipVisible) {
             if (this.listComponent)
                 setTimeout(() => this.listComponent.repaint());
             this.highlightSelectedFilters();
@@ -86,7 +86,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 else
                     this.process(isRemove);
             }
-            this.listComponent.clearFilter(); 
+            this.listComponent.clearFilter();
         }
         this.tooltipVisible = false;
     }
