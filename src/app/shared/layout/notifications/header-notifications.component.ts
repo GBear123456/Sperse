@@ -25,8 +25,6 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
 
     subscriptionInfoTitle: string;
     subscriptionInfoText: string;
-
-    profileThumbnailId: string;
     defaultLogo = './assets/common/images/app-logo-on-' + this.ui.getAsideSkin() + '.png';
     subscriptionExpiringDayCount = null;
 
@@ -97,7 +95,6 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
 
     getCurrentLoginInformations(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
-        this.profileThumbnailId = this.appSession.user.profileThumbnailId;
     }
 
     hideDropDown() {
