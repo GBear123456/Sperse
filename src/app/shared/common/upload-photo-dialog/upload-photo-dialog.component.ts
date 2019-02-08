@@ -183,6 +183,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
     }
 
     loadFile(paste = false) {
+        this.startLoading();
         /** Load file into the croop */
         if (this.fileUrlFormControl.valid) {
             let image = new Image();
@@ -191,6 +192,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
             image.onload = () => {
                 this.cropper.setImage(image);
                 this.changeDetectorRef.detectChanges();
+                this.finishLoading();
             };
             image.onerror = () => {
                 if (!paste) {
@@ -203,11 +205,16 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
                             image.onload = () => {
                                 this.cropper.setImage(image);
                                 this.changeDetectorRef.detectChanges();
+                                this.finishLoading();
                             };
-                            image.onerror = () => this.notify.error(this.l('PhotoIsNotReachable'));
+                            image.onerror = () => {
+                                this.notify.error(this.l('PhotoIsNotReachable'));
+                                this.finishLoading();
+                            };
                         }
                     );
-                }
+                } else 
+                    this.finishLoading();
             };
         }
     }

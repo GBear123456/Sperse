@@ -224,8 +224,8 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
 
     calendarOnKeyDown($event) {
         if (isNaN($event.event.key) && $event.event.key != '/' && 
-          ![8/*Backspace*/, 46 /*Delete*/, 37 /*ArrowLeft*/, 39 /*ArrowRight*/, 
-              38/*ArrowUp*/, 40/*ArrowDown*/].includes($event.event.keyCode)
+          [8/*Backspace*/, 46 /*Delete*/, 37 /*ArrowLeft*/, 39 /*ArrowRight*/, 
+              38/*ArrowUp*/, 40/*ArrowDown*/].indexOf($event.event.keyCode) < 0
         ) {
             $event.event.stopPropagation();
             $event.event.preventDefault();
