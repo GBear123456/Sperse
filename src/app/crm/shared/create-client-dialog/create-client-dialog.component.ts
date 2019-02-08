@@ -427,14 +427,14 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     }
 
     getPhoneContactInput() {
-        return this.contacts.phones.filter((obj) => obj.number).map((val) => {
-            return {
+        return this.contacts.phones.map((val) => {
+            return val.number && val.number != val.code ? {
                 phoneNumber: val.number,
                 phoneExtension: val.ext,
                 isActive: true,
                 usageTypeId: val.type
-            } as CreateContactPhoneInput;
-        });
+            } as CreateContactPhoneInput: undefined;
+        }).filter(Boolean);
     }
 
     getLinkContactInput() {
@@ -536,10 +536,14 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         this.userAssignmentComponent.toggle();
     }
 
-    checkSimilarCustomers(field = undefined, index = undefined) {
+    checkSimilarCustomers(field?, index?) {
         let person = this.person,
+            isPhone =  field == 'phones',
             isAddress = field == 'addresses',
             contact = field && this.contacts[field][index];
+        if (isPhone && contact.number == contact.code)
+            return false;
+
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
             this._contactService.getSimilarContacts(
@@ -550,7 +554,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                 field ? undefined : person.nameSuffix || undefined,
                 field ? undefined : undefined, //this.company ||
                 (field == 'emails') && contact.email && [contact.email] || undefined,
-                (field == 'phones') && contact.number && [contact.number] || undefined,
+                isPhone && contact.number && [contact.number] || undefined,
                 isAddress && contact.address || undefined,
                 isAddress && contact.city || undefined,
                 isAddress && this.getStateCode(contact.state, contact.country) || undefined,
@@ -762,8 +766,9 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     onPhoneChanged(component, i) {
         setTimeout(() => {
             let field = 'phones';
-            this.addButtonVisible[field] = component.isValid()
-                && !this.checkDuplicateContact(field);
+            this.contacts[field][i].code = component.getCountryCode();
+            this.addButtonVisible[field] = !component.isEmpty() && 
+                component.isValid() && !this.checkDuplicateContact(field);
             this.checkSimilarCustomers(field, i);
         });
     }

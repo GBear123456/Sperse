@@ -26,9 +26,19 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
     }
 
     isValid() {
+        return this.isEmpty() || this.model.valid;
+    }
+
+    isEmpty() {
+        let value = this.value;
+        let dialCode = this.getCountryCode();
+        return !value || (dialCode && value.match(
+            new RegExp('^\\' + dialCode + '$')));
+    }
+
+    getCountryCode() {
         let country = this.intPhoneNumber.selectedCountry;
-        return !this.value || (country && this.value.match(
-            new RegExp('^\\+' + country.dialCode + '$'))) || this.model.valid;
+        return country && country.dialCode ? '+' + country.dialCode: '';
     }
 
     keyUp(event) {
