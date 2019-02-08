@@ -35,7 +35,6 @@ import {
 })
 export class EditContactDialog extends AppComponentBase {
     @ViewChild('countryPhoneNumber') countryPhoneNumber;
-
     isValid = false;
     action: string;
     types: any[] = [];
@@ -155,6 +154,10 @@ export class EditContactDialog extends AppComponentBase {
 
             this.mouseDown(event);
         }
+    }
+
+    trim(value: string): string {
+        return value.replace(/ /g, '');
     }
 
     getUsageTypeHint(item) {
