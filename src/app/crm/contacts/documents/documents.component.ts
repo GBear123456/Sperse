@@ -19,7 +19,6 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
-import { FileSystemFileEntry } from 'ngx-file-drop';
 import { Observable, of } from 'rxjs';
 import { finalize, flatMap, tap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
@@ -28,7 +27,6 @@ import JSONFormatter from 'json-formatter-js';
 import '@node_modules/ng2-image-viewer/imageviewer.js';
 
 /** Application imports */
-import { UploadDocumentDialogComponent } from '../upload-document-dialog/upload-document-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy,
@@ -131,8 +129,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             { maxAge: urlInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
     }
 
-    private storeWopiRequestInfoToCache(id: string, requestInfo: WopiRequestOutcoming) {
-        this.cacheService.set(id, requestInfo,
+    private storeWopiRequestInfoToCache(wopiDocumentDataCacheKey: string, requestInfo: WopiRequestOutcoming) {
+        this.cacheService.set(wopiDocumentDataCacheKey, requestInfo,
             { maxAge: requestInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
     }
 
@@ -151,15 +149,15 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     private getViewWopiRequestInfoObservable(): Observable<WopiRequestOutcoming> {
-        let id = this.currentDocumentInfo.id;
-        if (this.cacheService.exists(id)) {
-            let requestInfo = this.cacheService.get(id) as WopiRequestOutcoming;
+        let wopiDocumentDataCacheKey = '_Wopi_' + this.currentDocumentInfo.id;
+        if (this.cacheService.exists(wopiDocumentDataCacheKey)) {
+            let requestInfo = this.cacheService.get(wopiDocumentDataCacheKey) as WopiRequestOutcoming;
             return of(requestInfo);
         }
 
-        return this._documentService.getViewWopiRequestInfo(id).pipe(
+        return this._documentService.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(
             flatMap((response) => {
-                this.storeWopiRequestInfoToCache(id, response);
+                this.storeWopiRequestInfoToCache(wopiDocumentDataCacheKey, response);
                 return of(response);
             }));
     }
