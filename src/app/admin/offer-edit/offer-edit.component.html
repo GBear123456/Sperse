@@ -4,4 +4,28 @@
             <h1>{{ (offerDetails$ | async)?.name }}</h1>
         </header>
     </ng-container>
+    <ng-container mainContent>
+        <form [formGroup]="offerEditForm" (ngSubmit)="onSubmit()">
+
+            <div *ngFor="let detail of details$ | async">
+                <label *ngIf="offerEditForm.get(detail) as control">
+                    {{ startCase(detail) }}
+
+                    <mat-form-field *ngIf="!isArray(control.value)">
+                        <input matInput [formControl]="control">
+                    </mat-form-field>
+
+                    <div *ngIf="controlIsFormArray(control)">
+                        <div *ngFor="let value of control.controls; let i=index">
+                            <mat-form-field>
+                                <input matInput [formControl]="control.controls[i]">
+                            </mat-form-field>
+                        </div>
+                        <button type="button" (click)="addNew(control)">Add New</button>
+                    </div>
+                </label>
+            </div>
+            <button type="submit" [disabled]="!offerEditForm.valid">Save</button>
+        </form>
+    </ng-container>
 </item-details-layout>

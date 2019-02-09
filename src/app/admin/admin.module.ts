@@ -1,7 +1,7 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /** Third party imports */
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -87,6 +87,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
 @NgModule({
     imports: [
         FormsModule,
+        ReactiveFormsModule,
         ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
