@@ -27,7 +27,7 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     shownLoginInfo: { fullName, email, tenantName?};
     userCompany$: Observable<string>;
     recentlyLinkedUsers: LinkedUserDto[];
-    hasPlatformPermissions = false;
+    hasPlatformPermissions: boolean;
     menuItemTypes = UserDropdownMenuItemType;
 
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = [
