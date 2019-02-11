@@ -94,8 +94,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             });
 
         this._contactInfo = this.data.contactInfo;
-        const relatedOrganizations: any[] = this._contactInfo.personContactInfo.orgRelations ?
-            this._contactInfo.personContactInfo.orgRelations
+        let personContactInfo = this._contactInfo.personContactInfo;
+        const relatedOrganizations: any[] = personContactInfo && personContactInfo.orgRelations ?
+            personContactInfo.orgRelations
             .map((organizationRelation: PersonOrgRelationShortInfo) => {
                 organizationRelation.organization['fullName'] = organizationRelation.organization.name;
                 return organizationRelation.organization;
@@ -105,11 +106,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                              ? this._contactInfo['organizationContactInfo'].contactPersons
                              : [{
                 id: this._contactInfo.id,
-                fullName: this._contactInfo.personContactInfo.fullName,
-                jobTitle: this._contactInfo.personContactInfo.jobTitle,
+                fullName: personContactInfo.fullName,
+                jobTitle: personContactInfo.jobTitle,
                 ratingId: this._contactInfo.ratingId,
-                thumbnail: this._contactInfo.personContactInfo.primaryPhoto,
-                phones: this._contactInfo.personContactInfo.details.phones
+                thumbnail: personContactInfo.primaryPhoto,
+                phones: personContactInfo.details.phones
             }];
         this.contacts = relatedPersons.concat(relatedOrganizations);
         this.onContactChanged({value: this.contacts[0].id});
