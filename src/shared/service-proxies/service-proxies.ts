@@ -15968,8 +15968,8 @@ export class OfferServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    submitApplication(input: SubmitApplicationInput | null | undefined): Observable<SubmitApplicationOutput> {
-        let url_ = this.baseUrl + "/api/services/PFM/Offer/SubmitApplication";
+    submitRequest(input: SubmitRequestInput | null | undefined): Observable<SubmitRequestOutput> {
+        let url_ = this.baseUrl + "/api/services/PFM/Offer/SubmitRequest";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -15985,20 +15985,20 @@ export class OfferServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSubmitApplication(response_);
+            return this.processSubmitRequest(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSubmitApplication(<any>response_);
+                    return this.processSubmitRequest(<any>response_);
                 } catch (e) {
-                    return <Observable<SubmitApplicationOutput>><any>_observableThrow(e);
+                    return <Observable<SubmitRequestOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SubmitApplicationOutput>><any>_observableThrow(response_);
+                return <Observable<SubmitRequestOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSubmitApplication(response: HttpResponseBase): Observable<SubmitApplicationOutput> {
+    protected processSubmitRequest(response: HttpResponseBase): Observable<SubmitRequestOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16009,7 +16009,7 @@ export class OfferServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SubmitApplicationOutput.fromJS(resultData200) : new SubmitApplicationOutput();
+            result200 = resultData200 ? SubmitRequestOutput.fromJS(resultData200) : new SubmitRequestOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16017,7 +16017,7 @@ export class OfferServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SubmitApplicationOutput>(<any>null);
+        return _observableOf<SubmitRequestOutput>(<any>null);
     }
 
     /**
@@ -48670,12 +48670,12 @@ export interface IOfferDetailsDto {
     details: string[] | undefined;
 }
 
-export class SubmitApplicationInput implements ISubmitApplicationInput {
-    systemType!: SubmitApplicationInputSystemType;
+export class SubmitRequestInput implements ISubmitRequestInput {
+    systemType!: SubmitRequestInputSystemType;
     campaignId!: number;
     redirectUrl!: string | undefined;
 
-    constructor(data?: ISubmitApplicationInput) {
+    constructor(data?: ISubmitRequestInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48692,9 +48692,9 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
         }
     }
 
-    static fromJS(data: any): SubmitApplicationInput {
+    static fromJS(data: any): SubmitRequestInput {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitApplicationInput();
+        let result = new SubmitRequestInput();
         result.init(data);
         return result;
     }
@@ -48708,18 +48708,18 @@ export class SubmitApplicationInput implements ISubmitApplicationInput {
     }
 }
 
-export interface ISubmitApplicationInput {
-    systemType: SubmitApplicationInputSystemType;
+export interface ISubmitRequestInput {
+    systemType: SubmitRequestInputSystemType;
     campaignId: number;
     redirectUrl: string | undefined;
 }
 
-export class SubmitApplicationOutput implements ISubmitApplicationOutput {
+export class SubmitRequestOutput implements ISubmitRequestOutput {
     status!: string | undefined;
     redirectUrl!: string | undefined;
     applicationId!: string | undefined;
 
-    constructor(data?: ISubmitApplicationOutput) {
+    constructor(data?: ISubmitRequestOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48736,9 +48736,9 @@ export class SubmitApplicationOutput implements ISubmitApplicationOutput {
         }
     }
 
-    static fromJS(data: any): SubmitApplicationOutput {
+    static fromJS(data: any): SubmitRequestOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitApplicationOutput();
+        let result = new SubmitRequestOutput();
         result.init(data);
         return result;
     }
@@ -48752,7 +48752,7 @@ export class SubmitApplicationOutput implements ISubmitApplicationOutput {
     }
 }
 
-export interface ISubmitApplicationOutput {
+export interface ISubmitRequestOutput {
     status: string | undefined;
     redirectUrl: string | undefined;
     applicationId: string | undefined;
@@ -60398,7 +60398,7 @@ export enum OfferDetailsDtoCampaignProviderType {
     CreditLand = "CreditLand", 
 }
 
-export enum SubmitApplicationInputSystemType {
+export enum SubmitRequestInputSystemType {
     EPCVIP = "EPCVIP", 
 }
 
