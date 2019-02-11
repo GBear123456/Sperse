@@ -73,7 +73,7 @@ export class OffersService {
             max: 850
         }
     };
-    readonly creditCardsLogoUrl = './assets/common/images/offers/credit-land.png';
+    readonly creditLandLogoUrl = './assets/common/images/offers/credit-land.png';
     displayedCards: OfferDto[];
     defaultCategoryDisplayName: string = this.ls.l('Offers_Offers');
     constructor(
@@ -130,7 +130,7 @@ export class OffersService {
         }
     }
 
-    applyOffer(offer: OfferDto) {
+    applyOffer(offer: OfferDto, isCreditCard = false) {
         const linkIsDirect = !!offer.redirectUrl;
         let submitRequestInput = SubmitRequestInput.fromJS({
             campaignId: offer.campaignId,
@@ -144,7 +144,9 @@ export class OffersService {
             title: 'Offers_ConnectingToPartners',
             subtitle: 'Offers_NewWindowWillBeOpen',
             redirectUrl: redirectUrl,
-            logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand ? this.creditCardsLogoUrl : offer.logoUrl
+            logoUrl: offer.campaignProviderType === OfferDtoCampaignProviderType.CreditLand
+                     ? this.creditLandLogoUrl
+                     : (isCreditCard ? null : offer.logoUrl)
         };
         if (!linkIsDirect) {
             modalData.processingSteps = cloneDeep(this.processingSteps);
