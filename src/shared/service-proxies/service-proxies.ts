@@ -48307,6 +48307,8 @@ export class GetAllInput implements IGetAllInput {
     overallRating!: number | undefined;
     issuingBank!: string | undefined;
     campaignIds!: number[] | undefined;
+    sortOrderType!: GetAllInputSortOrderType | undefined;
+    topCount!: number | undefined;
 
     constructor(data?: IGetAllInput) {
         if (data) {
@@ -48337,6 +48339,8 @@ export class GetAllInput implements IGetAllInput {
                 for (let item of data["campaignIds"])
                     this.campaignIds.push(item);
             }
+            this.sortOrderType = data["sortOrderType"];
+            this.topCount = data["topCount"];
         }
     }
 
@@ -48367,6 +48371,8 @@ export class GetAllInput implements IGetAllInput {
             for (let item of this.campaignIds)
                 data["campaignIds"].push(item);
         }
+        data["sortOrderType"] = this.sortOrderType;
+        data["topCount"] = this.topCount;
         return data; 
     }
 }
@@ -48386,6 +48392,8 @@ export interface IGetAllInput {
     overallRating: number | undefined;
     issuingBank: string | undefined;
     campaignIds: number[] | undefined;
+    sortOrderType: GetAllInputSortOrderType | undefined;
+    topCount: number | undefined;
 }
 
 export class OfferDto implements IOfferDto {
@@ -49064,6 +49072,8 @@ export class OfferFilter implements IOfferFilter {
     issuingBank!: string | undefined;
     campaignIds!: number[] | undefined;
     campaignUrls!: string[] | undefined;
+    sortOrderType!: OfferFilterSortOrderType | undefined;
+    topCount!: number | undefined;
 
     constructor(data?: IOfferFilter) {
         if (data) {
@@ -49099,6 +49109,8 @@ export class OfferFilter implements IOfferFilter {
                 for (let item of data["campaignUrls"])
                     this.campaignUrls.push(item);
             }
+            this.sortOrderType = data["sortOrderType"];
+            this.topCount = data["topCount"];
         }
     }
 
@@ -49134,6 +49146,8 @@ export class OfferFilter implements IOfferFilter {
             for (let item of this.campaignUrls)
                 data["campaignUrls"].push(item);
         }
+        data["sortOrderType"] = this.sortOrderType;
+        data["topCount"] = this.topCount;
         return data; 
     }
 }
@@ -49154,6 +49168,8 @@ export interface IOfferFilter {
     issuingBank: string | undefined;
     campaignIds: number[] | undefined;
     campaignUrls: string[] | undefined;
+    sortOrderType: OfferFilterSortOrderType | undefined;
+    topCount: number | undefined;
 }
 
 export class ExtendFromCSVOutput implements IExtendFromCSVOutput {
@@ -59362,6 +59378,11 @@ export enum GetAllInputItemOfOfferCollection {
     NoCredit = "NoCredit", 
 }
 
+export enum GetAllInputSortOrderType {
+    Best = "Best", 
+    Newest = "Newest", 
+}
+
 export enum OfferDtoSystemType {
     EPCVIP = "EPCVIP", 
 }
@@ -59659,6 +59680,11 @@ export enum OfferFilterItemOfOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+}
+
+export enum OfferFilterSortOrderType {
+    Best = "Best", 
+    Newest = "Newest", 
 }
 
 export enum ModuleSubscriptionInfoFrequency {
