@@ -6,26 +6,43 @@
     </ng-container>
     <ng-container mainContent>
         <form [formGroup]="offerEditForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+                <div class="col-md-5 detail" *ngFor="let detail of details$ | async" >
+                    <label *ngIf="offerEditForm.get(detail) as control">
+                        {{ startCase(detail) }}:
 
-            <div *ngFor="let detail of details$ | async">
-                <label *ngIf="offerEditForm.get(detail) as control">
-                    {{ startCase(detail) }}
-
-                    <mat-form-field *ngIf="!isArray(control.value)">
-                        <input matInput [formControl]="control">
-                    </mat-form-field>
-
-                    <div *ngIf="controlIsFormArray(control)">
-                        <div *ngFor="let value of control.controls; let i=index">
-                            <mat-form-field>
-                                <input matInput [formControl]="control.controls[i]">
+                        <ng-container *ngIf="isPrimitive(control.value)">
+                            <mat-form-field *ngIf="!isBool(control.value)">
+                                <input matInput [formControl]="control">
                             </mat-form-field>
+                            <ng-container *ngIf="isBool(control.value)">
+                                <mat-checkbox [formControl]="control"></mat-checkbox>
+                            </ng-container>
+                        </ng-container>
+
+                        <div *ngIf="isFormArray(control)">
+                            <div *ngFor="let value of control.controls; let i=index" class="detailItem">
+                                <mat-form-field>
+                                    <input matInput [formControl]="control.controls[i]">
+                                </mat-form-field>
+                            </div>
+                            <button class="btn btn-layout" type="button" (click)="addNew(control)">Add New</button>
                         </div>
-                        <button type="button" (click)="addNew(control)">Add New</button>
-                    </div>
-                </label>
+
+                        <div *ngIf="isFormGroup(control)">
+                            <div [formGroupName]="detail">
+                                <div *ngFor="let value of getKeys(control.controls)">
+                                    <label>
+                                        {{ startCase(value) }}:
+                                        <mat-checkbox [formControl]="control.get(value)"></mat-checkbox>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
+                </div>
             </div>
-            <button type="submit" [disabled]="!offerEditForm.valid">Save</button>
+            <div class="row"><div class="col-md-12"><button class="btn btn-layout" type="submit" [disabled]="!offerEditForm.valid">Save</button></div></div>
         </form>
     </ng-container>
 </item-details-layout>
