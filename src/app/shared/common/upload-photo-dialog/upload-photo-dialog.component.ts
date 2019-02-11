@@ -211,7 +211,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
                                 this.notify.error(this.l('PhotoIsNotReachable'));
                                 this.finishLoading();
                             };
-                        }
+                        }, (e) => this.finishLoading()
                     );
                 } else 
                     this.finishLoading();
