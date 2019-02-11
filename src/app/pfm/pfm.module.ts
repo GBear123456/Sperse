@@ -11,8 +11,6 @@ import { CommonModule } from '@shared/common/common.module';
 import { OffersComponent } from '@app/pfm/offers/offers.component';
 import { PfmRoutingModule } from '@app/pfm/pfm-routing.module';
 import { OfferCategoriesComponent } from '@app/pfm/shared/offer-categories/offer-categories.component';
-import { OffersService } from 'personal-finance/shared/offers/offers.service';
-import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [

@@ -151,11 +151,24 @@
         height: 100%;
     }
 
-    #quovo-connect-modal.quovo-connect .search h2::after,
-    #quovo-connect-modal.quovo-connect .search .search-group i {
-        display: none;
-    }
     #quovo-connect-modal.quovo-connect .search h2 {
         margin-bottom: 10px;
+        height: auto;
+        margin-top: 30px;
+        padding: 0 10px;
+    }
+
+    #quovo-connect-modal.quovo-connect .search .search-group {
+        padding: 0 10px;
+        width: 100%;
+        max-width: 630px;
+        margin: 0 auto;
+    }
+
+    #quovo-connect-modal.quovo-connect .search.hidden-xs {
+        display: block !important;
+    }
+    #quovo-connect-modal.quovo-connect .search.visible-xs {
+        display: none !important;
     }
 }

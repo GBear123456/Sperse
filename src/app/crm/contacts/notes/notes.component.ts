@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Observable, of } from 'rxjs';
-import { publishReplay, refCount } from 'rxjs/operators';
+import { first, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -82,7 +82,7 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     }
 
     openNoteAddDialog() {
-        this._clientService.organizationInfoSubscribe(() => {
+        this._clientService.organizationContactInfo.pipe(first()).subscribe(() => {
             this.dialog.open(NoteAddDialogComponent, {
                 panelClass: 'slider',
                 disableClose: false,

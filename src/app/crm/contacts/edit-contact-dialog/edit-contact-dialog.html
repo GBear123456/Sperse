@@ -14,7 +14,7 @@
             itemTemplate="itemTemplate">
             <div *dxTemplate="let item of 'fieldTemplate'">
                 <div class="type-item-wrapper">
-                    <img *ngIf="data.field == 'url'" class="socialIcon" src="./assets/common/icons/social/{{ item.name }}.svg" onError="this.src='./assets/common/icons/social/OtherLink.svg';" width="25px" height="25px">
+                    <img *ngIf="data.field == 'url'" class="socialIcon" src="./assets/common/icons/social/{{ trim(item.name) }}.svg" onError="this.src='./assets/common/icons/social/OtherLink.svg';" width="25px" height="25px">
                     <dx-text-box class="{{data.field}} type-{{item?.id}}"
                                  [value]="item?.name"
                                  [readOnly]="true"
