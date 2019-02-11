@@ -105,13 +105,13 @@
                     "Accept": "application/json"
                 }
             ).then(function (response) {
-                handleGetCurrentLoginInformations(response);
+                handleGetCurrentLoginInformations(response && response.result);
             });
         }
     }
 
     function handleGetCurrentLoginInformations(response) {
-        var loginInformations = window.loginInfo = response && response.result;
+        var loginInformations = window.loginInfo = response;
         tenant = loginInformations && loginInformations.tenant;
         if (tenant && tenant.customLayoutType == 'LendSpace') {
             window.loginPageHandler = undefined;
@@ -121,10 +121,12 @@
 
             loadLoginStylesheet();
             updateTenantMetadata();
-            ajax('./assets/login/login.html', undefined, true).then(function (loginBody) {
-                document.body.innerHTML = loginBody;
-                setTimeout(loginPageAfterInit);
-            });
+            ajax('./assets/login/login.html', undefined, true).then(
+                function (loginBody) {
+                    document.body.innerHTML = loginBody;
+                    setTimeout(loginPageAfterInit);
+                }
+            );
 
             let customizations = tenant && tenant.tenantCustomizations;
             if (customizations && customizations.favicons && customizations.favicons.length)
