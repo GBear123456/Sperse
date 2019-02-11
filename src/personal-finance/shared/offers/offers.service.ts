@@ -16,8 +16,8 @@ import {
     OfferDto,
     OfferFilterCategory,
     GetMemberInfoResponseCreditScore,
-    SubmitApplicationInput,
-    SubmitApplicationOutput,
+    SubmitRequestInput,
+    SubmitRequestOutput,
     OfferServiceProxy,
     GetMemberInfoResponse,
     OfferDtoCampaignProviderType
@@ -140,7 +140,7 @@ export class OffersService {
 
     applyOffer(offer: OfferDto) {
         const linkIsDirect = !!offer.redirectUrl;
-        let submitApplicationInput = SubmitApplicationInput.fromJS({
+        let submitRequestInput = SubmitRequestInput.fromJS({
             campaignId: offer.campaignId,
             systemType: offer.systemType
         });
@@ -161,7 +161,7 @@ export class OffersService {
             modalData.completeDelays = [ 1000, 1000, 1000, null ];
             modalData.delayMessages = <any>[ null, null, null, this.ls.l('Offers_TheNextStepWillTake') ];
         } else {
-            submitApplicationInput.redirectUrl = redirectUrl;
+            submitRequestInput.redirectUrl = redirectUrl;
         }
 
         const applyOfferDialog = this.dialog.open(ApplyOfferDialogComponent, {
@@ -169,9 +169,9 @@ export class OffersService {
             panelClass: 'apply-offer-dialog',
             data: modalData
         });
-        this.offerServiceProxy.submitApplication(submitApplicationInput)
+        this.offerServiceProxy.submitRequest(submitRequestInput)
             .subscribe(
-                (output: SubmitApplicationOutput) => {
+                (output: SubmitRequestOutput) => {
                     if (!linkIsDirect) {
                         /** If window opening is blocked - show message for allowing popups opening, else - close popup and redirect to the link (code for redirect in the popup component) */
                         !window.open(output.redirectUrl, '_blank')
