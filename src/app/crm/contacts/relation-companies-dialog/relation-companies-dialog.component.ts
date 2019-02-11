@@ -38,4 +38,7 @@ export class RelationCompaniesDialogComponent extends AppComponentBase implement
 
         this.contactList.filterList();
     }
+
+    setPrimary(contact) {
+    }
 }

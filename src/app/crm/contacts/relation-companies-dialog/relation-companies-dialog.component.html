@@ -3,11 +3,9 @@
         <div class="full-name">
             <h1>{{ contact?.name }}</h1>
         </div>
-        <div class="relation-type">
-            <span>{{ contact?.relation?.relationType?.name }}</span>
-        </div>
         <div class="job-title">
-            <h6>{{ contact?.relation?.jobTitle }}</h6>
+            <h6>{{ contact?.relation?.relationType?.name }}{{ contact?.relation?.jobTitle ? ', ' + contact?.relation?.jobTitle: ''}}</h6>
         </div>
+        <a (click)="setPrimary(contact)" class="set-primary">{{l('Set Primary')}}</a>
     </ng-template>
 </contact-list-dialog>
