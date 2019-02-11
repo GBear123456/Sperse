@@ -7,7 +7,7 @@ import { AppConsts } from '@shared/AppConsts';
 import * as _ from 'underscore';
 
 @Component({
-  selector: 'crm-static-list',
+  selector: 'app-static-list',
   templateUrl: './static-list.component.html',
   styleUrls: ['./static-list.component.less']
 })
@@ -27,7 +27,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() searchEnabled = false;
     @Input() customSearchEnabled = false;
     @Input() searchExprType = 'name';
-
+    @Input() bulkUpdatePermissionKey = '';
     @Input() list: any;
     @Input() showTitle = true;
 
@@ -131,7 +131,7 @@ export class StaticListComponent extends AppComponentBase {
     }
 
     checkPermissions() {
-        return this.permission.isGranted('Pages.CRM.BulkUpdates');
+        return this.permission.isGranted(this.bulkUpdatePermissionKey);
     }
 
     getNewListData(event, title) {

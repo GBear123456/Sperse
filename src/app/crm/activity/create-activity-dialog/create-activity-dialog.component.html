@@ -9,7 +9,7 @@
             target="#{{saveButtonId}}">
         </dx-context-menu>
         <app-toolbar [config]="toolbarConfig"></app-toolbar>
-        <crm-static-list #stagesList
+        <app-static-list #stagesList
                          [width]="'210px'"
                          [selectedKeys]="[data.appointment.StageId]"
                          [showConfirmation]="false"
@@ -21,7 +21,7 @@
                          [showTitle]="false"
                          [funnelStyling]="true"
                          [list]="data.stages">
-        </crm-static-list>
+        </app-static-list>
         <crm-user-assignment-list [multiSelection]="true"
                                   [targetSelector]="'[accesskey=\'UserAssign\']'"
                                   [(selectedItemKey)]="data.appointment.AssignedUserIds"
@@ -32,7 +32,7 @@
                                   [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
         </crm-user-assignment-list>
 
-        <crm-static-list #leadsList
+        <app-static-list #leadsList
                          [width]="'330px'"
                          [height]="440"
                          [targetSelector]="'[accesskey=\'LeadsList\']'"
@@ -45,8 +45,8 @@
                          (onItemSelected)="onLeadSelected($event)"
                          (onListFiltered)="onListFiltered($event)"
                          [list]="leads">
-        </crm-static-list>
-        <crm-static-list #clientsList
+        </app-static-list>
+        <app-static-list #clientsList
                          [width]="'330px'"
                          [height]="440"
                          [targetSelector]="'[accesskey=\'ClientsList\']'"
@@ -59,8 +59,8 @@
                          (onItemSelected)="onClientSelected($event)"
                          (onListFiltered)="onListFiltered($event)"
                          [list]="clients">
-        </crm-static-list>
-        <!--<crm-static-list #ordersList-->
+        </app-static-list>
+        <!--<app-static-list #ordersList-->
                          <!--[width]="'330px'"-->
                          <!--[height]="440"-->
                          <!--[targetSelector]="'[accesskey=\'OrdersList\']'"-->
@@ -72,10 +72,10 @@
                          <!--(onItemSelected)="onOrderSelected($event)"-->
                          <!--(onListFiltered)="onListFiltered($event)"-->
                          <!--[list]="orders">-->
-        <!--</crm-static-list>-->
+        <!--</app-static-list>-->
 
-        <crm-stars-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true"
-                        (onSelectionChanged)="onStarsChanged($event)"></crm-stars-list>
+        <app-static-list [selectedKeys]="[data.appointment.SelectedStar]" [hideButtons]="true"
+                        (onSelectionChanged)="onStarsChanged($event)" [bulkUpdatePermissionKey]="'Pages.CRM.BulkUpdates'"></app-static-list>
 
         <div class="tab-content">
             <dx-validation-group (onInitialized)="initDateValidationGroup($event)">

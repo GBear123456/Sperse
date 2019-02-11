@@ -52,7 +52,7 @@ import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';
 import { RatingComponent } from '../shared/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
-import { StaticListComponent } from '../shared/static-list/static-list.component';
+import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 

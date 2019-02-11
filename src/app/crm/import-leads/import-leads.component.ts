@@ -12,7 +12,7 @@ import { AppService } from '@app/app.service';
 import { AppStore, PartnerTypesStoreSelectors, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors, LeadAssignedUsersStoreSelectors } from '@app/store';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
-import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
+import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
 import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.component';
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';

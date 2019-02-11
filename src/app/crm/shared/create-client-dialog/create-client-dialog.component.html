@@ -6,7 +6,7 @@
     (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
     target="#{{saveButtonId}}">
 </dx-context-menu>
-<crm-static-list #stagesList
+<app-static-list #stagesList
                  [width]="'210px'"
                  [selectedKeys]="[this.stageId]"
                  [showConfirmation]="false"
@@ -19,7 +19,7 @@
                  [list]="stages"
                  [funnelStyling]="true"
                  [disableHindmost]="true">
-</crm-static-list>
+</app-static-list>
 <crm-rating [targetSelector]="'[accesskey=\'ClientRating\']'" [hideButtons]="true" (onValueChanged)="onRatingchanged($event)"></crm-rating>
 <crm-types-list [targetSelector]="'[accesskey=\'PartnerTypesList\']'" [hideButtons]="true"
                 (onSelectedChanged)="onPartnerTypeChanged($event)"></crm-types-list>

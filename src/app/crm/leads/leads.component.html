@@ -2,19 +2,19 @@
     <app-headline [config]="headlineConfig">
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <crm-static-list
+    <app-static-list
         [width]="'210px'"
         [title]="l('Stages')"
         [selectedKeys]="selectedClientKeys"
         [filterModel]="filterModelStages"
-        [showConfirmation]="true"
+        [bulkUpdatePermissionKey]="'Pages.CRM.BulkUpdates'"
         [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
         [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
         [targetSelector]="'[aria-label=Stage]'"
         [funnelStyling]="true"
         [list]="stages"
         (onItemSelected)="updateLeadsStage($event)">
-    </crm-static-list>
+    </app-static-list>
     <crm-tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>
     <crm-lists-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelLists"></crm-lists-list>
     <crm-user-assignment-list [selectedKeys]="selectedClientKeys"

@@ -87,12 +87,12 @@ import { PayPalComponent } from './payment-wizard/payment-options/pay-pal/pay-pa
 import { BankTransferComponent } from './payment-wizard/payment-options/bank-transfer/bank-transfer.component';
 import { ECheckComponent } from './payment-wizard/payment-options/e-check/e-check.component';
 import { UserAssignmentComponent } from '@app/crm/shared/user-assignment-list/user-assignment-list.component';
-import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
 import { TagsListComponent } from '@app/crm/shared/tags-list/tags-list.component';
 import { ListsListComponent } from '@app/crm/shared/lists-list/lists-list.component';
 import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
+import { StaticListComponent } from './static-list/static-list.component';
 
 @NgModule({
     imports: [

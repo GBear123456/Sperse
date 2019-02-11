@@ -2,7 +2,7 @@
     <app-headline [config]="headlineConfig">
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <crm-static-list #statusesList
+    <app-static-list #statusesList
         [width]="'180px'"
         [title]="l('Status')"
         [showConfirmation]="false"
@@ -12,13 +12,14 @@
         [targetSelector]="'[aria-label=Status]'"
         [list]="statuses"
         (onItemSelected)="updatePartnerStatuses($event)">
-    </crm-static-list>
+    </app-static-list>
 
-    <!--<crm-static-list #partnerTypesList-->
+    <!--<app-static-list #partnerTypesList-->
         <!--[width]="'180px'"-->
         <!--[title]="l('Type')"-->
         <!--[selectedKeys]="selectedPartnerKeys"-->
         <!--[showConfirmation]="true"-->
+        <!-- [bulkUpdatePermissionKey]="'Pages.CRM.BulkUpdates'" -->
         <!--[updateConfirmationTitle]="l('PartnerTypeUpdateConfirmationTitle')"-->
         <!--[updateConfirmationMessage]="l('PartnersUpdateTypeWarningMessage')"-->
         <!--[hideButtons]="true"-->
@@ -26,7 +27,7 @@
         <!--[targetSelector]="'[accessKey=PartnerType]'"-->
         <!--[list]="partnerTypes"-->
         <!--(onItemSelected)="updatePartnerTypes($event)">-->
-    <!--</crm-static-list>-->
+    <!--</app-static-list>-->
     <!---->
     <crm-types-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTypes"></crm-types-list>
     <crm-tags-list [selectedKeys]="selectedPartnerKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></crm-tags-list>

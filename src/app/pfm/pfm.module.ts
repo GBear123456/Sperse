@@ -10,7 +10,6 @@ import { AppCommonModule } from '../shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { OffersComponent } from '@app/pfm/offers/offers.component';
 import { PfmRoutingModule } from '@app/pfm/pfm-routing.module';
-import { OfferCategoriesComponent } from '@app/pfm/shared/offer-categories/offer-categories.component';
 
 @NgModule({
     imports: [
@@ -24,7 +23,6 @@ import { OfferCategoriesComponent } from '@app/pfm/shared/offer-categories/offer
         DxTextBoxModule
     ],
     declarations: [
-        OfferCategoriesComponent,
         OffersComponent
     ],
     entryComponents: [

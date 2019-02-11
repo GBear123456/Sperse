@@ -1,7 +1,7 @@
 <div class="operations-widget">
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <ng-container *ngIf="enabled">
-        <crm-static-list
+        <app-static-list
             #stagesList
             [width]="'210px'"
             [title]="localizationService.l('Stages')"
@@ -9,13 +9,14 @@
             [selectedItems]=""
             [hideButtons]="true"
             [highlightSelected]="true"
+            [bulkUpdatePermissionKey]="'Pages.CRM.BulkUpdates'"
             (onSelectionChanged)="updateStage($event)"
             [targetSelector]="'[aria-label=Stage]'"
             [funnelStyling]="true"
             [showTitle]="false"
             [list]="stages">
-        </crm-static-list>
-        <crm-static-list
+        </app-static-list>
+        <app-static-list
             #statusesList
             [width]="'180px'"
             [title]="localizationService.l('Status')"
@@ -26,8 +27,8 @@
             [targetSelector]="'[aria-label=Status]'"
             [list]="[{id: 'A', name: localizationService.l('Active')}, {id: 'I', name: localizationService.l('Inactive')}]"
             (onItemSelected)="updateStatus($event)">
-        </crm-static-list>
-        <!--<crm-static-list-->
+        </app-static-list>
+        <!--<app-static-list-->
             <!--#partnerTypesList-->
             <!--[width]="'210px'"-->
             <!--[title]="localizationService.l('Type')"-->
@@ -35,11 +36,12 @@
             <!--[selectedItems]=""-->
             <!--[hideButtons]="true"-->
             <!--[highlightSelected]="true"-->
+            <!-- [bulkUpdatePermissionKey]="'Pages.CRM.BulkUpdates'" -->
             <!--(onSelectionChanged)="updatePartnerType($event)"-->
             <!--[targetSelector]="'[accessKey=PartnerType]'"-->
             <!--[showTitle]="false"-->
             <!--[list]="partnerTypes">-->
-        <!--</crm-static-list>-->
+        <!--</app-static-list>-->
         <crm-types-list [selectedKeys]="[contactInfo.id]" [selectedItems]="[selectedPartnerTypeId]"></crm-types-list>
         <crm-tags-list [selectedKeys]="[contactInfo.id]" [selectedItems]="contactInfo?.tags"></crm-tags-list>
         <crm-lists-list [selectedKeys]="[contactInfo.id]" [selectedItems]="contactInfo?.lists"></crm-lists-list>

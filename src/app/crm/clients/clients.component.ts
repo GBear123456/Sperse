@@ -26,7 +26,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { StaticListComponent } from '../shared/static-list/static-list.component';
+import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
 import { UserAssignmentComponent } from '../shared/user-assignment-list/user-assignment-list.component';

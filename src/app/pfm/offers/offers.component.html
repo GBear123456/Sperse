@@ -1,12 +1,16 @@
 <div>
     <app-headline [config]="headlineConfig">
     </app-headline>
-    <offer-categories [width]="'310px'"
-                     [title]="l('Categories')"
-                     [filterModel]="filterModelStages"
-                     [targetSelector]="'[aria-label=Category]'"
-                     [list]="categories">
-    </offer-categories>
+    <app-static-list
+        [width]="'310px'"
+        [title]="l('Categories')"
+        [showConfirmation]="false"
+        [hideButtons]="true"
+        [filterModel]="filterModelStages"
+        [targetSelector]="'[aria-label=Category]'"
+        [list]="categories">
+    </app-static-list>
+
     <div class="main-wrapper">
         <dx-data-grid id="gridContainer"
                       [dataSource]="dataSource"

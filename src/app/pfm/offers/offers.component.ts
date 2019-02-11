@@ -20,8 +20,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterHelpers } from '@app/cfo/shared/helpers/filter.helper';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
-import { StaticListComponent } from '@app/crm/shared/static-list/static-list.component';
-import { OfferCategoriesComponent } from '@app/pfm/shared/offer-categories/offer-categories.component';
+import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -30,7 +29,7 @@ import { OfferCategoriesComponent } from '@app/pfm/shared/offer-categories/offer
 export class OffersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
-    @ViewChild(OfferCategoriesComponent) stagesComponent: OfferCategoriesComponent;
+    @ViewChild(StaticListComponent) categoriesComponent: StaticListComponent;
 
     private readonly dataSourceURI = 'Offer';
 
@@ -162,7 +161,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleStages() {
-        this.stagesComponent.toggle();
+        this.categoriesComponent.toggle();
     }
 
     searchValueChange(e: object) {

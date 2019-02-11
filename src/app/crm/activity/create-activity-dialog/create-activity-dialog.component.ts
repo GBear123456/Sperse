@@ -19,7 +19,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
-import { StaticListComponent } from '../../shared/static-list/static-list.component';
+import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { ActivityAssignedUsersStoreSelectors } from '@app/store';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
