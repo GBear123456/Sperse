@@ -132,8 +132,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                         rightPanelId == RP_DEFAULT_ID && abp.features.isEnabled('PFM.CreditReport')
                         || rightPanelId == RP_USER_INFO_ID && this._userService['data'].userId
                     );
-                    if (this.rightPanelSetting.opened)
-                        this.rightPanelSetting.id = rightPanelId;
+                    this.rightPanelSetting.id = rightPanelId;
                 });
         });
         _contactsService.userSubscribe((userId) => {
