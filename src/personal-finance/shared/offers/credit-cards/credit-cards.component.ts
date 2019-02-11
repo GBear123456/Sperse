@@ -8,10 +8,10 @@ import {
     Renderer2
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
 import { Observable, combineLatest } from 'rxjs';
-import { delay, finalize, map, switchMap, takeUntil, tap, skip, publishReplay, refCount } from 'rxjs/operators';
+import { delay, finalize, map, switchMap, takeUntil, tap, skip, publishReplay, refCount, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 import {
@@ -45,10 +45,11 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
     bestCreditCard: any;
     cards: OfferDto[];
     selectedOfferGroup: OfferDto;
+    skipScrollFirstTime: Boolean;
 
     offerCollection$: Observable<any> = combineLatest(
         this.route.params,
-        this.route.queryParams
+        this.route.queryParams        
     ).pipe(
         map(([params, queryParams]) => ({...params, ...queryParams}))
     );
@@ -62,14 +63,17 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         private lifecycleSubjectService: LifecycleSubjectsService,
         private renderer: Renderer2,
         @Inject(DOCUMENT) private document: any
-    ) {}
+    ) { 
+        this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
+            this.skipScrollFirstTime = event.url.split('/').pop() == 'home';
+        });
+    }
 
     sortCollection(itemOfOfferCollections, a, b) {
         return itemOfOfferCollections.indexOf(a['offerCollection']) > itemOfOfferCollections.indexOf(b['offerCollection']) ? 1 : -1;
     }
 
     ngOnInit() {
-
         this.cardOffersList$ = this.getCreditCards().pipe(publishReplay(), refCount());
         this.cardOffersList$.subscribe(list => {
             const itemOfOfferCollections = _.values(GetAllInputItemOfOfferCollection);
@@ -90,7 +94,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         );
 
         creditCards$.subscribe((offers: OfferDto[]) => this.cards = offers);
-        creditCards$.pipe(skip(1), delay(25)).subscribe(() => this.scrollToTopCards());
+        creditCards$.pipe(skip(Number(this.skipScrollFirstTime)), delay(25)).subscribe(() => this.scrollToTopCards());
     }
 
     scrollToTopCards() {
