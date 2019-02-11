@@ -4,6 +4,7 @@ import * as ngCommon from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /** Third party imports */
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -121,6 +122,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         MatFormFieldModule,
         MatProgressBarModule,
         MatStepperModule,
+        MatCheckboxModule,
 
         UtilsModule,
         TableModule,

@@ -39,8 +39,16 @@ export class OfferEditComponent implements OnInit {
                         detailValue.forEach(value => {
                             group[detailName].push(new FormControl(value));
                         });
+                    } else if (this.isObject(detailValue)) {
+                        let detailGroup: any = {};
+                        for (let value in detailValue) {
+                            if (detailValue.hasOwnProperty(value)) {
+                                detailGroup[value] = new FormControl(detailValue[value]);
+                            }
+                        }
+                        group[detailName] = new FormGroup(detailGroup);
                     } else {
-                        group[detailName] = new FormControl(detailValue);
+                        group[detailName] = this.isBool(detailValue) ? new FormControl(!!detailValue) : new FormControl(detailValue);
                     }
                 }
                 this.offerEditForm = new FormGroup(group);
@@ -49,20 +57,40 @@ export class OfferEditComponent implements OnInit {
         );
     }
 
+    isPrimitive(item: any): boolean {
+        return item !== Object(item);
+    }
+
+    isBool(value: any): boolean {
+        return value === 'true' || value === 'false' || typeof value === 'boolean';
+    }
+
+    isObject(item: any): boolean {
+        return item === Object(item);
+    }
+
     isArray(item: any): boolean {
         return Array.isArray(item);
     }
 
-    controlIsFormArray(control: FormControl | FormArray): boolean {
+    isFormArray(control: FormControl | FormArray): boolean {
         return control instanceof FormArray;
+    }
+
+    isFormGroup(control: FormControl | FormGroup): boolean {
+        return control instanceof FormGroup;
     }
 
     addNew(control: FormArray) {
         control.push(new FormControl(''));
     }
 
+    getKeys(object: Object) {
+        return Object.keys(object);
+    }
+
     onSubmit() {
-        console.log(this.offerEditForm.value);
+        this.offerManagementService.extend(this.offerEditForm.value).subscribe();
     }
 
 }
