@@ -20,7 +20,8 @@ import {
     GetAllInputItemOfOfferCollection,
     GetMemberInfoResponse,
     OfferFilterCategory,
-    GetAllInput
+    GetAllInput,
+    GetAllInputSortOrderType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
@@ -69,7 +70,6 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-
         this.cardOffersList$ = this.getCreditCards().pipe(publishReplay(), refCount());
         this.cardOffersList$.subscribe(list => {
             const itemOfOfferCollections = _.values(GetAllInputItemOfOfferCollection);
@@ -78,6 +78,11 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
             this.creditCardCollection = list.filter(item => !_.contains(this.creditScoreNames, item.offerCollection));
             this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection)).sort(this.sortCollection.bind(this, itemOfOfferCollections));
             this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort(this.sortCollection.bind(this, itemOfOfferCollections));
+            /** @todo fix in new version with the getting the whole categories from backend */
+            this.filteredGroup.push(OfferDto.fromJS({
+                name: 'Newest Offers',
+                offerCollection: 'NewestOffers'
+            }));
         });
 
         /** @todo avoid two request on init, use frontend filtering for the first time */
@@ -110,7 +115,9 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
                 category: OfferFilterCategory.CreditCards,
                 country: 'US',
                 isOfferCollection: isOfferCollection,
-                itemOfOfferCollection: GetAllInputItemOfOfferCollection[collection]
+                itemOfOfferCollection: GetAllInputItemOfOfferCollection[collection],
+                sortOrderType:  (collection as any) === 'NewestOffers' ? GetAllInputSortOrderType.Newest : GetAllInputSortOrderType.Best,
+                topCount: (collection as any) === 'NewestOffers' ? 30 : undefined
             }))),
             finalize(() => abp.ui.clearBusy())
         );
