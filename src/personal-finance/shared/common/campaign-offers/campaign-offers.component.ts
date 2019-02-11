@@ -3,7 +3,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     GetAllInput,
     OfferServiceProxy,
-    SubmitApplicationInput
+    SubmitRequestInput
 } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '../../offers/offers.service';
 
@@ -42,11 +42,11 @@ export class CampaignOffersComponent extends AppComponentBase {
 
     open(offer) {
         window.open(offer.url, '_blank');
-        const submitApplicationInput = SubmitApplicationInput.fromJS({
+        const submitRequestInput = SubmitRequestInput.fromJS({
             campaignId: offer.campaignId,
             systemType: offer.systemType
         });
-        this._offerServiceProxy.submitApplication(submitApplicationInput)
+        this._offerServiceProxy.submitRequest(submitRequestInput)
             .subscribe(() => {});
     }
 }

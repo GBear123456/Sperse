@@ -14,8 +14,8 @@ import {
     OfferDto,
     OfferFilterCategory,
     GetMemberInfoResponseCreditScore,
-    SubmitApplicationInput,
-    SubmitApplicationOutput,
+    SubmitRequestInput,
+    SubmitRequestOutput,
     OfferServiceProxy,
     GetMemberInfoResponse,
     OfferDtoCampaignProviderType
@@ -132,7 +132,7 @@ export class OffersService {
 
     applyOffer(offer: OfferDto) {
         const linkIsDirect = !!offer.redirectUrl;
-        const submitApplicationInput = SubmitApplicationInput.fromJS({
+        const submitRequestInput = SubmitRequestInput.fromJS({
             campaignId: offer.campaignId,
             systemType: offer.systemType
         });
@@ -158,9 +158,9 @@ export class OffersService {
             panelClass: 'apply-offer-dialog',
             data: modalData
         });
-        this.offerServiceProxy.submitApplication(submitApplicationInput)
+        this.offerServiceProxy.submitRequest(submitRequestInput)
             .subscribe(
-                (output: SubmitApplicationOutput) => {
+                (output: SubmitRequestOutput) => {
                     if (!linkIsDirect) {
                         /** If window opening is blocked - show message for allowing popups opening, else - close popup and redirect to the link (code for redirect in the popup component) */
                         !window.open(output.redirectUrl, '_blank')
