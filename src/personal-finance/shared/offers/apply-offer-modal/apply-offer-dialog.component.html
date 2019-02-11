@@ -1,9 +1,10 @@
 <mat-dialog-content>
     <ng-container *ngIf="!showBlockedMessage">
         <div class="nextImageBlock">
-            <ng-container *ngIf="data.logoUrl">
+            <ng-container *ngIf="data.logoUrl; else pleaseWait">
                 <img [src]="data.logoUrl">
             </ng-container>
+            <ng-template #pleaseWait><h3>{{ ls.l('ApplyOfferModal_PleaseWait') }}</h3></ng-template>
         </div>
         <h2>{{title}}</h2>
         <p>{{subtitle}}</p>
