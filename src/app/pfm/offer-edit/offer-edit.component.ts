@@ -1,10 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+/** Core imports */
+import { ApplicationRef, ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+
+/** Third party imports */
 import { Observable } from 'rxjs';
 import { map, publishReplay, switchMap, refCount } from 'rxjs/operators';
 import { startCase } from 'lodash';
-import { OfferDetailsForEditDto, OfferManagementServiceProxy } from '@shared/service-proxies/service-proxies';
+
+/** Application imports */
+import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
+import { RootComponent } from 'root.components';
 
 @Component({
     selector: 'offer-edit',
@@ -13,17 +19,39 @@ import { OfferDetailsForEditDto, OfferManagementServiceProxy } from '@shared/ser
     providers: [ OfferManagementServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OfferEditComponent implements OnInit {
+export class OfferEditComponent implements OnInit, OnDestroy {
     offerDetails$: Observable<OfferDetailsForEditDto>;
     offerEditForm: FormGroup = new FormGroup({});
     details$: Observable<string[]>;
     startCase = startCase;
+    rootComponent: RootComponent;
+    /** @todo replace in future */
+    navLinks = [
+        {
+            label: 'General',
+            route: 'general'
+        },
+        {
+            label: 'Rates',
+            route: 'rates'
+        },
+        {
+            label: 'Flags',
+            route: 'flags'
+        }
+    ];
     constructor(
+        injector: Injector,
         private route: ActivatedRoute,
-        private offerManagementService: OfferManagementServiceProxy
-    ) { }
+        private offerManagementService: OfferManagementServiceProxy,
+        private applicationRef: ApplicationRef,
+        private router: Router
+    ) {
+        this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
+    }
 
     ngOnInit() {
+        this.rootComponent.overflowHidden(true);
         this.offerDetails$ = this.route.paramMap.pipe(
             map((paramMap: ParamMap) => +paramMap.get('id')),
             switchMap(offerId => this.offerManagementService.getDetailsForEdit(false, offerId).pipe(publishReplay(), refCount()))
@@ -85,12 +113,24 @@ export class OfferEditComponent implements OnInit {
         control.push(new FormControl(''));
     }
 
+    remove(control: FormArray, i: number) {
+        control.removeAt(i);
+    }
+
     getKeys(object: Object) {
         return Object.keys(object);
     }
 
+    back() {
+        this.router.navigate(['../'], { relativeTo: this.route });
+    }
+
     onSubmit() {
         this.offerManagementService.extend(this.offerEditForm.value).subscribe();
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.overflowHidden(false);
     }
 
 }

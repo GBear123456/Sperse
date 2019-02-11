@@ -18,7 +18,8 @@
                       [columnAutoWidth]="true"
                       [allowColumnResizing]="true"
                       [hoverStateEnabled]="true"
-                      [pager]="defaultGridPagerConfig">
+                      [pager]="defaultGridPagerConfig"
+                      (onRowClick)="openOfferEdit($event)">
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"
                            mode="multiple">

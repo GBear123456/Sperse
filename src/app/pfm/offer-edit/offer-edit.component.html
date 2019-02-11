@@ -1,7 +1,8 @@
-<item-details-layout>
+<item-details-layout [navLinks]="navLinks" (onClose)="back()">
     <ng-container topHeader>
         <header>
             <h1>{{ (offerDetails$ | async)?.name }}</h1>
+            <button class="btn btn-layout" type="submit" [disabled]="!offerEditForm.valid">Save</button>
         </header>
     </ng-container>
     <ng-container mainContent>
@@ -24,6 +25,7 @@
                             <div *ngFor="let value of control.controls; let i=index" class="detailItem">
                                 <mat-form-field>
                                     <input matInput [formControl]="control.controls[i]">
+                                    <i class="fa fa-minus" (click)="remove(control, i)"></i>
                                 </mat-form-field>
                             </div>
                             <button class="btn btn-layout" type="button" (click)="addNew(control)">Add New</button>
@@ -42,7 +44,6 @@
                     </label>
                 </div>
             </div>
-            <div class="row"><div class="col-md-12"><button class="btn btn-layout" type="submit" [disabled]="!offerEditForm.valid">Save</button></div></div>
         </form>
     </ng-container>
 </item-details-layout>
