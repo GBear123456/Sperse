@@ -58,11 +58,11 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     id: 'PullOffers',
                     enabled: true,
-                    class: 'button-layout button-primary menu'
+                    class: 'button-layout button-primary menu',
                     action: (event) => {
                         this.pullOffers(false, event);
                     },
-                    lable: this.l('Offers_PullChanges');
+                    lable: this.l('Offers_PullChanges')
                 }
             ]
         };
