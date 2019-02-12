@@ -120,17 +120,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             }
         };
 
-        this.searchColumns = [
-            {name: 'CompanyName', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'Email', strategy: ODataSearchStrategy.Contains},
-            {name: 'Phone', strategy: ODataSearchStrategy.Contains},
-            {name: 'City', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'State', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'StateId', strategy: ODataSearchStrategy.Equals}
-        ];
-        FilterHelpers.nameParts.forEach(x => {
-            this.searchColumns.push({name: x, strategy: ODataSearchStrategy.StartsWith});
-        });
         this.searchValue = '';
 
         this._pipelineService.stageChange.asObservable().subscribe((lead) => {
@@ -586,7 +575,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     processFilterInternal() {
-        if (this.dataGrid && this.dataGrid.instance)
+        if (this.dataGrid && this.dataGrid.instance) {
             this.processODataFilter(
                 this.dataGrid.instance,
                 this.dataSourceURI,
@@ -596,8 +585,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
-                }
+                },
+                null,
+                this.searchValue
             );
+        }
     }
 
     updateClientStatuses(status) {
