@@ -4,7 +4,6 @@ import * as ngCommon from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 /** Third party imports */
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -82,7 +81,6 @@ import { CreateUserDialogComponent } from './users/create-user-dialog/create-use
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { ContactsModule } from '../crm/contacts/contacts.module';
 import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-select.component.ts/modules-editions-select.component';
-import { OfferEditComponent } from './offer-edit/offer-edit.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 
 @NgModule({
@@ -122,7 +120,6 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         MatFormFieldModule,
         MatProgressBarModule,
         MatStepperModule,
-        MatCheckboxModule,
 
         UtilsModule,
         TableModule,
@@ -177,8 +174,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         EditTenantModalComponent,
         ModulesEditionsSelectComponent,
         TenantFeaturesModalComponent,
-        CreateUserDialogComponent,
-        OfferEditComponent
+        CreateUserDialogComponent
     ],
     entryComponents: [
         CreateUserDialogComponent

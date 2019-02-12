@@ -17,7 +17,6 @@ import { UiCustomizationComponent } from './ui-customization/ui-customization.co
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
 import { SystemSettingsComponent } from './settings/system-settings.component';
-import { OfferEditComponent } from '@admin/offer-edit/offer-edit.component';
 
 @NgModule({
     imports: [
@@ -42,8 +41,7 @@ import { OfferEditComponent } from '@admin/offer-edit/offer-edit.component';
                     { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: 'Pages.Administration.Host.Dashboard' } },
                     { path: 'ui-customization', component: UiCustomizationComponent },
                     { path: 'products', component: EditionsComponent, data: { permission: 'Pages.Editions' } },
-                    { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' } },
-                    { path: 'offers/:id', component: OfferEditComponent }
+                    { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' } }
                 ]
             }
         ])

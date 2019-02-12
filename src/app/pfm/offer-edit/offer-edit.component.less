@@ -1,0 +1,50 @@
+:host {
+
+    header {
+        padding: 0 70px 0 10px;
+        justify-content: space-between;
+    }
+    /deep/ .mat-sidenav-container {
+        height: calc(100vh - 158px) !important;
+    }
+    /deep/ .main-content {
+        padding: 20px;
+        label {
+            width: 100%;
+            margin-bottom: 0;
+        }
+        .detail {
+            margin-right: 120px;
+            .mat-form-field-infix {
+                display: flex;
+                border-top: 0px;
+                width: 240px;
+            }
+            & > label {
+                & > .mat-form-field,
+                .mat-checkbox {
+                    float: right;
+                }
+                .detailItem {
+                    .mat-form-field {
+                        width: 100%;
+                    }
+                }
+            }
+            .fa {
+                cursor: pointer;
+                margin-left: 10px;
+            }
+        }
+        .mat-checkbox-ripple {
+            display: none;
+        }
+        .mat-checkbox-frame {
+            border-color: #00AEEF !important;
+        }
+        .mat-checkbox-checked .mat-checkbox-background {
+            background-color: #00AEEF;
+        }
+    }
+
+}

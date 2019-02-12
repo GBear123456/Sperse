@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { OffersComponent } from '@app/pfm/offers/offers.component';
+import { OfferEditComponent } from '@app/pfm/offer-edit/offer-edit.component';
 
 @NgModule({
     imports: [
@@ -9,7 +10,8 @@ import { OffersComponent } from '@app/pfm/offers/offers.component';
             {
                 path: '',
                 children: [
-                    { path: 'offers', component: OffersComponent, data: { permission: '' } }
+                    { path: 'offers', component: OffersComponent, data: { permission: '' } },
+                    { path: 'offers/:id', component: OfferEditComponent }
                 ]
             }
         ])

@@ -4,20 +4,14 @@ import { AppConsts } from '@shared/AppConsts';
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import * as moment from 'moment';
-import { forkJoin } from 'rxjs';
-import { finalize, first } from 'rxjs/operators';
-import * as _ from 'underscore';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { OfferFilterCategory } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { FilterHelpers } from '@app/cfo/shared/helpers/filter.helper';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -275,6 +269,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
         this.dataGrid.instance.showColumnChooser();
     }
 
+    openOfferEdit(e) {
+        this._router.navigate(['./', e.data.CampaignId], { relativeTo: this._activatedRoute });
+    }
+
     ngOnDestroy() {
         this.deactivate();
         super.ngOnDestroy();
@@ -287,5 +285,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
 
     deactivate() {
         super.deactivate();
+        this._appService.updateToolbar(null);
     }
 }
