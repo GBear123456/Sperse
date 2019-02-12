@@ -5,6 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { environment } from 'environments/environment';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -29,7 +30,7 @@ export class ArticlesComponent extends AppComponentBase implements OnInit {
             () => {
                 this.articles$ = from(
                     $.ajax({
-                        url: './assets/articles.html',
+                        url: environment.LENDSPACE_DOMAIN + '/documents/articles.html',
                         method: 'GET'
                     })
                 ).pipe(
