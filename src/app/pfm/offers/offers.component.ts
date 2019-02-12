@@ -4,13 +4,14 @@ import { AppConsts } from '@shared/AppConsts';
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { OfferFilterCategory } from '@shared/service-proxies/service-proxies';
+import { OfferFilterCategory, OfferManagementServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
@@ -18,11 +19,12 @@ import { StaticListComponent } from '@app/shared/common/static-list/static-list.
 
 @Component({
     templateUrl: './offers.component.html',
-    styleUrls: ['./offers.component.less']
+    styleUrls: ['./offers.component.less'],
+    providers: [OfferManagementServiceProxy]
 })
 export class OffersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-
+    @ViewChild(DxContextMenuComponent) pullContextComponent: DxContextMenuComponent;
     @ViewChild(StaticListComponent) categoriesComponent: StaticListComponent;
 
     private readonly dataSourceURI = 'Offer';
@@ -31,12 +33,14 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     private filters: FilterModel[] = new Array<FilterModel>();
     private updateAfterActivation: boolean;
     filterModelStages: FilterModel;
+    pullContextMenuItems = [];
     categories = [];
 
     constructor(
         private injector: Injector,
         private _appService: AppService,
-        private _filtersService: FiltersService
+        private _filtersService: FiltersService,
+        private _offersProxy: OfferManagementServiceProxy
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
         this._filtersService.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
@@ -51,8 +55,20 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
             onRefresh: this.refreshDataGrid.bind(this),
             icon: 'people',
             buttons: [
+                {
+                    id: 'PullOffers',
+                    enabled: true,
+                    class: 'button-layout button-primary menu'
+                    action: (event) => {
+                        this.pullOffers(false, event);
+                    },
+                    lable: this.l('Offers_PullChanges');
+                }
             ]
         };
+        this.pullContextMenuItems = [
+            { text: this.l('Offers_PullAll'), selected: false }
+        ];
     }
 
     initToolbarConfig() {
@@ -286,5 +302,17 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     deactivate() {
         super.deactivate();
         this._appService.updateToolbar(null);
+    }
+
+    pullOffers(fetchAll, event?) {
+        if (event && event.offsetX > 150)
+           return this.pullContextComponent.instance.option('visible', true);
+
+        this.notify.info(this.l('Offers_PullStarted'));
+        this._offersProxy.pull(fetchAll).subscribe(() => {
+            this.notify.info(this.l('Offers_PullFinished'));
+        }, (e) => {
+            this.message.error(e.message);
+        });
     }
 }

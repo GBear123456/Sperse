@@ -4,7 +4,11 @@ import * as ngCommon from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 /** Third party imports */
-import { DxDataGridModule, DxTooltipModule, DxListModule, DxTextBoxModule } from '../../node_modules/devextreme-angular';
+import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 
@@ -26,6 +30,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         DxTooltipModule,
         DxListModule,
         DxTextBoxModule,
+        DxContextMenuModule,
         MatCheckboxModule,
         MatInputModule,
         ReactiveFormsModule,

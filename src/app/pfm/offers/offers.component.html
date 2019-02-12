@@ -1,6 +1,13 @@
 <div>
-    <app-headline [config]="headlineConfig">
-    </app-headline>
+    <dx-context-menu
+        [selectByClick]="true"
+        [selectionMode]="'single'"
+        [dataSource]="pullContextMenuItems"
+        [position]="{ my: 'top right', at: 'bottom right' }"
+        (onSelectionChanged)="pullOffers(true)"
+        target="#PullOffers">
+    </dx-context-menu>
+    <app-headline [config]="headlineConfig"></app-headline>
     <app-static-list
         [width]="'310px'"
         [title]="l('Categories')"
