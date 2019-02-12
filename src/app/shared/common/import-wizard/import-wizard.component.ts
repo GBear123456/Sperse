@@ -216,7 +216,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         });
     }
 
-    complete(rows = null, importAll = true) {
+    complete(rows = null, importAll = false) {
         if (rows && !rows.length)
             return this.message.info(this.l('Import_NoRecordsAvailable'));
 
