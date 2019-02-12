@@ -37,7 +37,7 @@ export class ArticlesComponent extends AppComponentBase implements OnInit {
                         html = html.replace('var apiUiOrigin', 'var apiUiOrigin = "' + AppConsts.remoteServiceBaseUrl + '"');
                         html = html.replace('var applyOfferParams', 'var applyOfferParams = "' + this.offersService.memberInfoApplyOfferParams + '"');
                         html = html.replace('var authorization', 'var authorization = "Bearer ' + abp.auth.getToken() + '"');
-                        eval(html.match(/<script>(.+?)<\/script>/s).pop());
+                        eval(html.match(new RegExp('<script>(.+?)<\/script>', 's')).pop());
                         return html;
                     }),
                     map((html) => {
