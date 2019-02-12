@@ -14987,6 +14987,73 @@ export class LeadTypeServiceProxy {
 }
 
 @Injectable()
+export class LocalizationServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @sourceName (optional) 
+     * @return Success
+     */
+    loadLocalizationSource(sourceName: string | null | undefined): Observable<LocalizationSourceDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/Localization/LoadLocalizationSource?";
+        if (sourceName !== undefined)
+            url_ += "sourceName=" + encodeURIComponent("" + sourceName) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLoadLocalizationSource(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLoadLocalizationSource(<any>response_);
+                } catch (e) {
+                    return <Observable<LocalizationSourceDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LocalizationSourceDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processLoadLocalizationSource(response: HttpResponseBase): Observable<LocalizationSourceDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? LocalizationSourceDto.fromJS(resultData200) : new LocalizationSourceDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LocalizationSourceDto>(<any>null);
+    }
+}
+
+@Injectable()
 export class MemberServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -16288,6 +16355,68 @@ export class OfferManagementServiceProxy {
     }
 
     protected processSetAttribute(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
+
+    /**
+     * @value (optional) 
+     * @return Success
+     */
+    setFlag(offerFilter: OfferFilter, offerFlag: OfferFlag, value: boolean | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/SetFlag?";
+        if (offerFlag === undefined || offerFlag === null)
+            throw new Error("The parameter 'offerFlag' must be defined and cannot be null.");
+        else
+            url_ += "offerFlag=" + encodeURIComponent("" + offerFlag) + "&"; 
+        if (value !== undefined)
+            url_ += "value=" + encodeURIComponent("" + value) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(offerFilter);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetFlag(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetFlag(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetFlag(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25364,61 +25493,6 @@ export class UiCustomizationSettingsServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
-
-    /**
-     * @sourceName (optional) 
-     * @return Success
-     */
-    loadLocalizationSource(sourceName: string | null | undefined): Observable<LocalizationSourceDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/UiCustomizationSettings/LoadLocalizationSource?";
-        if (sourceName !== undefined)
-            url_ += "sourceName=" + encodeURIComponent("" + sourceName) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processLoadLocalizationSource(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processLoadLocalizationSource(<any>response_);
-                } catch (e) {
-                    return <Observable<LocalizationSourceDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<LocalizationSourceDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processLoadLocalizationSource(response: HttpResponseBase): Observable<LocalizationSourceDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? LocalizationSourceDto.fromJS(resultData200) : new LocalizationSourceDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<LocalizationSourceDto>(<any>null);
-    }
 }
 
 @Injectable()
@@ -27357,7 +27431,7 @@ export class WebLogServiceProxy {
 }
 
 @Injectable()
-export class WorkflowActionServiceProxy {
+export class WorkflowEventsServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -27372,7 +27446,7 @@ export class WorkflowActionServiceProxy {
      * @return Success
      */
     addRule(ruleDto: AddWorkflowRuleDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/WorkflowAction/AddRule";
+        let url_ = this.baseUrl + "/api/services/Platform/WorkflowEvents/AddRule";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(ruleDto);
@@ -27424,7 +27498,7 @@ export class WorkflowActionServiceProxy {
      * @return Success
      */
     editRule(ruleDto: EditWorkflowRuleDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/WorkflowAction/EditRule";
+        let url_ = this.baseUrl + "/api/services/Platform/WorkflowEvents/EditRule";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(ruleDto);
@@ -27472,10 +27546,61 @@ export class WorkflowActionServiceProxy {
     }
 
     /**
+     * @ruleId (optional) 
+     * @return Success
+     */
+    deleteRule(ruleId: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/WorkflowEvents/DeleteRule?";
+        if (ruleId !== undefined)
+            url_ += "ruleId=" + encodeURIComponent("" + ruleId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteRule(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteRule(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteRule(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getRules(): Observable<WorkflowRuleDto[]> {
-        let url_ = this.baseUrl + "/api/services/Platform/WorkflowAction/GetRules";
+        let url_ = this.baseUrl + "/api/services/Platform/WorkflowEvents/GetRules";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -27531,7 +27656,7 @@ export class WorkflowActionServiceProxy {
      * @return Success
      */
     getTriggers(): Observable<WorkflowTriggerDto[]> {
-        let url_ = this.baseUrl + "/api/services/Platform/WorkflowAction/GetTriggers";
+        let url_ = this.baseUrl + "/api/services/Platform/WorkflowEvents/GetTriggers";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -27581,6 +27706,57 @@ export class WorkflowActionServiceProxy {
             }));
         }
         return _observableOf<WorkflowTriggerDto[]>(<any>null);
+    }
+
+    /**
+     * @ruleId (optional) 
+     * @return Success
+     */
+    triggerRule(ruleId: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/WorkflowEvents/TriggerRule?";
+        if (ruleId !== undefined)
+            url_ += "ruleId=" + encodeURIComponent("" + ruleId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processTriggerRule(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processTriggerRule(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processTriggerRule(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -37485,7 +37661,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
     emailAddress!: string | undefined;
     phoneNumber!: string | undefined;
     phoneExtension!: string | undefined;
-    starId!: number | undefined;
     address!: AddressInfo | undefined;
     photo!: ContactPhotoInfo | undefined;
     contactEmails!: ContactEmailInfo[] | undefined;
@@ -37548,7 +37723,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
             this.emailAddress = data["emailAddress"];
             this.phoneNumber = data["phoneNumber"];
             this.phoneExtension = data["phoneExtension"];
-            this.starId = data["starId"];
             this.address = data["address"] ? AddressInfo.fromJS(data["address"]) : <any>undefined;
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             if (data["contactEmails"] && data["contactEmails"].constructor === Array) {
@@ -37627,7 +37801,6 @@ export class OrganizationBusinessInfo implements IOrganizationBusinessInfo {
         data["emailAddress"] = this.emailAddress;
         data["phoneNumber"] = this.phoneNumber;
         data["phoneExtension"] = this.phoneExtension;
-        data["starId"] = this.starId;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         if (this.contactEmails && this.contactEmails.constructor === Array) {
@@ -37691,7 +37864,6 @@ export interface IOrganizationBusinessInfo {
     emailAddress: string | undefined;
     phoneNumber: string | undefined;
     phoneExtension: string | undefined;
-    starId: number | undefined;
     address: AddressInfo | undefined;
     photo: ContactPhotoInfo | undefined;
     contactEmails: ContactEmailInfo[] | undefined;
@@ -41517,7 +41689,7 @@ export interface IPartnerTypeDto {
 export class ContactStarInfoDto implements IContactStarInfoDto {
     id!: number | undefined;
     name!: string | undefined;
-    colorType!: string | undefined;
+    colorType!: ContactStarInfoDtoColorType | undefined;
 
     constructor(data?: IContactStarInfoDto) {
         if (data) {
@@ -41555,7 +41727,7 @@ export class ContactStarInfoDto implements IContactStarInfoDto {
 export interface IContactStarInfoDto {
     id: number | undefined;
     name: string | undefined;
-    colorType: string | undefined;
+    colorType: ContactStarInfoDtoColorType | undefined;
 }
 
 export class ContactTagInfoDto implements IContactTagInfoDto {
@@ -43980,7 +44152,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
     drivingLicense!: string | undefined;
     drivingLicenseState!: string | undefined;
     isActiveMilitaryDuty!: boolean | undefined;
-    creditScoreRating!: ImportPersonalInputCreditScoreRating | undefined;
     gender!: string | undefined;
     fullAddress!: ImportAddressInput | undefined;
     isUSCitizen!: boolean | undefined;
@@ -44018,7 +44189,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.drivingLicense = data["drivingLicense"];
             this.drivingLicenseState = data["drivingLicenseState"];
             this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
-            this.creditScoreRating = data["creditScoreRating"];
             this.gender = data["gender"];
             this.fullAddress = data["fullAddress"] ? ImportAddressInput.fromJS(data["fullAddress"]) : <any>undefined;
             this.isUSCitizen = data["isUSCitizen"];
@@ -44056,7 +44226,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["drivingLicense"] = this.drivingLicense;
         data["drivingLicenseState"] = this.drivingLicenseState;
         data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
-        data["creditScoreRating"] = this.creditScoreRating;
         data["gender"] = this.gender;
         data["fullAddress"] = this.fullAddress ? this.fullAddress.toJSON() : <any>undefined;
         data["isUSCitizen"] = this.isUSCitizen;
@@ -44087,7 +44256,6 @@ export interface IImportPersonalInput {
     drivingLicense: string | undefined;
     drivingLicenseState: string | undefined;
     isActiveMilitaryDuty: boolean | undefined;
-    creditScoreRating: ImportPersonalInputCreditScoreRating | undefined;
     gender: string | undefined;
     fullAddress: ImportAddressInput | undefined;
     isUSCitizen: boolean | undefined;
@@ -46942,6 +47110,62 @@ export interface ILeadTypeDto {
     name: string | undefined;
 }
 
+export class LocalizationSourceDto implements ILocalizationSourceDto {
+    values!: { [key: string] : string; } | undefined;
+    name!: string | undefined;
+    type!: string | undefined;
+
+    constructor(data?: ILocalizationSourceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["values"]) {
+                this.values = {};
+                for (let key in data["values"]) {
+                    if (data["values"].hasOwnProperty(key))
+                        this.values[key] = data["values"][key];
+                }
+            }
+            this.name = data["name"];
+            this.type = data["type"];
+        }
+    }
+
+    static fromJS(data: any): LocalizationSourceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LocalizationSourceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.values) {
+            data["values"] = {};
+            for (let key in this.values) {
+                if (this.values.hasOwnProperty(key))
+                    data["values"][key] = this.values[key];
+            }
+        }
+        data["name"] = this.name;
+        data["type"] = this.type;
+        return data; 
+    }
+}
+
+export interface ILocalizationSourceDto {
+    values: { [key: string] : string; } | undefined;
+    name: string | undefined;
+    type: string | undefined;
+}
+
 export class SelectPackageResponseDto implements ISelectPackageResponseDto {
     registrationId!: string | undefined;
     memberInfo!: MemberInfoDto | undefined;
@@ -48317,6 +48541,7 @@ export class GetAllInput implements IGetAllInput {
     overallRating!: number | undefined;
     issuingBank!: string | undefined;
     campaignIds!: number[] | undefined;
+    includeEmpty!: boolean | undefined;
 
     constructor(data?: IGetAllInput) {
         if (data) {
@@ -48324,6 +48549,9 @@ export class GetAllInput implements IGetAllInput {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.includeEmpty = true;
         }
     }
 
@@ -48355,6 +48583,7 @@ export class GetAllInput implements IGetAllInput {
                 for (let item of data["campaignIds"])
                     this.campaignIds.push(item);
             }
+            this.includeEmpty = data["includeEmpty"] !== undefined ? data["includeEmpty"] : true;
         }
     }
 
@@ -48393,6 +48622,7 @@ export class GetAllInput implements IGetAllInput {
             for (let item of this.campaignIds)
                 data["campaignIds"].push(item);
         }
+        data["includeEmpty"] = this.includeEmpty;
         return data; 
     }
 }
@@ -48416,6 +48646,7 @@ export interface IGetAllInput {
     overallRating: number | undefined;
     issuingBank: string | undefined;
     campaignIds: number[] | undefined;
+    includeEmpty: boolean | undefined;
 }
 
 export class OfferDto implements IOfferDto {
@@ -49366,6 +49597,7 @@ export class OfferFilter implements IOfferFilter {
     issuingBank!: string | undefined;
     campaignIds!: number[] | undefined;
     campaignUrls!: string[] | undefined;
+    includeEmpty!: boolean | undefined;
 
     constructor(data?: IOfferFilter) {
         if (data) {
@@ -49409,6 +49641,7 @@ export class OfferFilter implements IOfferFilter {
                 for (let item of data["campaignUrls"])
                     this.campaignUrls.push(item);
             }
+            this.includeEmpty = data["includeEmpty"];
         }
     }
 
@@ -49452,6 +49685,7 @@ export class OfferFilter implements IOfferFilter {
             for (let item of this.campaignUrls)
                 data["campaignUrls"].push(item);
         }
+        data["includeEmpty"] = this.includeEmpty;
         return data; 
     }
 }
@@ -49476,6 +49710,7 @@ export interface IOfferFilter {
     issuingBank: string | undefined;
     campaignIds: number[] | undefined;
     campaignUrls: string[] | undefined;
+    includeEmpty: boolean | undefined;
 }
 
 export class ExtendFromCSVOutput implements IExtendFromCSVOutput {
@@ -57454,98 +57689,6 @@ export interface IUiCustomizationFooterSettingsEditDto {
     fixedFooter: boolean | undefined;
 }
 
-export class LocalizationSourceDto implements ILocalizationSourceDto {
-    source!: AbpLocalizationSourceDto | undefined;
-    values!: { [key: string] : string; } | undefined;
-
-    constructor(data?: ILocalizationSourceDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.source = data["source"] ? AbpLocalizationSourceDto.fromJS(data["source"]) : <any>undefined;
-            if (data["values"]) {
-                this.values = {};
-                for (let key in data["values"]) {
-                    if (data["values"].hasOwnProperty(key))
-                        this.values[key] = data["values"][key];
-                }
-            }
-        }
-    }
-
-    static fromJS(data: any): LocalizationSourceDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new LocalizationSourceDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["source"] = this.source ? this.source.toJSON() : <any>undefined;
-        if (this.values) {
-            data["values"] = {};
-            for (let key in this.values) {
-                if (this.values.hasOwnProperty(key))
-                    data["values"][key] = this.values[key];
-            }
-        }
-        return data; 
-    }
-}
-
-export interface ILocalizationSourceDto {
-    source: AbpLocalizationSourceDto | undefined;
-    values: { [key: string] : string; } | undefined;
-}
-
-export class AbpLocalizationSourceDto implements IAbpLocalizationSourceDto {
-    name!: string | undefined;
-    type!: string | undefined;
-
-    constructor(data?: IAbpLocalizationSourceDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.type = data["type"];
-        }
-    }
-
-    static fromJS(data: any): AbpLocalizationSourceDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new AbpLocalizationSourceDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["type"] = this.type;
-        return data; 
-    }
-}
-
-export interface IAbpLocalizationSourceDto {
-    name: string | undefined;
-    type: string | undefined;
-}
-
 export class ActivateUserForContactInput implements IActivateUserForContactInput {
     contactId!: number;
     tenantHostType!: ActivateUserForContactInputTenantHostType | undefined;
@@ -59728,6 +59871,28 @@ export enum OfferAttribute {
     ParameterHandlerType = "ParameterHandlerType", 
 }
 
+export enum OfferFlag {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _3 = 3, 
+    _4 = 4, 
+    _5 = 5, 
+    _6 = 6, 
+    _7 = 7, 
+    _8 = 8, 
+    _9 = 9, 
+    _10 = 10, 
+    _11 = 11, 
+    _12 = 12, 
+    _13 = 13, 
+    _14 = 14, 
+    _15 = 15, 
+    _16 = 16, 
+    _17 = 17, 
+    _18 = 18, 
+}
+
 export enum Module {
     CFO = "CFO", 
     CRM = "CRM", 
@@ -60177,6 +60342,19 @@ export enum ScoreSimulatorInfoDtoAccessStatus {
     NoPayment = "NoPayment", 
 }
 
+export enum ContactStarInfoDtoColorType {
+    Green = "Green", 
+    Blue = "Blue", 
+    Yellow = "Yellow", 
+    Red = "Red", 
+    Purple = "Purple", 
+    Gradient1 = "Gradient1", 
+    Gradient2 = "Gradient2", 
+    Gradient3 = "Gradient3", 
+    Gradient4 = "Gradient4", 
+    Gradient5 = "Gradient5", 
+}
+
 export enum ImportInputImportType {
     Lead = "Lead", 
     Client = "Client", 
@@ -60189,14 +60367,6 @@ export enum ImportPersonalInputPreferredToD {
     Afternoon = "Afternoon", 
     Evening = "Evening", 
     Anytime = "Anytime", 
-}
-
-export enum ImportPersonalInputCreditScoreRating {
-    NotSure = "NotSure", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Poor = "Poor", 
 }
 
 export enum ImportContactInputImportType {
