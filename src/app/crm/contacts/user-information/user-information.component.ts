@@ -94,6 +94,14 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             });
         }, this.constructor.name);
 
+        _contactsService.invalidateSubscribe((area) => {
+            if (area == 'user-information') {
+                if ((this.data = this._userService['data']).userId)
+                    this.loadData();
+                this.checkShowInviteForm();
+            }
+        });
+
         if (!(this.roles = _roleServiceProxy['data']))
             _roleServiceProxy.getRoles(undefined, undefined).subscribe((res) => {
                 _roleServiceProxy['data'] = this.roles = res.items;

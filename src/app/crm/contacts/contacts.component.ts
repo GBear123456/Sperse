@@ -674,4 +674,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         });
         event.stopPropagation();
     }
+
+    reloadCurrentSection() {
+        let area = this._router.url.split('?').shift().split('/').pop();
+        if (area == 'contact-information') this.invalidate();
+        this._contactsService.invalidate(area);
+    }
 }

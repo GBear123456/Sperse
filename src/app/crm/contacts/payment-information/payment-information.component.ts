@@ -10,6 +10,7 @@ import * as moment from 'moment';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { ContactsService } from '../contacts.service';
 import { ContactServiceProxy, MonthlyPaymentInfo, PaymentMethodInfo, PaymentMethodInfoType, PaymentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -34,7 +35,8 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     constructor(
         injector: Injector,
         private paymentServiceProxy: PaymentServiceProxy,
-        private contactService: ContactServiceProxy
+        private contactService: ContactServiceProxy,
+        private _clientService: ContactsService,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -63,6 +65,13 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
         //     map(issues => issues[0]),
         //     first()
         // );
+
+        this._clientService.invalidateSubscribe((area) => {
+            if (area == 'payment-information') {
+                this.payments$.subscribe();
+                this.paymentMethods$.subscribe();
+            }
+        });
     }
 
     getPayments(contactId): Observable<MonthlyPaymentInfo[]> {

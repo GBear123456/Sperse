@@ -5,10 +5,12 @@ import {
     ContactServiceProxy, OrderSubscriptionServiceProxy, OrderSubscriptionDto, ContactInfoDto,
     NameValueDto,
     FindUsersInput,
-    CommonLookupServiceProxy} from 'shared/service-proxies/service-proxies';
+    CommonLookupServiceProxy
+} from 'shared/service-proxies/service-proxies';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { map } from 'rxjs/operators';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     selector: 'subscriptions',
@@ -26,11 +28,17 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _contactService: ContactServiceProxy,
+        private _clientService: ContactsService,
         private _orderSubscriptionService: OrderSubscriptionServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
         private _impersonationService: ImpersonationService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        _clientService.invalidateSubscribe((area) => {
+            if (area == 'subscriptions') {
+                this.refreshData(true);
+            }
+        });
     }
 
     ngOnInit() {
