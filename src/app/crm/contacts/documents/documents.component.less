@@ -8,6 +8,7 @@
     &:before {
         margin-right: 17px;
         max-height: 32px;
+        width: 24px;
     }
     &.doc:before,
     &.docx:before {
@@ -19,6 +20,13 @@
     &.xlsx:before,
     &.xls:before {
         content: url('../../../../assets/common/icons/documents/xls.svg');
+    }
+
+    &.unknown:before {
+        content: '\f070';
+        font-family: 'FontAwesome';
+        font-size: 25px;
+        line-height: 1em;
     }
 
     .file-size {

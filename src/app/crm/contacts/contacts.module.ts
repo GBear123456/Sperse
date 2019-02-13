@@ -97,6 +97,8 @@ import { ContactListDialogComponent } from './contact-list-dialog/contact-list-d
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialog/create-client-dialog.component';
+import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
+import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 
 @NgModule({
     declarations: [
@@ -142,7 +144,8 @@ import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialo
         CompanyDialogComponent,
         RelationCompaniesDialogComponent,
         CreateClientDialogComponent,
-        ContactListDialogComponent
+        ContactListDialogComponent,
+        NotSupportedTypeDialogComponent
     ],
     imports: [
         FormsModule,
@@ -201,7 +204,8 @@ import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialo
         AddCompanyDialogComponent,
         NoteAddDialogComponent,
         RelationCompaniesDialogComponent,
-        CreateClientDialogComponent
+        CreateClientDialogComponent,
+        NotSupportedTypeDialogComponent
     ],
     providers: [
         DialogService,
@@ -218,7 +222,8 @@ import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialo
         NotesServiceProxy,
         DocumentServiceProxy,
         DocumentTypeServiceProxy,
-        OrderSubscriptionServiceProxy
+        OrderSubscriptionServiceProxy,
+        DocumentsService
     ]
 })
 export class ContactsModule {}
