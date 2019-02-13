@@ -153,16 +153,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
 
-        this.searchColumns = [
-            {name: 'CompanyName', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'Email', strategy: ODataSearchStrategy.Contains},
-            {name: 'City', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'State', strategy: ODataSearchStrategy.StartsWith},
-            {name: 'StateId', strategy: ODataSearchStrategy.Equals}
-        ];
-        FilterHelpers.nameParts.forEach(x => {
-            this.searchColumns.push({name: x, strategy: ODataSearchStrategy.StartsWith});
-        });
         this.searchValue = '';
     }
 
@@ -688,7 +678,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.capitalize(filter.caption)];
                 if (filterMethod)
                     return filterMethod.call(this, filter);
-                }
+                },
+                null,
+                this.searchValue
         );
     }
 

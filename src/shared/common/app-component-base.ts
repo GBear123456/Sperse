@@ -265,13 +265,16 @@ export abstract class AppComponentBase implements OnDestroy {
         return this.appUrlService.appRootUrl;
     }
 
-    getODataUrl(uri: String, filter?: Object, instanceData = null) {
-        return this.oDataService.getODataUrl(uri, filter, instanceData);
+    getODataUrl(uri: String, filter?: Object, instanceData = null, param = null) {
+        return this.oDataService.getODataUrl(uri, filter, instanceData, param);
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null) {
+    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null, quickSearchValue = null) {
+        let param = this.searchValue ?
+            { name: 'quickSearchValue', value: this.searchValue } :
+            null;
         this.isDataLoaded = false;
-        return this.oDataService.processODataFilter(grid, uri, filters, getCheckCustom, this.searchColumns, this.searchValue, instanceData);
+        return this.oDataService.processODataFilter(grid, uri, filters, getCheckCustom, this.searchColumns, this.searchValue, instanceData, param);
     }
 
     getSearchFilter() {
