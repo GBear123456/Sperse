@@ -32,8 +32,12 @@
             <dxi-column dataField="typeName" caption="{{l('DocumentType')}}" cellTemplate="typeCell" [width]="335" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
             <dxi-column dataField="fileName" cellTemplate="fileNameCell" caption="{{l('FileName')}}"></dxi-column>
 
-            <div *dxTemplate="let cellData of 'fileNameCell'" [ngClass]="'file-name ' + getFileExtensionByFileName(cellData.value)">
-                {{ cellData.value }}
+            <div *dxTemplate="let cellData of 'fileNameCell'">
+                <ng-container *ngIf="getFileExtensionByFileName(cellData.value) as extension">
+                    <div [ngClass]="['file-name', extension, getViewerType(extension)]">
+                        {{ cellData.value }}
+                    </div>
+                </ng-container>
             </div>
 
             <dxi-column
@@ -72,22 +76,22 @@
     </div>
 </div>
 <div [hidden]="!openDocumentMode" class="documentView" #documentViewContainer>
-    <form *ngIf="showViewerType == WOPI_VIEWER" id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">
+    <form *ngIf="showViewerType == documentViewerTypes.WOPI" id="office_form" name="office_form" target="office_frame" action="{{ wopiUrlsrc }}" method="post">
         <input name="access_token" value="{{ wopiAccessToken }}" type="hidden" />
         <input name="access_token_ttl" value="{{ wopiAccessTokenTtl }}" type="hidden" />
     </form>
-    <span *ngIf="showViewerType == WOPI_VIEWER" #frameHolder class="wopi-frame-holder"></span>
+    <span *ngIf="showViewerType == documentViewerTypes.WOPI" #frameHolder class="wopi-frame-holder"></span>
 
-    <app-image-viewer *ngIf="showViewerType == IMAGE_VIEWER"
+    <app-image-viewer *ngIf="showViewerType == documentViewerTypes.IMAGE"
         [images]="[previewContent]"
         [idContainer]="'imageViewer'"
         [loadOnInit]="true">
     </app-image-viewer>
-    <textarea *ngIf="showViewerType == TEXT_VIEWER" readonly>{{previewContent}}</textarea>
+    <textarea *ngIf="showViewerType == documentViewerTypes.TEXT" readonly>{{previewContent}}</textarea>
 
-    <div [hidden]="showViewerType !== XML_VIEWER" class="xmlContainer" #xmlContainer></div>
+    <div [hidden]="showViewerType !== documentViewerTypes.XML" class="xmlContainer" #xmlContainer></div>
 
-    <div *ngIf="showViewerType === ARCHIVE_VIEWER" class="archiveContainer">
+    <div *ngIf="showViewerType === documentViewerTypes.ARCHIVE" class="archiveContainer">
         <h3>Content:</h3>
         <dx-tree-list
             [dataSource]="archiveFiles$ | async"

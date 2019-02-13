@@ -33,13 +33,16 @@ import * as Rar from 'rarjs/rar.js';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy,
-DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming, GetUrlOutput } from '@shared/service-proxies/service-proxies';
+DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentType } from './document-type.enum';
 import { ContactsService } from '../contacts.service';
 import { UploadDocumentsDialogComponent } from '@app/crm/contacts/documents/upload-documents-dialog/upload-documents-dialog.component';
+import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
+import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
+import { DocumentViewerType } from '@app/crm/contacts/documents/document-viewer-type.enum';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -56,10 +59,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     @ViewChildren('frameHolder') set frameHolderElements(elements: QueryList<ElementRef>) {
         this._frameHolderElementRef = elements.first && elements.first.nativeElement;
     }
-    private readonly RESERVED_TIME_SECONDS = 30;
-
     private visibleDocuments: DocumentInfo[];
-    private currentDocumentURL: string;
 
     public data: {
         contactInfo: ContactInfoDto
@@ -75,22 +75,17 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public wopiUrlsrc: string;
     public wopiAccessToken: string;
     public wopiAccessTokenTtl: string;
-    public showViewerType: number;
+    public showViewerType: DocumentViewerType;
+    public documentViewerTypes = DocumentViewerType;
     public clickedCellKey: string;
-
-    public readonly WOPI_VIEWER  = 0;
-    public readonly IMAGE_VIEWER = 1;
-    public readonly TEXT_VIEWER  = 2;
-    public readonly VIDEO_VIEWER  = 3;
-    public readonly XML_VIEWER  = 4;
-    public readonly ARCHIVE_VIEWER  = 5;
-
     private defaultNoDataText = this.ls('Platform', 'NoData');
     public noDataText = '';
     public validTextExtensions: String[] = ['txt', 'text'];
     public validXmlExtensions: String[] = ['xml'];
+    public validWopiExtensions: String[] = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'dot', 'dotx', 'docm', 'odt', 'pot', 'potm', 'pps', 'ppsm', 'pptm', 'pptx', 'ppsx', 'odp', 'xlsm', 'xlsb', 'ods'];
     public validVideoExtensions: String[] = ['mp4', 'mov'];
     public validArchiveExtensions: String[] = ['zip', 'rar'];
+    public validImageExtensions: String[] = ['jpeg', 'png', 'pdf'];
     public viewerToolbarConfig: any = [];
     archiveFiles$: Observable<{ name: string, data: Date }[]>;
 
@@ -103,7 +98,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         private _clientService: ContactsService,
         private printerService: PrinterService,
         private cacheService: CacheService,
-        private renderer: Renderer2
+        private renderer: Renderer2,
+        public documentsService: DocumentsService
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -130,28 +126,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         });
     }
 
-    private storeUrlToCache(id: string, urlInfo: GetUrlOutput) {
-        this.cacheService.set(id, urlInfo,
-            { maxAge: urlInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
-    }
-
     private storeWopiRequestInfoToCache(wopiDocumentDataCacheKey: string, requestInfo: WopiRequestOutcoming) {
         this.cacheService.set(wopiDocumentDataCacheKey, requestInfo,
-            { maxAge: requestInfo.validityPeriodSeconds - this.RESERVED_TIME_SECONDS });
-    }
-
-    private getDocumentUrlInfoObservable(): Observable<GetUrlOutput> {
-        let id = this.currentDocumentInfo.id;
-        if (this.cacheService.exists(id)) {
-            let urlInfo = this.cacheService.get(id) as GetUrlOutput;
-            return of(urlInfo);
-        }
-
-        return this._documentService.getUrl(id).pipe(
-            flatMap((urlInfo) => {
-                this.storeUrlToCache(id, urlInfo);
-                return of(urlInfo);
-            }));
+            { maxAge: requestInfo.validityPeriodSeconds - this.documentsService.RESERVED_TIME_SECONDS });
     }
 
     private getViewWopiRequestInfoObservable(): Observable<WopiRequestOutcoming> {
@@ -177,7 +154,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                         action: this.closeDocument.bind(this)
                     },
                     {
-                        html: `<div class="file-name ${this.getFileExtensionByFileName(this.currentDocumentInfo.fileName)}" title="${this.currentDocumentInfo.fileName} ${this._fileSizePipe.transform(this.currentDocumentInfo.size)}">
+                        html: `<div class="file-name ${this.getFileExtensionByFileName(this.currentDocumentInfo.fileName)} ${this.getFileType(this.currentDocumentInfo.fileName)}" title="${this.currentDocumentInfo.fileName} ${this._fileSizePipe.transform(this.currentDocumentInfo.size)}">
                                     ${this.currentDocumentInfo.fileName.split('.').shift()}
                                </div>`
                     }
@@ -207,8 +184,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                         visible: !conf.printHidden,
                         action: () => {
                             const viewedDocument = <any>this.getViewedDocumentElement();
-                            if (this.showViewerType !== this.WOPI_VIEWER && this.showViewerType !== this.VIDEO_VIEWER) {
-                                const printSrc = this.showViewerType == this.IMAGE_VIEWER ?
+                            if (this.showViewerType !== DocumentViewerType.WOPI && this.showViewerType !== DocumentViewerType.VIDEO) {
+                                const printSrc = this.showViewerType == DocumentViewerType.IMAGE ?
                                     this.imageViewer.images[0] :
                                     viewedDocument.textContent;
                                 const format = <any>this.getFileExtensionByFileName(this.currentDocumentInfo.fileName);
@@ -223,13 +200,13 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     {
                         name: 'rotateLeft',
                         action: this.rotateImageLeft.bind(this),
-                        visible: conf.viewerType == this.IMAGE_VIEWER,
+                        visible: conf.viewerType == DocumentViewerType.IMAGE,
                         disabled: conf.rotateDisabled
                     },
                     {
                         name: 'rotateRight',
                         action: this.rotateImageRight.bind(this),
-                        visible: conf.viewerType == this.IMAGE_VIEWER,
+                        visible: conf.viewerType == DocumentViewerType.IMAGE,
                         disabled: conf.rotateDisabled
                     }
                 ]
@@ -238,12 +215,16 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 location: 'after', items: [
                     {
                         name: 'prev',
-                        action: this.viewDocument.bind(this, DocumentType.Prev),
+                        action: e => {
+                            this.viewDocument.call(this, DocumentType.Prev, e.event.originalEvent);
+                        },
                         disabled: conf.prevButtonDisabled
                     },
                     {
                         name: 'next',
-                        action: this.viewDocument.bind(this, DocumentType.Next),
+                        action: e => {
+                            this.viewDocument.call(this, DocumentType.Next, e.event.originalEvent);
+                        },
                         disabled: conf.nextButtonDisabled
                     }
                 ]
@@ -330,7 +311,12 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             if (!this.dataSource || !this.dataSource.length) {
                 setTimeout(() => this.openDocumentAddAddDialog());
             }
+            callback && callback();
         });
+    }
+
+    downloadDocument() {
+        this.documentsService.downloadDocument(this.currentDocumentInfo.id);
     }
 
     openDocumentAddAddDialog() {
@@ -390,23 +376,27 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 /** Save sorted visible rows to get next and prev properly */
                 this.visibleDocuments = $event.component.getVisibleRows().map(row => row.data);
                 /** If user click the whole row */
-                this.viewDocument(DocumentType.Current);
+                this.viewDocument(DocumentType.Current, $event.event);
             }
         }
     }
 
     onMenuItemClick($event) {
         this.currentDocumentInfo = this.actionRecordData;
-        this.currentDocumentURL = '';
         $event.itemData.action.call(this);
         this.actionRecordData = null;
     }
 
-    getFileExtensionByFileName(fileName: string): string {
+    getFileType(fileName): string {
+        const fileExtension = this.getFileExtensionByFileName(fileName);
+        return this.getViewerType(fileExtension);
+    }
+
+    private getFileExtensionByFileName(fileName: string): string {
         return fileName && fileName.split('.').pop();
     }
 
-    viewDocument(type: DocumentType = DocumentType.Current) {
+    viewDocument(type: DocumentType = DocumentType.Current, event?: Event) {
         let currentDocumentIndex = this.visibleDocuments.indexOf(this.currentDocumentInfo);
         if (type !== DocumentType.Current) {
             currentDocumentIndex = currentDocumentIndex + type;
@@ -418,84 +408,116 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             this.currentDocumentInfo = prevOrNextDocument;
         }
 
-        this.currentDocumentURL = '';
+        const ext = this.getFileExtensionByFileName(this.currentDocumentInfo.fileName);
+        const viewerType = this.getViewerType(ext);
         this.showViewerType = undefined;
-        let ext = this.getFileExtensionByFileName(this.currentDocumentInfo.fileName), viewerType;
-
-        if (this.validVideoExtensions.indexOf(ext) >= 0) {
-            viewerType = this.VIDEO_VIEWER;
-        } else if (this.validArchiveExtensions.indexOf(ext) >= 0) {
-            viewerType = this.ARCHIVE_VIEWER;
-        } else {
-            viewerType = this.currentDocumentInfo.isViewSupportedByWopi ? this.WOPI_VIEWER :
-                (this.validTextExtensions.indexOf(ext) >= 0 ?  this.TEXT_VIEWER : (
-                    this.validXmlExtensions.indexOf(ext) >= 0 ? this.XML_VIEWER : this.IMAGE_VIEWER
-                ));
-        }
-
-        super.startLoading(true);
-        this.initViewerToolbar({
-            viewerType: viewerType,
-            rotateDisabled: ext == 'pdf',
-            editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
-            prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
-            nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
-            printHidden: viewerType === this.WOPI_VIEWER || viewerType === this.VIDEO_VIEWER || ext === 'pdf'
-        });
-        switch (viewerType) {
-            case this.WOPI_VIEWER:
-                this.getViewWopiRequestInfoObservable().pipe(finalize(() => {
-                    super.finishLoading(true);
-                })).subscribe((response) => {
-                    this.showOfficeOnline(response);
-                });
-                break;
-            case this.VIDEO_VIEWER:
-                this.getDocumentUrlInfoObservable().subscribe((urlInfo) => {
-                    this.currentDocumentURL = urlInfo.url;
-                    super.finishLoading(true);
-                    this.showViewerType = viewerType;
-                    this.openDocumentMode = true;
-                });
-                break;
-            default:
-                this.getDocumentUrlInfoObservable().subscribe((urlInfo) => {
-                    this.currentDocumentURL = urlInfo.url;
-                    this.downloadFileBlob(urlInfo.url, (blob) => {
-                        if (viewerType === this.ARCHIVE_VIEWER) {
-                            this.archiveFiles$ = (ext === 'rar' ? this.getFilesInfoFromRarBlob(blob) : this.getFilesInfoFromZipBlob(blob)).pipe(tap(() => this.openDocumentMode = true));
-                        } else {
-                            let reader = new FileReader();
-                            reader.addEventListener('loadend', () => {
-                                this.openDocumentMode = true;
-                                let content = StringHelper.getBase64(reader.result);
-                                this.previewContent = viewerType == this.TEXT_VIEWER || viewerType == this.XML_VIEWER || viewerType == this.ARCHIVE_VIEWER ? atob(content) : content;
-                                if (viewerType === this.XML_VIEWER) {
-                                    const json = xmlJs.xml2js(
-                                        this.sanitizeContent(this.previewContent),
-                                        {
-                                            compact: true,
-                                            trim: true,
-                                            ignoreDoctype: true,
-                                            ignoreDeclaration: true,
-                                            ignoreAttributes: true
-                                        }
-                                    );
-                                    this.xmlContainerElementRef.nativeElement.innerHTML = '';
-                                    this.renderer.appendChild(
-                                        this.xmlContainerElementRef.nativeElement,
-                                        new JSONFormatter(json, 2).render()
-                                    );
-                                }
-                            });
-                            reader.readAsDataURL(blob);
-                        }
-                        this.showViewerType = viewerType;
+        if (viewerType !== DocumentViewerType.UNKNOWN) {
+            super.startLoading(true);
+            this.initViewerToolbar({
+                viewerType: viewerType,
+                rotateDisabled: ext == 'pdf',
+                editDisabled: !this.currentDocumentInfo.isEditSupportedByWopi,
+                prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
+                nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
+                printHidden: viewerType === DocumentViewerType.IMAGE || viewerType === DocumentViewerType.VIDEO || ext === 'pdf'
+            });
+            switch (viewerType) {
+                case DocumentViewerType.WOPI:
+                    this.getViewWopiRequestInfoObservable().pipe(finalize(() => {
                         super.finishLoading(true);
+                    })).subscribe((response) => {
+                        this.showOfficeOnline(response);
                     });
+                    break;
+                case DocumentViewerType.VIDEO:
+                    this.documentsService.getDocumentUrlInfoObservable(this.currentDocumentInfo.id).subscribe((urlInfo) => {
+                        super.finishLoading(true);
+                        this.showViewerType = viewerType;
+                        this.openDocumentMode = true;
+                    });
+                    break;
+                default:
+                    this.documentsService.getDocumentUrlInfoObservable(this.currentDocumentInfo.id).subscribe((urlInfo) => {
+                        this.downloadFileBlob(urlInfo.url, (blob) => {
+                            if (viewerType === DocumentViewerType.ARCHIVE) {
+                                this.archiveFiles$ = (ext === 'rar' ? this.getFilesInfoFromRarBlob(blob) : this.getFilesInfoFromZipBlob(blob)).pipe(tap(() => this.openDocumentMode = true));
+                            } else {
+                                let reader = new FileReader();
+                                reader.addEventListener('loadend', () => {
+                                    this.openDocumentMode = true;
+                                    let content = StringHelper.getBase64(reader.result);
+                                    this.previewContent = (
+                                        viewerType === DocumentViewerType.TEXT
+                                        || viewerType === DocumentViewerType.XML
+                                    )
+                                        ? atob(content)
+                                        : content;
+                                    if (viewerType === DocumentViewerType.XML) {
+                                        const json = xmlJs.xml2js(
+                                            this.sanitizeContent(this.previewContent),
+                                            {
+                                                compact: true,
+                                                trim: true,
+                                                ignoreDoctype: true,
+                                                ignoreDeclaration: true,
+                                                ignoreAttributes: true
+                                            }
+                                        );
+                                        this.xmlContainerElementRef.nativeElement.innerHTML = '';
+                                        this.renderer.appendChild(
+                                            this.xmlContainerElementRef.nativeElement,
+                                            new JSONFormatter(json, 2).render()
+                                        );
+                                    }
+                                });
+                                reader.readAsDataURL(blob);
+                            }
+                            this.showViewerType = viewerType;
+                            super.finishLoading(true);
+                        });
+                    });
+                    break;
+            }
+        } else {
+            /** If not supported file was opend through navigation - then update toolbar */
+            if (type !== DocumentType.Current) {
+                this.initViewerToolbar({
+                    viewerType: null,
+                    rotateDisabled: true,
+                    editDisabled: true,
+                    prevButtonDisabled: currentDocumentIndex === 0, // document is first in list
+                    nextButtonDisabled: currentDocumentIndex === this.visibleDocuments.length - 1, // document is last in list
+                    printHidden: true
                 });
-                break;
+            }
+            this.dialog.open(NotSupportedTypeDialogComponent, {
+                data: {
+                    documentId: this.currentDocumentInfo.id
+                }
+            });
+            if (event && event.preventDefault) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
         }
+    }
+
+    getViewerType(extension: string): DocumentViewerType {
+        let viewerType = DocumentViewerType.UNKNOWN;
+        if (this.validWopiExtensions.indexOf(extension) >= 0) {
+            viewerType = DocumentViewerType.WOPI;
+        } else if (this.validImageExtensions.indexOf(extension) >= 0) {
+            viewerType = DocumentViewerType.IMAGE;
+        } else if (this.validTextExtensions.indexOf(extension) >= 0) {
+            viewerType = DocumentViewerType.TEXT;
+        }  else if (this.validVideoExtensions.indexOf(extension) >= 0) {
+            viewerType = DocumentViewerType.VIDEO;
+        } else if (this.validArchiveExtensions.indexOf(extension) >= 0) {
+            viewerType = DocumentViewerType.ARCHIVE;
+        }  else if (this.validXmlExtensions.indexOf(extension) >= 0) {
+            viewerType = DocumentViewerType.XML;
+        }
+        return viewerType;
     }
 
     private getFilesInfoFromRarBlob(blob: Blob) {
@@ -549,7 +571,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     showOfficeOnline(wopiRequestInfo: WopiRequestOutcoming) {
-        this.showViewerType = this.WOPI_VIEWER;
+        this.showViewerType = DocumentViewerType.WOPI;
         this.wopiUrlsrc = wopiRequestInfo.wopiUrlsrc;
         this.wopiAccessToken = wopiRequestInfo.accessToken;
         this.wopiAccessTokenTtl = wopiRequestInfo.accessTokenTtl.toString();
@@ -600,17 +622,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         );
     }
 
-    downloadDocument() {
-        if (this.currentDocumentURL)
-            window.open(this.currentDocumentURL, '_self');
-        else {
-            this.getDocumentUrlInfoObservable().subscribe((urlInfo) => {
-                this.currentDocumentURL = urlInfo.url;
-                this.downloadDocument();
-            });
-        }
-    }
-
     downloadDocumentFromActionsMenu() {
         this.downloadDocument();
         this.hideActionsMenu();
@@ -629,16 +640,16 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this._clientService.toolbarUpdate();
     }
 
-    @HostListener('document:keydown', ['$event.keyCode'])
-    handleKeyDown(keyCode: number) {
+    @HostListener('document:keydown', ['$event'])
+    handleKeyDown(event: KeyboardEvent) {
         if (this.openDocumentMode) {
             /** Arrow left is pressed */
-            if (keyCode === 37) {
-                this.viewDocument(DocumentType.Prev);
+            if (event.keyCode === 37) {
+                this.viewDocument(DocumentType.Prev, event);
             }
             /** Arrow right is pressed */
-            if (keyCode === 39) {
-                this.viewDocument(DocumentType.Next);
+            if (event.keyCode === 39) {
+                this.viewDocument(DocumentType.Next, event);
             }
         }
     }

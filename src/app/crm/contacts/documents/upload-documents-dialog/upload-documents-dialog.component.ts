@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Inject, Injector, ElementRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
