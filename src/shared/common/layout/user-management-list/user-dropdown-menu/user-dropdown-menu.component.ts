@@ -2,9 +2,6 @@ import { Component, OnInit, Input, Injector } from '@angular/core';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { AbpSessionService } from '@abp/session/abp-session.service';
 import { ImpersonationService } from 'app/admin/users/impersonation.service';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { isEqual } from 'lodash';
 import {
     CommonUserInfoServiceProxy,
     LinkedUserDto
@@ -25,11 +22,10 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     profileThumbnailId = this.appSession.user.profileThumbnailId;
     isImpersonatedLogin = this.abpSessionService.impersonatorUserId > 0;
     shownLoginInfo: { fullName, email, tenantName?};
-    userCompany$: Observable<string>;
     recentlyLinkedUsers: LinkedUserDto[];
     hasPlatformPermissions: boolean;
     menuItemTypes = UserDropdownMenuItemType;
-
+    @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = [
         {
             name: this.l('BackToMyAccount'),
@@ -121,7 +117,6 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
 
     ngOnInit() {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
-        this.userCompany$ = this.commonUserInfoService.getCompany().pipe(map(x => isEqual(x, {}) ? null : x));
         this.userManagementService.getRecentlyLinkedUsers().subscribe(
             recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
         );
