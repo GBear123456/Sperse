@@ -145,16 +145,17 @@
                                 <button class="applyButton" (click)="applyOffer(offerItem)">
                                     <span>{{ ls.l(buttonCaption) }}</span>
                                 </button>
+                                <a class="viewDetails" (click)="viewCardDetails(offerItem)">{{ ls.l('View_details') }}</a>
                             </div>
                         </div>
                         <div class="description col-12 col-md-6 col-lg-7">
                             <small *ngIf="offerItem.issuingBank" class="bank-name">{{ offerItem.issuingBank }}</small>
                             <h4 (click)="applyOffer(offerItem)">{{ offerItem.name }}</h4>
                             <p *ngIf="offerItem.minLoanAmount || offerItem.maxLoanAmount">{{ ls.l('Offers_LoanAmount') }}: {{offersService.formatLoanAmountValues(offerItem.minLoanAmount, offerItem.maxLoanAmount)}}</p>
-                            <!-- <div class="rating" *ngIf="offerItem.overallRating">
+                            <!-- div class="rating" *ngIf="offerItem.overallRating">
                                 <stars-rating [currentRating]="offerItem.overallRating" color="#f0d500"></stars-rating>
-                                span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span
-                            </div> -->
+                                <span>({{ offerItem.reviewsAmount + ' ' + ls.l('Offers_reviews') }})</span>
+                            </div -->
                             <ul class="descriptionItems">
                                 <ng-container *ngIf="pagePrefix == 'CreditCards'">
                                     <ng-container *ngFor="let param of ['annualFee', 'rewardsRate', 'introRewardsBonus', 'regularAPR']">
