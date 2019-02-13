@@ -19,12 +19,15 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
-import { Observable, of } from 'rxjs';
-import { finalize, flatMap, tap } from 'rxjs/operators';
+import { Observable, from, of } from 'rxjs';
+import { finalize, flatMap, tap, pluck, map } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as xmlJs from 'xml-js';
+import { values } from 'lodash';
 import JSONFormatter from 'json-formatter-js';
 import '@node_modules/ng2-image-viewer/imageviewer.js';
+import * as jszip from 'jszip';
+import * as Rar from 'rarjs/rar.js';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -80,13 +83,16 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public readonly TEXT_VIEWER  = 2;
     public readonly VIDEO_VIEWER  = 3;
     public readonly XML_VIEWER  = 4;
+    public readonly ARCHIVE_VIEWER  = 5;
 
     private defaultNoDataText = this.ls('Platform', 'NoData');
     public noDataText = '';
     public validTextExtensions: String[] = ['txt', 'text'];
     public validXmlExtensions: String[] = ['xml'];
     public validVideoExtensions: String[] = ['mp4', 'mov'];
+    public validArchiveExtensions: String[] = ['zip', 'rar'];
     public viewerToolbarConfig: any = [];
+    archiveFiles$: Observable<{ name: string, data: Date }[]>;
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -418,6 +424,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
         if (this.validVideoExtensions.indexOf(ext) >= 0) {
             viewerType = this.VIDEO_VIEWER;
+        } else if (this.validArchiveExtensions.indexOf(ext) >= 0) {
+            viewerType = this.ARCHIVE_VIEWER;
         } else {
             viewerType = this.currentDocumentInfo.isViewSupportedByWopi ? this.WOPI_VIEWER :
                 (this.validTextExtensions.indexOf(ext) >= 0 ?  this.TEXT_VIEWER : (
@@ -454,36 +462,58 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 this.getDocumentUrlInfoObservable().subscribe((urlInfo) => {
                     this.currentDocumentURL = urlInfo.url;
                     this.downloadFileBlob(urlInfo.url, (blob) => {
-                        let reader = new FileReader();
-                        reader.addEventListener('loadend', () => {
-                            this.openDocumentMode = true;
-                            let content = StringHelper.getBase64(reader.result);
-                            this.previewContent = (viewerType == this.TEXT_VIEWER || viewerType == this.XML_VIEWER ? atob(content) : content);
-                            if (viewerType === this.XML_VIEWER) {
-                                const json = xmlJs.xml2js(
-                                    this.sanitizeContent(this.previewContent),
-                                    {
-                                        compact: true,
-                                        trim: true,
-                                        ignoreDoctype: true,
-                                        ignoreDeclaration: true,
-                                        ignoreAttributes: true
-                                    }
-                                );
-                                this.xmlContainerElementRef.nativeElement.innerHTML = '';
-                                this.renderer.appendChild(
-                                    this.xmlContainerElementRef.nativeElement,
-                                    new JSONFormatter(json, 2).render()
-                                );
-                            }
-                            this.showViewerType = viewerType;
-                        });
-                        reader.readAsDataURL(blob);
+                        if (viewerType === this.ARCHIVE_VIEWER) {
+                            this.archiveFiles$ = (ext === 'rar' ? this.getFilesInfoFromRarBlob(blob) : this.getFilesInfoFromZipBlob(blob)).pipe(tap(() => this.openDocumentMode = true));
+                        } else {
+                            let reader = new FileReader();
+                            reader.addEventListener('loadend', () => {
+                                this.openDocumentMode = true;
+                                let content = StringHelper.getBase64(reader.result);
+                                this.previewContent = viewerType == this.TEXT_VIEWER || viewerType == this.XML_VIEWER || viewerType == this.ARCHIVE_VIEWER ? atob(content) : content;
+                                if (viewerType === this.XML_VIEWER) {
+                                    const json = xmlJs.xml2js(
+                                        this.sanitizeContent(this.previewContent),
+                                        {
+                                            compact: true,
+                                            trim: true,
+                                            ignoreDoctype: true,
+                                            ignoreDeclaration: true,
+                                            ignoreAttributes: true
+                                        }
+                                    );
+                                    this.xmlContainerElementRef.nativeElement.innerHTML = '';
+                                    this.renderer.appendChild(
+                                        this.xmlContainerElementRef.nativeElement,
+                                        new JSONFormatter(json, 2).render()
+                                    );
+                                }
+                            });
+                            reader.readAsDataURL(blob);
+                        }
+                        this.showViewerType = viewerType;
                         super.finishLoading(true);
                     });
                 });
                 break;
         }
+    }
+
+    private getFilesInfoFromRarBlob(blob: Blob) {
+        return from(Rar.fromFile(blob)).pipe(
+            tap(x => console.log(x)),
+            pluck('entries'),
+            map((archives: Rar.RarEntry[]) => archives.map((archive: Rar.RarEntry) => ({
+                name: archive.name,
+                date: archive.time
+            })))
+        );
+    }
+
+    private getFilesInfoFromZipBlob(blob: Blob) {
+        return from(new jszip().loadAsync(blob)).pipe(
+            pluck('files'),
+            map(files => values(files))
+        );
     }
 
     sanitizeContent(content: string): string {
