@@ -6,6 +6,7 @@
   "requiredPermission": "Pages.PFM",
   "localizationSource": "PFM",
   "navigation": [
-    [ "Offers", "Pages.PFM.ManageOffers", "icon-home", "/app/pfm/offers" ]
+    [ "Offers", "Pages.PFM.Applications.ManageOffers", "icon-home", "/app/pfm/offers" ],
+    [ "MemberArea", "", "icon-home", "/personal-finance" ]
   ]
 }
