@@ -80,6 +80,11 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
+        _contactsService.invalidateSubscribe((area) => {
+            if (area == 'lead-information') {
+                _contactsService.loadLeadInfo();
+            }
+        });
     }
 
     ngOnInit() {

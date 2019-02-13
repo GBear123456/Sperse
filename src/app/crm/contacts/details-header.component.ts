@@ -79,7 +79,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
-    @Output() onRefresh: EventEmitter<any> = new EventEmitter();
 
     private _contactInfoBehaviorSubject = new BehaviorSubject<ContactInfoDto>(ContactInfoDto.fromJS({}));
     private _personContactInfoBehaviorSubject = new BehaviorSubject<PersonContactInfoDto>(PersonContactInfoDto.fromJS({}));
@@ -418,6 +417,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     refresh(event) {
-        this.onRefresh.emit(event);
+        this.onInvalidate.emit(event);
     }
 }
