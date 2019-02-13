@@ -94,6 +94,16 @@
             display: inline-block;
         }
     }
+
+    @media (max-width: 768px) {
+        .m-dropdown__wrapper {
+            left: auto;
+            right: 0;
+            .m-nav .m-nav__item > .m-nav__link {
+                table-layout: auto;
+            }
+        }
+    }
 }
 
 /deep/ body.lend-space {

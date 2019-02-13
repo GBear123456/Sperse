@@ -87,6 +87,16 @@
 
     <div [hidden]="showViewerType !== XML_VIEWER" class="xmlContainer" #xmlContainer></div>
 
+    <div *ngIf="showViewerType === ARCHIVE_VIEWER" class="archiveContainer">
+        <h3>Content:</h3>
+        <dx-tree-list
+            [dataSource]="archiveFiles$ | async"
+            keyExpr="name">
+            <dxi-column dataField="name"></dxi-column>
+            <dxi-column dataField="date"></dxi-column>
+        </dx-tree-list>
+    </div>
+
     <vg-player *ngIf="showViewerType == VIDEO_VIEWER">
         <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
             <source src="{{currentDocumentURL}}">

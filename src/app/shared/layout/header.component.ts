@@ -3,6 +3,8 @@ import { Component, Injector, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 /** Application imports */
@@ -35,6 +37,7 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     unreadChatMessageCount = 0;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     chatConnected = false;
+    userCompany$: Observable<string>;
     dropdownMenuItems: UserDropdownMenuItemModel[] = [
         {
             name: this.l('BackToMyAccount'),
@@ -109,7 +112,8 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
         private _abpSessionService: AbpSessionService,
         private _profileServiceProxy: ProfileServiceProxy,
         public userManagementService: UserManagementService,
-        public layoutService: LayoutService
+        public layoutService: LayoutService,
+        private commonUserInfoService: CommonUserInfoServiceProxy
     ) {
         super(injector);
     }
@@ -117,7 +121,9 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     ngOnInit() {
         this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled === false);
         this.currentLanguage = this.localization.currentLanguage;
-
+        this.userCompany$ = this.commonUserInfoService.getCompany().pipe(
+            map(x => _.isEqual(x, {}) ? null : x)
+        );
         let tenant = this.appSession.tenant;
         if (tenant && tenant.customLayoutType && tenant.customLayoutType != TenantLoginInfoDtoCustomLayoutType.Default)
             this.customLayoutType = _.kebabCase(tenant.customLayoutType);
