@@ -26,6 +26,7 @@ body.lend-space app-header dx-nav-bar .dx-item.dx-tab .dx-menu-item-text {
 }
 body.lend-space .m-dropdown__arrow {
   color: #313131 !important;
+  right: 6px !important;
 }
 body.lend-space .page-header.navbar .page-top #m_header_topbar .m-dropdown__header {
   box-shadow: none !important;
