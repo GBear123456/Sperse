@@ -23,7 +23,9 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
     isImpersonatedLogin = this.abpSessionService.impersonatorUserId > 0;
     shownLoginInfo: { fullName, email, tenantName?};
     recentlyLinkedUsers: LinkedUserDto[];
-    hasPlatformPermissions: boolean;
+    hasPlatformPermissions = (this.feature.isEnabled('CFO') && this.permission.isGranted('Pages.CFO')) ||
+                             (this.feature.isEnabled('CRM') && this.permission.isGranted('Pages.CRM')) ||
+                             (this.feature.isEnabled('Admin') && this.permission.isGranted('Pages.Administration.Users'));
     menuItemTypes = UserDropdownMenuItemType;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = [
@@ -109,10 +111,6 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
         super(injector);
         this.impersonationService = injector.get(ImpersonationService);
         this.commonUserInfoService = injector.get(CommonUserInfoServiceProxy);
-        this.hasPlatformPermissions =
-            (this.feature.isEnabled('CFO') && this.permission.isGranted('Pages.CFO')) ||
-            (this.feature.isEnabled('CRM') && this.permission.isGranted('Pages.CRM')) ||
-            (this.feature.isEnabled('Admin') && this.permission.isGranted('Pages.Administration.Users'));
     }
 
     ngOnInit() {
