@@ -181,7 +181,9 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
     }
 
     applyOffer(offer: OfferDto) {
-        this.offersService.applyOffer(offer);
+        this.category$.subscribe(
+            category => this.offersService.applyOffer(offer, category === OfferFilterCategory.CreditCards)
+        );
     }
 
     getCreditScore(creditScores: CreditScores[]): CreditScoreInterface {

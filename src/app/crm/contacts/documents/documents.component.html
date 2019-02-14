@@ -101,7 +101,7 @@
         </dx-tree-list>
     </div>
 
-    <vg-player *ngIf="showViewerType == VIDEO_VIEWER">
+    <vg-player *ngIf="showViewerType == documentViewerTypes.VIDEO">
         <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
             <source src="{{currentDocumentURL}}">
         </video>

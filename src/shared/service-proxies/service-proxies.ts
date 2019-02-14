@@ -14221,7 +14221,7 @@ export class LeadServiceProxy {
      * @model (optional) 
      * @return Success
      */
-    submitContactUsRequest(model: SubmitContactUsRequestInput | null | undefined): Observable<void> {
+    submitContactUsRequest(model: SubmitContactUsRequestInput | null | undefined): Observable<SubmitContactUsRequestOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitContactUsRequest";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -14233,6 +14233,7 @@ export class LeadServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -14243,14 +14244,14 @@ export class LeadServiceProxy {
                 try {
                     return this.processSubmitContactUsRequest(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<SubmitContactUsRequestOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<SubmitContactUsRequestOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSubmitContactUsRequest(response: HttpResponseBase): Observable<void> {
+    protected processSubmitContactUsRequest(response: HttpResponseBase): Observable<SubmitContactUsRequestOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14259,14 +14260,17 @@ export class LeadServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SubmitContactUsRequestOutput.fromJS(resultData200) : new SubmitContactUsRequestOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<SubmitContactUsRequestOutput>(<any>null);
     }
 
     /**
@@ -46093,6 +46097,8 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
     phoneExt!: string | undefined;
     comments!: string | undefined;
     sourceCode!: string | undefined;
+    channelCode!: string | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: ISubmitContactUsRequestInput) {
         if (data) {
@@ -46114,6 +46120,8 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
             this.phoneExt = data["phoneExt"];
             this.comments = data["comments"];
             this.sourceCode = data["sourceCode"];
+            this.channelCode = data["channelCode"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -46135,6 +46143,8 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
         data["phoneExt"] = this.phoneExt;
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
+        data["channelCode"] = this.channelCode;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -46149,6 +46159,44 @@ export interface ISubmitContactUsRequestInput {
     phoneExt: string | undefined;
     comments: string | undefined;
     sourceCode: string | undefined;
+    channelCode: string | undefined;
+    affiliateCode: string | undefined;
+}
+
+export class SubmitContactUsRequestOutput implements ISubmitContactUsRequestOutput {
+    contactId!: number | undefined;
+
+    constructor(data?: ISubmitContactUsRequestOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+        }
+    }
+
+    static fromJS(data: any): SubmitContactUsRequestOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitContactUsRequestOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        return data; 
+    }
+}
+
+export interface ISubmitContactUsRequestOutput {
+    contactId: number | undefined;
 }
 
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
@@ -46164,6 +46212,8 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     phoneExt!: string | undefined;
     comments!: string | undefined;
     sourceCode!: string | undefined;
+    channelCode!: string | undefined;
+    affiliateCode!: string | undefined;
 
     constructor(data?: ISubmitTenantCreationRequestInput) {
         if (data) {
@@ -46195,6 +46245,8 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
             this.phoneExt = data["phoneExt"];
             this.comments = data["comments"];
             this.sourceCode = data["sourceCode"];
+            this.channelCode = data["channelCode"];
+            this.affiliateCode = data["affiliateCode"];
         }
     }
 
@@ -46223,6 +46275,8 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
         data["phoneExt"] = this.phoneExt;
         data["comments"] = this.comments;
         data["sourceCode"] = this.sourceCode;
+        data["channelCode"] = this.channelCode;
+        data["affiliateCode"] = this.affiliateCode;
         return data; 
     }
 }
@@ -46240,6 +46294,8 @@ export interface ISubmitTenantCreationRequestInput {
     phoneExt: string | undefined;
     comments: string | undefined;
     sourceCode: string | undefined;
+    channelCode: string | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class InterestDto implements IInterestDto {
@@ -46288,6 +46344,7 @@ export interface IInterestDto {
 
 export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationRequestOutput {
     leadRequestXref!: string | undefined;
+    contactId!: number | undefined;
     paymentPeriodType!: SubmitTenantCreationRequestOutputPaymentPeriodType | undefined;
     totalMonthlyAmount!: number | undefined;
     trialDayCount!: number | undefined;
@@ -46304,6 +46361,7 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
     init(data?: any) {
         if (data) {
             this.leadRequestXref = data["leadRequestXref"];
+            this.contactId = data["contactId"];
             this.paymentPeriodType = data["paymentPeriodType"];
             this.totalMonthlyAmount = data["totalMonthlyAmount"];
             this.trialDayCount = data["trialDayCount"];
@@ -46320,6 +46378,7 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadRequestXref"] = this.leadRequestXref;
+        data["contactId"] = this.contactId;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["totalMonthlyAmount"] = this.totalMonthlyAmount;
         data["trialDayCount"] = this.trialDayCount;
@@ -46329,6 +46388,7 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
 
 export interface ISubmitTenantCreationRequestOutput {
     leadRequestXref: string | undefined;
+    contactId: number | undefined;
     paymentPeriodType: SubmitTenantCreationRequestOutputPaymentPeriodType | undefined;
     totalMonthlyAmount: number | undefined;
     trialDayCount: number | undefined;
@@ -48541,6 +48601,8 @@ export class GetAllInput implements IGetAllInput {
     overallRating!: number | undefined;
     issuingBank!: string | undefined;
     campaignIds!: number[] | undefined;
+    sortOrderType!: GetAllInputSortOrderType | undefined;
+    topCount!: number | undefined;
     includeEmpty!: boolean | undefined;
 
     constructor(data?: IGetAllInput) {
@@ -48583,6 +48645,8 @@ export class GetAllInput implements IGetAllInput {
                 for (let item of data["campaignIds"])
                     this.campaignIds.push(item);
             }
+            this.sortOrderType = data["sortOrderType"];
+            this.topCount = data["topCount"];
             this.includeEmpty = data["includeEmpty"] !== undefined ? data["includeEmpty"] : true;
         }
     }
@@ -48622,6 +48686,8 @@ export class GetAllInput implements IGetAllInput {
             for (let item of this.campaignIds)
                 data["campaignIds"].push(item);
         }
+        data["sortOrderType"] = this.sortOrderType;
+        data["topCount"] = this.topCount;
         data["includeEmpty"] = this.includeEmpty;
         return data; 
     }
@@ -48646,6 +48712,8 @@ export interface IGetAllInput {
     overallRating: number | undefined;
     issuingBank: string | undefined;
     campaignIds: number[] | undefined;
+    sortOrderType: GetAllInputSortOrderType | undefined;
+    topCount: number | undefined;
     includeEmpty: boolean | undefined;
 }
 
@@ -60508,6 +60576,11 @@ export enum GetAllInputTargetAudience {
     Consumer = "Consumer", 
     Business = "Business", 
     Students = "Students", 
+}
+
+export enum GetAllInputSortOrderType {
+    Best = "Best", 
+    Newest = "Newest", 
 }
 
 export enum OfferDtoSystemType {

@@ -17,7 +17,7 @@
             </div>
 
             <ul class="row cards-list">
-                <ng-container *ngFor="let cardOfferGroup of filteredGroup">
+                <ng-container *ngFor="let cardOfferGroup of filteredGroup.slice(0, -1)">
                     <li class="col-md-3 col-sm-4 cards-item" *ngIf="cardOfferGroup.offerCollection != 'Best'">
                         <a class="cards-item-wrap"
                            (click)="openOffers(cardOfferGroup)">
@@ -63,7 +63,7 @@
                     <div class="col-md-9 col-sm-8 offer-collection">
                         <h2>Top results by category</h2>
                         <div class="row" *ngIf="(cards && cards.length); else noCards">
-                            <div class="w-100 mb-5">
+                            <div class="w-100 mb-5" [ngClass]="{hidden: !selectedOfferGroup}">
                                 <div class="col-12 text-center">
                                     <button class="applyButton" (click)="openOffers(selectedOfferGroup)">
                                         View all cards in this category
@@ -94,7 +94,7 @@
                                 </div>
                             </div>
 
-                            <div class="w-100 mt-5">
+                            <div class="w-100 mt-5" [ngClass]="{hidden: !selectedOfferGroup}">
                                 <div class="col-12 text-center">
                                     <button class="applyButton" (click)="openOffers(selectedOfferGroup)">
                                         View all cards in this category
