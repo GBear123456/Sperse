@@ -28,6 +28,8 @@ import JSONFormatter from 'json-formatter-js';
 import '@node_modules/ng2-image-viewer/imageviewer.js';
 import * as jszip from 'jszip';
 import * as Rar from 'rarjs/rar.js';
+import { Papa } from 'ngx-papaparse';
+import { PapaParseResult } from 'ngx-papaparse/lib/interfaces/papa-parse-result';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -82,11 +84,13 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     public noDataText = '';
     public validTextExtensions: String[] = ['txt', 'text'];
     public validXmlExtensions: String[] = ['xml'];
+    public validCsvExtensions: String[] = ['csv'];
     public validWopiExtensions: String[] = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'dot', 'dotx', 'docm', 'odt', 'pot', 'potm', 'pps', 'ppsm', 'pptm', 'pptx', 'ppsx', 'odp', 'xlsm', 'xlsb', 'ods'];
     public validVideoExtensions: String[] = ['mp4', 'mov'];
     public validArchiveExtensions: String[] = ['zip', 'rar'];
     public validImageExtensions: String[] = ['jpeg', 'png', 'pdf'];
     public viewerToolbarConfig: any = [];
+    public parsedCsv: any;
     archiveFiles$: Observable<{ name: string, data: Date }[]>;
 
     constructor(injector: Injector,
@@ -99,7 +103,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         private printerService: PrinterService,
         private cacheService: CacheService,
         private renderer: Renderer2,
-        public documentsService: DocumentsService
+        public documentsService: DocumentsService,
+        private csvParser: Papa
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -449,6 +454,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                                     this.previewContent = (
                                         viewerType === DocumentViewerType.TEXT
                                         || viewerType === DocumentViewerType.XML
+                                        || viewerType === DocumentViewerType.CSV
                                     )
                                         ? atob(content)
                                         : content;
@@ -468,6 +474,15 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                                             this.xmlContainerElementRef.nativeElement,
                                             new JSONFormatter(json, 2).render()
                                         );
+                                    }
+                                    if (viewerType === DocumentViewerType.CSV) {
+                                        this.csvParser.parse(this.previewContent, {
+                                            complete: (result: PapaParseResult) => {
+                                                if (!result.errors || !result.errors.length) {
+                                                    this.parsedCsv = result.data;
+                                                }
+                                            }
+                                        });
                                     }
                                 });
                                 reader.readAsDataURL(blob);
@@ -506,6 +521,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         let viewerType = DocumentViewerType.UNKNOWN;
         if (this.validWopiExtensions.indexOf(extension) >= 0) {
             viewerType = DocumentViewerType.WOPI;
+        } else if (this.validCsvExtensions.indexOf(extension) >= 0) {
+            viewerType = DocumentViewerType.CSV;
         } else if (this.validImageExtensions.indexOf(extension) >= 0) {
             viewerType = DocumentViewerType.IMAGE;
         } else if (this.validTextExtensions.indexOf(extension) >= 0) {

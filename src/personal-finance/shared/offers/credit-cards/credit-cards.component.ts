@@ -50,7 +50,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
 
     offerCollection$: Observable<any> = combineLatest(
         this.route.params,
-        this.route.queryParams        
+        this.route.queryParams
     ).pipe(
         map(([params, queryParams]) => ({...params, ...queryParams}))
     );
@@ -91,7 +91,6 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
             }));
         });
 
-        /** @todo avoid two request on init, use frontend filtering for the first time */
         const creditCards$ = this.offerCollection$.pipe(
             takeUntil(this.lifecycleSubjectService.destroy$),
             tap(collectionName => this.selectedOfferGroup = this.creditCardCollection.filter(item => item.offerCollection == collectionName.group)[0]),

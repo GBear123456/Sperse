@@ -101,7 +101,13 @@
         </dx-tree-list>
     </div>
 
-    <vg-player *ngIf="showViewerType == documentViewerTypes.VIDEO">
+    <dx-data-grid
+        *ngIf="showViewerType === documentViewerTypes.CSV && parsedCsv && parsedCsv.length"
+        [showColumnHeaders]="false"
+        [dataSource]="parsedCsv">
+    </dx-data-grid >
+
+    <vg-player *ngIf="showViewerType === documentViewerTypes.VIDEO">
         <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
             <source src="{{currentDocumentURL}}">
         </video>
