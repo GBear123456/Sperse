@@ -1,9 +1,13 @@
-import {Component, Injector, OnInit} from '@angular/core';
-import {AppComponentBase} from '@shared/common/app-component-base';
+import { Component, Injector, OnInit } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { environment } from 'environments/environment';
+
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { environment } from 'environments/environment';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'articles',
@@ -14,24 +18,32 @@ export class ArticlesComponent extends AppComponentBase implements OnInit {
     articles$: Observable<SafeHtml>;
 
     constructor(injector: Injector,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private offersService: OffersService
     ) {
         super(injector);
     }
 
     ngOnInit() {
         this.startLoading(true);
-        this.articles$ = from(
-            $.ajax({
-                url: environment.LENDSPACE_DOMAIN + '/documents/articles.html',
-                method: 'GET'
-            })
-        ).pipe(
-            map((html) => {
-                this.finishLoading(true);
-                return this.sanitizer.bypassSecurityTrustHtml(html);
-            })
+        this.offersService.memberInfo$.subscribe(
+            () => {
+                this.articles$ = from(
+                    $.ajax({
+                        url: environment.LENDSPACE_DOMAIN + '/documents/articles.html',
+                        method: 'GET'
+                    })
+                ).pipe(
+                    map((html) => {
+                        html = html.replace('apiUiOrigin', 'apiUiOrigin = "' + AppConsts.remoteServiceBaseUrl + '"');
+                        html = html.replace('applyOfferParams', 'applyOfferParams = "' + this.offersService.memberInfoApplyOfferParams + '"');
+                        html = html.replace('authorization', 'authorization = "Bearer ' + abp.auth.getToken() + '"');
+                        eval(html.match(new RegExp('<script>(.+?)<\/script>', 's')).pop());
+                        this.finishLoading(true);
+                        return this.sanitizer.bypassSecurityTrustHtml(html);
+                    })
+                );
+            }
         );
     }
-
 }
