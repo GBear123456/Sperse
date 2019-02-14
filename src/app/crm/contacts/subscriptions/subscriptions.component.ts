@@ -10,7 +10,7 @@ import {
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { map } from 'rxjs/operators';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { ContactsService } from '../contacts.service';
 
 @Component({
     selector: 'subscriptions',
@@ -28,13 +28,13 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _contactService: ContactServiceProxy,
-        private _clientService: ContactsService,
+        private _contactsService: ContactsService,
         private _orderSubscriptionService: OrderSubscriptionServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
         private _impersonationService: ImpersonationService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        _clientService.invalidateSubscribe((area) => {
+        _contactsService.invalidateSubscribe((area) => {
             if (area == 'subscriptions') {
                 this.refreshData(true);
             }
