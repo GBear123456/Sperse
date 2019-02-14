@@ -315,4 +315,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
             this.message.error(e.message);
         });
     }
+
+    categoryGroupValue(data) {
+        return data.Categories.map(item => item.Name).join(', ');
+    }
 }
