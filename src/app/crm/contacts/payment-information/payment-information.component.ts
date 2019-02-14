@@ -36,7 +36,7 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
         injector: Injector,
         private paymentServiceProxy: PaymentServiceProxy,
         private contactService: ContactServiceProxy,
-        private _clientService: ContactsService,
+        private _contactsService: ContactsService,
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -66,7 +66,7 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
         //     first()
         // );
 
-        this._clientService.invalidateSubscribe((area) => {
+        this._contactsService.invalidateSubscribe((area) => {
             if (area == 'payment-information') {
                 this.payments$.subscribe();
                 this.paymentMethods$.subscribe();
