@@ -64,9 +64,9 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         private lifecycleSubjectService: LifecycleSubjectsService,
         private renderer: Renderer2,
         @Inject(DOCUMENT) private document: any
-    ) { 
+    ) {
         this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
-            let collection = event.url.split('/').pop();  
+            let collection = event.url.split('/').pop();
             this.skipScrollFirstTime = (collection == 'home') || !GetAllInputItemOfOfferCollection[collection] && (collection != 'NewestOffers');
         });
     }
