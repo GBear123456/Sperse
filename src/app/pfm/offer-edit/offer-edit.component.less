@@ -2,7 +2,43 @@
 
     header {
         padding: 0 70px 0 10px;
-        justify-content: space-between;
+        img {
+            max-width: 200px;
+            margin-right: 10px;
+        }
+        /deep/ inplace-edit {
+            .inplace-edit-view-mode {
+                display: flex;
+                align-items: center;
+                .link {
+                    display: flex;
+                    font-size: 22px;
+                }
+                dx-text-box input {
+                    font-size: 22px;
+                }
+            }
+            .inplace-edit-edit-mode {
+                display: flex;
+                font-size: 22px;
+                background: transparent;
+                .dx-texteditor {
+                    background: transparent;
+                    .dx-texteditor-input {
+                        background: transparent;
+                        font-size: 22px;
+                    }
+                }
+                dx-button {
+                    top: 0;
+                    background: transparent;
+                }
+            }
+        }
+
+        button {
+            margin-left: auto;
+        }
     }
     /deep/ .mat-sidenav-container {
         height: calc(100vh - 158px) !important;

@@ -3,8 +3,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { PersonContactServiceProxy, UpdatePersonInfoInput } from 'shared/service-proxies/service-proxies';
 
-import * as _ from 'underscore';
-
 @Component({
     selector: 'person-info',
     templateUrl: './person-info.component.html',
@@ -43,8 +41,7 @@ export class PersonInfoComponent extends AppComponentBase {
         person[propName] = value;
         if (this.data.id)
             this._personContactService.updatePersonInfo(
-                UpdatePersonInfoInput.fromJS(
-                    _.extend({id: this.data.id}, person))
+                UpdatePersonInfoInput.fromJS({...{id: this.data.id}, ...person})
             ).subscribe(result => {
                 this.data.fullName = result.fullName;
             });

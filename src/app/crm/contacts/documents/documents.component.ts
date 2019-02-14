@@ -539,7 +539,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     private getFilesInfoFromRarBlob(blob: Blob) {
         return from(Rar.fromFile(blob)).pipe(
-            tap(x => console.log(x)),
             pluck('entries'),
             map((archives: Rar.RarEntry[]) => archives.map((archive: Rar.RarEntry) => ({
                 name: archive.name,

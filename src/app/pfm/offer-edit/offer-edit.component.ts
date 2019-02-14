@@ -11,6 +11,7 @@ import { startCase } from 'lodash';
 /** Application imports */
 import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
 import { RootComponent } from 'root.components';
+import { ExtendOfferDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'offer-edit',
@@ -39,6 +40,11 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             label: 'Flags',
             route: 'flags'
         }
+    ];
+    detailsToHide = [
+        'name',
+        'logoUrl',
+        'customName'
     ];
     constructor(
         injector: Injector,
@@ -126,7 +132,19 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        this.offerManagementService.extend(this.offerEditForm.value).subscribe();
+        this.offerManagementService.extend(ExtendOfferDto.fromJS(this.offerEditForm.value)).subscribe();
+    }
+
+    getInplaceEditData() {
+        const customNameControl = this.offerEditForm.get('customName');
+        const nameControl = this.offerEditForm.get('name');
+        return {
+            value: customNameControl && customNameControl.value || nameControl && nameControl.value
+        };
+    }
+
+    updateCustomName(value: string) {
+        this.offerEditForm.get('customName').patchValue(value);
     }
 
     ngOnDestroy() {

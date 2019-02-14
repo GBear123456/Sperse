@@ -1,4 +1,13 @@
-import { Component, Injector, Input, Output, ViewChild, AfterViewInit, EventEmitter } from '@angular/core';
+import {
+    Component,
+    Injector,
+    Input,
+    Output,
+    ViewChild,
+    AfterViewInit,
+    EventEmitter,
+    ChangeDetectorRef
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
@@ -36,7 +45,8 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
 
     constructor(
         injector: Injector,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private changeDetector: ChangeDetectorRef
     ) {
         super(injector);
     }
@@ -69,7 +79,7 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
         }
     }
 
-    setEditModeEnabled(isEnabled: boolean, event = undefined) {
+    setEditModeEnabled(isEnabled: boolean, event?: MouseEvent) {
         this._clickCounter++;
         clearTimeout(this._clickTimeout);
         this._clickTimeout = setTimeout(() => {
@@ -85,6 +95,7 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
                 this.data.value = this.valueOriginal;
             }
             this._clickCounter = 0;
+            this.changeDetector.detectChanges();
         }, 250);
     }
 
