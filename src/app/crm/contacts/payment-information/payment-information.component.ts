@@ -36,7 +36,7 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
         injector: Injector,
         private paymentServiceProxy: PaymentServiceProxy,
         private contactService: ContactServiceProxy,
-        private _contactsService: ContactsService,
+        private _contactsService: ContactsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
