@@ -79,7 +79,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
             this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection)).sort(this.sortCollection.bind(this, itemOfOfferCollections));
             this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort(this.sortCollection.bind(this, itemOfOfferCollections));
             /** @todo fix in new version with the getting the whole categories from backend */
-            this.filteredGroup.push(OfferDto.fromJS({
+            this.filteredGroup.unshift(OfferDto.fromJS({
                 name: 'Newest Offers',
                 offerCollection: 'NewestOffers'
             }));
@@ -115,7 +115,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
                 category: OfferFilterCategory.CreditCards,
                 country: 'US',
                 isOfferCollection: isOfferCollection,
-                itemOfOfferCollection: GetAllInputItemOfOfferCollection[collection],
+                itemOfOfferCollection: (collection as any) === 'NewestOffers' ? 'Newest' : GetAllInputItemOfOfferCollection[collection],
                 sortOrderType:  (collection as any) === 'NewestOffers' ? GetAllInputSortOrderType.Newest : GetAllInputSortOrderType.Best,
                 topCount: (collection as any) === 'NewestOffers' ? 30 : undefined
             }))),

@@ -17,7 +17,7 @@
             </div>
 
             <ul class="row cards-list">
-                <ng-container *ngFor="let cardOfferGroup of filteredGroup.slice(0, -1)">
+                <ng-container *ngFor="let cardOfferGroup of filteredGroup.slice(1)">
                     <li class="col-md-3 col-sm-4 cards-item" *ngIf="cardOfferGroup.offerCollection != 'Best'">
                         <a class="cards-item-wrap"
                            (click)="openOffers(cardOfferGroup)">
