@@ -101,9 +101,8 @@ export class TopBarComponent extends AppComponentBase {
                             availableWidth -= item['length'];
                         return availableWidth >= 0;
                     });
-
-                    this.navbarItems = this.menu.items.slice(0, --switchItemIndex);
-                    this.adaptiveMenuItems = this.menu.items.slice(switchItemIndex);
+                    this.navbarItems = switchItemIndex ? this.menu.items.slice(0, --switchItemIndex): [];
+                    this.adaptiveMenuItems = switchItemIndex ? this.menu.items.slice(switchItemIndex): this.menu.items;
                 } else
                     this.navbarItems = this.menu.items;
             }, 300);

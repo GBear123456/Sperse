@@ -13,6 +13,17 @@
         .page-header-inner {
             width: 100%;
             padding: 0px 14px;
+
+            @media (max-width: 580px) {
+                .page-logo img {
+                    width: 120px;
+                }
+            }
+            @media (max-width: 480px) {
+                .m-topbar__notifications {
+                    display: none;
+                }
+            }
         }
 
         .page-top {

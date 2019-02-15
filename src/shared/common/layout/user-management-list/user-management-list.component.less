@@ -17,7 +17,10 @@ user-management-list {
             .m-topbar__nav.m-nav {
                 display: flex;
                 align-items: center;
-                // padding-top: 6px;
+
+                @media (max-width: 380px) {
+                    margin: 0;
+                }
 
                 /deep/ .m-nav__item {
                     padding: 0 14px !important;

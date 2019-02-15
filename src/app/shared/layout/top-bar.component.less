@@ -4,13 +4,18 @@
     display: flex;
     padding-left: 20px;
     justify-content: flex-start;
-    width: calc(~"100% - 428px");
+    width: calc(~"100% - 430px");
     margin-left: 220px;
     white-space: nowrap;
     height: 75px;
 
-    @media (max-width: 565px) {
-        width: calc(~"100% - 200px") !important;
+    @media (max-width: 580px) {
+        width: calc(~"100% - 320px");
+        margin-left: 120px;
+    }
+
+    @media (max-width: 480px) {
+        width: calc(~"100% - 200px");
     }
 
     .top-bar-nav {
