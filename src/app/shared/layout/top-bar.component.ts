@@ -81,8 +81,13 @@ export class TopBarComponent extends AppComponentBase {
     }
 
     navigate(event) {
-        if (event.itemData.route)
-            this.router.navigate([event.itemData.route]);
+        let route = event.itemData.route;
+        if (route) {
+            if (route.startsWith('/'))
+                this.router.navigate([event.itemData.route]);
+            else 
+                window.open(route, '_blank');
+        }
     }
 
     updateNavMenu(forced = false) {

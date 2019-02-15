@@ -49,7 +49,8 @@ export class PlatformSelectComponent extends AppComponentBase {
     changeModule(event) {
         let switchModule = this.modules[event.itemIndex];
         if ((this.module !== switchModule.name || this.uri !== switchModule.uri) &&
-            this._appService.isModuleActive(switchModule.name)
+            this._appService.isModuleActive(switchModule.name) &&
+            !this.checkModuleCustomHandler(switchModule)
         ) {
             this.module = switchModule.name;
             this.uri = switchModule.uri;
@@ -64,6 +65,14 @@ export class PlatformSelectComponent extends AppComponentBase {
                 this._dropDown.close();
             });
         }
+    }
+
+    checkModuleCustomHandler(module) {
+        if (module.name == 'PFM') {
+            let moduleConfig = this._appService.getModuleConfig(module.name);
+            if (!this.permission.isGranted('Pages.PFM.Applications.ManageOffers'))
+                return window.open(location.origin + '/personal-finance', '_blank');
+        }        
     }
 
     isDisabled(item) {
