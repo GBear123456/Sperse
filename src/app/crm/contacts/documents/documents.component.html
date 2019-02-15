@@ -102,10 +102,13 @@
     </div>
 
     <dx-data-grid
+        id="gridContainer"
         *ngIf="showViewerType === documentViewerTypes.CSV && parsedCsv && parsedCsv.length"
+        [columnAutoWidth]="true"
+        [pager]="defaultGridPagerConfig"
         [showColumnHeaders]="false"
         [dataSource]="parsedCsv">
-    </dx-data-grid >
+    </dx-data-grid>
 
     <vg-player *ngIf="showViewerType === documentViewerTypes.VIDEO">
         <video [vgMedia]="media" #media id="singleVideo" preload="auto" controls>
