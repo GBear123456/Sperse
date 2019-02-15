@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { GetNotificationSettingsOutput, NotificationServiceProxy, NotificationSubscriptionDto, UpdateNotificationSettingsInput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'lodash';
 import { finalize } from 'rxjs/operators';
