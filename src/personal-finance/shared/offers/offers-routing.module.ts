@@ -13,7 +13,7 @@ import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers
         RouterModule.forChild([
             {
                 path: 'credit-cards/home',
-                redirectTo: 'credit-cards/home/Best'
+                redirectTo: 'credit-cards/home/SpecialDeals'
             },
             {
                 path: 'credit-cards/home/:group',
