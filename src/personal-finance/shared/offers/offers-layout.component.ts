@@ -686,4 +686,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     showNextItems() {
         this.visibleOffersCount += this.defaultVisibleOffersCount;
     }
+
+    getFilterScrollHeight() {
+        return window.innerHeight - 155;
+    }
 }
