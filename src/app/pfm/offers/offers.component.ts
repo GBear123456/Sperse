@@ -236,8 +236,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
 
 
     ngAfterViewInit(): void {
-        this.showCompactRowsHeight();
-
         let rootComponent = this.getRootComponent();
         rootComponent.overflowHidden(true);
     }
