@@ -537,10 +537,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.starsListComponent.toggle();
     }
 
-    filterByName(filter: FilterModel) {
-        return FilterHelpers.filterByClientName(filter);
-    }
-
     filterByStates(filter: FilterModel) {
         return FilterHelpers.filterByStates(filter);
     }

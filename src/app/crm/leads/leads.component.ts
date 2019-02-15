@@ -617,10 +617,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataGrid.instance.updateDimensions();
     }
 
-    filterByName(filter: FilterModel) {
-        return FilterHelpers.filterByClientName(filter);
-    }
-
     filterByStages(filter: FilterModel) {
         let data = {};
         if (filter.items.element) {

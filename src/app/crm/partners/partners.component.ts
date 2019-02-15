@@ -551,10 +551,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.starsListComponent.toggle();
     }
 
-    filterByName(filter: FilterModel) {
-        return FilterHelpers.filterByClientName(filter);
-    }
-
     filterByStates(filter: FilterModel) {
         return FilterHelpers.filterByStates(filter);
     }
