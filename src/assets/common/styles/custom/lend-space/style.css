@@ -341,6 +341,7 @@ body.lend-space .notification-header .m-dropdown__header {
   padding: 20px 35px;
 }
 body.lend-space .notification-header .m-dropdown__header .tenantName {
+  font-family: Poppins;
   font-size: 16px;
   letter-spacing: 0.2px;
   color: #fff;
@@ -366,6 +367,10 @@ body.lend-space .notification-header .m-dropdown__body .row {
     width: 433px !important;
   }
 }
+body.lend-space .notification-header,
+body.lend-space .notification-modal {
+  font-family: Poppins;
+}
 body.lend-space .notification-header a,
 body.lend-space .notification-modal a {
   font-size: 13px;
@@ -373,10 +378,16 @@ body.lend-space .notification-modal a {
   letter-spacing: 0.2px;
   color: #3463ae;
 }
+body.lend-space notificationsettingsmodal .mat-dialog-header input,
+body.lend-space notificationsettingsmodal .mat-dialog-actions button,
+body.lend-space notificationsettingsmodal h4,
+body.lend-space notificationsettingsmodal .help-block,
+body.lend-space notificationsettingsmodal .m-checkbox,
+body.lend-space notificationsettingsmodal .mat-button-wrapper span {
+  font-family: Poppins !important;
+}
 body.lend-space .m-scrollable {
   font-family: Poppins;
-}
-body.lend-space .m-scrollable .mCSB_container {
   padding-left: 35px;
 }
 body.lend-space .m-scrollable .m-list-timeline__items:before {

@@ -272,6 +272,7 @@ body.lend-space {
             background: #313131;
             padding: 20px 35px;
             .tenantName {
+                font-family: Poppins;
                 font-size: 16px;
                 letter-spacing: 0.2px;
                 color: #fff;
@@ -300,6 +301,7 @@ body.lend-space {
 
     .notification-header,
     .notification-modal {
+        font-family: Poppins;
         & a {
             font-size: 13px;
             font-weight: 600;
@@ -308,11 +310,20 @@ body.lend-space {
         }
     }
 
+    notificationsettingsmodal {
+        .mat-dialog-header input,
+        .mat-dialog-actions button,
+        h4,
+        .help-block,
+        .m-checkbox,
+        .mat-button-wrapper span {
+            font-family: Poppins !important;
+        }
+    }
+
     .m-scrollable {
         font-family: Poppins;
-        .mCSB_container {
-            padding-left: 35px;
-        }
+        padding-left: 35px;
         .m-list-timeline__items {
             &:before {
                 display: none;
