@@ -142,62 +142,6 @@ export class AccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    register(input: RegisterInput | null | undefined): Observable<RegisterOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/Account/Register";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRegister(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRegister(<any>response_);
-                } catch (e) {
-                    return <Observable<RegisterOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<RegisterOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processRegister(response: HttpResponseBase): Observable<RegisterOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? RegisterOutput.fromJS(resultData200) : new RegisterOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<RegisterOutput>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
     sendPasswordResetCode(input: SendPasswordResetCodeInput | null | undefined): Observable<SendPasswordResetCodeOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Account/SendPasswordResetCode";
         url_ = url_.replace(/[?&]$/, "");
@@ -27940,102 +27884,6 @@ export interface IResolveTenantIdInput {
     c: string | undefined;
 }
 
-export class RegisterInput implements IRegisterInput {
-    name!: string;
-    surname!: string;
-    userName!: string;
-    emailAddress!: string;
-    password!: string;
-    captchaResponse!: string | undefined;
-    tenantHostType!: RegisterInputTenantHostType | undefined;
-
-    constructor(data?: IRegisterInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.surname = data["surname"];
-            this.userName = data["userName"];
-            this.emailAddress = data["emailAddress"];
-            this.password = data["password"];
-            this.captchaResponse = data["captchaResponse"];
-            this.tenantHostType = data["tenantHostType"];
-        }
-    }
-
-    static fromJS(data: any): RegisterInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new RegisterInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["surname"] = this.surname;
-        data["userName"] = this.userName;
-        data["emailAddress"] = this.emailAddress;
-        data["password"] = this.password;
-        data["captchaResponse"] = this.captchaResponse;
-        data["tenantHostType"] = this.tenantHostType;
-        return data; 
-    }
-}
-
-export interface IRegisterInput {
-    name: string;
-    surname: string;
-    userName: string;
-    emailAddress: string;
-    password: string;
-    captchaResponse: string | undefined;
-    tenantHostType: RegisterInputTenantHostType | undefined;
-}
-
-export class RegisterOutput implements IRegisterOutput {
-    canLogin!: boolean | undefined;
-
-    constructor(data?: IRegisterOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.canLogin = data["canLogin"];
-        }
-    }
-
-    static fromJS(data: any): RegisterOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new RegisterOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["canLogin"] = this.canLogin;
-        return data; 
-    }
-}
-
-export interface IRegisterOutput {
-    canLogin: boolean | undefined;
-}
-
 export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     emailAddress!: string;
     autoDetectTenancy!: boolean | undefined;
@@ -49172,6 +49020,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     maxAnnualIncome!: number | undefined;
     flags!: Flags | undefined;
     states!: string[] | undefined;
+    categories!: Categories[] | undefined;
     description!: string | undefined;
     introAPR!: string | undefined;
     creditScores!: CreditScores2[] | undefined;
@@ -49236,6 +49085,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
                 this.states = [];
                 for (let item of data["states"])
                     this.states.push(item);
+            }
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(item);
             }
             this.description = data["description"];
             this.introAPR = data["introAPR"];
@@ -49318,6 +49172,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             for (let item of this.states)
                 data["states"].push(item);
         }
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item);
+        }
         data["description"] = this.description;
         data["introAPR"] = this.introAPR;
         if (this.creditScores && this.creditScores.constructor === Array) {
@@ -49388,6 +49247,7 @@ export interface IOfferDetailsForEditDto {
     maxAnnualIncome: number | undefined;
     flags: Flags | undefined;
     states: string[] | undefined;
+    categories: Categories[] | undefined;
     description: string | undefined;
     introAPR: string | undefined;
     creditScores: CreditScores2[] | undefined;
@@ -60133,11 +59993,6 @@ export enum IsTenantAvailableOutputState {
     _3 = 3, 
 }
 
-export enum RegisterInputTenantHostType {
-    PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
-}
-
 export enum SendPasswordResetCodeInputTenantHostType {
     PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
@@ -60801,6 +60656,27 @@ export interface IFlags {
     zeroPercentageInterestTransfers: boolean | undefined;
     special: boolean | undefined;
     newest: boolean | undefined;
+}
+
+export enum Categories {
+    PaydayLoans = "PaydayLoans", 
+    PersonalLoans = "PersonalLoans", 
+    Beauty = "Beauty", 
+    InstallmentLoans = "InstallmentLoans", 
+    AutoLoans = "AutoLoans", 
+    Legal = "Legal", 
+    CreditRepair = "CreditRepair", 
+    CreditScore = "CreditScore", 
+    Travel = "Travel", 
+    Jobs = "Jobs", 
+    BusinessLoans = "BusinessLoans", 
+    DebtConsolidation = "DebtConsolidation", 
+    CreditCards = "CreditCards", 
+    MerchantServices = "MerchantServices", 
+    Dating = "Dating", 
+    Miscellaneous = "Miscellaneous", 
+    Crypto = "Crypto", 
+    CreditMonitoring = "CreditMonitoring", 
 }
 
 export enum CreditScores2 {
