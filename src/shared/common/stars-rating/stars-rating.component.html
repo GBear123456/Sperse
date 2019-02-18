@@ -1,0 +1,9 @@
+<ng-container *ngFor="let ratingItem of ratings; let i = index">
+    <i class="fa fa-star"
+       [ngStyle]="{color: color}"
+       [ngClass]="{ 'empty fa-star-o': i + 1 > _currentRating }"
+       (click)="starClick(i)"
+       (mouseover)="onHover(i)"
+       (mouseleave)="onLeave()">
+    </i>
+</ng-container>

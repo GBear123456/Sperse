@@ -21,6 +21,7 @@ import { OffersComponent } from '@app/pfm/offers/offers.component';
 import { PfmRoutingModule } from '@app/pfm/pfm-routing.module';
 import { OfferEditComponent } from '@app/pfm/offer-edit/offer-edit.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
+import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.module';
 
 @NgModule({
     imports: [
@@ -38,16 +39,15 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         MatCheckboxModule,
         MatInputModule,
         MatSelectModule,
-        ItemDetailsLayoutModule
+        ItemDetailsLayoutModule,
+        StarsRatingModule
     ],
     declarations: [
         OffersComponent,
         OfferEditComponent
     ],
-    entryComponents: [
-    ],
-    providers: [
-    ]
+    entryComponents: [],
+    providers: []
 })
 
 export class PfmModule { }

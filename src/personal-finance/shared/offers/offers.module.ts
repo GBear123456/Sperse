@@ -30,6 +30,7 @@ import { BusinessLoansComponent } from '@root/personal-finance/shared/offers/bus
 import { OffersCategoryDetailsComponent } from '@root/personal-finance/shared/offers/offers-category-details/offers-category-details.component';
 import { DebtConsolidationComponent } from '@root/personal-finance/shared/offers/debt-consolidation/debt-consolidation.component';
 import { PersonalFinanceCommonModule } from '../../shared/common/personal-finance-common.module';
+import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.module';
 
 @NgModule({
     imports: [
@@ -45,6 +46,7 @@ import { PersonalFinanceCommonModule } from '../../shared/common/personal-financ
         RoundProgressModule,
         NoDataModule,
         OffersRoutingModule,
+        StarsRatingModule,
         LayoutModule,
         PersonalFinanceCommonModule
     ],

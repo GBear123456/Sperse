@@ -81,6 +81,14 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         'securingType',
         'issuingBank'
     ];
+    ratingDetails = [
+        'overallRating',
+        'interestRating',
+        'feesRating',
+        'benefitsRating',
+        'rewardsRating',
+        'serviceRating'
+    ];
     detailsEnums = {
         cardNetwork: OfferDetailsForEditDtoCardNetwork,
         cardType: OfferDetailsForEditDtoCardType,
@@ -119,7 +127,14 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'campaignUrl',
             'redirectUrl',
         ],
-        'rating': [],
+        'rating': [
+            'overallRating',
+            'interestRating',
+            'feesRating',
+            'benefitsRating',
+            'rewardsRating',
+            'serviceRating'
+        ],
         'attributes': []
     };
     detailColumnClasses = {
@@ -183,6 +198,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         return this.detailsEnums[detailName];
     }
 
+    isRatingDetail(detailName: string): boolean {
+        return this.ratingDetails.indexOf(detailName) >= 0;
+    }
+
     isArray(item: any): boolean {
         return Array.isArray(item);
     }
@@ -208,15 +227,17 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        abp.ui.setBusy();
         const differences = diff(this.initialModel, this.model);
         let changed = {};
-        for (let diff of differences) {
-            changed[diff.path[0]] = this.model[diff.path[0]];
+        if (differences) {
+            abp.ui.setBusy();
+            for (let diff of differences) {
+                changed[diff.path[0]] = this.model[diff.path[0]];
+            }
+            this.offerManagementService.extend(ExtendOfferDto.fromJS(changed))
+                .pipe(finalize(() => abp.ui.clearBusy()))
+                .subscribe();
         }
-        this.offerManagementService.extend(ExtendOfferDto.fromJS(changed))
-            .pipe(finalize(() => abp.ui.clearBusy()))
-            .subscribe();
     }
 
     getInplaceEditData() {

@@ -23,7 +23,7 @@ export class LendspaceWelcome2Component extends AppComponentBase implements OnIn
         {
             name: 'CreditCards',
             button: 'SeeOffers',
-            router: 'personal-finance/offers/credit-cards/home/Best',
+            router: 'personal-finance/offers/credit-cards/home',
             hidden: false
         },
         {
