@@ -142,62 +142,6 @@ export class AccountServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    register(input: RegisterInput | null | undefined): Observable<RegisterOutput> {
-        let url_ = this.baseUrl + "/api/services/Platform/Account/Register";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRegister(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRegister(<any>response_);
-                } catch (e) {
-                    return <Observable<RegisterOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<RegisterOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processRegister(response: HttpResponseBase): Observable<RegisterOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? RegisterOutput.fromJS(resultData200) : new RegisterOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<RegisterOutput>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
     sendPasswordResetCode(input: SendPasswordResetCodeInput | null | undefined): Observable<SendPasswordResetCodeOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Account/SendPasswordResetCode";
         url_ = url_.replace(/[?&]$/, "");
@@ -10817,7 +10761,7 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getContactsByRegion(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCustomersByRegionOutput[]> {
+    getContactsByRegion(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetContactsByRegionOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByRegion?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
@@ -10841,14 +10785,14 @@ export class DashboardServiceProxy {
                 try {
                     return this.processGetContactsByRegion(<any>response_);
                 } catch (e) {
-                    return <Observable<GetCustomersByRegionOutput[]>><any>_observableThrow(e);
+                    return <Observable<GetContactsByRegionOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetCustomersByRegionOutput[]>><any>_observableThrow(response_);
+                return <Observable<GetContactsByRegionOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetContactsByRegion(response: HttpResponseBase): Observable<GetCustomersByRegionOutput[]> {
+    protected processGetContactsByRegion(response: HttpResponseBase): Observable<GetContactsByRegionOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -10862,7 +10806,7 @@ export class DashboardServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(GetCustomersByRegionOutput.fromJS(item));
+                    result200.push(GetContactsByRegionOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -10871,7 +10815,7 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetCustomersByRegionOutput[]>(<any>null);
+        return _observableOf<GetContactsByRegionOutput[]>(<any>null);
     }
 }
 
@@ -27940,102 +27884,6 @@ export interface IResolveTenantIdInput {
     c: string | undefined;
 }
 
-export class RegisterInput implements IRegisterInput {
-    name!: string;
-    surname!: string;
-    userName!: string;
-    emailAddress!: string;
-    password!: string;
-    captchaResponse!: string | undefined;
-    tenantHostType!: RegisterInputTenantHostType | undefined;
-
-    constructor(data?: IRegisterInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.surname = data["surname"];
-            this.userName = data["userName"];
-            this.emailAddress = data["emailAddress"];
-            this.password = data["password"];
-            this.captchaResponse = data["captchaResponse"];
-            this.tenantHostType = data["tenantHostType"];
-        }
-    }
-
-    static fromJS(data: any): RegisterInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new RegisterInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["surname"] = this.surname;
-        data["userName"] = this.userName;
-        data["emailAddress"] = this.emailAddress;
-        data["password"] = this.password;
-        data["captchaResponse"] = this.captchaResponse;
-        data["tenantHostType"] = this.tenantHostType;
-        return data; 
-    }
-}
-
-export interface IRegisterInput {
-    name: string;
-    surname: string;
-    userName: string;
-    emailAddress: string;
-    password: string;
-    captchaResponse: string | undefined;
-    tenantHostType: RegisterInputTenantHostType | undefined;
-}
-
-export class RegisterOutput implements IRegisterOutput {
-    canLogin!: boolean | undefined;
-
-    constructor(data?: IRegisterOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.canLogin = data["canLogin"];
-        }
-    }
-
-    static fromJS(data: any): RegisterOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new RegisterOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["canLogin"] = this.canLogin;
-        return data; 
-    }
-}
-
-export interface IRegisterOutput {
-    canLogin: boolean | undefined;
-}
-
 export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     emailAddress!: string;
     autoDetectTenancy!: boolean | undefined;
@@ -41606,12 +41454,12 @@ export interface IGetCustomersByCompanySizeOutput {
     companySizeRange: string | undefined;
 }
 
-export class GetCustomersByRegionOutput implements IGetCustomersByRegionOutput {
-    customerCount!: number | undefined;
+export class GetContactsByRegionOutput implements IGetContactsByRegionOutput {
     countryId!: string | undefined;
     stateId!: string | undefined;
+    count!: number | undefined;
 
-    constructor(data?: IGetCustomersByRegionOutput) {
+    constructor(data?: IGetContactsByRegionOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -41622,32 +41470,32 @@ export class GetCustomersByRegionOutput implements IGetCustomersByRegionOutput {
 
     init(data?: any) {
         if (data) {
-            this.customerCount = data["customerCount"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
+            this.count = data["count"];
         }
     }
 
-    static fromJS(data: any): GetCustomersByRegionOutput {
+    static fromJS(data: any): GetContactsByRegionOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetCustomersByRegionOutput();
+        let result = new GetContactsByRegionOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerCount"] = this.customerCount;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
+        data["count"] = this.count;
         return data; 
     }
 }
 
-export interface IGetCustomersByRegionOutput {
-    customerCount: number | undefined;
+export interface IGetContactsByRegionOutput {
     countryId: string | undefined;
     stateId: string | undefined;
+    count: number | undefined;
 }
 
 export class PartnerTypeDto implements IPartnerTypeDto {
@@ -49172,6 +49020,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     maxAnnualIncome!: number | undefined;
     flags!: Flags | undefined;
     states!: string[] | undefined;
+    categories!: Categories[] | undefined;
     description!: string | undefined;
     introAPR!: string | undefined;
     creditScores!: CreditScores2[] | undefined;
@@ -49236,6 +49085,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
                 this.states = [];
                 for (let item of data["states"])
                     this.states.push(item);
+            }
+            if (data["categories"] && data["categories"].constructor === Array) {
+                this.categories = [];
+                for (let item of data["categories"])
+                    this.categories.push(item);
             }
             this.description = data["description"];
             this.introAPR = data["introAPR"];
@@ -49318,6 +49172,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             for (let item of this.states)
                 data["states"].push(item);
         }
+        if (this.categories && this.categories.constructor === Array) {
+            data["categories"] = [];
+            for (let item of this.categories)
+                data["categories"].push(item);
+        }
         data["description"] = this.description;
         data["introAPR"] = this.introAPR;
         if (this.creditScores && this.creditScores.constructor === Array) {
@@ -49388,6 +49247,7 @@ export interface IOfferDetailsForEditDto {
     maxAnnualIncome: number | undefined;
     flags: Flags | undefined;
     states: string[] | undefined;
+    categories: Categories[] | undefined;
     description: string | undefined;
     introAPR: string | undefined;
     creditScores: CreditScores2[] | undefined;
@@ -59941,27 +59801,27 @@ export enum OfferAttribute {
 }
 
 export enum OfferFlag {
-    _0 = 0, 
-    _1 = 1, 
-    _2 = 2, 
-    _3 = 3, 
-    _4 = 4, 
-    _5 = 5, 
-    _6 = 6, 
-    _7 = 7, 
-    _8 = 8, 
-    _9 = 9, 
-    _10 = 10, 
-    _11 = 11, 
-    _12 = 12, 
-    _13 = 13, 
-    _14 = 14, 
-    _15 = 15, 
-    _16 = 16, 
-    _17 = 17, 
-    _18 = 18, 
-    _19 = 19, 
-    _20 = 20, 
+    Choice = "Choice", 
+    Best = "Best", 
+    TravelAndAirlineMiles = "TravelAndAirlineMiles", 
+    DinigRewards = "DinigRewards", 
+    GasRewards = "GasRewards", 
+    CashBackRewards = "CashBackRewards", 
+    InstantDecision = "InstantDecision", 
+    InstantResponse = "InstantResponse", 
+    NoCreditCheck = "NoCreditCheck", 
+    GuaranteedApproval = "GuaranteedApproval", 
+    RebuildCredit = "RebuildCredit", 
+    ChipCard = "ChipCard", 
+    ApplePay = "ApplePay", 
+    GroceryRewards = "GroceryRewards", 
+    EntertainmentRewards = "EntertainmentRewards", 
+    HotelRewards = "HotelRewards", 
+    HasNoRewards = "HasNoRewards", 
+    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
+    ZeroPercentageInterestTransfers = "ZeroPercentageInterestTransfers", 
+    Special = "Special", 
+    Newest = "Newest", 
 }
 
 export enum Module {
@@ -60131,11 +59991,6 @@ export enum IsTenantAvailableOutputState {
     _1 = 1, 
     _2 = 2, 
     _3 = 3, 
-}
-
-export enum RegisterInputTenantHostType {
-    PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum SendPasswordResetCodeInputTenantHostType {
@@ -60801,6 +60656,27 @@ export interface IFlags {
     zeroPercentageInterestTransfers: boolean | undefined;
     special: boolean | undefined;
     newest: boolean | undefined;
+}
+
+export enum Categories {
+    PaydayLoans = "PaydayLoans", 
+    PersonalLoans = "PersonalLoans", 
+    Beauty = "Beauty", 
+    InstallmentLoans = "InstallmentLoans", 
+    AutoLoans = "AutoLoans", 
+    Legal = "Legal", 
+    CreditRepair = "CreditRepair", 
+    CreditScore = "CreditScore", 
+    Travel = "Travel", 
+    Jobs = "Jobs", 
+    BusinessLoans = "BusinessLoans", 
+    DebtConsolidation = "DebtConsolidation", 
+    CreditCards = "CreditCards", 
+    MerchantServices = "MerchantServices", 
+    Dating = "Dating", 
+    Miscellaneous = "Miscellaneous", 
+    Crypto = "Crypto", 
+    CreditMonitoring = "CreditMonitoring", 
 }
 
 export enum CreditScores2 {

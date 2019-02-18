@@ -24,14 +24,14 @@
 <div class="row">
     <div class="col-md-6">
         <ul class="advantages">
-            <li *ngFor="let advantage of advantages">{{ advantage }}</li>
+            <li *ngFor="let advantage of advantages">{{ advantage.value || advantage }} <sup *ngIf="advantage.disclaimerNumber">{{ advantage.disclaimerNumber}}</sup></li>
         </ul>
     </div>
     <div class="description col-md-6">
         <div>
             <h4>{{ descriptionTitle }}</h4>
         </div>
-        <p>{{ descriptionText }}</p>
+        <p>{{ descriptionText }} <sup *ngIf="descriptionDisclaimerNumber">{{ descriptionDisclaimerNumber }}</sup></p>
     </div>
 </div>
 <ng-content select="[bottomBlock]"></ng-content>

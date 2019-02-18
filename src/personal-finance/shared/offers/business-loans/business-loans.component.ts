@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offers-layout.component';
+import { IAdvantage } from '@root/personal-finance/shared/offers/offers-category-details/advantage.interface';
 
 @Component({
     selector: 'business-loans',
@@ -9,11 +10,22 @@ import { OffersLayoutComponent } from '@root/personal-finance/shared/offers/offe
 })
 export class BusinessLoansComponent implements OnInit {
     @ViewChild(OffersLayoutComponent) offersLayoutComponent: OffersLayoutComponent;
-    advantages = [
-        this.ls.l('BusinessLoans_Choose6or12months'),
-        this.ls.l('BusinessLoans_QuickDecisioning'),
-        this.ls.l('BusinessLoans_TransparentTerms'),
-        this.ls.l('BusinessLoans_RevolvingLines')
+    advantages: IAdvantage[] = [
+        {
+            value: this.ls.l('BusinessLoans_Choose6or12months'),
+            disclaimerNumber: 1
+        },
+        {
+            value: this.ls.l('BusinessLoans_QuickDecisioning'),
+            disclaimerNumber: 2
+        },
+        {
+            value: this.ls.l('BusinessLoans_TransparentTerms'),
+        },
+        {
+            value: this.ls.l('BusinessLoans_RevolvingLines'),
+            disclaimerNumber: 1
+        }
     ];
     constructor(
         public ls: AppLocalizationService
