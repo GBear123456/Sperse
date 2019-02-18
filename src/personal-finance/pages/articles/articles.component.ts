@@ -57,5 +57,6 @@ export class ArticlesComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnDestroy() {
         window['openOffer'] = undefined;
+        super.ngOnDestroy();
     }
 }
