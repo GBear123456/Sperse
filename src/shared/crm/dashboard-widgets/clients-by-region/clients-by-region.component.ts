@@ -32,7 +32,7 @@ export class ClientsByReginComponent extends AppComponentBase implements AfterVi
 
         _dashboardWidgetsService.subscribePeriodChange((period) => {
             this.startLoading();
-            _dashboardServiceProxy.getCustomersByRegion(
+            _dashboardServiceProxy.getContactsByRegion(
                 period && period.from, period && period.to)
                     .pipe(finalize(() => {this.finishLoading();})).subscribe((result) => {
                         this.gdpData = {};
@@ -98,7 +98,7 @@ export class ClientsByReginComponent extends AppComponentBase implements AfterVi
         return {
             dataSource: chartData,
             title: {
-                text: this.l("CRMDashboard_ClientsByStates"),
+                text: this.l("CRMDashboard_ContactsByStates"),
                 font: {
                     size: 16
                 }

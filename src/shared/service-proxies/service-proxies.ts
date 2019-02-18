@@ -10817,8 +10817,8 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getCustomersByRegion(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCustomersByRegionOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetCustomersByRegion?";
+    getContactsByRegion(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCustomersByRegionOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByRegion?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
         if (endDate !== undefined)
@@ -10835,11 +10835,11 @@ export class DashboardServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCustomersByRegion(response_);
+            return this.processGetContactsByRegion(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCustomersByRegion(<any>response_);
+                    return this.processGetContactsByRegion(<any>response_);
                 } catch (e) {
                     return <Observable<GetCustomersByRegionOutput[]>><any>_observableThrow(e);
                 }
@@ -10848,7 +10848,7 @@ export class DashboardServiceProxy {
         }));
     }
 
-    protected processGetCustomersByRegion(response: HttpResponseBase): Observable<GetCustomersByRegionOutput[]> {
+    protected processGetContactsByRegion(response: HttpResponseBase): Observable<GetCustomersByRegionOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -49422,17 +49422,17 @@ export class ExtendOfferDto implements IExtendOfferDto {
     campaignId!: number;
     customName!: string | undefined;
     subId!: string | undefined;
-    isPublished!: boolean;
-    overallRating!: number;
+    isPublished!: boolean | undefined;
+    overallRating!: number | undefined;
     interestRating!: number | undefined;
     feesRating!: number | undefined;
     benefitsRating!: number | undefined;
     rewardsRating!: number | undefined;
     serviceRating!: number | undefined;
-    cardNetwork!: ExtendOfferDtoCardNetwork;
-    cardType!: ExtendOfferDtoCardType;
-    targetAudience!: ExtendOfferDtoTargetAudience;
-    securingType!: ExtendOfferDtoSecuringType;
+    cardNetwork!: ExtendOfferDtoCardNetwork | undefined;
+    cardType!: ExtendOfferDtoCardType | undefined;
+    targetAudience!: ExtendOfferDtoTargetAudience | undefined;
+    securingType!: ExtendOfferDtoSecuringType | undefined;
     regularAPR!: string | undefined;
     introAPR!: string | undefined;
     balanceTransferFee!: string | undefined;
@@ -49603,17 +49603,17 @@ export interface IExtendOfferDto {
     campaignId: number;
     customName: string | undefined;
     subId: string | undefined;
-    isPublished: boolean;
-    overallRating: number;
+    isPublished: boolean | undefined;
+    overallRating: number | undefined;
     interestRating: number | undefined;
     feesRating: number | undefined;
     benefitsRating: number | undefined;
     rewardsRating: number | undefined;
     serviceRating: number | undefined;
-    cardNetwork: ExtendOfferDtoCardNetwork;
-    cardType: ExtendOfferDtoCardType;
-    targetAudience: ExtendOfferDtoTargetAudience;
-    securingType: ExtendOfferDtoSecuringType;
+    cardNetwork: ExtendOfferDtoCardNetwork | undefined;
+    cardType: ExtendOfferDtoCardType | undefined;
+    targetAudience: ExtendOfferDtoTargetAudience | undefined;
+    securingType: ExtendOfferDtoSecuringType | undefined;
     regularAPR: string | undefined;
     introAPR: string | undefined;
     balanceTransferFee: string | undefined;
