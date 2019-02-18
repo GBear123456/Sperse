@@ -48603,7 +48603,7 @@ export class GetAllInput implements IGetAllInput {
     campaignIds!: number[] | undefined;
     sortOrderType!: GetAllInputSortOrderType | undefined;
     topCount!: number | undefined;
-    includeEmpty!: boolean | undefined;
+    strictMatch!: boolean | undefined;
 
     constructor(data?: IGetAllInput) {
         if (data) {
@@ -48611,9 +48611,6 @@ export class GetAllInput implements IGetAllInput {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
-        }
-        if (!data) {
-            this.includeEmpty = true;
         }
     }
 
@@ -48647,7 +48644,7 @@ export class GetAllInput implements IGetAllInput {
             }
             this.sortOrderType = data["sortOrderType"];
             this.topCount = data["topCount"];
-            this.includeEmpty = data["includeEmpty"] !== undefined ? data["includeEmpty"] : true;
+            this.strictMatch = data["strictMatch"];
         }
     }
 
@@ -48688,7 +48685,7 @@ export class GetAllInput implements IGetAllInput {
         }
         data["sortOrderType"] = this.sortOrderType;
         data["topCount"] = this.topCount;
-        data["includeEmpty"] = this.includeEmpty;
+        data["strictMatch"] = this.strictMatch;
         return data; 
     }
 }
@@ -48714,7 +48711,7 @@ export interface IGetAllInput {
     campaignIds: number[] | undefined;
     sortOrderType: GetAllInputSortOrderType | undefined;
     topCount: number | undefined;
-    includeEmpty: boolean | undefined;
+    strictMatch: boolean | undefined;
 }
 
 export class OfferDto implements IOfferDto {
@@ -49665,7 +49662,7 @@ export class OfferFilter implements IOfferFilter {
     issuingBank!: string | undefined;
     campaignIds!: number[] | undefined;
     campaignUrls!: string[] | undefined;
-    includeEmpty!: boolean | undefined;
+    strictMatch!: boolean | undefined;
 
     constructor(data?: IOfferFilter) {
         if (data) {
@@ -49709,7 +49706,7 @@ export class OfferFilter implements IOfferFilter {
                 for (let item of data["campaignUrls"])
                     this.campaignUrls.push(item);
             }
-            this.includeEmpty = data["includeEmpty"];
+            this.strictMatch = data["strictMatch"];
         }
     }
 
@@ -49753,7 +49750,7 @@ export class OfferFilter implements IOfferFilter {
             for (let item of this.campaignUrls)
                 data["campaignUrls"].push(item);
         }
-        data["includeEmpty"] = this.includeEmpty;
+        data["strictMatch"] = this.strictMatch;
         return data; 
     }
 }
@@ -49778,7 +49775,7 @@ export interface IOfferFilter {
     issuingBank: string | undefined;
     campaignIds: number[] | undefined;
     campaignUrls: string[] | undefined;
-    includeEmpty: boolean | undefined;
+    strictMatch: boolean | undefined;
 }
 
 export class ExtendFromCSVOutput implements IExtendFromCSVOutput {
@@ -55677,6 +55674,7 @@ export interface ITenantBillingSettingsEditDto {
 export class EPCVIPMailerSettingsEditDto implements IEPCVIPMailerSettingsEditDto {
     baseUrl!: string | undefined;
     apiKey!: string | undefined;
+    server!: EPCVIPMailerSettingsEditDtoServer | undefined;
 
     constructor(data?: IEPCVIPMailerSettingsEditDto) {
         if (data) {
@@ -55691,6 +55689,7 @@ export class EPCVIPMailerSettingsEditDto implements IEPCVIPMailerSettingsEditDto
         if (data) {
             this.baseUrl = data["baseUrl"];
             this.apiKey = data["apiKey"];
+            this.server = data["server"];
         }
     }
 
@@ -55705,6 +55704,7 @@ export class EPCVIPMailerSettingsEditDto implements IEPCVIPMailerSettingsEditDto
         data = typeof data === 'object' ? data : {};
         data["baseUrl"] = this.baseUrl;
         data["apiKey"] = this.apiKey;
+        data["server"] = this.server;
         return data; 
     }
 }
@@ -55712,6 +55712,7 @@ export class EPCVIPMailerSettingsEditDto implements IEPCVIPMailerSettingsEditDto
 export interface IEPCVIPMailerSettingsEditDto {
     baseUrl: string | undefined;
     apiKey: string | undefined;
+    server: EPCVIPMailerSettingsEditDtoServer | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
@@ -59959,6 +59960,8 @@ export enum OfferFlag {
     _16 = 16, 
     _17 = 17, 
     _18 = 18, 
+    _19 = 19, 
+    _20 = 20, 
 }
 
 export enum Module {
@@ -60551,6 +60554,8 @@ export enum GetAllInputItemOfOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+    Newest = "Newest", 
+    SpecialDeals = "SpecialDeals", 
 }
 
 export enum CardNetworks {
@@ -60602,6 +60607,8 @@ export enum OfferDtoOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+    Newest = "Newest", 
+    SpecialDeals = "SpecialDeals", 
 }
 
 export enum OfferDtoCampaignProviderType {
@@ -60635,6 +60642,8 @@ export enum OfferDetailsDtoOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+    Newest = "Newest", 
+    SpecialDeals = "SpecialDeals", 
 }
 
 export enum OfferDetailsDtoCampaignProviderType {
@@ -60698,6 +60707,8 @@ export class Flags implements IFlags {
     hasNoRewards!: boolean | undefined;
     zeroPercentageOnPurchases!: boolean | undefined;
     zeroPercentageInterestTransfers!: boolean | undefined;
+    special!: boolean | undefined;
+    newest!: boolean | undefined;
 
     constructor(data?: IFlags) {
         if (data) {
@@ -60729,6 +60740,8 @@ export class Flags implements IFlags {
             this.hasNoRewards = data["HasNoRewards"];
             this.zeroPercentageOnPurchases = data["ZeroPercentageOnPurchases"];
             this.zeroPercentageInterestTransfers = data["ZeroPercentageInterestTransfers"];
+            this.special = data["Special"];
+            this.newest = data["Newest"];
         }
     }
 
@@ -60760,6 +60773,8 @@ export class Flags implements IFlags {
         data["HasNoRewards"] = this.hasNoRewards;
         data["ZeroPercentageOnPurchases"] = this.zeroPercentageOnPurchases;
         data["ZeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
+        data["Special"] = this.special;
+        data["Newest"] = this.newest;
         return data; 
     }
 }
@@ -60784,6 +60799,8 @@ export interface IFlags {
     hasNoRewards: boolean | undefined;
     zeroPercentageOnPurchases: boolean | undefined;
     zeroPercentageInterestTransfers: boolean | undefined;
+    special: boolean | undefined;
+    newest: boolean | undefined;
 }
 
 export enum CreditScores2 {
@@ -60813,6 +60830,8 @@ export enum OfferDetailsForEditDtoOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+    Newest = "Newest", 
+    SpecialDeals = "SpecialDeals", 
 }
 
 export enum OfferDetailsForEditDtoCampaignProviderType {
@@ -60881,6 +60900,8 @@ export enum ExtendOfferDtoOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+    Newest = "Newest", 
+    SpecialDeals = "SpecialDeals", 
 }
 
 export enum ExtendOfferDtoCampaignProviderType {
@@ -60911,6 +60932,8 @@ export class Flags2 implements IFlags2 {
     hasNoRewards!: boolean | undefined;
     zeroPercentageOnPurchases!: boolean | undefined;
     zeroPercentageInterestTransfers!: boolean | undefined;
+    special!: boolean | undefined;
+    newest!: boolean | undefined;
 
     constructor(data?: IFlags2) {
         if (data) {
@@ -60942,6 +60965,8 @@ export class Flags2 implements IFlags2 {
             this.hasNoRewards = data["HasNoRewards"];
             this.zeroPercentageOnPurchases = data["ZeroPercentageOnPurchases"];
             this.zeroPercentageInterestTransfers = data["ZeroPercentageInterestTransfers"];
+            this.special = data["Special"];
+            this.newest = data["Newest"];
         }
     }
 
@@ -60973,6 +60998,8 @@ export class Flags2 implements IFlags2 {
         data["HasNoRewards"] = this.hasNoRewards;
         data["ZeroPercentageOnPurchases"] = this.zeroPercentageOnPurchases;
         data["ZeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
+        data["Special"] = this.special;
+        data["Newest"] = this.newest;
         return data; 
     }
 }
@@ -60997,6 +61024,8 @@ export interface IFlags2 {
     hasNoRewards: boolean | undefined;
     zeroPercentageOnPurchases: boolean | undefined;
     zeroPercentageInterestTransfers: boolean | undefined;
+    special: boolean | undefined;
+    newest: boolean | undefined;
 }
 
 export enum OfferFilterStatus {
@@ -61068,6 +61097,8 @@ export enum OfferFilterItemOfOfferCollection {
     Fair = "Fair", 
     Bad = "Bad", 
     NoCredit = "NoCredit", 
+    Newest = "Newest", 
+    SpecialDeals = "SpecialDeals", 
 }
 
 export enum CardNetworks2 {
@@ -61179,6 +61210,13 @@ export enum UpdateSslBindingCertificateInputTenantHostType {
 export enum UpdateSslBindingIsActiveInputTenantHostType {
     PlatformApp = "PlatformApp", 
     FundingUi = "FundingUi", 
+}
+
+export enum EPCVIPMailerSettingsEditDtoServer {
+    AmazonSES = "AmazonSES", 
+    Mailgun = "Mailgun", 
+    SendGrid = "SendGrid", 
+    SparkPost = "SparkPost", 
 }
 
 export enum PaymentRequestInfoDtoPaymentMethod {
