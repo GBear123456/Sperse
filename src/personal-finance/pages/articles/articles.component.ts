@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
@@ -7,24 +7,36 @@ import { map } from 'rxjs/operators';
 
 import { environment } from 'environments/environment';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { AppConsts } from '@shared/AppConsts';
+import { SubmitRequestInput, SubmitRequestOutput, OfferDtoSystemType, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'articles',
     templateUrl: './articles.component.html',
     styleUrls: ['./articles.component.less']
 })
-export class ArticlesComponent extends AppComponentBase implements OnInit {
+export class ArticlesComponent extends AppComponentBase implements OnInit, OnDestroy {
     articles$: Observable<SafeHtml>;
 
     constructor(injector: Injector,
         private sanitizer: DomSanitizer,
+        private offerServiceProxy: OfferServiceProxy,
         private offersService: OffersService
     ) {
         super(injector);
     }
 
     ngOnInit() {
+        window['openOffer'] = (campaignId, redirectUrl) => {
+            let submitRequestInput = SubmitRequestInput.fromJS({
+                campaignId: campaignId,
+                redirectUrl: redirectUrl,
+                systemType: OfferDtoSystemType.EPCVIP
+            });
+            window.open(redirectUrl, '_blank');
+            this.offerServiceProxy.submitRequest(submitRequestInput)
+                .subscribe((output: SubmitRequestOutput) => {});
+        };
+
         this.startLoading(true);
         this.offersService.memberInfo$.subscribe(
             () => {
@@ -35,15 +47,16 @@ export class ArticlesComponent extends AppComponentBase implements OnInit {
                     })
                 ).pipe(
                     map((html) => {
-                        html = html.replace('apiUiOrigin', 'apiUiOrigin = "' + AppConsts.remoteServiceBaseUrl + '"');
-                        html = html.replace('applyOfferParams', 'applyOfferParams = "' + this.offersService.memberInfoApplyOfferParams + '"');
-                        html = html.replace('authorization', 'authorization = "Bearer ' + abp.auth.getToken() + '"');
-                        eval(html.match(new RegExp('<script>(.+?)<\/script>', 's')).pop());
                         this.finishLoading(true);
                         return this.sanitizer.bypassSecurityTrustHtml(html);
                     })
                 );
             }
         );
+    }
+
+    ngOnDestroy() {
+        window['openOffer'] = undefined;
+        super.ngOnDestroy();
     }
 }

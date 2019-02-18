@@ -37,12 +37,18 @@
                 <dxo-sorting mode="multiple"></dxo-sorting>
                 <dxo-paging [pageSize]="20"></dxo-paging>
 
+                <dxi-column dataField="LogoUrl" caption="Logo" cellTemplate="photoTemplate"
+                            [width]="100" [showInColumnChooser]="false" [allowExporting]="false"
+                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                 <dxi-column dataField="Name" caption="{{l('Offer_Name')}}"></dxi-column>
                 <dxi-column dataField="CardNetwork" caption="" [width]="150"></dxi-column>
                 <dxi-column dataField="Categories" caption="{{l('Category')}}" [width]="300" cellTemplate="categoriesCell" [calculateGroupValue]="categoryGroupValue"></dxi-column>
                 <dxi-column dataField="Status" caption="{{l('Offer_Status')}}" [width]="180"></dxi-column>
                 <dxi-column dataField="Created" caption="{{l('Offer_Created')}}" [width]="180" cellTemplate="dateCell"></dxi-column>
 
+                <div *dxTemplate="let field of 'photoTemplate'">
+                    <div [ngStyle]="{'background-image': 'url(' + field.data.LogoUrl + ')'}" class="logo-url"></div>
+                </div>
                 <div *dxTemplate="let cellData of 'dateCell'">
                     {{cellData.value | date: 'MM/dd/yyyy'}}
                 </div>

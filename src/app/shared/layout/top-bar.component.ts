@@ -81,8 +81,13 @@ export class TopBarComponent extends AppComponentBase {
     }
 
     navigate(event) {
-        if (event.itemData.route)
-            this.router.navigate([event.itemData.route]);
+        let route = event.itemData.route;
+        if (route) {
+            if (route.startsWith('/'))
+                this.router.navigate([event.itemData.route]);
+            else 
+                window.open(route, '_blank');
+        }
     }
 
     updateNavMenu(forced = false) {
@@ -101,9 +106,8 @@ export class TopBarComponent extends AppComponentBase {
                             availableWidth -= item['length'];
                         return availableWidth >= 0;
                     });
-
-                    this.navbarItems = this.menu.items.slice(0, --switchItemIndex);
-                    this.adaptiveMenuItems = this.menu.items.slice(switchItemIndex);
+                    this.navbarItems = switchItemIndex ? this.menu.items.slice(0, --switchItemIndex): [];
+                    this.adaptiveMenuItems = switchItemIndex ? this.menu.items.slice(switchItemIndex): this.menu.items;
                 } else
                     this.navbarItems = this.menu.items;
             }, 300);

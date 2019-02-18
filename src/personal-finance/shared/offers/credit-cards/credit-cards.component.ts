@@ -1,3 +1,4 @@
+/** Application imports */
 import {
     Component,
     ElementRef,
@@ -10,10 +11,12 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 
+/** Third party imports */
 import { Observable, combineLatest } from 'rxjs';
 import { delay, finalize, map, switchMap, takeUntil, tap, skip, publishReplay, refCount, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
+/** Core imports */
 import {
     OfferDto,
     OfferServiceProxy,
@@ -21,11 +24,13 @@ import {
     GetMemberInfoResponse,
     OfferFilterCategory,
     GetAllInput,
-    GetAllInputSortOrderType
+    GetAllInputSortOrderType,
+    OfferDtoOfferCollection
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { CustomItemOfOfferCollection } from '@root/personal-finance/shared/offers/credit-cards/custom-item-of-offer-collection.enum';
 
 @Component({
     selector: 'pfm-credit-cards-home',
@@ -79,22 +84,28 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         this.cardOffersList$ = this.getCreditCards().pipe(publishReplay(), refCount());
         this.cardOffersList$.subscribe(list => {
             const itemOfOfferCollections = _.values(GetAllInputItemOfOfferCollection);
-            this.bestCreditCard = _.first(list.filter(item => 'Best' == item.offerCollection));
-            this.selectedOfferGroup = _.first(list.filter(item => this.route.snapshot.params.group == item.offerCollection));
+            this.bestCreditCard = list.find(item => item.offerCollection === OfferDtoOfferCollection.Best);
+            this.selectedOfferGroup = list.find(item => this.route.snapshot.params.group == item.offerCollection);
             this.creditCardCollection = list.filter(item => !_.contains(this.creditScoreNames, item.offerCollection));
             this.bestCardsByScore = list.filter(item => _.contains(this.creditScoreNames, item.offerCollection)).sort(this.sortCollection.bind(this, itemOfOfferCollections));
             this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort(this.sortCollection.bind(this, itemOfOfferCollections));
             /** @todo fix in new version with the getting the whole categories from backend */
-            this.filteredGroup.push(OfferDto.fromJS({
-                name: 'Newest Offers',
-                offerCollection: 'NewestOffers'
-            }));
+            this.filteredGroup.unshift(
+                    OfferDto.fromJS({
+                        name: 'Special Deals',
+                        offerCollection: CustomItemOfOfferCollection.SpecialDeals
+                    }),
+                    OfferDto.fromJS({
+                        name: 'Newest Offers',
+                        offerCollection: CustomItemOfOfferCollection.Newest
+                    })
+                );
         });
 
         const creditCards$ = this.offerCollection$.pipe(
             takeUntil(this.lifecycleSubjectService.destroy$),
             tap(collectionName => this.selectedOfferGroup = this.creditCardCollection.filter(item => item.offerCollection == collectionName.group)[0]),
-            switchMap(collectionName => this.getCreditCards(collectionName.group || GetAllInputItemOfOfferCollection.Best, false)),
+            switchMap(collectionName => this.getCreditCards(collectionName.group, false)),
             publishReplay(),
             refCount()
         );
@@ -111,7 +122,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
         this.offersService.applyOffer(offer, true);
     }
 
-    getCreditCards(collection?: GetAllInputItemOfOfferCollection, isOfferCollection = true): Observable<OfferDto[]> {
+    getCreditCards(collection?: GetAllInputItemOfOfferCollection | CustomItemOfOfferCollection, isOfferCollection = true): Observable<OfferDto[]> {
         abp.ui.setBusy();
         return this.offersService.memberInfo$.pipe(
             switchMap((memberInfo: GetMemberInfoResponse) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
@@ -120,9 +131,9 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
                 category: OfferFilterCategory.CreditCards,
                 country: 'US',
                 isOfferCollection: isOfferCollection,
-                itemOfOfferCollection: GetAllInputItemOfOfferCollection[collection],
-                sortOrderType:  (collection as any) === 'NewestOffers' ? GetAllInputSortOrderType.Newest : GetAllInputSortOrderType.Best,
-                topCount: (collection as any) === 'NewestOffers' ? 30 : undefined
+                itemOfOfferCollection: CustomItemOfOfferCollection[collection] || GetAllInputItemOfOfferCollection[collection],
+                sortOrderType: collection === CustomItemOfOfferCollection.Newest ? GetAllInputSortOrderType.Newest : GetAllInputSortOrderType.Best,
+                topCount: collection === CustomItemOfOfferCollection.Newest ? 30 : undefined
             }))),
             finalize(() => abp.ui.clearBusy())
         );
