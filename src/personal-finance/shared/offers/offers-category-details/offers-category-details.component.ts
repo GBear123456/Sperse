@@ -3,6 +3,7 @@ import { OfferDto } from '@shared/service-proxies/service-proxies';
 import { Observable } from 'rxjs';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { IAdvantage } from '@root/personal-finance/shared/offers/offers-category-details/advantage.interface';
 
 @Component({
   selector: 'offers-category-details',
@@ -11,10 +12,11 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class OffersCategoryDetailsComponent implements OnInit {
     @Input() offers$: Observable<OfferDto[]>;
-    @Input() advantages: string[];
+    @Input() advantages: IAdvantage[] | string[];
     @Input() logoes: string[];
     @Input() descriptionTitle: string;
     @Input() descriptionText: string;
+    @Input() descriptionDisclaimerNumber: number;
     constructor(
         public offersService: OffersService,
         public ls: AppLocalizationService
