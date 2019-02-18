@@ -23,7 +23,8 @@ import {
     TenantOfferProviderSettingsServiceProxy,
     TenantCustomizationInfoDto,
     EPCVIPMailerSettingsEditDto,
-    TenantLoginInfoDtoCustomLayoutType
+    TenantLoginInfoDtoCustomLayoutType,
+    EPCVIPMailerSettingsEditDtoServer
 } from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -60,7 +61,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
     isLendSpaceLayout: boolean = this.appSession.tenant.customLayoutType && this.appSession.tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace;
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
+
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
+    epcvipEmailServers: string[] = [];
 
     logoUploader: FileUploader;
     faviconsUploader: FileUploader;
@@ -120,6 +123,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
                 this.isLendSpaceLayout ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
             ];
+        if (this.isLendSpaceLayout)
+        {
+            this.epcvipEmailServers = Object.keys(EPCVIPMailerSettingsEditDtoServer);
+        }
 
         forkJoin(requests)
             .pipe(finalize(() => { this.loading = false; }))
