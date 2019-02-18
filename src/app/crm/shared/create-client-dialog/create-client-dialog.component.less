@@ -64,77 +64,43 @@
             }
         }
 
-        .add-new-button {
-            height: 30px;
-            padding-top: 10px;
-            padding-left: 140px;
-            span {
-                font-size: 14px;
-                font-weight: 300;
-                font-style: normal;
-                font-stretch: normal;
-                line-height: 1.79;
-                letter-spacing: 0.3px;
-                cursor: pointer;
-                color: #00aeef;
-            }
-            &.disabled span {
-                color: #dedede;
-                cursor: default;
-            }
-        }
-
         /deep/ .field {
             margin-bottom: 30px;
             &.addr {
                 margin-bottom: 0px;
-                &.padding-right {
-                    padding-left: 110px;
-                }
             }
             &.notes {
                 margin-top: 20px;
-            }
-
-            .editable-item {
-                margin-left: 110px;
-                &.first-item {
-                    margin-left: 0px;
-                    display: inline-block;
+                span.clear-contact {
+                    align-self: flex-start;
                 }
             }
 
             label {
-                height: 22px;
-                font-size: 15px;
-                line-height: 1.33;
-                letter-spacing: 0.3px;
-                color: #202b35;
-                font-weight: 500;
-                width: 70px;
-                margin-right: 40px;
                 text-transform: uppercase;
+                width: 70px;
                 padding-left: 30px;
-                vertical-align: bottom;
                 &.notes-label {
                     vertical-align: top;
-                    background: url("../../../../assets/common/icons/comments.svg") no-repeat 0px 0px;
+                    background-image: url("../../../../assets/common/icons/comments.svg");
                 }
                 &.company-label {
-                    background: url("../../../../assets/common/icons/company-icon.svg") no-repeat 0px 0px;
+                    background-image: url("../../../../assets/common/icons/company-icon.svg");
                 }
                 &.email-label {
-                    background: url("../../../../assets/common/icons/email.svg") no-repeat 0px 0px;
+                    background-image: url("../../../../assets/common/icons/email.svg");
                 }
                 &.phone-label {
-                    background: url("../../../../assets/common/icons/phone.svg") no-repeat 0px 0px;
+                    background-image: url("../../../../assets/common/icons/phone.svg");
                 }
                 &.link-label {
-                    background: url("../../../../assets/common/icons/link.svg") no-repeat 0px 0px;
+                    background-image: url("../../../../assets/common/icons/link.svg");
                 }
                 &.address-label {
-                    background: url("../../../../assets/common/icons/location.svg") no-repeat 0px 0px;
+                    background-image: url("../../../../assets/common/icons/location.svg");
                 }
+                background-position: 0 8px;
+                background-repeat: no-repeat;
             }
             p {
                 width: 100%;
@@ -195,51 +161,7 @@
                     color: #8a969b;
                 }
             }
-            span {
-                font-size: 32px;
-                font-weight: 100;
-                margin: 0px 15px;
-                cursor: pointer;
-                line-height: 35px;
-                position: relative;
-                vertical-align: top;
 
-                &.hidden {
-                    display: none;
-                }
-                &.add-contact {
-                    color: #00aeef;
-                }
-                &.clear-contact {
-                    color: red;
-                    margin: 0px !important;
-                    display: inline-block;
-                    left: 30px;
-                    width: 8px;
-                    height: 8px;
-                    .minus-icon {
-                        width: 16px;
-                        height: 16px;
-                        display: inline-block;
-                        border-radius: 50%;
-                        background: #F9E6E6;
-                        position: absolute;
-                        top: 10px;
-                        cursor: pointer;
-                        &:before {
-                            content: '';
-                            width: 8px;
-                            height: 2px;
-                            background: #e7326a;
-                            position: absolute;
-                            left: 50%;
-                            top: 50%;
-                            -webkit-transform: translate(-50%, -50%);
-                            transform: translate(-50%, -50%);
-                        }
-                    }
-                }
-            }
             dx-text-box, dx-number-box, dx-text-area, dx-select-box, country-phone-number, dx-drop-down-box {
                 display: inline-block;
                 margin-left: 30px;
@@ -263,7 +185,7 @@
                     font-size: 15px;
                     font-weight: 400;
                     line-height: 1.79;
-                    letter-spacing: 0.3px;                    
+                    letter-spacing: 0.3px;
                     padding: 0px;
                 }
             }

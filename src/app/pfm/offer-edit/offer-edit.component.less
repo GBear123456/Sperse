@@ -4,6 +4,7 @@
         padding: 0 70px 0 10px;
         img {
             max-width: 200px;
+            max-height: 50px;
             margin-right: 10px;
         }
         /deep/ inplace-edit {
@@ -45,10 +46,35 @@
     }
     /deep/ .main-content {
         padding: 20px;
-        label {
-            width: 100%;
-            margin-bottom: 0;
+        .field {
+            label {
+                font-size: 14px;
+                font-weight: 300;
+                color: #677380;
+                flex: 1;
+                cursor: pointer;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                & + * {
+                    &.dx-checkbox {
+                        margin-top: 10px;
+                    }
+                    &:not(.dx-checkbox) {
+                        flex: 2;
+                    }
+                }
+            }
+            .dx-state-disabled.dx-widget, .dx-state-disabled .dx-widget {
+                & .dx-texteditor-input, input.form-control {
+                    border-bottom: 0;
+                }
+            }
+            .clear-contact {
+                top: 15px;
+            }
         }
+
         .detail {
             margin-right: 120px;
             .mat-form-field-infix {
@@ -56,15 +82,14 @@
                 border-top: 0px;
                 width: 240px;
             }
-            & > label {
-                & > .mat-form-field,
-                .mat-checkbox {
-                    float: right;
+            .detailItem {
+                display: flex;
+                align-items: center;
+                .mat-form-field {
+                    width: 100%;
                 }
-                .detailItem {
-                    .mat-form-field {
-                        width: 100%;
-                    }
+                span.clear-contact {
+                    top: 0;
                 }
             }
             .fa {
@@ -82,5 +107,6 @@
             background-color: #00AEEF;
         }
     }
+
 
 }

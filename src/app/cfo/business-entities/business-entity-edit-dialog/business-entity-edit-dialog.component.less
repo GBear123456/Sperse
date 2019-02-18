@@ -4,17 +4,11 @@
 
 :host {
     /deep/ .tab-content {
-        display: flex;
-        flex-direction: column;
         padding: 30px 50px;
         height: 700px;
 
         .field {
-            margin-bottom: 20px;
-
-            &.addr, &.checkbox {
-                margin-bottom: 0px;
-            }
+            margin-bottom: 10px;
 
             label {
                 font-size: 12px;
@@ -23,7 +17,7 @@
                 color: #677380;
                 font-weight: 400;
                 width: 150px;
-                margin-right: 40px;
+                text-transform: capitalize;
             }
 
             input[name="Address"] {
@@ -36,26 +30,6 @@
                 color: #424c56;
                 padding: 0px;
                 vertical-align: top;
-            }
-
-            span {
-                font-size: 32px;
-                font-weight: 100;
-                margin: 0px 15px;
-                cursor: pointer;
-
-                &.hidden {
-                    display: none;
-                }
-
-                &.clear-contact {
-                    color: red;
-                    transform: rotate(45deg);
-                    display: inline-block;
-                    vertical-align: top;
-                    width: 8px;
-                    height: 8px;
-                }
             }
 
             &.email {

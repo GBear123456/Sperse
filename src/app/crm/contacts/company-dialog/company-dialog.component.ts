@@ -35,7 +35,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 @Component({
     selector: 'company-dialog',
     templateUrl: './company-dialog.component.html',
-    styleUrls: ['./company-dialog.component.less'],
+    styleUrls: [ '../../../shared/form.less', './company-dialog.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ContactPhotoServiceProxy, MaskPipe]
 })
@@ -223,8 +223,8 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
     }
 
     calendarOnKeyDown($event) {
-        if (isNaN($event.event.key) && $event.event.key != '/' && 
-          [8/*Backspace*/, 46 /*Delete*/, 37 /*ArrowLeft*/, 39 /*ArrowRight*/, 
+        if (isNaN($event.event.key) && $event.event.key != '/' &&
+          [8/*Backspace*/, 46 /*Delete*/, 37 /*ArrowLeft*/, 39 /*ArrowRight*/,
               38/*ArrowUp*/, 40/*ArrowDown*/].indexOf($event.event.keyCode) < 0
         ) {
             $event.event.stopPropagation();

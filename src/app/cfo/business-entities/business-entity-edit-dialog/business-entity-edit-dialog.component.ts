@@ -21,7 +21,7 @@ import {
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
-    styleUrls: ['business-entity-edit-dialog.component.less'],
+    styleUrls: [ '../../../shared/form.less', 'business-entity-edit-dialog.component.less' ],
     providers: [ BusinessEntityServiceProxy ]
 })
 export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent implements OnInit {

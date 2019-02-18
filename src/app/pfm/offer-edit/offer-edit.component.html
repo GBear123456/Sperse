@@ -8,49 +8,86 @@
                     (valueChanged)="updateCustomName($event)">
                 </inplace-edit>
             </ng-container>
-            <button class="btn btn-layout" type="submit" [disabled]="!offerEditForm.valid" form="ngForm">Save</button>
+            <button class="btn btn-layout" type="submit" (click)="onSubmit()">Save</button>
         </header>
     </ng-container>
     <ng-container mainContent>
-        <form [formGroup]="offerEditForm" (ngSubmit)="onSubmit()" #editForm="ngForm" id="ngForm">
+        <form>
             <div class="row">
-                <div class="col-md-5 detail" *ngFor="let detail of details$ | async" >
-                    <ng-container *ngIf="detailsToHide.indexOf(detail) === -1">
-                        <label *ngIf="offerEditForm.get(detail) as control">
-                            {{ startCase(detail) }}:
-
-                            <ng-container *ngIf="isPrimitive(control.value)">
-                                <mat-form-field *ngIf="!isBool(control.value)">
-                                    <input matInput [formControl]="control">
-                                </mat-form-field>
-                                <ng-container *ngIf="isBool(control.value)">
-                                    <mat-checkbox [formControl]="control"></mat-checkbox>
+                <ng-container *ngFor="let detail of filteredBySectionDetails$ | async" >
+                    <div [ngClass]="['detail', getColumnClass(detail)]" ng-container *ngIf="detailsToHide.indexOf(detail) === -1">
+                        <ng-container *ngIf="isEnum(detail); else another">
+                            <div class="field">
+                                <ng-container *ngIf="startCase(detail) as detailDisplayValue">
+                                    <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                 </ng-container>
+                                <div class="drop-down-box-wrapper">
+                                    <dx-select-box
+                                        [inputAttr]="{ id: detail }"
+                                        [placeholder]="ls.l('Select')"
+                                        [dataSource]="keys(detailsEnums[detail])"
+                                        [(value)]="model[detail]"
+                                        [disabled]="isReadOnly(detail)">
+                                    </dx-select-box>
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <ng-template #another>
+                            <ng-container *ngIf="isPrimitive(model[detail])">
+                                <div class="field" *ngIf="!isBool(model[detail])">
+                                    <ng-container *ngIf="startCase(detail) as detailDisplayValue">
+                                        <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
+                                    </ng-container>
+                                    <dx-text-box [inputAttr]="{ id: detail }"
+                                                 [valueChangeEvent]="'focusout'"
+                                                 [(value)]="model[detail]"
+                                                 [placeholder]="!isReadOnly(detail) ? ls.l('Enter_Value') : ''"
+                                                 [disabled]="isReadOnly(detail)"
+                                                 (onValueChanged)="onTextBoxChange($event, detail)">
+                                    </dx-text-box>
+                                    <span [ngClass]="model[detail] && !isReadOnly(detail) && 'clear-contact' || 'hidden'" (click)="model[detail] = ''"><i class="minus-icon"></i></span>
+                                </div>
+
+                                <div class="field" *ngIf="isBool(model[detail])">
+                                    <ng-container *ngIf="startCase(detail) as detailDisplayValue">
+                                        <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
+                                    </ng-container>
+                                    <dx-check-box [(value)]="model[detail]" [disabled]="isReadOnly(detail)"></dx-check-box>
+                                </div>
                             </ng-container>
 
-                            <div *ngIf="isFormArray(control)">
-                                <div *ngFor="let value of control.controls; let i=index" class="detailItem">
-                                    <mat-form-field>
-                                        <input matInput [formControl]="control.controls[i]">
-                                        <i class="fa fa-minus" (click)="remove(control, i)"></i>
-                                    </mat-form-field>
-                                </div>
-                                <button class="btn btn-layout" type="button" (click)="addNew(control)">Add New</button>
-                            </div>
-
-                            <div *ngIf="isFormGroup(control)">
-                                <div [formGroupName]="detail">
-                                    <div *ngFor="let value of getKeys(control.controls)">
-                                        <label>
-                                            {{ startCase(value) }}:
-                                            <mat-checkbox [formControl]="control.get(value)"></mat-checkbox>
-                                        </label>
+                            <div *ngIf="isArray(model[detail]); else object">
+                                <div class="field">
+                                    <ng-container *ngIf="startCase(detail) as detailDisplayValue">
+                                        <label [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
+                                    </ng-container>
+                                    <div>
+                                        <div *ngFor="let value of model[detail]; let i=index" class="detailItem">
+                                            <dx-text-box [valueChangeEvent]="'focusout'"
+                                                         [placeholder]="!isReadOnly(detail) ? ls.l('Enter_Value') : ''"
+                                                         [(value)]="model[detail][i]">
+                                            </dx-text-box>
+                                            <span class="clear-contact" (click)="remove(model[detail], i)"><i class="minus-icon"></i></span>
+                                        </div>
+                                        <div *ngIf="!isReadOnly(detail)" class="add-new-button" (click)="addNew(model[detail], value)">
+                                            <span>+ Add new</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </label>
-                    </ng-container>
-                </div>
+
+                            <ng-template #object>
+                                <div *ngIf="isObject(model[detail])">
+                                    <div class="field" *ngFor="let value of getKeys(model[detail])">
+                                        <label>{{ startCase(value) }}</label>
+                                        <dx-check-box [(value)]="!!model[detail][value]"></dx-check-box>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ng-template>
+                    </div>
+                </ng-container>
             </div>
         </form>
     </ng-container>
