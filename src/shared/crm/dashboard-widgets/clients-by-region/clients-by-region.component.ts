@@ -38,17 +38,17 @@ export class ClientsByReginComponent extends AppComponentBase implements AfterVi
                         this.gdpData = {};
                         result.forEach((val, index) => {
                             if (this.gdpData.hasOwnProperty(val.countryId))
-                                this.gdpData[val.countryId].total += val.customerCount;
+                                this.gdpData[val.countryId].total += val.count;
                             else
                                 this.gdpData[val.countryId] = {
                                     name: val.countryId,
-                                    total: val.customerCount,
+                                    total: val.count,
                                     states: []
                                 };
 
                             this.gdpData[val.countryId].states.push({
                                 state: val.stateId || 'Other',
-                                count: val.customerCount
+                                count: val.count
                             });
                         });
                     }

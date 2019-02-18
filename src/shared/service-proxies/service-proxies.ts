@@ -10761,7 +10761,7 @@ export class DashboardServiceProxy {
      * @endDate (optional) 
      * @return Success
      */
-    getContactsByRegion(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetCustomersByRegionOutput[]> {
+    getContactsByRegion(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetContactsByRegionOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactsByRegion?";
         if (startDate !== undefined)
             url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
@@ -10785,14 +10785,14 @@ export class DashboardServiceProxy {
                 try {
                     return this.processGetContactsByRegion(<any>response_);
                 } catch (e) {
-                    return <Observable<GetCustomersByRegionOutput[]>><any>_observableThrow(e);
+                    return <Observable<GetContactsByRegionOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetCustomersByRegionOutput[]>><any>_observableThrow(response_);
+                return <Observable<GetContactsByRegionOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetContactsByRegion(response: HttpResponseBase): Observable<GetCustomersByRegionOutput[]> {
+    protected processGetContactsByRegion(response: HttpResponseBase): Observable<GetContactsByRegionOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -10806,7 +10806,7 @@ export class DashboardServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(GetCustomersByRegionOutput.fromJS(item));
+                    result200.push(GetContactsByRegionOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -10815,7 +10815,7 @@ export class DashboardServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetCustomersByRegionOutput[]>(<any>null);
+        return _observableOf<GetContactsByRegionOutput[]>(<any>null);
     }
 }
 
@@ -41454,12 +41454,12 @@ export interface IGetCustomersByCompanySizeOutput {
     companySizeRange: string | undefined;
 }
 
-export class GetCustomersByRegionOutput implements IGetCustomersByRegionOutput {
-    customerCount!: number | undefined;
+export class GetContactsByRegionOutput implements IGetContactsByRegionOutput {
     countryId!: string | undefined;
     stateId!: string | undefined;
+    count!: number | undefined;
 
-    constructor(data?: IGetCustomersByRegionOutput) {
+    constructor(data?: IGetContactsByRegionOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -41470,32 +41470,32 @@ export class GetCustomersByRegionOutput implements IGetCustomersByRegionOutput {
 
     init(data?: any) {
         if (data) {
-            this.customerCount = data["customerCount"];
             this.countryId = data["countryId"];
             this.stateId = data["stateId"];
+            this.count = data["count"];
         }
     }
 
-    static fromJS(data: any): GetCustomersByRegionOutput {
+    static fromJS(data: any): GetContactsByRegionOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetCustomersByRegionOutput();
+        let result = new GetContactsByRegionOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customerCount"] = this.customerCount;
         data["countryId"] = this.countryId;
         data["stateId"] = this.stateId;
+        data["count"] = this.count;
         return data; 
     }
 }
 
-export interface IGetCustomersByRegionOutput {
-    customerCount: number | undefined;
+export interface IGetContactsByRegionOutput {
     countryId: string | undefined;
     stateId: string | undefined;
+    count: number | undefined;
 }
 
 export class PartnerTypeDto implements IPartnerTypeDto {
