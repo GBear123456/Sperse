@@ -15,6 +15,7 @@ import { RecommendedLendersComponent } from './recommended-lenders/recommended-l
 import { RecommendedArticlesComponent } from './recommended-articles/recommended-articles.component';
 import { FreeCheckingComponent } from './free-checking/free-checking.component';
 import { ShopNowComponent } from './shop-now/shop-now.component';
+import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.module';
 
 @NgModule({
     imports: [
@@ -24,6 +25,7 @@ import { ShopNowComponent } from './shop-now/shop-now.component';
         DxValidatorModule,
         DxButtonModule,
         FormsModule,
+        StarsRatingModule,
         NgxMaskModule.forRoot(),
         RouterModule.forChild([{
             path: '',

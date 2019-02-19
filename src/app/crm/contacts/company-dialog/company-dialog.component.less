@@ -83,7 +83,6 @@
         /deep/ .field {
             margin-bottom: 19px;
             display: flex;
-            align-items: flex-end;
             position: relative;
             &.addr {
                 margin-bottom: 0px;
@@ -103,10 +102,7 @@
             }
 
             label {
-                font-size: 15px;
                 letter-spacing: 0.3px;
-                color: #202b35;
-                font-weight: 500;
                 vertical-align: bottom;
                 font-size: 14px;
                 font-weight: 300;
@@ -115,6 +111,7 @@
                 border-bottom: 1px solid #dadee1;
                 padding-bottom: 5px;
                 white-space: nowrap;
+                margin-right: 0;
                 flex: 1;
             }
 
@@ -130,56 +127,6 @@
                 dx-text-area {
                     flex-basis: 100% !important;
                     margin-left: 0;
-                }
-            }
-
-            span {
-                font-size: 32px;
-                font-weight: 100;
-                margin: 0px 15px;
-                cursor: pointer;
-                line-height: 35px;
-                position: relative;
-                vertical-align: top;
-
-                &.hidden {
-                    display: none;
-                }
-
-                &.add-contact {
-                    color: #00aeef;
-                }
-
-                &.clear-contact {
-                    margin: 0px !important;
-                    width: 8px;
-                    height: 8px;
-                    position: absolute;
-                    right: -20px;
-                    top: 10px;
-
-                    .minus-icon {
-                        width: 16px;
-                        height: 16px;
-                        display: block;
-                        border-radius: 50%;
-                        background: #F9E6E6;
-                        position: relative;
-                        cursor: pointer;
-
-                        &:before {
-                            content: '';
-                            width: 8px;
-                            height: 2px;
-                            background: #e7326a;
-                            position: absolute;
-                            left: 0;
-                            top: 0;
-                            margin: auto;
-                            right: 0;
-                            bottom: 0;
-                        }
-                    }
                 }
             }
 

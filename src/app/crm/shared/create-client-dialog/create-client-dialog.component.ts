@@ -49,7 +49,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
-    styleUrls: ['create-client-dialog.component.less'],
+    styleUrls: [ '../../../shared/form.less', 'create-client-dialog.component.less' ],
     providers: [ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ]
 })
 export class CreateClientDialogComponent extends AppModalDialogComponent implements OnInit, OnDestroy, AfterViewInit {
