@@ -370,7 +370,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
                 selected = _.difference(exclude ? data.previousValue: data.value, exclude ? data.value: data.previousValue);            
             if (selected.length)
                 this._offersProxy.setFlag(OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}), 
-                    OfferFlag[selected[0].id], !exclude).subscribe(() => {
+                    selected[0]['id'], !exclude).subscribe(() => {
                         this.notify.info(this.l('AppliedSuccessfully'));
                     }
                 );
