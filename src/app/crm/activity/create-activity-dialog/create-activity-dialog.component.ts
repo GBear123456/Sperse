@@ -220,6 +220,7 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
                     // },
                     {
                         name: 'star',
+                        disabled: true,
                         action: () => this.starsListComponent.toggle(),
                         options: {
                             width: 20,
