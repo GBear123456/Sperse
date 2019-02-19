@@ -8,14 +8,25 @@
         target="#PullOffers">
     </dx-context-menu>
     <app-headline [config]="headlineConfig"></app-headline>
-    <app-static-list
+    <app-static-list #categoriesComponent
         [width]="'310px'"
         [title]="l('Categories')"
         [showConfirmation]="false"
         [hideButtons]="true"
-        [filterModel]="filterModelStages"
+        [filterModel]="filterModelCategories"
         [targetSelector]="'[aria-label=Category]'"
         [list]="categories">
+    </app-static-list>
+    <app-static-list #flagsComponent
+        [width]="'350px'"
+        [title]="l('Flags')"
+        [showConfirmation]="true"
+        [filterModel]="filterModelFlags"
+        [targetSelector]="'[aria-label=flag-icon]'"
+        [selectionMode]="selectedOfferKeys.length ? 'multiple': 'none'"
+        (onItemSelected)="onFlagSelected($event)"
+        (onOptionChanged)="onFlagOptionChanged($event)"
+        [list]="flags">
     </app-static-list>
 
     <div class="portlet light no-padding margin-bottom-0">
@@ -28,6 +39,7 @@
                           [allowColumnResizing]="true"
                           [hoverStateEnabled]="true"
                           [pager]="defaultGridPagerConfig"
+                          (onSelectionChanged)="onSelectionChanged($event)"
                           (onRowClick)="openOfferEdit($event)">
                 <dxo-selection selectAllMode="page"
                                showCheckBoxesMode="always"

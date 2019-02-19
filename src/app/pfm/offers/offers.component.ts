@@ -11,11 +11,13 @@ import 'devextreme/data/odata/store';
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { OfferFilterCategory, OfferManagementServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OfferFilterCategory, OfferManagementServiceProxy, OfferFlag, OfferFilter } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
+
+import * as _ from 'lodash';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -25,16 +27,20 @@ import { StaticListComponent } from '@app/shared/common/static-list/static-list.
 export class OffersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(DxContextMenuComponent) pullContextComponent: DxContextMenuComponent;
-    @ViewChild(StaticListComponent) categoriesComponent: StaticListComponent;
+    @ViewChild('categoriesComponent') categoriesComponent: StaticListComponent;
+    @ViewChild('flagsComponent') flagsComponent: StaticListComponent;
 
     private readonly dataSourceURI = 'Offer';
 
     public headlineConfig;
     private filters: FilterModel[] = new Array<FilterModel>();
     private updateAfterActivation: boolean;
-    filterModelStages: FilterModel;
+    filterModelCategories: FilterModel;
+    filterModelFlags: FilterModel;
     pullContextMenuItems = [];
+    selectedOfferKeys = [];
     categories = [];
+    flags = [];
 
     constructor(
         private injector: Injector,
@@ -128,9 +134,22 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
                     items: [
                         {
                             name: 'category',
-                            action: this.toggleStages.bind(this),
+                            action: this.toggleCategories.bind(this),
                             attr: {
-                                'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
+                                'filter-selected': this.filterModelCategories && this.filterModelCategories.isSelected
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'flag',
+                            action: this.toggleFlags.bind(this),
+                            attr: {
+                                'filter-selected': this.filterModelFlags && this.filterModelFlags.isSelected
                             }
                         }
                     ]
@@ -170,8 +189,12 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     }
 
-    toggleStages() {
+    toggleCategories() {
         this.categoriesComponent.toggle();
+    }
+
+    toggleFlags() {
+        this.flagsComponent.toggle();
     }
 
     searchValueChange(e: object) {
@@ -196,13 +219,27 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
         this.categories = Object.keys(OfferFilterCategory)
             .map(key => ({ id: OfferFilterCategory[key], name: this.l(key) }));
 
+        this.flags = Object.keys(OfferFlag)
+            .map(key => ({ id: OfferFlag[key], name: _.startCase(key) }));
+
         this.filters = [
-            this.filterModelStages = new FilterModel({
+            this.filterModelCategories = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'Category',
                 items: {
                     element: new FilterCheckBoxesModel({
                         dataSource: this.categories,
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+                }
+            }),
+            this.filterModelFlags = new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'Flag',
+                items: {
+                    element: new FilterCheckBoxesModel({
+                        dataSource: this.flags,
                         nameField: 'name',
                         keyExpr: 'id'
                     })
@@ -275,6 +312,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     }
 
+    onSelectionChanged($event) {
+        this.selectedOfferKeys = $event.component.getSelectedRowKeys().map(item => item.CampaignId);
+    }
+
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
@@ -316,5 +357,23 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
 
     categoryGroupValue(data) {
         return data.Categories.map(item => item.Name).join(', ');
+    }
+
+    onFlagSelected(data) {
+    }
+
+    onFlagOptionChanged(data) {
+        if (data.name == 'selectedItems' && this.selectedOfferKeys.length 
+            && data.value.length != data.previousValue.length
+        ) {
+            let exclude = data.previousValue.length > data.value.length,
+                selected = _.difference(exclude ? data.previousValue: data.value, exclude ? data.value: data.previousValue);            
+            if (selected.length)
+                this._offersProxy.setFlag(OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}), 
+                    selected[0]['id'], !exclude).subscribe(() => {
+                        this.notify.info(this.l('AppliedSuccessfully'));
+                    }
+                );
+        }
     }
 }

@@ -30,7 +30,7 @@
                      [searchEnabled]="searchEnabled"
                      [searchExpr]="searchExprType"
                      [searchTimeout]="1000"
-                     [selectionMode]="selectedKeys?.length ? 'single': 'none'"
+                     [selectionMode]="selectionMode || (selectedKeys?.length ? 'single': 'none')"
                      [showSelectionControls]="true"
                      [dataSource]="list"
                      [keyExpr]="'id'"
@@ -39,6 +39,7 @@
                      [selectedItems]="selectedItems"
                      (onContentReady)="onContentReady($event)"
                      (onInitialized)="onInitialized($event)"
+                     (onOptionChanged)="onOptionChanged.emit($event)"
                      (onItemClick)="onItemClick($event)">
                 <div *dxTemplate="let data of 'item'">
                     <div class="item-row {{data.name.replace(' ', '-') | lowercase}}" data-id="{{data.id}}">

@@ -14,6 +14,7 @@ import * as _ from 'underscore';
 export class StaticListComponent extends AppComponentBase {
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Output() onListFiltered: EventEmitter<any> = new EventEmitter();
+    @Output() onOptionChanged: EventEmitter<any> = new EventEmitter();
     @Input() width: string;
     @Input() height: number;
     @Input() title: string;
@@ -30,6 +31,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() bulkUpdatePermissionKey = '';
     @Input() list: any;
     @Input() showTitle = true;
+    @Input() selectionMode;
 
     listComponent: any;
     listHeight: number;
