@@ -18,14 +18,12 @@
         [list]="categories">
     </app-static-list>
     <app-static-list #flagsComponent
-        [width]="'250px'"
+        [width]="'350px'"
         [title]="l('Flags')"
         [showConfirmation]="true"
-        [hideButtons]="false"
         [filterModel]="filterModelFlags"
         [targetSelector]="'[aria-label=flag-icon]'"
         [selectionMode]="selectedOfferKeys.length ? 'multiple': 'none'"
-        [selectedKeys]="selectedOfferKeys"
         (onItemSelected)="onFlagSelected($event)"
         (onOptionChanged)="onFlagOptionChanged($event)"
         [list]="flags">

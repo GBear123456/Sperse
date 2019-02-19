@@ -17,6 +17,8 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 
+import * as _ from 'lodash';
+
 @Component({
     templateUrl: './offers.component.html',
     styleUrls: ['./offers.component.less'],
@@ -218,7 +220,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
             .map(key => ({ id: OfferFilterCategory[key], name: this.l(key) }));
 
         this.flags = Object.keys(OfferFlag)
-            .map(key => ({ id: OfferFlag[key], name: this.l(key) }));
+            .map(key => ({ id: OfferFlag[key], name: _.startCase(key) }));
 
         this.filters = [
             this.filterModelCategories = new FilterModel({
@@ -311,8 +313,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onSelectionChanged($event) {
-        this.selectedOfferKeys = $event.component.getSelectedRowKeys();
-        this.initToolbarConfig();
+        this.selectedOfferKeys = $event.component.getSelectedRowKeys().map(item => item.CampaignId);
     }
 
     showCompactRowsHeight() {
@@ -359,15 +360,20 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onFlagSelected(data) {
-        console.log(data);
     }
 
     onFlagOptionChanged(data) {
         if (data.name == 'selectedItems' && this.selectedOfferKeys.length 
             && data.value.length != data.previousValue.length
         ) {
-//            console.log(data);
-//            this._offersProxy.setFlag(OfferFilter.fromJS({campaignIds: selectedOfferKeys}), OfferFlag[], );
+            let exclude = data.previousValue.length > data.value.length,
+                selected = _.difference(exclude ? data.previousValue: data.value, exclude ? data.value: data.previousValue);            
+            if (selected.length)
+                this._offersProxy.setFlag(OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}), 
+                    OfferFlag[selected[0].id], !exclude).subscribe(() => {
+                        this.notify.info(this.l('AppliedSuccessfully'));
+                    }
+                );
         }
     }
 }
