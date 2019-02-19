@@ -49,6 +49,21 @@
                            title="{{l('Filter')}}"
                            (click)="applyFilter($event, data)"></a>
                     </div>
+                    <div (click)="$event.stopPropagation()"
+                         [ngClass]="template"
+                         *ngIf="template =='bottomInput'">
+                        <div class="input-wrap">
+                            <dx-text-box [(value)]="data.bottomInputValue"></dx-text-box>
+                        </div>
+                        <dx-button
+                            icon="check"
+                            (onClick)="setValue($event, data, 'add')">
+                        </dx-button>
+                        <dx-button
+                            icon="close"
+                            (onClick)="setValue($event, data, 'remove')">
+                        </dx-button>
+                    </div>
                 </div>
             </dx-list>
         </div>

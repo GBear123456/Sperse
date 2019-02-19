@@ -198,5 +198,43 @@
         .dx-icon-clear {
             right: 0px;
         }
+    
+        .bottomInput {
+            display: none;
+        }
+    
+        .dx-list-item-selected {
+            .bottomInput {
+                display: flex;
+                align-items: center;
+                
+                .input-wrap {
+                    input {
+                        padding: 5px 6px;
+                        margin-right: 10px;
+                    }
+                }
+                
+                .dx-button {
+                    border: 0;
+                    margin: 0 0 0 4px;
+    
+                    .dx-button-content {
+                        padding: 4px;
+                    }
+                    
+                    &[aria-label="check"] {
+                        .dx-icon {
+                            color: #24c26c;
+                        }
+                    }
+                    &[aria-label="close"] {
+                        .dx-icon {
+                            color: #ed501a;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
