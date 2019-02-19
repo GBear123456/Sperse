@@ -56,6 +56,7 @@
                 <dxi-column dataField="CardNetwork" caption="" [width]="150"></dxi-column>
                 <dxi-column dataField="Categories" caption="{{l('Category')}}" [width]="300" cellTemplate="categoriesCell" [calculateGroupValue]="categoryGroupValue"></dxi-column>
                 <dxi-column dataField="Status" caption="{{l('Offer_Status')}}" [width]="180"></dxi-column>
+                <dxi-column dataField="Published" caption="{{l('Offer_Published')}}" dataType="boolean"></dxi-column>
                 <dxi-column dataField="Created" caption="{{l('Offer_Created')}}" [width]="180" cellTemplate="dateCell"></dxi-column>
 
                 <div *dxTemplate="let field of 'photoTemplate'">

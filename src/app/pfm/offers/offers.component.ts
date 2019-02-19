@@ -213,7 +213,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
-            }
+            },
+            sort: [
+                { selector: "Created", desc: true }
+            ]
         });
 
         this.categories = Object.keys(OfferFilterCategory)
