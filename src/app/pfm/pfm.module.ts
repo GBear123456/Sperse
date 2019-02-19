@@ -5,6 +5,7 @@ import * as ngCommon from '@angular/common';
 /** Third party imports */
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -33,6 +34,7 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
         DxTooltipModule,
         DxListModule,
         DxTextBoxModule,
+        DxTagBoxModule,
         DxContextMenuModule,
         DxSelectBoxModule,
         DxCheckBoxModule,

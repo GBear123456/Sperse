@@ -19,6 +19,7 @@ import { diff } from 'deep-diff';
 import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
 import { RootComponent } from 'root.components';
 import {
+    CreditScores2,
     ExtendOfferDto,
     OfferDetailsForEditDtoCampaignProviderType,
     OfferDetailsForEditDtoCardNetwork,
@@ -90,6 +91,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         'serviceRating'
     ];
     detailsEnums = {
+        creditScores: CreditScores2,
         cardNetwork: OfferDetailsForEditDtoCardNetwork,
         cardType: OfferDetailsForEditDtoCardType,
         targetAudience: OfferDetailsForEditDtoTargetAudience,
@@ -100,6 +102,9 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         parameterHandlerType: OfferDetailsForEditDtoParameterHandlerType,
         status: OfferDetailsForEditDtoStatus,
         type: OfferDetailsForEditDtoType
+    };
+    detailsWithMultipleValues = {
+        creditScores: 1
     };
     initialModel: OfferDetailsForEditDto;
     model: OfferDetailsForEditDto;
@@ -135,7 +140,31 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'rewardsRating',
             'serviceRating'
         ],
-        'attributes': []
+        'attributes': [
+            'states',
+            'creditScores',
+            'minAnnualIncome',
+            'maxAnnualIncome',
+            'minLoanAmount',
+            'maxLoanAmount',
+            'minLoanTermMonths',
+            'maxLoanTermMonths',
+            'loanAmount',
+            'loanTermMonths',
+            'introAPR',
+            'regularAPR',
+            'introRewardsBonus',
+            'rewardsRate',
+            'annualFee',
+            'monthlyFee',
+            'balanceTransferFee',
+            'activationFee',
+            'zeroPercentageInterestTransfers',
+            'durationForZeroPercentageTransfersInMonths',
+            'durationForZeroPercentagePurchasesInMonths',
+            'offerCollection',
+            'flags'
+        ]
     };
     detailColumnClasses = {
         'campaignUrl': 'col-md-12',
@@ -198,6 +227,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         return this.detailsEnums[detailName];
     }
 
+    isMultiple(detailName: string): boolean {
+        return this.detailsWithMultipleValues[detailName];
+    }
+
     isRatingDetail(detailName: string): boolean {
         return this.ratingDetails.indexOf(detailName) >= 0;
     }
@@ -223,7 +256,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     back() {
-        this.router.navigate(['../'], { relativeTo: this.route });
+        this.router.navigate(['../../'], { relativeTo: this.route });
     }
 
     onSubmit() {

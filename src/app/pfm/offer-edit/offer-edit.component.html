@@ -22,13 +22,24 @@
                                     <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                 </ng-container>
                                 <div class="drop-down-box-wrapper">
-                                    <dx-select-box
-                                        [inputAttr]="{ id: detail }"
-                                        [placeholder]="ls.l('Select')"
-                                        [dataSource]="keys(detailsEnums[detail])"
-                                        [(value)]="model[detail]"
-                                        [disabled]="isReadOnly(detail)">
-                                    </dx-select-box>
+                                    <ng-container *ngIf="isMultiple(detail); else single">
+                                        <dx-tag-box
+                                            [inputAttr]="{ id: detail }"
+                                            [placeholder]="ls.l('Select')"
+                                            [dataSource]="keys(detailsEnums[detail])"
+                                            [(value)]="model[detail]"
+                                            [disabled]="isReadOnly(detail)">
+                                        </dx-tag-box>
+                                    </ng-container>
+                                    <ng-template #single>
+                                        <dx-select-box
+                                            [inputAttr]="{ id: detail }"
+                                            [placeholder]="ls.l('Select')"
+                                            [dataSource]="keys(detailsEnums[detail])"
+                                            [(value)]="model[detail]"
+                                            [disabled]="isReadOnly(detail)">
+                                        </dx-select-box>
+                                    </ng-template>
                                 </div>
                             </div>
                         </ng-container>
@@ -50,7 +61,7 @@
                                         <dx-text-box [inputAttr]="{ id: detail }"
                                                      [valueChangeEvent]="'focusout'"
                                                      [(value)]="model[detail]"
-                                                     [placeholder]="!isReadOnly(detail) ? ls.l('Enter_Value') : ''"
+                                                     [placeholder]="!isReadOnly(detail) ? ls.ls('PFM', 'Enter_Value') : ''"
                                                      [disabled]="isReadOnly(detail)"
                                                      (onValueChanged)="onTextBoxChange($event, detail)">
                                         </dx-text-box>
@@ -73,7 +84,7 @@
                                         <div>
                                             <div *ngFor="let value of model[detail]; let i=index" class="detailItem">
                                                 <dx-text-box [valueChangeEvent]="'focusout'"
-                                                             [placeholder]="!isReadOnly(detail) ? ls.l('Enter_Value') : ''"
+                                                             [placeholder]="!isReadOnly(detail) ? ls.ls('PFM', 'Enter_Value') : ''"
                                                              [(value)]="model[detail][i]">
                                                 </dx-text-box>
                                                 <span class="clear-contact" (click)="remove(model[detail], i)"><i class="minus-icon"></i></span>
