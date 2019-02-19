@@ -59,7 +59,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
-    isLendSpaceLayout: boolean = this.appSession.tenant.customLayoutType && this.appSession.tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace;
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
 
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
@@ -121,9 +120,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
                 this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
-                this.isLendSpaceLayout ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
+                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
             ];
-        if (this.isLendSpaceLayout)
+        if (this.isPFMApplicationsFeatureEnabled)
         {
             this.epcvipEmailServers = Object.keys(EPCVIPMailerSettingsEditDtoServer);
         }
@@ -287,7 +286,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
         if (this.isPFMApplicationsFeatureEnabled) 
             requests.push(this._tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
-        if (this.isLendSpaceLayout)
+        if (this.isPFMApplicationsFeatureEnabled)
             requests.push(this._tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
         
 

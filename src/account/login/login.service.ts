@@ -270,18 +270,16 @@ export class LoginService {
         this._authService.setLoginCookies(accessToken, encryptedAccessToken, expireInSeconds, rememberMe, twoFactorRememberClientToken, redirectUrl);
 
         redirectUrl = redirectUrl || sessionStorage.getItem('redirectUrl');
-        if (redirectUrl) {
+        if (redirectUrl)
             sessionStorage.removeItem('redirectUrl');
-            location.href = redirectUrl;
-        } else {
-            let initialUrl = UrlHelper.initialUrl;
+        else {
+            redirectUrl = UrlHelper.initialUrl;
 
-            if (initialUrl.indexOf('/account') > 0) {
-                initialUrl = AppConsts.appBaseUrl;
-            }
-
-            location.href = initialUrl;
+            if (redirectUrl.indexOf('/account') > 0)
+                redirectUrl = AppConsts.appBaseUrl;
         }
+
+        setTimeout(() => location.href = redirectUrl, 300);
     }
 
     private clear(): void {
