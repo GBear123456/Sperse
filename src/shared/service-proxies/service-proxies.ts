@@ -49020,7 +49020,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     maxAnnualIncome!: number | undefined;
     flags!: Flags | undefined;
     states!: string[] | undefined;
-    categories!: Categories[] | undefined;
+    categories!: string[] | undefined;
     description!: string | undefined;
     introAPR!: string | undefined;
     creditScores!: CreditScores2[] | undefined;
@@ -49247,7 +49247,7 @@ export interface IOfferDetailsForEditDto {
     maxAnnualIncome: number | undefined;
     flags: Flags | undefined;
     states: string[] | undefined;
-    categories: Categories[] | undefined;
+    categories: string[] | undefined;
     description: string | undefined;
     introAPR: string | undefined;
     creditScores: CreditScores2[] | undefined;
@@ -60656,27 +60656,6 @@ export interface IFlags {
     zeroPercentageInterestTransfers: boolean | undefined;
     special: boolean | undefined;
     newest: boolean | undefined;
-}
-
-export enum Categories {
-    PaydayLoans = "PaydayLoans", 
-    PersonalLoans = "PersonalLoans", 
-    Beauty = "Beauty", 
-    InstallmentLoans = "InstallmentLoans", 
-    AutoLoans = "AutoLoans", 
-    Legal = "Legal", 
-    CreditRepair = "CreditRepair", 
-    CreditScore = "CreditScore", 
-    Travel = "Travel", 
-    Jobs = "Jobs", 
-    BusinessLoans = "BusinessLoans", 
-    DebtConsolidation = "DebtConsolidation", 
-    CreditCards = "CreditCards", 
-    MerchantServices = "MerchantServices", 
-    Dating = "Dating", 
-    Miscellaneous = "Miscellaneous", 
-    Crypto = "Crypto", 
-    CreditMonitoring = "CreditMonitoring", 
 }
 
 export enum CreditScores2 {
