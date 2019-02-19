@@ -7,6 +7,8 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
+import { difference, startCase } from 'lodash';
+
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -16,8 +18,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-
-import * as _ from 'lodash';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -220,7 +220,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
             .map(key => ({ id: OfferFilterCategory[key], name: this.l(key) }));
 
         this.flags = Object.keys(OfferFlag)
-            .map(key => ({ id: OfferFlag[key], name: _.startCase(key) }));
+            .map(key => ({ id: OfferFlag[key], name: startCase(key) }));
 
         this.filters = [
             this.filterModelCategories = new FilterModel({
@@ -367,7 +367,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
             && data.value.length != data.previousValue.length
         ) {
             let exclude = data.previousValue.length > data.value.length,
-                selected = _.difference(exclude ? data.previousValue: data.value, exclude ? data.value: data.previousValue);            
+                selected = difference(exclude ? data.previousValue: data.value, exclude ? data.value: data.previousValue);            
             if (selected.length)
                 this._offersProxy.setFlag(OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}), 
                     selected[0]['id'], !exclude).subscribe(() => {
