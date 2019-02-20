@@ -52,8 +52,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         }
     ];
     actionsButtons = [
-        {name: 'SIGN UP', class: 'member-signup', routerUrl: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false},
-        {name: 'Member Login', class: 'member-login', routerUrl: environment.LENDSPACE_DOMAIN + '/login.html', disabled: false}
+        {name: 'SIGN UP', class: 'member-signup', url: environment.LENDSPACE_DOMAIN + '/sign-up', disabled: false},
+        {name: 'Member Login', class: 'member-login', url: environment.LENDSPACE_DOMAIN + '/login.html', disabled: false}
     ];
 
     constructor(
@@ -170,7 +170,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
             },
             {
                 name: 'Resources',
-                routerUrl: '/personal-finance/resources'
+                url: environment.LENDSPACE_DOMAIN + '/resources'
             }
         ];
     }
