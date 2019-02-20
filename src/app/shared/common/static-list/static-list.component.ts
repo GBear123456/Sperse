@@ -15,8 +15,11 @@ export class StaticListComponent extends AppComponentBase {
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
     @Output() onListFiltered: EventEmitter<any> = new EventEmitter();
     @Output() onOptionChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onBottomInputApplyValue: EventEmitter<any> = new EventEmitter();
     @Input() width: string;
     @Input() height: number;
+    @Input() template: string;
+    @Input() accessKey: string;
     @Input() title: string;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
@@ -36,6 +39,7 @@ export class StaticListComponent extends AppComponentBase {
     listComponent: any;
     listHeight: number;
     tooltipVisible: boolean;
+    bottomInputValue: string;
     @Input() selectedItems: any = [];
     @HostBinding('class.highlightSelected') @Input() highlightSelected = false;
     @HostBinding('class.disableHindmost') @Input() disableHindmost = false;
@@ -139,5 +143,11 @@ export class StaticListComponent extends AppComponentBase {
     getNewListData(event, title) {
         event.listTitle = title;
         this.onListFiltered.emit(event);
+    }
+
+    setValue(event, data, type) {
+        event.event.stopPropagation();
+        if (type != 'add') data.bottomInputValue = '';
+        this.onBottomInputApplyValue.emit(data);
     }
 }

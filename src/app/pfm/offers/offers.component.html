@@ -24,9 +24,20 @@
         [filterModel]="filterModelFlags"
         [targetSelector]="'[aria-label=flag-icon]'"
         [selectionMode]="selectedOfferKeys.length ? 'multiple': 'none'"
-        (onItemSelected)="onFlagSelected($event)"
         (onOptionChanged)="onFlagOptionChanged($event)"
         [list]="flags">
+    </app-static-list>
+    <app-static-list #attributesComponent
+                     [accessKey]="'attributes-select'"
+                     [width]="'300px'"
+                     [title]="l('Attributes')"
+                     [template]="'bottomInput'"
+                     [showConfirmation]="true"
+                     [filterModel]="filterModelAttributes"
+                     [targetSelector]="'[aria-label=pen]'"
+                     [selectionMode]="selectedOfferKeys.length ? 'multiple': 'none'"
+                     (onBottomInputApplyValue)="onAttributeValueApply($event)"
+                     [list]="attributes">
     </app-static-list>
 
     <div class="portlet light no-padding margin-bottom-0">
