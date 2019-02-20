@@ -7,17 +7,23 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
+import { difference, startCase } from 'lodash';
+
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { OfferFilterCategory, OfferManagementServiceProxy, OfferFlag, OfferFilter } from '@shared/service-proxies/service-proxies';
+import {
+    OfferFilterCategory,
+    OfferManagementServiceProxy,
+    OfferFlag,
+    OfferFilter,
+    OfferAttribute
+} from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-
-import * as _ from 'lodash';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -29,6 +35,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     @ViewChild(DxContextMenuComponent) pullContextComponent: DxContextMenuComponent;
     @ViewChild('categoriesComponent') categoriesComponent: StaticListComponent;
     @ViewChild('flagsComponent') flagsComponent: StaticListComponent;
+    @ViewChild('attributesComponent') attributesComponent: StaticListComponent;
 
     private readonly dataSourceURI = 'Offer';
 
@@ -37,10 +44,12 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     private updateAfterActivation: boolean;
     filterModelCategories: FilterModel;
     filterModelFlags: FilterModel;
+    filterModelAttributes: FilterModel;
     pullContextMenuItems = [];
     selectedOfferKeys = [];
     categories = [];
     flags = [];
+    attributes = [];
 
     constructor(
         private injector: Injector,
@@ -151,6 +160,13 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
                             attr: {
                                 'filter-selected': this.filterModelFlags && this.filterModelFlags.isSelected
                             }
+                        },
+                        {
+                            name: 'pen',
+                            action: this.toggleAttributes.bind(this),
+                            attr: {
+                                'filter-selected': this.filterModelAttributes && this.filterModelAttributes.isSelected
+                            }
                         }
                     ]
                 },
@@ -197,6 +213,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
         this.flagsComponent.toggle();
     }
 
+    toggleAttributes() {
+        this.attributesComponent.toggle();
+    }
+
     searchValueChange(e: object) {
         this.searchValue = e['value'];
         this.processFilterInternal();
@@ -213,14 +233,20 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
-            }
+            },
+            sort: [
+                { selector: 'Created', desc: true }
+            ]
         });
 
         this.categories = Object.keys(OfferFilterCategory)
             .map(key => ({ id: OfferFilterCategory[key], name: this.l(key) }));
 
         this.flags = Object.keys(OfferFlag)
-            .map(key => ({ id: OfferFlag[key], name: _.startCase(key) }));
+            .map(key => ({ id: OfferFlag[key], name: startCase(key) }));
+
+        this.attributes = Object.keys(OfferAttribute)
+            .map(key => ({ id: OfferAttribute[key], name: startCase(key) }));
 
         this.filters = [
             this.filterModelCategories = new FilterModel({
@@ -244,11 +270,21 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
                         keyExpr: 'id'
                     })
                 }
+            }),
+            this.filterModelAttributes = new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'Attribute',
+                items: {
+                    element: new FilterCheckBoxesModel({
+                        dataSource: this.attributes,
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+                }
             })
         ];
         this._filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
         this.initFiltering();
-
         this.initHeadlineConfig();
     }
 
@@ -359,21 +395,28 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
         return data.Categories.map(item => item.Name).join(', ');
     }
 
-    onFlagSelected(data) {
-    }
-
     onFlagOptionChanged(data) {
-        if (data.name == 'selectedItems' && this.selectedOfferKeys.length 
+        if (data.name == 'selectedItems' && this.selectedOfferKeys.length
             && data.value.length != data.previousValue.length
         ) {
             let exclude = data.previousValue.length > data.value.length,
-                selected = _.difference(exclude ? data.previousValue: data.value, exclude ? data.value: data.previousValue);            
+                selected = difference(exclude ? data.previousValue : data.value, exclude ? data.value : data.previousValue);
             if (selected.length)
-                this._offersProxy.setFlag(OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}), 
+                this._offersProxy.setFlag(OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}),
                     selected[0]['id'], !exclude).subscribe(() => {
                         this.notify.info(this.l('AppliedSuccessfully'));
                     }
                 );
         }
+    }
+
+    onAttributeValueApply(data) {
+        this._offersProxy.setAttribute(
+            OfferFilter.fromJS({campaignIds: this.selectedOfferKeys}),
+            data.id,
+            data.bottomInputValue
+        ).subscribe(() => {
+            this.notify.info(this.l('AppliedSuccessfully'));
+        });
     }
 }

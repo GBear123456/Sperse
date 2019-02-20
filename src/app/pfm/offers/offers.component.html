@@ -24,9 +24,20 @@
         [filterModel]="filterModelFlags"
         [targetSelector]="'[aria-label=flag-icon]'"
         [selectionMode]="selectedOfferKeys.length ? 'multiple': 'none'"
-        (onItemSelected)="onFlagSelected($event)"
         (onOptionChanged)="onFlagOptionChanged($event)"
         [list]="flags">
+    </app-static-list>
+    <app-static-list #attributesComponent
+                     [accessKey]="'attributes-select'"
+                     [width]="'300px'"
+                     [title]="l('Attributes')"
+                     [template]="'bottomInput'"
+                     [showConfirmation]="true"
+                     [filterModel]="filterModelAttributes"
+                     [targetSelector]="'[aria-label=pen]'"
+                     [selectionMode]="selectedOfferKeys.length ? 'multiple': 'none'"
+                     (onBottomInputApplyValue)="onAttributeValueApply($event)"
+                     [list]="attributes">
     </app-static-list>
 
     <div class="portlet light no-padding margin-bottom-0">
@@ -56,6 +67,7 @@
                 <dxi-column dataField="CardNetwork" caption="" [width]="150"></dxi-column>
                 <dxi-column dataField="Categories" caption="{{l('Category')}}" [width]="300" cellTemplate="categoriesCell" [calculateGroupValue]="categoryGroupValue"></dxi-column>
                 <dxi-column dataField="Status" caption="{{l('Offer_Status')}}" [width]="180"></dxi-column>
+                <dxi-column dataField="Published" caption="{{l('Offer_Published')}}" dataType="boolean"></dxi-column>
                 <dxi-column dataField="Created" caption="{{l('Offer_Created')}}" [width]="180" cellTemplate="dateCell"></dxi-column>
 
                 <div *dxTemplate="let field of 'photoTemplate'">

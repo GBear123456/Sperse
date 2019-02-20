@@ -28,13 +28,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         }
 
         if (!this._sessionService.user) {
-            if (this._feature.isEnabled('PFM.Applications')) {
-                this._router.navigate(['/personal-finance/home']);
-            } else if (this._feature.isEnabled('PFM.CreditReport')) {
-                this._router.navigate(['/personal-finance/credit-report']);
-            } else {
-                this._router.navigate(['/account/login']);
-            }
+            this._router.navigate(['/account/login']);
             return false;
         }
 
@@ -62,7 +56,6 @@ export class RouteGuard implements CanActivate, CanActivateChild {
 
     selectBestRoute(): string {
         if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
-
             if (this._sessionService.userId !== null) {
                 const lastModuleName = this._cacheService.get('lastVisitedModule_' + this._sessionService.userId);
                 if (lastModuleName) {
@@ -84,6 +77,9 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                         return '/app/cfo/user/';
                 }
             }
+
+            if (this._feature.isEnabled('PFM') && this._permissionChecker.isGranted('Pages.PFM.Applications.ManageOffers'))
+                return '/app/pfm/offers';
         }
 
         if (abp.session.multiTenancySide == abp.multiTenancy.sides.HOST || this._feature.isEnabled('Admin')) {

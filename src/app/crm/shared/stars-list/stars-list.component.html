@@ -1,4 +1,4 @@
-<dx-tooltip height="315"
+<dx-tooltip height="310"
             [target]="targetSelector"
             [(visible)]="tooltipVisible">
     <div *dxTemplate="let data of 'content'">
@@ -11,7 +11,7 @@
                 </div>
             </div>
             <dx-list #starslist
-                height="230px"
+                height="240px"
                 [selectionMode]="bulkUpdateMode && !selectedKeys?.length ? 'none' : 'single'"
                 [showSelectionControls]="true"
                 [dataSource]="list"

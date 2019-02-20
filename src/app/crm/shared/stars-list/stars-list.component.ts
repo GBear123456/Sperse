@@ -147,7 +147,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
 
     ngOnInit() {
         this.store$.select(StarsStoreSelectors.getStars).subscribe((result) => {
-            this.list = result;
+            this.list = _.sortBy(result, 'id');
         });
     }
 
