@@ -27,7 +27,8 @@
             </div>
             <ng-template #detailsFields let-details>
                 <ng-container *ngFor="let detail of details">
-                    <div class="detail" *ngIf="!detailsConfig[detail] || !detailsConfig[detail].hidden">
+                    <div *ngIf="!detailsConfig[detail] || !detailsConfig[detail].hidden"
+                         [ngClass]="['detail', detailsConfig[detail] && detailsConfig[detail].cssClass ? detailsConfig[detail].cssClass : '']">
                         <ng-container *ngIf="isEnum(detail); else a">
                             <div class="field">
                                 <ng-container *ngIf="startCase(detail) as detailDisplayValue">
@@ -46,7 +47,7 @@
                                     <ng-template #single>
                                         <dx-select-box
                                             [inputAttr]="{ id: detail }"
-                                            [placeholder]="ls.l('Select')"
+                                            [placeholder]="!isReadOnly(detail) ? ls.l('Select') : ''"
                                             [dataSource]="keys(detailsConfig[detail].enum)"
                                             [(value)]="model[detail]"
                                             [disabled]="isReadOnly(detail)">

@@ -105,11 +105,13 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         campaignUrl: {
             readOnly: true,
-            position: FieldPositionEnum.Center
+            position: FieldPositionEnum.Center,
+            cssClass: 'center'
         },
         redirectUrl: {
             readOnly: true,
-            position: FieldPositionEnum.Center
+            position: FieldPositionEnum.Center,
+            cssClass: 'center'
         },
         cardNetwork: {
             readOnly: true,
@@ -228,6 +230,15 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         states: {
             position: FieldPositionEnum.Left
+        },
+        pros: {
+            cssClass: 'valuesBelow'
+        },
+        cons: {
+            cssClass: 'valuesBelow'
+        },
+        details: {
+            cssClass: 'valuesBelow'
         }
     };
     initialModel: OfferDetailsForEditDto;
@@ -237,10 +248,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         'general': [
             'campaignId',
             'name',
-            'description',
-            'categories',
-            'status',
             'isPublished',
+            'status',
+            'categories',
+            'description',
             'subId',
             'systemType',
             'type',
