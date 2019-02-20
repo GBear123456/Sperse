@@ -581,9 +581,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         this.capitalize(filter.caption)];
                     if (filterMethod)
                         return filterMethod.call(this, filter);
-                },
-                null,
-                this.searchValue
+                }
             );
         }
     }
