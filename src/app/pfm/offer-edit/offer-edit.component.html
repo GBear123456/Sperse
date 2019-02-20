@@ -103,10 +103,11 @@
                                         <div>
                                             <div *ngFor="let value of model[detail]; let i=index" class="detailItem">
                                                 <dx-text-box [valueChangeEvent]="'focusout'"
+                                                             [disabled]="isReadOnly(detail)"
                                                              [placeholder]="!isReadOnly(detail) ? ls.ls('PFM', 'Enter_Value') : ''"
                                                              [(value)]="model[detail][i]">
                                                 </dx-text-box>
-                                                <span class="clear-contact" (click)="remove(model[detail], i)"><i class="minus-icon"></i></span>
+                                                <span *ngIf="!isReadOnly(detail)" class="clear-contact" (click)="remove(model[detail], i)"><i class="minus-icon"></i></span>
                                             </div>
                                             <div *ngIf="!isReadOnly(detail)" class="add-new-button" (click)="addNew(model[detail], value)">
                                                 <span>+ Add new</span>

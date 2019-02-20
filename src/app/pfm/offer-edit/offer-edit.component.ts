@@ -89,7 +89,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         description: {
             readOnly: true
         },
-        category: {
+        categories: {
             readOnly: true
         },
         status: {
@@ -239,7 +239,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'campaignId',
             'name',
             'description',
-            'category',
+            'categories',
             'status',
             'isPublished',
             'subId',
