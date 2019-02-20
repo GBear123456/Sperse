@@ -19,6 +19,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() width: string;
     @Input() height: number;
     @Input() template: string;
+    @Input() accessKey: string;
     @Input() title: string;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
