@@ -39,14 +39,14 @@ export class TopBarComponent extends AppComponentBase {
                 let currModuleName = (this.config.name || '').toLowerCase();
                 if (currModuleName && currModuleName != _appService.getModule())
                     _appService.initModule();
-                else
-                    setTimeout(() => {
-                        this.menu.items.forEach((item, i) => {
-                            let route = this.router.url.split('?')[0];
-                            if (route === item.route || _.contains(item.alterRoutes, route))
-                                this.selectedIndex = i;
-                        });
-                    }, 300);
+
+                setTimeout(() => {
+                    let route = event.urlAfterRedirects.split('?').shift();
+                    this.menu.items.forEach((item, i) => {                        
+                        if (route === item.route || _.contains(item.alterRoutes, route))
+                            this.selectedIndex = i;
+                    });
+                });
             }
         });
 
