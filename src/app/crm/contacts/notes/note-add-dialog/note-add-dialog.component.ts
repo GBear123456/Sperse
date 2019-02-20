@@ -227,9 +227,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             this.phone = this.phones[0] && this.phones[0].id;
         });
         this.contactId = contact.id;
-        this.type = this.contactId == this.primaryOrgId ?
-            NoteType.CompanyNote :
-            this.defaultType;
+
+        this.type = (contact instanceof OrganizationShortInfo ?
+            NoteType.CompanyNote : this.defaultType);
     }
 
     initValidationGroup($event) {
