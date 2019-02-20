@@ -5,13 +5,15 @@ import {
     Component,
     Injector,
     OnDestroy,
-    OnInit
+    OnInit,
+    Inject
 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, combineLatest } from 'rxjs';
-import { finalize, map, publishReplay, switchMap, refCount } from 'rxjs/operators';
+import { finalize, map, tap, publishReplay, switchMap, refCount } from 'rxjs/operators';
 import { cloneDeep, startCase } from 'lodash';
 import { diff } from 'deep-diff';
 
@@ -53,7 +55,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     };
     startCase = startCase;
     rootComponent: RootComponent;
-    /** @todo replace in future */
     navLinks = [
         {
             label: 'General',
@@ -297,7 +298,8 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         private offerManagementService: OfferManagementServiceProxy,
         private applicationRef: ApplicationRef,
         private router: Router,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        @Inject(DOCUMENT) private document: any
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
     }
@@ -305,9 +307,13 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.section$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => paramMap.get('section') || 'general'));
         this.rootComponent.overflowHidden(true);
+        const formElement: HTMLFormElement = this.document.querySelector('form.offerEditForm');
         this.offerDetails$ = this.route.paramMap.pipe(
+            tap(() => abp.ui.setBusy(formElement)),
             map((paramMap: ParamMap) => +paramMap.get('id')),
-            switchMap(offerId => this.offerManagementService.getDetailsForEdit(false, offerId)),
+            switchMap(offerId => this.offerManagementService.getDetailsForEdit(false, offerId).pipe(
+                finalize(() => abp.ui.clearBusy(formElement))
+            )),
             publishReplay(),
             refCount()
         );

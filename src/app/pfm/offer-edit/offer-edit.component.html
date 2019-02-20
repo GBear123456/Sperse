@@ -12,7 +12,7 @@
         </header>
     </ng-container>
     <ng-container mainContent>
-        <form>
+        <form class="offerEditForm">
             <div class="row">
                 <div class="col-md-5" *ngIf="detailsFieldsByPosition[fieldPositions.Left].length">
                     <ng-container *ngTemplateOutlet="detailsFields; context: {$implicit: detailsFieldsByPosition[fieldPositions.Left]}"></ng-container>
