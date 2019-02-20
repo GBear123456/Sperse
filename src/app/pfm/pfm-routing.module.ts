@@ -10,7 +10,7 @@ import { OfferEditComponent } from '@app/pfm/offer-edit/offer-edit.component';
             {
                 path: '',
                 children: [
-                    { path: 'offers', component: OffersComponent, data: { permission: '' } },
+                    { path: 'offers', component: OffersComponent, data: { permission: '', reuse: true } },
                     { path: 'offers/:id', redirectTo: 'offers/:id/general' },
                     { path: 'offers/:id/:section', component: OfferEditComponent }
                 ]

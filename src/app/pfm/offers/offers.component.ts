@@ -224,7 +224,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngOnInit(): void {
-        this.activate();
         this.dataSource = new DataSource({
             store: {
                 type: 'odata',
@@ -283,8 +282,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
                 }
             })
         ];
-        this._filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
-        this.initFiltering();
+        this.activate();
         this.initHeadlineConfig();
     }
 
@@ -371,11 +369,14 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
 
     activate() {
         super.activate();
+        this._filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
+        this.initFiltering();
         this.initToolbarConfig();
     }
 
     deactivate() {
         super.deactivate();
+        this._filtersService.unsubscribe();
         this._appService.updateToolbar(null);
     }
 
