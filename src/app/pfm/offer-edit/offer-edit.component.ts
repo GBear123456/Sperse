@@ -5,10 +5,8 @@ import {
     Component,
     Injector,
     OnDestroy,
-    OnInit,
-    Inject
+    OnInit
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
@@ -298,8 +296,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         private offerManagementService: OfferManagementServiceProxy,
         private applicationRef: ApplicationRef,
         private router: Router,
-        public ls: AppLocalizationService,
-        @Inject(DOCUMENT) private document: any
+        public ls: AppLocalizationService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
     }
@@ -307,12 +304,11 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.section$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => paramMap.get('section') || 'general'));
         this.rootComponent.overflowHidden(true);
-        const formElement: HTMLFormElement = this.document.querySelector('form.offerEditForm');
         this.offerDetails$ = this.route.paramMap.pipe(
-            tap(() => abp.ui.setBusy(formElement)),
+            tap(() => abp.ui.setBusy()),
             map((paramMap: ParamMap) => +paramMap.get('id')),
             switchMap(offerId => this.offerManagementService.getDetailsForEdit(false, offerId).pipe(
-                finalize(() => abp.ui.clearBusy(formElement))
+                finalize(() => abp.ui.clearBusy())
             )),
             publishReplay(),
             refCount()
