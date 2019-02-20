@@ -139,7 +139,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 this.firstStage = this.lockMarginalEntities ? this.stages[0] : {};
                 this.lastStage = this.lockMarginalEntities ? this.stages[this.stages.length - 1] : {};
 
-                this.loadStagesLeads(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
+                this.loadData(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
 
                 this.refreshTimeout = null;
             })
@@ -201,7 +201,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             !this.quiet && this.startLoading();
             this.refreshTimeout = setTimeout(() => {
                 if (this.pipeline) {
-                    this.loadStagesLeads(0, stageId &&
+                    this.loadData(0, stageId &&
                         _.findIndex(this.stages, obj => obj.id == stageId), Boolean(stageId));
                     this.refreshTimeout = null;
                 } else
@@ -232,6 +232,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             && !this.filterModelStages.items.element.value.some((item) => {
                 return item.split(':').pop() == stageId;
             });
+    }
+
+    loadData(page = 0, stageIndex?: number, oneStageOnly = false) {
+        this.loadStagesLeads(page, stageIndex, oneStageOnly);
+        if (this.totalsURI && !oneStageOnly)
+            this.processTotalsRequest(this.queryWithSearch);
     }
 
     loadStagesLeads(page = 0, stageIndex?: number, oneStageOnly = false) {
@@ -279,11 +285,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     stage['full'] = true;
                 }
 
-                let allStagesLoaded = this.isAllStagesLoaded();
-                if (oneStageOnly || allStagesLoaded)
-                    setTimeout(() => this.finishLoading(), 1000);
-                if (this.totalsURI && allStagesLoaded)
+                if (oneStageOnly || this.isAllStagesLoaded())
+                    setTimeout(() => this.finishLoading());
+                if (oneStageOnly && stage['full'])
                     this.processTotalsRequest(this.queryWithSearch);
+            }).fail((error) => {
+                this.finishLoading();
+                this.notify.error(error);
             });
         }
 
@@ -330,14 +338,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }).concat(this.getSearchFilter());
 
         this.startLoading();
-        this.loadStagesLeads();
+        this.loadData();
 
         return this.queryWithSearch;
     }
 
     loadMore(stageIndex) {
         this.startLoading();
-        this.loadStagesLeads(
+        this.loadData(
             Math.floor(this.stages[stageIndex]['leads'].length
                 / this.STAGE_PAGE_COUNT), stageIndex, true);
     }
@@ -351,7 +359,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         let result = (stage.name == oldStage);
                         if (result && stage['total'] && !stage['leads'].length) {
                             this.startLoading();
-                            this.loadStagesLeads(0, index, true);
+                            this.loadData(0, index, true);
                         }
                         return !result;
                     });
