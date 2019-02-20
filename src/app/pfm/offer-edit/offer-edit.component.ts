@@ -32,6 +32,8 @@ import {
     OfferDetailsForEditDtoType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { FieldPositionEnum } from '@app/pfm/offer-edit/field-position.enum';
+import { FieldType } from '@app/pfm/offer-edit/field-type.enum';
 
 @Component({
     selector: 'offer-edit',
@@ -44,6 +46,11 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     offerDetails$: Observable<OfferDetailsForEditDto>;
     allDetails$: Observable<string[]>;
     filteredBySectionDetails$: Observable<string[]>;
+    detailsFieldsByPosition = {
+        [FieldPositionEnum.Left]: [],
+        [FieldPositionEnum.Right]: [],
+        [FieldPositionEnum.Center]: []
+    };
     startCase = startCase;
     rootComponent: RootComponent;
     /** @todo replace in future */
@@ -61,50 +68,168 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             route: '../attributes'
         }
     ];
-    detailsToHide = [
-        'logoUrl',
-        'customName',
-        'parameterHandlerType'
-    ];
-    readonlyDetails = [
-        'campaignId',
-        'name',
-        'description',
-        'category',
-        'status',
-        'systemType',
-        'type',
-        'campaignUrl',
-        'redirectUrl',
-        'cardNetwork',
-        'cartType',
-        'targetAudience',
-        'securingType',
-        'issuingBank'
-    ];
-    ratingDetails = [
-        'overallRating',
-        'interestRating',
-        'feesRating',
-        'benefitsRating',
-        'rewardsRating',
-        'serviceRating'
-    ];
-    detailsEnums = {
-        creditScores: CreditScores2,
-        cardNetwork: OfferDetailsForEditDtoCardNetwork,
-        cardType: OfferDetailsForEditDtoCardType,
-        targetAudience: OfferDetailsForEditDtoTargetAudience,
-        securingType: OfferDetailsForEditDtoSecuringType,
-        systemType: OfferDetailsForEditDtoSystemType,
-        offerCollection: OfferDetailsForEditDtoOfferCollection,
-        campaignProviderType: OfferDetailsForEditDtoCampaignProviderType,
-        parameterHandlerType: OfferDetailsForEditDtoParameterHandlerType,
-        status: OfferDetailsForEditDtoStatus,
-        type: OfferDetailsForEditDtoType
-    };
-    detailsWithMultipleValues = {
-        creditScores: 1
+    fieldPositions = FieldPositionEnum;
+    detailsConfig = {
+        logoUrl: {
+            hidden: true
+        },
+        customName: {
+            hidden: true
+        },
+        parameterHandlerType: {
+            hidden: true,
+            enum: OfferDetailsForEditDtoParameterHandlerType
+        },
+        campaignId: {
+            readOnly: true
+        },
+        name: {
+            readOnly: true
+        },
+        description: {
+            readOnly: true
+        },
+        category: {
+            readOnly: true
+        },
+        status: {
+            readOnly: true,
+            enum: OfferDetailsForEditDtoStatus
+        },
+        systemType: {
+            readOnly: true,
+            enum: OfferDetailsForEditDtoSystemType
+        },
+        type: {
+            readOnly: true,
+            enum: OfferDetailsForEditDtoType
+        },
+        campaignUrl: {
+            readOnly: true,
+            position: FieldPositionEnum.Center
+        },
+        redirectUrl: {
+            readOnly: true,
+            position: FieldPositionEnum.Center
+        },
+        cardNetwork: {
+            readOnly: true,
+            enum: OfferDetailsForEditDtoCardNetwork
+        },
+        cartType: {
+            readOnly: true
+        },
+        targetAudience: {
+            readOnly: true,
+            enum: OfferDetailsForEditDtoTargetAudience
+        },
+        securingType: {
+            readOnly: true,
+            enum: OfferDetailsForEditDtoSecuringType
+        },
+        issuingBank: {
+            readOnly: true
+        },
+        creditScores: {
+            readOnly: true,
+            enum: CreditScores2,
+            multiple: true,
+            position: FieldPositionEnum.Left
+        },
+        minAnnualIncome: {
+            position: FieldPositionEnum.Left,
+            type: FieldType.Currency
+        },
+        maxAnnualIncome: {
+            position: FieldPositionEnum.Left,
+            type: FieldType.Currency
+        },
+        minLoanAmount: {
+            position: FieldPositionEnum.Left,
+            type: FieldType.Currency
+        },
+        maxLoanAmount: {
+            position: FieldPositionEnum.Left,
+            type: FieldType.Currency
+        },
+        minLoanTermMonths: {
+            position: FieldPositionEnum.Left,
+            type: FieldType.Number
+        },
+        maxLoanTermMonths: {
+            position: FieldPositionEnum.Left,
+            type: FieldType.Number
+        },
+        introAPR: {
+            position: FieldPositionEnum.Left
+        },
+        regularAPR: {
+            position: FieldPositionEnum.Left
+        },
+        introRewardsBonus: {
+            position: FieldPositionEnum.Left
+        },
+        rewardsRate: {
+            position: FieldPositionEnum.Left,
+            type: FieldType.Number
+        },
+        annualFee: {
+            position: FieldPositionEnum.Left
+        },
+        monthlyFee: {
+            position: FieldPositionEnum.Left
+        },
+        balanceTransferFee: {
+            position: FieldPositionEnum.Left
+        },
+        activationFee: {
+            position: FieldPositionEnum.Left
+        },
+        zeroPercentageInterestTransfers: {
+            position: FieldPositionEnum.Left
+        },
+        durationForZeroPercentageTransfersInMonths: {
+            position: FieldPositionEnum.Left,
+            type: FieldType.Number
+        },
+        durationForZeroPercentagePurchasesInMonths: {
+            position: FieldPositionEnum.Left,
+            type: FieldType.Number
+        },
+        offerCollection: {
+            enum: OfferDetailsForEditDtoOfferCollection,
+            position: FieldPositionEnum.Right
+        },
+        flags: {
+            position: FieldPositionEnum.Right
+        },
+        overallRating: {
+            type: FieldType.Rating
+        },
+        interestRating: {
+            type: FieldType.Rating
+        },
+        feesRating: {
+            type: FieldType.Rating
+        },
+        benefitsRating: {
+            type: FieldType.Rating
+        },
+        rewardsRating: {
+            type: FieldType.Rating
+        },
+        serviceRating: {
+            type: FieldType.Rating
+        },
+        cardType: {
+            enum: OfferDetailsForEditDtoCardType
+        },
+        campaignProviderType: {
+            enum: OfferDetailsForEditDtoCampaignProviderType
+        },
+        states: {
+            position: FieldPositionEnum.Left
+        }
     };
     initialModel: OfferDetailsForEditDto;
     model: OfferDetailsForEditDto;
@@ -166,10 +291,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'flags'
         ]
     };
-    detailColumnClasses = {
-        'campaignUrl': 'col-md-12',
-        'redirectUrl': 'col-md-12'
-    };
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
@@ -205,6 +326,31 @@ export class OfferEditComponent implements OnInit, OnDestroy {
                         .sort((detailA, detailB) => this.sectionsDetails[section].indexOf(detailA) > this.sectionsDetails[section].indexOf(detailB) ? 1 : -1);
             })
         );
+        this.filteredBySectionDetails$.subscribe(details => {
+            this.resetDetailsPositionsArrays();
+            details.forEach((detail, index) => {
+                const detailSideArray = this.detailsConfig[detail] && this.detailsConfig[detail].position
+                    ? this.detailsFieldsByPosition[this.detailsConfig[detail].position]
+                    : index % 2 === 0 ? this.detailsFieldsByPosition[FieldPositionEnum.Left] : this.detailsFieldsByPosition[FieldPositionEnum.Right];
+                detailSideArray.push(detail);
+            });
+        });
+    }
+
+    private resetDetailsPositionsArrays() {
+        for (let prop in this.detailsFieldsByPosition) {
+            if (this.detailsFieldsByPosition.hasOwnProperty(prop)) {
+                this.detailsFieldsByPosition[prop] = [];
+            }
+        }
+    }
+
+    isCurrencyType(detailName: string): boolean {
+        return this.detailsConfig[detailName] && this.detailsConfig[detailName].type === FieldType.Currency;
+    }
+
+    isNumberType(detailName: string): boolean {
+        return this.detailsConfig[detailName] && this.detailsConfig[detailName].type === FieldType.Number || this.isCurrencyType(detailName);
     }
 
     keys(obj: Object): string[] {
@@ -224,15 +370,15 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     isEnum(detailName: string): boolean {
-        return this.detailsEnums[detailName];
+        return this.detailsConfig[detailName] && this.detailsConfig[detailName].enum;
     }
 
     isMultiple(detailName: string): boolean {
-        return this.detailsWithMultipleValues[detailName];
+        return this.detailsConfig[detailName] && this.detailsConfig[detailName].multiple;
     }
 
     isRatingDetail(detailName: string): boolean {
-        return this.ratingDetails.indexOf(detailName) >= 0;
+        return this.detailsConfig[detailName] && this.detailsConfig[detailName].type === FieldType.Rating;
     }
 
     isArray(item: any): boolean {
@@ -249,10 +395,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
 
     getKeys(object: Object) {
         return Object.keys(object);
-    }
-
-    getColumnClass(detail: string) {
-        return this.detailColumnClasses[detail] || 'col-md-5';
     }
 
     back() {
@@ -295,7 +437,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     isReadOnly(detail: string): boolean {
-        return this.readonlyDetails.indexOf(detail) >= 0;
+        return this.detailsConfig[detail] && this.detailsConfig[detail].readOnly;
     }
 
 }

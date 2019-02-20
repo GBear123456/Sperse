@@ -7,6 +7,7 @@ import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
@@ -34,6 +35,7 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
         DxTooltipModule,
         DxListModule,
         DxTextBoxModule,
+        DxNumberBoxModule,
         DxTagBoxModule,
         DxContextMenuModule,
         DxSelectBoxModule,
