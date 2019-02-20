@@ -27,7 +27,7 @@
             </div>
             <ng-template #detailsFields let-details>
                 <ng-container *ngFor="let detail of details">
-                    <div class="detail" *ngIf="detailsConfig[detail] && !detailsConfig[detail].hidden">
+                    <div class="detail" *ngIf="!detailsConfig[detail] || !detailsConfig[detail].hidden">
                         <ng-container *ngIf="isEnum(detail); else a">
                             <div class="field">
                                 <ng-container *ngIf="startCase(detail) as detailDisplayValue">
