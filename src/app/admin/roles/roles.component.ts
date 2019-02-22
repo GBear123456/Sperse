@@ -136,7 +136,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Users').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('Roles').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
