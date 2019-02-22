@@ -19,8 +19,29 @@ export class ExportService {
         this._exportGoogleSheetService = _injector.get(ExportGoogleSheetService);
     }
 
-    getFileName() {
-        return _s.capitalize(location.href.split('/').pop()) + '_' + moment().local().format('YYYY-MM-DD_hhmmss_a');
+    getFileName(dataGrid?) {
+        let name = dataGrid && dataGrid.export.fileName || '';
+        return _s.capitalize(location.href.split('/').pop()) + '_' + 
+            (!name || name == 'DataGrid' ? '': name + '_') + moment().local().format('YYYY-MM-DD_hhmmss_a');
+    }
+
+    private checkJustifyData(data) {
+        return data.map((item) => {
+            let result = {};
+            for (let field in item)
+                if (typeof(item[field]) != 'function') {
+                    if (item[field] && item[field].join)
+                        result[field] = item[field].map((record) => {
+                            return typeof(record) == 'string' ? record : 
+                                record && record[Object.keys(record).pop()];
+                        }).join(';');
+                    else if (item[field] instanceof moment)
+                        result[field] = item[field].toDate();
+                    else
+                        result[field] = item[field];
+                }
+            return result;
+        });
     }
 
     private getDataFromGrid(dataGrid: DxDataGridComponent, callback, exportAllData) {
@@ -38,22 +59,7 @@ export class ExportService {
                     })
                 });
             dataSource.load().done((res) => {
-                callback(res.map((item) => {
-                    let result = {};
-                    for (let field in item)
-                        if (typeof(item[field]) != 'function') {
-                            if (item[field] && item[field].join)
-                                result[field] = item[field].map((record) => {
-                                    return typeof(record) == 'string' ? record : 
-                                        record && record[Object.keys(record).pop()];
-                                }).join(';');
-                            else if (item[field] instanceof moment)
-                                result[field] = item[field].format('DD/MM/YYYY hh:mm:ss');
-                            else
-                                result[field] = item[field];
-                        }
-                    return result;
-                }));
+                callback(this.checkJustifyData(res));
             }).fail((e) => {
                 callback([]);
             });
@@ -61,14 +67,14 @@ export class ExportService {
             callback(dataGrid.instance.getSelectedRowsData());
     }
 
-    moveItemsToCSV(data) {
+    moveItemsToCSV(data, dataGrid) {
         if (data) {
             setTimeout(() => {
                 let _headers = [''];
                 if (data.length > 0)
                     _headers = Object.keys(data[0]);
 
-                new Angular5Csv(data, this.getFileName(), { headers: _headers, replaceNulls: true });
+                new Angular5Csv(data, this.getFileName(dataGrid), { headers: _headers, replaceNulls: true });
             });
         }
     }
@@ -76,7 +82,7 @@ export class ExportService {
     exportToCSV(dataGrid: DxDataGridComponent, exportAllData: boolean) {
         return new Promise((resolve, reject) => {
             this.getDataFromGrid(dataGrid, (data) => {
-                this.moveItemsToCSV(data);
+                this.moveItemsToCSV(data, dataGrid);
                 resolve();
             }, exportAllData);
         });
@@ -100,7 +106,7 @@ export class ExportService {
                     rowData.push(row);
                 });
 
-                this._exportGoogleSheetService.export(rowData, this.getFileName());
+                this._exportGoogleSheetService.export(rowData, this.getFileName(dataGrid));
                 resolve();
             }, exportAllData);
         });
@@ -111,21 +117,34 @@ export class ExportService {
             let instance = dataGrid.instance,
                 dataStore = instance.getDataSource().store(),
                 initialBeforeSend = dataStore._beforeSend,
-                isLoadPanel = instance.option('loadPanel.enabled');
-
-            dataGrid.export.fileName = this.getFileName();
+                isLoadPanel = instance.option('loadPanel.enabled'),
+                initialFileName = dataGrid.export.fileName;
+            
+            dataGrid.export.fileName = this.getFileName(dataGrid);
             if (isLoadPanel)
                 instance.option('loadPanel.enabled', false);
 
             dataStore._beforeSend = (request) => {
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
                 initialBeforeSend.call(dataStore, request);
-            }
+            };
+
+            dataStore.on('loaded', (res) => {
+                if (res instanceof Array)
+                    return this.checkJustifyData(res);
+                else if (res.data)
+                    res.data = this.checkJustifyData(res.data);
+
+                return res;
+            });
 
             instance.on("exported", () => {
                 if (isLoadPanel)
                     instance.option('loadPanel.enabled', true);
+
+                dataGrid.export.fileName = initialFileName;
                 dataStore._beforeSend = initialBeforeSend;
+                dataStore.off('loaded');
                 resolve();
             });
 
