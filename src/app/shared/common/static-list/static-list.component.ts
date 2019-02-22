@@ -145,9 +145,8 @@ export class StaticListComponent extends AppComponentBase {
         this.onListFiltered.emit(event);
     }
 
-    setValue(event, data, type) {
+    setValue(event, data) {
         event.event.stopPropagation();
-        if (type != 'add') data.bottomInputValue = '';
         this.onBottomInputApplyValue.emit(data);
     }
 }

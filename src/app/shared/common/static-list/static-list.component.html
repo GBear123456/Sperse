@@ -54,15 +54,12 @@
                          [ngClass]="template"
                          *ngIf="template =='bottomInput'">
                         <div class="input-wrap">
-                            <dx-text-box [(value)]="data.bottomInputValue"></dx-text-box>
+                            <dx-text-box [(value)]="data.bottomInputValue"
+                                         [showClearButton]="true"></dx-text-box>
                         </div>
                         <dx-button
                             icon="check"
-                            (onClick)="setValue($event, data, 'add')">
-                        </dx-button>
-                        <dx-button
-                            icon="close"
-                            (onClick)="setValue($event, data, 'remove')">
+                            (onClick)="setValue($event, data)">
                         </dx-button>
                     </div>
                 </div>

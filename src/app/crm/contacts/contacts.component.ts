@@ -678,6 +678,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     reloadCurrentSection() {
         let area = this._router.url.split('?').shift().split('/').pop();
         this.invalidate();
+        if (area == 'lead-information') this.leadInfo = undefined;
         this._contactsService.invalidate(area);
     }
 }
