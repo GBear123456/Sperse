@@ -27,6 +27,7 @@ export class ExportService {
         if (exportAllData) {
             let initialDataSource = dataGrid.instance.getDataSource(),
                 dataSource = new DataSource({
+                    paginate: false,
                     filter: initialDataSource.filter(),
                     requireTotalCount: true,
                     store: _.extend(initialDataSource.store(), {
@@ -36,9 +37,23 @@ export class ExportService {
                         }
                     })
                 });
-            dataSource.paginate(false);
             dataSource.load().done((res) => {
-                callback(res);
+                callback(res.map((item) => {
+                    let result = {};
+                    for (let field in item)
+                        if (typeof(item[field]) != 'function') {
+                            if (item[field] && item[field].join)
+                                result[field] = item[field].map((record) => {
+                                    return typeof(record) == 'string' ? record : 
+                                        record && record[Object.keys(record).pop()];
+                                }).join(';');
+                            else if (item[field] instanceof moment)
+                                result[field] = item[field].format('DD/MM/YYYY hh:mm:ss');
+                            else
+                                result[field] = item[field];
+                        }
+                    return result;
+                }));
             }).fail((e) => {
                 callback([]);
             });

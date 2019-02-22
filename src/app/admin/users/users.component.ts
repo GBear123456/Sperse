@@ -121,7 +121,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     this.group,
                     (loadOptions.sort || []).map((item) => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
-                    }).join(','), loadOptions.take, loadOptions.skip
+                    }).join(','), loadOptions.take || -1, loadOptions.skip
                 ).toPromise().then(response => {
                     return {
                         data: response.items,
