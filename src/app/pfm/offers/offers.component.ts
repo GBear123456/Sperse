@@ -82,7 +82,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
             ]
         };
         this.pullContextMenuItems = [
-            { text: this.l('Offers_PullAll'), selected: false }
+            { text: this.l('Offers_PullAll'), icon: 'arrowdown', selected: false }
         ];
     }
 
