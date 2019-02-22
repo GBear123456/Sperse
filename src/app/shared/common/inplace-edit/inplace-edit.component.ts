@@ -29,6 +29,8 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
     mask: string;
     @Input()
     maskInvalidMessage: string;
+    @Input()
+    width = 'auto';
 
     @Output()
     valueChanged: EventEmitter<any> = new EventEmitter();

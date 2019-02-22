@@ -10,8 +10,8 @@ import {
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { Observable, combineLatest } from 'rxjs';
-import { finalize, map, tap, publishReplay, switchMap, refCount } from 'rxjs/operators';
+import { Observable, Subject, combineLatest } from 'rxjs';
+import { finalize, map, tap, publishReplay, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
 import { cloneDeep, startCase } from 'lodash';
 import { diff } from 'deep-diff';
 
@@ -244,6 +244,9 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     initialModel: OfferDetailsForEditDto;
     model: OfferDetailsForEditDto;
     section$: Observable<string>;
+    offerId$: Observable<number>;
+    private _refresh: Subject<null> = new Subject<null>();
+    refresh: Observable<null> = this._refresh.asObservable();
     sectionsDetails = {
         'general': [
             'campaignId',
@@ -315,10 +318,12 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.section$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => paramMap.get('section') || 'general'));
         this.rootComponent.overflowHidden(true);
-        this.offerDetails$ = this.route.paramMap.pipe(
+        this.offerId$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => +paramMap.get('id')));
+        this.offerDetails$ = this.refresh.pipe(
             tap(() => abp.ui.setBusy()),
-            map((paramMap: ParamMap) => +paramMap.get('id')),
-            switchMap(offerId => this.offerManagementService.getDetailsForEdit(false, offerId).pipe(
+            startWith(this.offerId$),
+            withLatestFrom(this.offerId$),
+            switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(false, offerId).pipe(
                 finalize(() => abp.ui.clearBusy())
             )),
             publishReplay(),
@@ -356,6 +361,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
                 this.detailsFieldsByPosition[prop] = [];
             }
         }
+    }
+
+    refreshData() {
+        this._refresh.next();
     }
 
     isCurrencyType(detailName: string): boolean {
@@ -432,6 +441,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         return {
             value: this.model && (this.model.customName || this.model.name)
         };
+    }
+
+    getInplaceWidth(name: string): string {
+        return ((name.length + 1) * 12) + 'px';
     }
 
     updateCustomName(value: string) {
