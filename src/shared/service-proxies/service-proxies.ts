@@ -12072,6 +12072,72 @@ export class EditionServiceProxy {
 }
 
 @Injectable()
+export class EmailingServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @emailType (optional) 
+     * @emailAddress (optional) 
+     * @return Success
+     */
+    getLastEmailCustomData(emailType: string | null | undefined, emailAddress: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Emailing/GetLastEmailCustomData?";
+        if (emailType !== undefined)
+            url_ += "emailType=" + encodeURIComponent("" + emailType) + "&"; 
+        if (emailAddress !== undefined)
+            url_ += "emailAddress=" + encodeURIComponent("" + emailAddress) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLastEmailCustomData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLastEmailCustomData(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetLastEmailCustomData(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class FriendshipServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -16153,12 +16219,8 @@ export class OfferManagementServiceProxy {
     /**
      * @return Success
      */
-    getDetailsForEdit(testMode: boolean, campaignId: number): Observable<OfferDetailsForEditDto> {
+    getDetailsForEdit(campaignId: number): Observable<OfferDetailsForEditDto> {
         let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/GetDetailsForEdit?";
-        if (testMode === undefined || testMode === null)
-            throw new Error("The parameter 'testMode' must be defined and cannot be null.");
-        else
-            url_ += "TestMode=" + encodeURIComponent("" + testMode) + "&"; 
         if (campaignId === undefined || campaignId === null)
             throw new Error("The parameter 'campaignId' must be defined and cannot be null.");
         else
@@ -18475,6 +18537,57 @@ export class PersonOrgRelationServiceProxy {
     }
 
     protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @orgRelationId (optional) 
+     * @return Success
+     */
+    setPrimaryOrgRelation(orgRelationId: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/SetPrimaryOrgRelation?";
+        if (orgRelationId !== undefined)
+            url_ += "orgRelationId=" + encodeURIComponent("" + orgRelationId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetPrimaryOrgRelation(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetPrimaryOrgRelation(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetPrimaryOrgRelation(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -49021,16 +49134,15 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     flags!: Flags | undefined;
     states!: string[] | undefined;
     categories!: string[] | undefined;
+    creditScores!: CreditScores2[] | undefined;
     description!: string | undefined;
     introAPR!: string | undefined;
-    creditScores!: CreditScores2[] | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
     campaignId!: number | undefined;
     name!: string | undefined;
     systemType!: OfferDetailsForEditDtoSystemType | undefined;
     subId!: string | undefined;
-    redirectUrl!: string | undefined;
     campaignUrl!: string | undefined;
     logoUrl!: string | undefined;
     overallRating!: number | undefined;
@@ -49091,13 +49203,13 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
                 for (let item of data["categories"])
                     this.categories.push(item);
             }
-            this.description = data["description"];
-            this.introAPR = data["introAPR"];
             if (data["creditScores"] && data["creditScores"].constructor === Array) {
                 this.creditScores = [];
                 for (let item of data["creditScores"])
                     this.creditScores.push(item);
             }
+            this.description = data["description"];
+            this.introAPR = data["introAPR"];
             if (data["pros"] && data["pros"].constructor === Array) {
                 this.pros = [];
                 for (let item of data["pros"])
@@ -49112,7 +49224,6 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             this.name = data["name"];
             this.systemType = data["systemType"];
             this.subId = data["subId"];
-            this.redirectUrl = data["redirectUrl"];
             this.campaignUrl = data["campaignUrl"];
             this.logoUrl = data["logoUrl"];
             this.overallRating = data["overallRating"];
@@ -49177,13 +49288,13 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             for (let item of this.categories)
                 data["categories"].push(item);
         }
-        data["description"] = this.description;
-        data["introAPR"] = this.introAPR;
         if (this.creditScores && this.creditScores.constructor === Array) {
             data["creditScores"] = [];
             for (let item of this.creditScores)
                 data["creditScores"].push(item);
         }
+        data["description"] = this.description;
+        data["introAPR"] = this.introAPR;
         if (this.pros && this.pros.constructor === Array) {
             data["pros"] = [];
             for (let item of this.pros)
@@ -49198,7 +49309,6 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
         data["name"] = this.name;
         data["systemType"] = this.systemType;
         data["subId"] = this.subId;
-        data["redirectUrl"] = this.redirectUrl;
         data["campaignUrl"] = this.campaignUrl;
         data["logoUrl"] = this.logoUrl;
         data["overallRating"] = this.overallRating;
@@ -49248,16 +49358,15 @@ export interface IOfferDetailsForEditDto {
     flags: Flags | undefined;
     states: string[] | undefined;
     categories: string[] | undefined;
+    creditScores: CreditScores2[] | undefined;
     description: string | undefined;
     introAPR: string | undefined;
-    creditScores: CreditScores2[] | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
     campaignId: number | undefined;
     name: string | undefined;
     systemType: OfferDetailsForEditDtoSystemType | undefined;
     subId: string | undefined;
-    redirectUrl: string | undefined;
     campaignUrl: string | undefined;
     logoUrl: string | undefined;
     overallRating: number | undefined;
