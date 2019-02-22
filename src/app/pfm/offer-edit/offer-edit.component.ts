@@ -440,7 +440,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
 
     onSubmit() {
         const differences = diff(this.initialModel, this.model);
-        let changed = {};
+        let changed = { campaignId: this.model.campaignId };
         if (differences) {
             abp.ui.setBusy();
             for (let diff of differences) {
@@ -448,7 +448,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             }
             this.offerManagementService.extend(ExtendOfferDto.fromJS(changed))
                 .pipe(finalize(() => abp.ui.clearBusy()))
-                .subscribe();
+                .subscribe(() => {
+                    /** Update model to see the changes next time */
+                    this.initialModel = cloneDeep(this.model);
+                });
         }
     }
 
