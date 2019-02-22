@@ -72,24 +72,7 @@
         .detail {
             .field {
                 align-items: baseline;
-                label {
-                    font-size: 14px;
-                    font-weight: 500;
-                    color: #202b35;
-                    flex: 1;
-                    cursor: pointer;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    & + * {
-                        &.dx-checkbox {
-                            margin-top: 10px;
-                        }
-                        &:not(.dx-checkbox) {
-                            flex: 2;
-                        }
-                    }
-                }
+
                 .dx-state-disabled.dx-widget, .dx-state-disabled .dx-widget {
                     & .dx-texteditor-input, input.form-control {
                         border-bottom: 0;
@@ -100,11 +83,22 @@
                 }
 
                 .dx-widget  {
-                    .dx-texteditor-input,
+                    .dx-texteditor-input {
+                        font-size: 15px;
+                        font-weight: 400;
+                        color: #424c56;
+                        padding: 0;
+                        letter-spacing: .3px;
+                    }
                     .dx-placeholder {
                         font-size: 15px;
-                        font-weight: 300;
-                        color: #424c56;
+                        font-weight: 400;
+                        letter-spacing: .3px;
+                        color: #8a969b;
+                        transition: .2s;
+                    }
+                    &.dx-state-focused .dx-placeholder {
+                        top: -30px;
                     }
                 }
 
@@ -114,17 +108,53 @@
                     .mat-form-field {
                         width: 100%;
                     }
-                    span.clear-contact {
-                        top: 0;
+                }
+
+                span.clear-contact {
+                    top: -2px;
+                    position: absolute;
+                    left: initial;
+                    right: -30px;
+                    bottom: 0;
+                    margin: auto !important;
+                    width: 16px;
+                    height: 16px;
+                }
+                .numberBox {
+                    display: flex;
+                    span {
+                        cursor: default;
                     }
                 }
 
-                .clear-contact {
-                    top: 15px;
-                }
                 /deep/ stars-rating {
                     align-self: center;
                 }
+            }
+
+            .field label,
+            .groupLabel {
+                font-size: 14px;
+                font-weight: 500;
+                color: #202b35;
+                flex: 1;
+                cursor: pointer;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                & + * {
+                    &.dx-checkbox {
+                        margin-top: 10px;
+                    }
+                    &:not(.dx-checkbox) {
+                        flex: 2;
+                    }
+                }
+            }
+            .groupLabel {
+                display: flex;
+                align-items: center;
+                height: 34px;
             }
 
             .fa {
@@ -153,6 +183,12 @@
                             margin-left: 0;
                         }
                     }
+                }
+            }
+
+            &.groupItem {
+                .field label {
+                    margin: 0 20px;
                 }
             }
         }

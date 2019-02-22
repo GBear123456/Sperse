@@ -139,27 +139,33 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         minAnnualIncome: {
             position: FieldPositionEnum.Left,
-            type: FieldType.Currency
+            type: FieldType.Currency,
+            label: 'Annual Income'
         },
         maxAnnualIncome: {
             position: FieldPositionEnum.Left,
-            type: FieldType.Currency
+            type: FieldType.Currency,
+            hidden: true
         },
         minLoanAmount: {
             position: FieldPositionEnum.Left,
-            type: FieldType.Currency
+            type: FieldType.Currency,
+            label: 'Loan Amount'
         },
         maxLoanAmount: {
             position: FieldPositionEnum.Left,
-            type: FieldType.Currency
+            type: FieldType.Currency,
+            hidden: true
         },
         minLoanTermMonths: {
             position: FieldPositionEnum.Left,
-            type: FieldType.Number
+            type: FieldType.Number,
+            label: 'Loan Term Months'
         },
         maxLoanTermMonths: {
             position: FieldPositionEnum.Left,
-            type: FieldType.Number
+            type: FieldType.Number,
+            hidden: true
         },
         introAPR: {
             position: FieldPositionEnum.Left
@@ -191,11 +197,16 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         durationForZeroPercentageTransfersInMonths: {
             position: FieldPositionEnum.Left,
-            type: FieldType.Number
+            type: FieldType.Number,
+            groupLabel: 'Duration For Zero Percentage (Months)',
+            label: 'Transfers',
+            cssClass: 'groupItem'
         },
         durationForZeroPercentagePurchasesInMonths: {
             position: FieldPositionEnum.Left,
-            type: FieldType.Number
+            type: FieldType.Number,
+            label: 'Purchases',
+            cssClass: 'groupItem'
         },
         offerCollection: {
             enum: OfferDetailsForEditDtoOfferCollection,
@@ -320,8 +331,8 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         this.rootComponent.overflowHidden(true);
         this.offerId$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => +paramMap.get('id')));
         this.offerDetails$ = this.refresh.pipe(
-            tap(() => abp.ui.setBusy()),
             startWith(this.offerId$),
+            tap(() => abp.ui.setBusy()),
             withLatestFrom(this.offerId$),
             switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(false, offerId).pipe(
                 finalize(() => abp.ui.clearBusy())
@@ -365,6 +376,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
 
     refreshData() {
         this._refresh.next();
+    }
+
+    detailHasMaxValue(detailName: string): boolean {
+        return detailName.indexOf('min') === 0;
     }
 
     isCurrencyType(detailName: string): boolean {
@@ -443,6 +458,14 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         };
     }
 
+    getDetailDisplayValue(detailName: string): string {
+        return this.detailsConfig[detailName] && this.detailsConfig[detailName].label || startCase(detailName);
+    }
+
+    getDetailGroupLabel(detailName: string): string {
+        return this.detailsConfig[detailName] && this.detailsConfig[detailName].groupLabel;
+    }
+
     getInplaceWidth(name: string): string {
         return ((name.length + 1) * 12) + 'px';
     }
@@ -460,6 +483,17 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         if (detailName === 'subId' && this.model.redirectUrl) {
             this.model.redirectUrl = this.model.redirectUrl.replace(/&subid=.*(&|$)/g, '&subid=' + e.value);
         }
+    }
+
+    getEnumDataSource(enumObject: any) {
+        return [ { name: 'None', value: null } ].concat(
+            Object.keys(enumObject).map(
+                value => ({
+                    name: value,
+                    value: value
+                })
+            )
+        );
     }
 
     isReadOnly(detail: string): boolean {

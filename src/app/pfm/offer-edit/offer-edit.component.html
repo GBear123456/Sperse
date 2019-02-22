@@ -34,16 +34,19 @@
                 <ng-container *ngFor="let detail of details">
                     <div *ngIf="!detailsConfig[detail] || !detailsConfig[detail].hidden"
                          [ngClass]="['detail', detailsConfig[detail] && detailsConfig[detail].cssClass ? detailsConfig[detail].cssClass : '']">
+                        <ng-container *ngIf="getDetailGroupLabel(detail) as detailGroupLabel">
+                            <div class="groupLabel" [title]="detailGroupLabel">{{ detailGroupLabel }}</div>
+                        </ng-container>
                         <ng-container *ngIf="isEnum(detail); else a">
                             <div class="field">
-                                <ng-container *ngIf="startCase(detail) as detailDisplayValue">
+                                <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
                                     <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                 </ng-container>
                                 <div class="drop-down-box-wrapper">
                                     <ng-container *ngIf="isMultiple(detail); else single">
                                         <dx-tag-box
                                             [inputAttr]="{ id: detail }"
-                                            [placeholder]="ls.l('Select')"
+                                            [placeholder]="!isReadOnly(detail) ? ls.l('Select') : ''"
                                             [dataSource]="keys(detailsConfig[detail].enum)"
                                             [(value)]="model[detail]"
                                             [disabled]="isReadOnly(detail)">
@@ -53,7 +56,9 @@
                                         <dx-select-box
                                             [inputAttr]="{ id: detail }"
                                             [placeholder]="!isReadOnly(detail) ? ls.l('Select') : ''"
-                                            [dataSource]="keys(detailsConfig[detail].enum)"
+                                            displayExpr="name"
+                                            valueExpr="value"
+                                            [dataSource]="getEnumDataSource(detailsConfig[detail].enum)"
                                             [(value)]="model[detail]"
                                             [disabled]="isReadOnly(detail)">
                                         </dx-select-box>
@@ -64,7 +69,7 @@
                         <ng-template #a>
                             <ng-container *ngIf="isRatingDetail(detail); else b">
                                 <div class="field">
-                                    <ng-container *ngIf="startCase(detail) as detailDisplayValue">
+                                    <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
                                         <label [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                     </ng-container>
                                     <stars-rating [isEditable]="true" [(currentRating)]="model[detail]" color="#f0d500"></stars-rating>
@@ -73,15 +78,25 @@
                             <ng-template #b>
                                 <ng-container *ngIf="isPrimitive(model[detail])">
                                     <div class="field" *ngIf="!isBool(model[detail])">
-                                        <ng-container *ngIf="startCase(detail) as detailDisplayValue">
+                                        <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
                                             <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                         </ng-container>
-                                        <ng-container *ngIf="isNumberType(detail); else string">
+                                        <div *ngIf="isNumberType(detail); else string" class="numberBox">
                                             <dx-number-box
+                                                [inputAttr]="{ id: detail }"
+                                                [placeholder]="detailHasMaxValue(detail) ? ls.l('Min') : ''"
                                                 [format]="isCurrencyType(detail) ? '$ #,##0.##;($ #,##0.##)' : ''"
                                                 [(value)]="model[detail]">
                                             </dx-number-box>
-                                        </ng-container>
+                                            <ng-container *ngIf="detailHasMaxValue(detail)">
+                                                <span> - </span>
+                                                <dx-number-box
+                                                    [placeholder]="ls.l('Min')"
+                                                    [format]="isCurrencyType(detail) ? '$ #,##0.##;($ #,##0.##)' : ''"
+                                                    [(value)]="model['max' + detail.slice(3)]">
+                                                </dx-number-box>
+                                            </ng-container>
+                                        </div>
                                         <ng-template #string>
                                             <dx-text-box [inputAttr]="{ id: detail }"
                                                          [valueChangeEvent]="'focusout'"
@@ -91,10 +106,10 @@
                                                          (onValueChanged)="onTextBoxChange($event, detail)">
                                             </dx-text-box>
                                         </ng-template>
-                                        <span [ngClass]="model[detail] && !isReadOnly(detail) && 'clear-contact' || 'hidden'" (click)="model[detail] = ''"><i class="minus-icon"></i></span>
+                                        <span [ngClass]="(model[detail] || (detailHasMaxValue(detail) && model['max' + detail.slice(3)])) && !isReadOnly(detail) && 'clear-contact' || 'hidden'" (click)="model[detail] = model['max' + detail.slice(3)] = ''"><i class="minus-icon"></i></span>
                                     </div>
                                     <div class="field" *ngIf="isBool(model[detail])">
-                                        <ng-container *ngIf="startCase(detail) as detailDisplayValue">
+                                        <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
                                             <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                         </ng-container>
                                         <dx-check-box [(value)]="model[detail]" [disabled]="isReadOnly(detail)"></dx-check-box>
@@ -103,7 +118,7 @@
 
                                 <div *ngIf="isArray(model[detail]); else object">
                                     <div class="field">
-                                        <ng-container *ngIf="startCase(detail) as detailDisplayValue">
+                                        <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
                                             <label [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                         </ng-container>
                                         <div>
