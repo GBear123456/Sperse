@@ -26,9 +26,9 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
     @HostBinding('class.yellow') yellowTheme = true;
 
+    loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     showDefaultHeader = true;
-    loggedUserId: number;
 
     currentDate = new Date();
     appAreaLinks = this.getAppAreaLinks();
@@ -80,7 +80,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                 });
         }
 
-        this.loggedUserId = abp.session.userId;
         this.hasPfmAppFeature = this.feature.isEnabled('PFM.Applications');
         this.showDefaultHeader = this.isMemberArea() || this.hasPfmAppFeature;
     }
@@ -177,7 +176,8 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
             },
             {
                 name: 'Resources',
-                url: environment.LENDSPACE_DOMAIN + '/resources'
+                url: this.loggedUserId ? null : environment.LENDSPACE_DOMAIN + '/resources',
+                routerUrl: this.loggedUserId ? '/personal-finance/resources' : null
             }
         ];
     }
