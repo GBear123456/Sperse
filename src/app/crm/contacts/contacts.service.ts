@@ -142,13 +142,16 @@ export class ContactsService {
         }).afterClosed();
     }
 
-    updateLocation(customerId?, leadId?, partnerId?, companyId?) {
-        this._location.replaceState(this._router.createUrlTree(['app/crm'].concat(
+    updateLocation(customerId?, leadId?, partnerId?, companyId?, nav: boolean = false) {
+        let navigate = this._router.createUrlTree(['app/crm'].concat(
             customerId ? ['client', customerId] : [],
             leadId ? ['lead', leadId] : [],
             partnerId ? ['partner', partnerId] : [],
-            companyId ? ['company', companyId] : [],
-            [location.pathname.split('/').pop()]
-        )).toString(), location.search);
+            companyId ? ['company', companyId] : []
+        )).toString();
+
+        this._location.replaceState(navigate, location.search);
+
+        if (nav) this._router.navigate([navigate], { queryParamsHandling: 'merge' });
     }
 }
