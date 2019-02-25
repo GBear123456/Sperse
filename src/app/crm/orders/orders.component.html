@@ -2,10 +2,9 @@
     <app-headline [config]="headlineConfig">
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
+    <div [hidden]="isDataLoaded && !totalRowCount || showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div>
-                <div [hidden]="showPipeline">
+              <div>
                     <div id="ClientsTable">
                         <dx-data-grid id="gridContainer"
                                       accesskey="narrowHeaderPanel"
@@ -61,16 +60,33 @@
                                 {{cellData.value | date: formatting.dateTime}}
                             </div>
                         </dx-data-grid>
-				    </div>
-                </div>
-                <div [hidden]="!showPipeline" class="pipepline-wrapper">
-                    <app-pipeline [dataSource]="gridDataSource" [pipelinePurposeId]="pipelinePurposeId">
+                    </div>
+              </div>
+        </div>
+    </div>      
+
+    <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <div>
+                <div class="funnel-wrapper">
+                    <app-pipeline
+                        [totalsURI]="'OrderCount'"
+                        [dragulaName]="'orderStages'"
+                        [dataSource]="pipelineDataSource"
+                        [lockMarginalEntities]="true"
+                        [selectFields]="['Id', 'Email', 'FullName', 'OrderType', 'CreationTime', 'StageId', 'Stage', 'Photo']"
+                        [pipelinePurposeId]="pipelinePurposeId"
+                        [filterModelStages]="filterModelStages"
+                        [(selectedLeads)]="selectedOrders"
+                        (onStagesLoaded)="onStagesLoaded($event)"
+                        (onCardClick)="onCardClick($event)">
                         Loading...
                     </app-pipeline>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 
 <app-no-data

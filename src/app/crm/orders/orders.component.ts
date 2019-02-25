@@ -29,6 +29,7 @@ import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.mo
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -38,10 +39,11 @@ import { FilterHelpers } from '../shared/helpers/filter.helper';
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     items: any;
-    showPipeline = false;
+    showPipeline = true;
     firstRefresh = false;
-    gridDataSource: any = {};
+    pipelineDataSource: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
+    stages = [];
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
@@ -54,38 +56,60 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     public headlineConfig = {
         names: [this.l('Orders')],
         onRefresh: this.refreshDataGrid.bind(this),
-        icon: 'briefcase',
+        icon: 'briefcase' /*,
         buttons: [
             {
                 enabled: true,
                 action: Function(),
                 lable: this.l('CreateNewOrder')
             }
-        ]
+        ] */
     };
 
     constructor(injector: Injector,
                 private _filtersService: FiltersService,
                 private _appService: AppService,
+                private _pipelineService: PipelineService,
                 private store$: Store<CrmStore.State>
-                ) {
+    ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
 
         this.dataSource = {
+            uri: this.dataSourceURI,
+            requireTotalCount: true,
             store: {
+                key: 'Id',
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
-                version: 4,
+                version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
+                deserializeDates: false,
                 paginate: true
             }
         };
 
         this.initToolbarConfig();
+    }
+
+    initDataSource() {
+        if (this.showPipeline) {
+            if (!this.pipelineDataSource)
+                setTimeout(() => { this.pipelineDataSource = this.dataSource; });
+        } else {
+            this.setDataGridInstance();
+        }
+    }
+
+    setDataGridInstance() {
+        let instance = this.dataGrid && this.dataGrid.instance;
+        if (instance && !instance.option('dataSource')) {
+            instance.option('dataSource', this.dataSource);
+            this.startLoading();
+        }
     }
 
     onContentReady(event) {
@@ -107,6 +131,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     toggleDataLayout(dataLayoutType) {
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
+        this.initDataSource();
         if (!this.firstRefresh) {
             this.firstRefresh = true;
             abp.ui.setBusy(
@@ -356,24 +381,24 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     //         },
                     //     }
                     // },
-                    // {
-                    //     name: 'pipeline',
-                    //     action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
-                    //     options: {
-                    //         checkPressed: () => {
-                    //             return (this.dataLayoutType == DataLayoutType.Pipeline);
-                    //         },
-                    //     }
-                    // },
-                    // {
-                    //     name: 'grid',
-                    //     action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
-                    //     options: {
-                    //         checkPressed: () => {
-                    //             return (this.dataLayoutType == DataLayoutType.Grid);
-                    //         },
-                    //     }
-                    // }
+                     {
+                         name: 'pipeline',
+                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+                         options: {
+                             checkPressed: () => {
+                                 return (this.dataLayoutType == DataLayoutType.Pipeline);
+                             },
+                         }
+                     },
+                     {
+                         name: 'grid',
+                         action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+                         options: {
+                             checkPressed: () => {
+                                 return (this.dataLayoutType == DataLayoutType.Grid);
+                             },
+                         }
+                     }
                 ]
             }
         ]);
@@ -391,8 +416,33 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return data;
     }
 
+    onStagesLoaded($event) {
+        this.stages = $event.stages.map((stage) => {
+            return {
+                id: this._pipelineService.getPipeline(
+                    this.pipelinePurposeId).id + ':' + stage.id,
+                name: stage.name,
+                text: stage.name
+            };
+        });
+
+        this.initToolbarConfig();
+    }
+
+    onCardClick(order) {
+        if (order && order.Id)
+            this._router.navigate(
+                ['app/crm/order', order.Id, 'order', order.Id, 'contact-information'], {
+                    queryParams: {
+                        referrer: 'app/crm/orders',
+                        dataLayoutType: DataLayoutType.Pipeline
+                    }
+                }
+            );
+    }
+
     ngAfterViewInit(): void {
-        //this.gridDataSource = this.dataGrid.instance.getDataSource();
+        this.initDataSource();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
