@@ -12,6 +12,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 /** Third party imports */
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { finalize, map, tap, publishReplay, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
+import { Store, select } from '@ngrx/store';
 import { cloneDeep, startCase } from 'lodash';
 import { diff } from 'deep-diff';
 
@@ -19,6 +20,7 @@ import { diff } from 'deep-diff';
 import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
 import { RootComponent } from 'root.components';
 import {
+    CountryStateDto,
     CreditScores2,
     ExtendOfferDto,
     OfferDetailsForEditDtoCampaignProviderType,
@@ -34,6 +36,7 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { FieldPositionEnum } from '@app/pfm/offer-edit/field-position.enum';
 import { FieldType } from '@app/pfm/offer-edit/field-type.enum';
+import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 
 @Component({
     selector: 'offer-edit',
@@ -43,7 +46,6 @@ import { FieldType } from '@app/pfm/offer-edit/field-type.enum';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OfferEditComponent implements OnInit, OnDestroy {
-    offerDetails$: Observable<OfferDetailsForEditDto>;
     allDetails$: Observable<string[]>;
     filteredBySectionDetails$: Observable<string[]>;
     detailsFieldsByPosition = {
@@ -68,6 +70,24 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         }
     ];
     fieldPositions = FieldPositionEnum;
+    offerId$: Observable<number> = this.route.paramMap.pipe(map((paramMap: ParamMap) => +paramMap.get('id')));
+    private _refresh: Subject<null> = new Subject<null>();
+    refresh: Observable<null> = this._refresh.asObservable();
+    offerDetails$: Observable<OfferDetailsForEditDto> = this.refresh.pipe(
+        startWith(this.offerId$),
+        tap(() => abp.ui.setBusy()),
+        withLatestFrom(this.offerId$),
+        switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(
+            finalize(() => abp.ui.clearBusy())
+        )),
+        publishReplay(),
+        refCount()
+    );
+    states$: Observable<CountryStateDto[]> = this.offerDetails$.pipe(
+        map(offerDetails => offerDetails.countries[0]),
+        tap(countryCode => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode))),
+        switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode})))
+    );
     detailsConfig = {
         logoUrl: {
             hidden: true
@@ -235,7 +255,14 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             enum: OfferDetailsForEditDtoCampaignProviderType
         },
         states: {
-            position: FieldPositionEnum.Left
+            position: FieldPositionEnum.Left,
+            multiple: true,
+            dataSourceConfig: {
+                source: this.states$,
+                async: true,
+                displayExpr: 'name',
+                valueExpr: 'code'
+            }
         },
         pros: {
             cssClass: 'valuesBelow'
@@ -268,9 +295,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     initialModel: OfferDetailsForEditDto;
     model: OfferDetailsForEditDto;
     section$: Observable<string>;
-    offerId$: Observable<number>;
-    private _refresh: Subject<null> = new Subject<null>();
-    refresh: Observable<null> = this._refresh.asObservable();
     sectionsDetails = {
         'general': [
             'campaignId',
@@ -339,7 +363,8 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         private offerManagementService: OfferManagementServiceProxy,
         private applicationRef: ApplicationRef,
         private router: Router,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        private store$: Store<RootStore.State>
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
     }
@@ -347,17 +372,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.section$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => paramMap.get('section') || 'general'));
         this.rootComponent.overflowHidden(true);
-        this.offerId$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => +paramMap.get('id')));
-        this.offerDetails$ = this.refresh.pipe(
-            startWith(this.offerId$),
-            tap(() => abp.ui.setBusy()),
-            withLatestFrom(this.offerId$),
-            switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(
-                finalize(() => abp.ui.clearBusy())
-            )),
-            publishReplay(),
-            refCount()
-        );
         this.offerDetails$.subscribe(details => {
             this.model = details;
             this.initialModel = cloneDeep(this.model);
@@ -497,9 +511,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden(false);
-    }
-
-    onTextBoxChange(e, detailName: string) {
     }
 
     getEnumDataSource(enumObject: any) {

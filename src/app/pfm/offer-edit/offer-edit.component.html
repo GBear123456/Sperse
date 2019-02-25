@@ -37,7 +37,7 @@
                         <ng-container *ngIf="getDetailGroupLabel(detail) as detailGroupLabel">
                             <div class="groupLabel" [title]="detailGroupLabel">{{ detailGroupLabel }}</div>
                         </ng-container>
-                        <ng-container *ngIf="isEnum(detail); else a">
+                        <ng-container *ngIf="isEnum(detail) || (isMultiple(detail) && detailsConfig[detail].dataSourceConfig); else a">
                             <div class="field">
                                 <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
                                     <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
@@ -47,7 +47,11 @@
                                         <dx-tag-box
                                             [inputAttr]="{ id: detail }"
                                             [placeholder]="!isReadOnly(detail) ? ls.l('Select') : ''"
-                                            [dataSource]="keys(detailsConfig[detail].enum)"
+                                            [displayExpr]="detailsConfig[detail].dataSourceConfig && detailsConfig[detail].dataSourceConfig.displayExpr"
+                                            [valueExpr]="detailsConfig[detail].dataSourceConfig && detailsConfig[detail].dataSourceConfig.valueExpr"
+                                            [dataSource]="detailsConfig[detail].dataSourceConfig
+                                                          ? detailsConfig[detail].dataSourceConfig.async ? (detailsConfig[detail].dataSourceConfig.source | async) : detailsConfig[detail].dataSourceConfig.source
+                                                          : keys(detailsConfig[detail].enum)"
                                             [(value)]="model[detail]"
                                             [disabled]="isReadOnly(detail)">
                                         </dx-tag-box>
@@ -102,8 +106,7 @@
                                                          [valueChangeEvent]="'focusout'"
                                                          [(value)]="model[detail]"
                                                          [placeholder]="!isReadOnly(detail) ? ls.ls('PFM', 'Enter_Value') : ''"
-                                                         [disabled]="isReadOnly(detail)"
-                                                         (onValueChanged)="onTextBoxChange($event, detail)">
+                                                         [disabled]="isReadOnly(detail)">
                                             </dx-text-box>
                                         </ng-template>
                                         <span [ngClass]="(model[detail] || (detailHasMaxValue(detail) && model['max' + detail.slice(3)])) && !isReadOnly(detail) && 'clear-contact' || 'hidden'" (click)="model[detail] = model['max' + detail.slice(3)] = ''"><i class="minus-icon"></i></span>
