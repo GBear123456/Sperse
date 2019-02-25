@@ -306,7 +306,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this.dataGrid.instance.refresh();
     }
 
-
     public refreshData(): void {
     }
 
@@ -355,7 +354,12 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     }
 
     openOfferEdit(e) {
+        this.searchClear = false;
         this._router.navigate(['./', e.data.CampaignId], { relativeTo: this._activatedRoute });
+    }
+
+    invalidate() {
+        this.processFilterInternal();
     }
 
     ngOnDestroy() {
