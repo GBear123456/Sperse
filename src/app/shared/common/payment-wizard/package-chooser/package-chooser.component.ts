@@ -121,13 +121,15 @@ export class PackageChooserComponent implements OnInit {
     /** Preselect package if current edition is in list of not free packages, else - preselect best value package */
     preselectPackage() {
         const selectedPackage = this.currentPackage || this.packages.find(packageConfig => packageConfig.bestValue);
-        this.selectedPackageIndex = this.packages.indexOf(selectedPackage);
-        /** Update selected package with the active status to handle next button status */
-        setTimeout(() => {
-            this.selectPackage(this.selectedPackageIndex);
-            const plan = this.getPlan();
-            this.onPlanChosen.emit(plan);
-        }, 10);
+        if (selectedPackage) {
+            this.selectedPackageIndex = this.packages.indexOf(selectedPackage);
+            /** Update selected package with the active status to handle next button status */
+            setTimeout(() => {
+                this.selectPackage(this.selectedPackageIndex);
+                const plan = this.getPlan();
+                this.onPlanChosen.emit(plan);
+            }, 10);
+        }
     }
 
     /** Get values of usersAmount and billing period from user previous choice */
