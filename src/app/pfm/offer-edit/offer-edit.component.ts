@@ -334,7 +334,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             startWith(this.offerId$),
             tap(() => abp.ui.setBusy()),
             withLatestFrom(this.offerId$),
-            switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(false, offerId).pipe(
+            switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(
                 finalize(() => abp.ui.clearBusy())
             )),
             publishReplay(),
@@ -482,10 +482,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     onTextBoxChange(e, detailName: string) {
-        /** Change redirect url if subId has changed */
-        if (detailName === 'subId' && this.model.redirectUrl) {
-            this.model.redirectUrl = this.model.redirectUrl.replace(/&subid=.*(&|$)/g, '&subid=' + e.value);
-        }
     }
 
     getEnumDataSource(enumObject: any) {
