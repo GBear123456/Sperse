@@ -108,11 +108,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             position: FieldPositionEnum.Center,
             cssClass: 'center'
         },
-        redirectUrl: {
-            readOnly: true,
-            position: FieldPositionEnum.Center,
-            cssClass: 'center'
-        },
         cardNetwork: {
             readOnly: true,
             enum: OfferDetailsForEditDtoCardNetwork
@@ -250,6 +245,24 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         details: {
             cssClass: 'valuesBelow'
+        },
+        countries: {
+            readOnly: true
+        },
+        daysOfWeekAvailability: {
+                readOnly: true
+        },
+        effectiveTimeOfDay: {
+            readOnly: true
+        },
+        expireTimeOfDay: {
+            readOnly: true
+        },
+        termsOfService: {
+            readOnly: true
+        },
+        traficSource: {
+            readOnly: true
         }
     };
     initialModel: OfferDetailsForEditDto;
@@ -276,10 +289,15 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'securingType',
             'issuingBank',
             'pros',
-            'cons',
             'details',
+            'cons',
             'campaignUrl',
-            'redirectUrl',
+            'countries',
+            'daysOfWeekAvailability',
+            'effectiveTimeOfDay',
+            'expireTimeOfDay',
+            'termsOfService',
+            'traficSource'
         ],
         'rating': [
             'overallRating',
