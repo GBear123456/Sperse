@@ -60,10 +60,12 @@ export class PlatformSelectComponent extends AppComponentBase {
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
             else
                 navigate = this._router.navigate(['app/' + this.module.toLowerCase() + (this.uri ? '/' + this.uri.toLowerCase() : '')]);
+            this._dropDown.option('disabled', true);
             navigate.then(() => {
-                this._appService.switchModule(this.module, { instance: this.uri });
-                this._dropDown.close();
+                this._appService.switchModule(this.module, { instance: this.uri });                
+                this._dropDown.option('disabled', false);
             });
+            this._dropDown.close();
         }
     }
 
