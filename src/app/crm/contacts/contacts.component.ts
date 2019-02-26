@@ -9,6 +9,7 @@ import { Store, select } from '@ngrx/store';
 import { forkJoin, of } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import * as _ from 'underscore';
+import DataSource from 'devextreme/data/data_source';
 
 /** Application imports */
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -88,6 +89,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private paramsSubscribe: any = [];
     referrerParams: Params;
 
+    prevNextDataSource: any;
+    dataSourceURI = 'Customer';
+    currentItemId;
+
     constructor(injector: Injector,
                 private _dialog: MatDialog,
                 private _dialogService: DialogService,
@@ -150,6 +155,40 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         let key = this.getCacheKey(abp.session.userId);
         if (this._cacheService.exists(key))
             this.rightPanelSetting = this._cacheService.get(key);
+        switch (this.referrerParams.referrer.split('/').pop()) {
+            case 'leads':
+                this.dataSourceURI = 'Lead';
+                this.currentItemId = this.params.leadId;
+                break;
+            case 'clients':
+                this.dataSourceURI = 'Customer';
+                this.currentItemId = this.params.clientId;
+                break;
+            case 'partners':
+                this.dataSourceURI = 'Partner';
+                this.currentItemId = this.params.partnerId;
+                break;
+            default:
+                break;
+        }
+
+        this.prevNextDataSource = new DataSource({
+            requireTotalCount: false,
+            pageSize: 1,
+            filter: [ 'Id', '>', this.currentItemId ],
+            store: {
+                type: 'odata',
+                url: this.getODataUrl(this.dataSourceURI),
+                version: AppConsts.ODataVersion,
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                },
+                paginate: true
+            },
+            sort: [
+                { selector: 'Id', desc: false }
+            ]
+        });
     }
 
     private getCheckPropertyValue(obj, prop, def) {
@@ -334,7 +373,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     loadLeadData(personContactInfo?: any, lastLeadCallback?) {
         let contactInfo = this._contactService['data'].contactInfo,
             leadInfo = this._contactService['data'].leadInfo;
-        if ((!this.leadInfo && contactInfo && leadInfo) || lastLeadCallback) {
+        if ((contactInfo && leadInfo) || lastLeadCallback) {
             !lastLeadCallback && this.startLoading(true);
             let leadId = leadInfo.id,
                 leadInfo$ = leadId && !lastLeadCallback ? this._leadService.getLeadInfo(leadId) :
@@ -680,5 +719,34 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.invalidate();
         if (area == 'lead-information') this.leadInfo = undefined;
         this._contactsService.invalidate(area);
+    }
+
+    loadOtherItem(event, position) {
+        this.prevNextDataSource.filter(
+            position == 'next' ? [ 'Id', '>', +this.currentItemId ] : [ 'Id', '<', +this.currentItemId ]
+        );
+        this.prevNextDataSource.sort(
+            { selector: 'Id', desc: position != 'next' }
+        );
+        this.prevNextDataSource.load().then(() => {
+                let items = this.prevNextDataSource.items();
+                if (items) {
+                    this.currentItemId = items[0].Id;
+                    switch (this.referrerParams.referrer.split('/').pop()) {
+                        case 'leads':
+                            this._contactsService.updateLocation(items[0].CustomerId, this.currentItemId, null, items[0].OrganizationId, true);
+                            break;
+                        case 'clients':
+                            this._contactsService.updateLocation(this.currentItemId, null, null, items[0].OrganizationId, true);
+                            break;
+                        case 'partners':
+                            this._contactsService.updateLocation(null, null, this.currentItemId, items[0].OrganizationId, true);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        );
     }
 }

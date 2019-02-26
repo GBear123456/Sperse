@@ -290,6 +290,9 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         traficSource: {
             readOnly: true
+        },
+        isPublished: {
+            cssClass: 'leftAlignment'
         }
     };
     initialModel: OfferDetailsForEditDto;
@@ -312,16 +315,16 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'targetAudience',
             'securingType',
             'issuingBank',
-            'pros',
-            'details',
-            'cons',
-            'campaignUrl',
             'countries',
             'daysOfWeekAvailability',
             'effectiveTimeOfDay',
             'expireTimeOfDay',
             'termsOfService',
-            'traficSource'
+            'traficSource',
+            'pros',
+            'details',
+            'cons',
+            'campaignUrl'
         ],
         'rating': [
             'overallRating',
@@ -454,8 +457,8 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         return Array.isArray(item);
     }
 
-    addNew(model: any[], value: any) {
-        model.push(value);
+    addNew(model: any[]) {
+        model.push('');
     }
 
     remove(item: any[], i: number) {
