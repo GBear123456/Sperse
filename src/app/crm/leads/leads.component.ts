@@ -573,7 +573,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     exportPipelineSelectedItemsFilter(dataSource) {
-        let selectedLeads = this.pipelineComponent.getSelectedLeads();
+        let selectedLeads = this.pipelineComponent.getSelectedEntities();
         if (selectedLeads.length) {
             dataSource.filter(selectedLeads.map((lead) => {
                 return ['Id', '=', lead.Id];

@@ -30,24 +30,24 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCardClick: EventEmitter<any> = new EventEmitter<any>();
 
-    private _selectedLeads: any;
+    private _selectedEntities : any;
     private _dataSource: any;
     private _dataSources: any = {};
     private refreshTimeout: any;
-    private shiftStartLead: any;
+    private shiftStartEntity: any;
     private firstStage: any;
     private lastStage: any;
     private quiet: boolean;
     private stageId: number;
     private dataSource$: Subject<DataSource> = new Subject<DataSource>();
 
-    @Output() selectedLeadsChange = new EventEmitter<any>();
-    @Input() get selectedLeads() {
-        return this._selectedLeads || [];
+    @Output() selectedEntitiesChange = new EventEmitter<any>();
+    @Input() get selectedEntities() {
+        return this._selectedEntities || [];
     }
-    set selectedLeads(leads) {
-        this._selectedLeads = leads;
-        this.selectedLeadsChange.emit(this._selectedLeads);
+    set selectedEntities(entities) {
+        this._selectedEntities = entities;
+        this.selectedEntitiesChange.emit(this._selectedEntities);
     }
 
     @Input() lockMarginalEntities = false;
@@ -81,28 +81,28 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.startLoading();
         this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             if (value[0] == this.dragulaName) {
-                let leadId = this.getAccessKey(value[1]),
+                let entityId = this.getAccessKey(value[1]),
                     newStage = this.getStageByElement(value[2]);
                 if (value[1].classList.contains('selected')) {
-                    this.getSelectedLeads().forEach((lead) => {
+                    this.getSelectedEntities().forEach((entity) => {
                         let oldStage = _.find(this.stages, (stage) => {
-                            return stage.id == lead.StageId;
+                            return stage.id == entity.StageId;
                         });
 
                         if ([this.firstStage.id, this.lastStage.id].indexOf(oldStage.id) >= 0)
                             return false;
 
-                        if (lead && oldStage.name != newStage.name)
-                            this.updateEntityStage(lead.Id, newStage.name, oldStage.name, () => {
-                                if (lead.Id != leadId) {
-                                    newStage['leads'].unshift(lead);
-                                    oldStage['leads'].splice(oldStage['leads'].indexOf(lead), 1);
+                        if (entity && oldStage.name != newStage.name)
+                            this.updateEntityStage(entity.Id, newStage.name, oldStage.name, () => {
+                                if (entity.Id != entityId) {
+                                    newStage['entities'].unshift(entity);
+                                    oldStage['entities'].splice(oldStage['entities'].indexOf(entity), 1);
                                 }
                             });
                     });
-                    this.selectedLeads = [];
+                    this.selectedEntities = [];
                 } else
-                    this.updateEntityStage(leadId, newStage.name,
+                    this.updateEntityStage(entityId, newStage.name,
                         this.getStageByElement(value[3]).name);
             }
         }));
@@ -130,7 +130,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
                 this.stages = pipeline.stages.map((stage) => {
                     _.extend(stage, {
-                        leads: [],
+                        entities: [],
                         full: true
                     });
                     return stage;
@@ -139,7 +139,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 this.firstStage = this.lockMarginalEntities ? this.stages[0] : {};
                 this.lastStage = this.lockMarginalEntities ? this.stages[this.stages.length - 1] : {};
 
-                this.loadStagesLeads(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
+                this.loadStagesEntities(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
 
                 this.refreshTimeout = null;
             })
@@ -176,7 +176,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         });
                 });
 
-                return stage && this.getLeadByElement(el, stage);
+                return stage && this.getEntityByElement(el, stage);
             },
             accepts: (el, target, source) => {
                 let stageSource = this.getStageByElement(source),
@@ -194,14 +194,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     refresh(quiet = false, stageId?: number, skipAlreadyLoadedChecking = false) {
-        this.selectedLeads = [];
+        this.selectedEntities = [];
         this.quiet = quiet;
         this.stageId = stageId;
         if (!this.refreshTimeout) {
             !this.quiet && this.startLoading();
             this.refreshTimeout = setTimeout(() => {
                 if (this.pipeline) {
-                    this.loadStagesLeads(0, stageId &&
+                    this.loadStagesEntities(0, stageId &&
                         _.findIndex(this.stages, obj => obj.id == stageId), Boolean(stageId));
                     this.refreshTimeout = null;
                 } else
@@ -211,9 +211,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    getLeadByElement(el, stage) {
-        return stage && _.find(stage.leads, (lead) => {
-            return lead && (lead['Id'] == parseInt(this.getAccessKey(el.closest('.card'))));
+    getEntityByElement(el, stage) {
+        return stage && _.find(stage.entities, (entity) => {
+            return entity && (entity['Id'] == parseInt(this.getAccessKey(el.closest('.card'))));
         });
     }
 
@@ -234,14 +234,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
     }
 
-    loadStagesLeads(page = 0, stageIndex?: number, oneStageOnly = false) {
+    loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false) {
         let index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
             dataSource = this._dataSources[stage.name],
             filter = {StageId: stage.id};
 
         if (this.checkFilterExcludeCondition(stage.id))
-            stage['leads'] = [];
+            stage['entities'] = [];
         else {
             if (!dataSource)
                 dataSource = this._dataSources[stage.name] =
@@ -251,8 +251,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         select: this.selectFields
                     }));
 
-            if (!isNaN(stage['lastLeadId']) && page)
-                filter['Id'] = {lt: stage['lastLeadId']};
+            if (!isNaN(stage['lastEntityId']) && page)
+                filter['Id'] = {lt: stage['lastEntityId']};
 
             dataSource.pageSize(this.STAGE_PAGE_COUNT);
             dataSource['_store']['_url'] =
@@ -262,20 +262,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     ]})
             );
             dataSource.sort({getter: 'Id', desc: true});
-            dataSource.load().done((leads) => {
-                if (leads.length) {
-                    stage['leads'] = (page && oneStageOnly ? _.uniqBy(
-                        (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads).map((lead) => {
-                            stage['lastLeadId'] = Math.min((page ? stage['lastLeadId'] : undefined) || Infinity, lead['Id']);
-                            return lead;
+            dataSource.load().done((entities) => {
+                if (entities.length) {
+                    stage['entities'] = (page && oneStageOnly ? _.uniqBy(
+                        (stage['entities'] || []).concat(entities), (entity) => entity['Id']) : entities).map((entity) => {
+                            stage['lastEntityId'] = Math.min((page ? stage['lastEntityId'] : undefined) || Infinity, entity['Id']);
+                            return entity;
                         });
                     if (!this.totalsURI)
                         stage['total'] = dataSource.totalCount();
-                    stage['full'] = (stage['leads'].length >= (stage['total'] || 0));
+                    stage['full'] = (stage['entities'].length >= (stage['total'] || 0));
                 } else  {
-                    if (!page || !stage['leads'])
-                        stage['leads'] = [];
-                    stage['total'] = stage['leads'].length;
+                    if (!page || !stage['entities'])
+                        stage['entities'] = [];
+                    stage['total'] = stage['entities'].length;
                     stage['full'] = true;
                 }
 
@@ -288,7 +288,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
 
         if (!oneStageOnly && stages[index + 1])
-            this.loadStagesLeads(page, index + 1);
+            this.loadStagesEntities(page, index + 1);
     }
 
     processTotalsRequest(filter?: any) {
@@ -309,7 +309,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 if (stages[stage.id]) {
                     stage['total'] = stages[stage.id];
                     stage['full'] = stage['total']
-                        <= stage['leads'].length;
+                        <= stage['entities'].length;
                 } else {
                     stage['total'] = 0;
                     stage['full'] = false;
@@ -330,28 +330,28 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }).concat(this.getSearchFilter());
 
         this.startLoading();
-        this.loadStagesLeads();
+        this.loadStagesEntities();
 
         return this.queryWithSearch;
     }
 
     loadMore(stageIndex) {
         this.startLoading();
-        this.loadStagesLeads(
-            Math.floor(this.stages[stageIndex]['leads'].length
+        this.loadStagesEntities(
+            Math.floor(this.stages[stageIndex]['entities'].length
                 / this.STAGE_PAGE_COUNT), stageIndex, true);
     }
 
-    updateEntityStage(leadId, newStage, oldStage, complete = null) {
-        if (leadId && newStage != oldStage) {
+    updateEntityStage(entityId, newStage, oldStage, complete = null) {
+        if (entityId && newStage != oldStage) {
             this.disabled = true;
             this._pipelineService.updateEntityStageById(
-                this.pipelinePurposeId, leadId, oldStage, newStage, () => {
+                this.pipelinePurposeId, entityId, oldStage, newStage, () => {
                     this.stages.every((stage, index) => {
                         let result = (stage.name == oldStage);
-                        if (result && stage['total'] && !stage['leads'].length) {
+                        if (result && stage['total'] && !stage['entities'].length) {
                             this.startLoading();
-                            this.loadStagesLeads(0, index, true);
+                            this.loadStagesEntities(0, index, true);
                         }
                         return !result;
                     });
@@ -382,10 +382,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return document.getElementsByClassName('card selected');
     }
 
-    getSelectedLeads() {
+    getSelectedEntities() {
         return [].map.call(this.getSelectedCards(), (card) => {
             return !card.classList.contains('gu-mirror') &&
-                this.getLeadByElement(card, this.getStageByElement(card));
+                this.getEntityByElement(card, this.getStageByElement(card));
         }).filter(Boolean);
     }
 
@@ -411,12 +411,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             .contains('selected');
     }
 
-    private toogleHighlightShiftArea(lead, checked) {
-        if (this.shiftStartLead &&
-            this.shiftStartLead.StageId == lead.StageId
+    private toogleHighlightShiftArea(entity, checked) {
+        if (this.shiftStartEntity &&
+            this.shiftStartEntity.StageId == entity.StageId
         ) {
-            let startCard: any = document.querySelector('[accessKey="' + this.shiftStartLead.Id + '"]'),
-                endCard: any = document.querySelector('[accessKey="' + lead.Id + '"]');
+            let startCard: any = document.querySelector('[accessKey="' + this.shiftStartEntity.Id + '"]'),
+                endCard: any = document.querySelector('[accessKey="' + entity.Id + '"]');
 
             if (startCard.offsetTop > endCard.offsetTop) {
                 let stored = startCard;
@@ -431,7 +431,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             }
             this.setCardSelection(endCard, checked);
         } else
-            this.shiftStartLead = lead;
+            this.shiftStartEntity = entity;
     }
 
     deselectAllCards() {
@@ -443,20 +443,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     onKeyUp(event) {
         if (event.keyCode == 16/*SHIFT*/)
-            this.shiftStartLead = null;
+            this.shiftStartEntity = null;
     }
 
-    onCardClickInternal(lead, event) {
+    onCardClickInternal(entity, event) {
         let clickedOnCheckbox = event.target.classList.contains('dx-checkbox-icon');
         if (event.ctrlKey || event.shiftKey || clickedOnCheckbox) {
             let checkedCard = this.highlightSelectedCard(event);
             if (!checkedCard && event.ctrlKey && event.shiftKey)
                 this.deselectAllCards();
             else if (event.shiftKey)
-                this.toogleHighlightShiftArea(lead, checkedCard);
-            this.selectedLeads = this.getSelectedLeads();
+                this.toogleHighlightShiftArea(entity, checkedCard);
+            this.selectedEntities = this.getSelectedEntities();
         } else
-            this.onCardClick.emit(lead);
+            this.onCardClick.emit(entity);
         this.hideStageHighlighting();
     }
 }

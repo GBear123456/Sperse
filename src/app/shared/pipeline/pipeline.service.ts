@@ -76,7 +76,7 @@ export class PipelineService {
     updateEntityStageById(pipelinePurposeId, entityId, oldStageName, newStageName, complete = null) {
         let fromStage = this.getStageByName(pipelinePurposeId, oldStageName);
         if (fromStage) {
-            let entity = _.findWhere(fromStage.leads, {Id: parseInt(entityId)});
+            let entity = _.findWhere(fromStage.entities, {Id: parseInt(entityId)});
             return entity && this.updateEntityStage(pipelinePurposeId, entity, oldStageName, newStageName, complete);
         }
     }
@@ -158,10 +158,10 @@ export class PipelineService {
     }
 
     moveEntityTo(entity, sourceStage, targetStage) {
-        if (sourceStage.leads && targetStage.leads)
-            targetStage.leads.unshift(
-                sourceStage.leads.splice(
-                    sourceStage.leads.indexOf(entity), 1).pop());
+        if (sourceStage.entities && targetStage.entities)
+            targetStage.entities.unshift(
+                sourceStage.entities.splice(
+                    sourceStage.entities.indexOf(entity), 1).pop());
         entity.StageId = targetStage.id;
         entity.stage = entity.Stage = targetStage.name;
         entity.locked = false;

@@ -3,16 +3,16 @@
         <div class="column-title">
             <span>{{stage.name}}</span><div>{{'(' + (stage?.total || 0) + ')'}}</div><button class="edit-button"><img src="./assets/common/icons/edit-icon.svg" alt="Edit"></button>
         </div>
-        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.leads" accessKey="{{stage?.id}}" (click)="hideStageHighlighting()">
-            <ng-container *ngFor="let lead of stage.leads">
-                  <div class="card" [ngClass]="{locked: lead?.locked}" [accessKey]="lead?.Id" (click)="onCardClickInternal(lead, $event)" [attr.stage]="lead?.StageId" count="">
+        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.entities" accessKey="{{stage?.id}}" (click)="hideStageHighlighting()">
+            <ng-container *ngFor="let entity of stage.entities">
+                  <div class="card" [ngClass]="{locked: entity?.locked}" [accessKey]="entity?.Id" (click)="onCardClickInternal(entity, $event)" [attr.stage]="entity?.StageId" count="">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="full-name">
-                                    <span *ngIf="lead?.Name || lead?.Title">{{ lead?.Name || lead?.Title }}</span>
-                                    <span *ngIf="!lead?.Name && !lead?.Title" class="no-name">{{ l('ClientNoName') }}</span>
+                                    <span *ngIf="entity?.Name || entity?.Title">{{ entity?.Name || entity?.Title }}</span>
+                                    <span *ngIf="!entity?.Name && !entity?.Title" class="no-name">{{ l('ClientNoName') }}</span>
                                     <div class="company-name">
-                                        <span>{{ lead?.CompanyName || lead?.Description }}</span>
+                                        <span>{{ entity?.CompanyName || entity?.Description }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -21,17 +21,17 @@
                                     <dx-check-box text=""></dx-check-box>
                                 </div>
                                 <div class="days-ago">
-                                    <img src="./assets/common/icons/clock-circle.svg" class="img-responsive"><span *ngIf="lead?.CreationTime">{{ lead?.CreationTime | timeAgo }}</span>
-                                    <span *ngIf="lead?.StartDate">{{ getDateWithTimezone(lead?.StartDate) | date : 'M/d, H:mm' }} - {{ getDateWithTimezone(lead?.EndDate) | date : 'M/d, H:mm' }}</span>
+                                    <img src="./assets/common/icons/clock-circle.svg" class="img-responsive"><span *ngIf="entity?.CreationTime">{{ entity?.CreationTime | timeAgo }}</span>
+                                    <span *ngIf="entity?.StartDate">{{ getDateWithTimezone(entity?.StartDate) | date : 'M/d, H:mm' }} - {{ getDateWithTimezone(entity?.EndDate) | date : 'M/d, H:mm' }}</span>
                                 </div>
                                 <div class="text-right pipeline-photo-wrap">
-                                    <div [ngStyle]="{'background-image': lead?.PhotoPublicId ? 'url(' + getContactPhotoUrl(lead?.PhotoPublicId) + ')': 'none'}" class="img-responsive img-circle"></div>
+                                    <div [ngStyle]="{'background-image': entity?.PhotoPublicId ? 'url(' + getContactPhotoUrl(entity?.PhotoPublicId) + ')': 'none'}" class="img-responsive img-circle"></div>
                                 </div>
                             </div>
                       </div>
                   </div>
             </ng-container>
         </div>
-        <span class="load-more" [hidden]="stage.full || !stage?.leads?.length && !stage?.total" (click)="loadMore(i)"><img src="./assets/common/icons/arrow-down.svg"></span>
+        <span class="load-more" [hidden]="stage.full || !stage?.entities?.length && !stage?.total" (click)="loadMore(i)"><img src="./assets/common/icons/arrow-down.svg"></span>
     </div>
 </div>

@@ -73,10 +73,10 @@
                         [dragulaName]="'orderStages'"
                         [dataSource]="pipelineDataSource"
                         [lockMarginalEntities]="true"
-                        [selectFields]="['Id', 'Email', 'FullName', 'OrderType', 'CreationTime', 'StageId', 'Stage', 'Photo']"
+                        [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'PhotoPublicId']"
                         [pipelinePurposeId]="pipelinePurposeId"
                         [filterModelStages]="filterModelStages"
-                        [(selectedLeads)]="selectedOrders"
+                        [(selectedEntities)]="selectedOrders"
                         (onStagesLoaded)="onStagesLoaded($event)"
                         (onCardClick)="onCardClick($event)">
                         Loading...
