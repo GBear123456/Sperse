@@ -2202,7 +2202,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let cashflowScroll = $('.cashflow-scroll');
         if (this.statsDetailResult) {
             let cashflowElement = $('.cashflow');
-            cashflowScroll.height(cashflowElement.outerHeight() - $('.cashflow-wrap').outerHeight());
+            cashflowScroll.height(innerHeight - cashflowElement.offset().top - $('.cashflow-wrap').outerHeight());
         } else {
             cashflowScroll.height('');
         }
@@ -4457,7 +4457,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onTransactionDetailsResize($event) {
-        this.cashFlowGrid.height = $event.height;
         this.handleBottomHorizontalScrollPosition();
         this.handleVerticalScrollPosition();
     }
