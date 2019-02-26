@@ -85,7 +85,7 @@ export class PackageChooserComponent implements OnInit {
     ngOnInit() {
         if (!this.title) {
             /** Default value for title if any was set in input */
-            this.title = this.l('TrialExpired', this.module);
+            this.title = this.l('ModuleExpired', this.module, 'trial');
         }
         this.packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
