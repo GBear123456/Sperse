@@ -1,0 +1,196 @@
+.m-topbar {
+    width: auto;
+    height: 100%;
+    float: right;
+    padding: 0;
+    -webkit-transition: all .6s ease;
+    -moz-transition: all .6s ease;
+    -ms-transition: all .6s ease;
+    -o-transition: all .6s ease;
+    transition: all .6s ease
+}
+
+.m-topbar.m-topbar--pushed {
+    -webkit-transition: all .6s ease;
+    -moz-transition: all .6s ease;
+    -ms-transition: all .6s ease;
+    -o-transition: all .6s ease;
+    transition: all .6s ease
+}
+
+.m-topbar .m-topbar__nav.m-nav {
+    margin: 0 20px 0 30px
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item {
+    padding: 0 12px
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link {
+    position: relative;
+    margin: 0 auto
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-nav__link-badge {
+    left: 50%;
+    margin-left: -2px;
+    position: absolute;
+    top: 11px
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-nav__link-icon {
+    text-align: center;
+    line-height: 0;
+    vertical-align: middle;
+    padding: 0;
+    color: #5aaceb
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-nav__link-icon > i {
+    font-size: 1.5rem
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-nav__link-icon > i:before {
+    background: -webkit-linear-gradient(180deg, #5aaceb 25%, #77afdb 50%, #6eaada 75%, #6db2e7 100%);
+    background: linear-gradient(180deg, #5aaceb 25%, #77afdb 50%, #6eaada 75%, #6db2e7 100%);
+    background-clip: text;
+    text-fill-color: transparent;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent
+}
+
+@media screen\0 {
+    .m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-nav__link-icon > i:before {
+        background: 0 0
+    }
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-nav__link-icon i:before {
+    font-weight: 700;
+    padding: 1px
+}
+
+@media screen\0 {
+    .m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-nav__link-icon i:before {
+        font-weight: 400
+    }
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-topbar__username {
+    display: table-cell;
+    vertical-align: middle;
+    text-transform: uppercase;
+    font-size: .9rem;
+    font-weight: 400;
+    text-align: left;
+    color: #fff
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-topbar__userpic {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    margin: 0 auto
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-topbar__userpic img {
+    display: block;
+    vertical-align: middle;
+    max-width: 41px !important;
+    margin: 0 0 0 5px
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item.m-topbar__notifications.m-topbar__notifications--img.m-dropdown--arrow .m-dropdown__arrow {
+    color: #55a1dc
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item.m-topbar__quick-actions.m-topbar__quick-actions--img.m-dropdown--arrow .m-dropdown__arrow {
+    color: #4694d0
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item.m-topbar__user-profile.m-topbar__user-profile--img.m-dropdown--arrow .m-dropdown__arrow {
+    color: #489ee0
+}
+
+.m-topbar .m-topbar__nav.m-nav > .m-nav__item.m-dropdown.m-dropdown--offcanvas.m-dropdown--header-bg-fil.m-dropdown--arrow.m-dropdown--arrow .m-dropdown__arrow {
+    color: #fff
+}
+
+@media (min-width: 1025px) and (max-width: 1200px) {
+    .m-topbar {
+        padding: 0
+    }
+
+    .m-topbar .m-topbar__nav.m-nav {
+        margin: 0 5px 0 5px
+    }
+
+    .m-topbar .m-topbar__nav.m-nav > .m-nav__item {
+        padding: 0 6px
+    }
+}
+
+@media (max-width: 1024px) {
+    .m-topbar {
+        width: 100% !important;
+        -webkit-transition: all .3s ease;
+        -moz-transition: all .3s ease;
+        -ms-transition: all .3s ease;
+        -o-transition: all .3s ease;
+        transition: all .3s ease;
+        height: 50px !important;
+        margin-top: -50px;
+        position: relative;
+        background-color: #fff;
+        -webkit-box-shadow: 0 3px 12px 0 rgba(0, 0, 0, .1);
+        -moz-box-shadow: 0 3px 12px 0 rgba(0, 0, 0, .1);
+        box-shadow: 0 3px 12px 0 rgba(0, 0, 0, .1)
+    }
+
+    .m-topbar--on .m-topbar {
+        -webkit-transition: all .3s ease;
+        -moz-transition: all .3s ease;
+        -ms-transition: all .3s ease;
+        -o-transition: all .3s ease;
+        transition: all .3s ease;
+        margin-top: 0
+    }
+
+    .m-header--fixed-mobile .m-topbar {
+        margin-top: 0;
+        top: -50px
+    }
+
+    .m-header--fixed-mobile.m-topbar--on .m-topbar {
+        margin-top: 0;
+        top: 0;
+        -webkit-transition: all .3s ease;
+        -moz-transition: all .3s ease;
+        -ms-transition: all .3s ease;
+        -o-transition: all .3s ease;
+        transition: all .3s ease
+    }
+
+    .m-topbar .m-topbar__nav.m-nav {
+        float: right
+    }
+
+    .m-topbar .m-topbar__nav.m-nav > .m-nav__item {
+        padding: 0 4px
+    }
+
+    .m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-nav__link-badge {
+        margin-left: -2px;
+        top: 5px
+    }
+
+    .m-topbar .m-topbar__nav.m-nav > .m-nav__item > .m-nav__link .m-topbar__userpic img {
+        max-width: 31px !important
+    }
+}
+
+@media (max-width: 768px) {
+    .m-topbar .m-topbar__nav.m-nav > .m-nav__item.m-dropdown {
+        position: static
+    }
+}

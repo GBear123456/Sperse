@@ -17,7 +17,12 @@ import { UserHelper } from '../../helpers/UserHelper';
 @Component({
     templateUrl: './chat-bar.component.html',
     selector: 'chat-bar',
-    styleUrls: ['./chat-bar.component.less'],
+    styleUrls: [
+        '../../../../shared/metronic/m-list-search.less',
+        '../../../../shared/metronic/m-quick-sidebar.less',
+        '../../../../shared/metronic/m-messenger.less',
+        './chat-bar.component.less'
+    ],
     encapsulation: ViewEncapsulation.None
 })
 export class ChatBarComponent extends AppComponentBase implements OnInit, AfterViewInit {
@@ -98,7 +103,6 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     get selectedUser(): ChatFriendDto {
         return this._selectedUser;
     }
-
 
     constructor(injector: Injector,
         private _appSessionService: AppSessionService,

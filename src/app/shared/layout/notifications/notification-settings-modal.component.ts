@@ -10,6 +10,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     selector: 'notificationSettingsModal',
     templateUrl: './notification-settings-modal.component.html',
+    styleUrls: [ '../../metronic/m-checkbox.less' ],
     providers: [ DialogService ]
 })
 export class NotificationSettingsModalComponent extends AppModalDialogComponent implements OnInit  {

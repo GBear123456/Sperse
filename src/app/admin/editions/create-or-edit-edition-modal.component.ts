@@ -8,7 +8,8 @@ import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'createOrEditEditionModal',
-    templateUrl: './create-or-edit-edition-modal.component.html'
+    templateUrl: './create-or-edit-edition-modal.component.html',
+    styleUrls: [ '../../../shared/metronic/m-radio.less' ]
 })
 export class CreateOrEditEditionModalComponent extends AppComponentBase implements AfterViewChecked {
 

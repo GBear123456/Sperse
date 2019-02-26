@@ -24,11 +24,13 @@ export class LocalizedResourcesHelper {
         let cssPostfix = isRtl ? '-rtl' : '';
         if (abp.session.userId) {
             $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/' + theme + '/assets/vendors/base/vendors.bundle.css'));
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/' + theme + '/assets/demo/' + theme + '/base/style.bundle' + cssPostfix + '.css'));
+            //$('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/' + theme + '/assets/demo/' + theme + '/base/style.bundle' + cssPostfix + '.css'));
+            /** @todo remove after changing Languages and other admin sections to devexttreme */
             $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/primeng/datatable/css/primeng.datatable' + cssPostfix + '.css'));
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/themes/' + theme + '/primeng.datatable' + cssPostfix + '.css'));
-        } else
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css'));
+            // $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/themes/' + theme + '/primeng.datatable' + cssPostfix + '.css'));
+        }
+
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css'));
 
         return $.Deferred().resolve().promise();
     }

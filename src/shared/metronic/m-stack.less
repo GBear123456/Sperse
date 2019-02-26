@@ -1,0 +1,120 @@
+.m-stack {
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    &.m-stack--hor {
+        > .m-stack__item {
+            display: block;
+
+            &.m-stack__item--fluid {
+                display: block;
+                height: auto;
+            }
+        }
+    }
+
+    &.m-stack--ver {
+        > .m-stack__item {
+            display: block;
+            height: auto;
+        }
+    }
+
+    &.m-stack.m-stack--general {
+        display: table;
+        table-layout: fixed;
+
+        &.m-stack--inline {
+            width: auto;
+        }
+
+        &.m-stack--hor {
+            > .m-stack__item {
+                display: table-row;
+                vertical-align: top;
+                height: 1px;
+
+                > .m-stack__demo-item {
+                    height: 100%;
+                }
+
+                &.m-stack__item--fluid {
+                    height: auto;
+                }
+
+                &.m-stack__item--fit {
+                    line-height: 0;
+                }
+
+                &.m-stack__item--left {
+                    text-align: left;
+                }
+
+                &.m-stack__item--right {
+                    text-align: right;
+                }
+
+                &.m-stack__item--center {
+                    text-align: center;
+                }
+
+                &.m-stack__item--top {
+                    vertical-align: top;
+                }
+
+                &.m-stack__item--middle {
+                    vertical-align: middle;
+                }
+
+                &.m-stack__item--bottom {
+                    vertical-align: bottom;
+                }
+            }
+        }
+
+        &.m-stack--ver {
+            &.m-stack--demo {
+                height: 80px;
+            }
+
+            > .m-stack__item {
+                display: table-cell;
+                vertical-align: top;
+                height: 100%;
+
+                &.m-stack__item--fluid {
+                    width: 100%;
+                }
+
+                &.m-stack__item--fit {
+                    line-height: 0;
+                }
+
+                &.m-stack__item--left {
+                    text-align: left;
+                }
+
+                &.m-stack__item--right {
+                    text-align: right;
+                }
+
+                &.m-stack__item--center {
+                    text-align: center;
+                }
+
+                &.m-stack__item--top {
+                    vertical-align: top;
+                }
+
+                &.m-stack__item--middle {
+                    vertical-align: middle;
+                }
+
+                &.m-stack__item--bottom {
+                    vertical-align: bottom;
+                }
+            }
+        }
+    }
+}

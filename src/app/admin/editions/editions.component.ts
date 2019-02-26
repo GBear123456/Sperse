@@ -8,7 +8,8 @@ import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-moda
 
 @Component({
     templateUrl: './editions.component.html',
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    styleUrls: [ '../../../shared/metronic/dropdown-menu.less' ]
 })
 export class EditionsComponent extends AppComponentBase  {
 

@@ -29,6 +29,12 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { UserManagementModule } from '@shared/common/layout/user-management-list/user-management.module';
 
+/** @todo Used for chart bar and dropdown. Reimplement in future */
+import 'assets/metronic/src/js/framework/base/util.js';
+import 'assets/metronic/src/js/framework/base/app.js';
+import 'assets/metronic/src/js/framework/components/general/dropdown.js';
+import 'assets/metronic/src/js/framework/components/general/offcanvas.js';
+
 let COMPONENTS = [
     PlatformSelectComponent,
     HeaderComponent,

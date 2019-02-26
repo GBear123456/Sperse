@@ -9,7 +9,10 @@ import { NotificationsComponent } from '@app/shared/layout/notifications/notific
 
 @Component({
     templateUrl: './header-notifications.component.html',
-    styleUrls: ['./header-notifications.component.less'],
+    styleUrls: [
+        '../../../../shared/metronic/m-card-user.less',
+        './header-notifications.component.less'
+    ],
     selector: '[headerNotifications]',
     encapsulation: ViewEncapsulation.None,
     providers: [ InstanceServiceProxy, TenantSubscriptionServiceProxy ]
@@ -95,12 +98,6 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
 
     getCurrentLoginInformations(): void {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
-    }
-
-    hideDropDown() {
-        let element: any = $('#header_notification_bar');
-        let dropDown = element.mDropdown();
-        dropDown && dropDown.hide();
     }
 
     loadNotifications(): void {

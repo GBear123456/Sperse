@@ -12,7 +12,10 @@ import { forkJoin } from 'rxjs';
 @Component({
     templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()],
-    styleUrls: ['./host-settings.component.less'],
+    styleUrls: [
+        '../../shared/metronic/m-checkbox.less',
+        './host-settings.component.less'
+    ],
     providers: [TenantPaymentSettingsServiceProxy]
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {

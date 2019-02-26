@@ -9,6 +9,7 @@ import { AbpSessionService } from '@abp/session/abp-session.service';
 
 @Component({
     templateUrl: './languages.component.html',
+    styleUrls: [ '../../../shared/metronic/dropdown-menu.less' ],
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })

@@ -8,7 +8,7 @@ import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './maintenance.component.html',
-    styleUrls: ['./maintenance.component.less'],
+    styleUrls: [ '../../../shared/metronic/table.less', './maintenance.component.less' ],
     animations: [appModuleAnimation()]
 })
 export class MaintenanceComponent extends AppComponentBase implements OnInit, AfterViewInit, AfterViewChecked {

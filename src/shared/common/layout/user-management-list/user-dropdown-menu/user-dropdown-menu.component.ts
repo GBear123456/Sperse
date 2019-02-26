@@ -13,7 +13,7 @@ import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-l
 @Component({
     selector: 'user-dropdown-menu',
     templateUrl: './user-dropdown-menu.component.html',
-    styleUrls: [ './user-dropdown-menu.component.less'],
+    styleUrls: [ '../../../../metronic/m-nav.less', './user-dropdown-menu.component.less'],
     providers: [ CommonUserInfoServiceProxy, ImpersonationService ]
 })
 export class UserDropdownMenuComponent extends AppComponentBase implements OnInit {

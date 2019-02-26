@@ -1,0 +1,117 @@
+
+.m-quick-sidebar {
+    padding: 20px 30px 30px 30px
+}
+
+.m-quick-sidebar .m-quick-sidebar__close {
+    position: absolute;
+    font-size: 1.4rem;
+    cursor: pointer
+}
+
+.m-quick-sidebar .mCSB_scrollTools {
+    right: -13px !important
+}
+
+.m-quick-sidebar.m-quick-sidebar--tabbed .m-quick-sidebar__close {
+    top: 16px;
+    right: 30px
+}
+
+.m-quick-sidebar.m-quick-sidebar--tabbed .m-tabs.m-tabs-line {
+    margin: 0 0 30px 0
+}
+
+.m-quick-sidebar.m-quick-sidebar--tabbed .m-tabs.m-tabs-line > .m-tabs__item > .m-tabs__link {
+    padding: 15px 0
+}
+
+.m-quick-sidebar {
+    background-color: #fff;
+    -webkit-box-shadow: 0 0 15px 1px rgba(64, 72, 78, .2);
+    -moz-box-shadow: 0 0 15px 1px rgba(64, 72, 78, .2);
+    box-shadow: 0 0 15px 1px rgba(64, 72, 78, .2)
+}
+
+.m-quick-sidebar .m-quick-sidebar__close {
+    color: #ced5db
+}
+
+.m-quick-sidebar .m-quick-sidebar__close:hover {
+    color: #6aa0ca
+}
+
+.m-quick-sidebar.m-quick-sidebar--skin-dark {
+    background-color: #fff;
+    -webkit-box-shadow: 0 0 15px 1px rgba(64, 72, 78, .4);
+    -moz-box-shadow: 0 0 15px 1px rgba(64, 72, 78, .4);
+    box-shadow: 0 0 15px 1px rgba(64, 72, 78, .4)
+}
+
+.m-quick-sidebar.m-quick-sidebar--skin-dark .m-quick-sidebar__close {
+    color: #dfe9f1
+}
+
+.m-quick-sidebar.m-quick-sidebar--skin-dark .m-quick-sidebar__close:hover {
+    color: #6aa0ca
+}
+
+.m-quick-sidebar-close {
+    display: none
+}
+
+.m-quick-sidebar {
+    display: block !important;
+    z-index: 1001;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    width: 455px !important;
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+    right: -465px
+}
+
+.m-quick-sidebar.m-quick-sidebar--on {
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -ms-transition: all .3s ease;
+    -o-transition: all .3s ease;
+    transition: all .3s ease;
+    right: 0
+}
+
+.m-quick-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: 1000;
+    background: rgba(0, 0, 0, .1);
+    -webkit-animation: m-offcanvas-overlay-fade-in .3s linear 1;
+    -moz-animation: m-offcanvas-overlay-fade-in .3s linear 1;
+    -ms-animation: m-offcanvas-overlay-fade-in .3s linear 1;
+    -o-animation: m-offcanvas-overlay-fade-in .3s linear 1;
+    animation: m-offcanvas-overlay-fade-in .3s linear 1
+}
+
+@media screen and (-ms-high-contrast: active),(-ms-high-contrast: none) {
+    .m-quick-sidebar-overlay {
+        animation: none !important
+    }
+}
+
+@media (max-width: 455px) {
+    .m-quick-sidebar {
+        width: 90% !important
+    }
+}

@@ -14,7 +14,7 @@ import { TenantFeaturesModalComponent } from './tenant-features-modal.component'
 
 @Component({
     templateUrl: './tenants.component.html',
-    styleUrls: ['./tenants.component.less'],
+    styleUrls: [ '../../shared/metronic/dropdown-menu.less', './tenants.component.less' ],
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
