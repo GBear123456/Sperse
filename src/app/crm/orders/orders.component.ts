@@ -266,17 +266,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         this._filtersService.apply(() => {
             this.initToolbarConfig();
-            this.processODataFilter(
-                this.dataGrid.instance,
-                this.dataSourceURI,
-                this.filters,
-                (filter) => {
-                    let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
-            );
+            this.processFilterInternal();
         });
     }
 
@@ -319,7 +309,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         options: {
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase()
+                            placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
                         }
                     }
                 ]
@@ -414,6 +407,27 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
 
         return data;
+    }
+
+    processFilterInternal() {
+        if (this.dataGrid && this.dataGrid.instance) {
+            this.processODataFilter(
+                this.dataGrid.instance,
+                this.dataSourceURI,
+                this.filters,
+                (filter) => {
+                    let filterMethod = this['filterBy' +
+                    this.capitalize(filter.caption)];
+                    if (filterMethod)
+                        return filterMethod.call(this, filter);
+                }
+            );
+        }
+    }
+
+    searchValueChange(e: object) {
+        this.searchValue = e['value'];
+        this.processFilterInternal();
     }
 
     onStagesLoaded($event) {
