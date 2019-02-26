@@ -12,7 +12,7 @@ import { NotificationsComponent } from '@app/shared/layout/notifications/notific
     styleUrls: ['./header-notifications.component.less'],
     selector: '[headerNotifications]',
     encapsulation: ViewEncapsulation.None,
-    providers: [ AppService, InstanceServiceProxy, TenantSubscriptionServiceProxy ]
+    providers: [ InstanceServiceProxy, TenantSubscriptionServiceProxy ]
 })
 export class HeaderNotificationsComponent extends AppComponentBase implements OnInit {
 
