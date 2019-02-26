@@ -128,7 +128,7 @@ export class CashflowService {
     }
 
     isSubCategory(categoryId: number, categoryTree: GetCategoryTreeOutput): boolean {
-        return !!categoryTree.categories[categoryId].parentId;
+        return categoryId && !!categoryTree.categories[categoryId].parentId;
     }
 
 }
