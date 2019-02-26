@@ -40,12 +40,17 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
                         this._router.navigate(['app/admin/users']);
                     paymentDialogTimeout = setTimeout(() => {
                         if (!this.dialog.getDialogById('payment-wizard')) {
+                            const upperModuleName = name.toUpperCase();
+                            const module = appService.getModuleSubscription(name);
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '655px',
                                 width: '980px',
                                 id: 'payment-wizard',
                                 panelClass: ['payment-wizard', 'setup'],
-                                data: { module: name.toUpperCase() }
+                                data: {
+                                    module: upperModuleName,
+                                    title: this.l('ModuleExpired', upperModuleName, module && module.endDate ? 'subscription' : 'trial')
+                                }
                             }).afterClosed().subscribe(result => {});
                         }
                     }, 2000);
