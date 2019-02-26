@@ -162,7 +162,11 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
             width: '980px',
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
-            data: { module: this._appService.getModule().toUpperCase() }
+            data: {
+                module: this._appService.getModule().toUpperCase(),
+                title: this.subscriptionInfoTitle,
+                subtitle: this.subscriptionInfoText
+            }
         }).afterClosed().subscribe(result => { });
         e.stopPropagation && e.stopPropagation();
     }
