@@ -105,6 +105,7 @@
                 .detailItem {
                     display: flex;
                     align-items: center;
+                    position: relative;
                     .mat-form-field {
                         width: 100%;
                     }
@@ -162,6 +163,12 @@
                 margin-left: 10px;
             }
 
+            &.leftAlignment {
+                label + * {
+                    flex: 2;
+                }
+            }
+
             &.center {
                 label {
                     flex: initial;
@@ -182,6 +189,10 @@
                         span {
                             margin-left: 0;
                         }
+                    }
+                    label + *,
+                    .dx-widget {
+                        width: 100%;
                     }
                 }
             }
