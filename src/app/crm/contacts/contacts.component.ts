@@ -155,7 +155,13 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         let key = this.getCacheKey(abp.session.userId);
         if (this._cacheService.exists(key))
             this.rightPanelSetting = this._cacheService.get(key);
-        switch (this.referrerParams.referrer.split('/').pop()) {
+        let section = this.referrerParams.referrer.split('/').pop();
+        let selectItems = [
+            'Id',
+            'OrganizationId',
+            section == 'leads' ? 'CustomerId' : 'UserId'
+        ];
+        switch (section) {
             case 'leads':
                 this.dataSourceURI = 'Lead';
                 this.currentItemId = this.params.leadId;
@@ -174,7 +180,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
         this.prevNextDataSource = new DataSource({
             requireTotalCount: false,
-            pageSize: 1,
+            pageSize: 2,
             filter: [ 'Id', '>', this.currentItemId ],
             store: {
                 type: 'odata',
@@ -187,7 +193,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             },
             sort: [
                 { selector: 'Id', desc: false }
-            ]
+            ],
+            select: selectItems
         });
     }
 
@@ -373,7 +380,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     loadLeadData(personContactInfo?: any, lastLeadCallback?) {
         let contactInfo = this._contactService['data'].contactInfo,
             leadInfo = this._contactService['data'].leadInfo;
-        if ((contactInfo && leadInfo) || lastLeadCallback) {
+        if ((!this.leadInfo && contactInfo && leadInfo) || lastLeadCallback) {
             !lastLeadCallback && this.startLoading(true);
             let leadId = leadInfo.id,
                 leadInfo$ = leadId && !lastLeadCallback ? this._leadService.getLeadInfo(leadId) :
@@ -721,26 +728,37 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this._contactsService.invalidate(area);
     }
 
-    loadOtherItem(event, position) {
+    loadTargetEntity(event, direction) {
         this.prevNextDataSource.filter(
-            position == 'next' ? [ 'Id', '>', +this.currentItemId ] : [ 'Id', '<', +this.currentItemId ]
+            direction == 'next' ? [ 'Id', '>', +this.currentItemId ] : [ 'Id', '<', +this.currentItemId ]
         );
         this.prevNextDataSource.sort(
-            { selector: 'Id', desc: position != 'next' }
+            { selector: 'Id', desc: direction != 'next' }
         );
         this.prevNextDataSource.load().then(() => {
                 let items = this.prevNextDataSource.items();
                 if (items) {
+                    this.toolbarComponent.checkSetNavButtonsEnabled(direction, items);
                     this.currentItemId = items[0].Id;
+
+                    this.loadData({
+                        userId: this.dataSourceURI != 'Lead' ? items[0].UserId : undefined,
+                        clientId: this.dataSourceURI == 'Customer' ? items[0].Id : undefined,
+                        partnerId: this.dataSourceURI == 'Partner' ? items[0].Id : undefined,
+                        customerId: this.dataSourceURI == 'Lead' ? items[0].CustomerId : undefined,
+                        leadId: this.dataSourceURI == 'Lead' ? items[0].Id : undefined,
+                        companyId: items[0].OrganizationId
+                    });
+
                     switch (this.referrerParams.referrer.split('/').pop()) {
                         case 'leads':
-                            this._contactsService.updateLocation(items[0].CustomerId, this.currentItemId, null, items[0].OrganizationId, true);
+                            this._contactsService.updateLocation(items[0].CustomerId, this.currentItemId, null, items[0].OrganizationId);
                             break;
                         case 'clients':
-                            this._contactsService.updateLocation(this.currentItemId, null, null, items[0].OrganizationId, true);
+                            this._contactsService.updateLocation(this.currentItemId, null, null, items[0].OrganizationId);
                             break;
                         case 'partners':
-                            this._contactsService.updateLocation(null, null, this.currentItemId, items[0].OrganizationId, true);
+                            this._contactsService.updateLocation(null, null, this.currentItemId, items[0].OrganizationId);
                             break;
                         default:
                             break;
