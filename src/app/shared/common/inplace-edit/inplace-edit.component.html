@@ -8,7 +8,7 @@
     </span>
 </div>
 <div *ngIf="isEditModeEnabled" class="inplace-edit-edit-mode">
-    <dx-text-box [placeholder]="data?.lEditPlaceholder" [(value)]="valueOriginal" [mask]="mask" [maskInvalidMessage]="maskInvalidMessage">
+    <dx-text-box [width]="width" [placeholder]="data?.lEditPlaceholder" [(value)]="valueOriginal" [mask]="mask" [maskInvalidMessage]="maskInvalidMessage">
         <dx-validator [validationRules]="data?.validationRules || []"></dx-validator>
     </dx-text-box>
     <dx-button class="button-update" icon="todo" (onClick)="updateItem($event)"></dx-button>

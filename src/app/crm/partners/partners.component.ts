@@ -598,9 +598,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     this.capitalize(filter.caption)];
                 if (filterMethod)
                     return filterMethod.call(this, filter);
-            },
-            null,
-            this.searchValue
+            }
         );
     }
 

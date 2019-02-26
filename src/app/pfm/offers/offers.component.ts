@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 
 /** Third party imports */
@@ -30,7 +30,7 @@ import { StaticListComponent } from '@app/shared/common/static-list/static-list.
     styleUrls: ['./offers.component.less'],
     providers: [OfferManagementServiceProxy]
 })
-export class OffersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class OffersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(DxContextMenuComponent) pullContextComponent: DxContextMenuComponent;
     @ViewChild('categoriesComponent') categoriesComponent: StaticListComponent;
@@ -38,7 +38,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     @ViewChild('attributesComponent') attributesComponent: StaticListComponent;
 
     private readonly dataSourceURI = 'Offer';
-
+    private rootComponent: any;
     public headlineConfig;
     private filters: FilterModel[] = new Array<FilterModel>();
     private updateAfterActivation: boolean;
@@ -82,7 +82,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
             ]
         };
         this.pullContextMenuItems = [
-            { text: this.l('Offers_PullAll'), selected: false }
+            { text: this.l('Offers_PullAll'), icon: 'arrowdown', selected: false }
         ];
     }
 
@@ -224,7 +224,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     ngOnInit(): void {
-        this.activate();
+        this.rootComponent = this.getRootComponent();
         this.dataSource = new DataSource({
             store: {
                 type: 'odata',
@@ -283,8 +283,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
                 }
             })
         ];
-        this._filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
-        this.initFiltering();
+        this.activate();
         this.initHeadlineConfig();
     }
 
@@ -305,12 +304,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
 
     refreshDataGrid() {
         this.dataGrid.instance.refresh();
-    }
-
-
-    ngAfterViewInit(): void {
-        let rootComponent = this.getRootComponent();
-        rootComponent.overflowHidden(true);
     }
 
     public refreshData(): void {
@@ -361,7 +354,12 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     openOfferEdit(e) {
+        this.searchClear = false;
         this._router.navigate(['./', e.data.CampaignId], { relativeTo: this._activatedRoute });
+    }
+
+    invalidate() {
+        this.processFilterInternal();
     }
 
     ngOnDestroy() {
@@ -371,12 +369,17 @@ export class OffersComponent extends AppComponentBase implements OnInit, AfterVi
 
     activate() {
         super.activate();
+        this._filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
+        this.initFiltering();
         this.initToolbarConfig();
+        this.rootComponent.overflowHidden(true);
     }
 
     deactivate() {
         super.deactivate();
+        this._filtersService.unsubscribe();
         this._appService.updateToolbar(null);
+        this.rootComponent.overflowHidden(true);
     }
 
     pullOffers(fetchAll, event?) {

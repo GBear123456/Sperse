@@ -19,6 +19,7 @@
     </app-static-list>
     <app-static-list #flagsComponent
         [width]="'350px'"
+        [height]="450"
         [title]="l('Flags')"
         [showConfirmation]="true"
         [filterModel]="filterModelFlags"
@@ -30,6 +31,7 @@
     <app-static-list #attributesComponent
                      [accessKey]="'attributes-select'"
                      [width]="'300px'"
+                     [height]="450"
                      [title]="l('Attributes')"
                      [template]="'bottomInput'"
                      [showConfirmation]="true"
@@ -64,7 +66,7 @@
                             [width]="100" [showInColumnChooser]="false" [allowExporting]="false"
                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                 <dxi-column dataField="Name" caption="{{l('Offer_Name')}}"></dxi-column>
-                <dxi-column dataField="CardNetwork" caption="" [width]="150"></dxi-column>
+                <dxi-column dataField="CardNetwork" caption="{{l('Offer_Network')}}" [width]="150"></dxi-column>
                 <dxi-column dataField="Categories" caption="{{l('Category')}}" [width]="300" cellTemplate="categoriesCell" [calculateGroupValue]="categoryGroupValue"></dxi-column>
                 <dxi-column dataField="Status" caption="{{l('Offer_Status')}}" [width]="180"></dxi-column>
                 <dxi-column dataField="IsPublished" caption="{{l('Offer_Published')}}" dataType="boolean"></dxi-column>

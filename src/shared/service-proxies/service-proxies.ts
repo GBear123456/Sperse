@@ -49131,6 +49131,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     durationForZeroPercentageTransfersInMonths!: number | undefined;
     minAnnualIncome!: number | undefined;
     maxAnnualIncome!: number | undefined;
+    daysOfWeekAvailability!: string | undefined;
+    effectiveTimeOfDay!: string | undefined;
+    expireTimeOfDay!: string | undefined;
+    termsOfService!: string | undefined;
+    traficSource!: OfferDetailsForEditDtoTraficSource | undefined;
     flags!: Flags | undefined;
     states!: string[] | undefined;
     categories!: string[] | undefined;
@@ -49139,6 +49144,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     introAPR!: string | undefined;
     pros!: string[] | undefined;
     cons!: string[] | undefined;
+    countries!: string[] | undefined;
     campaignId!: number | undefined;
     name!: string | undefined;
     systemType!: OfferDetailsForEditDtoSystemType | undefined;
@@ -49192,6 +49198,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             this.durationForZeroPercentageTransfersInMonths = data["durationForZeroPercentageTransfersInMonths"];
             this.minAnnualIncome = data["minAnnualIncome"];
             this.maxAnnualIncome = data["maxAnnualIncome"];
+            this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
+            this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
+            this.expireTimeOfDay = data["expireTimeOfDay"];
+            this.termsOfService = data["termsOfService"];
+            this.traficSource = data["traficSource"];
             this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
             if (data["states"] && data["states"].constructor === Array) {
                 this.states = [];
@@ -49219,6 +49230,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
                 this.cons = [];
                 for (let item of data["cons"])
                     this.cons.push(item);
+            }
+            if (data["countries"] && data["countries"].constructor === Array) {
+                this.countries = [];
+                for (let item of data["countries"])
+                    this.countries.push(item);
             }
             this.campaignId = data["campaignId"];
             this.name = data["name"];
@@ -49277,6 +49293,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
         data["durationForZeroPercentageTransfersInMonths"] = this.durationForZeroPercentageTransfersInMonths;
         data["minAnnualIncome"] = this.minAnnualIncome;
         data["maxAnnualIncome"] = this.maxAnnualIncome;
+        data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
+        data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
+        data["expireTimeOfDay"] = this.expireTimeOfDay;
+        data["termsOfService"] = this.termsOfService;
+        data["traficSource"] = this.traficSource;
         data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
         if (this.states && this.states.constructor === Array) {
             data["states"] = [];
@@ -49304,6 +49325,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             data["cons"] = [];
             for (let item of this.cons)
                 data["cons"].push(item);
+        }
+        if (this.countries && this.countries.constructor === Array) {
+            data["countries"] = [];
+            for (let item of this.countries)
+                data["countries"].push(item);
         }
         data["campaignId"] = this.campaignId;
         data["name"] = this.name;
@@ -49355,6 +49381,11 @@ export interface IOfferDetailsForEditDto {
     durationForZeroPercentageTransfersInMonths: number | undefined;
     minAnnualIncome: number | undefined;
     maxAnnualIncome: number | undefined;
+    daysOfWeekAvailability: string | undefined;
+    effectiveTimeOfDay: string | undefined;
+    expireTimeOfDay: string | undefined;
+    termsOfService: string | undefined;
+    traficSource: OfferDetailsForEditDtoTraficSource | undefined;
     flags: Flags | undefined;
     states: string[] | undefined;
     categories: string[] | undefined;
@@ -49363,6 +49394,7 @@ export interface IOfferDetailsForEditDto {
     introAPR: string | undefined;
     pros: string[] | undefined;
     cons: string[] | undefined;
+    countries: string[] | undefined;
     campaignId: number | undefined;
     name: string | undefined;
     systemType: OfferDetailsForEditDtoSystemType | undefined;
@@ -59910,6 +59942,8 @@ export enum OfferAttribute {
 }
 
 export enum OfferFlag {
+    Special = "Special", 
+    Newest = "Newest", 
     Choice = "Choice", 
     Best = "Best", 
     TravelAndAirlineMiles = "TravelAndAirlineMiles", 
@@ -59929,8 +59963,6 @@ export enum OfferFlag {
     HasNoRewards = "HasNoRewards", 
     ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     ZeroPercentageInterestTransfers = "ZeroPercentageInterestTransfers", 
-    Special = "Special", 
-    Newest = "Newest", 
 }
 
 export enum Module {
@@ -60649,6 +60681,24 @@ export enum OfferDetailsForEditDtoSecuringType {
     Unsecured = "Unsecured", 
     Secured = "Secured", 
     Prepaid = "Prepaid", 
+}
+
+export enum OfferDetailsForEditDtoTraficSource {
+    PPC_Default = "PPC_Default", 
+    Email = "Email", 
+    SEO = "SEO", 
+    SMS = "SMS", 
+    Decline = "Decline", 
+    Reject = "Reject", 
+    Display = "Display", 
+    Mixed = "Mixed", 
+    TypeIn = "TypeIn", 
+    QualityControl = "QualityControl", 
+    PPC_Email = "PPC_Email", 
+    PPC_SEO = "PPC_SEO", 
+    PPC_Decline = "PPC_Decline", 
+    PPC_Reject = "PPC_Reject", 
+    PPC_Display = "PPC_Display", 
 }
 
 export class Flags implements IFlags {

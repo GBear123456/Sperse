@@ -106,7 +106,7 @@ export abstract class AppServiceBase {
     replaceParams(url: string, params: {}) {
         let urlObj: UrlTree = new DefaultUrlSerializer().parse(url);
         if (urlObj.root.children.primary) {
-            return (url.startsWith('/') ? '' : location.origin) + 
+            return (url.startsWith('/') ? '' : location.origin) +
                 '/' + urlObj.root.children.primary.segments
                 .map(segment => {
                     let segmentPath = segment.path;

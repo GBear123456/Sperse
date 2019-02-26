@@ -81,7 +81,7 @@ export class StaticListComponent extends AppComponentBase {
 
     onInitialized($event) {
         this.listComponent = $event.component;
-        this.listHeight = this.height - 90;
+        this.listHeight = this.searchEnabled ? this.height - 90 : this.height - 65;
     }
 
     highlightSelectedFilters() {
@@ -128,7 +128,6 @@ export class StaticListComponent extends AppComponentBase {
     }
 
     onItemClick(event) {
-        this.tooltipVisible = false;
         if (event.itemData.action) {
             event.itemData['action'](event);
         } else if (event.itemData.id) {
@@ -145,9 +144,8 @@ export class StaticListComponent extends AppComponentBase {
         this.onListFiltered.emit(event);
     }
 
-    setValue(event, data, type) {
+    setValue(event, data) {
         event.event.stopPropagation();
-        if (type != 'add') data.bottomInputValue = '';
         this.onBottomInputApplyValue.emit(data);
     }
 }

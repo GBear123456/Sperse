@@ -12,7 +12,7 @@ import { NotificationsComponent } from '@app/shared/layout/notifications/notific
     styleUrls: ['./header-notifications.component.less'],
     selector: '[headerNotifications]',
     encapsulation: ViewEncapsulation.None,
-    providers: [ AppService, InstanceServiceProxy, TenantSubscriptionServiceProxy ]
+    providers: [ InstanceServiceProxy, TenantSubscriptionServiceProxy ]
 })
 export class HeaderNotificationsComponent extends AppComponentBase implements OnInit {
 
@@ -162,7 +162,11 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
             width: '980px',
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
-            data: { module: this._appService.getModule().toUpperCase() }
+            data: {
+                module: this._appService.getModule().toUpperCase(),
+                title: this.subscriptionInfoTitle,
+                subtitle: this.subscriptionInfoText
+            }
         }).afterClosed().subscribe(result => { });
         e.stopPropagation && e.stopPropagation();
     }

@@ -75,6 +75,8 @@ export class OperationsWidgetComponent extends AppComponentBase {
     @Output() onUpdatePartnerType: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateRating: EventEmitter<any> = new EventEmitter();
+    @Output() prev: EventEmitter<any> = new EventEmitter();
+    @Output() next: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private initTimeout;
@@ -170,6 +172,20 @@ export class OperationsWidgetComponent extends AppComponentBase {
                             action: this.print.emit.bind(this.print)
                         }
                     ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'prev',
+                            action: this.loadPrevItem.bind(this)
+                        },
+                        {
+                            name: 'next',
+                            action: this.loadNextItem.bind(this)
+                        }
+                    ]
                 }
             ] : [
                 {
@@ -179,7 +195,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                         {
                             name: 'print',
                             action: this.print.emit.bind(this.print)
-                        }
+                        },
                     ]
                 }
             ];
@@ -272,6 +288,14 @@ export class OperationsWidgetComponent extends AppComponentBase {
     refresh() {
         this.stagesComponent.tooltipVisible = false;
         this.initToolbarConfig();
+    }
+
+    loadPrevItem() {
+        this.prev.emit(this);
+    }
+
+    loadNextItem() {
+        this.next.emit(this);
     }
 
     isClientProspective() {
