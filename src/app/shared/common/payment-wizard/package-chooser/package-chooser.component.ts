@@ -70,6 +70,7 @@ export class PackageChooserComponent implements OnInit {
     private currentEdition: PackageEditionConfigDto;
     private freePackages: PackageConfigDto[];
     private enableSliderScalingChange = false;
+    packagesConfig$: Observable<GetPackagesConfigOutput>;
 
     constructor(
         private localizationService: AppLocalizationService,
@@ -86,18 +87,18 @@ export class PackageChooserComponent implements OnInit {
             /** Default value for title if any was set in input */
             this.title = this.l('TrialExpired', this.module);
         }
-        const packagesConfig$: Observable<GetPackagesConfigOutput> = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
+        this.packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
             refCount()
         );
-        packagesConfig$.subscribe((packagesConfig: GetPackagesConfigOutput) => {
+        this.packagesConfig$.subscribe((packagesConfig: GetPackagesConfigOutput) => {
             this.splitPackagesForFreeAndNotFree(packagesConfig);
             this.getCurrentPackageAndEdition(packagesConfig);
             this.changeDefaultSettings(packagesConfig);
             this.preselectPackage();
             this.changeDetectionRef.detectChanges();
         });
-        this.getMaxUsersAmount(packagesConfig$).subscribe(maxAmount => {
+        this.getMaxUsersAmount(this.packagesConfig$).subscribe(maxAmount => {
             this.packagesMaxUsersAmount = maxAmount;
             this.changeDetectionRef.detectChanges();
         });
