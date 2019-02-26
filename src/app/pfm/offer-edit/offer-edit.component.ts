@@ -13,8 +13,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { finalize, map, tap, publishReplay, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
-import { cloneDeep, startCase } from 'lodash';
-import { diff } from 'deep-diff';
+import { startCase } from 'lodash';
 
 /** Application imports */
 import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -295,7 +294,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             cssClass: 'leftAlignment'
         }
     };
-    initialModel: OfferDetailsForEditDto;
     model: OfferDetailsForEditDto;
     section$: Observable<string>;
     sectionsDetails = {
@@ -377,7 +375,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         this.rootComponent.overflowHidden(true);
         this.offerDetails$.subscribe(details => {
             this.model = details;
-            this.initialModel = cloneDeep(this.model);
         });
         this.allDetails$ = this.offerDetails$.pipe(map((details: OfferDetailsForEditDto) => Object.keys(details)));
         this.filteredBySectionDetails$ = combineLatest(
@@ -474,20 +471,9 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        const differences = diff(this.initialModel, this.model);
-        let changed = { campaignId: this.model.campaignId };
-        if (differences) {
-            abp.ui.setBusy();
-            for (let diff of differences) {
-                changed[diff.path[0]] = this.model[diff.path[0]];
-            }
-            this.offerManagementService.extend(ExtendOfferDto.fromJS(changed))
-                .pipe(finalize(() => abp.ui.clearBusy()))
-                .subscribe(() => {
-                    /** Update model to see the changes next time */
-                    this.initialModel = cloneDeep(this.model);
-                });
-        }
+        this.offerManagementService.extend(ExtendOfferDto.fromJS(this.model))
+            .pipe(finalize(() => abp.ui.clearBusy()))
+            .subscribe();
     }
 
     getInplaceEditData() {
