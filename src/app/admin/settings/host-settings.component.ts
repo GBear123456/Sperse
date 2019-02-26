@@ -13,7 +13,7 @@ import { forkJoin } from 'rxjs';
     templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()],
     styleUrls: [
-        '../../shared/metronic/m-checkbox.less',
+        '../../../shared/metronic/m-checkbox.less',
         './host-settings.component.less'
     ],
     providers: [TenantPaymentSettingsServiceProxy]
