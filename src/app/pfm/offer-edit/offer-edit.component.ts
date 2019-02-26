@@ -10,8 +10,8 @@ import {
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { finalize, map, tap, publishReplay, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
+import { Observable, Subject, combineLatest, of } from 'rxjs';
+import { finalize, map, tap, publishReplay, pluck, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { startCase } from 'lodash';
 
@@ -66,6 +66,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         {
             label: 'Attributes',
             route: '../attributes'
+        },
+        {
+            label: 'Credit Card Flags',
+            route: '../flags'
         }
     ];
     fieldPositions = FieldPositionEnum;
@@ -87,6 +91,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         tap(countryCode => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode))),
         switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode})))
     );
+    offerNotInCardCategory$ = this.offerDetails$.pipe(pluck('categories'), map((categories: any[]) => categories.indexOf('Credit Cards') === -1));
     detailsConfig = {
         logoUrl: {
             hidden: true
@@ -224,10 +229,12 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         offerCollection: {
             enum: OfferDetailsForEditDtoOfferCollection,
-            position: FieldPositionEnum.Right
+            position: FieldPositionEnum.Left,
+            readOnly$: this.offerNotInCardCategory$
         },
         flags: {
-            position: FieldPositionEnum.Right
+            position: FieldPositionEnum.Center,
+            readOnly$: this.offerNotInCardCategory$
         },
         overallRating: {
             type: FieldType.Rating
@@ -353,7 +360,9 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'activationFee',
             'zeroPercentageInterestTransfers',
             'durationForZeroPercentageTransfersInMonths',
-            'durationForZeroPercentagePurchasesInMonths',
+            'durationForZeroPercentagePurchasesInMonths'
+        ],
+        'flags': [
             'offerCollection',
             'flags'
         ]
@@ -462,10 +471,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         item.splice(i, 1);
     }
 
-    getKeys(object: Object) {
-        return Object.keys(object);
-    }
-
     back() {
         this.router.navigate(['../../'], { relativeTo: this.route });
     }
@@ -513,8 +518,12 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         );
     }
 
-    isReadOnly(detail: string): boolean {
-        return this.detailsConfig[detail] && this.detailsConfig[detail].readOnly;
+    isReadOnly(detail: string): Observable<boolean> {
+        let readOnly$ = of(false);
+        if (this.detailsConfig[detail]) {
+            readOnly$ = this.detailsConfig[detail].readOnly$ || of(this.detailsConfig[detail].readOnly);
+        }
+        return readOnly$;
     }
 
 }
