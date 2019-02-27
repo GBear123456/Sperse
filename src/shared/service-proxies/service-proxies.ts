@@ -16440,6 +16440,77 @@ export class OfferManagementServiceProxy {
 }
 
 @Injectable()
+export class OrderServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    getHistory(id: number | null | undefined): Observable<OrderHistoryInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/GetHistory?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetHistory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetHistory(<any>response_);
+                } catch (e) {
+                    return <Observable<OrderHistoryInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<OrderHistoryInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetHistory(response: HttpResponseBase): Observable<OrderHistoryInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(OrderHistoryInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<OrderHistoryInfo[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class OrderSubscriptionServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -20345,8 +20416,8 @@ export class StageServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    createLeadStage(input: CreateStageInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Stage/CreateLeadStage";
+    createStage(input: CreateStageInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/CreateStage";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -20361,11 +20432,11 @@ export class StageServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateLeadStage(response_);
+            return this.processCreateStage(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateLeadStage(<any>response_);
+                    return this.processCreateStage(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -20374,7 +20445,7 @@ export class StageServiceProxy {
         }));
     }
 
-    protected processCreateLeadStage(response: HttpResponseBase): Observable<void> {
+    protected processCreateStage(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -20397,8 +20468,8 @@ export class StageServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    renameLeadStage(input: RenameStageInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Stage/RenameLeadStage";
+    renameStage(input: RenameStageInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/RenameStage";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -20413,11 +20484,11 @@ export class StageServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRenameLeadStage(response_);
+            return this.processRenameStage(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processRenameLeadStage(<any>response_);
+                    return this.processRenameStage(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -20426,7 +20497,7 @@ export class StageServiceProxy {
         }));
     }
 
-    protected processRenameLeadStage(response: HttpResponseBase): Observable<void> {
+    protected processRenameStage(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -20449,8 +20520,8 @@ export class StageServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    mergeLeadStages(input: MergeLeadStagesInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Stage/MergeLeadStages";
+    mergeStages(input: MergeLeadStagesInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/MergeStages";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -20465,11 +20536,11 @@ export class StageServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMergeLeadStages(response_);
+            return this.processMergeStages(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processMergeLeadStages(<any>response_);
+                    return this.processMergeStages(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -20478,7 +20549,7 @@ export class StageServiceProxy {
         }));
     }
 
-    protected processMergeLeadStages(response: HttpResponseBase): Observable<void> {
+    protected processMergeStages(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -47620,7 +47691,6 @@ export interface IPaymentAuthorizeResponseDto {
 
 export class RegisterMemberRequest implements IRegisterMemberRequest {
     password!: string;
-    tenantHostType!: RegisterMemberRequestTenantHostType | undefined;
     registrationId!: string;
     name!: string;
     surname!: string;
@@ -47646,7 +47716,6 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     init(data?: any) {
         if (data) {
             this.password = data["password"];
-            this.tenantHostType = data["tenantHostType"];
             this.registrationId = data["registrationId"];
             this.name = data["name"];
             this.surname = data["surname"];
@@ -47672,7 +47741,6 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["password"] = this.password;
-        data["tenantHostType"] = this.tenantHostType;
         data["registrationId"] = this.registrationId;
         data["name"] = this.name;
         data["surname"] = this.surname;
@@ -47691,7 +47759,6 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
 
 export interface IRegisterMemberRequest {
     password: string;
-    tenantHostType: RegisterMemberRequestTenantHostType | undefined;
     registrationId: string;
     name: string;
     surname: string;
@@ -49704,6 +49771,62 @@ export class ExtendFromCSVOutput implements IExtendFromCSVOutput {
 
 export interface IExtendFromCSVOutput {
     notMatchedUrls: string[] | undefined;
+}
+
+export class OrderHistoryInfo implements IOrderHistoryInfo {
+    time!: moment.Moment | undefined;
+    type!: string | undefined;
+    userId!: number | undefined;
+    userFullName!: string | undefined;
+    action!: string | undefined;
+    stage!: string | undefined;
+
+    constructor(data?: IOrderHistoryInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.time = data["time"] ? moment(data["time"].toString()) : <any>undefined;
+            this.type = data["type"];
+            this.userId = data["userId"];
+            this.userFullName = data["userFullName"];
+            this.action = data["action"];
+            this.stage = data["stage"];
+        }
+    }
+
+    static fromJS(data: any): OrderHistoryInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderHistoryInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["time"] = this.time ? this.time.toISOString() : <any>undefined;
+        data["type"] = this.type;
+        data["userId"] = this.userId;
+        data["userFullName"] = this.userFullName;
+        data["action"] = this.action;
+        data["stage"] = this.stage;
+        return data; 
+    }
+}
+
+export interface IOrderHistoryInfo {
+    time: moment.Moment | undefined;
+    type: string | undefined;
+    userId: number | undefined;
+    userFullName: string | undefined;
+    action: string | undefined;
+    stage: string | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -59966,7 +60089,6 @@ export enum LayoutType {
 
 export enum TenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum Module2 {
@@ -60019,12 +60141,10 @@ export enum IsTenantAvailableOutputState {
 
 export enum SendPasswordResetCodeInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum SendEmailActivationLinkInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum ActivityDtoType {
@@ -60357,11 +60477,6 @@ export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
     BankCard = "BankCard", 
     ACH = "ACH", 
     PayPal = "PayPal", 
-}
-
-export enum RegisterMemberRequestTenantHostType {
-    PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum RegisterMemberRequestGender {
@@ -61081,32 +61196,26 @@ export enum SyncProgressDtoSyncStatus {
 
 export enum CreateTenantInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum CheckHostNameDnsMappingInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum TenantSslBindingInfoHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum AddSslBindingInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingCertificateInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum EPCVIPMailerSettingsEditDtoServer {
@@ -61149,7 +61258,6 @@ export enum CompleteTenantRegistrationInputPaymentPeriodType {
 
 export enum CompleteTenantRegistrationInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum TransactionDetailsDtoTransactionStatus {
@@ -61159,17 +61267,14 @@ export enum TransactionDetailsDtoTransactionStatus {
 
 export enum ActivateUserForContactInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum CreateOrUpdateUserInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum InviteUserInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum InviteUserInputModuleType {

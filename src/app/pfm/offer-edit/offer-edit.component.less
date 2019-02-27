@@ -100,11 +100,15 @@
                     &.dx-state-focused .dx-placeholder {
                         top: -30px;
                     }
+                    &.dx-numberbox {
+                        width: 100%;
+                    }
                 }
 
                 .detailItem {
                     display: flex;
                     align-items: center;
+                    position: relative;
                     .mat-form-field {
                         width: 100%;
                     }
@@ -147,7 +151,7 @@
                         margin-top: 10px;
                     }
                     &:not(.dx-checkbox) {
-                        flex: 2;
+                        flex: 1;
                     }
                 }
             }
@@ -160,6 +164,12 @@
             .fa {
                 cursor: pointer;
                 margin-left: 10px;
+            }
+
+            &.leftAlignment {
+                label + * {
+                    flex: 1;
+                }
             }
 
             &.center {
@@ -183,6 +193,10 @@
                             margin-left: 0;
                         }
                     }
+                    label + *,
+                    .dx-widget {
+                        width: 100%;
+                    }
                 }
             }
 
@@ -193,6 +207,5 @@
             }
         }
     }
-
 
 }

@@ -30,11 +30,12 @@ export class StaticListComponent extends AppComponentBase {
     @Input() hideButtons = false;
     @Input() searchEnabled = false;
     @Input() customSearchEnabled = false;
+    @Input() pageLoadMode = 'nextButton';
     @Input() searchExprType = 'name';
     @Input() bulkUpdatePermissionKey = '';
     @Input() list: any;
     @Input() showTitle = true;
-    @Input() selectionMode;
+    @Input() selectionMode;    
 
     listComponent: any;
     listHeight: number;
@@ -81,7 +82,7 @@ export class StaticListComponent extends AppComponentBase {
 
     onInitialized($event) {
         this.listComponent = $event.component;
-        this.listHeight = this.height - 90;
+        this.listHeight = this.searchEnabled ? this.height - 90 : this.height - 65;
     }
 
     highlightSelectedFilters() {
@@ -128,7 +129,6 @@ export class StaticListComponent extends AppComponentBase {
     }
 
     onItemClick(event) {
-        this.tooltipVisible = false;
         if (event.itemData.action) {
             event.itemData['action'](event);
         } else if (event.itemData.id) {
