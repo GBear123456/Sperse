@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{l('A client without order will be created if an Order Stage is not specified')}}</h2>
+<mat-dialog-content>
+    <dx-select-box
+        [dataSource]="orderStages"
+        [displayExpr]="'name'"
+        [valueExpr]="'id'"
+        [(value)]="orderStage"
+        (onValueChanged)="orderStageChanged($event)">
+    </dx-select-box>
+    <dx-text-box
+        [placeholder]="l('Amount')"
+        [(value)]="amount">
+    </dx-text-box>
+    <dx-text-area
+        [placeholder]="l('Comment')"
+        [(value)]="comment">
+    </dx-text-area>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button md-button mat-dialog-close class="button-layout button-default">{{l('Cancel')}}</button>
+  <button md-button (click)="confirm()" class="button-layout button-primary">{{l('Confirm')}}</button>
+</mat-dialog-actions>

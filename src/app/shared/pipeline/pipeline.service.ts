@@ -4,7 +4,7 @@ import { Injectable, Injector } from '@angular/core';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@node_modules/@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { filter, map, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -45,20 +45,23 @@ export class PipelineService {
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string): Observable<PipelineDto> {
-        return this.store$.pipe(
-            select(PipelinesStoreSelectors.getSortedPipeline({
-                purpose: pipelinePurposeId
-            })),
-            filter(pipelineDefinition => pipelineDefinition),
-            map(pipelineDefinition => {
-                this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
-                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
-                    (stage) => {
-                        return stage.sortOrder;
-                    });
-                return pipelineDefinition;
-            })
-        );
+        if (this._pipelineDefinitions[pipelinePurposeId])
+            return of(this._pipelineDefinitions[pipelinePurposeId]);
+        else
+            return this.store$.pipe(
+                select(PipelinesStoreSelectors.getSortedPipeline({
+                    purpose: pipelinePurposeId
+                })),
+                filter(pipelineDefinition => pipelineDefinition),
+                map(pipelineDefinition => {
+                    this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
+                    pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
+                        (stage) => {
+                            return stage.sortOrder;
+                        });
+                    return pipelineDefinition;
+                })
+            );
     }
 
     getStages(pipelinePurposeId: string): any {

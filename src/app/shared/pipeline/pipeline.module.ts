@@ -5,14 +5,16 @@ import { DragulaModule } from 'ng2-dragula/ng2-dragula';
 import { PipelineComponent } from './pipeline.component';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { LeadServiceProxy, PipelineServiceProxy, ActivityServiceProxy } from '@shared/service-proxies/service-proxies';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
+import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 
 import { MatDialogModule } from '@angular/material/dialog';
-
 import { PipelineService } from './pipeline.service';
 
 @NgModule({
@@ -22,6 +24,8 @@ import { PipelineService } from './pipeline.service';
         DxDataGridModule,
         DxRadioGroupModule,
         DxTextAreaModule,
+        DxTextBoxModule,
+        DxSelectBoxModule,
         MatDialogModule,
         RouterModule,
         DxCheckBoxModule
@@ -29,14 +33,17 @@ import { PipelineService } from './pipeline.service';
     declarations: [
         TimeAgoPipe,
         PipelineComponent,
-        LeadCancelDialogComponent
+        LeadCancelDialogComponent,
+        LeadCompleteDialogComponent
     ],
     exports: [
         PipelineComponent,
-        LeadCancelDialogComponent
+        LeadCancelDialogComponent,
+        LeadCompleteDialogComponent
     ],
     entryComponents: [
-        LeadCancelDialogComponent
+        LeadCancelDialogComponent,
+        LeadCompleteDialogComponent
     ],
     providers: [
         LeadServiceProxy,
