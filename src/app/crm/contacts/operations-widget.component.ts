@@ -84,6 +84,8 @@ export class OperationsWidgetComponent extends AppComponentBase {
     private _stages: any[] = [];
     private _partnerTypes: any[] = [];
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
+    isPrevDisabled = false;
+    isNextDisabled = false;
 
     toolbarConfig = [];
 
@@ -179,11 +181,13 @@ export class OperationsWidgetComponent extends AppComponentBase {
                     items: [
                         {
                             name: 'prev',
-                            action: this.loadPrevItem.bind(this)
+                            action: this.loadPrevItem.bind(this),
+                            disabled: this.isPrevDisabled
                         },
                         {
                             name: 'next',
-                            action: this.loadNextItem.bind(this)
+                            action: this.loadNextItem.bind(this),
+                            disabled: this.isNextDisabled
                         }
                     ]
                 }
@@ -321,5 +325,14 @@ export class OperationsWidgetComponent extends AppComponentBase {
 
     redirectToCFO() {
         this._appService.redirectToCFO(this.contactInfo.personContactInfo.userId);
+    }
+
+    checkSetNavButtonsEnabled(direction, items) {
+        if (items.length <= 1) {
+            direction == 'prev' ? this.isPrevDisabled = true : this.isNextDisabled = true;
+        } else {
+            this.isPrevDisabled = false;
+            this.isNextDisabled = false;
+        }
     }
 }
