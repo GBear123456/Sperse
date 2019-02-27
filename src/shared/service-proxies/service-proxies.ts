@@ -12072,6 +12072,72 @@ export class EditionServiceProxy {
 }
 
 @Injectable()
+export class EmailingServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @emailType (optional) 
+     * @emailAddress (optional) 
+     * @return Success
+     */
+    getLastEmailCustomData(emailType: string | null | undefined, emailAddress: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/Emailing/GetLastEmailCustomData?";
+        if (emailType !== undefined)
+            url_ += "emailType=" + encodeURIComponent("" + emailType) + "&"; 
+        if (emailAddress !== undefined)
+            url_ += "emailAddress=" + encodeURIComponent("" + emailAddress) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLastEmailCustomData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLastEmailCustomData(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetLastEmailCustomData(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class FriendshipServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -16507,6 +16573,60 @@ export class OrderServiceProxy {
             }));
         }
         return _observableOf<OrderHistoryInfo[]>(<any>null);
+    }
+
+    /**
+     * @orderId (optional) 
+     * @amount (optional) 
+     * @return Success
+     */
+    setAmount(orderId: number | null | undefined, amount: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/SetAmount?";
+        if (orderId !== undefined)
+            url_ += "orderId=" + encodeURIComponent("" + orderId) + "&"; 
+        if (amount !== undefined)
+            url_ += "amount=" + encodeURIComponent("" + amount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetAmount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetAmount(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetAmount(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -46843,6 +46963,9 @@ export interface IUpdateLeadStageInfo {
 
 export class ProcessLeadInput implements IProcessLeadInput {
     leadId!: number;
+    orderStageId!: number | undefined;
+    amount!: number | undefined;
+    comment!: string | undefined;
 
     constructor(data?: IProcessLeadInput) {
         if (data) {
@@ -46856,6 +46979,9 @@ export class ProcessLeadInput implements IProcessLeadInput {
     init(data?: any) {
         if (data) {
             this.leadId = data["leadId"];
+            this.orderStageId = data["orderStageId"];
+            this.amount = data["amount"];
+            this.comment = data["comment"];
         }
     }
 
@@ -46869,12 +46995,18 @@ export class ProcessLeadInput implements IProcessLeadInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadId"] = this.leadId;
+        data["orderStageId"] = this.orderStageId;
+        data["amount"] = this.amount;
+        data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IProcessLeadInput {
     leadId: number;
+    orderStageId: number | undefined;
+    amount: number | undefined;
+    comment: string | undefined;
 }
 
 export class LeadInfoDto implements ILeadInfoDto {
@@ -47691,6 +47823,7 @@ export interface IPaymentAuthorizeResponseDto {
 
 export class RegisterMemberRequest implements IRegisterMemberRequest {
     password!: string;
+    tenantHostType!: RegisterMemberRequestTenantHostType | undefined;
     registrationId!: string;
     name!: string;
     surname!: string;
@@ -47716,6 +47849,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     init(data?: any) {
         if (data) {
             this.password = data["password"];
+            this.tenantHostType = data["tenantHostType"];
             this.registrationId = data["registrationId"];
             this.name = data["name"];
             this.surname = data["surname"];
@@ -47741,6 +47875,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["password"] = this.password;
+        data["tenantHostType"] = this.tenantHostType;
         data["registrationId"] = this.registrationId;
         data["name"] = this.name;
         data["surname"] = this.surname;
@@ -47759,6 +47894,7 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
 
 export interface IRegisterMemberRequest {
     password: string;
+    tenantHostType: RegisterMemberRequestTenantHostType | undefined;
     registrationId: string;
     name: string;
     surname: string;
@@ -47841,6 +47977,7 @@ export class CreateNoteInput implements ICreateNoteInput {
     contactId!: number;
     text!: string;
     contactPhoneId!: number | undefined;
+    orderId!: number | undefined;
     typeId!: string;
     followUpDateTime!: moment.Moment | undefined;
     dateTime!: moment.Moment | undefined;
@@ -47860,6 +47997,7 @@ export class CreateNoteInput implements ICreateNoteInput {
             this.contactId = data["contactId"];
             this.text = data["text"];
             this.contactPhoneId = data["contactPhoneId"];
+            this.orderId = data["orderId"];
             this.typeId = data["typeId"];
             this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
@@ -47879,6 +48017,7 @@ export class CreateNoteInput implements ICreateNoteInput {
         data["contactId"] = this.contactId;
         data["text"] = this.text;
         data["contactPhoneId"] = this.contactPhoneId;
+        data["orderId"] = this.orderId;
         data["typeId"] = this.typeId;
         data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
@@ -47891,6 +48030,7 @@ export interface ICreateNoteInput {
     contactId: number;
     text: string;
     contactPhoneId: number | undefined;
+    orderId: number | undefined;
     typeId: string;
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
@@ -47938,6 +48078,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
     contactId!: number;
     text!: string;
     contactPhoneId!: number | undefined;
+    orderId!: number | undefined;
     typeId!: string;
     followUpDateTime!: moment.Moment | undefined;
     dateTime!: moment.Moment | undefined;
@@ -47958,6 +48099,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
             this.contactId = data["contactId"];
             this.text = data["text"];
             this.contactPhoneId = data["contactPhoneId"];
+            this.orderId = data["orderId"];
             this.typeId = data["typeId"];
             this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
@@ -47978,6 +48120,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
         data["contactId"] = this.contactId;
         data["text"] = this.text;
         data["contactPhoneId"] = this.contactPhoneId;
+        data["orderId"] = this.orderId;
         data["typeId"] = this.typeId;
         data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
@@ -47991,6 +48134,7 @@ export interface IUpdateNoteInput {
     contactId: number;
     text: string;
     contactPhoneId: number | undefined;
+    orderId: number | undefined;
     typeId: string;
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
@@ -60089,6 +60233,7 @@ export enum LayoutType {
 
 export enum TenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum Module2 {
@@ -60141,10 +60286,12 @@ export enum IsTenantAvailableOutputState {
 
 export enum SendPasswordResetCodeInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum SendEmailActivationLinkInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum ActivityDtoType {
@@ -60477,6 +60624,11 @@ export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
     BankCard = "BankCard", 
     ACH = "ACH", 
     PayPal = "PayPal", 
+}
+
+export enum RegisterMemberRequestTenantHostType {
+    PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum RegisterMemberRequestGender {
@@ -61196,26 +61348,32 @@ export enum SyncProgressDtoSyncStatus {
 
 export enum CreateTenantInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum CheckHostNameDnsMappingInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum TenantSslBindingInfoHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum AddSslBindingInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingCertificateInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum EPCVIPMailerSettingsEditDtoServer {
@@ -61258,6 +61416,7 @@ export enum CompleteTenantRegistrationInputPaymentPeriodType {
 
 export enum CompleteTenantRegistrationInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum TransactionDetailsDtoTransactionStatus {
@@ -61267,14 +61426,17 @@ export enum TransactionDetailsDtoTransactionStatus {
 
 export enum ActivateUserForContactInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum CreateOrUpdateUserInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum InviteUserInputTenantHostType {
     PlatformApp = "PlatformApp", 
+    FundingUi = "FundingUi", 
 }
 
 export enum InviteUserInputModuleType {

@@ -2,6 +2,7 @@
 import { OnInit, AfterViewInit, Component, Inject, Injector, ViewChild, ElementRef } from '@angular/core';
 
 /** Third party imports */
+import DataSource from 'devextreme/data/data_source';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { Store, select } from '@ngrx/store';
@@ -55,6 +56,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     showOrigin = false;
     searchTimeout: any;
 
+    orderId: number;
     summary: string;
     currentDate: any;
     followupDate: any;
@@ -69,6 +71,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     users = [];
     contacts: (OrganizationShortInfo|PersonShortInfoDto)[] = [];
     phones: PhoneNumber[];
+    ordersDataSource: any;
 
     constructor(
         injector: Injector,
@@ -128,6 +131,24 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         this.store$.pipe(select(assignedUsersSelector)).subscribe((result) => {
             this.users = result;
         });
+
+        this.ordersDataSource = new DataSource({
+            sort: [{ selector: 'CreationTime', desc: true }],
+            select: ['Id', 'ContactId', 'Stage', 'OrderType', 'CreationTime', 'DateProcessed', 'Name'],
+            requireTotalCount: false,
+            store: {
+                key: 'Id',
+                type: 'odata',
+                url: this.getODataUrl('Order'),
+                version: AppConsts.ODataVersion,
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                },
+                deserializeDates: false,
+                paginate: false
+            }
+        });
+        this.applyOrdersFilter();
     }
 
     ngOnInit() {
@@ -171,7 +192,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 typeId: this.type,
                 followUpDateTime: this.followupDate || undefined,
                 dateTime: this.currentDate || undefined,
-                addedByUserId: parseInt(this.addedBy) || undefined
+                addedByUserId: parseInt(this.addedBy) || undefined,
+                orderId: this.orderId
             })).subscribe(() => {
                 /** Clear the form data */
                 this.resetFields();
@@ -229,7 +251,21 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         this.contactId = contact.id;
         this.type = this.contactId == this.primaryOrgId ?
             NoteType.CompanyNote :
-            this.defaultType;
+            this.defaultType;        
+        this.applyOrdersFilter();
+    }
+
+    applyOrdersFilter() {
+        if (this.ordersDataSource) {
+            this.orderId = undefined;
+            this.ordersDataSource.filter(['ContactId', '=', 
+                this.contactId || this._contactInfo.id]);
+            this.ordersDataSource.load().then((items) => {       
+                let topItem = items[0];
+                if (topItem && !topItem.DateProcessed)
+                    this.orderId = topItem.Id;
+            });
+        }
     }
 
     initValidationGroup($event) {
@@ -273,6 +309,13 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 }
             }
         });
+    }
+
+    orderDisplayValue(data) {
+        if (data)
+            return data.CreationTime.split('T').shift() + 
+                ' ' + data.OrderType + ' - ' + data.Stage;
+        return data;
     }
 
     close() {

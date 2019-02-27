@@ -82,17 +82,18 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     }
 
     openNoteAddDialog() {
-        this._clientService.organizationContactInfo.pipe(first()).subscribe(() => {
-            this.dialog.open(NoteAddDialogComponent, {
-                panelClass: 'slider',
-                disableClose: false,
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {
-                    contactInfo: this._contactService['data'].contactInfo
-                }
+        if (this.data.contactInfo.personContactInfo)
+            this._clientService.organizationContactInfo.pipe(first()).subscribe(() => {
+                this.dialog.open(NoteAddDialogComponent, {
+                    panelClass: 'slider',
+                    disableClose: false,
+                    hasBackdrop: false,
+                    closeOnNavigation: true,
+                    data: {
+                        contactInfo: this._contactService['data'].contactInfo
+                    }
+                });
             });
-        });
     }
 
     onToolbarPreparing($event) {
