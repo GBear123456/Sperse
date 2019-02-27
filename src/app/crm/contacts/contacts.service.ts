@@ -147,8 +147,7 @@ export class ContactsService {
             customerId ? ['client', customerId] : [],
             leadId ? ['lead', leadId] : [],
             partnerId ? ['partner', partnerId] : [],
-            companyId ? ['company', companyId] : [],
-            [location.pathname.split('/').pop()]
+            companyId ? ['company', companyId] : []
         )).toString(), location.search);
     }
 }

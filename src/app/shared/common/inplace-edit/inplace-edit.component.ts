@@ -2,6 +2,7 @@ import {
     Component,
     Injector,
     Input,
+    ElementRef,
     Output,
     ViewChild,
     AfterViewInit,
@@ -12,7 +13,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { InplaceEditModel } from './inplace-edit.model';
-
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 
 @Component({
@@ -22,6 +22,7 @@ import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 })
 export class InplaceEditComponent extends AppComponentBase implements AfterViewInit {
     @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
+    @ViewChild('editText') editTextRef: ElementRef;
 
     @Input()
     data: InplaceEditModel;
@@ -29,7 +30,6 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
     mask: string;
     @Input()
     maskInvalidMessage: string;
-    @Input()
     width = 'auto';
 
     @Output()
@@ -55,6 +55,11 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
 
     ngAfterViewInit() {
         this.valueOriginal = this.data && this.data.value;
+        this.setWidth();
+    }
+
+    setWidth() {
+        this.width = this.editTextRef.nativeElement.offsetWidth + 20;
     }
 
     deleteItem(event) {
@@ -78,6 +83,7 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
             if (this.data.value != this.valueOriginal && this.valueChanged)
                 this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;
+            setTimeout(() => this.setWidth());
         }
     }
 

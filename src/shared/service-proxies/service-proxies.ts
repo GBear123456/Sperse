@@ -47691,7 +47691,6 @@ export interface IPaymentAuthorizeResponseDto {
 
 export class RegisterMemberRequest implements IRegisterMemberRequest {
     password!: string;
-    tenantHostType!: RegisterMemberRequestTenantHostType | undefined;
     registrationId!: string;
     name!: string;
     surname!: string;
@@ -47717,7 +47716,6 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     init(data?: any) {
         if (data) {
             this.password = data["password"];
-            this.tenantHostType = data["tenantHostType"];
             this.registrationId = data["registrationId"];
             this.name = data["name"];
             this.surname = data["surname"];
@@ -47743,7 +47741,6 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["password"] = this.password;
-        data["tenantHostType"] = this.tenantHostType;
         data["registrationId"] = this.registrationId;
         data["name"] = this.name;
         data["surname"] = this.surname;
@@ -47762,7 +47759,6 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
 
 export interface IRegisterMemberRequest {
     password: string;
-    tenantHostType: RegisterMemberRequestTenantHostType | undefined;
     registrationId: string;
     name: string;
     surname: string;
@@ -60093,7 +60089,6 @@ export enum LayoutType {
 
 export enum TenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum Module2 {
@@ -60146,12 +60141,10 @@ export enum IsTenantAvailableOutputState {
 
 export enum SendPasswordResetCodeInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum SendEmailActivationLinkInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum ActivityDtoType {
@@ -60484,11 +60477,6 @@ export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
     BankCard = "BankCard", 
     ACH = "ACH", 
     PayPal = "PayPal", 
-}
-
-export enum RegisterMemberRequestTenantHostType {
-    PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum RegisterMemberRequestGender {
@@ -61208,32 +61196,26 @@ export enum SyncProgressDtoSyncStatus {
 
 export enum CreateTenantInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum CheckHostNameDnsMappingInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum TenantSslBindingInfoHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum AddSslBindingInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingCertificateInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum EPCVIPMailerSettingsEditDtoServer {
@@ -61276,7 +61258,6 @@ export enum CompleteTenantRegistrationInputPaymentPeriodType {
 
 export enum CompleteTenantRegistrationInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum TransactionDetailsDtoTransactionStatus {
@@ -61286,17 +61267,14 @@ export enum TransactionDetailsDtoTransactionStatus {
 
 export enum ActivateUserForContactInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum CreateOrUpdateUserInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum InviteUserInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum InviteUserInputModuleType {

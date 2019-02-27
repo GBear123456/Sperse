@@ -75,6 +75,8 @@ export class OperationsWidgetComponent extends AppComponentBase {
     @Output() onUpdatePartnerType: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateRating: EventEmitter<any> = new EventEmitter();
+    @Output() prev: EventEmitter<any> = new EventEmitter();
+    @Output() next: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private initTimeout;
@@ -82,6 +84,8 @@ export class OperationsWidgetComponent extends AppComponentBase {
     private _stages: any[] = [];
     private _partnerTypes: any[] = [];
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
+    isPrevDisabled = false;
+    isNextDisabled = false;
 
     toolbarConfig = [];
 
@@ -170,6 +174,22 @@ export class OperationsWidgetComponent extends AppComponentBase {
                             action: this.print.emit.bind(this.print)
                         }
                     ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'prev',
+                            action: this.loadPrevItem.bind(this),
+                            disabled: this.isPrevDisabled
+                        },
+                        {
+                            name: 'next',
+                            action: this.loadNextItem.bind(this),
+                            disabled: this.isNextDisabled
+                        }
+                    ]
                 }
             ] : [
                 {
@@ -179,7 +199,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                         {
                             name: 'print',
                             action: this.print.emit.bind(this.print)
-                        }
+                        },
                     ]
                 }
             ];
@@ -274,6 +294,14 @@ export class OperationsWidgetComponent extends AppComponentBase {
         this.initToolbarConfig();
     }
 
+    loadPrevItem() {
+        this.prev.emit(this);
+    }
+
+    loadNextItem() {
+        this.next.emit(this);
+    }
+
     isClientProspective() {
         return this.contactInfo ? this.contactInfo.statusId == ContactStatus.Prospective : true;
     }
@@ -297,5 +325,14 @@ export class OperationsWidgetComponent extends AppComponentBase {
 
     redirectToCFO() {
         this._appService.redirectToCFO(this.contactInfo.personContactInfo.userId);
+    }
+
+    checkSetNavButtonsEnabled(direction, items) {
+        if (items.length <= 1) {
+            direction == 'prev' ? this.isPrevDisabled = true : this.isNextDisabled = true;
+        } else {
+            this.isPrevDisabled = false;
+            this.isNextDisabled = false;
+        }
     }
 }

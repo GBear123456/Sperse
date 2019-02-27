@@ -10,11 +10,10 @@ import {
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { finalize, map, tap, publishReplay, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
+import { Observable, Subject, combineLatest, of } from 'rxjs';
+import { finalize, map, tap, publishReplay, pluck, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
-import { cloneDeep, startCase } from 'lodash';
-import { diff } from 'deep-diff';
+import { startCase } from 'lodash';
 
 /** Application imports */
 import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -67,6 +66,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         {
             label: 'Attributes',
             route: '../attributes'
+        },
+        {
+            label: 'Credit Card Flags',
+            route: '../flags'
         }
     ];
     fieldPositions = FieldPositionEnum;
@@ -88,6 +91,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         tap(countryCode => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode))),
         switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode})))
     );
+    offerNotInCardCategory$ = this.offerDetails$.pipe(pluck('categories'), map((categories: any[]) => categories.indexOf('Credit Cards') === -1));
     detailsConfig = {
         logoUrl: {
             hidden: true
@@ -225,10 +229,12 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         offerCollection: {
             enum: OfferDetailsForEditDtoOfferCollection,
-            position: FieldPositionEnum.Right
+            position: FieldPositionEnum.Left,
+            readOnly$: this.offerNotInCardCategory$
         },
         flags: {
-            position: FieldPositionEnum.Right
+            position: FieldPositionEnum.Center,
+            readOnly$: this.offerNotInCardCategory$
         },
         overallRating: {
             type: FieldType.Rating
@@ -290,9 +296,11 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         traficSource: {
             readOnly: true
+        },
+        isPublished: {
+            cssClass: 'leftAlignment'
         }
     };
-    initialModel: OfferDetailsForEditDto;
     model: OfferDetailsForEditDto;
     section$: Observable<string>;
     sectionsDetails = {
@@ -312,16 +320,16 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'targetAudience',
             'securingType',
             'issuingBank',
-            'pros',
-            'details',
-            'cons',
-            'campaignUrl',
             'countries',
             'daysOfWeekAvailability',
             'effectiveTimeOfDay',
             'expireTimeOfDay',
             'termsOfService',
-            'traficSource'
+            'traficSource',
+            'pros',
+            'details',
+            'cons',
+            'campaignUrl'
         ],
         'rating': [
             'overallRating',
@@ -352,7 +360,9 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'activationFee',
             'zeroPercentageInterestTransfers',
             'durationForZeroPercentageTransfersInMonths',
-            'durationForZeroPercentagePurchasesInMonths',
+            'durationForZeroPercentagePurchasesInMonths'
+        ],
+        'flags': [
             'offerCollection',
             'flags'
         ]
@@ -374,7 +384,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         this.rootComponent.overflowHidden(true);
         this.offerDetails$.subscribe(details => {
             this.model = details;
-            this.initialModel = cloneDeep(this.model);
         });
         this.allDetails$ = this.offerDetails$.pipe(map((details: OfferDetailsForEditDto) => Object.keys(details)));
         this.filteredBySectionDetails$ = combineLatest(
@@ -454,16 +463,12 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         return Array.isArray(item);
     }
 
-    addNew(model: any[], value: any) {
-        model.push(value);
+    addNew(model: any[]) {
+        model.push('');
     }
 
     remove(item: any[], i: number) {
         item.splice(i, 1);
-    }
-
-    getKeys(object: Object) {
-        return Object.keys(object);
     }
 
     back() {
@@ -471,20 +476,9 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        const differences = diff(this.initialModel, this.model);
-        let changed = { campaignId: this.model.campaignId };
-        if (differences) {
-            abp.ui.setBusy();
-            for (let diff of differences) {
-                changed[diff.path[0]] = this.model[diff.path[0]];
-            }
-            this.offerManagementService.extend(ExtendOfferDto.fromJS(changed))
-                .pipe(finalize(() => abp.ui.clearBusy()))
-                .subscribe(() => {
-                    /** Update model to see the changes next time */
-                    this.initialModel = cloneDeep(this.model);
-                });
-        }
+        this.offerManagementService.extend(ExtendOfferDto.fromJS(this.model))
+            .pipe(finalize(() => abp.ui.clearBusy()))
+            .subscribe();
     }
 
     getInplaceEditData() {
@@ -499,10 +493,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
 
     getDetailGroupLabel(detailName: string): string {
         return this.detailsConfig[detailName] && this.detailsConfig[detailName].groupLabel;
-    }
-
-    getInplaceWidth(name: string): string {
-        return ((name.length + 1) * 12) + 'px';
     }
 
     updateCustomName(value: string) {
@@ -524,8 +514,12 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         );
     }
 
-    isReadOnly(detail: string): boolean {
-        return this.detailsConfig[detail] && this.detailsConfig[detail].readOnly;
+    isReadOnly(detail: string): Observable<boolean> {
+        let readOnly$ = of(false);
+        if (this.detailsConfig[detail]) {
+            readOnly$ = this.detailsConfig[detail].readOnly$ || of(this.detailsConfig[detail].readOnly);
+        }
+        return readOnly$;
     }
 
 }

@@ -5,7 +5,6 @@
                 <img [src]="offerDetails.logoUrl">
                 <ng-container *ngIf="getInplaceEditData() as data">
                     <inplace-edit
-                        [width]="getInplaceWidth(data.value)"
                         [data]="data"
                         (valueChanged)="updateCustomName($event)">
                     </inplace-edit>
@@ -46,25 +45,25 @@
                                     <ng-container *ngIf="isMultiple(detail); else single">
                                         <dx-tag-box
                                             [inputAttr]="{ id: detail }"
-                                            [placeholder]="!isReadOnly(detail) ? ls.l('Select') : ''"
+                                            [placeholder]="!(isReadOnly(detail) | async) ? ls.l('Select') : ''"
                                             [displayExpr]="detailsConfig[detail].dataSourceConfig && detailsConfig[detail].dataSourceConfig.displayExpr"
                                             [valueExpr]="detailsConfig[detail].dataSourceConfig && detailsConfig[detail].dataSourceConfig.valueExpr"
                                             [dataSource]="detailsConfig[detail].dataSourceConfig
                                                           ? detailsConfig[detail].dataSourceConfig.async ? (detailsConfig[detail].dataSourceConfig.source | async) : detailsConfig[detail].dataSourceConfig.source
                                                           : keys(detailsConfig[detail].enum)"
                                             [(value)]="model[detail]"
-                                            [disabled]="isReadOnly(detail)">
+                                            [disabled]="isReadOnly(detail) | async">
                                         </dx-tag-box>
                                     </ng-container>
                                     <ng-template #single>
                                         <dx-select-box
                                             [inputAttr]="{ id: detail }"
-                                            [placeholder]="!isReadOnly(detail) ? ls.l('Select') : ''"
+                                            [placeholder]="!(isReadOnly(detail) | async) ? ls.l('Select') : ''"
                                             displayExpr="name"
                                             valueExpr="value"
                                             [dataSource]="getEnumDataSource(detailsConfig[detail].enum)"
                                             [(value)]="model[detail]"
-                                            [disabled]="isReadOnly(detail)">
+                                            [disabled]="isReadOnly(detail) | async">
                                         </dx-select-box>
                                     </ng-template>
                                 </div>
@@ -77,6 +76,7 @@
                                         <label [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                     </ng-container>
                                     <stars-rating [isEditable]="true" [(currentRating)]="model[detail]" color="#f0d500"></stars-rating>
+                                    <span [ngClass]="model[detail] && 'clear-contact' || 'hidden'" (click)="model[detail] = ''"><i class="minus-icon"></i></span>
                                 </div>
                             </ng-container>
                             <ng-template #b>
@@ -88,14 +88,16 @@
                                         <div *ngIf="isNumberType(detail); else string" class="numberBox">
                                             <dx-number-box
                                                 [inputAttr]="{ id: detail }"
-                                                [placeholder]="detailHasMaxValue(detail) ? ls.l('Min') : ''"
+                                                [placeholder]="detailHasMaxValue(detail) ? ls.l('Min') : ((isReadOnly(detail) | async) ? '' : ls.ls('PFM', 'Enter_Value'))"
                                                 [format]="isCurrencyType(detail) ? '$ #,##0.##;($ #,##0.##)' : ''"
+                                                [disabled]="isReadOnly(detail) | async"
                                                 [(value)]="model[detail]">
                                             </dx-number-box>
                                             <ng-container *ngIf="detailHasMaxValue(detail)">
                                                 <span> - </span>
                                                 <dx-number-box
-                                                    [placeholder]="ls.l('Min')"
+                                                    [placeholder]="ls.l('Max')"
+                                                    [disabled]="isReadOnly(detail) | async"
                                                     [format]="isCurrencyType(detail) ? '$ #,##0.##;($ #,##0.##)' : ''"
                                                     [(value)]="model['max' + detail.slice(3)]">
                                                 </dx-number-box>
@@ -105,17 +107,17 @@
                                             <dx-text-box [inputAttr]="{ id: detail }"
                                                          [valueChangeEvent]="'focusout'"
                                                          [(value)]="model[detail]"
-                                                         [placeholder]="!isReadOnly(detail) ? ls.ls('PFM', 'Enter_Value') : ''"
-                                                         [disabled]="isReadOnly(detail)">
+                                                         [placeholder]="!(isReadOnly(detail) | async) ? ls.ls('PFM', 'Enter_Value') : ''"
+                                                         [disabled]="isReadOnly(detail) | async">
                                             </dx-text-box>
                                         </ng-template>
-                                        <span [ngClass]="(model[detail] || (detailHasMaxValue(detail) && model['max' + detail.slice(3)])) && !isReadOnly(detail) && 'clear-contact' || 'hidden'" (click)="model[detail] = model['max' + detail.slice(3)] = ''"><i class="minus-icon"></i></span>
+                                        <span [ngClass]="(model[detail] || (detailHasMaxValue(detail) && model['max' + detail.slice(3)])) && !(isReadOnly(detail) | async) && 'clear-contact' || 'hidden'" (click)="model[detail] = model['max' + detail.slice(3)] = ''"><i class="minus-icon"></i></span>
                                     </div>
                                     <div class="field" *ngIf="isBool(model[detail])">
                                         <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
                                             <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                         </ng-container>
-                                        <dx-check-box [(value)]="model[detail]" [disabled]="isReadOnly(detail)"></dx-check-box>
+                                        <dx-check-box [(value)]="model[detail]" [disabled]="isReadOnly(detail) | async"></dx-check-box>
                                     </div>
                                 </ng-container>
 
@@ -125,15 +127,16 @@
                                             <label [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                         </ng-container>
                                         <div>
-                                            <div *ngFor="let value of model[detail]; let i=index" class="detailItem">
+                                            <div *ngFor="let i of keys(model[detail])" class="detailItem">
                                                 <dx-text-box [valueChangeEvent]="'focusout'"
-                                                             [disabled]="isReadOnly(detail)"
-                                                             [placeholder]="!isReadOnly(detail) ? ls.ls('PFM', 'Enter_Value') : ''"
-                                                             [(value)]="model[detail][i]">
+                                                             [disabled]="isReadOnly(detail) | async"
+                                                             [placeholder]="!(isReadOnly(detail) | async) ? ls.ls('PFM', 'Enter_Value') : ''"
+                                                             [value]="model[detail][i]"
+                                                             (onValueChanged)="model[detail][i] = $event.value">
                                                 </dx-text-box>
-                                                <span *ngIf="!isReadOnly(detail)" class="clear-contact" (click)="remove(model[detail], i)"><i class="minus-icon"></i></span>
+                                                <span *ngIf="!(isReadOnly(detail) | async)" class="clear-contact" (click)="remove(model[detail], i)"><i class="minus-icon"></i></span>
                                             </div>
-                                            <div *ngIf="!isReadOnly(detail)" class="add-new-button" (click)="addNew(model[detail], value)">
+                                            <div *ngIf="!(isReadOnly(detail) | async)" class="add-new-button" (click)="addNew(model[detail])">
                                                 <span>+ Add new</span>
                                             </div>
                                         </div>
@@ -141,10 +144,10 @@
                                 </div>
 
                                 <ng-template #object>
-                                    <div *ngIf="isObject(model[detail])">
-                                        <div class="field" *ngFor="let value of getKeys(model[detail])">
+                                    <div *ngIf="isObject(model[detail])" class="row">
+                                        <div class="field col-md-5" *ngFor="let value of keys(model[detail])">
                                             <label>{{ startCase(value) }}</label>
-                                            <dx-check-box [(value)]="!!model[detail][value]"></dx-check-box>
+                                            <dx-check-box [disabled]="isReadOnly(detail) | async" [(value)]="!!model[detail][value]"></dx-check-box>
                                         </div>
                                     </div>
                                 </ng-template>

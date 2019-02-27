@@ -38,29 +38,25 @@
                      [height]="listHeight"
                      [selectedItemKeys]="selectedKeys"
                      [selectedItems]="selectedItems"
+                     [pageLoadMode]="pageLoadMode"
                      (onContentReady)="onContentReady($event)"
                      (onInitialized)="onInitialized($event)"
                      (onOptionChanged)="onOptionChanged.emit($event)"
                      (onItemClick)="onItemClick($event)">
-                <div *dxTemplate="let data of 'item'">
+                <div *dxTemplate="let data of 'item'" (click)="$event.stopPropagation()">
                     <div class="item-row {{data.name.replace(' ', '-') | lowercase}}" data-id="{{data.id}}">
                         <span>{{data.name}}</span>
                         <a *ngIf="filterModel"
                            class="dx-link dx-link-filter"
                            title="{{l('Filter')}}"
-                           (click)="applyFilter($event, data)"></a>
+                           (click)="applyFilter($event, data)">
+                        </a>
                     </div>
-                    <div (click)="$event.stopPropagation()"
-                         [ngClass]="template"
-                         *ngIf="template =='bottomInput'">
+                    <div [ngClass]="template" *ngIf="template =='bottomInput'">
                         <div class="input-wrap">
-                            <dx-text-box [(value)]="data.bottomInputValue"
-                                         [showClearButton]="true"></dx-text-box>
+                            <dx-text-box [(value)]="data.bottomInputValue" [showClearButton]="true"></dx-text-box>
                         </div>
-                        <dx-button
-                            icon="check"
-                            (onClick)="setValue($event, data)">
-                        </dx-button>
+                        <dx-button icon="check" (onClick)="setValue($event, data)"></dx-button>
                     </div>
                 </div>
             </dx-list>

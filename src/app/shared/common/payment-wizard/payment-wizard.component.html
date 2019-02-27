@@ -5,6 +5,7 @@
                 <package-chooser
                     *ngIf="!subscriptionIsLocked"
                     [title]="data?.title"
+                    [subtitle]="data?.subtitle"
                     [module]="module"
                     [showBackground]="true"
                     [showDowngradeLink]="!subscriptionIsFree"
