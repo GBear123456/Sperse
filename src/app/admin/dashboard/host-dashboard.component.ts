@@ -16,6 +16,7 @@ import '@node_modules/jquery.flot.tooltip/js/jquery.flot.tooltip.min.js';
 @Component({
     templateUrl: './host-dashboard.component.html',
     styleUrls: [
+        '../../../shared/metronic/progress.less',
         '../../../shared/metronic/dropdown-menu.less',
         '../../../shared/metronic/daterangepicker.less',
         '../../../shared/metronic/m-widget24.less',

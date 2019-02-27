@@ -2,7 +2,7 @@
  * @class mApp  Metronic App class
  */
 
-var mApp = function() {
+window.mApp = function() {
 
     /**
     * Initializes bootstrap tooltip
@@ -11,7 +11,7 @@ var mApp = function() {
         var skin = el.data('skin') ? 'm-tooltip--skin-' + el.data('skin') : '';
         var width = el.data('width') == 'auto' ? 'm-tooltop--auto-width' : '';
         var triggerValue = el.data('trigger') ? el.data('trigger') : 'hover';
-            
+
         el.tooltip({
             trigger: triggerValue,
             template: '<div class="m-tooltip ' + skin + ' ' + width + ' tooltip" role="tooltip">\
@@ -20,7 +20,7 @@ var mApp = function() {
             </div>'
         });
     }
-    
+
     /**
     * Initializes bootstrap tooltips
     */
@@ -37,7 +37,7 @@ var mApp = function() {
     var initPopover = function(el) {
         var skin = el.data('skin') ? 'm-popover--skin-' + el.data('skin') : '';
         var triggerValue = el.data('trigger') ? el.data('trigger') : 'hover';
-            
+
         el.popover({
             trigger: triggerValue,
             template: '\
@@ -68,7 +68,7 @@ var mApp = function() {
             var fileName = $(this).val();
             $(this).next('.custom-file-label').addClass("selected").html(fileName);
         });
-    }           
+    }
 
     /**
     * Initializes metronic portlet
@@ -152,7 +152,7 @@ var mApp = function() {
 
             $(this).click(function(e) {
                 e.preventDefault();
-                
+
                 var tab = $(this);
                 var tabs = tab.closest('[data-tabs="true"]');
                 var contents = $( tabs.data('tabs-contents') );
@@ -162,7 +162,7 @@ var mApp = function() {
                 tab.addClass('m-tabs__item--active');
 
                 contents.find('.m-tabs-content__item.m-tabs-content__item--active').removeClass('m-tabs-content__item--active');
-                content.addClass('m-tabs-content__item--active');         
+                content.addClass('m-tabs-content__item--active');
             });
 
             $(this).data('tabs-initialized', true);
@@ -173,7 +173,7 @@ var mApp = function() {
     * Initializes bootstrap collapse for Metronic's accordion feature
     */
     var initAccordions = function(el) {
-       
+
     }
 
 	var hideTouchWarning = function() {
@@ -241,7 +241,7 @@ var mApp = function() {
         },
 
         /**
-        * 
+        *
         * @param {object} el jQuery element object
         */
         // wrJangoer function to scroll(focus) to an element
@@ -250,7 +250,7 @@ var mApp = function() {
         },
 
         /**
-        * 
+        *
         * @param {object} el jQuery element object
         */
         // wrJangoer function to scroll(focus) to an element
@@ -259,7 +259,7 @@ var mApp = function() {
         },
 
         /**
-        * 
+        *
         * @param {object} el jQuery element object
         */
         // wrJangoer function to scroll(focus) to an element
@@ -268,7 +268,7 @@ var mApp = function() {
         },
 
         /**
-        * 
+        *
         * @param {object} el jQuery element object
         */
         // wrJangoer function to scroll(focus) to an element
@@ -277,7 +277,7 @@ var mApp = function() {
         },
 
         /**
-        * 
+        *
         * @param {object} el jQuery element object
         */
         // function to init portlet
@@ -286,7 +286,7 @@ var mApp = function() {
         },
 
         /**
-        * 
+        *
         * @param {object} el jQuery element object
         */
         // function to init portlets
@@ -311,7 +311,7 @@ var mApp = function() {
         },
 
         /**
-        * Scrolls until element is centered in the viewport 
+        * Scrolls until element is centered in the viewport
         * @param {object} el jQuery element object
         */
         // wrJangoer function to scroll(focus) to an element
@@ -344,8 +344,8 @@ var mApp = function() {
                 el.css('overflow', 'auto');
             } else {
                 if (doNotDestroy !== true) {
-                     mApp.destroyScroller(el); 
-                }               
+                     mApp.destroyScroller(el);
+                }
                 el.mCustomScrollbar({
                     scrollInertia: 0,
                     autoDraggerLength: true,
@@ -360,7 +360,7 @@ var mApp = function() {
                     setHeight: (options.height ? options.height : ''),
                     theme:"minimal-dark"
                 });
-            }           
+            }
         },
 
         /**
@@ -380,7 +380,7 @@ var mApp = function() {
         alert: function(options) {
             options = $.extend(true, {
                 container: "", // alerts parent container(by default placed after the page breadcrumbs)
-                place: "append", // "append" or "prepend" in container 
+                place: "append", // "append" or "prepend" in container
                 type: 'success', // alert's type
                 message: "", // alert's message
                 close: true, // make alert closable
@@ -434,7 +434,7 @@ var mApp = function() {
         /**
         * Blocks element with loading indiciator using http://malsup.com/jquery/block/
         * @param {object} target jQuery element object
-        * @param {object} options 
+        * @param {object} options
         */
         block: function(target, options) {
             var el = $(target);
@@ -501,7 +501,7 @@ var mApp = function() {
                     if (el) {
                         el.css('position', '');
                         el.css('zoom', '');
-                    }                    
+                    }
                 }
             };
 
@@ -515,7 +515,7 @@ var mApp = function() {
         },
 
         /**
-        * Un-blocks the blocked element 
+        * Un-blocks the blocked element
         * @param {object} target jQuery element object
         */
         unblock: function(target) {
@@ -528,7 +528,7 @@ var mApp = function() {
 
         /**
         * Blocks the page body element with loading indicator
-        * @param {object} options 
+        * @param {object} options
         */
         blockPage: function(options) {
             return mApp.block('body', options);
@@ -548,12 +548,12 @@ var mApp = function() {
         */
         progress: function(target, options) {
             var skin = (options && options.skin) ? options.skin : 'light';
-            var alignment = (options && options.alignment) ? options.alignment : 'right'; 
-            var size = (options && options.size) ? 'm-spinner--' + options.size : ''; 
+            var alignment = (options && options.alignment) ? options.alignment : 'right';
+            var size = (options && options.size) ? 'm-spinner--' + options.size : '';
             var classes = 'm-loader ' + 'm-loader--' + skin + ' m-loader--' + alignment + ' m-loader--' + size;
 
             mApp.unprogress(target);
-            
+
             $(target).addClass(classes);
             $(target).data('progress-classes', classes);
         },
