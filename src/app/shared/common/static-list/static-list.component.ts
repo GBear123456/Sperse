@@ -35,7 +35,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() bulkUpdatePermissionKey = '';
     @Input() list: any;
     @Input() showTitle = true;
-    @Input() selectionMode;    
+    @Input() selectionMode;
 
     listComponent: any;
     listHeight: number;
