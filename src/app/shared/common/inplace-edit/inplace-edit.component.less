@@ -1,33 +1,35 @@
 :host {
     .inplace-edit-view-mode {
         cursor: pointer;
-        display: inline-block;
+        display: flex;
+        align-items: center;
+        max-width: 100%;
 
         .actions  {
             float: right;
             bottom: 2px;
             left: 5px;
             visibility: hidden;
-      
+
             i {
                 font-size: 18px;
                 padding: 7px;
                 cursor: pointer;
             }
-      
+
             i.edit {
                 color: #00aeef;
             }
-          
+
             i.delete {
                 color: #f44336;
             }
-        }      
+        }
 
         &:hover {
             .actions {
                 visibility: visible;
-            }      
+            }
         }
 
         .placeholder {
@@ -55,8 +57,9 @@
 
     .inplace-edit-edit-mode {
         height: 35px;
-        display: inline-block;
-    
+        display: flex;
+        align-items: center;
+
         /deep/ dx-text-box {
             display: inline-block;
             input {
@@ -72,7 +75,7 @@
 
             .dx-placeholder {
                 font-size: 14px;
-                font-weight: 400;            
+                font-weight: 400;
             }
             &.dx-state-focused {
                 .dx-placeholder {
@@ -83,8 +86,6 @@
         /deep/ dx-button {
             border: none;
             position: relative;
-            top: -14px;
-            display: inline-block;
 
             &.button-update i {
                 color: #00aeef;

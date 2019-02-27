@@ -5,7 +5,6 @@
                 <img [src]="offerDetails.logoUrl">
                 <ng-container *ngIf="getInplaceEditData() as data">
                     <inplace-edit
-                        [width]="getInplaceWidth(data.value)"
                         [data]="data"
                         (valueChanged)="updateCustomName($event)">
                     </inplace-edit>

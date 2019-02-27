@@ -495,10 +495,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         return this.detailsConfig[detailName] && this.detailsConfig[detailName].groupLabel;
     }
 
-    getInplaceWidth(name: string): string {
-        return ((name.length + 1) * 12) + 'px';
-    }
-
     updateCustomName(value: string) {
         this.model['customName'] = value;
     }
