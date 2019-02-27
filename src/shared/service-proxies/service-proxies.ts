@@ -46963,6 +46963,9 @@ export interface IUpdateLeadStageInfo {
 
 export class ProcessLeadInput implements IProcessLeadInput {
     leadId!: number;
+    orderStageId!: number | undefined;
+    amount!: number | undefined;
+    comment!: string | undefined;
 
     constructor(data?: IProcessLeadInput) {
         if (data) {
@@ -46976,6 +46979,9 @@ export class ProcessLeadInput implements IProcessLeadInput {
     init(data?: any) {
         if (data) {
             this.leadId = data["leadId"];
+            this.orderStageId = data["orderStageId"];
+            this.amount = data["amount"];
+            this.comment = data["comment"];
         }
     }
 
@@ -46989,12 +46995,18 @@ export class ProcessLeadInput implements IProcessLeadInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadId"] = this.leadId;
+        data["orderStageId"] = this.orderStageId;
+        data["amount"] = this.amount;
+        data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IProcessLeadInput {
     leadId: number;
+    orderStageId: number | undefined;
+    amount: number | undefined;
+    comment: string | undefined;
 }
 
 export class LeadInfoDto implements ILeadInfoDto {
