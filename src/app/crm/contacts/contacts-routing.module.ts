@@ -16,6 +16,7 @@ import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
 
 import { RP_USER_INFO_ID } from './contacts.const';
+import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 
 @NgModule({
     imports: [
@@ -37,6 +38,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     { path: 'activity-logs', component: ActivityLogsComponent },
@@ -56,6 +58,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     { path: 'activity-logs', component: ActivityLogsComponent },
@@ -93,6 +96,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
@@ -111,6 +115,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
@@ -129,6 +134,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]

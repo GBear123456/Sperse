@@ -99,6 +99,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
 import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialog/create-client-dialog.component';
 import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
+import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 
 @NgModule({
     declarations: [
@@ -145,7 +146,8 @@ import { DocumentsService } from '@app/crm/contacts/documents/documents.service'
         RelationCompaniesDialogComponent,
         CreateClientDialogComponent,
         ContactListDialogComponent,
-        NotSupportedTypeDialogComponent
+        NotSupportedTypeDialogComponent,
+        OrdersComponent
     ],
     imports: [
         FormsModule,
