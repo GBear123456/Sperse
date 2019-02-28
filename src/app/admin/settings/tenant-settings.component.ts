@@ -24,7 +24,8 @@ import {
     TenantCustomizationInfoDto,
     EPCVIPMailerSettingsEditDto,
     TenantLoginInfoDtoCustomLayoutType,
-    EPCVIPMailerSettingsEditDtoServer
+    EPCVIPMailerSettingsEditDtoServer,
+    OngageSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -63,6 +64,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
     epcvipEmailServers: string[] = [];
+
+    ongageSettings: OngageSettingsEditDto = new OngageSettingsEditDto();
 
     logoUploader: FileUploader;
     faviconsUploader: FileUploader;
@@ -120,7 +123,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
                 this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null)
+                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
+                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null)
             ];
         if (this.isPFMApplicationsFeatureEnabled)
         {
@@ -138,7 +142,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.recurlySettings,
                     this.idcsSettings,
                     this.epcvipSettings,
-                    this.epcvipEmailSettings
+                    this.epcvipEmailSettings,
+                    this.ongageSettings
                 ] = results;
 
                 if (this.settings.general) {
@@ -284,11 +289,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         ];
         if (this.isCreditReportFeatureEnabled)
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
-        if (this.isPFMApplicationsFeatureEnabled) 
+        if (this.isPFMApplicationsFeatureEnabled)
             requests.push(this._tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
         if (this.isPFMApplicationsFeatureEnabled)
             requests.push(this._tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
-        
+        if (this.isPFMApplicationsFeatureEnabled)
+            requests.push(this._tenantSettingsService.updateOngageSettings(this.ongageSettings));
 
         forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
