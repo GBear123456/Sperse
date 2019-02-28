@@ -4,16 +4,19 @@
         [dataSource]="orderStages"
         [displayExpr]="'name'"
         [valueExpr]="'id'"
-        [(value)]="orderStage"
+        [(value)]="orderStageId"
+        [showClearButton]="true"
         (onValueChanged)="orderStageChanged($event)">
     </dx-select-box>
-    <dx-text-box
+    <dx-number-box
         [placeholder]="l('Amount')"
-        [(value)]="amount">
-    </dx-text-box>
+        [(value)]="amount"  
+        [disabled]="!orderStageId">
+    </dx-number-box>
     <dx-text-area
         [placeholder]="l('Comment')"
-        [(value)]="comment">
+        [(value)]="comment"
+        [disabled]="!orderStageId">
     </dx-text-area>
 </mat-dialog-content>
 <mat-dialog-actions>

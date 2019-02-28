@@ -6,7 +6,7 @@ import { PipelineComponent } from './pipeline.component';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
-import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { TimeAgoPipe } from 'time-ago-pipe';
@@ -24,7 +24,7 @@ import { PipelineService } from './pipeline.service';
         DxDataGridModule,
         DxRadioGroupModule,
         DxTextAreaModule,
-        DxTextBoxModule,
+        DxNumberBoxModule,
         DxSelectBoxModule,
         MatDialogModule,
         RouterModule,
