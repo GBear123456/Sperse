@@ -46,6 +46,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     stages = [];
 
     selectedOrders = [];
+    filterModelStages: FilterModel;
 
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
