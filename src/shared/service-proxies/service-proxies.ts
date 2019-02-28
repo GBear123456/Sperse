@@ -23396,6 +23396,58 @@ export class TenantSettingsServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getOngageSettings(): Observable<OngageSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetOngageSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetOngageSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetOngageSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<OngageSettingsEditDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<OngageSettingsEditDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetOngageSettings(response: HttpResponseBase): Observable<OngageSettingsEditDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? OngageSettingsEditDto.fromJS(resultData200) : new OngageSettingsEditDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<OngageSettingsEditDto>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -23481,6 +23533,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateEPCVIPMailerSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @settings (optional) 
+     * @return Success
+     */
+    updateOngageSettings(settings: OngageSettingsEditDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateOngageSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(settings);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateOngageSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateOngageSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateOngageSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -55460,6 +55564,58 @@ export interface IEPCVIPMailerSettingsEditDto {
     baseUrl: string | undefined;
     apiKey: string | undefined;
     server: EPCVIPMailerSettingsEditDtoServer | undefined;
+}
+
+export class OngageSettingsEditDto implements IOngageSettingsEditDto {
+    userName!: string | undefined;
+    password!: string | undefined;
+    accountCode!: string | undefined;
+    defaultListId!: number | undefined;
+    activationEmailMessageId!: number | undefined;
+
+    constructor(data?: IOngageSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userName = data["userName"];
+            this.password = data["password"];
+            this.accountCode = data["accountCode"];
+            this.defaultListId = data["defaultListId"];
+            this.activationEmailMessageId = data["activationEmailMessageId"];
+        }
+    }
+
+    static fromJS(data: any): OngageSettingsEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new OngageSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        data["accountCode"] = this.accountCode;
+        data["defaultListId"] = this.defaultListId;
+        data["activationEmailMessageId"] = this.activationEmailMessageId;
+        return data; 
+    }
+}
+
+export interface IOngageSettingsEditDto {
+    userName: string | undefined;
+    password: string | undefined;
+    accountCode: string | undefined;
+    defaultListId: number | undefined;
+    activationEmailMessageId: number | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
