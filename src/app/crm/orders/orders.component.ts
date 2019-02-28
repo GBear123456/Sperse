@@ -45,6 +45,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
     stages = [];
 
+    selectedOrders = [];
+
     private rootComponent: any;
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Order';
