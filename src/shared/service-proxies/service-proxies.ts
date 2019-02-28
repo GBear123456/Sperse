@@ -16207,11 +16207,14 @@ export class OfferManagementServiceProxy {
     }
 
     /**
+     * @campaignId (optional) 
      * @input (optional) 
      * @return Success
      */
-    extend(input: ExtendOfferDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/Extend";
+    extend(campaignId: number | null | undefined, input: ExtendOfferDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/Extend?";
+        if (campaignId !== undefined)
+            url_ += "campaignId=" + encodeURIComponent("" + campaignId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -22047,6 +22050,58 @@ export class TenantCustomizationServiceProxy {
     }
 
     protected processSetCustomLayout(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @layoutType (optional) 
+     * @return Success
+     */
+    validateCustomLayout(layoutType: LayoutType2 | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ValidateCustomLayout";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(layoutType);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processValidateCustomLayout(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processValidateCustomLayout(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processValidateCustomLayout(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -48991,59 +49046,21 @@ export interface IGetMemberInfoResponse {
 }
 
 export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
-    customName!: string | undefined;
-    isPublished!: boolean | undefined;
-    interestRating!: number | undefined;
-    feesRating!: number | undefined;
-    benefitsRating!: number | undefined;
-    rewardsRating!: number | undefined;
-    serviceRating!: number | undefined;
-    cardNetwork!: OfferDetailsForEditDtoCardNetwork | undefined;
-    cardType!: OfferDetailsForEditDtoCardType | undefined;
-    targetAudience!: OfferDetailsForEditDtoTargetAudience | undefined;
-    securingType!: OfferDetailsForEditDtoSecuringType | undefined;
-    balanceTransferFee!: string | undefined;
-    monthlyFee!: string | undefined;
-    activationFee!: string | undefined;
-    durationForZeroPercentagePurchasesInMonths!: number | undefined;
-    zeroPercentageInterestTransfers!: string | undefined;
-    durationForZeroPercentageTransfersInMonths!: number | undefined;
-    minAnnualIncome!: number | undefined;
-    maxAnnualIncome!: number | undefined;
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
     termsOfService!: string | undefined;
     traficSource!: OfferDetailsForEditDtoTraficSource | undefined;
-    flags!: Flags | undefined;
-    states!: string[] | undefined;
     categories!: string[] | undefined;
     creditScores!: CreditScores2[] | undefined;
     description!: string | undefined;
-    introAPR!: string | undefined;
-    pros!: string[] | undefined;
-    cons!: string[] | undefined;
     countries!: string[] | undefined;
+    extendedInfo!: ExtendOfferDto | undefined;
     campaignId!: number | undefined;
     name!: string | undefined;
     systemType!: OfferDetailsForEditDtoSystemType | undefined;
-    subId!: string | undefined;
     campaignUrl!: string | undefined;
     logoUrl!: string | undefined;
-    overallRating!: number | undefined;
-    issuingBank!: string | undefined;
-    annualFee!: string | undefined;
-    rewardsRate!: string | undefined;
-    introRewardsBonus!: string | undefined;
-    regularAPR!: string | undefined;
-    offerCollection!: OfferDetailsForEditDtoOfferCollection | undefined;
-    minLoanAmount!: number | undefined;
-    maxLoanAmount!: number | undefined;
-    minLoanTermMonths!: number | undefined;
-    maxLoanTermMonths!: number | undefined;
-    campaignProviderType!: OfferDetailsForEditDtoCampaignProviderType | undefined;
-    parameterHandlerType!: OfferDetailsForEditDtoParameterHandlerType | undefined;
-    details!: string[] | undefined;
     status!: OfferDetailsForEditDtoStatus | undefined;
     type!: OfferDetailsForEditDtoType | undefined;
 
@@ -49058,36 +49075,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
 
     init(data?: any) {
         if (data) {
-            this.customName = data["customName"];
-            this.isPublished = data["isPublished"];
-            this.interestRating = data["interestRating"];
-            this.feesRating = data["feesRating"];
-            this.benefitsRating = data["benefitsRating"];
-            this.rewardsRating = data["rewardsRating"];
-            this.serviceRating = data["serviceRating"];
-            this.cardNetwork = data["cardNetwork"];
-            this.cardType = data["cardType"];
-            this.targetAudience = data["targetAudience"];
-            this.securingType = data["securingType"];
-            this.balanceTransferFee = data["balanceTransferFee"];
-            this.monthlyFee = data["monthlyFee"];
-            this.activationFee = data["activationFee"];
-            this.durationForZeroPercentagePurchasesInMonths = data["durationForZeroPercentagePurchasesInMonths"];
-            this.zeroPercentageInterestTransfers = data["zeroPercentageInterestTransfers"];
-            this.durationForZeroPercentageTransfersInMonths = data["durationForZeroPercentageTransfersInMonths"];
-            this.minAnnualIncome = data["minAnnualIncome"];
-            this.maxAnnualIncome = data["maxAnnualIncome"];
             this.daysOfWeekAvailability = data["daysOfWeekAvailability"];
             this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
             this.expireTimeOfDay = data["expireTimeOfDay"];
             this.termsOfService = data["termsOfService"];
             this.traficSource = data["traficSource"];
-            this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
-            if (data["states"] && data["states"].constructor === Array) {
-                this.states = [];
-                for (let item of data["states"])
-                    this.states.push(item);
-            }
             if (data["categories"] && data["categories"].constructor === Array) {
                 this.categories = [];
                 for (let item of data["categories"])
@@ -49099,46 +49091,17 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
                     this.creditScores.push(item);
             }
             this.description = data["description"];
-            this.introAPR = data["introAPR"];
-            if (data["pros"] && data["pros"].constructor === Array) {
-                this.pros = [];
-                for (let item of data["pros"])
-                    this.pros.push(item);
-            }
-            if (data["cons"] && data["cons"].constructor === Array) {
-                this.cons = [];
-                for (let item of data["cons"])
-                    this.cons.push(item);
-            }
             if (data["countries"] && data["countries"].constructor === Array) {
                 this.countries = [];
                 for (let item of data["countries"])
                     this.countries.push(item);
             }
+            this.extendedInfo = data["extendedInfo"] ? ExtendOfferDto.fromJS(data["extendedInfo"]) : <any>undefined;
             this.campaignId = data["campaignId"];
             this.name = data["name"];
             this.systemType = data["systemType"];
-            this.subId = data["subId"];
             this.campaignUrl = data["campaignUrl"];
             this.logoUrl = data["logoUrl"];
-            this.overallRating = data["overallRating"];
-            this.issuingBank = data["issuingBank"];
-            this.annualFee = data["annualFee"];
-            this.rewardsRate = data["rewardsRate"];
-            this.introRewardsBonus = data["introRewardsBonus"];
-            this.regularAPR = data["regularAPR"];
-            this.offerCollection = data["offerCollection"];
-            this.minLoanAmount = data["minLoanAmount"];
-            this.maxLoanAmount = data["maxLoanAmount"];
-            this.minLoanTermMonths = data["minLoanTermMonths"];
-            this.maxLoanTermMonths = data["maxLoanTermMonths"];
-            this.campaignProviderType = data["campaignProviderType"];
-            this.parameterHandlerType = data["parameterHandlerType"];
-            if (data["details"] && data["details"].constructor === Array) {
-                this.details = [];
-                for (let item of data["details"])
-                    this.details.push(item);
-            }
             this.status = data["status"];
             this.type = data["type"];
         }
@@ -49153,36 +49116,11 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["customName"] = this.customName;
-        data["isPublished"] = this.isPublished;
-        data["interestRating"] = this.interestRating;
-        data["feesRating"] = this.feesRating;
-        data["benefitsRating"] = this.benefitsRating;
-        data["rewardsRating"] = this.rewardsRating;
-        data["serviceRating"] = this.serviceRating;
-        data["cardNetwork"] = this.cardNetwork;
-        data["cardType"] = this.cardType;
-        data["targetAudience"] = this.targetAudience;
-        data["securingType"] = this.securingType;
-        data["balanceTransferFee"] = this.balanceTransferFee;
-        data["monthlyFee"] = this.monthlyFee;
-        data["activationFee"] = this.activationFee;
-        data["durationForZeroPercentagePurchasesInMonths"] = this.durationForZeroPercentagePurchasesInMonths;
-        data["zeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
-        data["durationForZeroPercentageTransfersInMonths"] = this.durationForZeroPercentageTransfersInMonths;
-        data["minAnnualIncome"] = this.minAnnualIncome;
-        data["maxAnnualIncome"] = this.maxAnnualIncome;
         data["daysOfWeekAvailability"] = this.daysOfWeekAvailability;
         data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
         data["expireTimeOfDay"] = this.expireTimeOfDay;
         data["termsOfService"] = this.termsOfService;
         data["traficSource"] = this.traficSource;
-        data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
-        if (this.states && this.states.constructor === Array) {
-            data["states"] = [];
-            for (let item of this.states)
-                data["states"].push(item);
-        }
         if (this.categories && this.categories.constructor === Array) {
             data["categories"] = [];
             for (let item of this.categories)
@@ -49194,46 +49132,17 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
                 data["creditScores"].push(item);
         }
         data["description"] = this.description;
-        data["introAPR"] = this.introAPR;
-        if (this.pros && this.pros.constructor === Array) {
-            data["pros"] = [];
-            for (let item of this.pros)
-                data["pros"].push(item);
-        }
-        if (this.cons && this.cons.constructor === Array) {
-            data["cons"] = [];
-            for (let item of this.cons)
-                data["cons"].push(item);
-        }
         if (this.countries && this.countries.constructor === Array) {
             data["countries"] = [];
             for (let item of this.countries)
                 data["countries"].push(item);
         }
+        data["extendedInfo"] = this.extendedInfo ? this.extendedInfo.toJSON() : <any>undefined;
         data["campaignId"] = this.campaignId;
         data["name"] = this.name;
         data["systemType"] = this.systemType;
-        data["subId"] = this.subId;
         data["campaignUrl"] = this.campaignUrl;
         data["logoUrl"] = this.logoUrl;
-        data["overallRating"] = this.overallRating;
-        data["issuingBank"] = this.issuingBank;
-        data["annualFee"] = this.annualFee;
-        data["rewardsRate"] = this.rewardsRate;
-        data["introRewardsBonus"] = this.introRewardsBonus;
-        data["regularAPR"] = this.regularAPR;
-        data["offerCollection"] = this.offerCollection;
-        data["minLoanAmount"] = this.minLoanAmount;
-        data["maxLoanAmount"] = this.maxLoanAmount;
-        data["minLoanTermMonths"] = this.minLoanTermMonths;
-        data["maxLoanTermMonths"] = this.maxLoanTermMonths;
-        data["campaignProviderType"] = this.campaignProviderType;
-        data["parameterHandlerType"] = this.parameterHandlerType;
-        if (this.details && this.details.constructor === Array) {
-            data["details"] = [];
-            for (let item of this.details)
-                data["details"].push(item);
-        }
         data["status"] = this.status;
         data["type"] = this.type;
         return data; 
@@ -49241,65 +49150,26 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
 }
 
 export interface IOfferDetailsForEditDto {
-    customName: string | undefined;
-    isPublished: boolean | undefined;
-    interestRating: number | undefined;
-    feesRating: number | undefined;
-    benefitsRating: number | undefined;
-    rewardsRating: number | undefined;
-    serviceRating: number | undefined;
-    cardNetwork: OfferDetailsForEditDtoCardNetwork | undefined;
-    cardType: OfferDetailsForEditDtoCardType | undefined;
-    targetAudience: OfferDetailsForEditDtoTargetAudience | undefined;
-    securingType: OfferDetailsForEditDtoSecuringType | undefined;
-    balanceTransferFee: string | undefined;
-    monthlyFee: string | undefined;
-    activationFee: string | undefined;
-    durationForZeroPercentagePurchasesInMonths: number | undefined;
-    zeroPercentageInterestTransfers: string | undefined;
-    durationForZeroPercentageTransfersInMonths: number | undefined;
-    minAnnualIncome: number | undefined;
-    maxAnnualIncome: number | undefined;
     daysOfWeekAvailability: string | undefined;
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
     termsOfService: string | undefined;
     traficSource: OfferDetailsForEditDtoTraficSource | undefined;
-    flags: Flags | undefined;
-    states: string[] | undefined;
     categories: string[] | undefined;
     creditScores: CreditScores2[] | undefined;
     description: string | undefined;
-    introAPR: string | undefined;
-    pros: string[] | undefined;
-    cons: string[] | undefined;
     countries: string[] | undefined;
+    extendedInfo: ExtendOfferDto | undefined;
     campaignId: number | undefined;
     name: string | undefined;
     systemType: OfferDetailsForEditDtoSystemType | undefined;
-    subId: string | undefined;
     campaignUrl: string | undefined;
     logoUrl: string | undefined;
-    overallRating: number | undefined;
-    issuingBank: string | undefined;
-    annualFee: string | undefined;
-    rewardsRate: string | undefined;
-    introRewardsBonus: string | undefined;
-    regularAPR: string | undefined;
-    offerCollection: OfferDetailsForEditDtoOfferCollection | undefined;
-    minLoanAmount: number | undefined;
-    maxLoanAmount: number | undefined;
-    minLoanTermMonths: number | undefined;
-    maxLoanTermMonths: number | undefined;
-    campaignProviderType: OfferDetailsForEditDtoCampaignProviderType | undefined;
-    parameterHandlerType: OfferDetailsForEditDtoParameterHandlerType | undefined;
-    details: string[] | undefined;
     status: OfferDetailsForEditDtoStatus | undefined;
     type: OfferDetailsForEditDtoType | undefined;
 }
 
 export class ExtendOfferDto implements IExtendOfferDto {
-    campaignId!: number;
     customName!: string | undefined;
     subId!: string | undefined;
     isPublished!: boolean | undefined;
@@ -49337,7 +49207,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
     maxAnnualIncome!: number | undefined;
     campaignProviderType!: ExtendOfferDtoCampaignProviderType | undefined;
     parameterHandlerType!: ExtendOfferDtoParameterHandlerType | undefined;
-    flags!: Flags2 | undefined;
+    flags!: Flags | undefined;
     states!: string[] | undefined;
 
     constructor(data?: IExtendOfferDto) {
@@ -49351,7 +49221,6 @@ export class ExtendOfferDto implements IExtendOfferDto {
 
     init(data?: any) {
         if (data) {
-            this.campaignId = data["campaignId"];
             this.customName = data["customName"];
             this.subId = data["subId"];
             this.isPublished = data["isPublished"];
@@ -49401,7 +49270,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
             this.maxAnnualIncome = data["maxAnnualIncome"];
             this.campaignProviderType = data["campaignProviderType"];
             this.parameterHandlerType = data["parameterHandlerType"];
-            this.flags = data["flags"] ? Flags2.fromJS(data["flags"]) : <any>undefined;
+            this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
             if (data["states"] && data["states"].constructor === Array) {
                 this.states = [];
                 for (let item of data["states"])
@@ -49419,7 +49288,6 @@ export class ExtendOfferDto implements IExtendOfferDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["campaignId"] = this.campaignId;
         data["customName"] = this.customName;
         data["subId"] = this.subId;
         data["isPublished"] = this.isPublished;
@@ -49480,7 +49348,6 @@ export class ExtendOfferDto implements IExtendOfferDto {
 }
 
 export interface IExtendOfferDto {
-    campaignId: number;
     customName: string | undefined;
     subId: string | undefined;
     isPublished: boolean | undefined;
@@ -49518,7 +49385,7 @@ export interface IExtendOfferDto {
     maxAnnualIncome: number | undefined;
     campaignProviderType: ExtendOfferDtoCampaignProviderType | undefined;
     parameterHandlerType: ExtendOfferDtoParameterHandlerType | undefined;
-    flags: Flags2 | undefined;
+    flags: Flags | undefined;
     states: string[] | undefined;
 }
 
@@ -59821,8 +59688,6 @@ export enum OfferAttribute {
 }
 
 export enum OfferFlag {
-    Special = "Special", 
-    Newest = "Newest", 
     Choice = "Choice", 
     Best = "Best", 
     TravelAndAirlineMiles = "TravelAndAirlineMiles", 
@@ -59842,6 +59707,8 @@ export enum OfferFlag {
     HasNoRewards = "HasNoRewards", 
     ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     ZeroPercentageInterestTransfers = "ZeroPercentageInterestTransfers", 
+    Special = "Special", 
+    Newest = "Newest", 
 }
 
 export enum Module {
@@ -59956,6 +59823,11 @@ export enum InstanceType90 {
 }
 
 export enum LayoutType {
+    Default = "Default", 
+    LendSpace = "LendSpace", 
+}
+
+export enum LayoutType2 {
     Default = "Default", 
     LendSpace = "LendSpace", 
 }
@@ -60529,31 +60401,6 @@ export enum GetMemberInfoResponseCreditScore {
     Poor = "Poor", 
 }
 
-export enum OfferDetailsForEditDtoCardNetwork {
-    AmEx = "AmEx", 
-    Discover = "Discover", 
-    Mastercard = "Mastercard", 
-    Visa = "Visa", 
-    Store = "Store", 
-}
-
-export enum OfferDetailsForEditDtoCardType {
-    Credit = "Credit", 
-    Debit = "Debit", 
-}
-
-export enum OfferDetailsForEditDtoTargetAudience {
-    Consumer = "Consumer", 
-    Business = "Business", 
-    Students = "Students", 
-}
-
-export enum OfferDetailsForEditDtoSecuringType {
-    Unsecured = "Unsecured", 
-    Secured = "Secured", 
-    Prepaid = "Prepaid", 
-}
-
 export enum OfferDetailsForEditDtoTraficSource {
     PPC_Default = "PPC_Default", 
     Email = "Email", 
@@ -60570,6 +60417,88 @@ export enum OfferDetailsForEditDtoTraficSource {
     PPC_Decline = "PPC_Decline", 
     PPC_Reject = "PPC_Reject", 
     PPC_Display = "PPC_Display", 
+}
+
+export enum CreditScores2 {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
+}
+
+export enum OfferDetailsForEditDtoSystemType {
+    EPCVIP = "EPCVIP", 
+}
+
+export enum OfferDetailsForEditDtoStatus {
+    PendingReview = "PendingReview", 
+    Active = "Active", 
+    Denied = "Denied", 
+    Suspended = "Suspended", 
+    SuspendedRisk = "SuspendedRisk", 
+    Inactive = "Inactive", 
+    Dormant = "Dormant", 
+    Deleted = "Deleted", 
+}
+
+export enum OfferDetailsForEditDtoType {
+    MultiOfferSinglePage = "MultiOfferSinglePage", 
+    TrafficDistribution = "TrafficDistribution", 
+    DirectPost = "DirectPost", 
+    Carrier = "Carrier", 
+}
+
+export enum ExtendOfferDtoCardNetwork {
+    AmEx = "AmEx", 
+    Discover = "Discover", 
+    Mastercard = "Mastercard", 
+    Visa = "Visa", 
+    Store = "Store", 
+}
+
+export enum ExtendOfferDtoCardType {
+    Credit = "Credit", 
+    Debit = "Debit", 
+}
+
+export enum ExtendOfferDtoTargetAudience {
+    Consumer = "Consumer", 
+    Business = "Business", 
+    Students = "Students", 
+}
+
+export enum ExtendOfferDtoSecuringType {
+    Unsecured = "Unsecured", 
+    Secured = "Secured", 
+    Prepaid = "Prepaid", 
+}
+
+export enum ExtendOfferDtoOfferCollection {
+    Best = "Best", 
+    BalanceTransfer = "BalanceTransfer", 
+    CashBack = "CashBack", 
+    RewardPoints = "RewardPoints", 
+    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
+    TravelAirlineHotel = "TravelAirlineHotel", 
+    SecuredOrPrepaid = "SecuredOrPrepaid", 
+    BusinessCards = "BusinessCards", 
+    NoAnnualFees = "NoAnnualFees", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Bad = "Bad", 
+    NoCredit = "NoCredit", 
+    Newest = "Newest", 
+    SpecialDeals = "SpecialDeals", 
+}
+
+export enum ExtendOfferDtoCampaignProviderType {
+    CreditLand = "CreditLand", 
+}
+
+export enum ExtendOfferDtoParameterHandlerType {
+    Default = "Default", 
 }
 
 export class Flags implements IFlags {
@@ -60665,231 +60594,6 @@ export class Flags implements IFlags {
 }
 
 export interface IFlags {
-    choice: boolean | undefined;
-    best: boolean | undefined;
-    travelAndAirlineMiles: boolean | undefined;
-    dinigRewards: boolean | undefined;
-    gasRewards: boolean | undefined;
-    cashBackRewards: boolean | undefined;
-    instantDecision: boolean | undefined;
-    instantResponse: boolean | undefined;
-    noCreditCheck: boolean | undefined;
-    guaranteedApproval: boolean | undefined;
-    rebuildCredit: boolean | undefined;
-    chipCard: boolean | undefined;
-    applePay: boolean | undefined;
-    groceryRewards: boolean | undefined;
-    entertainmentRewards: boolean | undefined;
-    hotelRewards: boolean | undefined;
-    hasNoRewards: boolean | undefined;
-    zeroPercentageOnPurchases: boolean | undefined;
-    zeroPercentageInterestTransfers: boolean | undefined;
-    special: boolean | undefined;
-    newest: boolean | undefined;
-}
-
-export enum CreditScores2 {
-    NotSure = "NotSure", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Poor = "Poor", 
-}
-
-export enum OfferDetailsForEditDtoSystemType {
-    EPCVIP = "EPCVIP", 
-}
-
-export enum OfferDetailsForEditDtoOfferCollection {
-    Best = "Best", 
-    BalanceTransfer = "BalanceTransfer", 
-    CashBack = "CashBack", 
-    RewardPoints = "RewardPoints", 
-    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
-    TravelAirlineHotel = "TravelAirlineHotel", 
-    SecuredOrPrepaid = "SecuredOrPrepaid", 
-    BusinessCards = "BusinessCards", 
-    NoAnnualFees = "NoAnnualFees", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Bad = "Bad", 
-    NoCredit = "NoCredit", 
-    Newest = "Newest", 
-    SpecialDeals = "SpecialDeals", 
-}
-
-export enum OfferDetailsForEditDtoCampaignProviderType {
-    CreditLand = "CreditLand", 
-}
-
-export enum OfferDetailsForEditDtoParameterHandlerType {
-    Default = "Default", 
-}
-
-export enum OfferDetailsForEditDtoStatus {
-    PendingReview = "PendingReview", 
-    Active = "Active", 
-    Denied = "Denied", 
-    Suspended = "Suspended", 
-    SuspendedRisk = "SuspendedRisk", 
-    Inactive = "Inactive", 
-    Dormant = "Dormant", 
-    Deleted = "Deleted", 
-}
-
-export enum OfferDetailsForEditDtoType {
-    MultiOfferSinglePage = "MultiOfferSinglePage", 
-    TrafficDistribution = "TrafficDistribution", 
-    DirectPost = "DirectPost", 
-    Carrier = "Carrier", 
-}
-
-export enum ExtendOfferDtoCardNetwork {
-    AmEx = "AmEx", 
-    Discover = "Discover", 
-    Mastercard = "Mastercard", 
-    Visa = "Visa", 
-    Store = "Store", 
-}
-
-export enum ExtendOfferDtoCardType {
-    Credit = "Credit", 
-    Debit = "Debit", 
-}
-
-export enum ExtendOfferDtoTargetAudience {
-    Consumer = "Consumer", 
-    Business = "Business", 
-    Students = "Students", 
-}
-
-export enum ExtendOfferDtoSecuringType {
-    Unsecured = "Unsecured", 
-    Secured = "Secured", 
-    Prepaid = "Prepaid", 
-}
-
-export enum ExtendOfferDtoOfferCollection {
-    Best = "Best", 
-    BalanceTransfer = "BalanceTransfer", 
-    CashBack = "CashBack", 
-    RewardPoints = "RewardPoints", 
-    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
-    TravelAirlineHotel = "TravelAirlineHotel", 
-    SecuredOrPrepaid = "SecuredOrPrepaid", 
-    BusinessCards = "BusinessCards", 
-    NoAnnualFees = "NoAnnualFees", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Bad = "Bad", 
-    NoCredit = "NoCredit", 
-    Newest = "Newest", 
-    SpecialDeals = "SpecialDeals", 
-}
-
-export enum ExtendOfferDtoCampaignProviderType {
-    CreditLand = "CreditLand", 
-}
-
-export enum ExtendOfferDtoParameterHandlerType {
-    Default = "Default", 
-}
-
-export class Flags2 implements IFlags2 {
-    choice!: boolean | undefined;
-    best!: boolean | undefined;
-    travelAndAirlineMiles!: boolean | undefined;
-    dinigRewards!: boolean | undefined;
-    gasRewards!: boolean | undefined;
-    cashBackRewards!: boolean | undefined;
-    instantDecision!: boolean | undefined;
-    instantResponse!: boolean | undefined;
-    noCreditCheck!: boolean | undefined;
-    guaranteedApproval!: boolean | undefined;
-    rebuildCredit!: boolean | undefined;
-    chipCard!: boolean | undefined;
-    applePay!: boolean | undefined;
-    groceryRewards!: boolean | undefined;
-    entertainmentRewards!: boolean | undefined;
-    hotelRewards!: boolean | undefined;
-    hasNoRewards!: boolean | undefined;
-    zeroPercentageOnPurchases!: boolean | undefined;
-    zeroPercentageInterestTransfers!: boolean | undefined;
-    special!: boolean | undefined;
-    newest!: boolean | undefined;
-
-    constructor(data?: IFlags2) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.choice = data["Choice"];
-            this.best = data["Best"];
-            this.travelAndAirlineMiles = data["TravelAndAirlineMiles"];
-            this.dinigRewards = data["DinigRewards"];
-            this.gasRewards = data["GasRewards"];
-            this.cashBackRewards = data["CashBackRewards"];
-            this.instantDecision = data["InstantDecision"];
-            this.instantResponse = data["InstantResponse"];
-            this.noCreditCheck = data["NoCreditCheck"];
-            this.guaranteedApproval = data["GuaranteedApproval"];
-            this.rebuildCredit = data["RebuildCredit"];
-            this.chipCard = data["ChipCard"];
-            this.applePay = data["ApplePay"];
-            this.groceryRewards = data["GroceryRewards"];
-            this.entertainmentRewards = data["EntertainmentRewards"];
-            this.hotelRewards = data["HotelRewards"];
-            this.hasNoRewards = data["HasNoRewards"];
-            this.zeroPercentageOnPurchases = data["ZeroPercentageOnPurchases"];
-            this.zeroPercentageInterestTransfers = data["ZeroPercentageInterestTransfers"];
-            this.special = data["Special"];
-            this.newest = data["Newest"];
-        }
-    }
-
-    static fromJS(data: any): Flags2 {
-        data = typeof data === 'object' ? data : {};
-        let result = new Flags2();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["Choice"] = this.choice;
-        data["Best"] = this.best;
-        data["TravelAndAirlineMiles"] = this.travelAndAirlineMiles;
-        data["DinigRewards"] = this.dinigRewards;
-        data["GasRewards"] = this.gasRewards;
-        data["CashBackRewards"] = this.cashBackRewards;
-        data["InstantDecision"] = this.instantDecision;
-        data["InstantResponse"] = this.instantResponse;
-        data["NoCreditCheck"] = this.noCreditCheck;
-        data["GuaranteedApproval"] = this.guaranteedApproval;
-        data["RebuildCredit"] = this.rebuildCredit;
-        data["ChipCard"] = this.chipCard;
-        data["ApplePay"] = this.applePay;
-        data["GroceryRewards"] = this.groceryRewards;
-        data["EntertainmentRewards"] = this.entertainmentRewards;
-        data["HotelRewards"] = this.hotelRewards;
-        data["HasNoRewards"] = this.hasNoRewards;
-        data["ZeroPercentageOnPurchases"] = this.zeroPercentageOnPurchases;
-        data["ZeroPercentageInterestTransfers"] = this.zeroPercentageInterestTransfers;
-        data["Special"] = this.special;
-        data["Newest"] = this.newest;
-        return data; 
-    }
-}
-
-export interface IFlags2 {
     choice: boolean | undefined;
     best: boolean | undefined;
     travelAndAirlineMiles: boolean | undefined;
