@@ -16631,6 +16631,162 @@ export class OrderServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateStage(input: UpdateOrderStageInfo | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/UpdateStage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateStage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateStage(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateStage(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    process(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/Process?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProcess(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProcess(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processProcess(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    cancel(input: CancelOrderInfo | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/Cancel";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancel(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancel(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancel(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -23587,58 +23743,6 @@ export class TenantSettingsServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    getOngageSettings(): Observable<OngageSettingsEditDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetOngageSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetOngageSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetOngageSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<OngageSettingsEditDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<OngageSettingsEditDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetOngageSettings(response: HttpResponseBase): Observable<OngageSettingsEditDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OngageSettingsEditDto.fromJS(resultData200) : new OngageSettingsEditDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<OngageSettingsEditDto>(<any>null);
-    }
-
-    /**
      * @input (optional) 
      * @return Success
      */
@@ -23724,58 +23828,6 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateEPCVIPMailerSettings(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @settings (optional) 
-     * @return Success
-     */
-    updateOngageSettings(settings: OngageSettingsEditDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateOngageSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(settings);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateOngageSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateOngageSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateOngageSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -47982,7 +48034,6 @@ export interface IPaymentAuthorizeResponseDto {
 
 export class RegisterMemberRequest implements IRegisterMemberRequest {
     password!: string;
-    tenantHostType!: RegisterMemberRequestTenantHostType | undefined;
     registrationId!: string;
     name!: string;
     surname!: string;
@@ -48008,7 +48059,6 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     init(data?: any) {
         if (data) {
             this.password = data["password"];
-            this.tenantHostType = data["tenantHostType"];
             this.registrationId = data["registrationId"];
             this.name = data["name"];
             this.surname = data["surname"];
@@ -48034,7 +48084,6 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["password"] = this.password;
-        data["tenantHostType"] = this.tenantHostType;
         data["registrationId"] = this.registrationId;
         data["name"] = this.name;
         data["surname"] = this.surname;
@@ -48053,7 +48102,6 @@ export class RegisterMemberRequest implements IRegisterMemberRequest {
 
 export interface IRegisterMemberRequest {
     password: string;
-    tenantHostType: RegisterMemberRequestTenantHostType | undefined;
     registrationId: string;
     name: string;
     surname: string;
@@ -49942,6 +49990,86 @@ export interface IOrderHistoryInfo {
     userFullName: string | undefined;
     action: string | undefined;
     stage: string | undefined;
+}
+
+export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
+    orderId!: number;
+    stageId!: number;
+
+    constructor(data?: IUpdateOrderStageInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orderId = data["orderId"];
+            this.stageId = data["stageId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateOrderStageInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateOrderStageInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orderId"] = this.orderId;
+        data["stageId"] = this.stageId;
+        return data; 
+    }
+}
+
+export interface IUpdateOrderStageInfo {
+    orderId: number;
+    stageId: number;
+}
+
+export class CancelOrderInfo implements ICancelOrderInfo {
+    orderId!: number;
+    comment!: string;
+
+    constructor(data?: ICancelOrderInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.orderId = data["orderId"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): CancelOrderInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelOrderInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["orderId"] = this.orderId;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface ICancelOrderInfo {
+    orderId: number;
+    comment: string;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -55837,58 +55965,6 @@ export interface IEPCVIPMailerSettingsEditDto {
     server: EPCVIPMailerSettingsEditDtoServer | undefined;
 }
 
-export class OngageSettingsEditDto implements IOngageSettingsEditDto {
-    userName!: string | undefined;
-    password!: string | undefined;
-    accountCode!: string | undefined;
-    defaultListId!: number | undefined;
-    activationEmailMessageId!: number | undefined;
-
-    constructor(data?: IOngageSettingsEditDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.userName = data["userName"];
-            this.password = data["password"];
-            this.accountCode = data["accountCode"];
-            this.defaultListId = data["defaultListId"];
-            this.activationEmailMessageId = data["activationEmailMessageId"];
-        }
-    }
-
-    static fromJS(data: any): OngageSettingsEditDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new OngageSettingsEditDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userName"] = this.userName;
-        data["password"] = this.password;
-        data["accountCode"] = this.accountCode;
-        data["defaultListId"] = this.defaultListId;
-        data["activationEmailMessageId"] = this.activationEmailMessageId;
-        return data; 
-    }
-}
-
-export interface IOngageSettingsEditDto {
-    userName: string | undefined;
-    password: string | undefined;
-    accountCode: string | undefined;
-    defaultListId: number | undefined;
-    activationEmailMessageId: number | undefined;
-}
-
 export class IdcsSettings implements IIdcsSettings {
     requestSource!: string | undefined;
     partnerCode!: string | undefined;
@@ -60115,6 +60191,8 @@ export enum OfferAttribute {
 }
 
 export enum OfferFlag {
+    Special = "Special", 
+    Newest = "Newest", 
     Choice = "Choice", 
     Best = "Best", 
     TravelAndAirlineMiles = "TravelAndAirlineMiles", 
@@ -60134,8 +60212,6 @@ export enum OfferFlag {
     HasNoRewards = "HasNoRewards", 
     ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     ZeroPercentageInterestTransfers = "ZeroPercentageInterestTransfers", 
-    Special = "Special", 
-    Newest = "Newest", 
 }
 
 export enum Module {
@@ -60261,7 +60337,6 @@ export enum LayoutType2 {
 
 export enum TenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum Module2 {
@@ -60314,12 +60389,10 @@ export enum IsTenantAvailableOutputState {
 
 export enum SendPasswordResetCodeInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum SendEmailActivationLinkInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum ActivityDtoType {
@@ -60652,11 +60725,6 @@ export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
     BankCard = "BankCard", 
     ACH = "ACH", 
     PayPal = "PayPal", 
-}
-
-export enum RegisterMemberRequestTenantHostType {
-    PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum RegisterMemberRequestGender {
@@ -61208,32 +61276,26 @@ export enum SyncProgressDtoSyncStatus {
 
 export enum CreateTenantInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum CheckHostNameDnsMappingInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum TenantSslBindingInfoHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum AddSslBindingInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingCertificateInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum EPCVIPMailerSettingsEditDtoServer {
@@ -61276,7 +61338,6 @@ export enum CompleteTenantRegistrationInputPaymentPeriodType {
 
 export enum CompleteTenantRegistrationInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum TransactionDetailsDtoTransactionStatus {
@@ -61286,17 +61347,14 @@ export enum TransactionDetailsDtoTransactionStatus {
 
 export enum ActivateUserForContactInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum CreateOrUpdateUserInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum InviteUserInputTenantHostType {
     PlatformApp = "PlatformApp", 
-    FundingUi = "FundingUi", 
 }
 
 export enum InviteUserInputModuleType {
