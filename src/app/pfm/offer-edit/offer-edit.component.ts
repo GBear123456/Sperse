@@ -21,15 +21,14 @@ import { RootComponent } from 'root.components';
 import {
     CountryStateDto,
     CreditScores2,
-    ExtendOfferDto,
-    OfferDetailsForEditDtoCampaignProviderType,
-    OfferDetailsForEditDtoCardNetwork,
-    OfferDetailsForEditDtoCardType,
-    OfferDetailsForEditDtoOfferCollection,
-    OfferDetailsForEditDtoParameterHandlerType,
-    OfferDetailsForEditDtoSecuringType,
+    ExtendOfferDtoCampaignProviderType,
+    ExtendOfferDtoCardNetwork,
+    ExtendOfferDtoCardType,
+    ExtendOfferDtoOfferCollection,
+    ExtendOfferDtoParameterHandlerType,
+    ExtendOfferDtoSecuringType,
     OfferDetailsForEditDtoStatus, OfferDetailsForEditDtoSystemType,
-    OfferDetailsForEditDtoTargetAudience,
+    ExtendOfferDtoTargetAudience,
     OfferDetailsForEditDtoType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -101,7 +100,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         parameterHandlerType: {
             hidden: true,
-            enum: OfferDetailsForEditDtoParameterHandlerType
+            enum: ExtendOfferDtoParameterHandlerType
         },
         campaignId: {
             readOnly: true
@@ -134,18 +133,18 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         },
         cardNetwork: {
             readOnly: true,
-            enum: OfferDetailsForEditDtoCardNetwork
+            enum: ExtendOfferDtoCardNetwork
         },
         cartType: {
             readOnly: true
         },
         targetAudience: {
             readOnly: true,
-            enum: OfferDetailsForEditDtoTargetAudience
+            enum: ExtendOfferDtoTargetAudience
         },
         securingType: {
             readOnly: true,
-            enum: OfferDetailsForEditDtoSecuringType
+            enum: ExtendOfferDtoSecuringType
         },
         issuingBank: {
             readOnly: true
@@ -228,7 +227,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             cssClass: 'groupItem'
         },
         offerCollection: {
-            enum: OfferDetailsForEditDtoOfferCollection,
+            enum: ExtendOfferDtoOfferCollection,
             position: FieldPositionEnum.Left,
             readOnly$: this.offerNotInCardCategory$
         },
@@ -255,10 +254,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             type: FieldType.Rating
         },
         cardType: {
-            enum: OfferDetailsForEditDtoCardType
+            enum: ExtendOfferDtoCardType
         },
         campaignProviderType: {
-            enum: OfferDetailsForEditDtoCampaignProviderType
+            enum: ExtendOfferDtoCampaignProviderType
         },
         states: {
             position: FieldPositionEnum.Left,
@@ -319,17 +318,18 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'cartType',
             'targetAudience',
             'securingType',
-            'issuingBank',
             'countries',
             'daysOfWeekAvailability',
             'effectiveTimeOfDay',
             'expireTimeOfDay',
+            'asfdasdf',
             'termsOfService',
             'traficSource',
             'pros',
             'details',
             'cons',
-            'campaignUrl'
+            'campaignUrl',
+            'issuingBank'
         ],
         'rating': [
             'overallRating',
@@ -385,7 +385,17 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         this.offerDetails$.subscribe(details => {
             this.model = details;
         });
-        this.allDetails$ = this.offerDetails$.pipe(map((details: OfferDetailsForEditDto) => Object.keys(details)));
+        this.allDetails$ = this.offerDetails$.pipe(map((details: OfferDetailsForEditDto) => {
+            let res = [];
+            for (let detail in details) {
+                if (detail === 'extendedInfo') {
+                    res = res.concat(this.keys(details.extendedInfo));
+                } else {
+                    res.push(detail);
+                }
+            }
+            return res;
+        }));
         this.filteredBySectionDetails$ = combineLatest(
             this.allDetails$,
             this.section$
@@ -476,14 +486,14 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        this.offerManagementService.extend(ExtendOfferDto.fromJS(this.model))
+        this.offerManagementService.extend(this.model.campaignId, this.model.extendedInfo)
             .pipe(finalize(() => abp.ui.clearBusy()))
             .subscribe();
     }
 
     getInplaceEditData() {
         return {
-            value: this.model && (this.model.customName || this.model.name)
+            value: this.model && (this.model.extendedInfo.customName || this.model.name)
         };
     }
 
@@ -496,7 +506,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     updateCustomName(value: string) {
-        this.model['customName'] = value;
+        this.model.extendedInfo.customName = value;
     }
 
     ngOnDestroy() {
@@ -521,5 +531,4 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         }
         return readOnly$;
     }
-
 }
