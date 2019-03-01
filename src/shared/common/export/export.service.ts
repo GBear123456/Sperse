@@ -105,9 +105,9 @@ export class ExportService {
             dataStore._beforeSend = (request) => {
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
                 initialBeforeSend.call(dataStore, request);
-            }
+            };
 
-            instance.on("exported", () => {
+            instance.on('exported', () => {
                 if (isLoadPanel)
                     instance.option('loadPanel.enabled', true);
                 dataStore._beforeSend = initialBeforeSend;

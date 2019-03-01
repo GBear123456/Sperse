@@ -10,7 +10,7 @@
                     </inplace-edit>
                 </ng-container>
             </ng-container>
-            <button class="button-layout button-primary" type="submit" (click)="onSubmit()">Save</button>
+            <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">Save</button>
             <div class="vertical-delimiter ng-star-inserted"></div>
             <button (click)="refreshData()" class="refresh-button ng-star-inserted"></button>
         </header>
@@ -51,7 +51,7 @@
                                             [dataSource]="detailsConfig[detail].dataSourceConfig
                                                           ? detailsConfig[detail].dataSourceConfig.async ? (detailsConfig[detail].dataSourceConfig.source | async) : detailsConfig[detail].dataSourceConfig.source
                                                           : keys(detailsConfig[detail].enum)"
-                                            [(value)]="model[detail]"
+                                            [(value)]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail]"
                                             [disabled]="isReadOnly(detail) | async">
                                         </dx-tag-box>
                                     </ng-container>
@@ -99,7 +99,7 @@
                                                     [placeholder]="ls.l('Max')"
                                                     [disabled]="isReadOnly(detail) | async"
                                                     [format]="isCurrencyType(detail) ? '$ #,##0.##;($ #,##0.##)' : ''"
-                                                    [(value)]="model['max' + detail.slice(3)]">
+                                                    [(value)]="model.hasOwnProperty('max' + detail.slice(3)) ? model['max' + detail.slice(3)] : model.extendedInfo['max' + detail.slice(3)]">
                                                 </dx-number-box>
                                             </ng-container>
                                         </div>
