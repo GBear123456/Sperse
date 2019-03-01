@@ -9,8 +9,9 @@ export const environment = {
     hmr: false,
     appBaseUrl: 'http://localhost:7200',
     appBaseHref: 'https://testuicdn.azureedge.net/current/',
-    appConfig: 'appconfig.json',
+    appConfig: 'appconfig.json',    
 
     /* Custom tenant domains */
-    LENDSPACE_DOMAIN: 'http://localhost:9000'
+    LENDSPACE_DOMAIN: 'http://localhost:9000',
+    LENDSPACE_HEADER_THEME: 'black'
 };

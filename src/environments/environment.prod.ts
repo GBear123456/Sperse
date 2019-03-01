@@ -7,5 +7,6 @@ export const environment = {
     appBaseHref: 'https://sperseproduicdn.azureedge.net/current/',
 
     /* Custom tenant domains */
-    LENDSPACE_DOMAIN: 'https://www.lendspace.com'
+    LENDSPACE_DOMAIN: 'https://www.lendspace.com',
+    LENDSPACE_HEADER_THEME: 'black'
 };
