@@ -447,7 +447,7 @@
                             </div>
                         </div>
                     </tab>
-                    <tab heading="{{l('EPCVIPEmail')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
+                    <!--<tab heading="{{l('EPCVIPEmail')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
                         <div>
                             <div class="form-group">
                                 <label for="EPCVIPEmailApiKey">{{l("EPCVIPEmailApiKey")}}</label>
@@ -469,6 +469,14 @@
                                     <option></option>
                                     <option *ngFor="let server of epcvipEmailServers" [value]="server">{{server}}</option>
                                 </select>
+                            </div>
+                        </div>
+                    </tab>-->
+                    <tab heading="{{l('IAge')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
+                        <div>
+                            <div class="form-group">
+                                <label for="IAgeApiKey">{{l("IAgeApiKey")}}</label>
+                                <input id="IAgeApiKey" type="text" name="IAgeApiKey" class="form-control" [(ngModel)]="iageSettings.apiKey" maxlength="128">
                             </div>
                         </div>
                     </tab>
