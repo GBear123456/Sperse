@@ -35,6 +35,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { FieldPositionEnum } from '@app/pfm/offer-edit/field-position.enum';
 import { FieldType } from '@app/pfm/offer-edit/field-type.enum';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     selector: 'offer-edit',
@@ -367,6 +368,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             'flags'
         ]
     };
+    offerIsUpdating = false;
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
@@ -374,7 +376,8 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         private applicationRef: ApplicationRef,
         private router: Router,
         public ls: AppLocalizationService,
-        private store$: Store<RootStore.State>
+        private store$: Store<RootStore.State>,
+        private notifyService: NotifyService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
     }
@@ -486,9 +489,17 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
+        this.offerIsUpdating = true;
+        abp.ui.setBusy();
         this.offerManagementService.extend(this.model.campaignId, this.model.extendedInfo)
-            .pipe(finalize(() => abp.ui.clearBusy()))
-            .subscribe();
+            .pipe(finalize(() => {
+                abp.ui.clearBusy();
+                this.offerIsUpdating = false;
+            }))
+            .subscribe(
+                () => this.notifyService.info(this.ls.l('SavedSuccessfully', 'Platform')),
+                e => this.notifyService.error(e)
+            );
     }
 
     getInplaceEditData() {
