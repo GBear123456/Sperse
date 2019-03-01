@@ -263,6 +263,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             this.filterModelFlags = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'Flag',
+                field: 'Flags',
                 items: {
                     element: new FilterCheckBoxesModel({
                         dataSource: this.flags,
@@ -274,6 +275,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             this.filterModelAttributes = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'Attribute',
+                field: 'Attributes',
                 items: {
                     element: new FilterCheckBoxesModel({
                         dataSource: this.attributes,
@@ -327,8 +329,23 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     this.capitalize(filter.caption)];
                 if (filterMethod)
                     return filterMethod.call(this, filter);
-            }
+            },
+            null,
+            this.getCustomFiltersParams()
         );
+    }
+
+    private getCustomFiltersParams() {
+        return [ ...this.getFilterParams('Flags'), ...this.getFilterParams('Attributes') ];
+    }
+
+    private getFilterParams(filterField: string): { name: string, value: string }[] {
+        let filterParams = [];
+        const filterValue = this['filterModel' + filterField].items.element.value;
+        filterValue && filterValue.forEach(filterValue => {
+            filterParams.push({ name: filterField, value: filterValue });
+        });
+        return filterParams;
     }
 
     expandColapseRow(e) {
@@ -394,7 +411,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         });
     }
 
-    categoryGroupValue(data) {
+    getCategoryValue(data) {
         return data.Categories.map(item => item.Name).join(', ');
     }
 
