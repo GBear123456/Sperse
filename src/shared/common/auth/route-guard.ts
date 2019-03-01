@@ -57,7 +57,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     selectBestRoute(): string {
         if (abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT) {
             if (this._sessionService.userId !== null) {
-                const lastModuleName = this._cacheService.get('lastVisitedModule_' + this._sessionService.userId);
+                const lastModuleName = this._cacheService.get('lastVisitedModule_' + this._sessionService.tenantId + '_' + this._sessionService.userId);
                 if (lastModuleName) {
                     return 'app/' + lastModuleName;
                 }
