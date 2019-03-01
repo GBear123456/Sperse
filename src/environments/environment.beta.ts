@@ -7,5 +7,6 @@ export const environment = {
     appBaseHref: 'https://sperseuicdn.azureedge.net/current/',
 
     /* Custom tenant domains */
-    LENDSPACE_DOMAIN: 'https://betaweb.lendspace.com'
+    LENDSPACE_DOMAIN: 'https://betaweb.lendspace.com',
+    LENDSPACE_HEADER_THEME: 'black'
 };

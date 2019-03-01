@@ -25,7 +25,8 @@ import {
     EPCVIPMailerSettingsEditDto,
     TenantLoginInfoDtoCustomLayoutType,
     EPCVIPMailerSettingsEditDtoServer,
-    OngageSettingsEditDto
+    OngageSettingsEditDto,
+    IAgeSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -66,6 +67,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     epcvipEmailServers: string[] = [];
 
     ongageSettings: OngageSettingsEditDto = new OngageSettingsEditDto();
+    iageSettings: IAgeSettingsEditDto = new IAgeSettingsEditDto();
 
     logoUploader: FileUploader;
     faviconsUploader: FileUploader;
@@ -123,8 +125,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
                 this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
-                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null)
+                //this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
+                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
+                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null)
             ];
         if (this.isPFMApplicationsFeatureEnabled)
         {
@@ -142,8 +145,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.recurlySettings,
                     this.idcsSettings,
                     this.epcvipSettings,
-                    this.epcvipEmailSettings,
-                    this.ongageSettings
+                    //this.epcvipEmailSettings,
+                    this.ongageSettings,
+                    this.iageSettings
                 ] = results;
 
                 if (this.settings.general) {
@@ -291,10 +295,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
         if (this.isPFMApplicationsFeatureEnabled)
             requests.push(this._tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
-        if (this.isPFMApplicationsFeatureEnabled)
-            requests.push(this._tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
+        //if (this.isPFMApplicationsFeatureEnabled)
+        //    requests.push(this._tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
         if (this.isPFMApplicationsFeatureEnabled)
             requests.push(this._tenantSettingsService.updateOngageSettings(this.ongageSettings));
+        if (this.isPFMApplicationsFeatureEnabled)
+            requests.push(this._tenantSettingsService.updateIAgeSettings(this.iageSettings));
 
         forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));

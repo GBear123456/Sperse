@@ -13,14 +13,25 @@ import * as _ from 'lodash';
 /** Application imports */
 import { CrmStore, PipelinesStoreActions } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { PipelineDto, StageDto } from '@shared/service-proxies/service-proxies';
+import {
+    PipelineDto,
+    StageDto,
+    StageServiceProxy,
+    CreateStageInput,
+    RenameStageInput,
+    MergeLeadStagesInput
+} from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
+import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import dxTooltip from 'devextreme/ui/tooltip';
 
 @Component({
     selector: 'app-pipeline',
     templateUrl: './pipeline.component.html',
     styleUrls: ['./pipeline.component.less'],
+    providers: [ StageServiceProxy ],
     host: {
         '(window:keyup)': 'onKeyUp($event)'
     }
@@ -30,7 +41,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCardClick: EventEmitter<any> = new EventEmitter<any>();
 
-    private _selectedEntities : any;
+    private _selectedEntities: any;
     private _dataSource: any;
     private _dataSources: any = {};
     private refreshTimeout: any;
@@ -40,6 +51,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private quiet: boolean;
     private stageId: number;
     private dataSource$: Subject<DataSource> = new Subject<DataSource>();
+
+    createStageInput: CreateStageInput = new CreateStageInput();
+    renameStageInput: RenameStageInput = new RenameStageInput();
+    mergeLeadStagesInput: MergeLeadStagesInput = new MergeLeadStagesInput();
+    currentTooltip: dxTooltip;
 
     @Output() selectedEntitiesChange = new EventEmitter<any>();
     @Input() get selectedEntities() {
@@ -72,7 +88,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     constructor(injector: Injector,
         private _dragulaService: DragulaService,
         private _pipelineService: PipelineService,
-        private store$: Store<CrmStore.State>
+        private _stageServiceProxy: StageServiceProxy,
+        private store$: Store<CrmStore.State>,
+        public dialog: MatDialog
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -125,6 +143,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 mergeMap(pipeline => pipeline)
             ).subscribe((pipeline: PipelineDto) => {
                 this.pipeline = pipeline;
+                this.createStageInput.pipelineId = this.pipeline.id;
+                this.mergeLeadStagesInput.pipelineId = this.pipeline.id;
                 if (!this.stages && !this.quiet)
                     this.onStagesLoaded.emit(pipeline);
 
@@ -458,5 +478,66 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         } else
             this.onCardClick.emit(entity);
         this.hideStageHighlighting();
+    }
+
+    onTooltipShowing(event) {
+        this.currentTooltip = event.component;
+    }
+
+    updateStage(data, actionType) {
+        this.currentTooltip.hide();
+        this.createStageInput.sortOrder = data.sortOrder != 0 ? data.sortOrder : data.sortOrder + 1;
+        this.mergeLeadStagesInput.sourceStageId = this.renameStageInput.id = data.id;
+        this.dialog.open(AddRenameMergeDialogComponent, {
+            height: '300px',
+            width: '270px',
+            id: actionType + '-Stage',
+            data: {
+                dialogTitle: this.l(actionType + '_Stage_Title'),
+                placeholder: this.l(actionType + '_Stage_Placeholder'),
+                newStageName: null,
+                entities: data.entities,
+                stages: this.stages,
+                currentStageId: data.id,
+                currentStageName: data.name,
+                moveToStage: null,
+                actionType: actionType
+            }
+        }).afterClosed().subscribe(result => {
+            switch (actionType) {
+                case 'Add':
+                    if (result && result.newStageName) {
+                        this.createStageInput.name = result.newStageName;
+                        this._stageServiceProxy.createStage(this.createStageInput).subscribe(() => {
+                            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+                        });
+                    }
+                    break;
+                case 'Rename':
+                    if (result && result.newStageName) {
+                        this.renameStageInput.name = result.newStageName;
+                        this._stageServiceProxy.renameStage(this.renameStageInput).subscribe(() => {
+                            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+                        });
+                    }
+                    break;
+                case 'Merge':
+                    if (result && result.moveToStage) {
+                        this.mergeLeadStagesInput.destinationStageId = result.moveToStage;
+                        this._stageServiceProxy.mergeStages(this.mergeLeadStagesInput).subscribe(() => {
+                                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+                            }
+                        );
+                    } else if (result && !result.moveToStage) {
+                        this._stageServiceProxy.mergeStages(this.mergeLeadStagesInput).subscribe(() => {
+                            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+                        });
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        });
     }
 }

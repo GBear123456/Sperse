@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>{{dialogData.dialogTitle}}</h1>
+<div mat-dialog-content>
+    <mat-form-field *ngIf="!dialogData.entities || dialogData.actionType != 'Merge'">
+        <input cdkFocusInitial [placeholder]="dialogData.placeholder" matInput [(ngModel)]="dialogData.newStageName">
+    </mat-form-field>
+    <mat-form-field *ngIf="dialogData.entities && dialogData.entities.length && dialogData.actionType == 'Merge'">
+        <mat-select [placeholder]="dialogData.placeholder"
+                    cdkFocusInitial
+                    (selectionChange)="onStageSelected($event)">
+            <mat-option *ngFor="let stage of availableStages" [value]="stage.id">
+                {{stage.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <p *ngIf="dialogData.actionType == 'Merge' && !dialogData.entities.length">
+        {{ls.l('Really_Remove_Stage')}} <b>{{dialogData.currentStageName}}</b>?
+    </p>
+</div>
+<div mat-dialog-actions>
+    <button mat-button mat-dialog-close class="btn-default">{{ls.l('Cancel')}}</button>
+    <button mat-button [mat-dialog-close]="dialogData" class="btn-layout">{{ls.l('Submit')}}</button>
+</div>

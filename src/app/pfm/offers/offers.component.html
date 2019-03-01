@@ -68,7 +68,7 @@
                             [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                 <dxi-column dataField="Name" caption="{{l('Offer_Name')}}"></dxi-column>
                 <dxi-column dataField="CardNetwork" caption="{{l('Offer_Network')}}" [width]="150"></dxi-column>
-                <dxi-column dataField="Categories" caption="{{l('Category')}}" [width]="300" cellTemplate="categoriesCell" [calculateGroupValue]="categoryGroupValue"></dxi-column>
+                <dxi-column dataField="Categories" caption="{{l('Category')}}" [width]="300" [calculateSortValue]="getCategoryValue" [calculateGroupValue]="getCategoryValue" [calculateCellValue]="getCategoryValue"></dxi-column>
                 <dxi-column dataField="Status" caption="{{l('Offer_Status')}}" [width]="180"></dxi-column>
                 <dxi-column dataField="IsPublished" caption="{{l('Offer_Published')}}" dataType="boolean"></dxi-column>
                 <dxi-column dataField="Created" caption="{{l('Offer_Created')}}" [width]="180" cellTemplate="dateCell"></dxi-column>
@@ -78,11 +78,6 @@
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'">
                     {{cellData.value | date: 'MM/dd/yyyy'}}
-                </div>
-                <div *dxTemplate="let cellData of 'categoriesCell'">
-                    <span *ngFor="let category of cellData.value; let last = last">
-                        {{category.Name}}{{ last ? '': ', ' }}
-                    </span>
                 </div>
                 <dxo-group-panel [visible]="true"></dxo-group-panel>
             </dx-data-grid>
