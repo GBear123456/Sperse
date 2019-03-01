@@ -50,6 +50,7 @@ import { OperationsWidgetComponent } from './operations-widget.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
+import { HistoryListDialogComponent } from './orders/history-list-dialog/history-list-dialog.component';
 import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
@@ -147,6 +148,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
         CreateClientDialogComponent,
         ContactListDialogComponent,
         NotSupportedTypeDialogComponent,
+        HistoryListDialogComponent,
         OrdersComponent
     ],
     imports: [
@@ -207,7 +209,8 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
         NoteAddDialogComponent,
         RelationCompaniesDialogComponent,
         CreateClientDialogComponent,
-        NotSupportedTypeDialogComponent
+        NotSupportedTypeDialogComponent,
+        HistoryListDialogComponent
     ],
     providers: [
         DialogService,

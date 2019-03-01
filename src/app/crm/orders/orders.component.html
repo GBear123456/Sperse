@@ -13,6 +13,7 @@
                                       [columnAutoWidth]="true"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
+                                      (onCellClick)="onCardClick($event.data)"
                                       [pager]="defaultGridPagerConfig"
                                       (onContentReady)="onContentReady($event)"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">

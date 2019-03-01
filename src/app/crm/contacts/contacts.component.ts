@@ -286,7 +286,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         let userId = params['userId'],
             clientId = params['clientId'],
             partnerId = params['partnerId'],
-            customerId = clientId || partnerId,
+            customerId = params['contactId'],
             leadId = params['leadId'],
             companyId = params['companyId'];
 
@@ -295,7 +295,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             userId: userId, user: null, roles: null
         };
         this._contactService['data'].contactInfo = {
-            id: this.customerId = customerId
+            id: this.customerId = customerId || clientId || partnerId
         };
         this._contactService['data'].leadInfo = {
             id: this.leadId = leadId
@@ -304,7 +304,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         if (userId)
             this.loadDataForUser(userId, companyId);
         else
-            this.loadDataForClient(customerId, leadId, partnerId, companyId);
+            this.loadDataForClient(this.customerId, leadId, partnerId, companyId);
     }
 
     get isUserProfile() {

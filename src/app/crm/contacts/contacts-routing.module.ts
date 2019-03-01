@@ -23,8 +23,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
         RouterModule.forChild([{
             path: '',
             data: { localizationSource: 'CRM' },
-            children:
-            [
+            children: [
             {
                 path: 'user/:userId',
                 component: ContactsComponent,
@@ -155,8 +154,27 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } }
                 ]
+            },
+            {
+                path: 'contact/:contactId',
+                component: ContactsComponent,
+                children: [
+                    { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
+                    { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
+                    { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'questionnaire', component: QuestionnaireComponent },
+                    { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
+                    { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'activity-logs', component: ActivityLogsComponent },
+                    { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'orders', component: OrdersComponent },
+                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
+                ]
             }
-            ]}])
+        ]}])
     ],
     exports: [
         RouterModule

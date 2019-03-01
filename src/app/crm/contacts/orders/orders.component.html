@@ -15,7 +15,7 @@
                                       (onContentReady)="onContentReady($event)"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
-                            <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false"></dxi-column>
+                            <dxi-column [width]="40" [alignment]="'center'" [allowEditing]="false" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false" cellTemplate="historyCell"></dxi-column>
                             <dxi-column dataField="Stage" caption="{{l('Stage')}}" [allowEditing]="false"></dxi-column>
                             <dxi-column dataField="Amount" alignment="left" caption="{{l('Amount')}}" [allowEditing]="true"></dxi-column>
                             <dxi-column dataField="OrderType" caption="{{l('Type')}}" [allowEditing]="false"></dxi-column>
@@ -27,6 +27,9 @@
                             <dxo-paging [pageSize]="20"></dxo-paging>
                             <div *dxTemplate="let cellData of 'dateCell'">
                                 {{cellData.value | date: formatting.dateTime}}
+                            </div>
+                            <div *dxTemplate="let cellInfo of 'historyCell'">
+                                <a href="javascript:void(0);" class="dx-icon-event" (click)="showHistory(cellInfo.data)"></a>
                             </div>
                         </dx-data-grid>
                     </div>

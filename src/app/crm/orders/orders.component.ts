@@ -446,9 +446,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onCardClick(order) {
-        if (order && order.Id)
+        if (order && order.ContactId)
             this._router.navigate(
-                ['app/crm/order', order.Id, 'order', order.Id, 'contact-information'], {
+                ['app/crm/contact', order.ContactId, 'orders'], {
                     queryParams: {
                         referrer: 'app/crm/orders',
                         dataLayoutType: DataLayoutType.Pipeline

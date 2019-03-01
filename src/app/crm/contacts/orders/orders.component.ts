@@ -9,6 +9,7 @@ import {
 
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -16,6 +17,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { ContactServiceProxy, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -30,8 +32,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     private formatting = AppConsts.formatting;
 
     constructor(injector: Injector,
-                private _contactService: ContactServiceProxy,
-                private orderServiceProxy: OrderServiceProxy
+        private dialog: MatDialog,
+        private _contactService: ContactServiceProxy,
+        private orderServiceProxy: OrderServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.dataSource = {
@@ -94,4 +97,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
         }
     }
 
+    showHistory(data) {
+        setTimeout(() => 
+            this.dialog.open(HistoryListDialogComponent, {
+                panelClass: 'slider',
+                disableClose: false,
+                hasBackdrop: false,
+                closeOnNavigation: true,
+                data: data
+            })
+        );
+    }
 }
