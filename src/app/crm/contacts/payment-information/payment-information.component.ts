@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, OnInit, Injector, ViewChild, Elemen
 
 /** Third party imports */
 import { BehaviorSubject, Observable, of, combineLatest } from 'rxjs';
-import { publishReplay, refCount, tap, switchMap, finalize } from 'rxjs/operators';
+import { publishReplay, refCount, tap, map, switchMap, finalize, distinctUntilChanged } from 'rxjs/operators';
 import { CreditCard } from 'angular-cc-library';
 import * as moment from 'moment';
 
@@ -32,6 +32,10 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     paymentMethods$: Observable<PaymentMethodInfo[]>;
     paymentMethodsTypes = PaymentMethodInfoType;
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
+    private _refresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    refresh: Observable<boolean> = this._refresh.asObservable();
+    groupId$: Observable<number>;
+    contactIdAndRefreshSubscribe$: Observable<[number, boolean]>;
     constructor(
         injector: Injector,
         private paymentServiceProxy: PaymentServiceProxy,
@@ -42,13 +46,36 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     }
 
     ngOnInit() {
-        const groupId = this.contactService['data'].contactInfo.id;
         this.balanceAmount$ = of(0);
-        /** Create data prop if not exists */
-        this.paymentServiceProxy['data'] = this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][groupId]
-                                           ? this.paymentServiceProxy['data']
-                                           : { [groupId]: { payments: null, paymentMethods: null } };
-        this.payments$ = this.getPayments(groupId);
+        this.groupId$ = this._contactsService.contactInfo$.pipe(map(contactInfo => contactInfo.id));
+        this.groupId$.subscribe(groupId => {
+            /** Create data prop if not exists */
+            this.paymentServiceProxy['data'] = this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][groupId]
+                ? this.paymentServiceProxy['data']
+                : { [groupId]: { payments: null, paymentMethods: null } };
+        });
+
+        this.contactIdAndRefreshSubscribe$ = combineLatest(
+            this.groupId$.pipe(distinctUntilChanged()),
+            this.refresh
+        );
+        this.payments$ = this.contactIdAndRefreshSubscribe$.pipe(
+            tap(() => abp.ui.setBusy(this.paymentsContainer.nativeElement)),
+            switchMap(
+                ([contactId, refresh]: [number, boolean]) => {
+                    return (!refresh && this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].payments
+                        ? of(this.paymentServiceProxy['data'][contactId].payments)
+                        : this.paymentServiceProxy.getPayments(contactId).pipe(
+                            tap(payments => {
+                                this.paymentServiceProxy['data'][contactId].payments = payments;
+                            })
+                        )).pipe(finalize(() => {abp.ui.clearBusy(this.paymentsContainer.nativeElement); }));
+                }
+            ),
+            publishReplay(),
+            refCount()
+        );
+
         this.dispayedPayments$ =
             combineLatest(
                 this.payments$,
@@ -58,7 +85,16 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
                     return of(limit !== null ? payments.slice(0, limit) : payments);
                 })
             );
-        this.paymentMethods$ = this.getPaymentMethods(groupId);
+
+        this.paymentMethods$ = this.contactIdAndRefreshSubscribe$.pipe(
+                switchMap(([contactId, refresh]: [number, boolean]) => {
+                    return !refresh && this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].paymentMethods ?
+                        of(this.paymentServiceProxy['data'][contactId].paymentMethods) :
+                        this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
+                            tap(paymentMethods => this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods)
+                        );
+                })
+            );
         // this.warningMessage$ = this.paymentMethods$.pipe(
         //     concatAll(),
         //     pluck('issues'),
@@ -68,31 +104,9 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
 
         this._contactsService.invalidateSubscribe((area) => {
             if (area == 'payment-information') {
-                this.payments$.subscribe();
-                this.paymentMethods$.subscribe();
+                this._refresh.next(true);
             }
         });
-    }
-
-    getPayments(contactId): Observable<MonthlyPaymentInfo[]> {
-        abp.ui.setBusy(this.paymentsContainer.nativeElement);
-        return (this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].payments ?
-               of(this.paymentServiceProxy['data'][contactId].payments) :
-               this.paymentServiceProxy.getPayments(contactId).pipe(
-                   publishReplay(),
-                   refCount(),
-                   tap(payments => this.paymentServiceProxy['data'][contactId].payments = payments)
-               )).pipe(
-                   finalize(() => abp.ui.clearBusy(this.paymentsContainer.nativeElement))
-                );
-    }
-
-    getPaymentMethods(contactId): Observable<PaymentMethodInfo[]> {
-        return this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].paymentMethods ?
-               of(this.paymentServiceProxy['data'][contactId].paymentMethods) :
-               this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
-                   tap(paymentMethods => this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods)
-               );
     }
 
     formatDate(date: moment.Moment) {
