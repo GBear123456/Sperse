@@ -284,7 +284,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         !area && this.loadData(this.params);
     }
 
-    loadData(params, enableLoaderInside = true) {
+    loadData(params) {
         let userId = params['userId'],
             clientId = params['clientId'],
             partnerId = params['partnerId'],
@@ -305,7 +305,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         if (userId)
             this.loadDataForUser(userId, companyId);
         else
-            this.loadDataForClient(customerId, leadId, partnerId, companyId, enableLoaderInside);
+            this.loadDataForClient(customerId, leadId, partnerId, companyId);
     }
 
     get isUserProfile() {
@@ -342,9 +342,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    loadDataForClient(contactId: number, leadId: number, partnerId: number, companyId: number, enableLoaderInside: boolean) {
+    loadDataForClient(contactId: number, leadId: number, partnerId: number, companyId: number) {
         if (contactId) {
-            if (enableLoaderInside) this.startLoading(true);
+            if (!this.loading) this.startLoading(true);
             let contactInfo$ = this.getContactInfoWithCompany(companyId,
                 this._contactService.getContactInfo(contactId)
             );
@@ -745,12 +745,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     this.currentItemId = items[0].Id;
                     this.loadData({
                         userId: this.dataSourceURI != 'Lead' ? items[0].UserId : undefined,
-                        clientId: this.dataSourceURI == 'Customer' ? items[0].Id : undefined,
+                        clientId: this.dataSourceURI == 'Customer' ? items[0].Id : this.dataSourceURI == 'Lead' ? items[0].CustomerId : undefined,
                         partnerId: this.dataSourceURI == 'Partner' ? items[0].Id : undefined,
-                        customerId: this.dataSourceURI == 'Lead' ? items[0].CustomerId : undefined,
                         leadId: this.dataSourceURI == 'Lead' ? items[0].Id : undefined,
-                        companyId: items[0].OrganizationId,
-                    }, false);
+                        companyId: items[0].OrganizationId
+                    });
                     switch (this.referrerParams.referrer.split('/').pop()) {
                         case 'leads':
                             this._contactsService.updateLocation(items[0].CustomerId, this.currentItemId, null, items[0].OrganizationId);
