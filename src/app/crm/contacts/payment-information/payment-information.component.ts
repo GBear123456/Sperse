@@ -59,6 +59,7 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
             this.groupId$.pipe(distinctUntilChanged()),
             this.refresh
         );
+
         this.payments$ = this.contactIdAndRefreshSubscribe$.pipe(
             tap(() => abp.ui.setBusy(this.paymentsContainer.nativeElement)),
             switchMap(
@@ -76,25 +77,24 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
             refCount()
         );
 
-        this.dispayedPayments$ =
-            combineLatest(
-                this.payments$,
-                this.paymentsDisplayLimit$
-            ).pipe(
-                switchMap(([payments, limit]) => {
-                    return of(limit !== null ? payments.slice(0, limit) : payments);
-                })
-            );
+        this.dispayedPayments$ = combineLatest(
+            this.payments$,
+            this.paymentsDisplayLimit$
+        ).pipe(
+            switchMap(([payments, limit]) => {
+                return of(limit !== null ? payments.slice(0, limit) : payments);
+            })
+        );
 
         this.paymentMethods$ = this.contactIdAndRefreshSubscribe$.pipe(
-                switchMap(([contactId, refresh]: [number, boolean]) => {
-                    return !refresh && this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].paymentMethods ?
-                        of(this.paymentServiceProxy['data'][contactId].paymentMethods) :
-                        this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
-                            tap(paymentMethods => this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods)
-                        );
-                })
-            );
+            switchMap(([contactId, refresh]: [number, boolean]) => {
+                return !refresh && this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].paymentMethods ?
+                    of(this.paymentServiceProxy['data'][contactId].paymentMethods) :
+                    this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
+                        tap(paymentMethods => this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods)
+                    );
+            })
+        );
         // this.warningMessage$ = this.paymentMethods$.pipe(
         //     concatAll(),
         //     pluck('issues'),
