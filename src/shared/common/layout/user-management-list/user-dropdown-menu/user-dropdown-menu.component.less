@@ -47,10 +47,18 @@
         color: #43383b !important;
     }
 
-    .m-dropdown__header {
-        padding: 30px 25px 26px;
-        background: linear-gradient(to right, #AF47C0 60%, #3B58C1);
-        box-shadow: inset 2px 5px 12px 2px #AF47C0;
+    
+    .m-dropdown__inner {
+        @media (max-width: 400px) {
+            transform: scale(0.8);
+            transform-origin: top right;
+        }
+
+        .m-dropdown__header {
+            padding: 30px 25px 26px;
+            background: linear-gradient(to right, #AF47C0 60%, #3B58C1);
+            box-shadow: inset 2px 5px 12px 2px #AF47C0;
+        }
     }
 
     .header-profile-picture,

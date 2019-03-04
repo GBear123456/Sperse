@@ -22,43 +22,45 @@
                     {{ subtitle }}
                 </div>
             </div>
-            <div class="m-dropdown__body">
-                <div class="m-dropdown__content">
-                    <ul class="m-nav m-nav--skin-light">
-                        <ng-container *ngFor="let menuItem of dropdownMenuItems">
-                            <li class="m-nav__item" [ngClass]="menuItem.cssClass" *ngIf="menuItem.type !== menuItemTypes.Separator && (menuItem.visible === undefined || menuItem.visible)">
-                                <a href="javascript:;" class="m-nav__link" (click)="menuItem.onClick($event)">
-                                    <i class="m-nav__link-icon" *ngIf="menuItem.iconClass" [ngClass]="menuItem.iconClass"></i>
-                                    <img class="m-nav__link-icon" *ngIf="menuItem.iconSrc" [src]="menuItem.iconSrc">
-                                    <span class="m-nav__link-title">
-                                        <span class="m-nav__link-wrap">
-                                            <span [id]="menuItem.id" class="m-nav__link-text">
-                                                {{ menuItem.name }}
+            <dx-scroll-view showScrollbar="onHover" [height]="getScrollHeight()" [width]="'100%'">
+                <div class="m-dropdown__body">
+                    <div class="m-dropdown__content">
+                        <ul class="m-nav m-nav--skin-light">
+                            <ng-container *ngFor="let menuItem of dropdownMenuItems">
+                                <li class="m-nav__item" [ngClass]="menuItem.cssClass" *ngIf="menuItem.type !== menuItemTypes.Separator && (menuItem.visible === undefined || menuItem.visible)">
+                                    <a href="javascript:;" class="m-nav__link" (click)="menuItem.onClick($event)">
+                                        <i class="m-nav__link-icon" *ngIf="menuItem.iconClass" [ngClass]="menuItem.iconClass"></i>
+                                        <img class="m-nav__link-icon" *ngIf="menuItem.iconSrc" [src]="menuItem.iconSrc">
+                                        <span class="m-nav__link-title">
+                                            <span class="m-nav__link-wrap">
+                                                <span [id]="menuItem.id" class="m-nav__link-text">
+                                                    {{ menuItem.name }}
+                                                </span>
                                             </span>
                                         </span>
-                                    </span>
-                                </a>
-                            </li>
-                            <ng-container *ngIf="menuItem.submenuItems">
-                                <ul [id]="menuItem.submenuItems.id" class="m-nav linked-accounts" *ngIf="menuItem.submenuItems.items">
-                                    <li *ngFor="let submenuItem of menuItem.submenuItems.items" class="m-nav__item">
-                                        <a href="javascript:;" (click)="menuItem.submenuItems.onItemClick(submenuItem)" class="m-nav__link">
-                                            <span class="m-nav__link-bullet m-nav__link-bullet--dot">
-                                                <span></span>
-                                            </span>
-                                            <span class="m-nav__link-text">
-                                                {{ menuItem.submenuItems.onItemDisplay(submenuItem) }}
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </ng-container>
+                                    </a>
+                                </li>
+                                <ng-container *ngIf="menuItem.submenuItems">
+                                    <ul [id]="menuItem.submenuItems.id" class="m-nav linked-accounts" *ngIf="menuItem.submenuItems.items">
+                                        <li *ngFor="let submenuItem of menuItem.submenuItems.items" class="m-nav__item">
+                                            <a href="javascript:;" (click)="menuItem.submenuItems.onItemClick(submenuItem)" class="m-nav__link">
+                                                <span class="m-nav__link-bullet m-nav__link-bullet--dot">
+                                                    <span></span>
+                                                </span>
+                                                <span class="m-nav__link-text">
+                                                    {{ menuItem.submenuItems.onItemDisplay(submenuItem) }}
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </ng-container>
 
-                            <li *ngIf="menuItem.type === menuItemTypes.Separator && (menuItem.visible || menuItem.visible === undefined)" class="m-nav__separator m-nav__separator--fit"></li>
-                        </ng-container>
-                    </ul>
+                                <li *ngIf="menuItem.type === menuItemTypes.Separator && (menuItem.visible || menuItem.visible === undefined)" class="m-nav__separator m-nav__separator--fit"></li>
+                            </ng-container>
+                        </ul>
+                    </div>
                 </div>
-            </div>
+            </dx-scroll-view>
         </div>
     </div>
 </li>
