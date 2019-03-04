@@ -81,7 +81,6 @@ export class CreateTenantModalComponent extends AppComponentBase {
         }
 
         this.tenant.editions = this._tenantsService.getTenantEditions();
-        this.tenant.tenantHostType = <any>TenantHostType.PlatformApp;
         this._tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
