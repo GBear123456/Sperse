@@ -751,8 +751,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return;
 
         this.searchClear = false;
-        event.component.cancelEditData();
         let orgId = event.data.OrganizationId;
+        event.component && event.component.cancelEditData();
         this._router.navigate(['app/crm/client', clientId, 'lead', leadId].concat(orgId ? ['company', orgId]: []),
             { queryParams: { referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType } });
     }
@@ -856,15 +856,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onCardClick(lead) {
-        if (lead && lead.CustomerId && lead.Id)
-            this._router.navigate(
-                ['app/crm/client', lead.CustomerId, 'lead', lead.Id, 'contact-information'], {
-                    queryParams: {
-                        referrer: 'app/crm/leads',
-                        dataLayoutType: DataLayoutType.Pipeline
-                    }
-                }
-            );
+        this.showLeadDetails({data: lead});
     }
 
     getAssignedUsersStoreSelectors() {
