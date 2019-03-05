@@ -5,6 +5,6 @@ export class StringHelper {
         return data && prefix && data.slice(prefixIndex + prefix.length);
     }
     static getSize(originalSize: number, data: string): number {
-        return data.indexOf(StringHelper.prefixes[0]) === -1 ? originalSize - 3 : originalSize;
+        return data.indexOf(StringHelper.prefixes[0]) !== -1 ? originalSize - 3 : originalSize;
     }
 }
