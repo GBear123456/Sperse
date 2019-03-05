@@ -377,6 +377,7 @@ body.lend-space .notification-modal a {
   font-weight: 600;
   letter-spacing: 0.2px;
   color: #3463ae;
+  font-family: Poppins;
 }
 body.lend-space notificationsettingsmodal .mat-dialog-header input,
 body.lend-space notificationsettingsmodal .mat-dialog-actions button,
@@ -421,6 +422,7 @@ body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-
   font-weight: 400;
   color: #4a4a4a;
   padding-right: 0;
+  font-family: Poppins;
 }
 body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__time {
   width: auto;
@@ -428,6 +430,7 @@ body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-
   font-size: 12px;
   font-weight: 400;
   margin-top: 5px;
+  font-family: Poppins;
 }
 body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item.user-notification-item-unread .m-list-timeline__text {
   color: #000000;
