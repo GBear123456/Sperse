@@ -182,6 +182,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             requireTotalCount: false,
             pageSize: 2,
             filter: [ 'Id', '>', this.currentItemId ],
+            onLoadError: (error) => {
+                this.finishLoading(true);
+            },
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
@@ -343,7 +346,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     loadDataForClient(contactId: number, leadId: number, partnerId: number, companyId: number) {
         if (contactId) {
-            this.startLoading(true);
+            if (!this.loading) this.startLoading(true);
             let contactInfo$ = this.getContactInfoWithCompany(companyId,
                 this._contactService.getContactInfo(contactId)
             );
@@ -729,7 +732,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this._contactsService.invalidate(area);
     }
 
-    loadTargetEntity(event, direction) {
+    loadTargetEntity(direction) {
+        this.startLoading(true);
         this.prevNextDataSource.filter(
             direction == 'next' ? [ 'Id', '>', +this.currentItemId ] : [ 'Id', '<', +this.currentItemId ]
         );
@@ -741,16 +745,13 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 if (items) {
                     this.toolbarComponent.checkSetNavButtonsEnabled(direction, items);
                     this.currentItemId = items[0].Id;
-
                     this.loadData({
                         userId: this.dataSourceURI != 'Lead' ? items[0].UserId : undefined,
-                        clientId: this.dataSourceURI == 'Customer' ? items[0].Id : undefined,
+                        clientId: this.dataSourceURI == 'Customer' ? items[0].Id : this.dataSourceURI == 'Lead' ? items[0].CustomerId : undefined,
                         partnerId: this.dataSourceURI == 'Partner' ? items[0].Id : undefined,
-                        customerId: this.dataSourceURI == 'Lead' ? items[0].CustomerId : undefined,
                         leadId: this.dataSourceURI == 'Lead' ? items[0].Id : undefined,
                         companyId: items[0].OrganizationId
                     });
-
                     switch (this.referrerParams.referrer.split('/').pop()) {
                         case 'leads':
                             this._contactsService.updateLocation(items[0].CustomerId, this.currentItemId, null, items[0].OrganizationId);

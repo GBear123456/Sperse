@@ -28542,7 +28542,6 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
     emailAddress!: string;
     autoDetectTenancy!: boolean | undefined;
     features!: string[] | undefined;
-    tenantHostType!: SendPasswordResetCodeInputTenantHostType | undefined;
 
     constructor(data?: ISendPasswordResetCodeInput) {
         if (data) {
@@ -28565,7 +28564,6 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
                 for (let item of data["features"])
                     this.features.push(item);
             }
-            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -28585,7 +28583,6 @@ export class SendPasswordResetCodeInput implements ISendPasswordResetCodeInput {
             for (let item of this.features)
                 data["features"].push(item);
         }
-        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -28594,7 +28591,6 @@ export interface ISendPasswordResetCodeInput {
     emailAddress: string;
     autoDetectTenancy: boolean | undefined;
     features: string[] | undefined;
-    tenantHostType: SendPasswordResetCodeInputTenantHostType | undefined;
 }
 
 export class SendPasswordResetCodeOutput implements ISendPasswordResetCodeOutput {
@@ -28783,7 +28779,6 @@ export interface IResetPasswordOutput {
 
 export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInput {
     emailAddress!: string;
-    tenantHostType!: SendEmailActivationLinkInputTenantHostType | undefined;
 
     constructor(data?: ISendEmailActivationLinkInput) {
         if (data) {
@@ -28797,7 +28792,6 @@ export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInp
     init(data?: any) {
         if (data) {
             this.emailAddress = data["emailAddress"];
-            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -28811,14 +28805,12 @@ export class SendEmailActivationLinkInput implements ISendEmailActivationLinkInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailAddress"] = this.emailAddress;
-        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
 
 export interface ISendEmailActivationLinkInput {
     emailAddress: string;
-    tenantHostType: SendEmailActivationLinkInputTenantHostType | undefined;
 }
 
 export class ActivateEmailInput implements IActivateEmailInput {
@@ -54971,7 +54963,6 @@ export class CreateTenantInput implements ICreateTenantInput {
     sendActivationEmail!: boolean | undefined;
     editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
-    tenantHostType!: CreateTenantInputTenantHostType | undefined;
 
     constructor(data?: ICreateTenantInput) {
         if (data) {
@@ -55000,7 +54991,6 @@ export class CreateTenantInput implements ICreateTenantInput {
                     this.editions.push(TenantEditEditionDto.fromJS(item));
             }
             this.isActive = data["isActive"];
-            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -55029,7 +55019,6 @@ export class CreateTenantInput implements ICreateTenantInput {
                 data["editions"].push(item.toJSON());
         }
         data["isActive"] = this.isActive;
-        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -55047,7 +55036,6 @@ export interface ICreateTenantInput {
     sendActivationEmail: boolean | undefined;
     editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
-    tenantHostType: CreateTenantInputTenantHostType | undefined;
 }
 
 export class TenantEditEditionDto implements ITenantEditEditionDto {
@@ -58354,7 +58342,6 @@ export interface IUiCustomizationFooterSettingsEditDto {
 
 export class ActivateUserForContactInput implements IActivateUserForContactInput {
     contactId!: number;
-    tenantHostType!: ActivateUserForContactInputTenantHostType | undefined;
 
     constructor(data?: IActivateUserForContactInput) {
         if (data) {
@@ -58368,7 +58355,6 @@ export class ActivateUserForContactInput implements IActivateUserForContactInput
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -58382,14 +58368,12 @@ export class ActivateUserForContactInput implements IActivateUserForContactInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
 
 export interface IActivateUserForContactInput {
     contactId: number;
-    tenantHostType: ActivateUserForContactInputTenantHostType | undefined;
 }
 
 export class ActivateUserForContactOutput implements IActivateUserForContactOutput {
@@ -58999,7 +58983,6 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
     sendActivationEmail!: boolean | undefined;
     setRandomPassword!: boolean | undefined;
     organizationUnits!: number[] | undefined;
-    tenantHostType!: CreateOrUpdateUserInputTenantHostType | undefined;
 
     constructor(data?: ICreateOrUpdateUserInput) {
         if (data) {
@@ -59031,7 +59014,6 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
                 for (let item of data["organizationUnits"])
                     this.organizationUnits.push(item);
             }
-            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -59059,7 +59041,6 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
             for (let item of this.organizationUnits)
                 data["organizationUnits"].push(item);
         }
-        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -59072,7 +59053,6 @@ export interface ICreateOrUpdateUserInput {
     sendActivationEmail: boolean | undefined;
     setRandomPassword: boolean | undefined;
     organizationUnits: number[] | undefined;
-    tenantHostType: CreateOrUpdateUserInputTenantHostType | undefined;
 }
 
 export class InviteUserInput implements IInviteUserInput {
@@ -59080,7 +59060,6 @@ export class InviteUserInput implements IInviteUserInput {
     surname!: string;
     emailAddress!: string;
     assignedRoleNames!: string[];
-    tenantHostType!: InviteUserInputTenantHostType | undefined;
     moduleType!: InviteUserInputModuleType | undefined;
 
     constructor(data?: IInviteUserInput) {
@@ -59105,7 +59084,6 @@ export class InviteUserInput implements IInviteUserInput {
                 for (let item of data["assignedRoleNames"])
                     this.assignedRoleNames.push(item);
             }
-            this.tenantHostType = data["tenantHostType"];
             this.moduleType = data["moduleType"];
         }
     }
@@ -59127,7 +59105,6 @@ export class InviteUserInput implements IInviteUserInput {
             for (let item of this.assignedRoleNames)
                 data["assignedRoleNames"].push(item);
         }
-        data["tenantHostType"] = this.tenantHostType;
         data["moduleType"] = this.moduleType;
         return data; 
     }
@@ -59138,7 +59115,6 @@ export interface IInviteUserInput {
     surname: string;
     emailAddress: string;
     assignedRoleNames: string[];
-    tenantHostType: InviteUserInputTenantHostType | undefined;
     moduleType: InviteUserInputModuleType | undefined;
 }
 
@@ -60731,14 +60707,6 @@ export enum IsTenantAvailableOutputState {
     _3 = 3, 
 }
 
-export enum SendPasswordResetCodeInputTenantHostType {
-    PlatformApp = "PlatformApp", 
-}
-
-export enum SendEmailActivationLinkInputTenantHostType {
-    PlatformApp = "PlatformApp", 
-}
-
 export enum ActivityDtoType {
     Task = "Task", 
     Event = "Event", 
@@ -61618,10 +61586,6 @@ export enum SyncProgressDtoSyncStatus {
     Completed = "Completed", 
 }
 
-export enum CreateTenantInputTenantHostType {
-    PlatformApp = "PlatformApp", 
-}
-
 export enum CheckHostNameDnsMappingInputTenantHostType {
     PlatformApp = "PlatformApp", 
 }
@@ -61687,18 +61651,6 @@ export enum CompleteTenantRegistrationInputTenantHostType {
 export enum TransactionDetailsDtoTransactionStatus {
     Pending = "Pending", 
     Settled = "Settled", 
-}
-
-export enum ActivateUserForContactInputTenantHostType {
-    PlatformApp = "PlatformApp", 
-}
-
-export enum CreateOrUpdateUserInputTenantHostType {
-    PlatformApp = "PlatformApp", 
-}
-
-export enum InviteUserInputTenantHostType {
-    PlatformApp = "PlatformApp", 
 }
 
 export enum InviteUserInputModuleType {
