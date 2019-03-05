@@ -162,7 +162,7 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
 
         this.data.editTitle = true;
         this.data.titleClearButton = true;
-        this.data.placeholder = this.l('Contact.FullName');
+        this.data.placeholder = this.l('FullNamePlaceholder');
         this.data.buttons = [{
             id: this.saveButtonId,
             title: this.l('Save'),
