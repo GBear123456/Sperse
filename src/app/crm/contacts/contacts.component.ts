@@ -7,9 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
 import { forkJoin, of } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { filter, finalize, map } from 'rxjs/operators';
 import * as _ from 'underscore';
-import DataSource from 'devextreme/data/data_source';
 
 /** Application imports */
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -40,6 +39,11 @@ import { RP_DEFAULT_ID, RP_USER_INFO_ID } from './contacts.const';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
+import { BehaviorSubject, Observable } from '@node_modules/rxjs';
+import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -89,9 +93,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private paramsSubscribe: any = [];
     referrerParams: Params;
 
-    prevNextDataSource: any;
     dataSourceURI = 'Customer';
     currentItemId;
+    targetDirections = TargetDirectionEnum;
+    private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
+    public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
 
     constructor(injector: Injector,
                 private _dialog: MatDialog,
@@ -106,7 +112,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 private _contactsService: ContactsService,
                 private store$: Store<AppStore.State>,
                 private _appStoreService: AppStoreService,
-                private _customerService: CustomerServiceProxy
+                private _customerService: CustomerServiceProxy,
+                private _itemDetailsService: ItemDetailsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this._appStoreService.loadUserDictionaries();
@@ -156,11 +163,6 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         if (this._cacheService.exists(key))
             this.rightPanelSetting = this._cacheService.get(key);
         let section = this.referrerParams.referrer.split('/').pop();
-        let selectItems = [
-            'Id',
-            'OrganizationId',
-            section == 'leads' ? 'CustomerId' : 'UserId'
-        ];
         switch (section) {
             case 'leads':
                 this.dataSourceURI = 'Lead';
@@ -177,28 +179,44 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             default:
                 break;
         }
-
-        this.prevNextDataSource = new DataSource({
-            requireTotalCount: false,
-            pageSize: 2,
-            filter: [ 'Id', '>', this.currentItemId ],
-            onLoadError: (error) => {
-                this.finishLoading(true);
-            },
-            store: {
-                type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI),
-                version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                },
-                paginate: true
-            },
-            sort: [
-                { selector: 'Id', desc: false }
-            ],
-            select: selectItems
+        window['dataGrid'] = this._itemDetailsService.getItemsSource(this.dataSourceURI as any);
+        this.targetEntity$.subscribe((direction: TargetDirectionEnum) => {
+            this.startLoading(true);
+            const itemFullInfo$ = this._itemDetailsService.getItemFullInfo(this.dataSourceURI as ItemTypeEnum, this.currentItemId, direction);
+            itemFullInfo$.pipe(finalize(() => this.finishLoading(true))).subscribe((itemFullInfo: ItemFullInfo) => {
+                /** @todo reload grid closing list section to correctly show pagination */
+                this.toolbarComponent.checkSetNavButtonsEnabled(!itemFullInfo || itemFullInfo.isFirstOnList, !itemFullInfo || itemFullInfo.isLastOnList);
+                if (itemFullInfo) {
+                    this.currentItemId = itemFullInfo.itemData.Id;
+                    /** New current item Id */
+                    this.loadData({
+                        userId: this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined,
+                        clientId: this.dataSourceURI == 'Customer' ? itemFullInfo.itemData.Id : undefined,
+                        partnerId: this.dataSourceURI == 'Partner' ? itemFullInfo.itemData.Id : undefined,
+                        customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
+                        leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.Id : undefined,
+                        companyId: itemFullInfo.itemData.OrganizationId
+                    });
+                    this.updateLocation(itemFullInfo);
+                }
+            });
         });
+    }
+
+    private updateLocation(itemFullInfo) {
+        switch (this.referrerParams.referrer.split('/').pop()) {
+            case 'leads':
+                this._contactsService.updateLocation(itemFullInfo.itemData.CustomerId, itemFullInfo.itemData.Id, null, itemFullInfo.itemData.OrganizationId);
+                break;
+            case 'clients':
+                this._contactsService.updateLocation(itemFullInfo.itemData.Id, null, null, itemFullInfo.itemData.OrganizationId);
+                break;
+            case 'partners':
+                this._contactsService.updateLocation(null, null, itemFullInfo.itemData.Id, itemFullInfo.itemData.OrganizationId);
+                break;
+            default:
+                break;
+        }
     }
 
     private getCheckPropertyValue(obj, prop, def) {
@@ -288,7 +306,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         let userId = params['userId'],
             clientId = params['clientId'],
             partnerId = params['partnerId'],
-            customerId = clientId || partnerId || params['customerId'],
+            customerId = clientId || partnerId,
             leadId = params['leadId'],
             companyId = params['companyId'];
         this.params = params;
@@ -525,10 +543,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         let data = force || JSON.stringify(<any>this._contactService['data']);
         this._router.navigate(
             [this.referrerParams.referrer || 'app/crm/clients'],
-            { queryParams: _.extend(_.mapObject(this.referrerParams,
-                (val, key) => {
-                    return (key == 'referrer' ? undefined : val);
-                }), !force && this.initialData != data ? {refresh: true} : {})
+            {
+                queryParams: _.extend(
+                    _.mapObject(
+                        this.referrerParams,
+                        (val, key) => key == 'referrer' ? undefined : val
+                    ),
+                    !force && this.initialData != data ? {refresh: true} : {}
+                )
             }
         );
     }
@@ -730,41 +752,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this._contactsService.invalidate(area);
     }
 
-    loadTargetEntity(direction) {
-        this.startLoading(true);
-        this.prevNextDataSource.filter(
-            direction == 'next' ? [ 'Id', '>', +this.currentItemId ] : [ 'Id', '<', +this.currentItemId ]
-        );
-        this.prevNextDataSource.sort(
-            { selector: 'Id', desc: direction != 'next' }
-        );
-        this.prevNextDataSource.load().then(() => {
-                let items = this.prevNextDataSource.items();
-                if (items) {
-                    this.toolbarComponent.checkSetNavButtonsEnabled(direction, items);
-                    this.currentItemId = items[0].Id;
-                    this.loadData({
-                        userId: this.dataSourceURI != 'Lead' ? items[0].UserId : undefined,
-                        clientId: this.dataSourceURI == 'Customer' ? items[0].Id : this.dataSourceURI == 'Lead' ? items[0].CustomerId : undefined,
-                        partnerId: this.dataSourceURI == 'Partner' ? items[0].Id : undefined,
-                        leadId: this.dataSourceURI == 'Lead' ? items[0].Id : undefined,
-                        companyId: items[0].OrganizationId
-                    });
-                    switch (this.referrerParams.referrer.split('/').pop()) {
-                        case 'leads':
-                            this._contactsService.updateLocation(items[0].CustomerId, this.currentItemId, null, items[0].OrganizationId);
-                            break;
-                        case 'clients':
-                            this._contactsService.updateLocation(this.currentItemId, null, null, items[0].OrganizationId);
-                            break;
-                        case 'partners':
-                            this._contactsService.updateLocation(null, null, this.currentItemId, items[0].OrganizationId);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        );
+    loadTargetEntity(event, direction) {
+        this.targetEntity.next(direction);
     }
 }

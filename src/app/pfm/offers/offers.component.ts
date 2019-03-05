@@ -24,6 +24,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -55,7 +57,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         private injector: Injector,
         private _appService: AppService,
         private _filtersService: FiltersService,
-        private _offersProxy: OfferManagementServiceProxy
+        private _offersProxy: OfferManagementServiceProxy,
+        private itemDetailsService: ItemDetailsService
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
         this._filtersService.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
@@ -397,6 +400,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this._filtersService.unsubscribe();
         this._appService.updateToolbar(null);
         this.rootComponent.overflowHidden(true);
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.Offer, this.dataGrid.instance.getDataSource());
     }
 
     pullOffers(fetchAll, event?) {

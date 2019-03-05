@@ -4,7 +4,7 @@ import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, 
 /** Third party imports */
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
-import { Subject, of } from 'rxjs';
+import { Observable, Subject, from, of } from 'rxjs';
 import { delayWhen, map, mergeMap } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
@@ -234,7 +234,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
     }
 
-    loadStagesLeads(page = 0, stageIndex?: number, oneStageOnly = false) {
+    loadStagesLeads(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
+        let response = of(null);
         let index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
             dataSource = this._dataSources[stage.name],
@@ -247,7 +248,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 dataSource = this._dataSources[stage.name] =
                     new DataSource(_.extend(_.clone(this._dataSource), {
                         onLoadError: (error) => { this.httpInterceptor.handleError(error); },
-                        requireTotalCount: !this.totalsURI,
+                        requireTotalCount: true,
                         select: this.selectFields
                     }));
 
@@ -262,38 +263,44 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     ]})
             );
             dataSource.sort({getter: 'Id', desc: true});
-            dataSource.load().done((leads) => {
-                if (leads.length) {
-                    stage['leads'] = (page && oneStageOnly ? _.uniqBy(
-                        (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads).map((lead) => {
-                            stage['lastLeadId'] = Math.min((page ? stage['lastLeadId'] : undefined) || Infinity, lead['Id']);
-                            return lead;
-                        });
-                    if (!this.totalsURI)
-                        stage['total'] = dataSource.totalCount();
-                    stage['full'] = (stage['leads'].length >= (stage['total'] || 0));
-                } else  {
-                    if (!page || !stage['leads'])
-                        stage['leads'] = [];
-                    stage['total'] = stage['leads'].length;
-                    stage['full'] = true;
-                }
+            response = from(dataSource.load()).pipe(
+                map((entities: any) => {
+                    if (entities.length) {
+                        stage['leads'] = (page && oneStageOnly ? _.uniqBy(
+                            (stage['leads'] || []).concat(entities), (entity) => entity['Id']) : entities).map((entity) => {
+                                stage['lastEntityId'] = Math.min((page ? stage['lastEntityId'] : undefined) || Infinity, entity['Id']);
+                                return entity;
+                            });
+                        if (!this.totalsURI)
+                            stage['total'] = dataSource.totalCount();
+                        stage['full'] = (stage['leads'].length >= (stage['total'] || 0));
+                    } else  {
+                        if (!page || !stage['leads'])
+                            stage['leads'] = [];
+                        stage['total'] = stage['leads'].length;
+                        stage['full'] = true;
+                    }
 
-                let allStagesLoaded = this.isAllStagesLoaded();
-                if (oneStageOnly || allStagesLoaded)
-                    setTimeout(() => this.finishLoading(), 1000);
-                if (this.totalsURI && allStagesLoaded)
-                    this.processTotalsRequest(this.queryWithSearch);
-            });
+                    let allStagesLoaded = this.isAllStagesLoaded();
+                    if (oneStageOnly || allStagesLoaded)
+                        setTimeout(() => this.finishLoading(), 1000);
+                    if (this.totalsURI && allStagesLoaded)
+                        this.processTotalsRequest(this.queryWithSearch);
+                    dataSource['pipelineItems'] = stage['leads'];
+                    return entities;
+                })
+            );
+            response.subscribe();
         }
 
         if (!oneStageOnly && stages[index + 1])
-            this.loadStagesLeads(page, index + 1);
+            response = this.loadStagesLeads(page, index + 1);
+        return response;
     }
 
     processTotalsRequest(filter?: any) {
         (new DataSource({
-            requireTotalCount: false,
+            requireTotalCount: true,
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.totalsURI, filter),
@@ -335,11 +342,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return this.queryWithSearch;
     }
 
-    loadMore(stageIndex) {
+    loadMore(stageIndex): Observable<any> {
         this.startLoading();
-        this.loadStagesLeads(
-            Math.floor(this.stages[stageIndex]['leads'].length
-                / this.STAGE_PAGE_COUNT), stageIndex, true);
+        return this.loadStagesLeads(
+            Math.floor(this.stages[stageIndex]['leads'].length / this.STAGE_PAGE_COUNT),
+            stageIndex,
+            true
+        );
     }
 
     updateEntityStage(leadId, newStage, oldStage, complete = null) {
@@ -455,8 +464,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             else if (event.shiftKey)
                 this.toogleHighlightShiftArea(lead, checkedCard);
             this.selectedLeads = this.getSelectedLeads();
-        } else
-            this.onCardClick.emit(lead);
+        } else {
+            this.onCardClick.emit({
+                entity: lead,
+                entityStageDataSource: this._dataSources[lead.Stage],
+                loadMethod: this.loadMore.bind(this, this.stages.findIndex(stage => stage.id === lead.StageId))
+            });
+        }
         this.hideStageHighlighting();
     }
 }

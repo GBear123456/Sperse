@@ -6,6 +6,7 @@ import { DxScrollViewModule } from '@root/node_modules/devextreme-angular/ui/scr
 import { FormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { CommonModule } from '@angular/common';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,9 @@ import { CommonModule } from '@angular/common';
     exports: [
         MatSidenavModule,
         ItemDetailsLayoutComponent
+    ],
+    providers: [
+        ItemDetailsService
     ]
 })
 export class ItemDetailsLayoutModule {}
