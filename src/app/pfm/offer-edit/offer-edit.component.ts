@@ -2,6 +2,7 @@
 import {
     ApplicationRef,
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     Injector,
     OnDestroy,
@@ -377,7 +378,8 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         private router: Router,
         public ls: AppLocalizationService,
         private store$: Store<RootStore.State>,
-        private notifyService: NotifyService
+        private notifyService: NotifyService,
+        private changeDetector: ChangeDetectorRef
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
     }
@@ -495,6 +497,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             .pipe(finalize(() => {
                 abp.ui.clearBusy();
                 this.offerIsUpdating = false;
+                this.changeDetector.detectChanges();
             }))
             .subscribe(
                 () => this.notifyService.info(this.ls.l('SavedSuccessfully', 'Platform')),
