@@ -478,6 +478,14 @@
                                 <label for="IAgeApiKey">{{l("IAgeApiKey")}}</label>
                                 <input id="IAgeApiKey" type="text" name="IAgeApiKey" class="form-control" [(ngModel)]="iageSettings.apiKey" maxlength="128">
                             </div>
+                            <div class="form-group">
+                                <label for="IAgeActivationEmailId">{{l("IAgeActivationEmailId")}}</label>
+                                <input id="IAgeActivationEmailId" type="number" name="IAgeActivationEmailId" class="form-control" [(ngModel)]="iageSettings.activationEmailId" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="IAgePasswordResetEmailId">{{l("IAgePasswordResetEmailId")}}</label>
+                                <input id="IAgePasswordResetEmailId" type="number" name="IAgePasswordResetEmailId" class="form-control" [(ngModel)]="iageSettings.passwordResetEmailId" maxlength="128">
+                            </div>
                         </div>
                     </tab>
                     <tab heading="{{l('Ongage')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">

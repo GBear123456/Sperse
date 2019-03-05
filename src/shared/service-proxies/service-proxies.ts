@@ -56263,6 +56263,8 @@ export interface IOngageSettingsEditDto {
 
 export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
     apiKey!: string | undefined;
+    activationEmailId!: number | undefined;
+    passwordResetEmailId!: number | undefined;
 
     constructor(data?: IIAgeSettingsEditDto) {
         if (data) {
@@ -56276,6 +56278,8 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
     init(data?: any) {
         if (data) {
             this.apiKey = data["apiKey"];
+            this.activationEmailId = data["activationEmailId"];
+            this.passwordResetEmailId = data["passwordResetEmailId"];
         }
     }
 
@@ -56289,12 +56293,16 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
+        data["activationEmailId"] = this.activationEmailId;
+        data["passwordResetEmailId"] = this.passwordResetEmailId;
         return data; 
     }
 }
 
 export interface IIAgeSettingsEditDto {
     apiKey: string | undefined;
+    activationEmailId: number | undefined;
+    passwordResetEmailId: number | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
