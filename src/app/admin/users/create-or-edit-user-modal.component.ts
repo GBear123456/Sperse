@@ -3,7 +3,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrUpdateUserInput, OrganizationUnitDto, PasswordComplexitySetting, ProfileServiceProxy, TenantHostType, UserEditDto, UserRoleDto, UserServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap';
 import { IOrganizationUnitsTreeComponentData, OrganizationUnitsTreeComponent } from '../shared/organization-unit-tree.component';
-import * as _ from 'lodash';
+import map from 'lodash/map';
+import filter from 'lodash/filter';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -145,8 +146,8 @@ export class CreateOrEditUserModalComponent extends AppComponentBase implements 
         input.setRandomPassword = this.setRandomPassword;
         input.sendActivationEmail = this.sendActivationEmail;
         input.assignedRoleNames =
-            _.map(
-                _.filter(this.roles, { isAssigned: true }), role => role.roleName
+            map(
+                filter(this.roles, { isAssigned: true }), role => role.roleName
             );
 
         input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
@@ -168,6 +169,6 @@ export class CreateOrEditUserModalComponent extends AppComponentBase implements 
     }
 
     getAssignedRoleCount(): number {
-        return _.filter(this.roles, { isAssigned: true }).length;
+        return filter(this.roles, { isAssigned: true }).length;
     }
 }

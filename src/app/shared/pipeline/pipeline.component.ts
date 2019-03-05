@@ -8,7 +8,11 @@ import { Subject, of } from 'rxjs';
 import { delayWhen, map, mergeMap } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
-import * as _ from 'lodash';
+import extend from 'lodash/extend';
+import find from 'lodash/find';
+import findIndex from 'lodash/findIndex';
+import clone from 'lodash/clone';
+import uniqBy from 'lodash/uniqBy';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreActions } from '@app/crm/store';
@@ -85,7 +89,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     newStage = this.getStageByElement(value[2]);
                 if (value[1].classList.contains('selected')) {
                     this.getSelectedLeads().forEach((lead) => {
-                        let oldStage = _.find(this.stages, (stage) => {
+                        let oldStage = find(this.stages, (stage) => {
                             return stage.id == lead.StageId;
                         });
 
@@ -129,7 +133,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.onStagesLoaded.emit(pipeline);
 
                 this.stages = pipeline.stages.map((stage) => {
-                    _.extend(stage, {
+                    extend(stage, {
                         leads: [],
                         full: true
                     });
@@ -139,7 +143,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 this.firstStage = this.lockMarginalEntities ? this.stages[0] : {};
                 this.lastStage = this.lockMarginalEntities ? this.stages[this.stages.length - 1] : {};
 
-                this.loadData(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
+                this.loadData(0, this.stageId && findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
 
                 this.refreshTimeout = null;
             })
@@ -168,7 +172,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     if (stage)
                         stage.accessibleActions.forEach((action) => {
                             if (action.targetStageId) {
-                                let target = _.find(this.stages, (stage) => {
+                                let target = find(this.stages, (stage) => {
                                     return stage.id == action.targetStageId;
                                 }), targetElm = document.querySelector('[accessKey="' + target.id + '"]');
                                 targetElm && targetElm.classList.add('drop-area');
@@ -202,7 +206,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.refreshTimeout = setTimeout(() => {
                 if (this.pipeline) {
                     this.loadData(0, stageId &&
-                        _.findIndex(this.stages, obj => obj.id == stageId), Boolean(stageId));
+                        findIndex(this.stages, obj => obj.id == stageId), Boolean(stageId));
                     this.refreshTimeout = null;
                 } else
                     this.store$.dispatch(new PipelinesStoreActions
@@ -212,13 +216,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getLeadByElement(el, stage) {
-        return stage && _.find(stage.leads, (lead) => {
+        return stage && find(stage.leads, (lead) => {
             return lead && (lead['Id'] == parseInt(this.getAccessKey(el.closest('.card'))));
         });
     }
 
     getStageByElement(el) {
-        return _.find(this.stages, (stage) => {
+        return find(this.stages, (stage) => {
             return stage && (stage.id == (el.getAttribute('stage') || this.getAccessKey(el)));
         });
     }
@@ -251,7 +255,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         else {
             if (!dataSource)
                 dataSource = this._dataSources[stage.name] =
-                    new DataSource(_.extend(_.clone(this._dataSource), {
+                    new DataSource(extend(clone(this._dataSource), {
                         onLoadError: (error) => { this.httpInterceptor.handleError(error); },
                         requireTotalCount: !this.totalsURI,
                         select: this.selectFields
@@ -264,13 +268,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             dataSource['_store']['_url'] =
                 this.getODataUrl(this._dataSource.uri,
                     this.queryWithSearch.concat({and: [
-                        _.extend(filter, this._dataSource.customFilter)
+                        extend(filter, this._dataSource.customFilter)
                     ]})
             );
             dataSource.sort({getter: 'Id', desc: true});
             dataSource.load().done((leads) => {
                 if (leads.length) {
-                    stage['leads'] = (page && oneStageOnly ? _.uniqBy(
+                    stage['leads'] = (page && oneStageOnly ? uniqBy(
                         (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads).map((lead) => {
                             stage['lastLeadId'] = Math.min((page ? stage['lastLeadId'] : undefined) || Infinity, lead['Id']);
                             return lead;

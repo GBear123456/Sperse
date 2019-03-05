@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Output, Input, Injector, EventEmitt
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StatusInfo } from '@app/shared/common/payment-wizard/models/status-info';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
-import { values } from 'lodash';
+import values from 'lodash/values';
 
 @Component({
     selector: 'payment-status',

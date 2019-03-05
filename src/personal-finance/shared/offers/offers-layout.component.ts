@@ -33,7 +33,7 @@ import {
     skip,
     withLatestFrom, distinct, toArray
 } from 'rxjs/operators';
-import { kebabCase } from 'lodash';
+import kebabCase from 'lodash/kebabCase';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { MatSliderChange } from '@angular/material/slider';
 

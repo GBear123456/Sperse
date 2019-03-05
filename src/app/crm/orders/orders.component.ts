@@ -17,7 +17,6 @@ import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
@@ -32,8 +31,7 @@ import { FilterHelpers } from '../shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './orders.component.html',
-    styleUrls: ['./orders.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./orders.component.less']
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;

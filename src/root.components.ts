@@ -7,7 +7,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 
-import { kebabCase } from 'lodash';
+import kebabCase from 'lodash/kebabCase';
 import * as _ from 'underscore';
 
 /*

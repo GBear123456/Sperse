@@ -13,7 +13,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Observable, Subject, combineLatest, of } from 'rxjs';
 import { finalize, map, tap, publishReplay, pluck, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
-import { startCase } from 'lodash';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';

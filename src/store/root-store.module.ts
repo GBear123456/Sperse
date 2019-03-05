@@ -9,6 +9,7 @@ import { localStorageSync } from 'ngrx-store-localstorage';
 
 /** Application imports */
 import { StatesStoreModule } from './states-store';
+import { environment } from '../environments/environment';
 
 /** For storing some entities in local storage */
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
@@ -42,7 +43,8 @@ const metaReducers: Array<MetaReducer<any, any>> = [ localStorageSyncReducer ];
         StatesStoreModule,
         StoreModule.forRoot({}, { metaReducers }),
         EffectsModule.forRoot([]),
-        StoreDevtoolsModule.instrument({ maxAge: 10 })
+        environment.production ? [] :
+            StoreDevtoolsModule.instrument({ maxAge: 10 })
     ],
     declarations: []
 })

@@ -5,7 +5,7 @@ import { ExportGoogleSheetService } from './export-google-sheets/export-google-s
 import { Angular5Csv } from './export-csv/export-csv';
 import DataSource from 'devextreme/data/data_source';
 
-import * as _s from 'underscore.string';
+import { capitalize } from 'underscore.string/capitalize';
 import * as _ from 'underscore';
 import * as moment from 'moment';
 
@@ -21,7 +21,7 @@ export class ExportService {
 
     getFileName(dataGrid?) {
         let name = dataGrid && dataGrid.export.fileName || '';
-        return _s.capitalize(location.href.split('/').pop()) + '_' + 
+        return capitalize(location.href.split('/').pop()) + '_' + 
             (!name || name == 'DataGrid' ? '': name + '_') + moment().local().format('YYYY-MM-DD_hhmmss_a');
     }
 

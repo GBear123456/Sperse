@@ -7,7 +7,7 @@ import { finalize } from 'rxjs/operators';
 
 import DataSource from 'devextreme/data/data_source';
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
-import * as _ from 'lodash';
+import includes from 'lodash/includes';
 
 @Component({
     selector: 'oranization-units-tree',
@@ -44,7 +44,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
         this.organizationUnitsData = orgUnits;
         
         this.organizationUnitsData.forEach((item) => {
-            item['selected'] = _.includes(memberedOrganizationUnits, item.code);
+            item['selected'] = includes(memberedOrganizationUnits, item.code);
             item['expanded'] = true;
         });
 

@@ -13,7 +13,11 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { finalize } from 'rxjs/operators';
 
-import * as _ from 'lodash';
+import find from 'lodash/find';
+import extend from 'lodash/extend';
+import clone from 'lodash/clone';
+import map from 'lodash/map';
+import filter from 'lodash/filter';
 
 @Component({
     selector: 'user-information',
@@ -90,7 +94,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             this.data.raw.memberedOrganizationUnits = [];
             (this.selectedOrgUnits = data).forEach((item) => {
                 this.data.raw.memberedOrganizationUnits.push(
-                    _.find(this.data.raw.allOrganizationUnits, {id: item})['code']);
+                    find(this.data.raw.allOrganizationUnits, {id: item})['code']);
             });
         }, this.constructor.name);
 
@@ -153,7 +157,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         this._userService['data'].roles = data.roles;
 
         data.memberedOrganizationUnits.forEach((item) => {
-            this.selectedOrgUnits.push(_.find(data.allOrganizationUnits, {code: item})['id']);
+            this.selectedOrgUnits.push(find(data.allOrganizationUnits, {code: item})['id']);
         });
         setTimeout(() => this._contactsService.orgUnitsUpdate(this.userData = data));
     }
@@ -176,7 +180,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                     this.startLoading();
                     this.inviteData.contactId = this.contactInfoData.contactInfo.personContactInfo.id;
                     let phoneNumber = this.inviteData.phoneNumber;
-                    this._personContactServiceProxy.createUserForContact(_.extend(_.clone(this.inviteData),
+                    this._personContactServiceProxy.createUserForContact(extend(clone(this.inviteData),
                         { phoneNumber: phoneNumber && phoneNumber.replace(/\D/g, '') }))
                         .pipe(finalize(() => this.finishLoading())).subscribe(() => {
                             this._contactsService.invalidate();
@@ -269,7 +273,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 user: this.userData.user,
                 setRandomPassword: this.userData.user['setRandomPassword'],
                 sendActivationEmail: this.userData.user['sendActivationEmail'],
-                assignedRoleNames: _.map(_.filter(this.userData.roles, { isAssigned: true }), role => role.roleName),
+                assignedRoleNames: map(filter(this.userData.roles, { isAssigned: true }), role => role.roleName),
                 tenantHostType: <any>TenantHostType.PlatformApp,
                 organizationUnits: this.selectedOrgUnits
             }));

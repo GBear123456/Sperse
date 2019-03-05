@@ -22,8 +22,8 @@ import {
     ApplicationServiceProxy,
     SignUpMemberRequest
 } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
-import { finalize, map, publishReplay, refCount } from 'rxjs/operators';
+import map from 'lodash/map';
+import { finalize, map as _map, publishReplay, refCount } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
@@ -296,7 +296,7 @@ export class LoginService {
             .pipe(
                 publishReplay(),
                 refCount(),
-                map((providers: ExternalLoginProviderInfoModel[]) => _.map(providers, p => new ExternalLoginProvider(p)))
+                _map((providers: ExternalLoginProviderInfoModel[]) => map(providers, p => new ExternalLoginProvider(p)))
             );
     }
 

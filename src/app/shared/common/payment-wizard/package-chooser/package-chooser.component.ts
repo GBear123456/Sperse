@@ -17,7 +17,7 @@ import {
 import { MatSliderChange, MatSlider } from '@angular/material/slider';
 import { Observable } from 'rxjs';
 import { concatAll, map, max, pluck, publishReplay, refCount } from 'rxjs/operators';
-import { partition } from 'lodash';
+import partition from 'lodash/partition';
 
 /** Application imports */
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';

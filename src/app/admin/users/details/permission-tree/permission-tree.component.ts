@@ -3,7 +3,7 @@ import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.
 import { AppComponentBase } from '@shared/common/app-component-base';
 import DataSource from 'devextreme/data/data_source';
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
-import * as _ from 'lodash';
+import includes from 'lodash/includes';
 
 @Component({
     selector: 'permission-tree',
@@ -31,7 +31,7 @@ export class PermissionTreeComponent extends AppComponentBase {
             if (!item.parentName) pagesParentIndex = index;
             if (item.parentName == 'Pages') item.parentName = null;
 
-            item['selected'] = _.includes(this.permissionsData.grantedPermissionNames, item.name);
+            item['selected'] = includes(this.permissionsData.grantedPermissionNames, item.name);
             item['expanded'] = true;
         });
 

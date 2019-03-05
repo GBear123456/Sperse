@@ -3,7 +3,8 @@ import { Params } from '@angular/router';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { LanguageServiceProxy } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
+import map from 'lodash/map';
+import filter from 'lodash/filter';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
@@ -41,7 +42,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     }
 
     ngOnInit(): void {
-        this.sourceNames = _.map(_.filter(abp.localization.sources, source => source.type === 'MultiTenantLocalizationSource'), value => value.name);
+        this.sourceNames = map(filter(abp.localization.sources, source => source.type === 'MultiTenantLocalizationSource'), value => value.name);
         this.languages = abp.localization.languages;
     }
 

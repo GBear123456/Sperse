@@ -1,5 +1,5 @@
 import { FilterModel } from './filter.model';
-import * as _ from 'underscore.string';
+import { capitalize } from 'underscore.string/capitalize';
 
 export class FilterItemModel {
     protected _value: any = '';
@@ -20,7 +20,7 @@ export class FilterItemModel {
     }
 
     getDisplayElements(key: string): DisplayElement[] {
-        let caption = _.capitalize(key);
+        let caption = capitalize(key);
         let valueType = typeof (this.value);
         let isBoolValues = valueType == 'boolean';
         let value = valueType == 'string' && this.value

@@ -2,7 +2,8 @@ import { AfterViewInit, Component, ElementRef, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { HtmlHelper } from '@shared/helpers/HtmlHelper';
 import { OrganizationUnitDto } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
+import map from 'lodash/map';
+import includes from 'lodash/includes';
 
 export interface IOrganizationUnitsTreeComponentData {
     allOrganizationUnits: OrganizationUnitDto[];
@@ -74,7 +75,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             return;
         }
 
-        let treeData = _.map(this._allOrganizationUnits, item => (<any>{
+        let treeData = map(this._allOrganizationUnits, item => (<any>{
             id: item.id,
             parent: item.parentId ? item.parentId : '#',
             code: item.code,
@@ -84,7 +85,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             dto: item,
             state: {
                 opened: true,
-                selected: _.includes(self._selectedOrganizationUnits, item.code)
+                selected: includes(self._selectedOrganizationUnits, item.code)
             }
         }));
 

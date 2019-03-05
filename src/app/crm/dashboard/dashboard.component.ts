@@ -169,8 +169,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     renderWidgets() {
         setTimeout(() => {
-            this.totalsByPeriod.render();
-            this.totalsBySource.render();
+            if (this.totalsByPeriod)
+                this.totalsByPeriod.render();
+            if (this.totalsBySource)
+                this.totalsBySource.render();
         }, 300);
     }
 

@@ -7,7 +7,8 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-import { difference, startCase } from 'lodash';
+import difference from 'lodash/difference';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { AppService } from '@app/app.service';

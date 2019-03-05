@@ -11,7 +11,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
 
 import * as _ from 'underscore';
-import * as _s from 'underscore.string';
+import { capitalize } from 'underscore.string/capitalize';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -652,7 +652,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
 
     public static getFieldLocalizationName(dataField: string): string {
         let parts = dataField.split(ImportWizardComponent.FieldSeparator);
-        let partsCapitalized = parts.map(p => _s.capitalize(p));
+        let partsCapitalized = parts.map(p => capitalize(p));
         partsCapitalized.unshift(ImportWizardComponent.FieldLocalizationPrefix);
         return partsCapitalized.join(ImportWizardComponent.FieldSeparator);
     }

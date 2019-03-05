@@ -19,7 +19,8 @@ import { Observable, forkJoin, from, of } from 'rxjs';
 import { first, filter, pluck, mergeMap, map, toArray } from 'rxjs/operators';
 import * as $ from 'jquery';
 import * as underscore from 'underscore';
-import * as _ from 'underscore.string';
+import { capitalize } from 'underscore.string/capitalize';
+import { dasherize } from 'underscore.string/dasherize';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -2023,9 +2024,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
          *  current for year to current for the grouping period */
         let lowestOpenedCurrentInterval = this.getLowestOpenedCurrentInterval();
         $('.lowestOpenedCurrent').removeClass('lowestOpenedCurrent');
-        let targetCell = lowestOpenedCurrentInterval === 'year' && $(`.dx-pivotgrid-expanded.current${_.capitalize(lowestOpenedCurrentInterval)}`).length ?
-                         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}.dx-total`) :
-                         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}:not(.dx-pivotgrid-expanded)`);
+        let targetCell = lowestOpenedCurrentInterval === 'year' && $(`.dx-pivotgrid-expanded.current${capitalize(lowestOpenedCurrentInterval)}`).length ?
+                         $(`.current${capitalize(lowestOpenedCurrentInterval)}.dx-total`) :
+                         $(`.current${capitalize(lowestOpenedCurrentInterval)}:not(.dx-pivotgrid-expanded)`);
         targetCell.addClass('lowestOpenedCurrent');
 
         this.changeHistoricalColspans(lowestOpenedCurrentInterval);
@@ -2290,7 +2291,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getIntervalColspansAmountForCurrent(lowestColumnCaption) {
         let colspanAmount = 0;
         while (lowestColumnCaption) {
-            let currentElement = $(`.dx-pivotgrid-horizontal-headers .lowestOpenedCurrent.current${_.capitalize(lowestColumnCaption)}`);
+            let currentElement = $(`.dx-pivotgrid-horizontal-headers .lowestOpenedCurrent.current${capitalize(lowestColumnCaption)}`);
             if (currentElement.length) {
                 colspanAmount = +currentElement.attr('colspan') || 1;
                 break;
@@ -2344,7 +2345,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getIntervalColspansAmount(groupInterval, period) {
         let colspansAmount = 0;
         let dataAreaElement = this.getElementRef().nativeElement.querySelector('.dx-area-data-cell');
-        let currentElement = dataAreaElement.querySelector(`.current${_.capitalize(groupInterval)}`);
+        let currentElement = dataAreaElement.querySelector(`.current${capitalize(groupInterval)}`);
         if (dataAreaElement) {
             let allCellsAmount = dataAreaElement.querySelector('tr').childElementCount;
             if (!currentElement) {
@@ -3773,7 +3774,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     addPreferenceStyle(preference) {
-        const cssProperty = _.dasherize(preference['sourceName']);
+        const cssProperty = dasherize(preference['sourceName']);
         for (let area of preference.areas) {
             $(`.dx-area-${area}-cell`).css(cssProperty, preference['sourceValue']);
         }
@@ -3870,27 +3871,27 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let cellDateFormated = cellDate.format(periodFormat);
                 let currentDateFormatted = currentDate.format(periodFormat);
                 if (cellDateFormated === currentDateFormatted) {
-                    className = `current${_.capitalize(fieldCaption)}`;
+                    className = `current${capitalize(fieldCaption)}`;
                 } else if (cellDateFormated < currentDateFormatted) {
-                    className = `prev${_.capitalize(fieldCaption)}`;
+                    className = `prev${capitalize(fieldCaption)}`;
                 } else if (cellDateFormated > currentDateFormatted) {
-                    className = `next${_.capitalize(fieldCaption)}`;
+                    className = `next${capitalize(fieldCaption)}`;
                 }
             } else if (fieldCaption === 'projected') {
                 if (cellValue === Projected.Today) {
-                    className = `current${_.capitalize(fieldCaption)}`;
+                    className = `current${capitalize(fieldCaption)}`;
                 } else if (cellValue === Projected.Mtd || cellValue === Projected.PastTotal) {
-                    className = `prev${_.capitalize(fieldCaption)}`;
+                    className = `prev${capitalize(fieldCaption)}`;
                 } else if (cellValue === Projected.Forecast || cellValue === Projected.FutureTotal) {
-                    className = `next${_.capitalize(fieldCaption)}`;
+                    className = `next${capitalize(fieldCaption)}`;
                 }
             } else if (fieldCaption === 'historical') {
                 if (cellValue === Periods.Current) {
-                    className = `current${_.capitalize(fieldCaption)}`;
+                    className = `current${capitalize(fieldCaption)}`;
                 } else if (cellValue === Periods.Historical) {
-                    className = `prev${_.capitalize(fieldCaption)}`;
+                    className = `prev${capitalize(fieldCaption)}`;
                 } else if (cellValue === Periods.Forecast) {
-                    className = `next${_.capitalize(fieldCaption)}`;
+                    className = `next${capitalize(fieldCaption)}`;
                 }
             }
         }

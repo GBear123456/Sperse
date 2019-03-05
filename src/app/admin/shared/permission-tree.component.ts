@@ -1,7 +1,8 @@
 import { AfterViewChecked, AfterViewInit, Component, ElementRef, Injector, OnInit } from '@angular/core';
 import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import * as _ from 'lodash';
+import map from 'lodash/map';
+import includes from 'lodash/includes';
 
 @Component({
     selector: "permission-tree",
@@ -65,14 +66,14 @@ export class PermissionTreeComponent extends AppComponentBase implements OnInit,
             return;
         }
 
-        let treeData = _.map(this._editData.permissions, function (item) {
+        let treeData = map(this._editData.permissions, function (item) {
             return {
                 id: item.name,
                 parent: item.parentName ? item.parentName : '#',
                 text: item.displayName,
                 state: {
                     opened: true,
-                    selected: _.includes(self._editData.grantedPermissionNames, item.name)
+                    selected: includes(self._editData.grantedPermissionNames, item.name)
                 }
             };
         });

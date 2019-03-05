@@ -2,7 +2,10 @@ import { AfterViewChecked, AfterViewInit, Component, ElementRef, Injector, OnIni
 import { FeatureTreeEditModel } from '@app/admin/shared/feature-tree-edit.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
+import map from 'lodash/map';
+import some from 'lodash/some';
+import each from 'lodash/each';
+import find from 'lodash/find';
 
 @Component({
     selector: 'feature-tree',
@@ -47,13 +50,13 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
 
         const selectedFeatures = this._$tree.jstree('get_selected', true);
 
-        return _.map(this._editData.features, item => {
+        return map(this._editData.features, item => {
             const feature = new NameValueDto();
 
             feature.name = item.name;
 
             if (!item.inputType || item.inputType.name === 'CHECKBOX') {
-                feature.value = _.some(selectedFeatures, { original: { id: item.name } }) ? 'true' : 'false';
+                feature.value = some(selectedFeatures, { original: { id: item.name } }) ? 'true' : 'false';
             } else {
                 feature.value = this.getFeatureValueByName(item.name);
             }
@@ -75,13 +78,13 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             return;
         }
 
-        const treeData = _.map(this._editData.features, item => ({
+        const treeData = map(this._editData.features, item => ({
             id: item.name,
             parent: item.parentName ? item.parentName : '#',
             text: item.displayName,
             state: {
                 opened: true,
-                selected: _.some(this._editData.featureValues, { name: item.name, value: 'true' })
+                selected: some(this._editData.featureValues, { name: item.name, value: 'true' })
             }
         }));
 
@@ -259,7 +262,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
 
                     const $combobox = $('<select class="feature-tree-combobox" />');
                     const inputType = (feature.inputType as any);
-                    _.each(inputType.itemSource.items, (opt: any) => {
+                    each(inputType.itemSource.items, (opt: any) => {
                         $('<option></option>')
                             .attr('value', opt.value)
                             .text(opt.displayText)
@@ -294,7 +297,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     findFeatureByName(featureName: string): FlatFeatureDto {
         const self = this;
 
-        const feature = _.find(self._editData.features, f => f.name === featureName);
+        const feature = find(self._editData.features, f => f.name === featureName);
 
         if (!feature) {
             abp.log.warn('Could not find a feature by name: ' + featureName);
@@ -310,7 +313,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
             return '';
         }
 
-        const featureValue = _.find(self._editData.featureValues, f => f.name === featureName);
+        const featureValue = find(self._editData.featureValues, f => f.name === featureName);
         if (!featureValue) {
             return feature.defaultValue;
         }
@@ -384,7 +387,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     setFeatureValueByName(featureName: string, value: string): void {
-        const featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
+        const featureValue = find(this._editData.featureValues, f => f.name === featureName);
         if (!featureValue) {
             return;
         }
@@ -393,7 +396,7 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
     }
 
     getFeatureValueByName(featureName: string): string {
-        const featureValue = _.find(this._editData.featureValues, f => f.name === featureName);
+        const featureValue = find(this._editData.featureValues, f => f.name === featureName);
         if (!featureValue) {
             return null;
         }

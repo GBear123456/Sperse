@@ -5,7 +5,7 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { EditionSelectDto, EditionWithFeaturesDto, EditionsSelectOutput, FlatFeatureSelectDto, TenantRegistrationServiceProxy } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
+import filter from 'lodash/filter';
 
 @Component({
     templateUrl: './select-edition.component.html',
@@ -53,7 +53,7 @@ export class SelectEditionComponent extends AppComponentBase implements OnInit {
     }
 
     featureEnabledForEdition(feature: FlatFeatureSelectDto, edition: EditionWithFeaturesDto): boolean {
-        const featureValues = _.filter(edition.featureValues, { name: feature.name });
+        const featureValues = filter(edition.featureValues, { name: feature.name });
         if (!featureValues || featureValues.length <= 0) {
             return false;
         }
@@ -63,7 +63,7 @@ export class SelectEditionComponent extends AppComponentBase implements OnInit {
     }
 
     getFeatureValueForEdition(feature: FlatFeatureSelectDto, edition: EditionWithFeaturesDto): string {
-        const featureValues = _.filter(edition.featureValues, { name: feature.name });
+        const featureValues = filter(edition.featureValues, { name: feature.name });
         if (!featureValues || featureValues.length <= 0) {
             return '';
         }

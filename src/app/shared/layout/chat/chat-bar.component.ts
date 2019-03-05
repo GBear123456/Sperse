@@ -8,7 +8,11 @@ import { DomHelper } from '@shared/helpers/DomHelper';
 import { BlockUserInput, ChatMessageDtoSide, ChatServiceProxy, CommonLookupServiceProxy, CreateFriendshipRequestByUserNameInput, CreateFriendshipRequestInput, FindUsersInput, FriendDto, FriendDtoState, FriendshipServiceProxy, MarkAllUnreadMessagesOfUserAsReadInput, NameValueDto, ProfileServiceProxy, UnblockUserInput, UserLoginInfoDto } from '@shared/service-proxies/service-proxies';
 import { LocalStorageService } from '@shared/utils/local-storage.service';
 import { QuickSideBarChat } from 'app/shared/layout/chat/QuickSideBarChat';
-import * as _ from 'lodash';
+import filter from 'lodash/filter';
+import map from 'lodash/map';
+import min from 'lodash/min';
+import reduce from 'lodash/reduce';
+import forEach from 'lodash/forEach';
 import * as moment from 'moment';
 import { ChatFriendDto } from './ChatFriendDto';
 import { ChatSignalrService } from './chat-signalr.service';
@@ -192,8 +196,8 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
             return;
         }
 
-        const unreadMessages = _.filter(user.messages, m => m.readState === AppChatMessageReadState.Unread);
-        const unreadMessageIds = _.map(unreadMessages, 'id');
+        const unreadMessages = filter(user.messages, m => m.readState === AppChatMessageReadState.Unread);
+        const unreadMessageIds = map(unreadMessages, 'id');
 
         if (!unreadMessageIds.length) {
             return;
@@ -204,7 +208,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         input.userId = user.friendUserId;
 
         this._chatService.markAllUnreadMessagesOfUserAsRead(input).subscribe(() => {
-            _.forEach(user.messages, message => {
+            forEach(user.messages, message => {
                 if (unreadMessageIds.indexOf(message.id) >= 0) {
                     message.readState = AppChatMessageReadState.Read;
                 }
@@ -216,7 +220,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         this.loadingPreviousUserMessages = true;
         let minMessageId;
         if (user.messages && user.messages.length) {
-            minMessageId = _.min(_.map(user.messages, m => m.id));
+            minMessageId = min(map(user.messages, m => m.id));
         }
 
         this._chatService.getUserChatMessages(user.friendTenantId ? user.friendTenantId : undefined, user.friendUserId, minMessageId)
@@ -278,7 +282,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     getFriendOrNull(userId: number, tenantId?: number): ChatFriendDto {
-        const friends = _.filter(this.friends, friend => friend.friendUserId === userId && friend.friendTenantId === tenantId);
+        const friends = filter(this.friends, friend => friend.friendUserId === userId && friend.friendTenantId === tenantId);
         if (friends.length) {
             return friends[0];
         }
@@ -287,7 +291,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     getFilteredFriends(state: FriendDtoState, userNameFilter: string): FriendDto[] {
-        const foundFriends = _.filter(this.friends, friend => friend.state === state &&
+        const foundFriends = filter(this.friends, friend => friend.state === state &&
             this.getShownUserName(friend)
                 .toLocaleLowerCase()
                 .indexOf(userNameFilter.toLocaleLowerCase()) >= 0);
@@ -296,7 +300,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
     }
 
     getFilteredFriendsCount(state: FriendDtoState): number {
-        return _.filter(this.friends, friend => friend.state === state).length;
+        return filter(this.friends, friend => friend.state === state).length;
     }
 
     getUserNameByChatSide(chatSide: ChatMessageDtoSide): string {
@@ -489,7 +493,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
         let totalUnreadMessageCount = 0;
 
         if (this.friends) {
-            totalUnreadMessageCount = _.reduce(this.friends, (memo, friend) => memo + friend.unreadMessageCount, 0);
+            totalUnreadMessageCount = reduce(this.friends, (memo, friend) => memo + friend.unreadMessageCount, 0);
         }
 
         abp.event.trigger('app.chat.unreadMessageCountChanged', totalUnreadMessageCount);
@@ -542,7 +546,7 @@ export class ChatBarComponent extends AppComponentBase implements OnInit, AfterV
                 abp.notify.info(this.l('UserSendYouAFriendshipRequest', data.friendUserName));
             }
 
-            if (!_.filter(this.friends, f => f.friendUserId === data.friendUserId && f.friendTenantId === data.friendTenantId).length) {
+            if (!filter(this.friends, f => f.friendUserId === data.friendUserId && f.friendTenantId === data.friendTenantId).length) {
                 this.friends.push(data);
             }
         });

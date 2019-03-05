@@ -3,7 +3,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CachingServiceProxy, EntityDtoOfString, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
-import * as _ from 'lodash';
+import escape from 'lodash/escape';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -123,7 +123,7 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
     }
 
     getRawLogContent(log: string): string {
-        return _.escape(log)
+        return escape(log)
             .replace('DEBUG', '')
             .replace('INFO', '')
             .replace('WARN', '')

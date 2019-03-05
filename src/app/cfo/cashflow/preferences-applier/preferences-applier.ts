@@ -4,7 +4,7 @@
 import { UserPreferencesService } from '../preferences-dialog/preferences.service';
 import { GeneralScope } from '../enums/general-scope.enum';
 import { CashflowCellsChecker } from '../cashflow-cells-checker/cashflow-cells-checker';
-import * as _ from 'underscore.string';
+import { dasherize } from 'underscore.string/dasherize';
 import { CashflowHelper } from '../cashflow.helper/cashflow.helper';
 
 export class PreferencesApplier {
@@ -225,7 +225,7 @@ export class PreferencesApplier {
     }
 
     private addPreferenceStyle(preference) {
-        const cssProperty = _.dasherize(preference['sourceName']);
+        const cssProperty = dasherize(preference['sourceName']);
         for (let area of preference.areas) {
             $(`.dx-area-${area}-cell`).css(cssProperty, preference['sourceValue']);
         }
