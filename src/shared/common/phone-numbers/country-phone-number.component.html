@@ -1,9 +1,10 @@
 <div class="wrapper" [ngClass]="{valid: isValid()}">
-    <international-phone-number 
+    <international-phone-number
         class="tabular"
         placeholder=""
         [(ngModel)]="phoneNumber"
         [required]="required"
+        defaultCountry="us"
         #intPhoneNumberModel="ngModel"
         (onFocusIn)="focusIn($event)"
         (onFocusOut)="focusOut($event)"

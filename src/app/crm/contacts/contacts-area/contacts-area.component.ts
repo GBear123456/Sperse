@@ -33,7 +33,6 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
 
     isEditAllowed = false;
 
-    private masks = AppConsts.masks;
     private _clickTimeout;
     private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
@@ -98,7 +97,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
             phoneExtension: data && data.phoneExtension,
             usageTypeId: data && data.usageTypeId,
             isConfirmed: Boolean(data && data.isConfirmed),
-            isActive: Boolean(data ? data.isActive: true),
+            isActive: Boolean(data ? data.isActive : true),
             comment: data && data.comment,
             isCompany: this.isCompany,
             deleteItem: (event) => {
