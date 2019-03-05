@@ -107,17 +107,17 @@ body.lend-space .accountsContainer .p-content {
 }
 body.lend-space .accountsContainer .not-initialized-content .welcome-text,
 body.lend-space .accountsContainer .not-initialized-content body-text .btn-layout {
-  font-family: 'Poppins' !important;
-}
-body.lend-space .accountsContainer .not-initialized-content .btn-layout {
   border-radius: 2px !important;
-  background-color: #ffcc00;
   font-size: 18px !important;
+}
+body.lend-space .btn-layout {
+  font-family: 'Poppins' !important;
+  background-color: #ffcc00;
   color: #000000;
   transition: 0.2s;
   border: none;
 }
-body.lend-space .accountsContainer .not-initialized-content .btn-layout:hover {
+body.lend-space .btn-layout:hover {
   background-color: #e0b400;
   box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
 }
