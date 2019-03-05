@@ -3,11 +3,13 @@ import { OnInit, AfterViewInit, Injector, Inject, Component, ElementRef } from '
 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OrderHistoryInfo, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ObservableInput } from '@node_modules/rxjs';
 
 @Component({
     templateUrl: './history-list-dialog.component.html',
@@ -16,7 +18,7 @@ import { OrderServiceProxy } from '@shared/service-proxies/service-proxies';
 })
 export class HistoryListDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
     private slider: any;
-    ordersHistory = [];
+    ordersHistory$: ObservableInput<OrderHistoryInfo[]>;
 
     constructor(
         injector: Injector,
@@ -26,10 +28,6 @@ export class HistoryListDialogComponent extends AppComponentBase implements OnIn
         private orderServiceProxy: OrderServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
-        orderServiceProxy.getHistory(this.data.Id).subscribe((res) => {
-            this.ordersHistory = res;
-        });
     }
 
     ngOnInit() {
@@ -41,6 +39,8 @@ export class HistoryListDialogComponent extends AppComponentBase implements OnIn
             top: '75px',
             right: '-100vw'
         });
+        this.startLoading();
+        this.ordersHistory$ = this.orderServiceProxy.getHistory(this.data.Id).pipe(finalize(() => this.finishLoading()));
     }
 
     ngAfterViewInit() {
