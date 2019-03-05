@@ -24,7 +24,7 @@ import { CustomerAssignedUsersStoreSelectors,
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
@@ -48,6 +48,8 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -104,7 +106,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
-        public featureService: FeatureCheckerService
+        public featureService: FeatureCheckerService,
+        private itemDetailsService: ItemDetailsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
@@ -202,7 +205,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.searchClear = false;
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId].concat(orgId ? ['company', orgId]: []),
+        this._router.navigate(['app/crm/client', clientId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/clients'} });
     }
 
@@ -652,7 +655,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.Customer, this.dataGrid.instance.getDataSource());
         this.hideHostElement();
     }
 

@@ -24,6 +24,7 @@ import { PfmRoutingModule } from '@app/pfm/pfm-routing.module';
 import { OfferEditComponent } from '@app/pfm/offer-edit/offer-edit.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.module';
+import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 
 @NgModule({
     imports: [
@@ -51,7 +52,9 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
         OfferEditComponent
     ],
     entryComponents: [],
-    providers: []
+    providers: [
+        DataSourceService
+    ]
 })
 
 export class PfmModule { }

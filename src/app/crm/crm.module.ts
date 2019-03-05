@@ -70,6 +70,7 @@ import { ContactsModule } from './contacts/contacts.module';
 import { AppStoreService } from '@app/store/app-store.service';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
+import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 
 @NgModule({
     imports: [
@@ -141,7 +142,8 @@ import { CommonModule } from '@shared/common/common.module';
         AppStoreService,
         ImportServiceProxy,
         ImportLeadsService,
-        ZendeskService
+        ZendeskService,
+        DataSourceService
     ],
     entryComponents: [
         CreateActivityDialogComponent,

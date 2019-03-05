@@ -327,12 +327,8 @@ export class OperationsWidgetComponent extends AppComponentBase {
         this._appService.redirectToCFO(this.contactInfo.personContactInfo.userId);
     }
 
-    checkSetNavButtonsEnabled(direction, items) {
-        if (items.length <= 1) {
-            direction == 'prev' ? this.isPrevDisabled = true : this.isNextDisabled = true;
-        } else {
-            this.isPrevDisabled = false;
-            this.isNextDisabled = false;
-        }
+    checkSetNavButtonsEnabled(isFirst, isLast) {
+        this.isPrevDisabled = isFirst;
+        this.isNextDisabled = isLast;
     }
 }

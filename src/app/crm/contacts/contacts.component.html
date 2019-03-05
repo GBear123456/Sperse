@@ -30,8 +30,8 @@
             (onUpdateStatus)="updateStatus($event)"
             (onUpdateRating)="updateRating($event)"
             (onDelete)="deleteLead()"
-            (prev)="loadTargetEntity('prev')"
-            (next)="loadTargetEntity('next')"
+            (prev)="loadTargetEntity($event, targetDirections.Prev)"
+            (next)="loadTargetEntity($event, targetDirections.Next)"
             [getProxyService]="getProxyService"
             [getAssignedUsersSelector]="getAssignedUsersStoreSelectors"
             [getAssignmentsPermissionKey]="getAssignmentsPermissinKey">

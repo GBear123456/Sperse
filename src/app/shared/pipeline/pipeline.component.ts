@@ -4,7 +4,7 @@ import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, 
 /** Third party imports */
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
-import { Subject, of } from 'rxjs';
+import { Observable, Subject, from, of } from 'rxjs';
 import { delayWhen, map, mergeMap } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
@@ -254,7 +254,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             });
     }
 
-    loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false) {
+    loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
+        let response = of(null);
         let index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
             dataSource = this._dataSources[stage.name],
@@ -267,7 +268,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 dataSource = this._dataSources[stage.name] =
                     new DataSource(_.extend(_.clone(this._dataSource), {
                         onLoadError: (error) => { this.httpInterceptor.handleError(error); },
-                        requireTotalCount: !this.totalsURI,
+                        requireTotalCount: true,
                         select: this.selectFields
                     }));
 
@@ -282,38 +283,44 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     ]})
             );
             dataSource.sort({getter: 'Id', desc: true});
-            dataSource.load().done((entities) => {
-                if (entities.length) {
-                    stage['entities'] = (page && oneStageOnly ? _.uniqBy(
-                        (stage['entities'] || []).concat(entities), (entity) => entity['Id']) : entities).map((entity) => {
-                            stage['lastEntityId'] = Math.min((page ? stage['lastEntityId'] : undefined) || Infinity, entity['Id']);
-                            return entity;
-                        });
-                    if (!this.totalsURI)
-                        stage['total'] = dataSource.totalCount();
-                    stage['full'] = (stage['entities'].length >= (stage['total'] || 0));
-                } else  {
-                    if (!page || !stage['entities'])
-                        stage['entities'] = [];
-                    stage['total'] = stage['entities'].length;
-                    stage['full'] = true;
-                }
+            response = from(dataSource.load()).pipe(
+                map((entities: any) => {
+                    if (entities.length) {
+                        stage['entities'] = (page && oneStageOnly ? _.uniqBy(
+                            (stage['entities'] || []).concat(entities), (entity) => entity['Id']) : entities).map((entity) => {
+                                stage['lastEntityId'] = Math.min((page ? stage['lastEntityId'] : undefined) || Infinity, entity['Id']);
+                                return entity;
+                            });
+                        if (!this.totalsURI)
+                            stage['total'] = dataSource.totalCount();
+                        stage['full'] = (stage['entities'].length >= (stage['total'] || 0));
+                    } else  {
+                        if (!page || !stage['entities'])
+                            stage['entities'] = [];
+                        stage['total'] = stage['entities'].length;
+                        stage['full'] = true;
+                    }
 
-                let allStagesLoaded = this.isAllStagesLoaded();
-                if (oneStageOnly || allStagesLoaded)
-                    setTimeout(() => this.finishLoading(), 1000);
-                if (this.totalsURI && allStagesLoaded)
-                    this.processTotalsRequest(this.queryWithSearch);
-            });
+                    let allStagesLoaded = this.isAllStagesLoaded();
+                    if (oneStageOnly || allStagesLoaded)
+                        setTimeout(() => this.finishLoading(), 1000);
+                    if (this.totalsURI && allStagesLoaded)
+                        this.processTotalsRequest(this.queryWithSearch);
+                    dataSource['pipelineItems'] = stage['entities'];
+                    return entities;
+                })
+            );
+            response.subscribe();
         }
 
         if (!oneStageOnly && stages[index + 1])
-            this.loadStagesEntities(page, index + 1);
+            response = this.loadStagesEntities(page, index + 1);
+        return response;
     }
 
     processTotalsRequest(filter?: any) {
         (new DataSource({
-            requireTotalCount: false,
+            requireTotalCount: true,
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.totalsURI, filter),
@@ -355,11 +362,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return this.queryWithSearch;
     }
 
-    loadMore(stageIndex) {
+    loadMore(stageIndex): Observable<any> {
         this.startLoading();
-        this.loadStagesEntities(
-            Math.floor(this.stages[stageIndex]['entities'].length
-                / this.STAGE_PAGE_COUNT), stageIndex, true);
+        return this.loadStagesEntities(
+            Math.floor(this.stages[stageIndex]['entities'].length / this.STAGE_PAGE_COUNT),
+            stageIndex,
+            true
+        );
     }
 
     updateEntityStage(entityId, newStage, oldStage, complete = null) {
@@ -475,8 +484,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             else if (event.shiftKey)
                 this.toogleHighlightShiftArea(entity, checkedCard);
             this.selectedEntities = this.getSelectedEntities();
-        } else
-            this.onCardClick.emit(entity);
+        } else {
+            this.onCardClick.emit({
+                entity: entity,
+                entityStageDataSource: this._dataSources[entity.Stage],
+                loadMethod: this.loadMore.bind(this, this.stages.findIndex(stage => stage.id === entity.StageId))
+            });
+        }
         this.hideStageHighlighting();
     }
 
