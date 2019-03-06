@@ -55,10 +55,10 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
 
     ngAfterViewInit() {
         this.valueOriginal = this.data && this.data.value;
-        this.setWidth();
+        this.updateWidth();
     }
 
-    setWidth() {
+    updateWidth() {
         this.width = this.editTextRef.nativeElement.offsetWidth + 20;
     }
 
@@ -83,7 +83,7 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
             if (this.data.value != this.valueOriginal && this.valueChanged)
                 this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;
-            setTimeout(() => this.setWidth());
+            setTimeout(() => this.updateWidth());
         }
     }
 
@@ -93,6 +93,7 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
         this._clickTimeout = setTimeout(() => {
             if (isEnabled) {
                 if (this._clickCounter > 1) {
+                    this.updateWidth();
                     this.isEditModeEnabled = isEnabled;
                     this.valueOriginal = this.data.value;
                     setTimeout(() => this.textBox.instance.focus());
