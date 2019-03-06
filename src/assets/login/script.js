@@ -344,6 +344,7 @@
                     },
                     error: function(request) {
                         abp.ui.clearBusy();
+                        loginInProgress = false;
                         var response = JSON.parse(request.responseText);
                         if (response.error)
                             abp.message.error(response.error.details, response.error.message);

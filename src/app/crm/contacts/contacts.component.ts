@@ -245,7 +245,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     isClientDetailPage() {
-        return this.customerType !== ContactGroup.Partner && !this.partnerTypeId && !this.leadId;
+        return this.customerType != ContactGroup.Partner && this.contactInfo.statusId != ContactStatus.Prospective;
     }
 
     private storeInitialData() {
