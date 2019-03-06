@@ -86,7 +86,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         this.refresh,
         this.offerId$
     ).pipe(
-        tap((a) => console.log(a, 'id changed or refresh')),
         withLatestFrom(this.offerId$),
         tap(() => abp.ui.setBusy()),
         switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(

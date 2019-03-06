@@ -143,12 +143,18 @@ export class ContactsService {
         }).afterClosed();
     }
 
-    updateLocation(customerId?, leadId?, partnerId?, companyId?) {
-        this._location.replaceState(this._router.createUrlTree(['app/crm'].concat(
-            customerId ? ['client', customerId] : [],
-            leadId ? ['lead', leadId] : [],
-            partnerId ? ['partner', partnerId] : [],
-            companyId ? ['company', companyId] : []
-        )).toString(), location.search);
+    updateLocation(customerId?, leadId?, partnerId?, companyId?, userId?) {
+        this._location.replaceState(
+            this._router.createUrlTree(
+                ['app/' + (userId ? 'admin' : 'crm')].concat(
+                    customerId ? ['client', customerId] : [],
+                    leadId ? ['lead', leadId] : [],
+                    partnerId ? ['partner', partnerId] : [],
+                    companyId ? ['company', companyId] : [],
+                    userId ? ['user', userId, 'user-information'] : []
+                )
+            ).toString(),
+            location.search
+        );
     }
 }
