@@ -58,11 +58,7 @@
                         <div class="remove-import-user" (click)="removeImportUser(i)"><i class="fa fa-minus"></i></div>
                     </div>
                 </dx-validation-group>
-                <div>
-                    <span class="add-import-user"
-                          (click)="addImportUser()"
-                          *ngIf="maxAvailableUserCount > 0">+ADD</span>
-                </div>
+                <div class="add-import-user" (click)="addImportUser()" *ngIf="maxAvailableUserCount > 0">+ADD</div>
             </div>
         </dx-scroll-view>
     </div>
