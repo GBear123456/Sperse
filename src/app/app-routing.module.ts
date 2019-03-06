@@ -30,7 +30,7 @@ export class ModulePathResolverService implements Resolve<any> {
 
     resolve(route: ActivatedRouteSnapshot) {
         if (this.sessionService.userId !== null) {
-            this.cacheService.set('lastVisitedModule_' + this.sessionService.userId, route.url[0].path);
+            this.cacheService.set('lastVisitedModule_' + this.sessionService.tenantId + '_' + this.sessionService.userId, route.url[0].path);
         }
         return of('');
     }
