@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
 import { forkJoin, of } from 'rxjs';
-import { filter, finalize, map } from 'rxjs/operators';
+import { finalize, map, switchMap, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -176,30 +176,41 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 this.dataSourceURI = 'Partner';
                 this.currentItemId = this.params.partnerId;
                 break;
+            case 'users':
+                this.dataSourceURI = 'User';
+                this.currentItemId = this.params.userId;
+                break;
             default:
                 break;
         }
-        window['dataGrid'] = this._itemDetailsService.getItemsSource(this.dataSourceURI as any);
-        this.targetEntity$.subscribe((direction: TargetDirectionEnum) => {
-            this.startLoading(true);
-            const itemFullInfo$ = this._itemDetailsService.getItemFullInfo(this.dataSourceURI as ItemTypeEnum, this.currentItemId, direction);
-            itemFullInfo$.pipe(finalize(() => this.finishLoading(true))).subscribe((itemFullInfo: ItemFullInfo) => {
-                /** @todo reload grid closing list section to correctly show pagination */
-                this.toolbarComponent.checkSetNavButtonsEnabled(!itemFullInfo || itemFullInfo.isFirstOnList, !itemFullInfo || itemFullInfo.isLastOnList);
-                if (itemFullInfo) {
-                    this.currentItemId = itemFullInfo.itemData.Id;
-                    /** New current item Id */
-                    this.loadData({
-                        userId: this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined,
-                        clientId: this.dataSourceURI == 'Customer' ? itemFullInfo.itemData.Id : this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
-                        partnerId: this.dataSourceURI == 'Partner' ? itemFullInfo.itemData.Id : undefined,
-                        customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
-                        leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.Id : undefined,
-                        companyId: itemFullInfo.itemData.OrganizationId
-                    });
-                    this.updateLocation(itemFullInfo);
-                }
-            });
+        const itemIdProperty = this.dataSourceURI === 'User' ? 'id' : 'Id';
+        this.targetEntity$.pipe(
+            tap(() => this.startLoading(true)),
+            switchMap((direction: TargetDirectionEnum) => this._itemDetailsService.getItemFullInfo(
+                this.dataSourceURI as ItemTypeEnum,
+                this.currentItemId,
+                direction,
+                itemIdProperty
+            ).pipe(
+                finalize(() => this.finishLoading(true)))
+            )
+        ).subscribe((itemFullInfo: ItemFullInfo) => {
+            this.toolbarComponent.checkSetNavButtonsEnabled(!itemFullInfo || itemFullInfo.isFirstOnList, !itemFullInfo || itemFullInfo.isLastOnList);
+            if (itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemIdProperty]) {
+                this.currentItemId = itemFullInfo.itemData[itemIdProperty];
+                /** New current item Id */
+                this.loadData({
+                    userId: this.dataSourceURI === 'User'
+                            ? itemFullInfo.itemData[itemIdProperty]
+                            : (this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined),
+                    clientId: this.dataSourceURI == 'Customer' ? itemFullInfo.itemData[itemIdProperty] : this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
+                    partnerId: this.dataSourceURI == 'Partner' ? itemFullInfo.itemData[itemIdProperty] : undefined,
+                    customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
+                    leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData[itemIdProperty] : undefined,
+                    companyId: itemFullInfo.itemData.OrganizationId
+                });
+                this.updateLocation(itemFullInfo);
+            }
         });
     }
 
@@ -213,6 +224,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 break;
             case 'partners':
                 this._contactsService.updateLocation(null, null, itemFullInfo.itemData.Id, itemFullInfo.itemData.OrganizationId);
+                break;
+            case 'users':
+                this._contactsService.updateLocation(null, null, null, null, itemFullInfo.itemData.id);
                 break;
             default:
                 break;

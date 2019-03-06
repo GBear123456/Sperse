@@ -88,7 +88,16 @@ export class OperationsWidgetComponent extends AppComponentBase {
     isNextDisabled = false;
 
     toolbarConfig = [];
-
+    printButtonConfig = {
+        location: 'after',
+        locateInMenu: 'auto',
+        items: [
+            {
+                name: 'print',
+                action: this.print.emit.bind(this.print)
+            }
+        ]
+    };
     constructor(
         injector: Injector,
         private _clientService: ContactsService,
@@ -165,43 +174,11 @@ export class OperationsWidgetComponent extends AppComponentBase {
                         }
                     ]
                 },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'print',
-                            action: this.print.emit.bind(this.print)
-                        }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'prev',
-                            action: this.loadPrevItem.bind(this),
-                            disabled: this.isPrevDisabled
-                        },
-                        {
-                            name: 'next',
-                            action: this.loadNextItem.bind(this),
-                            disabled: this.isNextDisabled
-                        }
-                    ]
-                }
+                this.printButtonConfig,
+                this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
             ] : [
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'print',
-                            action: this.print.emit.bind(this.print)
-                        },
-                    ]
-                }
+                this.printButtonConfig,
+                this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
             ];
 
             this.toolbarConfig.push(
@@ -231,6 +208,25 @@ export class OperationsWidgetComponent extends AppComponentBase {
                 }
             );
         }, 300);
+    }
+
+    getNavigationConfig(isPrevDisabled: boolean, isNextDisabled: boolean) {
+        return {
+            location: 'after',
+            locateInMenu: 'auto',
+            items: [
+                {
+                    name: 'prev',
+                    action: this.loadPrevItem.bind(this),
+                    disabled: isPrevDisabled
+                },
+                {
+                    name: 'next',
+                    action: this.loadNextItem.bind(this),
+                    disabled: isNextDisabled
+                }
+            ]
+        };
     }
 
     toggleStages() {
