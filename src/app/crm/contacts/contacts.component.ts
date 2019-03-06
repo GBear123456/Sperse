@@ -191,7 +191,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     /** New current item Id */
                     this.loadData({
                         userId: this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined,
-                        clientId: this.dataSourceURI == 'Customer' ? itemFullInfo.itemData.Id : undefined,
+                        clientId: this.dataSourceURI == 'Customer' ? itemFullInfo.itemData.Id : this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
                         partnerId: this.dataSourceURI == 'Partner' ? itemFullInfo.itemData.Id : undefined,
                         customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
                         leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.Id : undefined,

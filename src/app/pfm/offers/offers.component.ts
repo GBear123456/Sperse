@@ -43,7 +43,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     private rootComponent: any;
     public headlineConfig;
     private filters: FilterModel[] = new Array<FilterModel>();
-    private updateAfterActivation: boolean;
     filterModelCategories: FilterModel;
     filterModelFlags: FilterModel;
     filterModelAttributes: FilterModel;
@@ -97,7 +96,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     items: [
                         {
                             name: 'filters',
-                            action: (event) => {
+                            action: () => {
                                 setTimeout(() => {
                                     this.dataGrid.instance.repaint();
                                 }, 1000);
@@ -107,10 +106,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                                 checkPressed: () => {
                                     return this._filtersService.fixed;
                                 },
-                                mouseover: (event) => {
+                                mouseover: () => {
                                     this._filtersService.enable();
                                 },
-                                mouseout: (event) => {
+                                mouseout: () => {
                                     if (!this._filtersService.fixed)
                                         this._filtersService.disable();
                                 }
@@ -296,7 +295,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         let data = {};
         if (filter.items.element && filter.items.element.value) {
             let filterData = [];
-            filter.items.element.value.forEach((category, i) => {
+            filter.items.element.value.forEach(category => {
                 filterData.push({ or: [{ Categories: { any: { CampaignCategory: category } } }] });
             });
             data = {
@@ -311,13 +310,9 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this.dataGrid.instance.refresh();
     }
 
-    public refreshData(): void {
-    }
-
     initFiltering() {
         this._filtersService.apply(() => {
             this.processFilterInternal();
-            this.refreshData();
             this.initToolbarConfig();
         });
     }
@@ -351,16 +346,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         return filterParams;
     }
 
-    expandColapseRow(e) {
-        if (!e.data.sourceData) return;
-
-        if (e.isExpanded) {
-            e.component.collapseRow(e.key);
-        } else {
-            e.component.expandRow(e.key);
-        }
-    }
-
     onSelectionChanged($event) {
         this.selectedOfferKeys = $event.component.getSelectedRowKeys().map(item => item.CampaignId);
     }
@@ -375,7 +360,9 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     openOfferEdit(e) {
         this.searchClear = false;
-        this._router.navigate(['./', e.data.CampaignId], { relativeTo: this._activatedRoute });
+        this._router.navigate(['./', e.data.CampaignId], {
+            relativeTo: this._activatedRoute
+        });
     }
 
     invalidate() {
@@ -393,6 +380,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this.initFiltering();
         this.initToolbarConfig();
         this.rootComponent.overflowHidden(true);
+        this.showHostElement();
     }
 
     deactivate() {

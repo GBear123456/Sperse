@@ -264,13 +264,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             );
             dataSource.sort({getter: 'Id', desc: true});
             response = from(dataSource.load()).pipe(
-                map((entities: any) => {
-                    if (entities.length) {
+                map((leads: any) => {
+                    if (leads.length) {
                         stage['leads'] = (page && oneStageOnly ? _.uniqBy(
-                            (stage['leads'] || []).concat(entities), (entity) => entity['Id']) : entities).map((entity) => {
-                                stage['lastEntityId'] = Math.min((page ? stage['lastEntityId'] : undefined) || Infinity, entity['Id']);
-                                return entity;
-                            });
+                            (stage['leads'] || []).concat(leads), (lead) => lead['Id']) : leads).map((lead) => {
+                            stage['lastLeadId'] = Math.min((page ? stage['lastLeadId'] : undefined) || Infinity, lead['Id']);
+                            return lead;
+                        });
                         if (!this.totalsURI)
                             stage['total'] = dataSource.totalCount();
                         stage['full'] = (stage['leads'].length >= (stage['total'] || 0));
@@ -287,7 +287,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     if (this.totalsURI && allStagesLoaded)
                         this.processTotalsRequest(this.queryWithSearch);
                     dataSource['pipelineItems'] = stage['leads'];
-                    return entities;
+                    return leads;
                 })
             );
             response.subscribe();
@@ -300,7 +300,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     processTotalsRequest(filter?: any) {
         (new DataSource({
-            requireTotalCount: true,
+            requireTotalCount: false,
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.totalsURI, filter),
@@ -315,8 +315,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             stages && this.stages.forEach((stage) => {
                 if (stages[stage.id]) {
                     stage['total'] = stages[stage.id];
-                    stage['full'] = stage['total']
-                        <= stage['leads'].length;
+                    stage['full'] = stage['total'] <= stage['leads'].length;
                 } else {
                     stage['total'] = 0;
                     stage['full'] = false;

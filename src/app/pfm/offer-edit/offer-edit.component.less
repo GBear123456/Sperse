@@ -49,6 +49,41 @@
             }
         }
 
+        .navigation {
+            margin: 0 20px;
+            /deep/ .dx-button {
+                &.prev {
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+                &.next {
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                }
+                .dx-button-content {
+                    height: 37px;
+                    min-width: 50px;
+                    padding: 6px 15px;
+                }
+                &.dx-state-hover,
+                &.dx-state-focused {
+                    background-color: #fff;
+                }
+                &.dx-state-focused {
+                    border-color: #ddd;
+                }
+                &.dx-state-hover {
+                    background-color: #fff;
+                }
+                &.dx-state-hover {
+                    border-color: #9d9d9d;
+                }
+                .dx-icon {
+                    color: #959a9f;
+                }
+            }
+        }
+
         button {
             margin-left: auto;
             margin-right: 20px;

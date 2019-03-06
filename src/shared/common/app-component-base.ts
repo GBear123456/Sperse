@@ -230,8 +230,7 @@ export abstract class AppComponentBase implements OnDestroy {
 
     showHostElement() {
         setTimeout(() => {
-            this.getElementRef().nativeElement
-                .style.display = 'block';
+            this.getElementRef().nativeElement.style.display = 'block';
             this.dataGrid && this.dataGrid.instance && this.dataGrid.instance.repaint();
         }, 100);
     }

@@ -39,7 +39,7 @@ export class ItemDetailsService {
      * @param {TargetDirectionEnum} itemDirection
      * @return {Observable<ItemFullInfo>}
      */
-    getItemFullInfo(itemType: ItemTypeEnum, itemId: number, itemDirection: TargetDirectionEnum): Observable<ItemFullInfo> {
+    getItemFullInfo(itemType: ItemTypeEnum, itemId: number, itemDirection: TargetDirectionEnum, itemSearchProperty = 'Id'): Observable<ItemFullInfo> {
         const dataSource$ = this.getItemsSource(itemType);
         return dataSource$.pipe(switchMap(dataSource => {
             let fullInfo$ = of(null);
@@ -47,7 +47,7 @@ export class ItemDetailsService {
                 let items = dataSource['pipelineItems'] || dataSource.items();
                 let itemIndex = 0;
                 let itemData = items.find((item, index) => {
-                    if (item.Id == itemId) {
+                    if (item[itemSearchProperty] == itemId) {
                         itemIndex = index;
                         return true;
                     }
@@ -57,7 +57,7 @@ export class ItemDetailsService {
                 const itemsCountOnTheLastPage = this.getItemsCountOnLastPage(dataSource.totalCount(), dataSource.pageSize(), dataSource.pageIndex());
                 const isLastOnPage = itemIndex + 1 === items.length || dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
                 const isFirstOnList = isFirstOnPage && dataSource.pageIndex() === 0;
-                const isLastOnList = !isFirstOnList && dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
+                const isLastOnList = dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
                 fullInfo$ = of({
                     itemData: itemData,
                     isFirstOnPage: isFirstOnPage,
@@ -71,15 +71,15 @@ export class ItemDetailsService {
                             /** Update data sourse page */
                             dataSource.pageIndex(dataSource.pageIndex() - 1);
                             fullInfo$ = from(dataSource.reload()).pipe(
-                                switchMap((items) => {
+                                switchMap(() => {
                                     const newItems = dataSource.items();
-                                    const newItemId = newItems[newItems.length - 1].Id;
+                                    const newItemId = newItems[newItems.length - 1][itemSearchProperty];
                                     /** Get data of the last item from the previous page */
-                                    return this.getItemFullInfo(itemType, newItemId, TargetDirectionEnum.Current);
+                                    return this.getItemFullInfo(itemType, newItemId, TargetDirectionEnum.Current, itemSearchProperty);
                                 })
                             );
                         } else {
-                            fullInfo$ = this.getItemFullInfo(itemType, items[itemIndex - 1].Id, TargetDirectionEnum.Current);
+                            fullInfo$ = this.getItemFullInfo(itemType, items[itemIndex - 1][itemSearchProperty], TargetDirectionEnum.Current, itemSearchProperty);
                         }
                     } else if (itemDirection === TargetDirectionEnum.Next) {
                         if (isLastOnPage) {
@@ -93,14 +93,14 @@ export class ItemDetailsService {
                             fullInfo$ = method$.pipe(
                                 switchMap(() => {
                                     const newItemId = dataSource['pipelineItems']
-                                        ? dataSource['pipelineItems'][dataSource['pipelineItems'].length - dataSource.pageSize()].Id
-                                        : dataSource.items()[0].Id;
+                                        ? dataSource['pipelineItems'][dataSource['pipelineItems'].length - dataSource.pageSize()][itemSearchProperty]
+                                        : dataSource.items()[0][itemSearchProperty];
                                     /** Get data of the first item from the next page */
-                                    return this.getItemFullInfo(itemType, newItemId, TargetDirectionEnum.Current);
+                                    return this.getItemFullInfo(itemType, newItemId, TargetDirectionEnum.Current, itemSearchProperty);
                                 })
                             );
                         } else {
-                            fullInfo$ = this.getItemFullInfo(itemType, items[itemIndex + 1].Id, TargetDirectionEnum.Current);
+                            fullInfo$ = this.getItemFullInfo(itemType, items[itemIndex + 1][itemSearchProperty], TargetDirectionEnum.Current, itemSearchProperty);
                         }
                     }
                 }

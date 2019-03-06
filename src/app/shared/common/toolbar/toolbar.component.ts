@@ -1,9 +1,7 @@
-import { Component, Injector, Input, Output, EventEmitter, HostListener, HostBinding } from '@angular/core';
+import { Component, Injector, Input, HostListener, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolbarGroupModel, ToolbarGroupModelItem } from './toolbar.model';
-
 import * as _ from 'underscore';
-import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'app-toolbar',
@@ -11,8 +9,8 @@ import { AppConsts } from '@shared/AppConsts';
     styleUrls: ['./toolbar.component.less']
 })
 export class ToolBarComponent extends AppComponentBase {
-    @Input('width') width = '100%';
-    @Input('compact') compact = false;
+    @Input() width = '100%';
+    @Input() compact = false;
     private _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
@@ -21,8 +19,6 @@ export class ToolBarComponent extends AppComponentBase {
     }
     @HostBinding('style.display') display: string;
     public items = [];
-
-    public responsiveItems = [];
     public options = {};
 
     constructor(injector: Injector) {
@@ -240,7 +236,7 @@ export class ToolBarComponent extends AppComponentBase {
         if (item.action)
             item.action.call(this, event);
         if (group.areItemsDependent)
-            group.items.forEach((i, index) => {
+            group.items.forEach(i => {
                 $('.dx-button[accesskey=' + i.name + ']').removeAttr('button-pressed');
             });
 
