@@ -92,6 +92,13 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode})))
     );
     offerNotInCardCategory$ = this.offerDetails$.pipe(pluck('categories'), map((categories: any[]) => categories.indexOf('Credit Cards') === -1));
+    statusEnum = OfferDetailsForEditDtoStatus;
+    systemTypeEnum = OfferDetailsForEditDtoSystemType;
+    typeEnum = OfferDetailsForEditDtoType;
+    campaignProviderTypeEnum = OfferDetailsForEditDtoCampaignProviderType;
+    cardNetworkEnum = OfferDetailsForEditDtoCardNetwork;
+    targetAudienceEnum = OfferDetailsForEditDtoTargetAudience;
+    securingTypeEnum = OfferDetailsForEditDtoSecuringType;
     detailsConfig = {
         logoUrl: {
             hidden: true
@@ -283,7 +290,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             readOnly: true
         },
         daysOfWeekAvailability: {
-                readOnly: true
+            readOnly: true
         },
         effectiveTimeOfDay: {
             readOnly: true
@@ -304,41 +311,8 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     model: OfferDetailsForEditDto;
     section$: Observable<string>;
     sectionsDetails = {
-        'general': [
-            'campaignId',
-            'name',
-            'isPublished',
-            'status',
-            'categories',
-            'description',
-            'subId',
-            'systemType',
-            'type',
-            'campaignProviderType',
-            'cardNetwork',
-            'cartType',
-            'targetAudience',
-            'securingType',
-            'issuingBank',
-            'countries',
-            'daysOfWeekAvailability',
-            'effectiveTimeOfDay',
-            'expireTimeOfDay',
-            'termsOfService',
-            'traficSource',
-            'pros',
-            'details',
-            'cons',
-            'campaignUrl'
-        ],
-        'rating': [
-            'overallRating',
-            'interestRating',
-            'feesRating',
-            'benefitsRating',
-            'rewardsRating',
-            'serviceRating'
-        ],
+        'general': [],
+        'rating': [],
         'attributes': [
             'states',
             'creditScores',

@@ -1,0 +1,14 @@
+<div class="field">
+    <label [for]="name" [title]="label">{{ label }}</label>
+    <div class="drop-down-box-wrapper">
+        <dx-tag-box
+            [inputAttr]="{ id: name }"
+            [placeholder]="!readOnly ? ls.l('Select') : ''"
+            [displayExpr]="detailsConfig[detail].dataSourceConfig && detailsConfig[detail].dataSourceConfig.displayExpr"
+            [valueExpr]="valueExpr"
+            [dataSource]="dataSource"
+            [(value)]="value"
+            [disabled]="readOnly">
+        </dx-tag-box>
+    </div>
+</div>

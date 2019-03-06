@@ -1,0 +1,5 @@
+<div class="field">
+    <label [title]="label">{{ label }}</label>
+    <stars-rating [isEditable]="true" [currentRating]="value" color="#f0d500" (currentRatingChange)="valueChange.emit($event)"></stars-rating>
+    <span [ngClass]="value && 'clear-contact' || 'hidden'" (click)="valueChange.emit('')"><i class="minus-icon"></i></span>
+</div>

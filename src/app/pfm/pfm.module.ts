@@ -24,6 +24,13 @@ import { PfmRoutingModule } from '@app/pfm/pfm-routing.module';
 import { OfferEditComponent } from '@app/pfm/offer-edit/offer-edit.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.module';
+import { TextFieldComponent } from './offer-edit/text-field/text-field.component';
+import { DropdownFieldComponent } from './offer-edit/dropdown-field/dropdown-field.component';
+import { NumberFieldComponent } from './offer-edit/number-field/number-field.component';
+import { TagFieldComponent } from './offer-edit/tag-field/tag-field.component';
+import { CheckboxFieldComponent } from './offer-edit/checkbox-field/checkbox-field.component';
+import { TextMultipleFieldComponent } from './offer-edit/text-multiple-field/text-multiple-field.component';
+import { RatingFieldComponent } from './offer-edit/rating-field/rating-field.component';
 
 @NgModule({
     imports: [
@@ -48,7 +55,14 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
     ],
     declarations: [
         OffersComponent,
-        OfferEditComponent
+        OfferEditComponent,
+        TextFieldComponent,
+        DropdownFieldComponent,
+        NumberFieldComponent,
+        TagFieldComponent,
+        CheckboxFieldComponent,
+        TextMultipleFieldComponent,
+        RatingFieldComponent
     ],
     entryComponents: [],
     providers: []

@@ -1,0 +1,4 @@
+<div class="field">
+    <label [title]="label">{{ label }}</label>
+    <dx-check-box [value]="value" [disabled]="readOnly" (onValueChanged)="valueChange.emit($event.value)"></dx-check-box>
+</div>

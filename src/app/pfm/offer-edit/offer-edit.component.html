@@ -18,6 +18,193 @@
     </ng-container>
     <ng-container mainContent>
         <form class="offerEditForm">
+
+            <ng-container [ngSwitch]="section$ | async" *ngIf="model">
+
+                <div *ngSwitchCase="'general'">
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <text-field name="campaignId"
+                                        [(value)]="model.campaignId"
+                                        [readOnly]="true">
+                            </text-field>
+
+                            <checkbox-field name="isPublished"
+                                            [(value)]="model.isPublished"
+                                            class="leftAlignment">
+                            </checkbox-field>
+
+                            <text-field name="categories"
+                                        [readOnly]="true"
+                                        [(value)]="model.categories">
+                            </text-field>
+
+                            <text-field name="subId"
+                                        [(value)]="model.subId">
+                            </text-field>
+
+                            <dropdown-field name="type"
+                                            [readOnly]="true"
+                                            [(value)]="model.type"
+                                            [dataSource]="getEnumDataSource(typeEnum)">
+                            </dropdown-field>
+
+                            <dropdown-field name="cardNetwork"
+                                            [(value)]="model.cardNetwork"
+                                            [readOnly]="true"
+                                            [dataSource]="getEnumDataSource(cardNetworkEnum)">
+                            </dropdown-field>
+
+                            <dropdown-field name="targetAudience"
+                                            [(value)]="model.targetAudience"
+                                            [readOnly]="true"
+                                            [dataSource]="getEnumDataSource(targetAudienceEnum)">
+                            </dropdown-field>
+
+                            <text-field name="issuingBank"
+                                        [readOnly]="true"
+                                        [(value)]="model.issuingBank">
+                            </text-field>
+
+                            <text-field name="daysOfWeekAvailability"
+                                        [readOnly]="true"
+                                        [(value)]="model.daysOfWeekAvailability">
+                            </text-field>
+
+                            <text-field name="expireTimeOfDay"
+                                        [readOnly]="true"
+                                        [(value)]="model.expireTimeOfDay">
+                            </text-field>
+
+                            <text-field name="traficSource"
+                                        [readOnly]="true"
+                                        [(value)]="model.traficSource">
+                            </text-field>
+
+                            <text-multiple-field name="details"
+                                                 [(value)]="model.details"
+                                                 class="valuesBelow">
+                            </text-multiple-field>
+
+                        </div>
+                        <div class="offset-md-1"></div>
+                        <div class="col-md-5">
+                            <text-field name="name"
+                                        [(value)]="model.name"
+                                        [readOnly]="true">
+                            </text-field>
+
+                            <dropdown-field name="status"
+                                            [(value)]="model.status"
+                                            [readOnly]="true"
+                                            [dataSource]="getEnumDataSource(statusEnum)">
+                            </dropdown-field>
+
+                            <text-field name="description"
+                                        [readOnly]="true"
+                                        [(value)]="model.description">
+                            </text-field>
+
+                            <dropdown-field name="systemType"
+                                            [readOnly]="true"
+                                            [(value)]="model.systemType"
+                                            [dataSource]="getEnumDataSource(systemTypeEnum)">
+                            </dropdown-field>
+
+                            <dropdown-field name="campaignProviderType"
+                                            [(value)]="model.campaignProviderType"
+                                            [dataSource]="getEnumDataSource(campaignProviderTypeEnum)">
+                            </dropdown-field>
+
+                            <text-field name="cardType"
+                                        [readOnly]="true"
+                                        [(value)]="model.cardType">
+                            </text-field>
+
+                            <dropdown-field name="securingType"
+                                            [(value)]="model.securingType"
+                                            [readOnly]="true"
+                                            [dataSource]="getEnumDataSource(securingTypeEnum)">
+                            </dropdown-field>
+
+                            <text-multiple-field name="countries"
+                                                [readOnly]="true">
+                            </text-multiple-field>
+
+                            <text-field name="effectiveTimeOfDay"
+                                        [readOnly]="true"
+                                        [(value)]="model.effectiveTimeOfDay">
+                            </text-field>
+
+                            <text-field name="termsOfService"
+                                        [readOnly]="true"
+                                        [(value)]="model.termsOfService">
+                            </text-field>
+
+                            <text-multiple-field name="pros"
+                                                 [(value)]="model.pros"
+                                                 class="valuesBelow">
+                            </text-multiple-field>
+
+                            <text-multiple-field name="cons"
+                                                 [(value)]="model.cons"
+                                                 class="valuesBelow">
+                            </text-multiple-field>
+                        </div>
+                        <div class="col-md-12" *ngIf="detailsFieldsByPosition[fieldPositions.Center].length">
+                            <text-field name="campaignUrl"
+                                        [readOnly]="true"
+                                        class="center"
+                                        [(value)]="model.campaignUrl">
+                            </text-field>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'rating'">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <rating-field name="overallRating"
+                                          [(value)]="model.overallRating">
+                            </rating-field>
+
+                            <rating-field name="feesRating"
+                                          [(value)]="model.feesRating">
+                            </rating-field>
+
+                            <rating-field name="rewardsRating"
+                                          [(value)]="model.rewardsRating">
+                            </rating-field>
+                        </div>
+                        <div class="offset-md-1"></div>
+                        <div class="col-md-5">
+                            <rating-field name="interestRating"
+                                          [(value)]="model.interestRating">
+                            </rating-field>
+
+                            <rating-field name="benefitsRating"
+                                          [(value)]="model.benefitsRating">
+                            </rating-field>
+
+                            <rating-field name="serviceRating"
+                                          [(value)]="model.serviceRating">
+                            </rating-field>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'attributes'">
+
+                </div>
+
+                <div *ngSwitchCase="'flags'">
+
+                </div>
+
+            </ng-container>
+
             <div class="row">
                 <div class="col-md-5" *ngIf="detailsFieldsByPosition[fieldPositions.Left].length">
                     <ng-container *ngTemplateOutlet="detailsFields; context: {$implicit: detailsFieldsByPosition[fieldPositions.Left]}"></ng-container>

@@ -69,141 +69,138 @@
     }
     /deep/ .main-content {
         padding: 20px;
-        .detail {
-            .field {
-                align-items: baseline;
+        .field {
+            align-items: baseline;
 
-                .dx-state-disabled.dx-widget, .dx-state-disabled .dx-widget {
-                    & .dx-texteditor-input, input.form-control {
-                        border-bottom: 0;
-                    }
-                    .dx-texteditor-buttons-container {
-                        display: none;
-                    }
+            .dx-state-disabled.dx-widget, .dx-state-disabled .dx-widget {
+                & .dx-texteditor-input, input.form-control {
+                    border-bottom: 0;
                 }
-
-                .dx-widget  {
-                    .dx-texteditor-input {
-                        font-size: 15px;
-                        font-weight: 400;
-                        color: #424c56;
-                        padding: 0;
-                        letter-spacing: .3px;
-                    }
-                    .dx-placeholder {
-                        font-size: 15px;
-                        font-weight: 400;
-                        letter-spacing: .3px;
-                        color: #8a969b;
-                        transition: .2s;
-                    }
-                    &.dx-state-focused .dx-placeholder {
-                        top: -30px;
-                    }
-                }
-
-                .detailItem {
-                    display: flex;
-                    align-items: center;
-                    position: relative;
-                    .mat-form-field {
-                        width: 100%;
-                    }
-                }
-
-                span.clear-contact {
-                    top: -2px;
-                    position: absolute;
-                    left: initial;
-                    right: -30px;
-                    bottom: 0;
-                    margin: auto !important;
-                    width: 16px;
-                    height: 16px;
-                }
-                .numberBox {
-                    display: flex;
-                    span {
-                        cursor: default;
-                    }
-                }
-
-                /deep/ stars-rating {
-                    align-self: center;
+                .dx-texteditor-buttons-container {
+                    display: none;
                 }
             }
 
-            .field label,
-            .groupLabel {
-                font-size: 14px;
-                font-weight: 500;
-                color: #202b35;
-                flex: 1;
-                cursor: pointer;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                & + * {
-                    &.dx-checkbox {
-                        margin-top: 10px;
-                    }
-                    &:not(.dx-checkbox) {
-                        flex: 1;
-                    }
+            .dx-widget  {
+                .dx-texteditor-input {
+                    font-size: 15px;
+                    font-weight: 400;
+                    color: #424c56;
+                    padding: 0;
+                    letter-spacing: .3px;
+                }
+                .dx-placeholder {
+                    font-size: 15px;
+                    font-weight: 400;
+                    letter-spacing: .3px;
+                    color: #8a969b;
+                    transition: .2s;
+                }
+                &.dx-state-focused .dx-placeholder {
+                    top: -30px;
                 }
             }
-            .groupLabel {
+
+            .detailItem {
                 display: flex;
                 align-items: center;
-                height: 34px;
+                position: relative;
+                .mat-form-field {
+                    width: 100%;
+                }
             }
 
-            .fa {
-                cursor: pointer;
-                margin-left: 10px;
+            span.clear-contact {
+                top: -2px;
+                position: absolute;
+                left: initial;
+                right: -30px;
+                bottom: 0;
+                margin: auto !important;
+                width: 16px;
+                height: 16px;
+            }
+            .numberBox {
+                display: flex;
+                span {
+                    cursor: default;
+                }
             }
 
-            &.leftAlignment {
-                label + * {
+            /deep/ stars-rating {
+                align-self: center;
+            }
+        }
+
+        .field label,
+        .groupLabel {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202b35;
+            flex: 1;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            & + * {
+                &.dx-checkbox {
+                    margin-top: 10px;
+                }
+                &:not(.dx-checkbox) {
                     flex: 1;
                 }
             }
+        }
+        .groupLabel {
+            display: flex;
+            align-items: center;
+            height: 34px;
+        }
 
-            &.center {
-                label {
-                    flex: initial;
-                    width: 120px;
-                    margin-right: 0;
-                    & + *:not(.dx-checkbox) {
-                        flex: auto;
-                    }
-                }
+        .fa {
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .leftAlignment {
+            label + * {
+                flex: 1;
             }
+        }
 
-            &.valuesBelow {
-                .field {
-                    flex-direction: column;
-                    .add-new-button {
-                        margin-left: 0;
-                        padding-top: 0;
-                        span {
-                            margin-left: 0;
-                        }
-                    }
-                    label + *,
-                    .dx-widget {
-                        width: 100%;
-                    }
-                }
-            }
-
-            &.groupItem {
-                .field label {
-                    margin: 0 20px;
+        .center {
+            label {
+                flex: initial;
+                width: 120px;
+                margin-right: 0;
+                & + *:not(.dx-checkbox) {
+                    flex: auto;
                 }
             }
         }
-    }
 
+        .valuesBelow {
+            .field {
+                flex-direction: column;
+                .add-new-button {
+                    margin-left: 0;
+                    padding-top: 0;
+                    span {
+                        margin-left: 0;
+                    }
+                }
+                label + *,
+                .dx-widget {
+                    width: 100%;
+                }
+            }
+        }
+
+        .groupItem {
+            .field label {
+                margin: 0 20px;
+            }
+        }
+    }
 
 }
