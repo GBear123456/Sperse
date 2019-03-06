@@ -81,7 +81,7 @@
                             {{cellData.value | phone}}
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'">
-                            {{cellData.value | date: formatting.dateTime}}
+                            {{cellData.value | date: formatting.dateTime : userTimezone}}
                         </div>
                         <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>

@@ -110,21 +110,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private itemDetailsService: ItemDetailsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-
         this.dataSource = {
             store: {
                 key: 'Id',
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
+                deserializeDates: false,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             }
         };
-
         this.searchValue = '';
-
         this._pipelineService.stageChange.asObservable().subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
@@ -242,7 +240,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         caption: 'creation',
                         field: 'CreationTime',
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                        options: {method: 'getFilterByDate'}
+                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                     }),
                     this.filterModelStatus = new FilterModel({
                         component: FilterCheckBoxesComponent,

@@ -119,7 +119,7 @@
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'">
-                            {{cellData.value | date: formatting.dateTime}}
+                            {{cellData.value | date: formatting.dateTime : userTimezone}}
                         </div>
                         <div *dxTemplate="let cellData of 'phoneCell'">
                             {{cellData.value | phone}}

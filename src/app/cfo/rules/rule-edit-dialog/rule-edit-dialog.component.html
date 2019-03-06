@@ -21,7 +21,7 @@
                     </ng-container>
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'">
-                    {{cellData.value | date: 'MM/dd/yyyy'}}
+                    {{cellData.value | date: 'MM/dd/yyyy' : userTimezone}}
                 </div>
             </dx-data-grid>
         </div>

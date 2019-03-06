@@ -58,7 +58,7 @@
                                 {{cellData.value | phone}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
-                                {{cellData.value | date: formatting.dateTime}}
+                                {{cellData.value | date: formatting.dateTime : userTimezone}}
                             </div>
                         </dx-data-grid>
 				    </div>

@@ -231,6 +231,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
+                deserializeDates: false,
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();

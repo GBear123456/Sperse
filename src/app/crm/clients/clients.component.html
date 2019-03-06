@@ -67,7 +67,7 @@
                                 {{cellData.value}}
                             </div>
                         </div>
-                        <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="CreationTime" dataType="string" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column [visible]="!featureService.isEnabled('PFM')" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
@@ -81,7 +81,7 @@
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'">
-                            {{cellData.value | date: formatting.dateTime}}
+                            {{cellData.value | date: formatting.dateTime : userTimezone }}
                         </div>
                         <div *dxTemplate="let cellData of 'phoneCell'">
                             {{cellData.value | phone}}
