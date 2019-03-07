@@ -44,7 +44,7 @@ export class ItemDetailsService {
         return dataSource$.pipe(switchMap(dataSource => {
             let fullInfo$ = of(null);
             if (dataSource) {
-                let items = dataSource['pipelineItems'] || dataSource.items();
+                let items = dataSource['entities'] || dataSource.items();
                 let itemIndex = 0;
                 let itemData = items.find((item, index) => {
                     if (item[itemSearchProperty] == itemId) {
@@ -54,7 +54,7 @@ export class ItemDetailsService {
                     return false;
                 });
                 const isFirstOnPage = itemIndex === 0;
-                const itemsCountOnTheLastPage = this.getItemsCountOnLastPage(dataSource.totalCount(), dataSource.pageSize(), dataSource.pageIndex());
+                const itemsCountOnTheLastPage = this.getItemsCountOnLastPage(dataSource['total'] || dataSource.totalCount(), dataSource.pageSize(), dataSource.pageIndex());
                 const isLastOnPage = itemIndex + 1 === items.length || dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
                 const isFirstOnList = isFirstOnPage && dataSource.pageIndex() === 0;
                 const isLastOnList = dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
@@ -83,7 +83,7 @@ export class ItemDetailsService {
                         }
                     } else if (itemDirection === TargetDirectionEnum.Next) {
                         if (isLastOnPage) {
-                            if (!dataSource['pipelineItems']) {
+                            if (!dataSource['entities']) {
                                 /** Update data sourse page */
                                 dataSource.pageIndex(dataSource.pageIndex() + 1);
                             }
@@ -92,8 +92,8 @@ export class ItemDetailsService {
                                 : from(dataSource.reload());
                             fullInfo$ = method$.pipe(
                                 switchMap(() => {
-                                    const newItemId = dataSource['pipelineItems']
-                                        ? dataSource['pipelineItems'][dataSource['pipelineItems'].length - dataSource.pageSize()][itemSearchProperty]
+                                    const newItemId = dataSource['entities']
+                                        ? dataSource['entities'][dataSource['entities'].length - dataSource.pageSize()][itemSearchProperty]
                                         : dataSource.items()[0][itemSearchProperty];
                                     /** Get data of the first item from the next page */
                                     return this.getItemFullInfo(itemType, newItemId, TargetDirectionEnum.Current, itemSearchProperty);

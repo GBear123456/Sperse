@@ -268,7 +268,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 dataSource = this._dataSources[stage.name] =
                     new DataSource(_.extend(_.clone(this._dataSource), {
                         onLoadError: (error) => { this.httpInterceptor.handleError(error); },
-                        requireTotalCount: true,
+                        requireTotalCount: !this.totalsURI,
                         select: this.selectFields
                     }));
 
@@ -306,7 +306,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         setTimeout(() => this.finishLoading(), 1000);
                     if (this.totalsURI && allStagesLoaded)
                         this.processTotalsRequest(this.queryWithSearch);
-                    dataSource['pipelineItems'] = stage['entities'];
+                    dataSource['entities'] = stage['entities'];
+                    dataSource['total'] = stage['total'];
                     return entities;
                 })
             );
@@ -320,7 +321,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     processTotalsRequest(filter?: any) {
         (new DataSource({
-            requireTotalCount: true,
+            requireTotalCount: false,
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.totalsURI, filter),
