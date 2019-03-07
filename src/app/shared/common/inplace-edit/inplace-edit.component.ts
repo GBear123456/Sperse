@@ -88,24 +88,31 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
     }
 
     setEditModeEnabled(isEnabled: boolean, event?: MouseEvent) {
-        this._clickCounter++;
-        clearTimeout(this._clickTimeout);
-        this._clickTimeout = setTimeout(() => {
-            if (isEnabled) {
-                if (this._clickCounter > 1) {
-                    this.updateWidth();
+        if (this.data.value) {
+            this._clickCounter++;
+            clearTimeout(this._clickTimeout);
+            this._clickTimeout = setTimeout(() => {
+                if (isEnabled) {
+                    if (this._clickCounter > 1)
+                        this.showInput(isEnabled);
+                    else
+                        this.showDialog(event);
+                } else {
                     this.isEditModeEnabled = isEnabled;
-                    this.valueOriginal = this.data.value;
-                    setTimeout(() => this.textBox.instance.focus());
-                } else
-                    this.showDialog(event);
-            } else {
-                this.isEditModeEnabled = isEnabled;
-                this.data.value = this.valueOriginal;
-            }
-            this._clickCounter = 0;
-            this.changeDetector.detectChanges();
-        }, 250);
+                    this.data.value = this.valueOriginal;
+                }
+                this._clickCounter = 0;
+                this.changeDetector.detectChanges();
+            }, 250);
+        } else 
+            this.showInput(isEnabled);
+    }
+
+    showInput(enabled) {
+        this.updateWidth();
+        this.isEditModeEnabled = enabled;
+        this.valueOriginal = this.data.value;
+        setTimeout(() => this.textBox.instance.focus());
     }
 
     showDialog(event) {
