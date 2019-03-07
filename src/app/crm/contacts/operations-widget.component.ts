@@ -113,7 +113,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
         });
     }
 
-    initToolbarConfig(config = null) {
+    initToolbarConfig(config = null, ms = 300) {
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
             if (config)
@@ -207,7 +207,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                     ]
                 }
             );
-        }, 300);
+        }, ms);
     }
 
     getNavigationConfig(isPrevDisabled: boolean, isNextDisabled: boolean) {
@@ -323,8 +323,12 @@ export class OperationsWidgetComponent extends AppComponentBase {
         this._appService.redirectToCFO(this.contactInfo.personContactInfo.userId);
     }
 
-    checkSetNavButtonsEnabled(isFirst, isLast) {
+    updateNavButtons(isFirst, isLast) {
+        const updateToolbar = this.isPrevDisabled !== isFirst || this.isNextDisabled !== isLast;
         this.isPrevDisabled = isFirst;
         this.isNextDisabled = isLast;
+        if (updateToolbar) {
+            this.initToolbarConfig(null, 0);
+        }
     }
 }

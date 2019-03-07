@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
 import { forkJoin, of } from 'rxjs';
-import { finalize, map, switchMap, tap } from 'rxjs/operators';
+import { debounceTime, finalize, map, publishReplay, refCount, switchMap, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -185,7 +185,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         }
         const itemIdProperty = this.dataSourceURI === 'User' ? 'id' : 'Id';
         this.targetEntity$.pipe(
-            tap(() => this.startLoading(true)),
+            /** To avoid fast next/prev clicking */
+            debounceTime(100),
+            tap(() => { this.toolbarComponent.updateNavButtons(true, true); this.startLoading(true); }),
             switchMap((direction: TargetDirectionEnum) => this._itemDetailsService.getItemFullInfo(
                 this.dataSourceURI as ItemTypeEnum,
                 this.currentItemId,
@@ -195,11 +197,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 finalize(() => this.finishLoading(true)))
             )
         ).subscribe((itemFullInfo: ItemFullInfo) => {
-            this.toolbarComponent.checkSetNavButtonsEnabled(!itemFullInfo || itemFullInfo.isFirstOnList, !itemFullInfo || itemFullInfo.isLastOnList);
+            let res$ = of(null);
             if (itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemIdProperty]) {
-                this.currentItemId = itemFullInfo.itemData[itemIdProperty];
+                const currentItemId = itemFullInfo.itemData[itemIdProperty];
                 /** New current item Id */
-                this.loadData({
+                res$ = this.loadData({
                     userId: this.dataSourceURI === 'User'
                             ? itemFullInfo.itemData[itemIdProperty]
                             : (this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined),
@@ -208,9 +210,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
                     leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData[itemIdProperty] : undefined,
                     companyId: itemFullInfo.itemData.OrganizationId
-                });
+                }).pipe(tap(() => this.currentItemId = currentItemId));
                 this.updateLocation(itemFullInfo);
             }
+            res$.subscribe(() => this.toolbarComponent.updateNavButtons(!itemFullInfo || itemFullInfo.isFirstOnList, !itemFullInfo || itemFullInfo.isLastOnList));
         });
     }
 
@@ -334,10 +337,9 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             id: this.leadId = leadId
         };
 
-        if (userId)
-            this.loadDataForUser(userId, companyId);
-        else
-            this.loadDataForClient(customerId, leadId, partnerId, companyId);
+        return userId
+               ? this.loadDataForUser(userId, companyId)
+               : this.loadDataForClient(customerId, leadId, partnerId, companyId);
     }
 
     get isUserProfile() {
@@ -366,19 +368,29 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadDataForUser(userId, companyId) {
-        this.getContactInfoWithCompany(
+        let res$ = this.getContactInfoWithCompany(
             companyId,
             this._contactService.getContactInfoForUser(userId)
-        ).subscribe((res) => {
+        ).pipe(
+            publishReplay(),
+            refCount()
+        );
+        res$.subscribe((res) => {
             this.fillContactDetails(res, res['id']);
         });
+        return res$;
     }
 
-    loadDataForClient(contactId: number, leadId: number, partnerId: number, companyId: number) {
+    loadDataForClient(contactId: number, leadId: number, partnerId: number, companyId: number): Observable<any> {
+        let contactInfo$ = of(null);
         if (contactId) {
             if (!this.loading) this.startLoading(true);
-            let contactInfo$ = this.getContactInfoWithCompany(companyId,
+            contactInfo$ = this.getContactInfoWithCompany(
+                companyId,
                 this._contactService.getContactInfo(contactId)
+            ).pipe(
+                publishReplay(),
+                refCount()
             );
 
             if (leadId)
@@ -409,6 +421,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 });
             }
         }
+        return contactInfo$;
     }
 
     loadLeadData(personContactInfo?: any, lastLeadCallback?) {
