@@ -109,10 +109,11 @@ export class InplaceEditComponent extends AppComponentBase implements AfterViewI
     }
 
     showInput(enabled) {
-        this.updateWidth();
+        enabled && this.updateWidth();
         this.isEditModeEnabled = enabled;
         this.valueOriginal = this.data.value;
-        setTimeout(() => this.textBox.instance.focus());
+        enabled && setTimeout(() => 
+            this.textBox.instance.focus());
     }
 
     showDialog(event) {
