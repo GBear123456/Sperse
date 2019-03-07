@@ -3,7 +3,7 @@
     <div class="container d-flex justify-content-between align-items-center">
         <a href="//lendspace.com" class="url">www.lendspace.com</a>
         <p class="get-free-score">Get Your Free Credit Score with LendSpace</p>
-        <p class="date">{{currentDate | date:'longDate'}}</p>
+        <p class="date">{{currentDate | date:'longDate' : userTimezone}}</p>
     </div>
 </div>
 <div class="page-header navbar navbar-fixed-top navbar-light md-shadow-zero-light container" [ngClass]="{'pfm-app': hasPfmAppFeature}" *ngIf="showDefaultHeader">

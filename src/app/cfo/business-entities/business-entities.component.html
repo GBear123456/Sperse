@@ -51,7 +51,7 @@
                                 alignment="center"
                                 cellTemplate="statusTemplate"></dxi-column>
 
-                    <div *dxTemplate="let data of 'dateOpenedTemplate'">{{data.value | date: 'EEE dd, yyyy'}}</div>
+                    <div *dxTemplate="let data of 'dateOpenedTemplate'">{{data.value | date: 'EEE dd, yyyy' : userTimezone }}</div>
                     <div *dxTemplate="let data of 'phoneCell'">{{data.value | phone}}</div>
                     <div *dxTemplate="let data of 'toolbarTitleTemplate'" class="title">{{l('BusinessEntities')}}</div>
                     <div *dxTemplate="let data of 'statusTemplate'" class="statusContent">

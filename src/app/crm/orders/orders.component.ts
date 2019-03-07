@@ -86,10 +86,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
+                deserializeDates: false,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
-                deserializeDates: false,
                 paginate: true
             }
         };
@@ -151,7 +151,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 caption: 'creation',
                 field: 'CreationTime',
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                options: { method: 'getFilterByDate' }
+                options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
             }),
             new FilterModel({
                 component: FilterCheckBoxesComponent,

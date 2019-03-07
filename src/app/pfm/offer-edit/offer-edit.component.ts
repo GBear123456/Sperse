@@ -11,8 +11,8 @@ import {
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { Observable, Subject, combineLatest, of } from 'rxjs';
-import { finalize, map, tap, publishReplay, pluck, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
+import { Observable, Subject, combineLatest, of, merge } from 'rxjs';
+import { finalize, map, tap, publishReplay, pluck, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { startCase } from 'lodash';
 
@@ -37,6 +37,11 @@ import { FieldPositionEnum } from '@app/pfm/offer-edit/field-position.enum';
 import { FieldType } from '@app/pfm/offer-edit/field-type.enum';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { NotifyService } from '@abp/notify/notify.service';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { BehaviorSubject } from '@node_modules/rxjs';
+import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
+import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 
 @Component({
     selector: 'offer-edit',
@@ -77,10 +82,12 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     offerId$: Observable<number> = this.route.paramMap.pipe(map((paramMap: ParamMap) => +paramMap.get('id')));
     private _refresh: Subject<null> = new Subject<null>();
     refresh: Observable<null> = this._refresh.asObservable();
-    offerDetails$: Observable<OfferDetailsForEditDto> = this.refresh.pipe(
-        startWith(this.offerId$),
-        tap(() => abp.ui.setBusy()),
+    offerDetails$: Observable<OfferDetailsForEditDto> = merge(
+        this.refresh,
+        this.offerId$
+    ).pipe(
         withLatestFrom(this.offerId$),
+        tap(() => abp.ui.setBusy()),
         switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(
             finalize(() => abp.ui.clearBusy())
         )),
@@ -370,6 +377,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         ]
     };
     offerIsUpdating = false;
+    private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
+    public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
+    prevButtonIsDisabled = true;
+    nextButtonIsDisabled = true;
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
@@ -379,7 +390,8 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService,
         private store$: Store<RootStore.State>,
         private notifyService: NotifyService,
-        private changeDetector: ChangeDetectorRef
+        private changeDetector: ChangeDetectorRef,
+        private itemDetailsService: ItemDetailsService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
     }
@@ -420,6 +432,32 @@ export class OfferEditComponent implements OnInit, OnDestroy {
                 detailSideArray.push(detail);
             });
         });
+        this.targetEntity$.pipe(
+            withLatestFrom(this.offerId$),
+            switchMap(([direction, offerId]: [number, TargetDirectionEnum]) => {
+                return this.itemDetailsService.getItemFullInfo(ItemTypeEnum.Offer, offerId, direction, 'CampaignId');
+            }),
+            withLatestFrom(this.offerId$, this.section$)
+        ).subscribe(([itemFullInfo, offerId, section]: [ItemFullInfo, number, string]) => {
+            if (itemFullInfo) {
+                this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
+                this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
+                if (offerId !== itemFullInfo.itemData.CampaignId) {
+                    this.router.navigate(
+                        ['../..', itemFullInfo.itemData.CampaignId, section],
+                        { relativeTo: this.route }
+                    );
+                }
+            }
+        });
+    }
+
+    onPrev() {
+        this.targetEntity.next(TargetDirectionEnum.Prev);
+    }
+
+    onNext() {
+        this.targetEntity.next(TargetDirectionEnum.Next);
     }
 
     private resetDetailsPositionsArrays() {

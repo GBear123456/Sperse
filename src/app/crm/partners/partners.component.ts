@@ -122,6 +122,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             store: {
                 key: 'Id',
                 type: 'odata',
+                deserializeDates: false,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
@@ -239,7 +240,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         caption: 'creation',
                         field: 'CreationTime',
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                        options: {method: 'getFilterByDate'}
+                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                     }),
                     this.filterModelStatus = new FilterModel({
                         component: FilterCheckBoxesComponent,

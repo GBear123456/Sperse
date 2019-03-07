@@ -25,11 +25,11 @@
             .add-import-user {
                 display: inline-block;
                 position: absolute;
-                right: 0;
                 color: #00aeef;
-                font-weight: bold;
+                font-weight: 700;
                 cursor: pointer;
-                bottom: 10px;
+                right: 30px;
+                bottom: -30px;
             }
 
             .import-user-row {
@@ -73,6 +73,15 @@
 
                 .dx-invalid-message .dx-overlay-content {
                     transform: none !important;
+                }
+            }
+
+            /deep/ .dx-textbox {
+                .dx-texteditor-input {
+                    padding-left: 15px;
+                }
+                .dx-placeholder:before {
+                    padding: 7px 20px 8px;
                 }
             }
         }

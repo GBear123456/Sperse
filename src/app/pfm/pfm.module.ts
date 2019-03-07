@@ -25,6 +25,7 @@ import { OfferEditComponent } from '@app/pfm/offer-edit/offer-edit.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.module';
 import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
+import { DxButtonModule } from '@root/node_modules/devextreme-angular';
 
 @NgModule({
     imports: [
@@ -32,6 +33,7 @@ import { DataSourceService } from '@app/shared/common/data-source/data-source.se
         ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
+        DxButtonModule,
         DxDataGridModule,
         DxTooltipModule,
         DxListModule,

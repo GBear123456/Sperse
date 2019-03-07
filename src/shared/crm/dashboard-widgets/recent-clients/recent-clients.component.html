@@ -11,7 +11,7 @@
             <dxi-column dataField="fullName" caption="{{l('Customer.Name')}}"></dxi-column>
             <dxi-column dataField="creationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
             <div *dxTemplate="let cellData of 'dateCell'">
-                {{cellData.value | date: formatting.dateTime}}
+                {{cellData.value | date: formatting.dateTime : userTimezone}}
             </div>
             <dxo-paging [pageSize]="10"></dxo-paging>
         </dx-data-grid>

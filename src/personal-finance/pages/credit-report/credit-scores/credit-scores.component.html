@@ -30,7 +30,7 @@
           {{l(item.creditScore.scoreRank + 'Score')}}
         </div>
         <br />
-        <div class="score-date">{{l("updated")}} {{item.creditScore.scoreDate | date: 'MMM dd, yyyy'}}</div>
+        <div class="score-date">{{l("updated")}} {{item.creditScore.scoreDate | date: 'MMM dd, yyyy' : userTimezone}}</div>
         <div class="next-update-date">
           <div *ngIf="item.creditScore.nextUpdate >= 0">
             {{l("nextUpdate")}} {{item.creditScore.nextUpdate}} {{l("days")}}

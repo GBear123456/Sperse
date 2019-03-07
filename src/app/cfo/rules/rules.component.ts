@@ -180,7 +180,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
                     caption: 'CreationDate',
                     field: 'creationTime',
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate' }
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
                 })
             ]
         );

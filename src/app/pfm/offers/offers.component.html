@@ -77,7 +77,7 @@
                     <div [ngStyle]="{'background-image': 'url(' + field.data.LogoUrl + ')'}" class="logo-url"></div>
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'">
-                    {{cellData.value | date: 'MM/dd/yyyy'}}
+                    {{cellData.value | date: 'MM/dd/yyyy' : userTimezone}}
                 </div>
                 <dxo-group-panel [visible]="true"></dxo-group-panel>
             </dx-data-grid>
