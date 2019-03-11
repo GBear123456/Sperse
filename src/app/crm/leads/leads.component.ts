@@ -322,7 +322,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterInputsComponent,
                     caption: 'Campaign',
                     field: 'CampaignCode',
-                    items: {Campaign: new FilterItemModel()}
+                    items: {CampaignCode: new FilterItemModel()}
                 }),
                 this.filterModelLists = new FilterModel({
                     component: FilterCheckBoxesComponent,
