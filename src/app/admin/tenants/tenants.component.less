@@ -1,1 +1,33 @@
 ﻿@tableWidth: 800px;
+
+.page-content ng-component {
+    display: block;
+    position: relative;
+    top: 74px;
+    height: 100%;
+    
+    &.fullscreen {
+        top: 0 !important;
+        #gridContainer {
+            height: calc(~"100vh - 60px");
+        }
+    }
+}
+
+#tenantsTable {
+    table {
+        direction: rtl;
+        
+        td {
+            direction: ltr;
+        }
+    }
+    
+    .dx-datagrid .dx-link.dx-link-edit {
+        width: 18px !important;
+    }
+    
+    td.dx-command-edit:before {
+        left: 60px !important;
+    }
+}
