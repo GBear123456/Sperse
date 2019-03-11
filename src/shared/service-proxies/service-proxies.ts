@@ -55674,7 +55674,7 @@ export class OngageSettingsEditDto implements IOngageSettingsEditDto {
     accountCode!: string | undefined;
     defaultListId!: number | undefined;
     activationEmailMessageId!: number | undefined;
-    isDisabled!: boolean | undefined;
+    isEnabled!: boolean | undefined;
 
     constructor(data?: IOngageSettingsEditDto) {
         if (data) {
@@ -55692,7 +55692,7 @@ export class OngageSettingsEditDto implements IOngageSettingsEditDto {
             this.accountCode = data["accountCode"];
             this.defaultListId = data["defaultListId"];
             this.activationEmailMessageId = data["activationEmailMessageId"];
-            this.isDisabled = data["isDisabled"];
+            this.isEnabled = data["isEnabled"];
         }
     }
 
@@ -55710,7 +55710,7 @@ export class OngageSettingsEditDto implements IOngageSettingsEditDto {
         data["accountCode"] = this.accountCode;
         data["defaultListId"] = this.defaultListId;
         data["activationEmailMessageId"] = this.activationEmailMessageId;
-        data["isDisabled"] = this.isDisabled;
+        data["isEnabled"] = this.isEnabled;
         return data; 
     }
 }
@@ -55721,7 +55721,7 @@ export interface IOngageSettingsEditDto {
     accountCode: string | undefined;
     defaultListId: number | undefined;
     activationEmailMessageId: number | undefined;
-    isDisabled: boolean | undefined;
+    isEnabled: boolean | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
