@@ -5171,7 +5171,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 currencyId: this.currencyId,
                 accountIds: this.requestFilter.accountIds || [],
                 businessEntityIds: this.requestFilter.businessEntityIds || [],
-                searchTerm: this.searchValue
+                searchTerm: this.searchValue,
+                forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
             };
             this.statsDetailFilter = StatsDetailFilter.fromJS(filterParams);
             this._cashflowServiceProxy
