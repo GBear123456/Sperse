@@ -1,4 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { from, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { AppConsts } from '../src/shared/AppConsts';
@@ -11,7 +12,7 @@ import { filter } from '@node_modules/rxjs/operators';
 
 @Injectable()
 export class WidgetsService {
-    initialize(injector: Injector, localizationService: LocalizationServiceProxy, localizationSrc?: string) {
+    initialize(injector: Injector, httpClient: HttpClient, localizationSrc?: string) {
         return () => {
             return from(abp.ajax({
                     url: environment.appBaseHref + 'assets/' + environment.appConfig,
@@ -22,9 +23,9 @@ export class WidgetsService {
                         AppConsts.remoteServiceBaseUrl = remoteUrl;
                         AppConsts.appBaseHref = environment.appBaseHref;
                     }),
-                    switchMap(() => {
+                    switchMap((remoteUrl) => {
                         return localizationSrc
-                            ? localizationService.loadLocalizationSource('CRM')
+                            ? new LocalizationServiceProxy(httpClient, remoteUrl).loadLocalizationSource('CRM')
                                 .pipe(
                                     filter(res => !!res),
                                     tap(result => {

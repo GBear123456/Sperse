@@ -1,6 +1,6 @@
 /** Application imports */
 import { NgModule, Injector, APP_INITIALIZER } from '@angular/core';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 /** Third party imports */
@@ -25,8 +25,8 @@ export function getRemoteUrl() {
     return AppConsts.remoteServiceBaseUrl;
 }
 
-export function initialize(widgetsService: WidgetsService, localizationService: LocalizationServiceProxy, injector: Injector) {
-    return widgetsService.initialize(injector, localizationService, 'CRM');
+export function initialize(widgetsService: WidgetsService, httpClient: HttpClient, injector: Injector) {
+    return widgetsService.initialize(injector, httpClient, 'CRM');
 }
 
 @NgModule({
@@ -54,7 +54,7 @@ export function initialize(widgetsService: WidgetsService, localizationService: 
         {
             provide: APP_INITIALIZER,
             useFactory: initialize,
-            deps: [ WidgetsService, LocalizationServiceProxy, Injector ],
+            deps: [ WidgetsService, HttpClient, Injector ],
             multi: true
         },
         {
