@@ -42,7 +42,7 @@ export class TopBarComponent extends AppComponentBase {
 
                 setTimeout(() => {
                     let route = event.urlAfterRedirects.split('?').shift();
-                    this.menu.items.forEach((item, i) => {                        
+                    this.menu.items.forEach((item, i) => {
                         if (route === item.route || _.contains(item.alterRoutes, route))
                             this.selectedIndex = i;
                     });
@@ -85,7 +85,7 @@ export class TopBarComponent extends AppComponentBase {
         if (route) {
             if (route.startsWith('/'))
                 this.router.navigate([event.itemData.route]);
-            else 
+            else
                 window.open(route, '_blank');
         }
     }
