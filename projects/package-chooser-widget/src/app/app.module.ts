@@ -13,7 +13,7 @@ import { PackageChooserComponent } from '../../../../src/app/shared/common/payme
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
 import { AbpModule } from '@abp/abp.module';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
-import { API_BASE_URL, PackageServiceProxy } from '@shared/service-proxies/service-proxies';
+import { API_BASE_URL, LocalizationServiceProxy, PackageServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { PackageChooserWidgetComponent } from './package-chooser-widget-component';
@@ -25,8 +25,8 @@ export function getRemoteUrl() {
     return AppConsts.remoteServiceBaseUrl;
 }
 
-export function initialize(widgetsService: WidgetsService, injector: Injector) {
-    return widgetsService.initialize(injector);
+export function initialize(widgetsService: WidgetsService, localizationService: LocalizationServiceProxy, injector: Injector) {
+    return widgetsService.initialize(injector, localizationService, 'CRM');
 }
 
 @NgModule({
@@ -48,12 +48,13 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
         AppHttpConfiguration,
         PackageServiceProxy,
         WidgetsService,
+        LocalizationServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
         { provide: API_BASE_URL, useFactory: getRemoteUrl },
         {
             provide: APP_INITIALIZER,
             useFactory: initialize,
-            deps: [ WidgetsService, Injector ],
+            deps: [ WidgetsService, LocalizationServiceProxy, Injector ],
             multi: true
         },
         {
