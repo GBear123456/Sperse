@@ -158,12 +158,10 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     ngOnInit() {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
-
         let key = this.getCacheKey(abp.session.userId);
         if (this._cacheService.exists(key))
             this.rightPanelSetting = this._cacheService.get(key);
-        let section = this.referrerParams.referrer.split('/').pop();
-        switch (section) {
+        switch (this.getSection()) {
             case 'leads':
                 this.dataSourceURI = 'Lead';
                 this.currentItemId = this.params.leadId;
@@ -217,8 +215,13 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    private getSection() {
+        return this.referrerParams && this.referrerParams.referrer && this.referrerParams.referrer.split('/').pop()
+            || (this._router.url.indexOf('partner') >= 0 ? 'partners' : 'clients');
+    }
+
     private updateLocation(itemFullInfo) {
-        switch (this.referrerParams.referrer.split('/').pop()) {
+        switch (this.getSection()) {
             case 'leads':
                 this._contactsService.updateLocation(itemFullInfo.itemData.CustomerId, itemFullInfo.itemData.Id, null, itemFullInfo.itemData.OrganizationId);
                 break;
