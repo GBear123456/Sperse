@@ -31,10 +31,12 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
 
     getCategorizationStatus(): void {
         if (!this.waitForBankAccounts) {
+            this.startLoading();
             this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId, this.bankAccountFilterData.selectedBankAccountIds)
                 .subscribe((result) => {
                     this.categorySynchData = result;
                     this.categorySynchData.totalCount = this.categorySynchData.classifiedTransactionCount + this.categorySynchData.unclassifiedTransactionCount;
+                    this.finishLoading();
                 });
         }
     }
