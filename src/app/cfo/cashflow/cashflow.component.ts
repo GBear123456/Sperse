@@ -2433,7 +2433,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     weekSorting(firstItem, secondItem) {
-        return JSON.parse(firstItem.value).weekNumber > JSON.parse(secondItem.value).weekNumber;
+        return JSON.parse(firstItem.value).weekNumber > JSON.parse(secondItem.value).weekNumber ? 1 : -1;
     }
 
     getWeekHeaderCustomizer(): any {
@@ -5640,7 +5640,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             let rowKey = this.cashFlowGrid.instance.getRowIndexByKey(cell.key);
             /** remove the value of opposite cell */
-            this.cashFlowGrid.instance.cellValue(rowKey, "accountId", e.value);
+            this.cashFlowGrid.instance.cellValue(rowKey, 'accountId', e.value);
 
             let newAccountNumber = this.bankAccounts.find(account => account.id === e.value)['accountNumber'];
             cell.setValue(newAccountNumber);
