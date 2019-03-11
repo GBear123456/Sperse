@@ -503,6 +503,15 @@
                                 <input id="OngageActivationEmailMessageId" type="number" name="OngageActivationEmailMessageId" class="form-control" [(ngModel)]="ongageSettings.activationEmailMessageId" maxlength="128">
                             </div>
                         </div>
+                        <div>
+                            <div class="form-group m-form__group">
+                                <label for="OngageIsDisabled" class="m-checkbox">
+                                    <input id="OngageIsDisabled" class="m-check" type="checkbox" name="OngageIsDisabled" [(ngModel)]="ongageSettings.isDisabled">
+                                    {{l("OngageIsDisabled")}}
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
                     </tab>
                 </tabset>
             </div>
