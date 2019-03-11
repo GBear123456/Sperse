@@ -7,7 +7,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
 import { forkJoin, of } from 'rxjs';
-import { debounceTime, finalize, map, publishReplay, refCount, switchMap, tap } from 'rxjs/operators';
+import {
+    debounceTime,
+    finalize,
+    map,
+    publishReplay,
+    refCount,
+    switchMap,
+    tap
+} from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -199,7 +207,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             if (itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemIdProperty]) {
                 const currentItemId = itemFullInfo.itemData[itemIdProperty];
                 /** New current item Id */
-                res$ = this.loadData({
+                res$ = this.reloadCurrentSection({
                     userId: this.dataSourceURI === 'User'
                             ? itemFullInfo.itemData[itemIdProperty]
                             : (this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined),
@@ -775,11 +783,12 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         event.stopPropagation();
     }
 
-    reloadCurrentSection() {
+    reloadCurrentSection(params = this.params) {
         let area = this._router.url.split('?').shift().split('/').pop();
-        this.invalidate();
+        const loading$ = this.loadData(params);
         if (area == 'lead-information') this.leadInfo = undefined;
         this._contactsService.invalidate(area);
+        return loading$;
     }
 
     loadTargetEntity(event, direction) {

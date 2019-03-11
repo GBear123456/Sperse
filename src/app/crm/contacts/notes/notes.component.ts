@@ -44,10 +44,12 @@ export class NotesComponent extends AppComponentBase implements OnInit {
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         _clientService.invalidateSubscribe((area) => {
-            if (area == 'notes')
+            if (area == 'notes') {
+                this.data = this._contactService['data'];
                 this.loadData().subscribe(
                     (notes: NoteInfoDto[]) => this.dataSource = notes
                 );
+            }
         });
     }
 
