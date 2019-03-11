@@ -8,15 +8,12 @@ import { CacheService } from 'ng2-cache-service';
 import { Store, select } from '@ngrx/store';
 import { forkJoin, of } from 'rxjs';
 import {
-    bufferWhen,
     debounceTime,
-    filter,
     finalize,
     map,
     publishReplay,
     refCount,
     switchMap,
-    takeUntil,
     tap
 } from 'rxjs/operators';
 import * as _ from 'underscore';
