@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CellInfo } from './models/cell-info';
 import { CellInterval } from './models/cell-interval';
 import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
-import { BankAccountDto, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
+import { BankAccountDto, CategoryDto, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
 import * as _ from 'underscore';
 import * as moment from 'moment-timezone';
 
@@ -131,4 +131,22 @@ export class CashflowService {
         return categoryId && !!categoryTree.categories[categoryId].parentId;
     }
 
+    getCategoryFullPath(categoryId: number, category: CategoryDto, categoryTree: GetCategoryTreeOutput): string[] {
+        let allCategoriesInPath: string[] = this.getCategoryPath(categoryId, categoryTree);
+        return [
+            CategorizationPrefixes.CashflowType + categoryTree.accountingTypes[category.accountingTypeId].typeId,
+            ...allCategoriesInPath
+        ];
+    }
+
+    private getCategoryPath(categoryId: number, categoryTree: GetCategoryTreeOutput): string[] {
+        const parentCategoryId = categoryTree.categories[categoryId].parentId;
+        const prevCategories = parentCategoryId  ? this.getCategoryPath(parentCategoryId, categoryTree) : [];
+        const prefix = !!parentCategoryId ? CategorizationPrefixes.SubCategory : CategorizationPrefixes.Category;
+        return [ ...prevCategories, prefix + categoryId ];
+    }
+
+    categoryHasTransactions(treePathes, categoryPath: string[]): boolean {
+        return !Object.keys(treePathes).some(path => path.indexOf(categoryPath.join(',')) >= 0);
+    }
 }
