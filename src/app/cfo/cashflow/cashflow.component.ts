@@ -65,7 +65,8 @@ import {
     UpdateTransactionsCategoryWithFilterInput,
     UpdateForecastsInput,
     CreateForecastsInput,
-    CashflowGridGeneralSettingsDtoSplitMonthType
+    CashflowGridGeneralSettingsDtoSplitMonthType,
+    CategoryDto
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
@@ -1401,17 +1402,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** categories - object with categories */
             this.cashflowData = this.getCashflowDataFromTransactions(transactions);
             /** Make a copy of cashflow data to display it in custom total group on the top level */
-            let stubCashflowDataForEndingCashPosition = this.getStubCashflowDataForEndingCashPosition(this.cashflowData);
-            let stubCashflowDataForAllDays = this.getStubCashflowDataForAllPeriods(this.cashflowData, period);
-            let cashflowWithStubForEndingPosition = this.cashflowData.concat(stubCashflowDataForEndingCashPosition);
-            let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(cashflowWithStubForEndingPosition);
+            const stubsCashflowDataForEndingCashPosition = this.getStubsCashflowDataForEndingCashPosition(this.cashflowData);
+            const stubsCashflowDataForAllDays = this.getStubsCashflowDataForAllPeriods(this.cashflowData, period);
+            const stubsCashflowDataForEmptyCategories = this.getStubsCashflowDataForEmptyCategories(this.cashflowData[0].date, this.cashflowData[0].initialDate);
+            const cashflowWithStubsForEndingPosition = this.cashflowData.concat(stubsCashflowDataForEndingCashPosition);
+            const stubsCashflowDataForAccounts = this.getStubsCashflowDataForAccounts(cashflowWithStubsForEndingPosition);
 
             /** concat initial data and stubs from the different hacks */
-            this.cashflowData = cashflowWithStubForEndingPosition.concat(
-                stubCashflowDataForAccounts,
-                stubCashflowDataForAllDays
+            this.cashflowData = cashflowWithStubsForEndingPosition.concat(
+                stubsCashflowDataForEmptyCategories,
+                stubsCashflowDataForAccounts,
+                stubsCashflowDataForAllDays
             );
-
             let start = underscore.min(this.cashflowData, function (val) { return val.date; }).date.year();
             let end = underscore.max(this.cashflowData, function (val) { return val.date; }).date.year();
             this.setSliderReportPeriodFilterData(start, end);
@@ -1450,7 +1452,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         });
         let accountId: number = transactions[0] ? +transactions[0].accountId : this.bankAccounts[0].id;
         let stubCashflowDataForAllDays = this.createStubsForPeriod(startDate, endDate, StatsFilterGroupByPeriod.Daily, accountId, existingPeriods);
-        let stubCashflowDataForAccounts = this.getStubCashflowDataForAccounts(transactions);
+        let stubCashflowDataForAccounts = this.getStubsCashflowDataForAccounts(transactions);
 
         /** concat initial data and stubs from the different hacks */
         transactions = transactions.concat(
@@ -1468,7 +1470,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Get the array of stub cashflow data to add stub empty columns for cashflow
      * @param {TransactionStatsDto[]} transactions
      */
-    getStubCashflowDataForAccounts(transactions) {
+    getStubsCashflowDataForAccounts(transactions) {
         let stubCashflowDataForAccounts = [],
             allAccountsIds: number[] = [],
             currentAccountsIds = {
@@ -1516,6 +1518,29 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         });
         return stubCashflowDataForAccounts;
+    }
+
+    getStubsCashflowDataForEmptyCategories(date, initialDate) {
+        let stubs = [];
+        for (let categoryId in this.categoryTree.categories) {
+            const category: CategoryDto = this.categoryTree.categories[categoryId];
+            /** Get category path in tree */
+            const categoryPath: string[] = this.cashflowService.getCategoryFullPath(+categoryId, category, this.categoryTree);
+            if (this.cashflowService.categoryHasTransactions(this.treePathes, categoryPath)) {
+                /** Create stub for category */
+                const stubTransaction = this.createStubTransaction({
+                    'cashflowTypeId': this.categoryTree.accountingTypes[category.accountingTypeId].typeId,
+                    'accountingTypeId': category.accountingTypeId,
+                    'categoryId': category.parentId ? category.parentId : categoryId,
+                    'subCategoryId': category.parentId ? categoryId : undefined,
+                    'amount': 0,
+                    'date': date,
+                    'initialDate': initialDate
+                });
+                stubs.push(stubTransaction);
+            }
+        }
+        return stubs;
     }
 
     /**
@@ -1604,7 +1629,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                    transactionObj.cashflowTypeId === Total ||
                                    transactionObj.cashflowTypeId === Reconciliation ||
                                    transactionObj.cashflowTypeId === NetChange;
-        let key, parentKey = null;
+        let key = null;
         if (transactionObj[`level${levelNumber}`]) {
             for (let i = levelNumber; i < 5; i++) {
                 if (transactionObj[`level${i}`]) {
@@ -1615,7 +1640,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.categorization.every((level) => {
             if (transactionObj[level.statsKeyName]) {
 
-                /** If user doens't want to show accounting type row - skip it */
+                /** If user doesn't want to show accounting type row - skip it */
                 if (level.prefix === CategorizationPrefixes.AccountingType && !this.cashflowGridSettings.general.showAccountingTypeRow) {
                     return true;
                 }
@@ -1693,7 +1718,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param {TransactionStatsDto[]} cashflowData
      * @return {TransactionStatsDto[]}
      */
-    getStubCashflowDataForEndingCashPosition(cashflowData) {
+    getStubsCashflowDataForEndingCashPosition(cashflowData) {
         let stubCashflowDataForEndingCashPosition = [];
         cashflowData.forEach(cashflowDataItem => {
             /** clone transaction to another array */
@@ -1755,7 +1780,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param {TransactionStatsDtoExtended[]} cashflowData
      * @return {TransactionStatsDtoExtended[]}
      */
-    getStubCashflowDataForAllPeriods(cashflowData: TransactionStatsDtoExtended[], period = StatsFilterGroupByPeriod.Monthly) {
+    getStubsCashflowDataForAllPeriods(cashflowData: TransactionStatsDtoExtended[], period = StatsFilterGroupByPeriod.Monthly) {
         this.allYears = [];
         this.yearsAmount = 0;
         let existingPeriods: string[] = [],
@@ -4305,8 +4330,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                  * If cell is forecast - if amount of results is 0 - add, >1 - show details
                  */
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
-                let columnFields = this.getColumnFields();
-                let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
                 if (
                     /** disallow adding historical periods */
                     this.cellIsNotHistorical(cellObj) &&
