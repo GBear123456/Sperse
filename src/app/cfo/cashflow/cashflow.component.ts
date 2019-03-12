@@ -829,6 +829,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.initFiltering();
 
                 /** After selected accounts change */
+                this._bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
+                    this.setBankAccountsFilter(true);
+                });
                 this._bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                     /** filter all widgets by new data if change is on this component */
                     if (this.componentIsActivated) {
@@ -1052,7 +1055,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         {
                             dataSource: syncAccounts,
                             nameField: 'name',
-                            keyExpr: 'id'
+                            keyExpr: 'id',
+                            onRemoved: (ids) => this._bankAccountsService.changeSelectedBankAccountsIds(ids)
                         }
                     )
                 }
@@ -5472,11 +5476,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    setBankAccountsFilter() {
-        let accountFilter: FilterModel = underscore.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this._bankAccountsService.state, this.syncAccounts);
-        this._filtersService.change(accountFilter);
-        this._bankAccountsService.applyFilter();
+    setBankAccountsFilter(emitFilterChange = false) {
+        this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
         this.allowChangingForecast = this._bankAccountsService.state.isActive;
     }
 
@@ -5720,7 +5721,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
-            this.loadGridDataSource();
+            this.setBankAccountsFilter();
+            this.loadGridDataSource();              
             this.updateAfterActivation = false;
         }
 

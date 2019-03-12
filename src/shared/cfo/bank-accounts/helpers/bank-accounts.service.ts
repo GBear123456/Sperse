@@ -12,6 +12,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { SyncAccountBankDto, BankAccountDto, BankAccountsServiceProxy, BusinessEntityDto, BusinessEntityServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
+import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { CFOService } from '@shared/cfo/cfo.service';
 
@@ -67,10 +68,12 @@ export class BankAccountsService {
     //activeStatus$ = this._activeStatus.asObservable();
 
     constructor(private cfoService: CFOService,
-                private bankAccountsServiceProxy: BankAccountsServiceProxy,
-                private businessEntityService: BusinessEntityServiceProxy,
-                private cacheService: CacheService,
-                private localizationService: AppLocalizationService) {
+        private bankAccountsServiceProxy: BankAccountsServiceProxy,
+        private businessEntityService: BusinessEntityServiceProxy,
+        private cacheService: CacheService,
+        private _filtersService: FiltersService,
+        private localizationService: AppLocalizationService
+    ) {
         this.cfoService.instanceTypeChanged$.subscribe(instanceType => {
             this.bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${instanceType}`;
         });
@@ -513,6 +516,13 @@ export class BankAccountsService {
         }
     }
 
+    setBankAccountsFilter(filters, syncAccounts, emitFilterChange = false) {
+        let accountFilter: FilterModel = _.find(filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
+        accountFilter = this.changeAndGetBankAccountFilter(accountFilter, this.state, syncAccounts);        
+        emitFilterChange && this._filtersService.change(accountFilter);
+        this.applyFilter();
+    }
+
     changeAndGetBankAccountFilter(accountFilter: FilterModel, data: BankAccountsState, initialDataSource: SyncAccountBankDto[]) {
         let accountFilterModel = <any>accountFilter.items.element;
         if (ArrayHelper.dataChanged(initialDataSource, accountFilterModel.dataSource)) {
@@ -523,7 +533,7 @@ export class BankAccountsService {
         } else {
             accountFilter.items['element'].setValue([], accountFilter);
         }
+        accountFilter.updateCaptions();
         return accountFilter;
     }
-
 }
