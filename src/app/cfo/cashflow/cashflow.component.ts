@@ -2486,11 +2486,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     changeGroupBy(event) {
         this.startLoading();
-        let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex,
-            value = this.groupbyItems[itemIndex],
-            startedGroupInterval = value.groupInterval;
+        let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex;
         /** Change historical field for different date intervals */
-        let historicalField = this.getHistoricField();
         this.closeTransactionsDetail();
         this.expandAll(itemIndex);
         this.pivotGrid.instance.repaint();
