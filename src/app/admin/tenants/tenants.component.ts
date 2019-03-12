@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -36,7 +36,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
     encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
-export class TenantsComponent extends AppComponentBase implements OnInit {
+export class TenantsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild('impersonateUserLookupModal') impersonateUserLookupModal: CommonLookupModalComponent;
     @ViewChild('createTenantModal') createTenantModal: CreateTenantModalComponent;
@@ -49,7 +49,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit {
     public actionRecord: any;
     public headlineConfig = {
         names: [this.l('Tenants')],
-        icon: 'people',
+        icon: '',
         onRefresh: this.refreshDataGrid.bind(this),
         buttons: [
             {
@@ -176,7 +176,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit {
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Roles').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('Tenants').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
@@ -311,21 +311,6 @@ export class TenantsComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    getTenants() {
-        this._tenantService.getTenants(
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined
-        ).subscribe(result => {
-            result && this.dataGrid.instance.refresh();
-        });
-    }
-
     showUserImpersonateLookUpModal(record: any): void {
         this.impersonateUserLookupModal.tenantId = record.id;
         this.impersonateUserLookupModal.show();
@@ -412,5 +397,10 @@ export class TenantsComponent extends AppComponentBase implements OnInit {
     refreshDataGrid() {
         if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.refresh();
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.overflowHidden();
+        this._appService.updateToolbar(null);
     }
 }

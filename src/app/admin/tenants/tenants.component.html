@@ -16,7 +16,7 @@
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
             <div>
-                <div id="tenantsTable">
+                <div id="tenantsGrid">
                     <dx-data-grid id="gridContainer"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
@@ -42,8 +42,8 @@
         </div>
     </div>
 
-    <createTenantModal #createTenantModal (modalSave)="getTenants()"></createTenantModal>
-    <editTenantModal #editTenantModal (modalSave)="getTenants()"></editTenantModal>
+    <createTenantModal #createTenantModal (modalSave)="refreshDataGrid()"></createTenantModal>
+    <editTenantModal #editTenantModal (modalSave)="refreshDataGrid()"></editTenantModal>
     <tenantFeaturesModal #tenantFeaturesModal></tenantFeaturesModal>
     <commonLookupModal #impersonateUserLookupModal (itemSelected)="impersonateUser($event)"></commonLookupModal>
 </div>
