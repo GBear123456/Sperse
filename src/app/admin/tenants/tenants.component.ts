@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -102,7 +102,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
                 text: this.l('LoginAsThisTenant'),
                 visible: this.permission.isGranted('Pages.Tenants.Impersonation'),
                 action: () => {
-                    this.showUserImpersonateLookUpModal(this.actionRecord.id);
+                    this.showUserImpersonateLookUpModal(this.actionRecord);
                 }
             },
             {
