@@ -31,6 +31,8 @@ import { TagFieldComponent } from './offer-edit/tag-field/tag-field.component';
 import { CheckboxFieldComponent } from './offer-edit/checkbox-field/checkbox-field.component';
 import { TextMultipleFieldComponent } from './offer-edit/text-multiple-field/text-multiple-field.component';
 import { RatingFieldComponent } from './offer-edit/rating-field/rating-field.component';
+import { FromToFieldComponent } from './offer-edit/from-to-field/from-to-field.component';
+import { GroupFieldComponent } from './offer-edit/group-field/group-field.component';
 
 @NgModule({
     imports: [
@@ -62,7 +64,9 @@ import { RatingFieldComponent } from './offer-edit/rating-field/rating-field.com
         TagFieldComponent,
         CheckboxFieldComponent,
         TextMultipleFieldComponent,
-        RatingFieldComponent
+        RatingFieldComponent,
+        FromToFieldComponent,
+        GroupFieldComponent
     ],
     entryComponents: [],
     providers: []

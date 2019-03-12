@@ -1,3 +1,12 @@
-<p>
-  number-field works!
-</p>
+<div class="field">
+    <label [for]="name" [title]="label">{{ label }}</label>
+    <dx-number-box
+        [inputAttr]="{ id: name }"
+        [placeholder]="!readOnly ? ls.ls('PFM', 'Enter_Value') : ''"
+        [format]="isCurrency ? '$ #,##0.##;($ #,##0.##)' : ''"
+        [disabled]="readOnly"
+        [value]="value"
+        (onValueChanged)="valueChange.emit($event.value)">
+    </dx-number-box>
+    <span [ngClass]="!readOnly && value && 'clear-contact' || 'hidden'" (click)="valueChange.emit('')"><i class="minus-icon"></i></span>
+</div>

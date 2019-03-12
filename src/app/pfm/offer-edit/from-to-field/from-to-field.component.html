@@ -1,0 +1,22 @@
+<div class="field">
+    <label [for]="fromName" [title]="label">{{ label }}</label>
+    <div class="numberBox">
+        <dx-number-box
+            [inputAttr]="{ id: fromName }"
+            [placeholder]="ls.l('Min')"
+            [format]="isCurrency ? '$ #,##0.##;($ #,##0.##)' : ''"
+            [disabled]="readOnly"
+            [value]="fromValue"
+            (onValueChanged)="fromValueChange.emit($event.value)">
+        </dx-number-box>
+        <span> - </span>
+        <dx-number-box
+            [placeholder]="ls.l('Max')"
+            [disabled]="readOnly"
+            [format]="isCurrency ? '$ #,##0.##;($ #,##0.##)' : ''"
+            [value]="toValue"
+            (onValueChanged)="toValueChange.emit($event.value)">
+        </dx-number-box>
+    </div>
+    <span [ngClass]="!readOnly && (fromValue || toValue) && 'clear-contact' || 'hidden'" (click)="clearValues()"><i class="minus-icon"></i></span>
+</div>

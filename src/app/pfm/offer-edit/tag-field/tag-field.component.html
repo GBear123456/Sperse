@@ -4,10 +4,11 @@
         <dx-tag-box
             [inputAttr]="{ id: name }"
             [placeholder]="!readOnly ? ls.l('Select') : ''"
-            [displayExpr]="detailsConfig[detail].dataSourceConfig && detailsConfig[detail].dataSourceConfig.displayExpr"
+            [displayExpr]="displayExpr"
             [valueExpr]="valueExpr"
             [dataSource]="dataSource"
-            [(value)]="value"
+            [value]="value"
+            (onValueChanged)="valueChange.emit($event.value)"
             [disabled]="readOnly">
         </dx-tag-box>
     </div>
