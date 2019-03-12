@@ -5,7 +5,7 @@ import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, 
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
 import { Observable, Subject, from, of } from 'rxjs';
-import { delayWhen, map, mergeMap } from 'rxjs/operators';
+import { finalize, delayWhen, map, mergeMap } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -264,6 +264,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             );
             dataSource.sort({getter: 'Id', desc: true});
             response = from(dataSource.load()).pipe(
+                finalize(() => {
+                    let allStagesLoaded = this.isAllStagesLoaded();
+                    if (oneStageOnly || allStagesLoaded)
+                        setTimeout(() => this.finishLoading(), 1000);
+                    if (this.totalsURI && allStagesLoaded)
+                        this.processTotalsRequest(this.queryWithSearch);
+                }),
                 map((leads: any) => {
                     if (leads.length) {
                         stage['leads'] = (page && oneStageOnly ? _.uniqBy(
@@ -281,17 +288,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stage['full'] = true;
                     }
 
-                    let allStagesLoaded = this.isAllStagesLoaded();
-                    if (oneStageOnly || allStagesLoaded)
-                        setTimeout(() => this.finishLoading(), 1000);
-                    if (this.totalsURI && allStagesLoaded)
-                        this.processTotalsRequest(this.queryWithSearch);
                     dataSource['entities'] = stage['leads'];
                     dataSource['total'] = stage['total'];
                     return leads;
                 })
             );
-            response.subscribe();
+            response.subscribe(() => {}, (e) => {
+                this.message.error(e);
+            });
         }
 
         if (!oneStageOnly && stages[index + 1])
