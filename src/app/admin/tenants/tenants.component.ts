@@ -33,7 +33,6 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 @Component({
     templateUrl: './tenants.component.html',
     styleUrls: [ './tenants.component.less' ],
-    encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
 export class TenantsComponent extends AppComponentBase implements OnInit, OnDestroy {
