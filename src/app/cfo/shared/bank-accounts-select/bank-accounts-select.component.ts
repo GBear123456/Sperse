@@ -51,4 +51,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         }
     }
 
+    onMultiTagPreparing(e) {
+        const totalCount = e.component.getDataSource().items().length;
+        e.text = !totalCount || e.selectedItems.length === totalCount ? 'All Entities' : e.selectedItems.length + ' of ' + totalCount + ' selected';
+    }
+
 }
