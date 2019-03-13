@@ -29,6 +29,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: './tenants.component.html',
@@ -38,9 +39,6 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 export class TenantsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild('impersonateUserLookupModal') impersonateUserLookupModal: CommonLookupModalComponent;
-    @ViewChild('createTenantModal') createTenantModal: CreateTenantModalComponent;
-    @ViewChild('editTenantModal') editTenantModal: EditTenantModalComponent;
-    @ViewChild('tenantFeaturesModal') tenantFeaturesModal: TenantFeaturesModalComponent;
 
     private filters: FilterModel[];
     public actionMenuItems: any;
@@ -68,7 +66,8 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
         private _filtersService: FiltersService,
         private _permissionService: PermissionServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _impersonationService: ImpersonationService
+        private _impersonationService: ImpersonationService,
+        private dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -109,14 +108,19 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
                 text: this.l('Edit'),
                 visible: this.permission.isGranted('Pages.Tenants.Edit'),
                 action: () => {
-                    this.editTenantModal.show(this.actionRecord.id);
+                    this.openEditDialog(this.actionRecord.id);
                 }
             },
             {
                 text: this.l('Features'),
                 visible: this.permission.isGranted('Pages.Tenants.ChangeFeatures'),
                 action: () => {
-                    this.tenantFeaturesModal.show(this.actionRecord.id, this.actionRecord.name);
+                    this.dialog.open(TenantFeaturesModalComponent, {
+                        panelClass: ['slider'],
+                        data: {
+                            tenantId: this.actionRecord.id
+                        }
+                    });
                 }
             },
             {
@@ -322,7 +326,10 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     createTenant(): void {
-        this.createTenantModal.show();
+        this.dialog.open(CreateTenantModalComponent, {
+            panelClass: ['slider', 'tenant-modal'],
+            data: {}
+        });
     }
 
     onContentReady() {
@@ -349,9 +356,16 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
             let roleId = event.data && event.data.id;
             if (roleId) {
                 event.component.cancelEditData();
-                this.editTenantModal.show(roleId);
+                this.openEditDialog(roleId);
             }
         }
+    }
+
+    private openEditDialog(tenantId: number) {
+        this.dialog.open(EditTenantModalComponent, {
+            panelClass: ['slider', 'tenant-modal'],
+            data: { tenantId: tenantId }
+        });
     }
 
     deleteTenant(tenant: TenantListDto): void {

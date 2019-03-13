@@ -177,7 +177,10 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         CreateUserDialogComponent
     ],
     entryComponents: [
-        CreateUserDialogComponent
+        CreateUserDialogComponent,
+        CreateTenantModalComponent,
+        EditTenantModalComponent,
+        TenantFeaturesModalComponent
     ],
     exports: [
         AddMemberModalComponent

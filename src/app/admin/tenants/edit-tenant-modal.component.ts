@@ -1,13 +1,11 @@
 /** Core imports */
-import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { ModalDirective } from 'ngx-bootstrap';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     SubscribableEditionComboboxItemDto,
     TenantEditDto,
@@ -15,20 +13,19 @@ import {
     TenantServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { TenantsService } from '@admin/tenants/tenants.service';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 @Component({
     selector: 'editTenantModal',
     templateUrl: './edit-tenant-modal.component.html',
     providers: [ TenantsService ]
 })
-export class EditTenantModalComponent extends AppComponentBase {
+export class EditTenantModalComponent extends AppModalDialogComponent implements OnInit {
 
     @ViewChild('nameInput') nameInput: ElementRef;
-    @ViewChild('editModal') modal: ModalDirective;
     @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active = false;
     saving = false;
     tenant: TenantEditDto;
     editionsModels: { [value: string]: TenantEditEditionDto } = {};
@@ -42,21 +39,16 @@ export class EditTenantModalComponent extends AppComponentBase {
         super(injector);
     }
 
-    show(tenantId: number): void {
-        this.active = true;
+    ngOnInit() {
+        this.data.title = this.l('EditTenant');
         forkJoin(
             this._tenantsService.getEditionsGroups(),
-            this._tenantService.getTenantForEdit(tenantId)
+            this._tenantService.getTenantForEdit(this.data.tenantId)
         ).subscribe(([editionsGroups, tenantResult]) => {
             this.editionsGroups = editionsGroups;
             this.tenant = tenantResult;
             this.editionsModels = this._tenantsService.getEditionsModels(editionsGroups, tenantResult);
-            this.modal.show();
         });
-    }
-
-    onShown(): void {
-        $(this.nameInput.nativeElement).focus();
     }
 
     save(): void {
@@ -72,7 +64,6 @@ export class EditTenantModalComponent extends AppComponentBase {
     }
 
     close(): void {
-        this.active = false;
-        this.modal.hide();
+        this.dialogRef.close();
     }
 }

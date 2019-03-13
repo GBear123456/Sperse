@@ -1,78 +1,67 @@
-<div bsModal #editModal="bs-modal" (onShown)="onShown()" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editModal"
-     aria-hidden="true" [config]="{backdrop: 'static'}">
-    <div class="modal-dialog">
+<app-modal-dialog>
+    <dx-scroll-view showScrollbar="onHover">
+        <form #tenantEditForm="ngForm" role="form" novalidate class="form-validation" (submit)="save()" *ngIf="tenant">
+            <div class="modal-body">
+                <tabset class="tab-container tabbable-line">
+                    <tab heading="{{l('TenantProperties')}}">
+                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                            <label>{{l("Name")}}</label>
+                            <input #nameInput type="text" name="Name" class="form-control input-ltr" [ngClass]="{'edited':tenant.name}" [(ngModel)]="tenant.name" required maxlength="128">
+                        </div>
 
-        <div class="modal-content">
+                        <modules-editions-select *ngIf="editionsGroups" [editionsGroups]="editionsGroups" [(editionsModels)]="editionsModels"></modules-editions-select>
 
-            <form #tenantEditForm="ngForm" role="form" novalidate class="form-validation" (submit)="save()" *ngIf="tenant && active">
-                <div class="modal-header">
-                    <h4 class="modal-title">
-                        <span>{{l("EditTenant")}}: {{tenant.tenancyName}}</span>
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <tabset class="tab-container tabbable-line">
-                        <tab heading="{{l('TenantProperties')}}">
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <label>{{l("Name")}}</label>
-                                <input #nameInput type="text" name="Name" class="form-control input-ltr" [ngClass]="{'edited':tenant.name}" [(ngModel)]="tenant.name" required maxlength="128">
+                        <div class="md-checkbox-list">
+                            <div class="md-checkbox">
+                                <input id="EditTenant_IsActive" class="md-check" type="checkbox" name="IsActive" [(ngModel)]="tenant.isActive">
+                                <label for="EditTenant_IsActive">
+                                    <span class="inc"></span>
+                                    <span class="check"></span>
+                                    <span class="box"></span>
+                                    {{l("Active")}}
+                                </label>
                             </div>
-
-                            <modules-editions-select *ngIf="editionsGroups" [editionsGroups]="editionsGroups" [(editionsModels)]="editionsModels"></modules-editions-select>
-
-                            <div class="md-checkbox-list">
-                                <div class="md-checkbox">
-                                    <input id="EditTenant_IsActive" class="md-check" type="checkbox" name="IsActive" [(ngModel)]="tenant.isActive">
-                                    <label for="EditTenant_IsActive">
-                                        <span class="inc"></span>
-                                        <span class="check"></span>
-                                        <span class="box"></span>
-                                        {{l("Active")}}
-                                    </label>
-                                </div>
-                            </div>
-                        </tab>
-                        <tab heading="{{l('TenantDatabases')}}">
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <label>{{l("Platform")}}</label>
-                            </div>
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <input type="text" name="ConnectionString" class="form-control" [(ngModel)]="tenant.connectionString" [ngClass]="{'edited':tenant.connectionString}" maxlength="1024">
-                                <label>{{l("DatabaseConnectionString")}}</label>
-                            </div>
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <label>{{ls("CRM", "CRM")}}</label>
-                            </div>
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <input type="text" name="CRMConnectionString" class="form-control" [(ngModel)]="tenant.crmConnectionString" [ngClass]="{'edited':tenant.crmConnectionString}" maxlength="1024">
-                                <label>{{l("DatabaseConnectionString")}}</label>
-                            </div>
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <label>{{ls("CFO", "CFO")}}</label>
-                            </div>
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <input type="text" name="CFODbConnectionString" class="form-control" [(ngModel)]="tenant.cfoConnectionString" [ngClass]="{'edited':tenant.cfoConnectionString}" maxlength="1024">
-                                <label>{{l("DatabaseConnectionString")}}</label>
-                            </div>
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <label>{{ls("PFM", "PFM")}}</label>
-                            </div>
-                            <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                                <input type="text" name="MemberDbConnectionString" class="form-control" [(ngModel)]="tenant.memberDbConnectionString" [ngClass]="{'edited':tenant.memberDbConnectionString}" maxlength="1024">
-                                <label>{{l("DatabaseConnectionString")}}</label>
-                            </div>
-                            <div>
-                                <span class="help-block text-warning">{{l("TenantDatabaseConnectionStringChangeWarningMessage")}}</span>
-                            </div>
-                        </tab>
-                    </tabset>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" [disabled]="saving" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
-                    <button type="submit" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')" class="btn btn-layout" [disabled]="!tenantEditForm.form.valid || saving"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
-                </div>
-            </form>
-
-        </div>
-    </div>
-</div>
+                        </div>
+                    </tab>
+                    <tab heading="{{l('TenantDatabases')}}">
+                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                            <label>{{l("Platform")}}</label>
+                        </div>
+                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                            <input type="text" name="ConnectionString" class="form-control" [(ngModel)]="tenant.connectionString" [ngClass]="{'edited':tenant.connectionString}" maxlength="1024">
+                            <label>{{l("DatabaseConnectionString")}}</label>
+                        </div>
+                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                            <label>{{ls("CRM", "CRM")}}</label>
+                        </div>
+                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                            <input type="text" name="CRMConnectionString" class="form-control" [(ngModel)]="tenant.crmConnectionString" [ngClass]="{'edited':tenant.crmConnectionString}" maxlength="1024">
+                            <label>{{l("DatabaseConnectionString")}}</label>
+                        </div>
+                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                            <label>{{ls("CFO", "CFO")}}</label>
+                        </div>
+                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                            <input type="text" name="CFODbConnectionString" class="form-control" [(ngModel)]="tenant.cfoConnectionString" [ngClass]="{'edited':tenant.cfoConnectionString}" maxlength="1024">
+                            <label>{{l("DatabaseConnectionString")}}</label>
+                        </div>
+                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                            <label>{{ls("PFM", "PFM")}}</label>
+                        </div>
+                        <div class="form-group form-md-line-input form-md-floating-label no-hint">
+                            <input type="text" name="MemberDbConnectionString" class="form-control" [(ngModel)]="tenant.memberDbConnectionString" [ngClass]="{'edited':tenant.memberDbConnectionString}" maxlength="1024">
+                            <label>{{l("DatabaseConnectionString")}}</label>
+                        </div>
+                        <div>
+                            <span class="help-block text-warning">{{l("TenantDatabaseConnectionStringChangeWarningMessage")}}</span>
+                        </div>
+                    </tab>
+                </tabset>
+            </div>
+            <div class="modal-footer">
+                <button type="button" [disabled]="saving" class="btn btn-default" (click)="close()">{{l("Cancel")}}</button>
+                <button type="submit" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')" class="btn btn-layout" [disabled]="!tenantEditForm.form.valid || saving"><i class="fa fa-save"></i> <span>{{l("Save")}}</span></button>
+            </div>
+        </form>
+    </dx-scroll-view>
+</app-modal-dialog>

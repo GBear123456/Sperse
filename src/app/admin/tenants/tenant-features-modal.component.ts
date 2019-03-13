@@ -1,26 +1,22 @@
-import { Component, Injector, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { EntityDto, TenantServiceProxy, UpdateTenantFeaturesInput } from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap';
 import { FeatureTreeComponent } from '../shared/feature-tree.component';
 import { finalize } from 'rxjs/operators';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 @Component({
     selector: 'tenantFeaturesModal',
     templateUrl: './tenant-features-modal.component.html'
 })
-export class TenantFeaturesModalComponent extends AppComponentBase {
+export class TenantFeaturesModalComponent extends AppModalDialogComponent implements OnInit {
 
     @ViewChild('tenantFeaturesModal') modal: ModalDirective;
     @ViewChild('featureTree') featureTree: FeatureTreeComponent;
 
-    active = false;
     saving = false;
-
     resettingFeatures = false;
     tenantId: number;
-    tenantName: string;
-    featureEditData: any = null;
 
     constructor(
         injector: Injector,
@@ -29,12 +25,10 @@ export class TenantFeaturesModalComponent extends AppComponentBase {
         super(injector);
     }
 
-    show(tenantId: number, tenantName: string): void {
-        this.tenantId = tenantId;
-        this.tenantName = tenantName;
-        this.active = true;
+    ngOnInit() {
+        this.data.title = this.l('Features');
+        this.tenantId = this.data.tenantId;
         this.loadFeatures();
-        this.modal.show();
     }
 
     loadFeatures(): void {
@@ -78,7 +72,6 @@ export class TenantFeaturesModalComponent extends AppComponentBase {
     }
 
     close(): void {
-        this.active = false;
-        this.modal.hide();
+        this.dialogRef.close();
     }
 }
