@@ -127,6 +127,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }
             }
         };
