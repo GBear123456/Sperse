@@ -119,6 +119,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 deserializeDates: false,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }
             }
         };

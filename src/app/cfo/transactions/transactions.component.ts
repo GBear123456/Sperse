@@ -187,7 +187,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             {
                                 dataSource: syncAccounts,
                                 nameField: 'name',
-                                keyExpr: 'id'
+                                keyExpr: 'id',
+                                onRemoved: (ids) => this._bankAccountsService.changeSelectedBankAccountsIds(ids)
                             })
                     }
                 }),
@@ -274,6 +275,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();
             /** After selected accounts change */
+            this._bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
+                this.applyTotalBankAccountFilter(true);
+            });
             this._bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                 /** filter all widgets by new data if change is on this component */
                 if (this.componentIsActivated) {
@@ -674,12 +678,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     //     this.bankAccountCount = this._bankAccountsService.getBankAccountCount(bankAccountIds, visibleAccountCount);
     // }
 
-    applyTotalBankAccountFilter() {
-        let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        accountFilter = this._bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this._bankAccountsService.state, this.syncAccounts);
-        this.setDataSource();
-        this.filtersService.change(accountFilter);
-        this._bankAccountsService.applyFilter();
+    applyTotalBankAccountFilter(emitFilterChange = false) {
+        emitFilterChange && this.setDataSource();
+        this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);        
     }
 
     processFilterInternal() {
@@ -1090,7 +1091,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
-            this.applyTotalBankAccountFilter();
+            this.applyTotalBankAccountFilter(true);
             this.updateAfterActivation = false;
         }
 

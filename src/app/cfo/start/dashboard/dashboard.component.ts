@@ -100,13 +100,9 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     refreshWidgets() {
-        const element = this.getElementRef().nativeElement.querySelector('.content .right');
-        abp.ui.setBusy(element);
         this.loadAllWidgetsData();
         /** @todo check requests */
-        this.bankAccountsService.load().pipe(
-            finalize(() => abp.ui.clearBusy(element))
-        ).subscribe();
+        this.bankAccountsService.load().subscribe();
     }
 
     loadAllWidgetsData() {

@@ -52,6 +52,7 @@ export class ZendeskService {
         try {
             if (this.accountUrl && environment.zenDeskEnabled) {
                 this.setup(settings);
+                clearTimeout(this.showZendeskWebwidgetTimeout);
                 this.showZendeskWebwidgetTimeout = setTimeout(() => {
                     this.zendeskWidgetService.show();
                 }, 2000);

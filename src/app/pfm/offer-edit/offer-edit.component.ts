@@ -12,7 +12,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, Subject, combineLatest, of, merge } from 'rxjs';
-import { finalize, map, tap, publishReplay, pluck, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
+import { debounceTime, filter, finalize, map, tap, publishReplay, pluck, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { startCase } from 'lodash';
 
@@ -433,22 +433,22 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             });
         });
         this.targetEntity$.pipe(
+            debounceTime(300),
             withLatestFrom(this.offerId$),
             switchMap(([direction, offerId]: [number, TargetDirectionEnum]) => {
                 return this.itemDetailsService.getItemFullInfo(ItemTypeEnum.Offer, offerId, direction, 'CampaignId');
             }),
-            withLatestFrom(this.offerId$, this.section$)
+            withLatestFrom(this.offerId$, this.section$),
+            filter(itemFullInfo => !!itemFullInfo)
         ).subscribe(([itemFullInfo, offerId, section]: [ItemFullInfo, number, string]) => {
-            if (itemFullInfo) {
-                this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
-                this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
-                if (offerId !== itemFullInfo.itemData.CampaignId) {
-                    this.router.navigate(
-                        ['../..', itemFullInfo.itemData.CampaignId, section],
-                        { relativeTo: this.route }
-                    );
-                }
+            if (offerId !== itemFullInfo.itemData.CampaignId) {
+                this.router.navigate(
+                    ['../..', itemFullInfo.itemData.CampaignId, section],
+                    { relativeTo: this.route }
+                );
             }
+            this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
+            this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
         });
     }
 
