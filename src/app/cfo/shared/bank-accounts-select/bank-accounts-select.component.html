@@ -19,13 +19,15 @@
                                                     displayExpr="name"
                                                     valueExpr="id"
                                                     placeholder="All Entities"
-                                                    showSelectionControls="true"
+                                                    [maxDisplayedTags]="2"
+                                                    [showSelectionControls]="true"
                                                     tagTemplate="customTagTemplate"
                                                     (onClosed)="changeSelectedBusinessEntities($event)"
+                                                    (onMultiTagPreparing)="onMultiTagPreparing($event)"
                                                     [value]="bankAccountsService.selectedBusinessEntitiesIds$ | async">
 
                                             <div *dxTemplate="let tag of 'customTagTemplate'">
-                                                <span class="tag-value"> {{tag.name}}  </span>
+                                                <span class="tag-value"> {{ tag.name || tag }}  </span>
                                             </div>
                                         </dx-tag-box>
                                     </ng-container>

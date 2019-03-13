@@ -5,6 +5,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { DisplayElement } from '@shared/filters/models/filter-item.model';
 import { Router, NavigationStart } from '@angular/router';
+import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 
 @Component({
@@ -24,6 +25,7 @@ export class SideBarComponent extends AppComponentBase {
 
     constructor(
         private _eref: ElementRef,
+        private _appService: AppService,
         private _filtersService: FiltersService,
         private _appSessionService: AppSessionService,
         injector: Injector,
@@ -44,6 +46,10 @@ export class SideBarComponent extends AppComponentBase {
         router.events.subscribe((event) => {
             if (event instanceof NavigationStart)
                 this.filters = [];
+        });
+
+        this._filtersService.subjectFilterDisable.subscribe(e => { 
+            this._appService.toolbarRefresh();
         });
     }
 
@@ -77,8 +83,8 @@ export class SideBarComponent extends AppComponentBase {
     }
 
     closeFilters(event) {
-      this.hideFilterDialog(event);
-      this._filtersService.toggle();
+        this.hideFilterDialog(event);
+        this._filtersService.toggle();
     }
 
     hideFilterDialog(event) {

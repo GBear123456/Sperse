@@ -149,6 +149,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 deserializeDates: false,
                 paginate: true

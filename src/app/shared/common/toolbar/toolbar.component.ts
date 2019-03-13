@@ -1,6 +1,7 @@
-import { Component, Injector, Input, HostListener, HostBinding } from '@angular/core';
+import { Component, Injector, Input, HostListener, HostBinding, OnDestroy } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolbarGroupModel, ToolbarGroupModelItem } from './toolbar.model';
+import { AppService } from '@app/app.service';
 import * as _ from 'underscore';
 
 @Component({
@@ -8,7 +9,7 @@ import * as _ from 'underscore';
     templateUrl: './toolbar.component.html',
     styleUrls: ['./toolbar.component.less']
 })
-export class ToolBarComponent extends AppComponentBase {
+export class ToolBarComponent extends AppComponentBase implements OnDestroy {
     @Input() width = '100%';
     @Input() compact = false;
     private _config: ToolbarGroupModel[];
@@ -20,9 +21,16 @@ export class ToolBarComponent extends AppComponentBase {
     @HostBinding('style.display') display: string;
     public items = [];
     public options = {};
+    private subscription: any;
 
-    constructor(injector: Injector) {
+    constructor(injector: Injector,
+        private _appService: AppService
+    ) {
         super(injector);
+        
+        this.subscription = _appService.toolbarSubscribe(() => {
+            this.initToolbarItems();
+        });
     }
     @HostListener('window:resize') onResize() {
         this.initToolbarItems();
@@ -347,5 +355,9 @@ export class ToolBarComponent extends AppComponentBase {
                 });
             });
         this.items = items;
+    }
+
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
     }
 }

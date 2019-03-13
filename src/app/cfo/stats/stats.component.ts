@@ -6,7 +6,7 @@ import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
 import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, first } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
@@ -338,6 +338,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 this.initFiltering();
 
                 /** After selected accounts change */
+                this.bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
+                    this.setBankAccountsFilter(true);
+                });
                 this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
                     /** filter all widgets by new data if change is on this component */
                     if (this.componentIsActivated) {
@@ -441,7 +444,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                 {
                                     dataSource: this.syncAccounts,
                                     nameField: 'name',
-                                    keyExpr: 'syncId'
+                                    keyExpr: 'syncId',
+                                    onRemoved: (ids) => this.bankAccountsService.changeSelectedBankAccountsIds(ids)
                                 })
                         }
                     })
@@ -619,11 +623,8 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         }
     }
 
-    setBankAccountsFilter() {
-        let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        accountFilter = this.bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this.bankAccountsService.state, this.syncAccounts);
-        this._filtersService.change(accountFilter);
-        this.bankAccountsService.applyFilter();
+    setBankAccountsFilter(emitFilterChange = false) {
+        this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
     }
 
     toggleBankAccountTooltip() {
@@ -782,7 +783,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
-            this.setBankAccountsFilter();
+            this.setBankAccountsFilter(true);
             this.updateAfterActivation = false;
         }
 

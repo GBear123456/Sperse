@@ -93,7 +93,7 @@ export class FiltersService {
             this.enabled = false;
             this.fixed = false;
             this.subjectFilterDisable.next();
-        }, 300);
+        }, 100);
     }
 
     preventDisable() {

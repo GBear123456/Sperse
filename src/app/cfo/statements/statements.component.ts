@@ -271,7 +271,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                         {
                             dataSource: syncAccounts,
                             nameField: 'name',
-                            keyExpr: 'id'
+                            keyExpr: 'id',
+                            onRemoved: (ids) => this.bankAccountsService.changeSelectedBankAccountsIds(ids)
                         })
                 }
             })
@@ -452,11 +453,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._filtersService.change(dateFilter);
     }
 
-    setBankAccountsFilter() {
-        let accountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        accountFilter = this.bankAccountsService.changeAndGetBankAccountFilter(accountFilter, this.bankAccountsService.state, this.syncAccounts);
-        this._filtersService.change(accountFilter);
-        this.bankAccountsService.applyFilter();
+    setBankAccountsFilter(emitFilterChange = false) {
+        this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
     }
 
     showCompactRowsHeight() {
@@ -488,7 +486,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
-            this.setBankAccountsFilter();
+            this.setBankAccountsFilter(true);
             this.updateAfterActivation = false;
         }
 

@@ -5,7 +5,7 @@ import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, 
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
 import { Observable, Subject, from, of } from 'rxjs';
-import { delayWhen, map, mergeMap } from 'rxjs/operators';
+import { finalize, delayWhen, map, mergeMap } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import * as _ from 'lodash';
@@ -284,13 +284,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             );
             dataSource.sort({getter: 'Id', desc: true});
             response = from(dataSource.load()).pipe(
-                map((entities: any) => {
+                finalize(() => {
+                    let allStagesLoaded = this.isAllStagesLoaded();
+                    if (oneStageOnly || allStagesLoaded)
+                        setTimeout(() => this.finishLoading(), 1000);
+                    if (this.totalsURI && allStagesLoaded)
+                        this.processTotalsRequest(this.queryWithSearch);
+                }),
+                map((leads: any) => {
                     if (entities.length) {
                         stage['entities'] = (page && oneStageOnly ? _.uniqBy(
                             (stage['entities'] || []).concat(entities), (entity) => entity['Id']) : entities).map((entity) => {
-                                stage['lastEntityId'] = Math.min((page ? stage['lastEntityId'] : undefined) || Infinity, entity['Id']);
-                                return entity;
-                            });
+                            stage['lastEntityId'] = Math.min((page ? stage['lastEntityId'] : undefined) || Infinity, entity['Id']);
+                            return entity;
+                        });
                         if (!this.totalsURI)
                             stage['total'] = dataSource.totalCount();
                         stage['full'] = (stage['entities'].length >= (stage['total'] || 0));
@@ -301,17 +308,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stage['full'] = true;
                     }
 
-                    let allStagesLoaded = this.isAllStagesLoaded();
-                    if (oneStageOnly || allStagesLoaded)
-                        setTimeout(() => this.finishLoading(), 1000);
-                    if (this.totalsURI && allStagesLoaded)
-                        this.processTotalsRequest(this.queryWithSearch);
-                    dataSource['entities'] = stage['entities'];
+                    dataSource['entities'] = stage['leads'];
                     dataSource['total'] = stage['total'];
                     return entities;
                 })
             );
-            response.subscribe();
+            response.subscribe(() => {}, (e) => {
+                this.message.error(e);
+            });
         }
 
         if (!oneStageOnly && stages[index + 1])
@@ -328,6 +332,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 paginate: false
             }

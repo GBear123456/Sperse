@@ -6,6 +6,7 @@ export class BankAccountFilterModel extends FilterItemModel {
     dataSource: any;
     keyExpr: any;
     nameField: string;
+    onRemoved: (ids: number[]) => void;
 
     public constructor(init?: Partial<BankAccountFilterModel>) {
         super();
@@ -88,9 +89,10 @@ export class BankAccountFilterModel extends FilterItemModel {
                         syncAccount['selected'] = undefined;
                     }
                 }
-            });
+            });            
         } else {
             this.setValue([], filter);
         }
-    }
+        this.onRemoved && this.onRemoved(this.value);
+    }    
 }
