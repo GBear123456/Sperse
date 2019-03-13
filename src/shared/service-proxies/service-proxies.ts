@@ -32937,12 +32937,13 @@ export interface IAddForecastInput {
 }
 
 export class ImportForecastInput implements IImportForecastInput {
-    forecastDate!: moment.Moment | undefined;
-    entity!: string | undefined;
-    type!: string | undefined;
+    forecastDate!: moment.Moment;
+    entity!: string;
+    type!: ImportForecastInputType;
     categoryID!: number | undefined;
     descriptor!: string | undefined;
-    amount!: string | undefined;
+    amount!: number;
+    cashFlowTypeId!: string | undefined;
 
     constructor(data?: IImportForecastInput) {
         if (data) {
@@ -32961,6 +32962,7 @@ export class ImportForecastInput implements IImportForecastInput {
             this.categoryID = data["categoryID"];
             this.descriptor = data["descriptor"];
             this.amount = data["amount"];
+            this.cashFlowTypeId = data["cashFlowTypeId"];
         }
     }
 
@@ -32979,17 +32981,19 @@ export class ImportForecastInput implements IImportForecastInput {
         data["categoryID"] = this.categoryID;
         data["descriptor"] = this.descriptor;
         data["amount"] = this.amount;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
         return data; 
     }
 }
 
 export interface IImportForecastInput {
-    forecastDate: moment.Moment | undefined;
-    entity: string | undefined;
-    type: string | undefined;
+    forecastDate: moment.Moment;
+    entity: string;
+    type: ImportForecastInputType;
     categoryID: number | undefined;
     descriptor: string | undefined;
-    amount: string | undefined;
+    amount: number;
+    cashFlowTypeId: string | undefined;
 }
 
 export class CreateForecastsInput implements ICreateForecastsInput {
@@ -56373,6 +56377,7 @@ export class OngageSettingsEditDto implements IOngageSettingsEditDto {
     accountCode!: string | undefined;
     defaultListId!: number | undefined;
     activationEmailMessageId!: number | undefined;
+    isEnabled!: boolean | undefined;
 
     constructor(data?: IOngageSettingsEditDto) {
         if (data) {
@@ -56390,6 +56395,7 @@ export class OngageSettingsEditDto implements IOngageSettingsEditDto {
             this.accountCode = data["accountCode"];
             this.defaultListId = data["defaultListId"];
             this.activationEmailMessageId = data["activationEmailMessageId"];
+            this.isEnabled = data["isEnabled"];
         }
     }
 
@@ -56407,6 +56413,7 @@ export class OngageSettingsEditDto implements IOngageSettingsEditDto {
         data["accountCode"] = this.accountCode;
         data["defaultListId"] = this.defaultListId;
         data["activationEmailMessageId"] = this.activationEmailMessageId;
+        data["isEnabled"] = this.isEnabled;
         return data; 
     }
 }
@@ -56417,6 +56424,7 @@ export interface IOngageSettingsEditDto {
     accountCode: string | undefined;
     defaultListId: number | undefined;
     activationEmailMessageId: number | undefined;
+    isEnabled: boolean | undefined;
 }
 
 export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
@@ -61007,6 +61015,11 @@ export enum CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity {
 export enum CashflowGridGeneralSettingsDtoSplitMonthType {
     Days = "Days", 
     Weeks = "Weeks", 
+}
+
+export enum ImportForecastInputType {
+    Inflows = "Inflows", 
+    Outflows = "Outflows", 
 }
 
 export enum CreateForecastScheduleDtoWeekDayNumber {
