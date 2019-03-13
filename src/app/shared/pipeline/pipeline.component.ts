@@ -291,7 +291,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     if (this.totalsURI && allStagesLoaded)
                         this.processTotalsRequest(this.queryWithSearch);
                 }),
-                map((leads: any) => {
+                map((entities: any) => {
                     if (entities.length) {
                         stage['entities'] = (page && oneStageOnly ? _.uniqBy(
                             (stage['entities'] || []).concat(entities), (entity) => entity['Id']) : entities).map((entity) => {
