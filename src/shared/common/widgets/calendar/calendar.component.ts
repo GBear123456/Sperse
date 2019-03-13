@@ -29,9 +29,14 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
 
     constructor(injector: Injector) {
         super(injector);
-      
+
         moment.tz.setDefault(undefined);
-    }
+        window['getUserTimezoneDate'] = (date) => {
+            date.setTime(date.getTime() + (date.getTimezoneOffset() +
+                moment(date).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset()) * 60 * 1000);
+            return date;
+        }
+    }    
 
     private setDateRageValues() {
         if (this.calendar) {
@@ -58,7 +63,7 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
                 this._values.from.value = new Date(obj.date1.getTime());
                 this._values.to.value = new Date(obj.date2.getTime());
             }
-            );
+        );
         this.setDateRageValues();
     }
 

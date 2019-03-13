@@ -126,8 +126,7 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     getUserTimezone() {
-        let timezone = moment().tz(abp.timing.timeZoneInfo.iana.timeZoneId).format('ZZ');
-        return timezone.replace(timezone[0], timezone[0] == '+' ? '-': '+');
+        return moment().tz(abp.timing.timeZoneInfo.iana.timeZoneId).format('ZZ');
     }
 
     getCacheKey(key) {

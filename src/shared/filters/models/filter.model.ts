@@ -96,8 +96,8 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
                 Date.prototype.setHours.apply(item.value,
                     key == 'to' ? [23,59,59,999]: [0,0,0,0]);
 
-                let clone = new Date(item.value.getTime());
-                clone.setTime(clone.getTime() - (clone.getTimezoneOffset() - (params && params.useUserTimezone ? 
+                let clone = new Date(item.value.getTime());             
+                clone.setTime(clone.getTime() - (clone.getTimezoneOffset() + (params && params.useUserTimezone ? 
                     moment(clone).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset() : 0)) * 60 * 1000);
 
                 data[this.field][this.operator[key]] = clone;
