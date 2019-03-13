@@ -313,7 +313,7 @@ export class AppService extends AppServiceBase {
     }
 
     toolbarSubscribe(callback) {
-        this.toolbarSubject.asObservable().subscribe(callback);
+        return this.toolbarSubject.asObservable().subscribe(callback);
     }
 
     toolbarRefresh() {
