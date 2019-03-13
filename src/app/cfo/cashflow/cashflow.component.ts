@@ -4441,16 +4441,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     removeModifyingCellNumberBox() {
         let parent = this.modifyingCellNumberBox.element().parentElement;
         this.modifyingCellNumberBox.dispose();
+        this.modifyingCellNumberBox.element().remove();
         this.modifyingCellNumberBox = null;
         this.functionButton.dispose();
+        this.functionButton.element().remove();
         this.functionButton = null;
         if (this.saveButton) {
             this.saveButton.dispose();
+            this.saveButton.element().remove();
             this.saveButton = null;
         }
         $('.dx-editor-cell.calculator-number-box').removeClass('dx-editor-cell');
         $('.calculator-number-box').removeClass('calculator-number-box');
         $(parent).children().show();
+        /** Remove inner span wrapper in the cell */
+        parent.innerHTML = parent.innerText;
         parent.style.padding = this.oldCellPadding;
         this.closeCalculator();
         this.modifyingNumberBoxCellObj = null;
@@ -5739,7 +5744,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
             this.setBankAccountsFilter();
-            this.loadGridDataSource();              
+            this.loadGridDataSource();
             this.updateAfterActivation = false;
         }
 
