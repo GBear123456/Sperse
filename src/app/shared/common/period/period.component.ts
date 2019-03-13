@@ -1,4 +1,4 @@
-import { Component, Output, Injector, EventEmitter, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, Injector, EventEmitter, AfterViewInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
@@ -10,6 +10,7 @@ import * as moment from 'moment';
 })
 export class PeriodComponent extends AppComponentBase implements AfterViewInit {
     @Output() onChange = new EventEmitter();
+    @Input() selectedPeriod;
 
     private readonly PERIOD_CACHE_KEY = 'selected.period';
 
@@ -23,17 +24,12 @@ export class PeriodComponent extends AppComponentBase implements AfterViewInit {
         this.l('Last_Year'),
         this.l('All_Periods')
     ];
-    selectedPeriod;
 
     constructor(
         injector: Injector,
         private _cacheService: CacheService
     ) {
         super(injector);
-        if (this._cacheService.exists(this.getCacheKey(this.PERIOD_CACHE_KEY)))
-            this.selectedPeriod = this._cacheService.get(this.getCacheKey(this.PERIOD_CACHE_KEY));
-        else
-            this.selectedPeriod = this.availablePeriods[this.availablePeriods.length - 1];
     }
 
     getCacheKey(key) {
@@ -41,6 +37,11 @@ export class PeriodComponent extends AppComponentBase implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+        if (this._cacheService.exists(this.getCacheKey(this.PERIOD_CACHE_KEY)))
+            this.selectedPeriod = this._cacheService.get(this.getCacheKey(this.PERIOD_CACHE_KEY));
+        else
+            this.selectedPeriod = this.selectedPeriod || this.availablePeriods[this.availablePeriods.length - 1];
+
         this.onChange.emit(this.getDatePeriodFromName(this.selectedPeriod));
     }
 

@@ -1,6 +1,6 @@
 <app-headline [config]="headlineConfig">
     <import-progress-bar></import-progress-bar>
-    <app-period (onChange)="periodChanged($event)"></app-period>
+    <app-period (onChange)="periodChanged($event)" [selectedPeriod]="l('This_Month')"></app-period>
 </app-headline>
 <div [@routerTransition]>
   <left-menu (openIntro)="openDialog()" [class.hidden]="leftMenuHidden" (openPaymentWizard)="openPaymentWizardDialog()"></left-menu>
