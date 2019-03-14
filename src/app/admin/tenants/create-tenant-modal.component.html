@@ -36,7 +36,7 @@
 
                             <div class="form-group">
                                 <label for="AdminEmailAddress">{{l("AdminEmailAddress")}} *</label>
-                                <input id="AdminEmailAddress" #adminEmailAddressInput="ngModel" type="email" name="AdminEmailAddress" class="form-control" [(ngModel)]="tenant.adminEmailAddress" [ngClass]="{'edited':tenant.adminEmailAddress}" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{1,})+$" maxlength="256">
+                                <input id="AdminEmailAddress" #adminEmailAddressInput="ngModel" type="email" name="AdminEmailAddress" class="form-control" [(ngModel)]="tenant.adminEmailAddress" [ngClass]="{'edited':tenant.adminEmailAddress}" required [pattern]="emailRegEx" maxlength="256">
                                 <validation-messages [formCtrl]="adminEmailAddressInput" [errorDefs]="[{pattern: l('InvalidEmailAddress')}]"></validation-messages>
                             </div>
 
