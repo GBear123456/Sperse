@@ -9,13 +9,15 @@
         <dx-tag-box [dataSource]="selectionList"
                     displayExpr="name"
                     valueExpr="id"
-                    placeholder="All Entities"
+                    [placeholder]="allItemsText"
                     showSelectionControls="true"
                     tagTemplate="customTagTemplate"
-                    (onClosed)="selectedItemsChange()"
+                    [maxDisplayedTags]="4"
+                    (onValueChanged)="selectedItemsChange()"
+                    (onMultiTagPreparing)="onMultiTagPreparing($event)"
                     [(value)]="selectedItems">
             <div *dxTemplate="let tag of 'customTagTemplate'">
-                <span class="tag-value">{{tag.name}}</span>
+                <span class="tag-value">{{tag.name || tag}}</span>
             </div>
         </dx-tag-box>
     </ng-container>

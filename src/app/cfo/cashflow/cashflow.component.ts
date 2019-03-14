@@ -15,7 +15,7 @@ import SparkLine from 'devextreme/viz/sparkline';
 import ScrollView from 'devextreme/ui/scroll_view';
 import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, Subject, from, combineLatest, forkJoin, of, zip } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, from, combineLatest, forkJoin, of, zip } from 'rxjs';
 import {
     first,
     filter,
@@ -99,7 +99,6 @@ import { UserPreferencesService } from './preferences-dialog/preferences.service
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
-import { BehaviorSubject } from '@node_modules/rxjs';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -154,6 +153,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     allowChangingForecast: boolean;
     showAllVisible = false;
     showAllDisable = false;
+    disableAddForecastButton = true;
     private noRefreshedAfterSync: boolean;
 
     /** Config of header */
@@ -779,6 +779,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private modifyingNumberBoxStatsDetailFilter: any;
 
     private detailsModifyingNumberBoxCellObj: any;
+
+    private changeTransactionGridEditMode: boolean;
 
     tabularFontName;
 
@@ -4411,6 +4413,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         };
         this.showAllVisible = false;
         this.showAllDisable = false;
+
         cellObj.cell.rowPath.forEach(item => {
             if (item) {
                 let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
@@ -4420,6 +4423,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 filterParams['categoryId'] = -1;
             }
         });
+
         return StatsDetailFilter.fromJS(filterParams);
     }
 
@@ -4468,7 +4472,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     removeModifyingCellNumberBox() {
-        let parent = this.modifyingCellNumberBox.element().parentElement;
+        let parentTD = this.modifyingCellNumberBox.element().parentElement;
         this.modifyingCellNumberBox.dispose();
         this.modifyingCellNumberBox.element().remove();
         this.modifyingCellNumberBox = null;
@@ -4480,12 +4484,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.saveButton.element().remove();
             this.saveButton = null;
         }
-        $('.dx-editor-cell.calculator-number-box').removeClass('dx-editor-cell');
-        $('.calculator-number-box').removeClass('calculator-number-box');
-        $(parent).children().show();
+
+        let editor = $('.dx-editor-cell.calculator-number-box');
+        editor = editor.removeClass('calculator-number-box');
+        if (!parentTD.parentElement.classList.contains('dx-row-inserted')) {
+            editor.removeClass('dx-editor-cell');
+        }
+        $(parentTD).children().show();
         /** Remove inner span wrapper in the cell */
-        parent.innerHTML = parent.innerText;
-        parent.style.padding = this.oldCellPadding;
+        parentTD.innerHTML = parentTD.firstElementChild.innerHTML;
+        parentTD.style.padding = this.oldCellPadding;
         this.closeCalculator();
         this.modifyingNumberBoxCellObj = null;
         this.modifyingNumberBoxStatsDetailFilter = null;
@@ -4499,6 +4507,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             return detail;
         }));
         this.detailsPeriodIsNotHistorical = cellIsNotHistorical;
+        this.disableAddForecastButton = cellIsNotHistorical && !this.statsDetailFilter.categoryId || (this.statsDetailFilter.cashflowTypeId != Income && this.statsDetailFilter.cashflowTypeId != Expense);
 
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
@@ -4695,6 +4704,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.statsDetailResult = undefined;
         this.showAllVisible = false;
         this.showAllDisable = false;
+        this.disableAddForecastButton = true;
         this.handleBottomHorizontalScrollPosition();
         this.handleVerticalScrollPosition();
     }
@@ -5220,6 +5230,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.searchValue) {
             this.showAllVisible = true;
             this.showAllDisable = true;
+            this.disableAddForecastButton = true;
             let filterParams = {
                 startDate: this.requestFilter.startDate,
                 endDate: this.requestFilter.endDate,
@@ -5279,13 +5290,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
+    addNewForecast() {
+        this.cashFlowGrid.instance.addRow();
+    }
+
     onDetailsCellClick(e) {
-        if (!e.cellElement.classList.contains('dx-focused') && !e.event.target.closest('.function-button'))
+        if (!e.event.target.closest('.calculator-number-box'))
             this.hideModifyingNumberBox();
 
         this.handleDoubleSingleClick(e, this.onDetailsCellSingleClick.bind(this), this.onDetailsCellDoubleClick.bind(this));
 
-        if (e.rowType === 'data') {
+        if (e.rowType === 'data' && !e.column.command) {
             if (!e.cellElement.classList.contains('selectedCell')) {
                 $(e.element).find('.selectedCell').removeClass('selectedCell');
                 e.cellElement.classList.add('selectedCell');
@@ -5294,18 +5309,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellSingleClick(e) {
-        if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId) {
+        if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId && !e.row.inserted) {
             this.transactionId = e.data.id;
             this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
             this.transactionInfo.toggleTransactionDetailsInfo();
         }
+        else if (e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
+            this.onAmountCellEditStart(e);
     }
 
     onDetailsCellDoubleClick(e) {
         if (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'accountNumber')
             e.component.editCell(e.rowIndex, e.column.dataField);
 
-        if (e.column.dataField == 'debit' || e.column.dataField == 'credit')
+        if (e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
 
@@ -5316,6 +5333,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onDetailsEditingStart(e) {
         if (e.data.date) {
             e.cancel = true;
+        }
+    }
+
+    onEditorPreparing(event) {
+        if (event.dataField == 'debit' || event.dataField == 'credit') {
+            event.editorName = 'dxNumberBox';
+            event.editorOptions['format'] = this.currencySymbol + ' #,###.##';
         }
     }
 
@@ -5343,6 +5367,113 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (e.rowType === 'data' && e.data.cashflowTypeId === StartedBalance) {
             e.rowElement.classList.add('adjustmentRow');
         }
+    }
+
+    onInitNewRow(e) {
+        let dataGrid = e.component;
+
+        dataGrid.beginUpdate();
+        dataGrid.option('editing.mode', 'row');
+        dataGrid.columnOption("command:edit", { width: 50 });
+        dataGrid.columnOption('forecastDate', { allowEditing: true });
+        dataGrid.columnOption('description', { allowEditing: true });
+        dataGrid.columnOption('debit', { allowEditing: true });
+        dataGrid.columnOption('credit', { allowEditing: true });
+        dataGrid.columnOption('accountNumber', { allowEditing: true });
+        dataGrid.endUpdate();
+        this.changeTransactionGridEditMode = true;
+
+        let data: CashFlowStatsDetailDto = e.data;
+
+        data.id = -1;
+        data.forecastId = -1;
+        data.status = CashFlowStatsDetailDtoStatus.Projected;
+        data.cashflowTypeId = this.statsDetailFilter.cashflowTypeId;
+        data.categoryId = this.statsDetailFilter.subCategoryId || this.statsDetailFilter.categoryId;
+        data.descriptor = this.statsDetailFilter.transactionDescriptor;
+
+        let currentDate = this.cashflowService.getUtcCurrentDate();
+        data.forecastDate = this.statsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.statsDetailFilter.startDate).utc() : currentDate;
+        data.currencyId = this.currencyId;
+
+        let activeBankAccountsIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.statsDetailFilter.accountIds);
+        let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : (this.statsDetailFilter.accountIds[0] || this.bankAccounts[0].id);
+        let bankAccount = this.bankAccounts.filter((v) => v.id == accountId)[0];
+
+        data.accountId = accountId;
+        data.accountName = bankAccount.accountName;
+        data.accountNumber = bankAccount.accountNumber;
+    }
+
+    onRowInserting(e) {
+        let data: CashFlowStatsDetailDto = e.data;
+        if (data.debit && data.credit || !data.debit && !data.credit) {
+            this.notify.error('Either debit or credit should be specified');
+            e.cancel = true;
+            return;
+        }
+
+        let momentDate = moment(data.forecastDate);
+        let startDate = this.statsDetailFilter.startDate;
+        let endDate = this.statsDetailFilter.endDate;
+        if (!momentDate.isBetween(this.statsDetailFilter.startDate, this.statsDetailFilter.endDate, null, '[]')) {
+            startDate = moment(momentDate).toDate();
+            endDate = moment(momentDate).add(1, 'days').subtract(1, 'seconds').toDate();
+        }
+
+        let forecastModel = new AddForecastInput({
+            forecastModelId: this.selectedForecastModel.id,
+            bankAccountId: data.accountId,
+            date: momentDate.toDate(),
+            startDate: startDate,
+            endDate: endDate,
+            cashFlowTypeId: data.cashflowTypeId,
+            categoryId: data.categoryId,
+            transactionDescriptor: data.description,
+            currencyId: this.currencyId,
+            amount: data.debit ? -data.debit : data.credit
+        });
+
+        let deferred = $.Deferred();
+        e.cancel = deferred.promise();
+
+        this._cashFlowForecastServiceProxy.addForecast(
+            InstanceType10[this.instanceType],
+            this.instanceId,
+            forecastModel
+        ).subscribe(
+            res => {
+                e.data.id = res;
+                e.data.forecastId = res;
+
+                let category: CategoryDto = this.categoryTree.categories[data.categoryId];
+                let localForecastData = {
+                    forecastId: res,
+                    accountId: forecastModel.bankAccountId,
+                    count: 1,
+                    amount: forecastModel.amount,
+                    date: moment(forecastModel.date).utc(),
+                    initialDate: moment(forecastModel.date).utc().subtract((<Date>forecastModel.date).getTimezoneOffset(), 'minutes'),
+                    cashflowTypeId: forecastModel.cashFlowTypeId,
+                    categoryId: this.statsDetailFilter.categoryId,
+                    subCategoryId: this.statsDetailFilter.subCategoryId,
+                    accountingTypeId: category.accountingTypeId,
+                    transactionDescriptor: forecastModel.transactionDescriptor,
+                    isStub: true
+                };
+
+                this.cashflowData.push(this.addCategorizationLevels(localForecastData));
+
+                this.getCellOptionsFromCell.cache = {};
+                this.pivotGrid.instance.getDataSource().reload()
+                    .then(() => {
+                        deferred.resolve(false);
+                        this.notify.success(this.l('Forecasts_added'));
+                    });
+            }, error => {
+                deferred.resolve(true);
+                e.component.cancelEditData();
+            });
     }
 
     onDetailsRowUpdating(e) {
@@ -5697,8 +5828,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     updateForecastCell(e) {
-        e.component.cellValue(e.rowIndex, e.columnIndex, this.modifyingCellNumberBox.option('value'));
-        e.component.saveEditData();
+        let value = this.modifyingCellNumberBox.option('value');
+        e.component.cellValue(e.rowIndex, e.columnIndex, value);
+        if (!e.row.inserted) {
+            e.component.saveEditData();
+        }
+        else {
+            if (value) {
+                let oppositColumnField = e.column.dataField == 'credit' ? 'debit' : 'credit';
+                this.cashFlowGrid.instance.cellValue(e.row.rowIndex, oppositColumnField, null);
+            }
+        }
         this.hideModifyingNumberBox();
     }
 
@@ -5711,6 +5851,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.component.shouldSkipNextReady = true;
             e.component.columnOption('command:select', 'width', 28);
             e.component.updateDimensions();
+        }
+
+        if (this.changeTransactionGridEditMode && !e.element.getElementsByClassName("dx-row-inserted").length) {
+            let dataGrid = e.component;
+            dataGrid.beginUpdate();
+            dataGrid.option('editing.mode', 'cell');
+            dataGrid.columnOption('forecastDate', { allowEditing: false });
+            dataGrid.columnOption('description', { allowEditing: false });
+            dataGrid.columnOption('debit', { allowEditing: false });
+            dataGrid.columnOption('credit', { allowEditing: false });
+            dataGrid.columnOption('accountNumber', { allowEditing: false });
+            dataGrid.endUpdate();
+
+            this.changeTransactionGridEditMode = false;
         }
     }
 

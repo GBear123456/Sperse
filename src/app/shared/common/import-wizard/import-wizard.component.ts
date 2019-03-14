@@ -399,7 +399,9 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
     }
 
     checkFileDataValid() {
-        return this.fileData && !this.fileData.errors.length
+        let errors = this.fileData && this.fileData.errors || [];
+        return this.fileData 
+            && (!errors.length || (errors.length == 1 && errors[0].code == "UndetectableDelimiter"))
             && this.fileData.data.length;
     }
 
@@ -407,11 +409,11 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         this.fileContent = content.trim();
         this._parser.parse(this.fileContent, {
             complete: (results) => {
-                if (results.errors.length)
+                this.fileData = results;
+                if (!this.checkFileDataValid())
                     this.message.error(this.l('IncorrectFileFormatError'));
                 else {
                     this.fileHeaderWasGenerated = false;
-                    this.fileData = results;
                     this.checkIfFileHasHeaders();
                 }
             }

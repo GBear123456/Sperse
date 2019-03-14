@@ -36,10 +36,8 @@
                      (onSelectionChanged)="changeDetailsTab($event)">
             </dx-tabs>
             <div class="detailsButtons">
-                <ng-container *ngIf="detailsPeriodIsNotHistorical" >
-                    <dx-button [text]="'+ ' + l('AddForecastTransaction')" (onClick)="openForecastAddDialog()"></dx-button>
-                    <dx-button *ngIf="detailsContainsForecasts" [disabled]="!detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
-                </ng-container>
+                <dx-button [text]="'+ ' + l('AddForecastTransaction')" (onClick)="openForecastAddDialog()" [disabled]="disableAddForecastButton"></dx-button>
+                <dx-button *ngIf="detailsContainsForecasts" [disabled]="!detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
                 <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!showAllVisible" (onClick)="refreshTransactionDetail(false)"></dx-button>
                 <dx-button class="showall-btn" [text]="l('Show all')" [visible]="showAllVisible" (onClick)="refreshTransactionDetail(true)" [disabled]="showAllDisable"></dx-button>
                 <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!detailsSomeHistoricalItemsSelected" (onClick)="reclassifyTransactions($event)"></dx-button>
@@ -56,8 +54,11 @@
                       (onCellPrepared)="onDetailsCellPrepared($event)"
                       (onCellClick)="onDetailsCellClick($event)"
                       (onEditingStart)="onDetailsEditingStart($event)"
+                      (onEditorPreparing)="onEditorPreparing($event)"
                       (onRowPrepared)="onDetailsRowPrepared($event)"
                       (onContentReady)="onTransactionDetailContentReady($event)"
+                      (onInitNewRow)="onInitNewRow($event)"
+                      (onRowInserting)="onRowInserting($event)"
                       (onRowUpdating)="onDetailsRowUpdating($event)"
                       (onSelectionChanged)="onDetailsSelectionChanged($event)">
             <dxo-editing mode="cell"
