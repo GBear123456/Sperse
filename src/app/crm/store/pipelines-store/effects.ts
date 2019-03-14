@@ -23,6 +23,7 @@ export class PipelinesStoreEffects {
 
     @Effect()
     loadRequestEffect$: Observable<Action> = this.actions$.pipe(
+        startWith(abp.session.userId ? new pipelinesActions.LoadRequestAction(false): of(null)),
         ofType<pipelinesActions.LoadRequestAction>(pipelinesActions.ActionTypes.LOAD_REQUEST),
         withLatestFrom(this.store$.pipe(select(getLoadedTime))),
         exhaustMap(([action, loadedTime]) => {
