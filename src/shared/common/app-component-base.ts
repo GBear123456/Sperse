@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
 import * as _ from 'underscore';
+import * as moment from 'moment-timezone';
 import { Subject, Observable } from 'rxjs';
 
 /** Application imports */
@@ -25,8 +26,7 @@ import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
-
-declare let require: any;
+import capitalize from 'underscore.string/capitalize';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
@@ -73,8 +73,9 @@ export abstract class AppComponentBase implements OnDestroy {
     private _elementRef: ElementRef;
     private _applicationRef: ApplicationRef;
     private _exportService: ExportService;
-    public capitalize = require('underscore.string/capitalize');
 
+    public capitalize = capitalize;
+    public userTimezone = '0000';
     public defaultGridPagerConfig = {
         showPageSizeSelector: true,
         allowedPageSizes: [20, 100, 500, 1000],
@@ -102,6 +103,7 @@ export abstract class AppComponentBase implements OnDestroy {
         this.oDataService = this._injector.get(ODataService);
         this._activatedRoute = _injector.get(ActivatedRoute);
         this._router = _injector.get(Router);
+        this.userTimezone = this.getUserTimezone();
     }
 
     @HostListener('document:webkitfullscreenchange', ['$event'])
@@ -120,6 +122,11 @@ export abstract class AppComponentBase implements OnDestroy {
         if (!this._elementRef)
             this._elementRef = this._injector.get(ElementRef);
         return this._elementRef;
+    }
+
+    getUserTimezone() {
+        let timezone = moment().tz(abp.timing.timeZoneInfo.iana.timeZoneId).format('ZZ');
+        return timezone.replace(timezone[0], timezone[0] == '+' ? '-': '+');
     }
 
     getCacheKey(key) {
@@ -230,8 +237,8 @@ export abstract class AppComponentBase implements OnDestroy {
 
     showHostElement() {
         setTimeout(() => {
-            this.getElementRef().nativeElement
-                .style.display = 'block';
+            this.getElementRef().nativeElement.style.display = 'block';
+            this.dataGrid && this.dataGrid.instance && this.dataGrid.instance.repaint();
         }, 100);
     }
 
@@ -266,14 +273,16 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     getODataUrl(uri: String, filter?: Object, instanceData = null) {
-        let param = this.getQuickSearchParam();
-        return this.oDataService.getODataUrl(uri, filter, instanceData, param);
+        const searchParam = this.getQuickSearchParam();
+        const params = searchParam && [searchParam];
+        return this.oDataService.getODataUrl(uri, filter, instanceData, params);
     }
 
-    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null) {
+    processODataFilter(grid, uri, filters, getCheckCustom, instanceData = null, params = null) {
         this.isDataLoaded = false;
-        let param = this.getQuickSearchParam();
-        return this.oDataService.processODataFilter(grid, uri, filters, getCheckCustom, this.searchColumns, this.searchValue, instanceData, param);
+        const searchParam = this.getQuickSearchParam();
+        params = searchParam ? params && params.concat([searchParam]) || [searchParam] : params;
+        return this.oDataService.processODataFilter(grid, uri, filters, getCheckCustom, this.searchColumns, this.searchValue, instanceData, params);
     }
 
     getSearchFilter() {

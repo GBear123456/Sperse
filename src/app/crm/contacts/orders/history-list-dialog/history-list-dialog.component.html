@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{l("Order History")}}<span class="close" (click)="close()"></span></h2>
+<mat-dialog-content>
+    <div class="content">
+        <ng-container *ngIf="ordersHistory$ | async as ordersHistory">
+            <dx-scroll-view showScrollbar="onHover" *ngIf="ordersHistory.length; else empty">
+                <div *ngFor="let record of ordersHistory" class="record">
+                    <div class="field"><label>{{l('Time')}}:</label><span>{{record.time}}</span></div>
+                    <div class="field"><label>{{l('Type')}}:</label><span>{{record.type}}</span></div>
+                    <div class="field"><label>{{l('User')}}:</label><span>{{'[' + record.userId + '] ' + record.userFullName}}</span></div>
+                    <div class="field"><label>{{l('Action')}}:</label><span>{{record.action}}</span></div>
+                    <div class="field"><label>{{l('Stage')}}:</label><span>{{record.stage}}</span></div>
+                </div>
+            </dx-scroll-view>
+
+            <ng-template #empty>
+                <app-no-data
+                    [showLink]="false">
+                </app-no-data>
+            </ng-template>
+        </ng-container>
+    </div>
+</mat-dialog-content>

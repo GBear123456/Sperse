@@ -50,6 +50,7 @@ import { OperationsWidgetComponent } from './operations-widget.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
+import { HistoryListDialogComponent } from './orders/history-list-dialog/history-list-dialog.component';
 import { AddContactDialogComponent } from './add-contact-dialog/add-contact-dialog.component';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
 import { EditContactDialog } from './edit-contact-dialog/edit-contact-dialog.component';
@@ -99,6 +100,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
 import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialog/create-client-dialog.component';
 import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
+import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 
 @NgModule({
     declarations: [
@@ -145,7 +147,9 @@ import { DocumentsService } from '@app/crm/contacts/documents/documents.service'
         RelationCompaniesDialogComponent,
         CreateClientDialogComponent,
         ContactListDialogComponent,
-        NotSupportedTypeDialogComponent
+        NotSupportedTypeDialogComponent,
+        HistoryListDialogComponent,
+        OrdersComponent
     ],
     imports: [
         FormsModule,
@@ -205,7 +209,8 @@ import { DocumentsService } from '@app/crm/contacts/documents/documents.service'
         NoteAddDialogComponent,
         RelationCompaniesDialogComponent,
         CreateClientDialogComponent,
-        NotSupportedTypeDialogComponent
+        NotSupportedTypeDialogComponent,
+        HistoryListDialogComponent
     ],
     providers: [
         DialogService,

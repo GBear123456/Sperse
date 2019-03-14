@@ -25,6 +25,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -42,7 +44,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     private rootComponent: any;
     public headlineConfig;
     private filters: FilterModel[] = new Array<FilterModel>();
-    private updateAfterActivation: boolean;
     filterModelCategories: FilterModel;
     filterModelFlags: FilterModel;
     filterModelAttributes: FilterModel;
@@ -56,7 +57,8 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         private injector: Injector,
         private _appService: AppService,
         private _filtersService: FiltersService,
-        private _offersProxy: OfferManagementServiceProxy
+        private _offersProxy: OfferManagementServiceProxy,
+        private itemDetailsService: ItemDetailsService
     ) {
         super(injector, AppConsts.localization.PFMLocalizationSourceName);
         this._filtersService.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
@@ -95,7 +97,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     items: [
                         {
                             name: 'filters',
-                            action: (event) => {
+                            action: () => {
                                 setTimeout(() => {
                                     this.dataGrid.instance.repaint();
                                 }, 1000);
@@ -105,10 +107,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                                 checkPressed: () => {
                                     return this._filtersService.fixed;
                                 },
-                                mouseover: (event) => {
+                                mouseover: () => {
                                     this._filtersService.enable();
                                 },
-                                mouseout: (event) => {
+                                mouseout: () => {
                                     if (!this._filtersService.fixed)
                                         this._filtersService.disable();
                                 }
@@ -230,6 +232,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
+                deserializeDates: false,
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
@@ -264,6 +267,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             this.filterModelFlags = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'Flag',
+                field: 'Flags',
                 items: {
                     element: new FilterCheckBoxesModel({
                         dataSource: this.flags,
@@ -275,6 +279,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             this.filterModelAttributes = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'Attribute',
+                field: 'Attributes',
                 items: {
                     element: new FilterCheckBoxesModel({
                         dataSource: this.attributes,
@@ -292,7 +297,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         let data = {};
         if (filter.items.element && filter.items.element.value) {
             let filterData = [];
-            filter.items.element.value.forEach((category, i) => {
+            filter.items.element.value.forEach(category => {
                 filterData.push({ or: [{ Categories: { any: { CampaignCategory: category } } }] });
             });
             data = {
@@ -307,13 +312,9 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this.dataGrid.instance.refresh();
     }
 
-    public refreshData(): void {
-    }
-
     initFiltering() {
         this._filtersService.apply(() => {
             this.processFilterInternal();
-            this.refreshData();
             this.initToolbarConfig();
         });
     }
@@ -328,18 +329,23 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     this.capitalize(filter.caption)];
                 if (filterMethod)
                     return filterMethod.call(this, filter);
-            }
+            },
+            null,
+            this.getCustomFiltersParams()
         );
     }
 
-    expandColapseRow(e) {
-        if (!e.data.sourceData) return;
+    private getCustomFiltersParams() {
+        return [ ...this.getFilterParams('Flags'), ...this.getFilterParams('Attributes') ];
+    }
 
-        if (e.isExpanded) {
-            e.component.collapseRow(e.key);
-        } else {
-            e.component.expandRow(e.key);
-        }
+    private getFilterParams(filterField: string): { name: string, value: string }[] {
+        let filterParams = [];
+        const filterValue = this['filterModel' + filterField].items.element.value;
+        filterValue && filterValue.forEach(filterValue => {
+            filterParams.push({ name: filterField, value: filterValue });
+        });
+        return filterParams;
     }
 
     onSelectionChanged($event) {
@@ -356,7 +362,9 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     openOfferEdit(e) {
         this.searchClear = false;
-        this._router.navigate(['./', e.data.CampaignId], { relativeTo: this._activatedRoute });
+        this._router.navigate(['./', e.data.CampaignId], {
+            relativeTo: this._activatedRoute
+        });
     }
 
     invalidate() {
@@ -374,6 +382,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this.initFiltering();
         this.initToolbarConfig();
         this.rootComponent.overflowHidden(true);
+        this.showHostElement();
     }
 
     deactivate() {
@@ -381,6 +390,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this._filtersService.unsubscribe();
         this._appService.updateToolbar(null);
         this.rootComponent.overflowHidden(true);
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.Offer, this.dataGrid.instance.getDataSource());
     }
 
     pullOffers(fetchAll, event?) {
@@ -395,7 +405,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         });
     }
 
-    categoryGroupValue(data) {
+    getCategoryValue(data) {
         return data.Categories.map(item => item.Name).join(', ');
     }
 

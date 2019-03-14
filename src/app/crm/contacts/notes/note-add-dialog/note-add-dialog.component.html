@@ -33,6 +33,17 @@
                     </dx-select-box>
                 </div>
                 <div class="field">
+                    <label>{{l('Orders') | uppercase }}</label>
+                    <dx-select-box
+                        width="355px"
+                        [showClearButton]="true"
+                        [dataSource]="ordersDataSource"
+                        [displayExpr]="orderDisplayValue"
+                        [valueExpr]="'Id'"
+                        [(value)]="orderId">
+                    </dx-select-box>
+                </div>
+                <div class="field">
                     <label>{{l('FollowUpDate') | uppercase }}</label>
                     <dx-date-box
                         #followUpDateBox

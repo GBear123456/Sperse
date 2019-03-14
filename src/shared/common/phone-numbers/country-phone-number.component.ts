@@ -69,5 +69,11 @@ export class CountryPhoneNumberComponent extends AppComponentBase implements OnI
         this.intPhoneNumber.registerOnChange((value) => {
             this.phoneNumberChange.emit(this.value = value);
         });
+        if (this.phoneNumber !== AppConsts.defaultCountryCode) {
+            setTimeout(() => {
+                this.intPhoneNumber.writeValue(this.phoneNumber);
+                this.intPhoneNumber.updateValue();
+            });
+        }
     }
 }

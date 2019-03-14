@@ -41,7 +41,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         AppConsts.PipelinePurposeIds.activity;
 
     public activityTypes = CreateActivityDtoType;
-    public selectedLeads: any = [];
+    public selectedEntities: any = [];
 
     public currentDate = new Date();
     public scheduleDate = new Date(this.currentDate);

@@ -53,6 +53,8 @@ import { ContactStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, 
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -112,17 +114,20 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private _filtersService: FiltersService,
         private _clientService: ClientService,
         private _partnerTypeService: PartnerTypeServiceProxy,
-        private store$: Store<AppStore.State>
+        private store$: Store<AppStore.State>,
+        private itemDetailsService: ItemDetailsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.dataSource = {
             store: {
                 key: 'Id',
                 type: 'odata',
+                deserializeDates: false,
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 }
             }
         };
@@ -199,7 +204,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.searchClear = false;
         event.component.cancelEditData();
         let orgId = event.data.OrganizationId;
-        this._router.navigate(['app/crm/partner', partnerId].concat(orgId ? ['company', orgId]: []),
+        this._router.navigate(['app/crm/partner', partnerId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/partners'} });
     }
 
@@ -236,7 +241,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         caption: 'creation',
                         field: 'CreationTime',
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                        options: {method: 'getFilterByDate'}
+                        options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                     }),
                     this.filterModelStatus = new FilterModel({
                         component: FilterCheckBoxesComponent,
@@ -685,7 +690,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.Partner, this.dataGrid.instance.getDataSource());
         this.hideHostElement();
     }
 

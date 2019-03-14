@@ -4,7 +4,7 @@ import { Injectable, Injector } from '@angular/core';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@node_modules/@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { filter, map, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -13,6 +13,7 @@ import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, PipelineServiceProxy,
     PipelineDto, ActivityServiceProxy, TransitionActivityDto } from '@shared/service-proxies/service-proxies';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
+import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 
 interface StageColor {
@@ -45,20 +46,23 @@ export class PipelineService {
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string): Observable<PipelineDto> {
-        return this.store$.pipe(
-            select(PipelinesStoreSelectors.getSortedPipeline({
-                purpose: pipelinePurposeId
-            })),
-            filter(pipelineDefinition => pipelineDefinition),
-            map(pipelineDefinition => {
-                this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
-                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
-                    (stage) => {
-                        return stage.sortOrder;
-                    });
-                return pipelineDefinition;
-            })
-        );
+        if (this._pipelineDefinitions[pipelinePurposeId])
+            return of(this._pipelineDefinitions[pipelinePurposeId]);
+        else
+            return this.store$.pipe(
+                select(PipelinesStoreSelectors.getSortedPipeline({
+                    purpose: pipelinePurposeId
+                })),
+                filter(pipelineDefinition => pipelineDefinition),
+                map(pipelineDefinition => {
+                    this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
+                    pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
+                        (stage) => {
+                            return stage.sortOrder;
+                        });
+                    return pipelineDefinition;
+                })
+            );
     }
 
     getStages(pipelinePurposeId: string): any {
@@ -76,75 +80,27 @@ export class PipelineService {
     updateEntityStageById(pipelinePurposeId, entityId, oldStageName, newStageName, complete = null) {
         let fromStage = this.getStageByName(pipelinePurposeId, oldStageName);
         if (fromStage) {
-            let entity = _.findWhere(fromStage.leads, {Id: parseInt(entityId)});
+            let entity = _.findWhere(fromStage.entities, {Id: parseInt(entityId)});
             return entity && this.updateEntityStage(pipelinePurposeId, entity, oldStageName, newStageName, complete);
         }
     }
 
     updateEntityStage(pipelinePurposeId, entity, oldStageName, newStageName, complete = null) {
-        let entityId = entity['Id'] || entity['id'],
-            fromStage = this.getStageByName(pipelinePurposeId, oldStageName),
+        let fromStage = this.getStageByName(pipelinePurposeId, oldStageName),
             toStage = this.getStageByName(pipelinePurposeId, newStageName);
         if (fromStage && toStage) {
             let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
             if (action && action.sysId && entity && !entity.locked) {
                 entity.locked = true;
-                if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_ACTIVITY_STAGE) {
-                    this._activityService.transition(TransitionActivityDto.fromJS({
-                        id: entityId,
-                        stageId: toStage.id
-                    })).pipe(finalize(() => {
-                        entity.locked = false;
-                        complete && complete();
-                    })).subscribe((res) => {
-                        this.completeEntityUpdate(entity, fromStage, toStage);
-                    });
-                } else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_LEAD)
-                    this._dialog.open(LeadCancelDialogComponent, {
-                        data: {}
-                    }).afterClosed().subscribe(result => {
-                        if (result) {
-                            this._leadService.cancelLead(
-                                CancelLeadInfo.fromJS({
-                                    leadId: entityId,
-                                    cancellationReasonId: result.reasonId,
-                                    comment: result.comment
-                                })
-                            ).pipe(finalize(() => {
-                                entity.locked = false;
-                                complete && complete();
-                            })).subscribe((result) => {
-                                this.completeEntityUpdate(entity, fromStage, toStage);
-                            });
-                        } else {
-                            this.moveEntityTo(entity, toStage, fromStage);
-                            complete && complete();
-                        }
-                    });
+                if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_ACTIVITY_STAGE)
+                    this.activityTransition(fromStage, toStage, entity, complete);
+                else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_LEAD)
+                    this.cancelLead(fromStage, toStage, entity, complete);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE)
-                    this._leadService.updateLeadStage(
-                        UpdateLeadStageInfo.fromJS({
-                            leadId: entityId,
-                            stageId: toStage.id
-                        })
-                    ).pipe(finalize(() => {
-                        entity.locked = false;
-                        complete && complete();
-                    })).subscribe((res) => {
-                        this.completeEntityUpdate(entity, fromStage, toStage);
-                    });
-                else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD)
-                   this._leadService.processLead(
-                        ProcessLeadInput.fromJS({
-                            leadId: entityId
-                        })
-                    ).pipe(finalize(() => {
-                        entity.locked = false;
-                        complete && complete();
-                    })).subscribe((res) => {
-                        this.completeEntityUpdate(entity, fromStage, toStage);
-                    });
-                else {
+                    this.updateLeadStage(fromStage, toStage, entity, complete);
+                else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD) {
+                    this.processLead(fromStage, toStage, entity, complete);
+                } else {
                     entity.locked = false;
                     complete && complete();
                 }
@@ -157,11 +113,92 @@ export class PipelineService {
             complete && complete();
     }
 
+    getEntityId(entity) {
+        return entity['Id'] || entity['id'];
+    }
+
+    activityTransition(fromStage, toStage, entity, complete) {
+        this._activityService.transition(TransitionActivityDto.fromJS({
+            id: this.getEntityId(entity),
+            stageId: toStage.id
+        })).pipe(finalize(() => {
+            entity.locked = false;
+            complete && complete();
+        })).subscribe((res) => {
+            this.completeEntityUpdate(entity, fromStage, toStage);
+        });
+    }
+
+    updateLeadStage(fromStage, toStage, entity, complete) {
+        this._leadService.updateLeadStage(
+            UpdateLeadStageInfo.fromJS({
+                leadId: this.getEntityId(entity),
+                stageId: toStage.id
+            })
+        ).pipe(finalize(() => {
+            entity.locked = false;
+            complete && complete();
+        })).subscribe((res) => {
+            this.completeEntityUpdate(entity, fromStage, toStage);
+        });
+    }
+
+    processLead(fromStage, toStage, entity, complete) {
+        this._dialog.open(LeadCompleteDialogComponent, {
+            data: {
+                stages: this._pipelineDefinitions[AppConsts.PipelinePurposeIds.lead].stages
+            }
+        }).afterClosed().subscribe(data => {
+            if (data)
+                this._leadService.processLead(
+                    ProcessLeadInput.fromJS({
+                        leadId: this.getEntityId(entity),
+                        orderStageId: data.orderStageId,
+                        amount: data.amount,
+                        comment: data.comment,
+                    })
+                ).pipe(finalize(() => {
+                    entity.locked = false;
+                    complete && complete();
+                })).subscribe((res) => {
+                    this.completeEntityUpdate(entity, fromStage, toStage);
+                });
+            else {
+                this.moveEntityTo(entity, toStage, fromStage);
+                complete && complete();
+            }
+        });
+    }
+
+    cancelLead(fromStage, toStage, entity, complete) {
+        this._dialog.open(LeadCancelDialogComponent, {
+            data: {}
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this._leadService.cancelLead(
+                    CancelLeadInfo.fromJS({
+                        leadId: this.getEntityId(entity),
+                        cancellationReasonId: result.reasonId,
+                        comment: result.comment
+                    })
+                ).pipe(finalize(() => {
+                    entity.locked = false;
+                    complete && complete();
+                })).subscribe((result) => {
+                    this.completeEntityUpdate(entity, fromStage, toStage);
+                });
+            } else {
+                this.moveEntityTo(entity, toStage, fromStage);
+                complete && complete();
+            }
+        });
+    }
+
     moveEntityTo(entity, sourceStage, targetStage) {
-        if (sourceStage.leads && targetStage.leads)
-            targetStage.leads.unshift(
-                sourceStage.leads.splice(
-                    sourceStage.leads.indexOf(entity), 1).pop());
+        if (sourceStage.entities && targetStage.entities)
+            targetStage.entities.unshift(
+                sourceStage.entities.splice(
+                    sourceStage.entities.indexOf(entity), 1).pop());
         entity.StageId = targetStage.id;
         entity.stage = entity.Stage = targetStage.name;
         entity.locked = false;

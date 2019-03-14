@@ -11,7 +11,7 @@
     [ "Clients", "Pages.CRM.Customers", "icon-globe", "/app/crm/clients" ],
     [ "Tasks", "Pages.CRM.Events", "icon-globe", "/app/crm/activity" ],
     [ "Partners", "Pages.CRM.Partners", "icon-globe", "/app/crm/partners" ],
-    [ "Orders", "Pages.CRM.Orders", "icon-globe", "" ],
+    [ "Orders", "Pages.CRM.Orders", "icon-globe", "/app/crm/orders" ],
     [ "Reports", "", "", "" ],
     [ "Products", "", "", "" ]
   ]

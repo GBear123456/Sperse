@@ -16,14 +16,14 @@ import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
 
 import { RP_USER_INFO_ID } from './contacts.const';
+import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
 
 @NgModule({
     imports: [
         RouterModule.forChild([{
             path: '',
             data: { localizationSource: 'CRM' },
-            children:
-            [
+            children: [
             {
                 path: 'user/:userId',
                 component: ContactsComponent,
@@ -37,6 +37,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     { path: 'activity-logs', component: ActivityLogsComponent },
@@ -56,6 +57,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     { path: 'activity-logs', component: ActivityLogsComponent },
@@ -93,6 +95,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
@@ -111,6 +114,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
@@ -129,6 +133,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'orders', component: OrdersComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
@@ -149,8 +154,27 @@ import { RP_USER_INFO_ID } from './contacts.const';
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } }
                 ]
+            },
+            {
+                path: 'contact/:contactId',
+                component: ContactsComponent,
+                children: [
+                    { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    { path: 'contact-information', component: ContactInformationComponent },
+                    { path: 'user-information', component: UserInformationComponent, data: { rightPanelId: RP_USER_INFO_ID } },
+                    { path: 'login-attemps', component: LoginAttempsComponent, data: { rightPanelOpened: false } },
+                    { path: 'lead-information', component: LeadInformationComponent },
+                    { path: 'questionnaire', component: QuestionnaireComponent },
+                    { path: 'documents', component: DocumentsComponent, data: { rightPanelOpened: false } },
+                    { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'activity-logs', component: ActivityLogsComponent },
+                    { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
+                    { path: 'orders', component: OrdersComponent },
+                    { path: 'subscriptions', component: SubscriptionsComponent },
+                    { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
+                ]
             }
-            ]}])
+        ]}])
     ],
     exports: [
         RouterModule

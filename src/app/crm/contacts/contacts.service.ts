@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { ReplaySubject, Subject } from 'rxjs';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
@@ -18,6 +18,7 @@ export class ContactsService {
     private invalidateSubject: Subject<any>;
     private leadInfoSubject: Subject<any>;
     private contactInfoSubject: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>();
+    contactInfo$: Observable<ContactInfoDto> = this.contactInfoSubject.asObservable();
     organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>();
     private subscribers: any = {
         common: []
@@ -142,16 +143,18 @@ export class ContactsService {
         }).afterClosed();
     }
 
-    updateLocation(customerId?, leadId?, partnerId?, companyId?, nav: boolean = false) {
-        let navigate = this._router.createUrlTree(['app/crm'].concat(
-            customerId ? ['client', customerId] : [],
-            leadId ? ['lead', leadId] : [],
-            partnerId ? ['partner', partnerId] : [],
-            companyId ? ['company', companyId] : []
-        )).toString();
-
-        this._location.replaceState(navigate, location.search);
-
-        if (nav) this._router.navigate([navigate], { queryParamsHandling: 'merge' });
+    updateLocation(customerId?, leadId?, partnerId?, companyId?, userId?) {
+        this._location.replaceState(
+            this._router.createUrlTree(
+                ['app/' + (userId ? 'admin' : 'crm')].concat(
+                    customerId ? ['client', customerId] : [],
+                    leadId ? ['lead', leadId] : [],
+                    partnerId ? ['partner', partnerId] : [],
+                    companyId ? ['company', companyId] : [],
+                    userId ? ['user', userId, 'user-information'] : []
+                )
+            ).toString(),
+            location.search
+        );
     }
 }

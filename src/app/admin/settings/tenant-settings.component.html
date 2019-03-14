@@ -447,7 +447,7 @@
                             </div>
                         </div>
                     </tab>
-                    <tab heading="{{l('EPCVIPEmail')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
+                    <!--<tab heading="{{l('EPCVIPEmail')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
                         <div>
                             <div class="form-group">
                                 <label for="EPCVIPEmailApiKey">{{l("EPCVIPEmailApiKey")}}</label>
@@ -463,12 +463,69 @@
                             <div class="form-group">
                                 <label for="EPCVIPEmailServer">{{l("EPCVIPEmailServer")}}</label>
                                 <select id="EPCVIPEmailServer"
-                                    name="EPCVIPEmailServer" 
-                                    class="form-control"
-                                    [(ngModel)]="epcvipEmailSettings.server">
-                                        <option></option>
-                                        <option *ngFor="let server of epcvipEmailServers" [value]="server">{{server}}</option>
+                                        name="EPCVIPEmailServer"
+                                        class="form-control"
+                                        [(ngModel)]="epcvipEmailSettings.server">
+                                    <option></option>
+                                    <option *ngFor="let server of epcvipEmailServers" [value]="server">{{server}}</option>
                                 </select>
+                            </div>
+                        </div>
+                    </tab>-->
+                    <tab heading="{{l('IAge')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
+                        <div>
+                            <div class="form-group">
+                                <label for="IAgeApiKey">{{l("IAgeApiKey")}}</label>
+                                <input id="IAgeApiKey" type="text" name="IAgeApiKey" class="form-control" [(ngModel)]="iageSettings.apiKey" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="IAgeActivationEmailId">{{l("IAgeActivationEmailId")}}</label>
+                                <input id="IAgeActivationEmailId" type="number" name="IAgeActivationEmailId" class="form-control" [(ngModel)]="iageSettings.activationEmailId" maxlength="128">
+                            </div>
+                            <div class="form-group">
+                                <label for="IAgePasswordResetEmailId">{{l("IAgePasswordResetEmailId")}}</label>
+                                <input id="IAgePasswordResetEmailId" type="number" name="IAgePasswordResetEmailId" class="form-control" [(ngModel)]="iageSettings.passwordResetEmailId" maxlength="128">
+                            </div>
+                        </div>
+                    </tab>
+                    <tab heading="{{l('Ongage')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
+                        <div>
+                            <div class="form-group">
+                                <label for="OngageUserName">{{l("OngageUserName")}}</label>
+                                <input id="OngageUserName" type="text" name="OngageUserName" class="form-control" [(ngModel)]="ongageSettings.userName" maxlength="128">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label for="OngagePassword">{{l("OngagePassword")}}</label>
+                                <input id="OngagePassword" type="password" name="OngagePassword" class="form-control" [(ngModel)]="ongageSettings.password" maxlength="128">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label for="OngageAccountCode">{{l("OngageAccountCode")}}</label>
+                                <input id="OngageAccountCode" type="text" name="OngageAccountCode" class="form-control" [(ngModel)]="ongageSettings.accountCode" maxlength="128">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label for="OngageDefaultListId">{{l("OngageDefaultListId")}}</label>
+                                <input id="OngageDefaultListId" type="number" name="OngageDefaultListId" class="form-control" [(ngModel)]="ongageSettings.defaultListId" maxlength="128">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label for="OngageActivationEmailMessageId">{{l("OngageActivationEmailMessageId")}}</label>
+                                <input id="OngageActivationEmailMessageId" type="number" name="OngageActivationEmailMessageId" class="form-control" [(ngModel)]="ongageSettings.activationEmailMessageId" maxlength="128">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group m-form__group">
+                                <label for="OngageIsEnabled" class="m-checkbox">
+                                    <input id="OngageIsEnabled" class="m-check" type="checkbox" name="OngageIsEnabled" [(ngModel)]="ongageSettings.isEnabled">
+                                    {{l("OngageIsEnabled")}}
+                                    <span></span>
+                                </label>
                             </div>
                         </div>
                     </tab>

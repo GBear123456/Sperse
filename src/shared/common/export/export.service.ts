@@ -21,7 +21,7 @@ export class ExportService {
 
     getFileName(dataGrid?) {
         let name = dataGrid && dataGrid.export.fileName || '';
-        return capitalize(location.href.split('/').pop()) + '_' + 
+        return capitalize(location.href.split('/').pop()) + '_' +
             (!name || name == 'DataGrid' ? '': name + '_') + moment().local().format('YYYY-MM-DD_hhmmss_a');
     }
 
@@ -32,7 +32,7 @@ export class ExportService {
                 if (typeof(item[field]) != 'function') {
                     if (item[field] && item[field].join)
                         result[field] = item[field].map((record) => {
-                            return typeof(record) == 'string' ? record : 
+                            return typeof(record) == 'string' ? record :
                                 record && record[Object.keys(record).pop()];
                         }).join(';');
                     else if (item[field] instanceof moment)
@@ -119,7 +119,7 @@ export class ExportService {
                 initialBeforeSend = dataStore._beforeSend,
                 isLoadPanel = instance.option('loadPanel.enabled'),
                 initialFileName = dataGrid.export.fileName;
-            
+
             dataGrid.export.fileName = this.getFileName(dataGrid);
             if (isLoadPanel)
                 instance.option('loadPanel.enabled', false);
@@ -138,7 +138,7 @@ export class ExportService {
                 return res;
             });
 
-            instance.on("exported", () => {
+            instance.on('exported', () => {
                 if (isLoadPanel)
                     instance.option('loadPanel.enabled', true);
 

@@ -84,9 +84,20 @@ export class OperationsWidgetComponent extends AppComponentBase {
     private _stages: any[] = [];
     private _partnerTypes: any[] = [];
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
+    isPrevDisabled = false;
+    isNextDisabled = false;
 
     toolbarConfig = [];
-
+    printButtonConfig = {
+        location: 'after',
+        locateInMenu: 'auto',
+        items: [
+            {
+                name: 'print',
+                action: this.print.emit.bind(this.print)
+            }
+        ]
+    };
     constructor(
         injector: Injector,
         private _clientService: ContactsService,
@@ -102,7 +113,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
         });
     }
 
-    initToolbarConfig(config = null) {
+    initToolbarConfig(config = null, ms = 300) {
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
             if (config)
@@ -163,41 +174,11 @@ export class OperationsWidgetComponent extends AppComponentBase {
                         }
                     ]
                 },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'print',
-                            action: this.print.emit.bind(this.print)
-                        }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'prev',
-                            action: this.loadPrevItem.bind(this)
-                        },
-                        {
-                            name: 'next',
-                            action: this.loadNextItem.bind(this)
-                        }
-                    ]
-                }
+                this.printButtonConfig,
+                this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
             ] : [
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'print',
-                            action: this.print.emit.bind(this.print)
-                        },
-                    ]
-                }
+                this.printButtonConfig,
+                this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
             ];
 
             this.toolbarConfig.push(
@@ -226,7 +207,26 @@ export class OperationsWidgetComponent extends AppComponentBase {
                     ]
                 }
             );
-        }, 300);
+        }, ms);
+    }
+
+    getNavigationConfig(isPrevDisabled: boolean, isNextDisabled: boolean) {
+        return {
+            location: 'after',
+            locateInMenu: 'auto',
+            items: [
+                {
+                    name: 'prev',
+                    action: this.loadPrevItem.bind(this),
+                    disabled: isPrevDisabled
+                },
+                {
+                    name: 'next',
+                    action: this.loadNextItem.bind(this),
+                    disabled: isNextDisabled
+                }
+            ]
+        };
     }
 
     toggleStages() {
@@ -321,5 +321,14 @@ export class OperationsWidgetComponent extends AppComponentBase {
 
     redirectToCFO() {
         this._appService.redirectToCFO(this.contactInfo.personContactInfo.userId);
+    }
+
+    updateNavButtons(isFirst, isLast) {
+        const updateToolbar = this.isPrevDisabled !== isFirst || this.isNextDisabled !== isLast;
+        this.isPrevDisabled = isFirst;
+        this.isNextDisabled = isLast;
+        if (updateToolbar) {
+            this.initToolbarConfig(null, 0);
+        }
     }
 }

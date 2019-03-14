@@ -33,6 +33,8 @@ import { TextMultipleFieldComponent } from './offer-edit/text-multiple-field/tex
 import { RatingFieldComponent } from './offer-edit/rating-field/rating-field.component';
 import { FromToFieldComponent } from './offer-edit/from-to-field/from-to-field.component';
 import { GroupFieldComponent } from './offer-edit/group-field/group-field.component';
+import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
+import { DxButtonModule } from '@root/node_modules/devextreme-angular';
 
 @NgModule({
     imports: [
@@ -40,6 +42,7 @@ import { GroupFieldComponent } from './offer-edit/group-field/group-field.compon
         ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
+        DxButtonModule,
         DxDataGridModule,
         DxTooltipModule,
         DxListModule,
@@ -69,7 +72,9 @@ import { GroupFieldComponent } from './offer-edit/group-field/group-field.compon
         GroupFieldComponent
     ],
     entryComponents: [],
-    providers: []
+    providers: [
+        DataSourceService
+    ]
 })
 
 export class PfmModule { }

@@ -12,5 +12,6 @@ export const environment = {
     appConfig: 'appconfig.json',
 
     /* Custom tenant domains */
-    LENDSPACE_DOMAIN: 'http://localhost:9000'
+    LENDSPACE_DOMAIN: 'http://localhost:9000',
+    LENDSPACE_HEADER_THEME: 'black'
 };

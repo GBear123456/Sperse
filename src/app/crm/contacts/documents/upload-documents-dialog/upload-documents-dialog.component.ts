@@ -108,7 +108,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
             fileReader.onloadend = (loadEvent: any) => {
                 this.uploadFile({
                     name: file.name,
-                    size: file.size,
+                    size: StringHelper.getSize(file.size, loadEvent.target.result),
                     fileBase64: StringHelper.getBase64(loadEvent.target.result)
                 }, index);
             };

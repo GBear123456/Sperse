@@ -18,7 +18,7 @@ import { first } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ODataSearchStrategy, ContactGroup } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
     LeadAssignedUsersStoreSelectors,
@@ -55,6 +55,8 @@ import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -108,8 +110,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private filters: FilterModel[];
     private subRouteParams: any;
     private filterChanged = false;
-    private masks = AppConsts.masks;
-    private formatting = AppConsts.formatting;
+    formatting = AppConsts.formatting;
 
     public headlineConfig = {
         names: [this.l('Leads')],
@@ -134,7 +135,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private _appService: AppService,
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy,
-        private lifeCycleSubjectsService: LifecycleSubjectsService
+        private lifeCycleSubjectsService: LifecycleSubjectsService,
+        private itemDetailsService: ItemDetailsService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.dataSource = {
@@ -147,12 +149,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 version: AppConsts.ODataVersion,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 deserializeDates: false,
                 paginate: true
             }
         };
-
         this.searchValue = '';
     }
 
@@ -254,7 +256,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     caption: 'creation',
                     field: 'CreationTime',
                     items: {from: new FilterItemModel(), to: new FilterItemModel()},
-                    options: {method: 'getFilterByDate'}
+                    options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                 }),
                 this.filterModelStages = new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -321,7 +323,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterInputsComponent,
                     caption: 'Campaign',
                     field: 'CampaignCode',
-                    items: {Campaign: new FilterItemModel()}
+                    items: {CampaignCode: new FilterItemModel()}
                 }),
                 this.filterModelLists = new FilterModel({
                     component: FilterCheckBoxesComponent,
@@ -573,7 +575,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     exportPipelineSelectedItemsFilter(dataSource) {
-        let selectedLeads = this.pipelineComponent.getSelectedLeads();
+        let selectedLeads = this.pipelineComponent.getSelectedEntities();
         if (selectedLeads.length) {
             dataSource.filter(selectedLeads.map((lead) => {
                 return ['Id', '=', lead.Id];
@@ -753,7 +755,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.searchClear = false;
         let orgId = event.data.OrganizationId;
         event.component && event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId, 'lead', leadId].concat(orgId ? ['company', orgId]: []),
+        this._router.navigate(['app/crm/client', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType } });
     }
 
@@ -846,7 +848,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.subRouteParams.unsubscribe();
-
+        if (!this.showPipeline) {
+            this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, this.dataGrid.instance.getDataSource());
+        }
         this.hideHostElement();
     }
 
@@ -855,8 +859,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         e.component.hide();
     }
 
-    onCardClick(lead) {
-        this.showLeadDetails({data: lead});
+    onCardClick({entity, entityStageDataSource, loadMethod}) {
+        this.showLeadDetails({data: entity});
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, entityStageDataSource, loadMethod);
     }
 
     getAssignedUsersStoreSelectors() {

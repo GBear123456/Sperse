@@ -100,10 +100,15 @@ export class AppConsts {
     static readonly SYS_ID_CRM_UPDATE_LEAD_STAGE     = 'CRM.UpdateLeadStage';
     static readonly SYS_ID_CRM_PROCESS_LEAD          = 'CRM.ProcessLead';
     static readonly SYS_ID_CRM_UPDATE_ACTIVITY_STAGE = 'CRM.UpdateActivityStage';
+    static readonly SYS_ID_CRM_CANCEL_ORDER          = 'CRM.CancelOrder';
+    static readonly SYS_ID_CRM_UPDATE_ORDER_STAGE    = 'CRM.UpdateOrderStage';
+    static readonly SYS_ID_CRM_PROCESS_ORDER         = 'CRM.ProcessOrder';
 
     static readonly defaultCountry = 'US';
     static readonly defaultCountryCode = '+1';
+
     static readonly ODataVersion = 4;
+    static readonly ODataRequestTimeoutMilliseconds = 2 * 60 * 1000;
 
     static readonly maxRatingValue = 10;
 

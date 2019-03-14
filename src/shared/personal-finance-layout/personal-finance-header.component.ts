@@ -24,7 +24,8 @@ export class AdHeaderHostDirective {
 export class PersonalFinanceHeaderComponent extends AppComponentBase {
     @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
-    @HostBinding('class.yellow') yellowTheme = true;
+    @HostBinding('class.yellow') yellowTheme = 
+        environment.LENDSPACE_HEADER_THEME == 'yellow';
 
     loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;

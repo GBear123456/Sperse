@@ -98,6 +98,7 @@ const routes: Routes = [
     },
     {
         path: '**',
+        canActivateChild: [LocalizationResolver],
         loadChildren: 'shared/not-found/not-found.module#NotFoundModule',
     }
 ];

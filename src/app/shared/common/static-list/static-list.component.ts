@@ -30,6 +30,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() hideButtons = false;
     @Input() searchEnabled = false;
     @Input() customSearchEnabled = false;
+    @Input() pageLoadMode = 'nextButton';
     @Input() searchExprType = 'name';
     @Input() bulkUpdatePermissionKey = '';
     @Input() list: any;

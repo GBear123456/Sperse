@@ -3,7 +3,15 @@ import { Component, ChangeDetectionStrategy, OnInit, Injector, ViewChild, Elemen
 
 /** Third party imports */
 import { BehaviorSubject, Observable, of, combineLatest } from 'rxjs';
-import { publishReplay, refCount, tap, switchMap, finalize } from 'rxjs/operators';
+import {
+    distinctUntilChanged,
+    publishReplay,
+    refCount,
+    tap,
+    map,
+    switchMap,
+    finalize,
+} from 'rxjs/operators';
 import { CreditCard } from 'angular-cc-library';
 import * as moment from 'moment';
 
@@ -32,6 +40,9 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     paymentMethods$: Observable<PaymentMethodInfo[]>;
     paymentMethodsTypes = PaymentMethodInfoType;
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
+    private _refresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    refresh: Observable<boolean> = this._refresh.asObservable();
+    groupId$: Observable<number>;
     constructor(
         injector: Injector,
         private paymentServiceProxy: PaymentServiceProxy,
@@ -42,57 +53,61 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
     }
 
     ngOnInit() {
-        const groupId = this.contactService['data'].contactInfo.id;
         this.balanceAmount$ = of(0);
-        /** Create data prop if not exists */
-        this.paymentServiceProxy['data'] = this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][groupId]
-                                           ? this.paymentServiceProxy['data']
-                                           : { [groupId]: { payments: null, paymentMethods: null } };
-        this.payments$ = this.getPayments(groupId);
-        this.dispayedPayments$ =
-            combineLatest(
-                this.payments$,
-                this.paymentsDisplayLimit$
-            ).pipe(
-                switchMap(([payments, limit]) => {
-                    return of(limit !== null ? payments.slice(0, limit) : payments);
-                })
-            );
-        this.paymentMethods$ = this.getPaymentMethods(groupId);
-        // this.warningMessage$ = this.paymentMethods$.pipe(
-        //     concatAll(),
-        //     pluck('issues'),
-        //     map(issues => issues[0]),
-        //     first()
-        // );
+        this.groupId$ = this._contactsService.contactInfo$.pipe(
+            map(contactInfo => contactInfo.id),
+            distinctUntilChanged()
+        );
+        this.groupId$.subscribe(groupId => {
+            /** Create data prop if not exists */
+            this.paymentServiceProxy['data'] = this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][groupId]
+                ? this.paymentServiceProxy['data']
+                : { [groupId]: { payments: null, paymentMethods: null } };
+        });
+
+        this.payments$ = this.refresh.pipe(
+            tap(() => abp.ui.setBusy(this.paymentsContainer.nativeElement)),
+            switchMap(
+                (refresh: boolean) => {
+                    const contactId = this.contactService['data'].contactInfo.id;
+                    return (!refresh && this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].payments
+                        ? of(this.paymentServiceProxy['data'][contactId].payments)
+                        : this.paymentServiceProxy.getPayments(contactId).pipe(
+                            tap(payments => {
+                                this.paymentServiceProxy['data'][contactId].payments = payments;
+                            })
+                        )).pipe(finalize(() => {abp.ui.clearBusy(this.paymentsContainer.nativeElement); }));
+                }
+            ),
+            publishReplay(),
+            refCount()
+        );
+
+        this.dispayedPayments$ = combineLatest(
+            this.payments$,
+            this.paymentsDisplayLimit$
+        ).pipe(
+            switchMap(([payments, limit]) => {
+                return of(limit !== null ? payments.slice(0, limit) : payments);
+            })
+        );
+
+        this.paymentMethods$ = this.refresh.pipe(
+            switchMap((refresh: boolean) => {
+                const contactId = this.contactService['data'].contactInfo.id;
+                return !refresh && this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].paymentMethods ?
+                    of(this.paymentServiceProxy['data'][contactId].paymentMethods) :
+                    this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
+                        tap(paymentMethods => this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods)
+                    );
+            })
+        );
 
         this._contactsService.invalidateSubscribe((area) => {
             if (area == 'payment-information') {
-                this.payments$.subscribe();
-                this.paymentMethods$.subscribe();
+                this._refresh.next(true);
             }
         });
-    }
-
-    getPayments(contactId): Observable<MonthlyPaymentInfo[]> {
-        abp.ui.setBusy(this.paymentsContainer.nativeElement);
-        return (this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].payments ?
-               of(this.paymentServiceProxy['data'][contactId].payments) :
-               this.paymentServiceProxy.getPayments(contactId).pipe(
-                   publishReplay(),
-                   refCount(),
-                   tap(payments => this.paymentServiceProxy['data'][contactId].payments = payments)
-               )).pipe(
-                   finalize(() => abp.ui.clearBusy(this.paymentsContainer.nativeElement))
-                );
-    }
-
-    getPaymentMethods(contactId): Observable<PaymentMethodInfo[]> {
-        return this.paymentServiceProxy['data'][contactId] && this.paymentServiceProxy['data'][contactId].paymentMethods ?
-               of(this.paymentServiceProxy['data'][contactId].paymentMethods) :
-               this.paymentServiceProxy.getPaymentMethods(contactId).pipe(
-                   tap(paymentMethods => this.paymentServiceProxy['data'][contactId].paymentMethods = paymentMethods)
-               );
     }
 
     formatDate(date: moment.Moment) {

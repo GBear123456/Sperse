@@ -70,6 +70,7 @@ import { ContactsModule } from './contacts/contacts.module';
 import { AppStoreService } from '@app/store/app-store.service';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
+import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 
 @NgModule({
     imports: [
@@ -141,7 +142,8 @@ import { CommonModule } from '@shared/common/common.module';
         AppStoreService,
         ImportServiceProxy,
         ImportLeadsService,
-        ZendeskService
+        ZendeskService,
+        DataSourceService
     ],
     entryComponents: [
         CreateActivityDialogComponent,
@@ -158,13 +160,15 @@ export class CrmModule {
         private _importLeadsService: ImportLeadsService,
         private _permissionService: PermissionCheckerService
     ) {
-        setTimeout(() => this._appStoreService.loadUserDictionaries(), 2000);
-        if (_permissionService.isGranted('Pages.CRM.BulkImport'))
-            _appService.subscribeModuleChange((config) => {
-                if (config['name'] == this.name)
-                    _importLeadsService.setupImportCheck();
-                else
-                    _importLeadsService.stopImportCheck();
-            });
+        if (abp.session.userId) {
+            setTimeout(() => this._appStoreService.loadUserDictionaries(), 2000);
+            if (_permissionService.isGranted('Pages.CRM.BulkImport'))
+                _appService.subscribeModuleChange((config) => {
+                    if (config['name'] == this.name)
+                        _importLeadsService.setupImportCheck();
+                    else
+                        _importLeadsService.stopImportCheck();
+                });
+        }
     }
 }

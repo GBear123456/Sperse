@@ -65,6 +65,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
+                deserializeDates: false,
                 beforeSend: function (request) {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }

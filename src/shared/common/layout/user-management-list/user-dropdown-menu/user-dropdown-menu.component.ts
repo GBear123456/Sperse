@@ -117,6 +117,11 @@ export class UserDropdownMenuComponent extends AppComponentBase implements OnIni
         this.commonUserInfoService = injector.get(CommonUserInfoServiceProxy);
     }
 
+    getScrollHeight() {
+        let height = innerHeight - 190;
+        return height > 490 ? '100%' : height;
+    }
+
     ngOnInit() {
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
         this.userManagementService.getRecentlyLinkedUsers().subscribe(

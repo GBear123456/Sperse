@@ -136,7 +136,7 @@
             </div>
             <div *dxTemplate="let cell of 'syncDateTemplate'">
                 <ng-container *ngIf="(cell.text)">
-                    <div class="sync-date">Last sync: {{cell.text | date: 'MMM d, y '}}</div>
+                    <div class="sync-date">Last sync: {{cell.text | date: 'MMM d, y ' : userTimezone}}</div>
                 </ng-container>
             </div>
 

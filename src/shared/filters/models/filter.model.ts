@@ -3,8 +3,8 @@ import { FilterItemModel, DisplayElement } from './filter-item.model';
 import { FilterComponent } from './filter-component';
 import { Observable } from 'rxjs';
 import * as _ from 'underscore';
-declare let require: any;
-let capitalize = require('underscore.string/capitalize');
+import * as moment from 'moment-timezone';
+import capitalize from 'underscore.string/capitalize';
 
 export class FilterModelBase<T extends FilterItemModel> {
     component: Type<FilterComponent>;
@@ -46,7 +46,7 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
     public static _remove = ['and', 'or', 'no', 'if', 'from', 'to', 'etc', 'for', 'like at'];
     public getODataFilterObject() {
         if (this.options && this.options.method)
-            return this[this.options.method].call(this);
+            return this[this.options.method].call(this, this.options.params);
         else
             return _.pairs(this.items)
                 .reduce((obj, pair) => {
@@ -88,7 +88,7 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
         return obj;
     }
 
-    private getFilterByDate() {
+    private getFilterByDate(params?) {
         let data = {};
         data[this.field] = {};
         _.each(this.items, (item: FilterItemModel, key) => {
@@ -97,8 +97,8 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
                     key == 'to' ? [23,59,59,999]: [0,0,0,0]);
 
                 let clone = new Date(item.value.getTime());
-                clone.setTime(clone.getTime() -
-                    clone.getTimezoneOffset() * 60 * 1000);
+                clone.setTime(clone.getTime() - (clone.getTimezoneOffset() - (params && params.useUserTimezone ? 
+                    moment(clone).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset() : 0)) * 60 * 1000);
 
                 data[this.field][this.operator[key]] = clone;
             }

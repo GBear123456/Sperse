@@ -39,6 +39,7 @@ export class AppService extends AppServiceBase {
     public showContactInfoPanel = false;
     public contactInfo: any;
 
+    private toolbarSubject: Subject<undefined>;
     private expiredModule: Subject<string>;
     public moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
     private moduleSubscriptions: ModuleSubscriptionInfoDto[];
@@ -121,6 +122,7 @@ export class AppService extends AppServiceBase {
         this.appLocalizationService = injector.get(AppLocalizationService);
         this._tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
 
+        this.toolbarSubject = new Subject<undefined>();
         if (this.isNotHostTenant()) {
             this.expiredModule = new Subject<string>();
             this.loadModeuleSubscriptions();
@@ -277,7 +279,6 @@ export class AppService extends AppServiceBase {
                     if (isConfirmed) {
                         let request = new ActivateUserForContactInput();
                         request.contactId = contactId;
-                        request.tenantHostType = <any>TenantHostType.PlatformApp;
                         this.userServiceProxy.activateUserForContact(request).subscribe(result => {
                             let setupInput = new SetupInput({ userId: result.userId });
                             this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(() => {
@@ -309,5 +310,13 @@ export class AppService extends AppServiceBase {
 
     private checkCFOClientAccessPermission() {
         return this.permission.isGranted('Pages.CFO.ClientInstanceAdmin');
+    }
+
+    toolbarSubscribe(callback) {
+        this.toolbarSubject.asObservable().subscribe(callback);
+    }
+
+    toolbarRefresh() {
+        this.toolbarSubject.next();
     }
 }

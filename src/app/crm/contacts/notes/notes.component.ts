@@ -44,10 +44,12 @@ export class NotesComponent extends AppComponentBase implements OnInit {
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         _clientService.invalidateSubscribe((area) => {
-            if (area == 'notes')
+            if (area == 'notes') {
+                this.data = this._contactService['data'];
                 this.loadData().subscribe(
                     (notes: NoteInfoDto[]) => this.dataSource = notes
                 );
+            }
         });
     }
 
@@ -82,17 +84,18 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     }
 
     openNoteAddDialog() {
-        this._clientService.organizationContactInfo.pipe(first()).subscribe(() => {
-            this.dialog.open(NoteAddDialogComponent, {
-                panelClass: 'slider',
-                disableClose: false,
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {
-                    contactInfo: this._contactService['data'].contactInfo
-                }
+        if (this.data.contactInfo.personContactInfo)
+            this._clientService.organizationContactInfo.pipe(first()).subscribe(() => {
+                this.dialog.open(NoteAddDialogComponent, {
+                    panelClass: 'slider',
+                    disableClose: false,
+                    hasBackdrop: false,
+                    closeOnNavigation: true,
+                    data: {
+                        contactInfo: this._contactService['data'].contactInfo
+                    }
+                });
             });
-        });
     }
 
     onToolbarPreparing($event) {

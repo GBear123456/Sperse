@@ -5,13 +5,17 @@
                 <img [src]="offerDetails.logoUrl">
                 <ng-container *ngIf="getInplaceEditData() as data">
                     <inplace-edit
-                        [width]="getInplaceWidth(data.value)"
                         [data]="data"
                         (valueChanged)="updateCustomName($event)">
                     </inplace-edit>
                 </ng-container>
             </ng-container>
-            <button class="button-layout button-primary" type="submit" (click)="onSubmit()">Save</button>
+            <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">Save</button>
+            <div class="vertical-delimiter ng-star-inserted"></div>
+            <div class="navigation">
+                <dx-button icon="chevronprev" class="prev" [hint]="ls.l('Previous')" (click)="onPrev()" [disabled]="prevButtonIsDisabled"></dx-button>
+                <dx-button icon="chevronnext" class="next" [hint]="ls.l('Next')" (click)="onNext()" [disabled]="nextButtonIsDisabled"></dx-button>
+            </div>
             <div class="vertical-delimiter ng-star-inserted"></div>
             <button (click)="refreshData()" class="refresh-button ng-star-inserted"></button>
         </header>

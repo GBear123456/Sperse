@@ -4,6 +4,7 @@ import { UserManagementListComponent } from '@shared/common/layout/user-manageme
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { CommonModule } from '@angular/common';
 import { ImpersonationService } from '@admin/users/impersonation.service';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 
 @NgModule({
     declarations: [
@@ -11,7 +12,8 @@ import { ImpersonationService } from '@admin/users/impersonation.service';
         UserDropdownMenuComponent
     ],
     imports: [
-        CommonModule
+        CommonModule,
+        DxScrollViewModule
     ],
     exports: [
         UserManagementListComponent,

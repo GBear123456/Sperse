@@ -2,10 +2,9 @@
     <app-headline [config]="headlineConfig">
         <import-progress-bar></import-progress-bar>
     </app-headline>
-    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
+    <div [hidden]="isDataLoaded && !totalRowCount || showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div>
-                <div [hidden]="showPipeline">
+              <div>
                     <div id="ClientsTable">
                         <dx-data-grid id="gridContainer"
                                       accesskey="narrowHeaderPanel"
@@ -14,6 +13,7 @@
                                       [columnAutoWidth]="true"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
+                                      (onCellClick)="onCardClick($event.data)"
                                       [pager]="defaultGridPagerConfig"
                                       (onContentReady)="onContentReady($event)"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
@@ -26,14 +26,13 @@
                             </dxo-editing>
                             <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="asc"></dxi-column>
-                            <dxi-column dataField="Photo" caption=" " cellTemplate="photoTemplate" [width]="50" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                            <dxi-column dataField="PhotoPublicId" caption=" " cellTemplate="photoTemplate"
+                                [width]="50"[showInColumnChooser]="false" [allowExporting]="false"
+                                [allowGrouping]="false" [allowSorting]="false"></dxi-column>
                             <div *dxTemplate="let data of 'photoTemplate'">
-                                <img [src]="getPhoto(data.data.Photo, data.data.Gender)"
-                                     alt="{{l('AltPersonPhoto')}}"
-                                     width="38"
-                                     class="img-circle" />
+                                <div [ngStyle]="{'background-image': 'url(' + getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                             </div>
-                            <dxi-column dataField="FullName" caption="{{l('Customer.Name')}}"></dxi-column>
+                            <dxi-column dataField="Name" caption="{{l('Customer.Name')}}"></dxi-column>
                             <dxi-column dataField="State" caption="{{l('Contact.State')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Email" caption="{{l('Contact.Email')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="Phone" caption="{{l('Contact.Phone')}}" [visible]="false" cellTemplate="phoneCell"
@@ -58,19 +57,36 @@
                                 {{cellData.value | phone}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'">
-                                {{cellData.value | date: formatting.dateTime}}
+                                {{cellData.value | date: formatting.dateTime : userTimezone}}
                             </div>
                         </dx-data-grid>
-				    </div>
-                </div>
-                <div [hidden]="!showPipeline" class="pipepline-wrapper">
-                    <app-pipeline [dataSource]="gridDataSource" [pipelinePurposeId]="pipelinePurposeId">
+                    </div>
+              </div>
+        </div>
+    </div>      
+
+    <div [hidden]="!showPipeline" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <div>
+                <div class="funnel-wrapper">
+                    <app-pipeline
+                        [totalsURI]="'OrderCount'"
+                        [dragulaName]="'orderStages'"
+                        [dataSource]="pipelineDataSource"
+                        [lockMarginalEntities]="true"
+                        [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'PhotoPublicId']"
+                        [pipelinePurposeId]="pipelinePurposeId"
+                        [filterModelStages]="filterModelStages"
+                        [(selectedEntities)]="selectedOrders"
+                        (onStagesLoaded)="onStagesLoaded($event)"
+                        (onCardClick)="onCardClick($event)">
                         Loading...
                     </app-pipeline>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 
 <app-no-data

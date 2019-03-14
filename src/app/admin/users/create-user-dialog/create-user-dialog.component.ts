@@ -162,7 +162,7 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
 
         this.data.editTitle = true;
         this.data.titleClearButton = true;
-        this.data.placeholder = this.l('Contact.FullName');
+        this.data.placeholder = this.l('FullNamePlaceholder');
         this.data.buttons = [{
             id: this.saveButtonId,
             title: this.l('Save'),
@@ -236,7 +236,6 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
         input.profilePicture = StringHelper.getBase64(this.photoOriginalData);
         input.profileThumbnail = StringHelper.getBase64(this.photoThumbnailData);
 
-        input.tenantHostType = <any>TenantHostType.PlatformApp;
         this._userService.createOrUpdateUser(input)
             .pipe(finalize(() => { saveButton.disabled = false; }))
             .subscribe((userId) => this.afterSave(userId || this.user.id));

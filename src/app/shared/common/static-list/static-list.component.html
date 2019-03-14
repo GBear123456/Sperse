@@ -38,11 +38,12 @@
                      [height]="listHeight"
                      [selectedItemKeys]="selectedKeys"
                      [selectedItems]="selectedItems"
+                     [pageLoadMode]="pageLoadMode"
                      (onContentReady)="onContentReady($event)"
                      (onInitialized)="onInitialized($event)"
                      (onOptionChanged)="onOptionChanged.emit($event)"
                      (onItemClick)="onItemClick($event)">
-                <div *dxTemplate="let data of 'item'">
+                <div *dxTemplate="let data of 'item'" (click)="$event.stopPropagation()">
                     <div class="item-row {{data.name.replace(' ', '-') | lowercase}}" data-id="{{data.id}}">
                         <span>{{data.name}}</span>
                         <a *ngIf="filterModel"

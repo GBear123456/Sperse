@@ -1,4 +1,4 @@
-import { Component, Injector, ViewEncapsulation, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
 
 import {
     UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
@@ -27,6 +27,8 @@ import { takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 import { MatDialog } from '@angular/material/dialog';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 
 @Component({
     templateUrl: './users.component.html',
@@ -60,8 +62,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
 
     private rootComponent: any;
-    private usersComponent: any;
-    private formatting = AppConsts.formatting;
+    formatting = AppConsts.formatting;
 
     dataSource: DataSource;
 
@@ -76,7 +77,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         private _tokenAuth: TokenAuthServiceProxy,
         private _permissionService: PermissionServiceProxy,
         private _roleService: RoleServiceProxy,
-        public _impersonationService: ImpersonationService
+        public _impersonationService: ImpersonationService,
+        private itemDetailsService: ItemDetailsService
     ) {
         super(injector);
         this.actionMenuItems = [
@@ -338,7 +340,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                     return {
                                         id: item.id,
                                         name: item.displayName
-                                    }
+                                    };
                                 })
                             })
                         }
@@ -494,8 +496,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-
-       this.hideHostElement();
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.User, this.dataGrid.instance.getDataSource());
+        this.hideHostElement();
     }
 
     private paramsSubscribe() {

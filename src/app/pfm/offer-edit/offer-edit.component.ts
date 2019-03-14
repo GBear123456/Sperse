@@ -2,6 +2,7 @@
 import {
     ApplicationRef,
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     Injector,
     OnDestroy,
@@ -10,8 +11,8 @@ import {
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { Observable, Subject } from 'rxjs';
-import { finalize, map, tap, publishReplay, pluck, startWith, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, merge } from 'rxjs';
+import { debounceTime, filter, finalize, map, tap, publishReplay, pluck, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 
 /** Application imports */
@@ -25,12 +26,25 @@ import {
     OfferDetailsForEditDtoCardNetwork,
     OfferDetailsForEditDtoOfferCollection,
     OfferDetailsForEditDtoSecuringType,
-    OfferDetailsForEditDtoStatus, OfferDetailsForEditDtoSystemType,
+    ExtendOfferDtoCampaignProviderType,
+    ExtendOfferDtoCardNetwork,
+    ExtendOfferDtoCardType,
+    ExtendOfferDtoOfferCollection,
+    ExtendOfferDtoParameterHandlerType,
+    ExtendOfferDtoSecuringType,
+    OfferDetailsForEditDtoStatus,
+    OfferDetailsForEditDtoSystemType,
+    ExtendOfferDtoTargetAudience,
     OfferDetailsForEditDtoTargetAudience,
     OfferDetailsForEditDtoType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
+import { NotifyService } from '@abp/notify/notify.service';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
+import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 
 @Component({
     selector: 'offer-edit',
@@ -62,10 +76,12 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     offerId$: Observable<number> = this.route.paramMap.pipe(map((paramMap: ParamMap) => +paramMap.get('id')));
     private _refresh: Subject<null> = new Subject<null>();
     refresh: Observable<null> = this._refresh.asObservable();
-    offerDetails$: Observable<OfferDetailsForEditDto> = this.refresh.pipe(
-        startWith(this.offerId$),
-        tap(() => abp.ui.setBusy()),
+    offerDetails$: Observable<OfferDetailsForEditDto> = merge(
+        this.refresh,
+        this.offerId$
+    ).pipe(
         withLatestFrom(this.offerId$),
+        tap(() => abp.ui.setBusy()),
         switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(
             finalize(() => abp.ui.clearBusy())
         )),
@@ -89,6 +105,11 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     offerCollectionEnum = OfferDetailsForEditDtoOfferCollection;
     model: OfferDetailsForEditDto;
     section$: Observable<string>;
+    offerIsUpdating = false;
+    private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
+    public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
+    prevButtonIsDisabled = true;
+    nextButtonIsDisabled = true;
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
@@ -96,7 +117,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         private applicationRef: ApplicationRef,
         private router: Router,
         public ls: AppLocalizationService,
-        private store$: Store<RootStore.State>
+        private store$: Store<RootStore.State>,
+        private notifyService: NotifyService,
+        private changeDetector: ChangeDetectorRef,
+        private itemDetailsService: ItemDetailsService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
     }
@@ -106,6 +130,24 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         this.rootComponent.overflowHidden(true);
         this.offerDetails$.subscribe(details => {
             this.model = details;
+        });
+        this.targetEntity$.pipe(
+            debounceTime(300),
+            withLatestFrom(this.offerId$),
+            switchMap(([direction, offerId]: [number, TargetDirectionEnum]) => {
+                return this.itemDetailsService.getItemFullInfo(ItemTypeEnum.Offer, offerId, direction, 'CampaignId');
+            }),
+            withLatestFrom(this.offerId$, this.section$),
+            filter(itemFullInfo => !!itemFullInfo)
+        ).subscribe(([itemFullInfo, offerId, section]: [ItemFullInfo, number, string]) => {
+            if (offerId !== itemFullInfo.itemData.CampaignId) {
+                this.router.navigate(
+                    ['../..', itemFullInfo.itemData.CampaignId, section],
+                    { relativeTo: this.route }
+                );
+            }
+            this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
+            this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
         });
     }
 
@@ -122,14 +164,23 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        this.offerManagementService.extend(ExtendOfferDto.fromJS(this.model))
-            .pipe(finalize(() => abp.ui.clearBusy()))
-            .subscribe();
+        this.offerIsUpdating = true;
+        abp.ui.setBusy();
+        this.offerManagementService.extend(this.model.campaignId, this.model.extendedInfo)
+            .pipe(finalize(() => {
+                abp.ui.clearBusy();
+                this.offerIsUpdating = false;
+                this.changeDetector.detectChanges();
+            }))
+            .subscribe(
+                () => this.notifyService.info(this.ls.l('SavedSuccessfully', 'Platform')),
+                e => this.notifyService.error(e)
+            );
     }
 
     getInplaceEditData() {
         return {
-            value: this.model && (this.model.customName || this.model.name)
+            value: this.model && (this.model.extendedInfo.customName || this.model.name)
         };
     }
 
@@ -138,7 +189,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     }
 
     updateCustomName(value: string) {
-        this.model.customName = value;
+        this.model.extendedInfo.customName = value;
     }
 
     ngOnDestroy() {

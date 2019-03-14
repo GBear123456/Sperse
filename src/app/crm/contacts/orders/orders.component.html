@@ -1,0 +1,43 @@
+<div [@routerTransition]>
+    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+              <div>
+                    <div id="ClientsTable">
+                        <dx-data-grid id="gridContainer"
+                                      accesskey="narrowHeaderPanel"
+                                      [dataSource]="dataSource"
+                                      [allowColumnReordering]="true"
+                                      [columnAutoWidth]="true"
+                                      [allowColumnResizing]="true"
+                                      [hoverStateEnabled]="true"
+                                      [pager]="defaultGridPagerConfig"
+                                      (onRowUpdating)="onRowUpdating($event)"
+                                      (onContentReady)="onContentReady($event)"
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                            <dxo-editing mode="cell" [allowUpdating]="true"></dxo-editing>
+                            <dxi-column [width]="40" [alignment]="'center'" [allowEditing]="false" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false" [allowEditing]="false" cellTemplate="historyCell"></dxi-column>
+                            <dxi-column dataField="Stage" caption="{{l('Stage')}}" [allowEditing]="false"></dxi-column>
+                            <dxi-column dataField="Amount" alignment="left" caption="{{l('Amount')}}" [allowEditing]="true"></dxi-column>
+                            <dxi-column dataField="OrderType" caption="{{l('Type')}}" [allowEditing]="false"></dxi-column>
+                            <dxi-column dataField="CreationTime" caption="{{l('Created')}}" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
+                            <dxi-column dataField="DateProcessed" caption="{{l('Processed')}}" cellTemplate="dateCell" [allowEditing]="false"></dxi-column>
+                            <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false"></dxi-column>
+                            <dxo-sorting mode="multiple"></dxo-sorting>
+                            <dxo-group-panel [visible]="true"></dxo-group-panel>
+                            <dxo-paging [pageSize]="20"></dxo-paging>
+                            <div *dxTemplate="let cellData of 'dateCell'">
+                                {{cellData.value | date: formatting.dateTime}}
+                            </div>
+                            <div *dxTemplate="let cellInfo of 'historyCell'">
+                                <a href="javascript:void(0);" class="dx-icon-event" (click)="showHistory(cellInfo.data)"></a>
+                            </div>
+                        </dx-data-grid>
+                    </div>
+              </div>
+        </div>
+    </div>
+</div>
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>

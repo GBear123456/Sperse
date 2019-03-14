@@ -1,0 +1,81 @@
+/deep/ .cdk-overlay-container {
+    .cdk-overlay-pane.slider {
+        transition: margin 1s!important;
+
+        .mat-dialog-container {
+            overflow: visible;
+            padding: 0px;
+            margin: 0px;
+        }
+    }
+}
+/deep/ .hide {
+    display: none;
+}
+:host {
+    height: calc(~"100vh - 75px");
+    position: relative;
+    display: block;
+    z-index: 2;
+    padding-top: 20px;
+    padding-left: 24px;
+    max-width: 400px;
+
+    h2 {  
+        position: relative;
+        margin-right: 10px;
+
+        .close {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 5px;
+            right: 15px;
+            cursor: pointer;
+            background-color: #FFF;
+            &:after, &:before {
+                position: absolute;
+                left: 9px;
+                content: ' ';
+                height: 20px;
+                width: 2px;
+                background-color: #202b35;
+            }
+            &:before {
+                transform: rotate(45deg);
+            }
+            &:after {
+                transform: rotate(-45deg);
+            }
+        }
+    }
+
+    .content {
+        width: 350px;
+        height: 80vh;
+        margin: 0px;
+        padding-right: 0px;
+        padding-bottom: 25px;
+        border: 1px solid #dfdfdf;
+
+        .record {
+            margin: 15px;
+            border: 1px solid #dfdfdf;
+            padding: 5px;
+            background: #f8ffcb;
+            label {
+                width: 55px;
+                font-weight: 600;
+                margin: 0;
+            }
+        }
+    }    
+
+    mat-dialog-content {
+        width: 430px;
+        overflow: hidden;
+        max-height: 100%!important;
+        min-height: 300px;
+        padding: 0px 30px;
+    }
+}

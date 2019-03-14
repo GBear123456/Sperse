@@ -29,7 +29,7 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
 
     constructor(injector: Injector) {
         super(injector);
-
+      
         moment.tz.setDefault(undefined);
     }
 
