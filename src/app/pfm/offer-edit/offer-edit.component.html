@@ -30,64 +30,64 @@
                     <div class="row">
                         <div class="col-md-5">
                             <text-field name="campaignId"
-                                        [(value)]="model.campaignId"
+                                        [value]="model.campaignId"
                                         [readOnly]="true">
                             </text-field>
 
                             <checkbox-field name="isPublished"
-                                            [(value)]="model.isPublished"
+                                            [(value)]="model.extendedInfo.isPublished"
                                             class="leftAlignment">
                             </checkbox-field>
 
                             <text-field name="categories"
                                         [readOnly]="true"
-                                        [(value)]="model.categories">
+                                        [value]="model.categories">
                             </text-field>
 
                             <text-field name="subId"
-                                        [(value)]="model.subId">
+                                        [(value)]="model.extendedInfo.subId">
                             </text-field>
 
                             <dropdown-field name="type"
                                             [readOnly]="true"
-                                            [(value)]="model.type"
+                                            [value]="model.type"
                                             [dataSource]="getEnumDataSource(typeEnum)">
                             </dropdown-field>
 
                             <dropdown-field name="cardNetwork"
-                                            [(value)]="model.cardNetwork"
+                                            [(value)]="model.extendedInfo.cardNetwork"
                                             [readOnly]="true"
                                             [dataSource]="getEnumDataSource(cardNetworkEnum)">
                             </dropdown-field>
 
                             <dropdown-field name="targetAudience"
-                                            [(value)]="model.targetAudience"
+                                            [(value)]="model.extendedInfo.targetAudience"
                                             [readOnly]="true"
                                             [dataSource]="getEnumDataSource(targetAudienceEnum)">
                             </dropdown-field>
 
                             <text-field name="issuingBank"
                                         [readOnly]="true"
-                                        [(value)]="model.issuingBank">
+                                        [(value)]="model.extendedInfo.issuingBank">
                             </text-field>
 
                             <text-field name="daysOfWeekAvailability"
                                         [readOnly]="true"
-                                        [(value)]="model.daysOfWeekAvailability">
+                                        [value]="model.daysOfWeekAvailability">
                             </text-field>
 
                             <text-field name="expireTimeOfDay"
                                         [readOnly]="true"
-                                        [(value)]="model.expireTimeOfDay">
+                                        [value]="model.expireTimeOfDay">
                             </text-field>
 
                             <text-field name="traficSource"
                                         [readOnly]="true"
-                                        [(value)]="model.traficSource">
+                                        [value]="model.traficSource">
                             </text-field>
 
                             <text-multiple-field name="details"
-                                                 [(value)]="model.details"
+                                                 [(value)]="model.extendedInfo.details"
                                                  class="valuesBelow">
                             </text-multiple-field>
 
@@ -95,64 +95,71 @@
                         <div class="offset-md-1"></div>
                         <div class="col-md-5">
                             <text-field name="name"
-                                        [(value)]="model.name"
+                                        [value]="model.name"
                                         [readOnly]="true">
                             </text-field>
 
                             <dropdown-field name="status"
-                                            [(value)]="model.status"
+                                            [value]="model.status"
                                             [readOnly]="true"
                                             [dataSource]="getEnumDataSource(statusEnum)">
                             </dropdown-field>
 
                             <text-field name="description"
                                         [readOnly]="true"
-                                        [(value)]="model.description">
+                                        [value]="model.description">
                             </text-field>
 
                             <dropdown-field name="systemType"
                                             [readOnly]="true"
-                                            [(value)]="model.systemType"
+                                            [value]="model.systemType"
                                             [dataSource]="getEnumDataSource(systemTypeEnum)">
                             </dropdown-field>
 
                             <dropdown-field name="campaignProviderType"
-                                            [(value)]="model.campaignProviderType"
+                                            [(value)]="model.extendedInfo.campaignProviderType"
                                             [dataSource]="getEnumDataSource(campaignProviderTypeEnum)">
                             </dropdown-field>
 
-                            <text-field name="cardType"
-                                        [readOnly]="true"
-                                        [(value)]="model.cardType">
-                            </text-field>
+                            <dropdown-field name="parameterHandlerType"
+                                            [(value)]="model.extendedInfo.parameterHandlerType"
+                                            [dataSource]="getEnumDataSource(parameterHandlerTypeEnum)">
+                            </dropdown-field>
+
+                            <dropdown-field name="cardType"
+                                            [readOnly]="true"
+                                            [(value)]="model.extendedInfo.cardType"
+                                            [dataSource]="getEnumDataSource(cardTypeEnum)">
+                            </dropdown-field>
 
                             <dropdown-field name="securingType"
-                                            [(value)]="model.securingType"
+                                            [(value)]="model.extendedInfo.securingType"
                                             [readOnly]="true"
                                             [dataSource]="getEnumDataSource(securingTypeEnum)">
                             </dropdown-field>
 
                             <text-multiple-field name="countries"
-                                                [readOnly]="true">
+                                                [readOnly]="true"
+                                                [value]="model.countries">
                             </text-multiple-field>
 
                             <text-field name="effectiveTimeOfDay"
                                         [readOnly]="true"
-                                        [(value)]="model.effectiveTimeOfDay">
+                                        [value]="model.effectiveTimeOfDay">
                             </text-field>
 
                             <text-field name="termsOfService"
                                         [readOnly]="true"
-                                        [(value)]="model.termsOfService">
+                                        [value]="model.termsOfService">
                             </text-field>
 
                             <text-multiple-field name="pros"
-                                                 [(value)]="model.pros"
+                                                 [(value)]="model.extendedInfo.pros"
                                                  class="valuesBelow">
                             </text-multiple-field>
 
                             <text-multiple-field name="cons"
-                                                 [(value)]="model.cons"
+                                                 [(value)]="model.extendedInfo.cons"
                                                  class="valuesBelow">
                             </text-multiple-field>
                         </div>
@@ -160,7 +167,7 @@
                             <text-field name="campaignUrl"
                                         [readOnly]="true"
                                         class="center"
-                                        [(value)]="model.campaignUrl">
+                                        [value]="model.campaignUrl">
                             </text-field>
                         </div>
                     </div>
@@ -170,29 +177,29 @@
                     <div class="row">
                         <div class="col-md-5">
                             <rating-field name="overallRating"
-                                          [(value)]="model.overallRating">
+                                          [(value)]="model.extendedInfo.overallRating">
                             </rating-field>
 
                             <rating-field name="feesRating"
-                                          [(value)]="model.feesRating">
+                                          [(value)]="model.extendedInfo.feesRating">
                             </rating-field>
 
                             <rating-field name="rewardsRating"
-                                          [(value)]="model.rewardsRating">
+                                          [(value)]="model.extendedInfo.rewardsRating">
                             </rating-field>
                         </div>
                         <div class="offset-md-1"></div>
                         <div class="col-md-5">
                             <rating-field name="interestRating"
-                                          [(value)]="model.interestRating">
+                                          [(value)]="model.extendedInfo.interestRating">
                             </rating-field>
 
                             <rating-field name="benefitsRating"
-                                          [(value)]="model.benefitsRating">
+                                          [(value)]="model.extendedInfo.benefitsRating">
                             </rating-field>
 
                             <rating-field name="serviceRating"
-                                          [(value)]="model.serviceRating">
+                                          [(value)]="model.extendedInfo.serviceRating">
                             </rating-field>
                         </div>
                     </div>
@@ -206,7 +213,7 @@
                                        displayExpr="name"
                                        valueExpr="code"
                                        [dataSource]="states$ | async"
-                                       [(value)]="model.states">
+                                       [(value)]="model.extendedInfo.states">
                             </tag-field>
 
                             <dropdown-field name="creditScores"
@@ -218,68 +225,68 @@
                             <from-to-field fromName="minAnnualIncome"
                                            toName="maxAnnualIncome"
                                            [isCurrency]="true"
-                                           [(fromValue)]="model.minAnnualIncome"
-                                           [(toValue)]="model.maxAnnualIncome"
+                                           [(fromValue)]="model.extendedInfo.minAnnualIncome"
+                                           [(toValue)]="model.extendedInfo.maxAnnualIncome"
                                            label="Annual Income">
                             </from-to-field>
 
                             <from-to-field fromName="minLoanAmount"
                                            toName="maxLoanAmount"
                                            [isCurrency]="true"
-                                           [(fromValue)]="model.minLoanAmount"
-                                           [(toValue)]="model.maxLoanAmount"
+                                           [(fromValue)]="model.extendedInfo.minLoanAmount"
+                                           [(toValue)]="model.extendedInfo.maxLoanAmount"
                                            label="Loan Amount">
                             </from-to-field>
 
                             <from-to-field fromName="minLoanTermMonths"
                                            toName="maxLoanTermMonths"
-                                           [(fromValue)]="model.minLoanTermMonths"
-                                           [(toValue)]="model.maxLoanTermMonths"
+                                           [(fromValue)]="model.extendedInfo.minLoanTermMonths"
+                                           [(toValue)]="model.extendedInfo.maxLoanTermMonths"
                                            label="Loan Term Months">
                             </from-to-field>
 
                             <text-field name="introAPR"
-                                        [(value)]="model.introAPR">
+                                        [(value)]="model.extendedInfo.introAPR">
                             </text-field>
 
                             <text-field name="regularAPR"
-                                        [(value)]="model.regularAPR">
+                                        [(value)]="model.extendedInfo.regularAPR">
                             </text-field>
 
                             <text-field name="introRewardsBonus"
-                                        [(value)]="model.introRewardsBonus">
+                                        [(value)]="model.extendedInfo.introRewardsBonus">
                             </text-field>
 
                             <number-field name="rewardsRate"
-                                          [(value)]="model.rewardsRate">
+                                          [(value)]="model.extendedInfo.rewardsRate">
                             </number-field>
 
                             <text-field name="annualFee"
-                                        [(value)]="model.annualFee">
+                                        [(value)]="model.extendedInfo.annualFee">
                             </text-field>
 
                             <text-field name="monthlyFee"
-                                        [(value)]="model.monthlyFee">
+                                        [(value)]="model.extendedInfo.monthlyFee">
                             </text-field>
 
                             <text-field name="balanceTransferFee"
-                                        [(value)]="model.balanceTransferFee">
+                                        [(value)]="model.extendedInfo.balanceTransferFee">
                             </text-field>
 
                             <text-field name="activationFee"
-                                        [(value)]="model.activationFee">
+                                        [(value)]="model.extendedInfo.activationFee">
                             </text-field>
 
                             <text-field name="zeroPercentageInterestTransfers"
-                                        [(value)]="model.zeroPercentageInterestTransfers">
+                                        [(value)]="model.extendedInfo.zeroPercentageInterestTransfers">
                             </text-field>
 
                             <group-field label="Duration For Zero Percentage (Months)">
                                 <number-field name="durationForZeroPercentageTransfersInMonths"
-                                              [(value)]="model.durationForZeroPercentageTransfersInMonths"
+                                              [(value)]="model.extendedInfo.durationForZeroPercentageTransfersInMonths"
                                             label="Transfers"></number-field>
                                 <number-field name="durationForZeroPercentagePurchasesInMonths"
-                                              [(value)]="model.durationForZeroPercentagePurchasesInMonths"
+                                              [(value)]="model.extendedInfo.durationForZeroPercentagePurchasesInMonths"
                                               label="Purchases"></number-field>
                             </group-field>
                         </div>
@@ -290,16 +297,16 @@
                     <div class="row">
                         <div class="col-md-5">
                             <dropdown-field name="offerCollection"
-                                            [(value)]="model.offerCollection"
+                                            [(value)]="model.extendedInfo.offerCollection"
                                             [readOnly]="offerNotInCardCategory$ | async"
                                             [dataSource]="getEnumDataSource(offerCollectionEnum)">
                             </dropdown-field>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-5" *ngFor="let key of keys(model.flags)">
+                        <div class="col-md-5" *ngFor="let key of keys(model.extendedInfo.flags)">
                             <checkbox-field [name]="key"
-                                            [(value)]="!!model.flags[key]"
+                                            [(value)]="!!model.extendedInfo.flags[key]"
                                             [readOnly]="offerNotInCardCategory$ | async">
                             </checkbox-field>
                         </div>

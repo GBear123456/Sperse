@@ -21,21 +21,14 @@ import { RootComponent } from 'root.components';
 import {
     CountryStateDto,
     CreditScores2,
-    ExtendOfferDto,
-    OfferDetailsForEditDtoCampaignProviderType,
-    OfferDetailsForEditDtoCardNetwork,
-    OfferDetailsForEditDtoOfferCollection,
-    OfferDetailsForEditDtoSecuringType,
     ExtendOfferDtoCampaignProviderType,
     ExtendOfferDtoCardNetwork,
     ExtendOfferDtoCardType,
-    ExtendOfferDtoOfferCollection,
-    ExtendOfferDtoParameterHandlerType,
+    ExtendOfferDtoOfferCollection, ExtendOfferDtoParameterHandlerType,
     ExtendOfferDtoSecuringType,
+    ExtendOfferDtoTargetAudience,
     OfferDetailsForEditDtoStatus,
     OfferDetailsForEditDtoSystemType,
-    ExtendOfferDtoTargetAudience,
-    OfferDetailsForEditDtoTargetAudience,
     OfferDetailsForEditDtoType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -97,12 +90,14 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     statusEnum = OfferDetailsForEditDtoStatus;
     systemTypeEnum = OfferDetailsForEditDtoSystemType;
     typeEnum = OfferDetailsForEditDtoType;
-    campaignProviderTypeEnum = OfferDetailsForEditDtoCampaignProviderType;
-    cardNetworkEnum = OfferDetailsForEditDtoCardNetwork;
-    targetAudienceEnum = OfferDetailsForEditDtoTargetAudience;
-    securingTypeEnum = OfferDetailsForEditDtoSecuringType;
+    campaignProviderTypeEnum = ExtendOfferDtoCampaignProviderType;
+    parameterHandlerTypeEnum = ExtendOfferDtoParameterHandlerType;
+    cardTypeEnum = ExtendOfferDtoCardType;
+    cardNetworkEnum = ExtendOfferDtoCardNetwork;
+    targetAudienceEnum = ExtendOfferDtoTargetAudience;
+    securingTypeEnum = ExtendOfferDtoSecuringType;
     creditScoresEnum = CreditScores2;
-    offerCollectionEnum = OfferDetailsForEditDtoOfferCollection;
+    offerCollectionEnum = ExtendOfferDtoOfferCollection;
     model: OfferDetailsForEditDto;
     section$: Observable<string>;
     offerIsUpdating = false;
@@ -159,6 +154,14 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         return Object.keys(obj);
     }
 
+    onPrev() {
+        this.targetEntity.next(TargetDirectionEnum.Prev);
+    }
+
+    onNext() {
+        this.targetEntity.next(TargetDirectionEnum.Next);
+    }
+
     back() {
         this.router.navigate(['../../'], { relativeTo: this.route });
     }
@@ -182,10 +185,6 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         return {
             value: this.model && (this.model.extendedInfo.customName || this.model.name)
         };
-    }
-
-    getInplaceWidth(name: string): string {
-        return ((name.length + 1) * 12) + 'px';
     }
 
     updateCustomName(value: string) {

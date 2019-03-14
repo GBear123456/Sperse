@@ -2,8 +2,10 @@
 import { Component, Injector, EventEmitter, HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
+import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of } from 'rxjs';
 import { finalize, delayWhen, map, mergeMap } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
@@ -18,18 +20,16 @@ import uniqBy from 'lodash/uniqBy';
 import { CrmStore, PipelinesStoreActions } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-    PipelineDto,
-    StageDto,
-    StageServiceProxy,
-    CreateStageInput,
-    RenameStageInput,
-    MergeLeadStagesInput
+PipelineDto,
+StageDto,
+StageServiceProxy,
+CreateStageInput,
+RenameStageInput,
+MergeLeadStagesInput
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
-import dxTooltip from 'devextreme/ui/tooltip';
 
 @Component({
     selector: 'app-pipeline',
@@ -303,7 +303,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 }),
                 map((entities: any) => {
                     if (entities.length) {
-                        stage['entities'] = (page && oneStageOnly ? _.uniqBy(
+                        stage['entities'] = (page && oneStageOnly ? uniqBy(
                             (stage['entities'] || []).concat(entities), (entity) => entity['Id']) : entities).map((entity) => {
                             stage['lastEntityId'] = Math.min((page ? stage['lastEntityId'] : undefined) || Infinity, entity['Id']);
                             return entity;
