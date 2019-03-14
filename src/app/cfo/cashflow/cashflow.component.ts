@@ -4679,7 +4679,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.statsDetailResult = undefined;
         this.showAllVisible = false;
         this.showAllDisable = false;
-        this.disableGetForecastButton = true;
+        this.disableAddForecastButton = true;
         this.handleBottomHorizontalScrollPosition();
         this.handleVerticalScrollPosition();
     }
@@ -5205,7 +5205,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.searchValue) {
             this.showAllVisible = true;
             this.showAllDisable = true;
-            this.disableGetForecastButton = true;
+            this.disableAddForecastButton = true;
             let filterParams = {
                 startDate: this.requestFilter.startDate,
                 endDate: this.requestFilter.endDate,
