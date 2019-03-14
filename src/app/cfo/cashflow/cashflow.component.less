@@ -1236,38 +1236,56 @@
             z-index: 3;
             transform: translate(0, 0) !important;
 
-            .resize-buttons {
-                z-index: 1;
-                text-align: center;
-                font-size: 22px;
-                position: absolute;
-                width: 100%;
-                left: 0;
-                line-height: 0.5;
-                font-weight: bold;
-                letter-spacing: 3px;
-                color: #cecece;
-            }
-
-            .detailsButtons {
-                position: absolute;
-                z-index: 100;
-                right: 5px;
-                top: 15px;
-
-                .close-btn:hover {
-                    background: transparent !important;
+            .configBlock {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                .resize-buttons {
+                    z-index: 1;
+                    text-align: center;
+                    font-size: 22px;
+                    position: absolute;
+                    width: 100%;
+                    left: 0;
+                    line-height: 0.5;
+                    font-weight: bold;
+                    letter-spacing: 3px;
+                    color: #cecece;
                 }
 
-                .reclassify-btn,
-                .showall-btn,
-                .close-btn,
-                .search-value-btn {
+                /deep/ .dx-tabs {
+                    border: none;
+                    .dx-tab {
+                        border: none;
+                        background: transparent;
+                        &.dx-tab-selected:after {
+                            border: none;
+                            border-bottom: 3px solid #00aeef;
+                        }
+                    }
+                }
+
+                .detailsButtons {
+                    margin-left: auto;
+                    .dx-button {
+                        border: 0;
+                        padding: 0;
+                        /deep/ .dx-button-text {
+                            text-decoration: underline;
+                        }
+                    }
+
+                }
+
+                .close-btn {
                     border: 0;
                     padding: 0;
-
-                    /deep/ .dx-button-text {
-                        text-decoration: underline;
+                    position: absolute;
+                    right: 0;
+                    z-index: 1;
+                    top: 70px;
+                    &:hover {
+                        background: transparent !important;
                     }
                 }
             }
@@ -1492,7 +1510,6 @@
                         }
                     }
 
-                    &.forecastRow,
                     &.adjustmentRow {
                         td.dx-command-select {
                             pointer-events: none;
@@ -1501,6 +1518,19 @@
                             }
                         }
 
+                        &.dx-selection td {
+                            background-color: initial;
+                            border: none;
+                        }
+
+                        &.dx-selection.dx-row-alt td {
+                            background-color: #f3f7fa;
+                            border: none;
+                        }
+                    }
+
+                    &.forecastRow,
+                    &.adjustmentRow {
                         &.projected {
                             td.forecastDate {
                                 position: relative;
@@ -1516,16 +1546,6 @@
                                     font-family: Montserrat;
                                 }
                             }
-                        }
-
-                        &.dx-selection td {
-                            background-color: initial;
-                            border: none;
-                        }
-
-                        &.dx-selection.dx-row-alt td {
-                            background-color: #f3f7fa;
-                            border: none;
                         }
                     }
                 }

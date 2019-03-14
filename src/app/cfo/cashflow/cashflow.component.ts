@@ -15,8 +15,18 @@ import SparkLine from 'devextreme/viz/sparkline';
 import ScrollView from 'devextreme/ui/scroll_view';
 import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, forkJoin, from, of } from 'rxjs';
-import { first, filter, pluck, mergeMap, map, publishReplay, refCount, toArray } from 'rxjs/operators';
+import { Observable, Subject, from, combineLatest, forkJoin, of, zip } from 'rxjs';
+import {
+    first,
+    filter,
+    pluck,
+    mergeMap,
+    map,
+    publishReplay,
+    refCount,
+    toArray
+} from 'rxjs/operators';
+import { difference } from 'lodash';
 import * as $ from 'jquery';
 import * as underscore from 'underscore';
 import * as _ from 'underscore.string';
@@ -89,6 +99,7 @@ import { UserPreferencesService } from './preferences-dialog/preferences.service
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { BehaviorSubject } from '@node_modules/rxjs';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -176,19 +187,26 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     dragImg;
 
-    /** Moment.js formats string for different periods */
-    private momentFormats = {
-        'year':     'Y',
-        'quarter':  'Q',
-        'month':    'M',
-        'week':     'w',
-        'day':      'D'
-    };
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
-    statsDetailResult: any;
+    private _statsDetailResult: Subject<CashFlowStatsDetailDto[]> = new Subject<CashFlowStatsDetailDto[]>();
+    statsDetailResult$: Observable<CashFlowStatsDetailDto[]> = this._statsDetailResult.asObservable();
+    private statsDetailResult: CashFlowStatsDetailDto[];
+    private detailsTab: BehaviorSubject<string> = new BehaviorSubject<string>('all');
+    detailsTab$: Observable<string> = this.detailsTab.asObservable();
+    displayedStatsDetails$: Observable<CashFlowStatsDetailDto[]> = combineLatest(
+        this.statsDetailResult$,
+        this.detailsTab$
+    ).pipe(
+        map(([details, tab]) => tab === 'all' ? details : details.filter(item => tab === 'history' ? !!item.date : !!item.forecastId))
+    );
+    displayedStatsDetails: CashFlowStatsDetailDto[];
 
     /** Whether stats details contains historical data */
-    detailsContainsHistorical: 'always' | 'none' = 'none';
+    detailsContainsHistorical: boolean;
+    detailsContainsForecasts: boolean;
+    detailsPeriodIsNotHistorical: boolean;
+    detailsSomeHistoricalItemsSelected: boolean;
+    detailsSomeForecastsItemsSelected: boolean;
 
     currencySymbol = '$';
 
@@ -766,6 +784,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     updateAfterActivation: boolean;
 
+    detailsTabs = [
+        { text: this.l('ShowAll'), value: 'all' },
+        { text: this.l('History'), value: 'history' },
+        { text: this.l('Forecast'), value: 'forecast' }
+    ];
+
     constructor(injector: Injector,
                 private _cashflowServiceProxy: CashflowServiceProxy,
                 private _filtersService: FiltersService,
@@ -800,6 +824,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     ngOnInit() {
         super.ngOnInit();
         this.initLocalization();
+        this.displayedStatsDetails$.subscribe((details) => this.displayedStatsDetails = details);
+        this.statsDetailResult$.subscribe(details => {
+            this.detailsContainsHistorical = this.isInstanceAdmin && details.some(item => !!item.date);
+            this.detailsContainsForecasts = this.isInstanceAdmin && details.some(item => !!item.forecastId);
+            this.statsDetailResult = details;
+        });
+
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.currencyId;
         this.requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Monthly;
@@ -811,7 +842,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         this._bankAccountsService.load();
-
         const syncAccounts$ = this._bankAccountsService.syncAccounts$.pipe(first());
         forkJoin(getCashFlowInitialData$, getForecastModels$, getCategoryTree$, getCashflowGridSettings, syncAccounts$)
             .subscribe(([initialData, forecastModels, categoryTree, cashflowSettings, syncAccounts]) => {
@@ -3829,18 +3859,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             .subscribe((result) => {  });
     }
 
-    /** Format moment js object to the lowest interval */
-    formatToLowest(date, lowestPeriod): string {
-        let formatAbbr = '';
-        for (let format of Object.keys(this.momentFormats)) {
-            formatAbbr += `${this.momentFormats[format]}.`;
-            if (format === lowestPeriod) {
-                break;
-            }
-        }
-        return date.format(formatAbbr);
-    }
-
     /** @todo refactor */
     getCellType(cell, area) {
         let cellType;
@@ -4231,74 +4249,81 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
             clickedCellPrefix !== CategorizationPrefixes.AccountName
         ) {
-            let columnFields = this.getColumnFields();
-            let lowestCaption = this.getLowestFieldCaptionFromPath(cellObj.cell.columnPath, columnFields);
             this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
             this._cashflowServiceProxy
                 .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
                 .subscribe(result => {
                     if (result.length !== 0) {
-                        let forecastIds: number[] = [];
-                        let forecastDates = [];
-                        result.forEach((item, i) => {
-                            if (item.forecastId) {
-                                forecastIds.push(item.forecastId);
-                                if (!underscore.contains(forecastDates, item.forecastDate))
-                                    forecastDates.push(item.forecastDate);
-                            }
-                        });
-                        if (forecastIds.length) {
-                            this._cashFlowForecastServiceProxy
-                                .deleteForecasts(InstanceType[this.instanceType], this.instanceId, forecastIds)
-                                .subscribe(result => {
-                                    let temp = {};
-                                    for (let i = this.cashflowData.length - 1; i >= 0; i--) {
-                                        let item = this.cashflowData[i];
-
-                                        if (underscore.contains(forecastIds, item.forecastId)) {
-                                            this.cashflowData.splice(i, 1);
-                                            if (!temp[item.forecastId])
-                                                temp[item.forecastId] = { 'affectedTransactions': [] };
-
-                                            temp[item.forecastId]['affectedTransactions'].push(item);
-                                        } else {
-                                            let itemForRemoveIndex = 0;
-                                            forecastDates.forEach((date, i) => {
-                                                if (moment(date).utc().isSame(item.date)) {
-                                                    itemForRemoveIndex = i;
-                                                }
-                                            });
-                                            if (itemForRemoveIndex)
-                                                forecastDates.splice(itemForRemoveIndex, 1);
-                                        }
-                                    }
-
-                                    forecastDates.forEach((date, i) => {
-                                        forecastIds.forEach((id, i) => {
-                                            temp[id]['affectedTransactions'].forEach(item => {
-                                                this.cashflowData.push(
-                                                    this.createStubTransaction({
-                                                        date: item.date,
-                                                        initialDate: (<any>item).initialDate,
-                                                        amount: 0,
-                                                        cashflowTypeId: item.cashflowTypeId,
-                                                        accountId: item.accountId
-                                                    }));
-
-                                                this.updateTreePathes(item, true);
-                                            });
-                                        });
-                                    });
-
-                                    this.updateDataSource()
-                                        .then(() => {
-                                            this.notify.success(this.l('Forecasts_deleted'));
-                                        });
-                                });
-                        }
+                        this.removeForecasts(result);
                     }
                 });
         }
+    }
+
+    removeForecasts(forecasts: CashFlowStatsDetailDto[]): Observable<any> {
+        let result$ = of(null);
+        let forecastIds: number[] = [];
+        let forecastDates = [];
+        forecasts.forEach(item => {
+            if (item.forecastId) {
+                forecastIds.push(item.forecastId);
+                if (!underscore.contains(forecastDates, item.forecastDate))
+                    forecastDates.push(item.forecastDate);
+            }
+        });
+        if (forecastIds.length) {
+            result$ = this._cashFlowForecastServiceProxy
+                .deleteForecasts(InstanceType[this.instanceType], this.instanceId, forecastIds).pipe(
+                    publishReplay(),
+                    refCount()
+                );
+            result$.subscribe(() => {
+                let temp = {};
+                for (let i = this.cashflowData.length - 1; i >= 0; i--) {
+                    let item = this.cashflowData[i];
+
+                    if (underscore.contains(forecastIds, item.forecastId)) {
+                        this.cashflowData.splice(i, 1);
+                        if (!temp[item.forecastId])
+                            temp[item.forecastId] = { 'affectedTransactions': [] };
+
+                        temp[item.forecastId]['affectedTransactions'].push(item);
+                    } else {
+                        let itemForRemoveIndex = 0;
+                        forecastDates.forEach((date, i) => {
+                            if (moment(date).utc().isSame(item.date)) {
+                                itemForRemoveIndex = i;
+                            }
+                        });
+                        if (itemForRemoveIndex)
+                            forecastDates.splice(itemForRemoveIndex, 1);
+                    }
+                }
+
+                forecastDates.forEach(() => {
+                    forecastIds.forEach(id => {
+                        temp[id]['affectedTransactions'].forEach(item => {
+                            this.cashflowData.push(
+                                this.createStubTransaction({
+                                    date: item.date,
+                                    initialDate: (<any>item).initialDate,
+                                    amount: 0,
+                                    cashflowTypeId: item.cashflowTypeId,
+                                    accountId: item.accountId
+                                }));
+
+                            this.updateTreePathes(item, true);
+                        });
+                    });
+                });
+
+                this.updateDataSource()
+                    .then(() => {
+                        this.notify.success(this.l('Forecasts_deleted'));
+                    });
+            });
+        }
+        return result$;
     }
 
     cellCanBeTargetOfCopy(cellObj): boolean {
@@ -4333,9 +4358,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                  * If cell is forecast - if amount of results is 0 - add, >1 - show details
                  */
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
+                const cellIsNotHistorical = this.cellIsNotHistorical(cellObj);
                 if (
                     /** disallow adding historical periods */
-                    this.cellIsNotHistorical(cellObj) &&
+                    cellIsNotHistorical &&
                     /** allow adding only for empty cells */
                     result.length === 0 &&
                     /** disallow adding of these levels */
@@ -4353,7 +4379,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.handleForecastAdding(cellObj, result);
                     }
                 } else {
-                    this.showTransactionDetail(result);
+                    this.showTransactionDetail(result, cellIsNotHistorical);
                 }
             });
     }
@@ -4466,13 +4492,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.detailsModifyingNumberBoxCellObj = null;
     }
 
-    showTransactionDetail(details) {
-        this.statsDetailResult = details.map(detail => {
+    showTransactionDetail(details, cellIsNotHistorical = this.detailsPeriodIsNotHistorical) {
+        this._statsDetailResult.next(details.map(detail => {
             this.removeLocalTimezoneOffset(detail.date);
             this.removeLocalTimezoneOffset(detail.forecastDate);
             return detail;
-        });
-        this.detailsContainsHistorical = this.isInstanceAdmin && this.statsDetailResult.some(item => !item.forecastId) ? 'always' : 'none';
+        }));
+        this.detailsPeriodIsNotHistorical = cellIsNotHistorical;
 
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
@@ -5562,10 +5588,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    onCloseCalculator(e) {
-        this.closeCalculator();
-    }
-
     closeCalculator() {
         this.calculatorShowed = false;
         if (this.modifyingCellNumberBox) {
@@ -5721,6 +5743,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             }
                             return true;
                         });
+                        this._statsDetailResult.next(this.statsDetailResult);
                     }, error => {
                         abp.ui.clearBusy();
                     });
@@ -5766,5 +5789,27 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     getBankAccountName(bankAccount) {
         return (bankAccount.accountName || '(no name)') + ': ' + bankAccount.accountNumber;
+    }
+
+    changeDetailsTab(e) {
+        this.detailsTab.next(e.addedItems[0].value);
+    }
+
+    openForecastAddDialog() {
+        console.log('add forecast');
+    }
+
+    deleteSelectedForecasts() {
+        /** get only forecasts, filter out forecasts and adjustments */
+        const forecasts = this.cashFlowGrid.instance.getSelectedRowKeys().filter(item => item.forecastId);
+        this.removeForecasts(forecasts).subscribe(() => {
+            /** Update stats details */
+            this._statsDetailResult.next(difference(this.statsDetailResult, forecasts));
+        });
+    }
+
+    onDetailsSelectionChanged(e) {
+        this.detailsSomeHistoricalItemsSelected = e.selectedRowKeys.some(item => !!item.date);
+        this.detailsSomeForecastsItemsSelected = e.selectedRowKeys.some(item => item.forecastId);
     }
 }
