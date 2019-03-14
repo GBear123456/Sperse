@@ -56431,6 +56431,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
     apiKey!: string | undefined;
     activationEmailId!: number | undefined;
     passwordResetEmailId!: number | undefined;
+    isEnabled!: boolean | undefined;
 
     constructor(data?: IIAgeSettingsEditDto) {
         if (data) {
@@ -56446,6 +56447,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
             this.apiKey = data["apiKey"];
             this.activationEmailId = data["activationEmailId"];
             this.passwordResetEmailId = data["passwordResetEmailId"];
+            this.isEnabled = data["isEnabled"];
         }
     }
 
@@ -56461,6 +56463,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
         data["apiKey"] = this.apiKey;
         data["activationEmailId"] = this.activationEmailId;
         data["passwordResetEmailId"] = this.passwordResetEmailId;
+        data["isEnabled"] = this.isEnabled;
         return data; 
     }
 }
@@ -56469,6 +56472,7 @@ export interface IIAgeSettingsEditDto {
     apiKey: string | undefined;
     activationEmailId: number | undefined;
     passwordResetEmailId: number | undefined;
+    isEnabled: boolean | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
