@@ -1235,22 +1235,23 @@
             z-index: 3;
             transform: translate(0, 0) !important;
 
+            .resize-buttons {
+                z-index: 1;
+                text-align: center;
+                font-size: 22px;
+                position: absolute;
+                width: 100%;
+                left: 0;
+                line-height: 0.5;
+                font-weight: bold;
+                letter-spacing: 3px;
+                color: #cecece;
+            }
+
             .configBlock {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                .resize-buttons {
-                    z-index: 1;
-                    text-align: center;
-                    font-size: 22px;
-                    position: absolute;
-                    width: 100%;
-                    left: 0;
-                    line-height: 0.5;
-                    font-weight: bold;
-                    letter-spacing: 3px;
-                    color: #cecece;
-                }
 
                 /deep/ .dx-tabs {
                     border: none;
@@ -1275,17 +1276,16 @@
                     }
 
                 }
-
-                .close-btn {
-                    border: 0;
-                    padding: 0;
-                    position: absolute;
-                    right: 0;
-                    z-index: 1;
-                    top: 70px;
-                    &:hover {
-                        background: transparent !important;
-                    }
+            }
+            .close-btn {
+                border: 0;
+                padding: 0;
+                position: absolute;
+                right: 0;
+                z-index: 1;
+                top: 70px;
+                &:hover {
+                    background: transparent !important;
                 }
             }
         }

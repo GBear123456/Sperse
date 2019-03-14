@@ -5949,10 +5949,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.detailsTab.next(e.addedItems[0].value);
     }
 
-    openForecastAddDialog() {
-        console.log('add forecast');
-    }
-
     deleteSelectedForecasts() {
         /** get only forecasts, filter out forecasts and adjustments */
         const forecasts = this.cashFlowGrid.instance.getSelectedRowKeys().filter(item => item.forecastId);

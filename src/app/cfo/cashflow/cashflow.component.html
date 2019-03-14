@@ -28,7 +28,8 @@
                   handles="top">
         <div class="resize-buttons noselect">....</div>
         <div class="configBlock">
-            <dx-tabs [dataSource]="detailsTabs"
+            <dx-tabs *ngIf="detailsContainsForecasts && detailsContainsHistorical"
+                     [dataSource]="detailsTabs"
                      [width]="300"
                      [selectedIndex]="0"
                      [scrollByContent]="true"
@@ -36,7 +37,7 @@
                      (onSelectionChanged)="changeDetailsTab($event)">
             </dx-tabs>
             <div class="detailsButtons">
-                <dx-button [text]="'+ ' + l('AddForecastTransaction')" (onClick)="openForecastAddDialog()" [disabled]="disableAddForecastButton"></dx-button>
+                <dx-button [text]="'+ ' + l('AddForecastTransaction')" (onClick)="addNewForecast()" [disabled]="disableAddForecastButton"></dx-button>
                 <dx-button *ngIf="detailsContainsForecasts" [disabled]="!detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
                 <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!showAllVisible" (onClick)="refreshTransactionDetail(false)"></dx-button>
                 <dx-button class="showall-btn" [text]="l('Show all')" [visible]="showAllVisible" (onClick)="refreshTransactionDetail(true)" [disabled]="showAllDisable"></dx-button>
