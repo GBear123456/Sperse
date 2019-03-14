@@ -3489,7 +3489,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     createMovedForecastsModels(forecasts: CashFlowStatsDetailDto[], sourceData: CellInfo, targetData: CellInfo): UpdateForecastsInput {
         let date, forecastModel;
         let forecastModels = {'forecasts': []};
-        const moveCategoryToCategory = sourceData.categoryId === targetData.categoryId;
+        const moveCategoryToCategory = sourceData.categoryId === targetData.categoryId && sourceData.subCategoryId === targetData.subCategoryId;
         forecasts.forEach(forecast => {
             date = this.getDateForForecast(targetData.fieldCaption, targetData.date.startDate, targetData.date.endDate, forecast.forecastDate.utc());
             forecastModel = new UpdateForecastInput({
@@ -3498,7 +3498,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 amount: forecast.debit !== null ? -forecast.debit : forecast.credit,
                 categoryId: moveCategoryToCategory && forecast.categoryId != targetData.categoryId
                     ? forecast.categoryId
-                    : targetData.categoryId || targetData.subCategoryId,
+                    : targetData.subCategoryId || targetData.categoryId,
                 transactionDescriptor: targetData.transactionDescriptor || forecast.description,
                 bankAccountId: forecast.accountId
             });
@@ -3569,7 +3569,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     updateMovedForecasts(forecasts: TransactionStatsDtoExtended[], sourceCellData: CellInfo, targetData: CellInfo) {
-        const moveCategoryToCategory = sourceCellData.categoryId === targetData.categoryId;
+        const moveCategoryToCategory = sourceCellData.categoryId === targetData.categoryId && sourceCellData.subCategoryId === targetData.subCategoryId;
         /** if the operation is update - then also remove the old objects (income or expense, net change and total balance) */
         forecasts.forEach((forecastInCashflow, index) => {
             /** Add stub to avoid hiding of old period from cashflow */
