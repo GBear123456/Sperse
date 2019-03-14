@@ -164,7 +164,7 @@
                         [minWidth]="200">
             </dxi-column>
 
-            <dxo-load-panel [enabled]="true"></dxo-load-panel>
+            <dxo-load-panel [enabled]="false"></dxo-load-panel>
             <dxo-scrolling mode="virtual"></dxo-scrolling>
 
             <div *dxTemplate="let cellData of 'dateCell'">{{cellData.value | date: 'MM/dd/yyyy'}}</div>

@@ -15,7 +15,7 @@ import SparkLine from 'devextreme/viz/sparkline';
 import ScrollView from 'devextreme/ui/scroll_view';
 import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, BehaviorSubject, Subject, from, combineLatest, forkJoin, of, zip } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, from, combineLatest, forkJoin, of } from 'rxjs';
 import {
     first,
     filter,
