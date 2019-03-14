@@ -148,7 +148,6 @@
 
     /deep/ .calculator-number-box {
         // padding: 0 !important;
-
         .dx-numberbox {
             float: left;
         }
@@ -1278,17 +1277,6 @@
 
             /deep/.dx-highlight-outline {
                 padding: 0;
-
-                &::after {
-                    content: '';
-                    position: absolute;
-                    border: 0;
-                    top: 0;
-                    left: 1px;
-                    bottom: 0;
-                    right: 0;
-                    pointer-events: none;
-                }
             }
 
             .dx-datagrid-headers {
@@ -1318,6 +1306,7 @@
                                 line-height: 1em;
                                 font-weight: 500;
                                 margin-bottom: 7px;
+
                                 & + div {
                                     line-height: 1em;
                                     color: @generalColor;
@@ -1326,7 +1315,7 @@
 
                             &.dx-command-select {
                                 padding: 20px 0;
-                                text-align: left!important;
+                                text-align: left !important;
                             }
 
                             &:hover,
@@ -1409,14 +1398,27 @@
                             }
                         }
 
+                        .dx-dropdowneditor-icon::before {
+                            font-family: DXIcons !important;
+                        }
+
+                        .dx-datagrid-revert-tooltip {
+                            display: none;
+                        }
+
+                        .dx-invalid-message * div {
+                            font-family: Montserrat !important;
+                        }
+
                         &.editable {
                             cursor: cell;
                         }
 
                         &.dx-editor-cell {
-                            padding: 0!important;
+                            padding: 0 !important;
                             line-height: initial;
                             text-align: left !important;
+
                             input {
                                 height: 36px;
                                 display: inline-block;
@@ -1424,6 +1426,7 @@
                                 background-color: initial;
                                 border: solid 1px #e5e9ec;
                             }
+
                             .dx-checkbox-container {
                                 height: 20px;
                             }
@@ -1481,8 +1484,32 @@
                             }
                         }
 
-                        .dx-invalid-message {
-                            display: none;
+                        &.dx-command-edit {
+                            padding: 0;
+
+                            .dx-link {
+                                display: inline-block;
+                                font: normal normal normal 14px/1 FontAwesome !important;
+                                text-rendering: auto;
+                                -webkit-font-smoothing: antialiased;
+                                -moz-osx-font-smoothing: grayscale;
+
+                                &.dx-link-save {
+                                    margin-right: 5px;
+
+                                    &::before {
+                                        font-size: 20px;
+                                        color: green;
+                                        content: "\f0c7";
+                                    }
+                                }
+
+                                &.dx-link-cancel::before {
+                                    font-size: 20px;
+                                    color: gray;
+                                    content: "\f0e2";
+                                }
+                            }
                         }
                     }
 
@@ -1496,6 +1523,7 @@
                     &.adjustmentRow {
                         td.dx-command-select {
                             pointer-events: none;
+
                             .dx-select-checkbox {
                                 display: none;
                             }
@@ -1503,17 +1531,16 @@
 
                         &.projected {
                             td.forecastDate {
-                                position: relative;
+                                display: flex;
+                                align-items: center;
+                                padding-left: 3px;
+
                                 &:before {
-                                    position: absolute;
                                     content: '!';
-                                    left: 2px;
-                                    display: block;
                                     color: #f89800;
                                     font-weight: 800;
                                     font-size: 18px;
-                                    top: 3px;
-                                    font-family: Montserrat;
+                                    margin-right: 5px;
                                 }
                             }
                         }
@@ -1555,12 +1582,15 @@
 
         .cashflow-scroll {
             height: calc(~'100vh - 210px');
+
             &.withCashflowFooterToolbar {
                 padding-bottom: 42px;
             }
+
             &.subscriptionBarIsVisible {
                 height: calc(~'100vh - 255px');
             }
+
             /deep/ .dx-scrollable-content {
                 transform: none !important;
             }
