@@ -143,6 +143,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     allowChangingForecast: boolean;
     showAllVisible = false;
     showAllDisable = false;
+    disableAddForecastButton = true;
     private noRefreshedAfterSync: boolean;
 
     /** Config of header */
@@ -4387,6 +4388,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         };
         this.showAllVisible = false;
         this.showAllDisable = false;
+
         cellObj.cell.rowPath.forEach(item => {
             if (item) {
                 let [ key, prefix ] = [ item.slice(2), item.slice(0, 2) ];
@@ -4396,6 +4398,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 filterParams['categoryId'] = -1;
             }
         });
+
         return StatsDetailFilter.fromJS(filterParams);
     }
 
@@ -4479,6 +4482,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             return detail;
         });
         this.detailsContainsHistorical = this.isInstanceAdmin && this.statsDetailResult.some(item => !item.forecastId) ? 'always' : 'none';
+        this.disableAddForecastButton = !this.statsDetailFilter.categoryId || (this.statsDetailFilter.cashflowTypeId != Income && this.statsDetailFilter.cashflowTypeId != Expense);
 
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
@@ -4675,6 +4679,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.statsDetailResult = undefined;
         this.showAllVisible = false;
         this.showAllDisable = false;
+        this.disableGetForecastButton = true;
         this.handleBottomHorizontalScrollPosition();
         this.handleVerticalScrollPosition();
     }
@@ -5200,6 +5205,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.searchValue) {
             this.showAllVisible = true;
             this.showAllDisable = true;
+            this.disableGetForecastButton = true;
             let filterParams = {
                 startDate: this.requestFilter.startDate,
                 endDate: this.requestFilter.endDate,
