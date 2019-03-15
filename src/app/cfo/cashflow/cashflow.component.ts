@@ -5385,7 +5385,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         dataGrid.beginUpdate();
         dataGrid.option('editing.mode', 'row');
-        dataGrid.columnOption("command:edit", { width: 50 });
+        dataGrid.columnOption('command:edit', { width: 50 });
         dataGrid.columnOption('forecastDate', { allowEditing: true });
         dataGrid.columnOption('description', { allowEditing: true });
         dataGrid.columnOption('debit', { allowEditing: true });
@@ -5423,8 +5423,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.cancel = true;
             return;
         }
-
-        let momentDate = moment(data.forecastDate);
+        /** if data.forecastDate is Date - then convert it to the utc moment */
+        let momentDate = data.forecastDate.format ? data.forecastDate : moment.tz(data.forecastDate.getFullYear() + '-' + (data.forecastDate.getMonth() + 1) + '-' +  data.forecastDate.getDate(), 'UTC');
         let startDate = this.statsDetailFilter.startDate;
         let endDate = this.statsDetailFilter.endDate;
         if (!momentDate.isBetween(this.statsDetailFilter.startDate, this.statsDetailFilter.endDate, null, '[]')) {
@@ -5844,8 +5844,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         e.component.cellValue(e.rowIndex, e.columnIndex, value);
         if (!e.row.inserted) {
             e.component.saveEditData();
-        }
-        else {
+        } else {
             if (value) {
                 let oppositColumnField = e.column.dataField == 'credit' ? 'debit' : 'credit';
                 this.cashFlowGrid.instance.cellValue(e.row.rowIndex, oppositColumnField, null);
@@ -5865,7 +5864,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             e.component.updateDimensions();
         }
 
-        if (this.changeTransactionGridEditMode && !e.element.getElementsByClassName("dx-row-inserted").length) {
+        if (this.changeTransactionGridEditMode && !e.element.getElementsByClassName('dx-row-inserted').length) {
             let dataGrid = e.component;
             dataGrid.beginUpdate();
             dataGrid.option('editing.mode', 'cell');
