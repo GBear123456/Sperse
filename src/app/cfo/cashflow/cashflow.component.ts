@@ -204,7 +204,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Whether stats details contains historical data */
     detailsContainsHistorical: boolean;
     detailsContainsForecasts: boolean;
-    detailsPeriodIsNotHistorical: boolean;
+    detailsPeriodIsHistorical: boolean;
     detailsSomeHistoricalItemsSelected: boolean;
     detailsSomeForecastsItemsSelected: boolean;
 
@@ -4381,7 +4381,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.handleForecastAdding(cellObj, result);
                     }
                 } else {
-                    this.showTransactionDetail(result, cellIsNotHistorical);
+                    this.detailsPeriodIsHistorical = !cellIsNotHistorical;
+                    this.showTransactionDetail(result);
                 }
             });
     }
@@ -4500,14 +4501,25 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.detailsModifyingNumberBoxCellObj = null;
     }
 
-    showTransactionDetail(details, cellIsNotHistorical = this.detailsPeriodIsNotHistorical) {
+    showTransactionDetail(details) {
         this._statsDetailResult.next(details.map(detail => {
             this.removeLocalTimezoneOffset(detail.date);
             this.removeLocalTimezoneOffset(detail.forecastDate);
             return detail;
         }));
-        this.detailsPeriodIsNotHistorical = cellIsNotHistorical;
-        this.disableAddForecastButton = cellIsNotHistorical && !this.statsDetailFilter.categoryId || (this.statsDetailFilter.cashflowTypeId != Income && this.statsDetailFilter.cashflowTypeId != Expense);
+        /** If period is historical*/
+        this.disableAddForecastButton = this.detailsPeriodIsHistorical
+            /** Or not category, subcategory or descriptor */
+            || (
+                !this.statsDetailFilter.categoryId
+                && !this.statsDetailFilter.subCategoryId
+                && !this.statsDetailFilter.transactionDescriptor
+            )
+            /** Or not income or expense*/
+            || (
+                this.statsDetailFilter.cashflowTypeId != Income
+                && this.statsDetailFilter.cashflowTypeId != Expense
+            );
 
         setTimeout(() => {
             let height = this._cacheService.get(this.cashflowDetailsGridSessionIdentifier);
