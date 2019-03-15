@@ -25,6 +25,10 @@
                             <timezone-combo id="Timezone" [(selectedTimeZone)]="settings.general.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
                         </div>
                         <div class="form-group">
+                            <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>
+                            <input  id="PublicSiteUrl" type="url" name="PublicSiteUrl" class="form-control" [(ngModel)]="settings.general.publicSiteUrl" maxlength="128">
+                        </div>
+                        <div class="form-group">
                             <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
                             <input id="ZendeskAccountUrl" type="text" name="ZendeskAccountUrl" class="form-control" [(ngModel)]="settings.general.zendeskAccountUrl" maxlength="128">
                         </div>
@@ -437,13 +441,6 @@
                             <div class="form-group">
                                 <label for="EPCVIPApiKey">{{l("EPCVIPApiKey")}}</label>
                                 <input id="EPCVIPApiKey" type="text" name="EPCVIPApiKey" class="form-control" [(ngModel)]="epcvipSettings.apiKey" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="EPCVIPPublicSiteUrl">{{l("EPCVIPPublicSiteUrl")}}</label>
-                                <input #epcvipPublicSiteUrl="ngModel" id="EPCVIPPublicSiteUrl" type="url" name="EPCVIPPublicSiteUrl" class="form-control" [(ngModel)]="epcvipSettings.publicSiteUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
-                            </div>
-                            <div>
-                                <span class="help-block text-danger" *ngIf="!epcvipPublicSiteUrl.valid && !epcvipPublicSiteUrl.pristine">{{l("Invalid_EPCVIPPublicSiteUrl")}}</span>
                             </div>
                         </div>
                     </tab>
