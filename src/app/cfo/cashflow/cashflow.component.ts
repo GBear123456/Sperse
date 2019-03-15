@@ -3537,7 +3537,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 categoryId: moveCategoryToCategory && forecast.categoryId != targetData.categoryId
                     ? forecast.categoryId
                     : targetData.subCategoryId || targetData.categoryId,
-                transactionDescriptor: targetData.transactionDescriptor,
+                transactionDescriptor: targetData.transactionDescriptor || forecast.descriptor,
                 bankAccountId: forecast.accountId,
                 description: forecast.description
             });
