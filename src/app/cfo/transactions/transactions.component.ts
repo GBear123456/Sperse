@@ -160,7 +160,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             },
-            onChanged: this.getTotalValues.bind(this)
+            onChanged: () => {
+                this.dataGrid.instance.clearSelection();
+                this.getTotalValues.bind(this);
+            }
         });
 
         this._bankAccountsService.load();
