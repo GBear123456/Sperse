@@ -1352,7 +1352,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     changeSelectedForecastModel(modelObj) {
         if (modelObj.itemIndex !== this.forecastModelsObj.selectedItemIndex &&
-            !modelObj.element.find('.editModel').length) {
+            !$(modelObj.element).find('.editModel').length) {
             this.selectedForecastModel = modelObj.itemData;
             this.forecastModelsObj.selectedItemIndex = modelObj.itemIndex;
             this._cacheService.set(`cashflow_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
