@@ -3,7 +3,7 @@
         <ng-container *ngIf="packages && packages.length; else nopackages">
             <h2 class="title">{{ title }}</h2>
             <h3 class="subtitle">{{ subtitle }}</h3>
-            <div class="billingPeriod">
+            <div class="billingPeriod" [hidden]="configurator !== 'billingPeriod'">
                 <div [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('BilledMonthly') }}</div>
                 <mat-slide-toggle
                     [checked]="selectedBillingPeriod === billingPeriod.Yearly"
@@ -13,12 +13,15 @@
                     <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
                 </div>
             </div>
-            <div class="slider" *ngIf="usersAmount !== null">
+            <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator !== 'slider'">
                 <span class="totalSeatsLabel">{{ l('TotalSeatsLabel') }}</span>
                 <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
                 <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
                 <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
             </div>
+            <button class="toggle" (click)="configurator === 'slider' ? configurator = 'billingPeriod' : configurator = 'slider'">
+                {{ configurator === 'slider' ? 'Change plan' : 'Add more seats' }}
+            </button>
         </ng-container>
         <ng-template #nopackages>
             <h2 class="title">{{ localizationService.ls('Platform', 'ModuleIsNotUpgradable', module) }}</h2>
@@ -45,6 +48,15 @@
                     (click)="selectPackage(i)">
                 </package-card>
             </ng-container>
+        </div>
+        <div *ngIf="module === modules.CFO" class="footerDescription">
+            <p>All Packages Include:</p>
+            <ul>
+                <li>Cash flow transactions report with calculator</li>
+                <li>Cash flow visualt statistics and statements</li>
+                <li>Free online support and product training</li>
+                <li>Minimum 5 seats licenses</li>
+            </ul>
         </div>
         <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
             <div>
