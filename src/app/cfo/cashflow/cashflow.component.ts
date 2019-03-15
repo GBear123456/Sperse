@@ -3531,8 +3531,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 categoryId: moveCategoryToCategory && forecast.categoryId != targetData.categoryId
                     ? forecast.categoryId
                     : targetData.subCategoryId || targetData.categoryId,
-                transactionDescriptor: targetData.transactionDescriptor || forecast.description,
-                bankAccountId: forecast.accountId
+                transactionDescriptor: targetData.transactionDescriptor,
+                bankAccountId: forecast.accountId,
+                description: forecast.description
             });
 
             if (forecastModel)
@@ -4567,7 +4568,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 categoryId: subCategoryId || categoryId,
                 transactionDescriptor: transactionDescriptor,
                 currencyId: this.currencyId,
-                amount: newValue
+                amount: newValue,
+                description: transactionDescriptor
             });
 
             this._cashFlowForecastServiceProxy.addForecast(
@@ -5442,7 +5444,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             categoryId: data.categoryId,
             transactionDescriptor: data.description,
             currencyId: this.currencyId,
-            amount: data.debit ? -data.debit : data.credit
+            amount: data.debit ? -data.debit : data.credit,
+            description: data.description
         });
 
         let deferred = $.Deferred();
