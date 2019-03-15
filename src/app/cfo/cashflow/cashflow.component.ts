@@ -5325,8 +5325,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.transactionId = e.data.id;
             this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
             this.transactionInfo.toggleTransactionDetailsInfo();
-        }
-        else if (e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
+        } else if (e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
 
@@ -5521,9 +5520,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     data[this.mapParamNameToUpdateParam('description')] = e.oldData['description'];
                 }
                 /* Set forecast category */
-                let forecastData = this.cashflowData.find(x => x.forecastId == e.key.id);
+                let forecastData = this.cashflowData.find(x => {
+                    return x.forecastId == e.key.id && (x.cashflowTypeId === Income || x.cashflowTypeId === Expense);
+                });
                 data['categoryId'] = forecastData.subCategoryId || forecastData.categoryId;
-
                 forecastMethod = this._cashFlowForecastServiceProxy
                     .updateForecast(
                         InstanceType10[this.instanceType],
@@ -5534,7 +5534,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             let deferred = $.Deferred();
             e.cancel = deferred.promise();
-            forecastMethod.subscribe(res => {
+            forecastMethod.subscribe(() => {
                 /** Remove opposite cell */
                 if (paramName === 'debit' || paramName === 'credit') {
                     let oppositeParamName = paramName === 'debit' ? 'credit' : 'debit';
