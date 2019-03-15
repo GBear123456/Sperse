@@ -22,6 +22,7 @@ import {
 } from 'shared/service-proxies/service-proxies';
 import { AccountPermission } from './account-permission.model';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 
 @Component({
     selector: 'app-permissions',
@@ -86,10 +87,12 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         onRefresh: this.onRefresh.bind(this),
     };
     constructor(injector: Injector,
-                private userServiceProxy: UserServiceProxy,
-                private bankAccountsServiceProxy: BankAccountsServiceProxy,
-                private securityManagmentServiceProxy: SecurityManagementServiceProxy,
-                public dialog: MatDialog) {
+        private userServiceProxy: UserServiceProxy,
+        private bankAccountsServiceProxy: BankAccountsServiceProxy,
+        private securityManagmentServiceProxy: SecurityManagementServiceProxy,
+        private zendeskService: ZendeskService,
+        public dialog: MatDialog
+    ) {
         super(injector);
     }
 
@@ -146,11 +149,13 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
     }
 
     ngAfterViewInit(): void {
+        this.zendeskService.showWidget();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
     }
 
     ngOnDestroy() {
+        this.zendeskService.hideWidget();
         this.rootComponent.overflowHidden(false);
     }
 

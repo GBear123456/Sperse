@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 
 import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -8,6 +8,8 @@ import 'devextreme/data/odata/store';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 import * as XLSX from 'xlsx';
 import { finalize } from 'rxjs/operators';
+
+import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 
 class UploadCategoryModel {
     'Cashflow Type': string;
@@ -27,7 +29,7 @@ class UploadCategoryModel {
     providers: [ClassificationServiceProxy, CategoryTreeServiceProxy],
     animations: [appModuleAnimation()]
 })
-export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
+export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
@@ -35,7 +37,9 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     override: boolean = false;
 
     constructor(injector: Injector,
-        private _categoryTreeServiceProxy: CategoryTreeServiceProxy) {
+        private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
+        private zendeskService: ZendeskService
+    ) {
         super(injector);
     }
 
@@ -58,6 +62,10 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
         //    }
         //  }
         //};
+    }
+
+    ngAfterViewInit(): void {
+        this.zendeskService.showWidget();
     }
 
     locationColumn_calculateCellValue(rowData) {
@@ -124,6 +132,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     }
 
     ngOnDestroy() {
+        this.zendeskService.hideWidget();
         this.getRootComponent().overflowHidden();
     }
 }
