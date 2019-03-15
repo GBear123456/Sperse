@@ -52,7 +52,7 @@
                            (click)="applyFilter($event, data)">
                         </a>
                     </div>
-                    <div [ngClass]="template" *ngIf="template =='bottomInput'">
+                    <div [ngClass]="template" *ngIf="template =='bottomInput'" (click)="$event.stopPropagation()">
                         <div class="input-wrap">
                             <dx-text-box [(value)]="data.bottomInputValue" [showClearButton]="true"></dx-text-box>
                         </div>
