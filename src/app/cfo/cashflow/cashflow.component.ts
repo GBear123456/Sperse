@@ -17,6 +17,7 @@ import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, BehaviorSubject, Subject, from, combineLatest, forkJoin, of } from 'rxjs';
 import {
+    finalize,
     first,
     filter,
     pluck,
@@ -224,6 +225,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private _calculatorShowed = false;
 
     private expandBeforeIndex: number = null;
+
+    private detailsSearching = false;
 
     public set calculatorShowed(value: boolean) {
         if (this._calculatorShowed = value) {
@@ -5096,7 +5099,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @param cellData
      */
     calculateCellValue(cellData, dataArray) {
-        let cellValuePerformance = performance.now();
         let currentDateDate = moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc').date();
         /** {cashflowTypeId: 'T', accountId: 10, quarter: 3, year: 2015, month: 5} */
         let value = dataArray.reduce((sum, cashflowData) => {
@@ -5239,30 +5241,33 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     searchValueChange(value) {
-        this.searchValue = value;
-
-        if (this.searchValue) {
-            this.showAllVisible = true;
-            this.showAllDisable = true;
-            this.disableAddForecastButton = true;
-            let filterParams = {
-                startDate: this.requestFilter.startDate,
-                endDate: this.requestFilter.endDate,
-                currencyId: this.currencyId,
-                accountIds: this.requestFilter.accountIds || [],
-                businessEntityIds: this.requestFilter.businessEntityIds || [],
-                searchTerm: this.searchValue,
-                forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
-            };
-            this.statsDetailFilter = StatsDetailFilter.fromJS(filterParams);
-            this._cashflowServiceProxy
-                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                .subscribe(result => {
-                    this.showTransactionDetail(result);
-                });
-        } else {
-            this.statsDetailResult = null;
-            this.closeTransactionsDetail();
+        if (!this.detailsSearching) {
+            this.detailsSearching = true;
+            this.searchValue = value;
+            if (this.searchValue) {
+                this.showAllVisible = true;
+                this.showAllDisable = true;
+                this.disableAddForecastButton = true;
+                let filterParams = {
+                    startDate: this.requestFilter.startDate,
+                    endDate: this.requestFilter.endDate,
+                    currencyId: this.currencyId,
+                    accountIds: this.requestFilter.accountIds || [],
+                    businessEntityIds: this.requestFilter.businessEntityIds || [],
+                    searchTerm: this.searchValue,
+                    forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
+                };
+                this.statsDetailFilter = StatsDetailFilter.fromJS(filterParams);
+                this._cashflowServiceProxy
+                    .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                    .pipe(finalize(() => this.detailsSearching = false ))
+                    .subscribe(result => {
+                        this.showTransactionDetail(result);
+                    });
+            } else {
+                this.statsDetailResult = null;
+                this.closeTransactionsDetail();
+            }
         }
     }
 
