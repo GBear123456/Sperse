@@ -7,6 +7,7 @@ import {
     distinct,
     distinctUntilChanged,
     finalize,
+    filter,
     first,
     switchMap,
     takeUntil,
@@ -190,7 +191,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             pluck('leadStageCount'),
             mergeMap(leadsStages => Object.keys(leadsStages)),
             distinct(),
-            switchMap(stageId => this.getLeadStageSeriaConfig(+stageId)),
+            mergeMap(stageId => this.getLeadStageSeriaConfig(+stageId)),
             toArray(),
             map(stages => stages.sort((a, b) => +a.sortOrder > +b.sortOrder ? 1 : (+a.sortOrder === +b.sortOrder ? 0 : -1)))
         );
@@ -201,16 +202,15 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             purpose: AppConsts.PipelinePurposeIds.lead,
             stageId: stageId
         }))).pipe(
+            filter(stage => !!stage),
             first(),
-            map(stage => {
-                return {
-                    valueField: stageId.toString(),
-                    name: stage && stage.name,
-                    color: (stage && stage.color) || this._pipelineService.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder),
-                    type: 'stackedBar',
-                    sortOrder: stage && stage.sortOrder
-                };
-            })
+            map(stage => ({
+                valueField: stageId.toString(),
+                name: stage && stage.name,
+                color: (stage && stage.color) || this._pipelineService.getStageDefaultColorByStageSortOrder(stage && stage.sortOrder),
+                type: 'stackedBar',
+                sortOrder: stage && stage.sortOrder
+            }))
         );
     }
 

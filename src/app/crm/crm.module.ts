@@ -71,6 +71,9 @@ import { AppStoreService } from '@app/store/app-store.service';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
+import { PipelinesStoreActions } from '@app/crm/store';
+import { Store } from '@node_modules/@ngrx/store';
+import { AppStore } from '@app/store';
 
 @NgModule({
     imports: [
@@ -158,7 +161,8 @@ export class CrmModule {
         private _appService: AppService,
         private _appStoreService: AppStoreService,
         private _importLeadsService: ImportLeadsService,
-        private _permissionService: PermissionCheckerService
+        private _permissionService: PermissionCheckerService,
+        private store$: Store<AppStore.State>
     ) {
         if (abp.session.userId) {
             setTimeout(() => this._appStoreService.loadUserDictionaries(), 2000);
@@ -169,6 +173,7 @@ export class CrmModule {
                     else
                         _importLeadsService.stopImportCheck();
                 });
+            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
         }
     }
 }

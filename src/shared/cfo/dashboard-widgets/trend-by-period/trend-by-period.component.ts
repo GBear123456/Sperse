@@ -282,7 +282,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     }
 
     render(component = undefined) {
-        component = component || this.chartComponent 
+        component = component || this.chartComponent
             && this.chartComponent.instance;
         if (component) {
             clearTimeout(this.renderTimeout);

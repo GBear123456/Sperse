@@ -53,7 +53,7 @@ export const getSortedPipeline = (filter: Filter) => createSelector(
 
 export const getPipelineStages = (filter: Filter) => createSelector(
     getPipeline(filter),
-    (pipeline: PipelineDto) => pipeline.stages
+    (pipeline: PipelineDto) => pipeline && pipeline.stages
 );
 
 export const getPipelineTreeSource = (filter: Filter) => createSelector(
@@ -66,7 +66,7 @@ export const getPipelineTreeSource = (filter: Filter) => createSelector(
                 parent: 0,
                 name: pipeline.name
             });
-            pipeline.stages.forEach((stage, j) => {
+            pipeline.stages.forEach(stage => {
                 result.push({
                     id: pipeline.id + ':' + stage.id,
                     parent: pipeline.name,
@@ -82,6 +82,6 @@ export const getPipelineTreeSource = (filter: Filter) => createSelector(
 export const getStageById = (filter: Filter) => createSelector(
     getPipelineStages(filter),
     (stages: StageDto[]) => {
-        return stages.find(stage => stage.id === +filter.stageId);
+        return stages && stages.find(stage => stage.id === +filter.stageId);
     }
 );
