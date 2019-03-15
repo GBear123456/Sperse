@@ -3537,7 +3537,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 categoryId: moveCategoryToCategory && forecast.categoryId != targetData.categoryId
                     ? forecast.categoryId
                     : targetData.subCategoryId || targetData.categoryId,
-                transactionDescriptor: targetData.transactionDescriptor,
+                transactionDescriptor: targetData.transactionDescriptor || forecast.descriptor,
                 bankAccountId: forecast.accountId,
                 description: forecast.description
             });
@@ -4575,7 +4575,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 transactionDescriptor: transactionDescriptor,
                 currencyId: this.currencyId,
                 amount: newValue,
-                description: transactionDescriptor
+                description: null
             });
 
             this._cashFlowForecastServiceProxy.addForecast(
@@ -5286,7 +5286,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     detailsCellIsEditable(e) {
-        return e.data && e.data.forecastId && ['forecastDate', 'description', 'debit', 'credit'].indexOf(e.column.dataField) !== -1;
+        return e.data && e.data.forecastId && ['forecastDate', 'description', 'descriptor', 'debit', 'credit'].indexOf(e.column.dataField) !== -1;
     }
 
     onDetailsCellPrepared(e) {
@@ -5340,7 +5340,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellDoubleClick(e) {
-        if (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'accountNumber')
+        if (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'descriptor' || e.column.dataField == 'accountNumber')
             e.component.editCell(e.rowIndex, e.column.dataField);
 
         if (e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
@@ -5398,6 +5398,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         dataGrid.columnOption('command:edit', { width: 50 });
         dataGrid.columnOption('forecastDate', { allowEditing: true });
         dataGrid.columnOption('description', { allowEditing: true });
+        dataGrid.columnOption('descriptor', { allowEditing: true });
         dataGrid.columnOption('debit', { allowEditing: true });
         dataGrid.columnOption('credit', { allowEditing: true });
         dataGrid.columnOption('accountNumber', { allowEditing: true });
@@ -5450,7 +5451,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             endDate: endDate,
             cashFlowTypeId: data.cashflowTypeId,
             categoryId: data.categoryId,
-            transactionDescriptor: data.description,
+            transactionDescriptor: data.descriptor,
             currencyId: this.currencyId,
             amount: data.debit ? -data.debit : data.credit,
             description: data.description
@@ -5505,47 +5506,51 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let paramValue = paramName === 'debit' ? -e.newData[paramName] : e.newData[paramName];
         if (e.newData[paramName] !== null) {
             let paramNameForUpdateInput = this.mapParamNameToUpdateParam(paramName);
-            let data = {
-                id: e.key.id,
-                [paramNameForUpdateInput]: paramValue
-            };
+            let apiMethod: Observable<void>;
+            let oldData: CashFlowStatsDetailDto = e.oldData;
+            let isHistoricalTransaction = !!oldData.date;
 
-            if (data['date']) {
-                let momentDate = moment(data['date']);
-                this.addLocalTimezoneOffset(momentDate);
-                data['date'] = momentDate.toDate();
+            if (isHistoricalTransaction) { //historical transaction edit
             }
+            else {
+                let data = new UpdateForecastInput();
+                data.id = e.key.id;
+                data[paramNameForUpdateInput] = paramValue;
+                data.description = paramName == 'description' ? paramValue : oldData.description;
+                data.transactionDescriptor = paramName == 'descriptor' ? paramValue : oldData.descriptor;
 
-            let forecastMethod: Observable<void>;
-            if (data['amount'] === 0) {
-                forecastMethod = this._cashFlowForecastServiceProxy
-                    .deleteForecast(
-                        InstanceType10[this.instanceType],
-                        this.instanceId,
-                        data.id
-                    );
-
-            } else {
-                /* Set descriptor */
-                if (paramName != 'description') {
-                    data[this.mapParamNameToUpdateParam('description')] = e.oldData['description'];
+                if (data.date) {
+                    let momentDate = moment(data.date);
+                    this.addLocalTimezoneOffset(momentDate);
+                    data.date = momentDate.toDate();
                 }
-                /* Set forecast category */
-                let forecastData = this.cashflowData.find(x => {
-                    return x.forecastId == e.key.id && (x.cashflowTypeId === Income || x.cashflowTypeId === Expense);
-                });
-                data['categoryId'] = forecastData.subCategoryId || forecastData.categoryId;
-                forecastMethod = this._cashFlowForecastServiceProxy
-                    .updateForecast(
-                        InstanceType10[this.instanceType],
-                        this.instanceId,
-                        UpdateForecastInput.fromJS(data)
-                    );
+
+                if (data.amount === 0) {
+                    apiMethod = this._cashFlowForecastServiceProxy
+                        .deleteForecast(
+                            InstanceType10[this.instanceType],
+                            this.instanceId,
+                            data.id
+                        );
+
+                } else {
+                    /* Set forecast category */
+                    let forecastData = this.cashflowData.find(x => {
+                        return x.forecastId == e.key.id && (x.cashflowTypeId === Income || x.cashflowTypeId === Expense);
+                    });
+                    data.categoryId = forecastData.subCategoryId || forecastData.categoryId;
+                    apiMethod = this._cashFlowForecastServiceProxy
+                        .updateForecast(
+                            InstanceType10[this.instanceType],
+                            this.instanceId,
+                            data
+                        );
+                }
             }
 
             let deferred = $.Deferred();
             e.cancel = deferred.promise();
-            forecastMethod.subscribe(() => {
+            apiMethod.subscribe(() => {
                 /** Remove opposite cell */
                 if (paramName === 'debit' || paramName === 'credit') {
                     let oppositeParamName = paramName === 'debit' ? 'credit' : 'debit';
@@ -5557,12 +5562,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
 
                 let hideFromCashflow = paramNameForUpdateInput == 'accountId' && !underscore.contains(this.selectedBankAccountsIds, paramValue);
-                this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName], hideFromCashflow);
+                if (isHistoricalTransaction)
+                    this.updateHistoricalStatsDescriptor(paramValue, oldData);
+                else
+                    this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName], hideFromCashflow);
 
                 this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload();
                 deferred.resolve().done(() => {
-                    if (data['amount'] === 0) {
+                    if (paramNameForUpdateInput == 'amount' && paramValue == 0) {
                         this.statsDetailResult.every((v, index) => {
                             if (v == e.key) {
                                 this.statsDetailResult.splice(index, 1);
@@ -5577,6 +5585,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 e.component.cancelEditData();
             });
         }
+    }
+
+    updateHistoricalStatsDescriptor(descriptor, oldData: CashFlowStatsDetailDto) {
     }
 
     deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, key, oldDataDate, hideFromCashflow) {
@@ -5625,25 +5636,26 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.addCategorizationLevels(item);
             }
         });
-
     }
+
     mapParamNameToUpdateParam(paramName) {
         let detailsParamsToUpdateParams = {
             'forecastDate': 'date',
             'credit': 'amount',
             'debit': 'amount',
-            'description': 'transactionDescriptor',
+            'descriptor': 'transactionDescriptor',
+            'description': 'description',
             'accountId': 'bankAccountId'
         };
 
         return detailsParamsToUpdateParams[paramName];
     }
 
-    detailsDescriptionColumnWidth() {
+    detailsDescriptorColumnWidth() {
         return window.innerWidth > 1920 ? '30%' : '20%';
     }
 
-    detailsCommentsColumnWidth() {
+    detailsDescriptionColumnWidth() {
         const buttonsWidthWithCommentsTitle = 340;
         let commentsWidth = window.innerWidth * 0.23;
         return commentsWidth > buttonsWidthWithCommentsTitle ? window.innerWidth > 1600 ? '33%' : '23%' : buttonsWidthWithCommentsTitle;
@@ -5881,6 +5893,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             dataGrid.option('editing.mode', 'cell');
             dataGrid.columnOption('forecastDate', { allowEditing: false });
             dataGrid.columnOption('description', { allowEditing: false });
+            dataGrid.columnOption('descriptor', { allowEditing: false });
             dataGrid.columnOption('debit', { allowEditing: false });
             dataGrid.columnOption('credit', { allowEditing: false });
             dataGrid.columnOption('accountNumber', { allowEditing: false });

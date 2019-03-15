@@ -101,12 +101,11 @@
                         [allowEditing]="false"
                         [minWidth]="130">
             </dxi-column>
-            <dxi-column dataField="description"
-                        cellTemplate="descriptionTemplate"
-                        [width]="detailsDescriptionColumnWidth()"
+            <dxi-column dataField="descriptor"
                         [minWidth]="130"
+                        [width]="detailsDescriptorColumnWidth()"
                         [allowEditing]="false"
-                        [caption]="l('DetailsHeaders_Description')">
+                        [caption]="l('DetailsHeaders_Descriptor')">
                 <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
             <dxi-column dataField="debit"
@@ -137,7 +136,7 @@
                         [allowFiltering]="false"
                         [cssClass]="tabularFontName"
                         [allowEditing]="false"
-                        [minWidth]="190"
+                        [minWidth]="150"
                         editCellTemplate="accountsEditSelect">
             </dxi-column>
             <dxi-column dataField="accountId"
@@ -155,13 +154,15 @@
                         cellTemplate="typeCell"
                         [minWidth]="130">
             </dxi-column>
-            <dxi-column [caption]="l('DetailsHeaders_Comments')"
-                        dataField="comment"
-                        [width]="detailsCommentsColumnWidth()"
+            <dxi-column [caption]="l('DetailsHeaders_Description')"
+                        dataField="description"
+                        cellTemplate="descriptionTemplate"
+                        [width]="detailsDescriptionColumnWidth()"
+                        [minWidth]="200"
                         [allowSorting]="false"
                         [allowFiltering]="false"
-                        [allowEditing]="false"
-                        [minWidth]="200">
+                        [allowEditing]="false">
+                <dxo-header-filter [visible]="true"></dxo-header-filter>
             </dxi-column>
 
             <dxo-load-panel [enabled]="false"></dxo-load-panel>
