@@ -111,6 +111,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     googleAutoComplete: boolean;
     photoOriginalData: string;
     photoThumbnailData: string;
+    photoSourceData: string;
 
     addButtonVisible = {
         emails: false,
@@ -340,8 +341,9 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             companyName: this.company,
             title: this.title,
             photo: this.photoOriginalData ? ContactPhotoInput.fromJS({
-                originalImage: StringHelper.getBase64(this.photoOriginalData),
-                thumbnail: StringHelper.getBase64(this.photoThumbnailData)
+                original: StringHelper.getBase64(this.photoOriginalData),
+                thumbnail: StringHelper.getBase64(this.photoThumbnailData),
+                source: this.photoSourceData
             }) : null,
             note: this.notes,
             assignedUserId: assignedUserId || this.currentUserId,
@@ -816,6 +818,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             if (result) {
                 this.photoOriginalData = result.origImage;
                 this.photoThumbnailData = result.thumImage;
+                this.photoSourceData = result.source;
             }
         });
         $event.stopPropagation();
@@ -852,6 +855,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             this.similarCustomers = [];
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
+            this.photoSourceData = undefined;
             this.title = undefined;
             this.tagsComponent.reset();
             this.listsComponent.reset();

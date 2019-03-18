@@ -37506,9 +37506,10 @@ export interface ICreateContactLinkInput {
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
-    originalImage!: string;
+    original!: string;
     thumbnail!: string;
     photoSourceId!: string | undefined;
+    source!: string | undefined;
     comment!: string | undefined;
 
     constructor(data?: IContactPhotoInput) {
@@ -37522,9 +37523,10 @@ export class ContactPhotoInput implements IContactPhotoInput {
 
     init(data?: any) {
         if (data) {
-            this.originalImage = data["originalImage"];
+            this.original = data["original"];
             this.thumbnail = data["thumbnail"];
             this.photoSourceId = data["photoSourceId"];
+            this.source = data["source"];
             this.comment = data["comment"];
         }
     }
@@ -37538,18 +37540,20 @@ export class ContactPhotoInput implements IContactPhotoInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["originalImage"] = this.originalImage;
+        data["original"] = this.original;
         data["thumbnail"] = this.thumbnail;
         data["photoSourceId"] = this.photoSourceId;
+        data["source"] = this.source;
         data["comment"] = this.comment;
         return data; 
     }
 }
 
 export interface IContactPhotoInput {
-    originalImage: string;
+    original: string;
     thumbnail: string;
     photoSourceId: string | undefined;
+    source: string | undefined;
     comment: string | undefined;
 }
 
@@ -39836,9 +39840,10 @@ export interface IPhoneUsageTypeDto {
 
 export class CreateContactPhotoInput implements ICreateContactPhotoInput {
     contactId!: number;
-    originalImage!: string;
+    original!: string;
     thumbnail!: string;
     photoSourceId!: string | undefined;
+    source!: string | undefined;
     comment!: string | undefined;
 
     constructor(data?: ICreateContactPhotoInput) {
@@ -39853,9 +39858,10 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.originalImage = data["originalImage"];
+            this.original = data["original"];
             this.thumbnail = data["thumbnail"];
             this.photoSourceId = data["photoSourceId"];
+            this.source = data["source"];
             this.comment = data["comment"];
         }
     }
@@ -39870,9 +39876,10 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        data["originalImage"] = this.originalImage;
+        data["original"] = this.original;
         data["thumbnail"] = this.thumbnail;
         data["photoSourceId"] = this.photoSourceId;
+        data["source"] = this.source;
         data["comment"] = this.comment;
         return data; 
     }
@@ -39880,9 +39887,10 @@ export class CreateContactPhotoInput implements ICreateContactPhotoInput {
 
 export interface ICreateContactPhotoInput {
     contactId: number;
-    originalImage: string;
+    original: string;
     thumbnail: string;
     photoSourceId: string | undefined;
+    source: string | undefined;
     comment: string | undefined;
 }
 
@@ -53286,6 +53294,7 @@ export interface IChangePasswordInput {
 export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
     originalImage!: string;
     thumbnail!: string;
+    source!: string | undefined;
 
     constructor(data?: IUpdateProfilePictureInput) {
         if (data) {
@@ -53300,6 +53309,7 @@ export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
         if (data) {
             this.originalImage = data["originalImage"];
             this.thumbnail = data["thumbnail"];
+            this.source = data["source"];
         }
     }
 
@@ -53314,6 +53324,7 @@ export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
         data = typeof data === 'object' ? data : {};
         data["originalImage"] = this.originalImage;
         data["thumbnail"] = this.thumbnail;
+        data["source"] = this.source;
         return data; 
     }
 }
@@ -53321,6 +53332,7 @@ export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
 export interface IUpdateProfilePictureInput {
     originalImage: string;
     thumbnail: string;
+    source: string | undefined;
 }
 
 export class DownloadPictureInput implements IDownloadPictureInput {
@@ -59160,6 +59172,7 @@ export class UpdateUserPictureInput implements IUpdateUserPictureInput {
     userId!: number | undefined;
     image!: string | undefined;
     imageThumbnail!: string | undefined;
+    source!: string | undefined;
 
     constructor(data?: IUpdateUserPictureInput) {
         if (data) {
@@ -59175,6 +59188,7 @@ export class UpdateUserPictureInput implements IUpdateUserPictureInput {
             this.userId = data["userId"];
             this.image = data["image"];
             this.imageThumbnail = data["imageThumbnail"];
+            this.source = data["source"];
         }
     }
 
@@ -59190,6 +59204,7 @@ export class UpdateUserPictureInput implements IUpdateUserPictureInput {
         data["userId"] = this.userId;
         data["image"] = this.image;
         data["imageThumbnail"] = this.imageThumbnail;
+        data["source"] = this.source;
         return data; 
     }
 }
@@ -59198,6 +59213,7 @@ export interface IUpdateUserPictureInput {
     userId: number | undefined;
     image: string | undefined;
     imageThumbnail: string | undefined;
+    source: string | undefined;
 }
 
 export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
@@ -59205,6 +59221,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
     assignedRoleNames!: string[];
     profilePicture!: string | undefined;
     profileThumbnail!: string | undefined;
+    pictureSource!: string | undefined;
     sendActivationEmail!: boolean | undefined;
     setRandomPassword!: boolean | undefined;
     organizationUnits!: number[] | undefined;
@@ -59232,6 +59249,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
             }
             this.profilePicture = data["profilePicture"];
             this.profileThumbnail = data["profileThumbnail"];
+            this.pictureSource = data["pictureSource"];
             this.sendActivationEmail = data["sendActivationEmail"];
             this.setRandomPassword = data["setRandomPassword"];
             if (data["organizationUnits"] && data["organizationUnits"].constructor === Array) {
@@ -59259,6 +59277,7 @@ export class CreateOrUpdateUserInput implements ICreateOrUpdateUserInput {
         }
         data["profilePicture"] = this.profilePicture;
         data["profileThumbnail"] = this.profileThumbnail;
+        data["pictureSource"] = this.pictureSource;
         data["sendActivationEmail"] = this.sendActivationEmail;
         data["setRandomPassword"] = this.setRandomPassword;
         if (this.organizationUnits && this.organizationUnits.constructor === Array) {
@@ -59275,6 +59294,7 @@ export interface ICreateOrUpdateUserInput {
     assignedRoleNames: string[];
     profilePicture: string | undefined;
     profileThumbnail: string | undefined;
+    pictureSource: string | undefined;
     sendActivationEmail: boolean | undefined;
     setRandomPassword: boolean | undefined;
     organizationUnits: number[] | undefined;

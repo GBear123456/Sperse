@@ -93,7 +93,8 @@ export class UserManagementService {
                         base64ThumbImage = StringHelper.getBase64(result.thumImage);
                     this.profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
                         originalImage: base64OrigImage,
-                        thumbnail: base64ThumbImage
+                        thumbnail: base64ThumbImage,
+                        source: result.source
                     })).subscribe(thumbnailId => {
                         this.handleProfilePictureChange(thumbnailId);
                     });

@@ -216,8 +216,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     this.contactPhotoServiceProxy.createContactPhoto(
                         CreateContactPhotoInput.fromJS({
                             contactId: this.data[dataField].id,
-                            originalImage: base64OrigImage,
-                            thumbnail: base64ThumbImage
+                            original: base64OrigImage,
+                            thumbnail: base64ThumbImage,
+                            source: result.source
                         })).subscribe((result) => {
                             this.handlePhotoChange(dataField, base64OrigImage, result);
                         });

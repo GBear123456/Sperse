@@ -194,8 +194,9 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
                     this.contactPhotoServiceProxy.createContactPhoto(
                         CreateContactPhotoInput.fromJS({
                             contactId: this.company.id,
-                            originalImage: base64OrigImage,
-                            thumbnail: base64ThumbImage
+                            original: base64OrigImage,
+                            thumbnail: base64ThumbImage,
+                            source: result.source
                         })
                     ).subscribe(() => {
                         this.handlePhotoChange(base64OrigImage);

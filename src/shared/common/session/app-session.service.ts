@@ -13,7 +13,7 @@ export class AppSessionService {
         private _abpMultiTenancyService: AbpMultiTenancyService
     ) {
         abp.event.on('profilePictureChanged', (thumbnailId) => {
-            this.user.profilePictureId = thumbnailId;
+            this.user.profileThumbnailId = thumbnailId;
         });
     }
 
