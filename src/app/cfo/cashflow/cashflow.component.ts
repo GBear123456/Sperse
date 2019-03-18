@@ -5605,8 +5605,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
 
                 let hideFromCashflow = paramNameForUpdateInput == 'accountId' && !underscore.contains(this.selectedBankAccountsIds, paramValue);
-                if (isHistoricalTransaction)
+                if (isHistoricalTransaction) {
+                    if (paramName == 'descriptor')
+                        oldData.isDescriptorCalculated = !!!paramValue;
+
                     this.updateHistoricalStatsDescriptor(paramValue, oldData);
+                }
                 else
                     this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName], hideFromCashflow);
 
