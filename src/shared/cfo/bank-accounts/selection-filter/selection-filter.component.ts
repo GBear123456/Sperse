@@ -21,9 +21,13 @@ export class SelectionFilterComponent {
         this.selectionChanged.emit(this.selectedItems);
     }
 
+    getSelectedTitle() {
+        let totalCount = this.selectionList.length;
+        return !totalCount || this.selectedItems.length === totalCount ? this.allItemsText
+            : this.selectedItems.length + ' ' + this.localization.l('of') + ' ' + totalCount + ' ' + this.localization.l('selected');
+    }
+
     onMultiTagPreparing(e) {
-        const totalCount = e.component.getDataSource().items().length;
-        e.text = !totalCount || e.selectedItems.length === totalCount ? this.allItemsText
-            : e.selectedItems.length + ' ' + this.localization.l('of') + ' ' + totalCount + ' ' + this.localization.l('selected');
+        e.text = this.getSelectedTitle();
     }
 }
