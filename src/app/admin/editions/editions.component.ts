@@ -11,7 +11,7 @@ import { AppService } from '@app/app.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditionListDto, EditionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-modal.component';
-import { AppConsts } from '@shared/AppConsts';
+import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: './editions.component.html',
@@ -20,7 +20,6 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class EditionsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild('createOrEditEditionModal') createOrEditEditionModal: CreateOrEditEditionModalComponent;
     public actionMenuItems: any;
     public actionRecord: any;
     dataSource: DataSource;
@@ -41,7 +40,8 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         private _appService: AppService,
-        private _editionService: EditionServiceProxy
+        private _editionService: EditionServiceProxy,
+        private dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -65,7 +65,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
                 text: this.l('Edit'),
                 visible: this.permission.isGranted('Pages.Editions.Edit'),
                 action: () => {
-                    this.createOrEditEditionModal.show(this.actionRecord.id);
+                    this.openCreateOrEditDialog(this.actionRecord.id);
                 }
             },
             {
@@ -153,8 +153,17 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
         ]);
     }
 
+    openCreateOrEditDialog(editionId?: number) {
+        this.dialog.open(CreateOrEditEditionModalComponent, {
+            panelClass: ['slider', 'edition-modal'],
+            data: {
+                editionId: editionId
+            }
+        });
+    }
+
     createEdition(): void {
-        this.createOrEditEditionModal.show();
+        this.openCreateOrEditDialog();
     }
 
     refreshDataGrid() {

@@ -25,7 +25,7 @@
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
                                   (onContentReady)="onContentReady()"
-                                  (onCellClick)="createOrEditEditionModal.show($event.data.id)"
+                                  (onCellClick)="this.openCreateOrEditDialog($event.data.id)"
                                   (onEditingStart)="showActionsMenu($event)"
                                   [dataSource]="dataSource">
                         <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
@@ -36,6 +36,4 @@
             </div>
         </div>
     </div>
-
-    <createOrEditEditionModal #createOrEditEditionModal (modalSave)="refreshDataGrid()"></createOrEditEditionModal>
 </div>

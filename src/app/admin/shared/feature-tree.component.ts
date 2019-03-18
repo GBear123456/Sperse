@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, Input } from '@angular/core';
 import { FeatureTreeEditModel } from '@app/admin/shared/feature-tree-edit.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-proxies';
@@ -12,11 +12,13 @@ import find from 'lodash/find';
     template: `<div class="feature-tree"></div>`,
     styleUrls: ['./feature-tree.component.less']
 })
-export class FeatureTreeComponent extends AppComponentBase implements OnInit, AfterViewInit, AfterViewChecked {
+export class FeatureTreeComponent extends AppComponentBase implements AfterViewInit {
 
-    set editData(val: FeatureTreeEditModel) {
-        this._editData = val;
-        this.refreshTree();
+    @Input() set editData(val: FeatureTreeEditModel) {
+        if (val) {
+            this._editData = val;
+            this.refreshTree();
+        }
     }
 
     private _$tree: JQuery;
@@ -29,18 +31,10 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
         super(injector);
     }
 
-    ngOnInit(): void {
-
-    }
-
     ngAfterViewInit(): void {
         this._$tree = $(this._element.nativeElement);
 
         this.refreshTree();
-    }
-
-    ngAfterViewChecked(): void {
-
     }
 
     getGrantedFeatures(): NameValueDto[] {
@@ -404,9 +398,4 @@ export class FeatureTreeComponent extends AppComponentBase implements OnInit, Af
         return featureValue.value;
     }
 
-    isFeatureEnabled(featureName: string): boolean {
-        const self = this;
-        const value = self.findFeatureValueByName(featureName);
-        return value.toLowerCase() === 'true';
-    }
 }

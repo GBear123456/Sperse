@@ -82,7 +82,6 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
 import { ContactsModule } from '../crm/contacts/contacts.module';
 import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-select.component.ts/modules-editions-select.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
-import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 
 @NgModule({
     imports: [
@@ -181,14 +180,14 @@ import { DataSourceService } from '@app/shared/common/data-source/data-source.se
         CreateUserDialogComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,
-        TenantFeaturesModalComponent
+        TenantFeaturesModalComponent,
+        CreateOrEditEditionModalComponent
     ],
     exports: [
         AddMemberModalComponent
     ],
     providers: [
-        ImpersonationService,
-        DataSourceService
+        ImpersonationService
     ]
 })
 

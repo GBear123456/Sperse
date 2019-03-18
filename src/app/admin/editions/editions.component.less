@@ -5,29 +5,39 @@
     position: relative;
     top: 74px;
     height: 100%;
-    
+
     &.fullscreen {
         top: 0 !important;
         #gridContainer {
             height: calc(~"100vh - 60px");
         }
     }
-    
+
     /deep/ #productsGrid {
         table {
             direction: rtl;
-            
+
             td {
                 direction: ltr;
             }
         }
-        
+
         .dx-datagrid .dx-link.dx-link-edit {
             width: 18px !important;
         }
-        
+
         td.dx-command-edit:before {
             left: 60px !important;
+        }
+    }
+}
+
+/deep/ .cdk-overlay-container {
+    .cdk-overlay-pane {
+        @media (min-width: 1200px) {
+            &.edition-modal {
+                width: 40vw;
+            }
         }
     }
 }
