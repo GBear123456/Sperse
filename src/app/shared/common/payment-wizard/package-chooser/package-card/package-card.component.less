@@ -106,8 +106,16 @@
                 }
                 line-height: 12px;
                 display: flex;
+                &.disabled {
+                    color: #d7d7d7;
+                }
                 img {
                     margin-right: 20px;
+                }
+            }
+            &.lowerMargin {
+                li:not(:last-child) {
+                    margin-bottom: 4px;
                 }
             }
         }
