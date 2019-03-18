@@ -17,6 +17,7 @@ import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, BehaviorSubject, Subject, from, combineLatest, forkJoin, of } from 'rxjs';
 import {
+    tap,
     finalize,
     first,
     filter,
@@ -841,20 +842,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Monthly;
         /** Create parallel operations */
         let getCashFlowInitialData$ = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
-        let getForecastModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         let getCategoryTree$ = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false);
 
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         this._bankAccountsService.load();
         const syncAccounts$ = this._bankAccountsService.syncAccounts$.pipe(first());
-        forkJoin(getCashFlowInitialData$, getForecastModels$, getCategoryTree$, getCashflowGridSettings, syncAccounts$)
+        forkJoin(getCashFlowInitialData$, this.getForecastModels(), getCategoryTree$, getCashflowGridSettings, syncAccounts$)
             .subscribe(([initialData, forecastModels, categoryTree, cashflowSettings, syncAccounts]) => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(initialData, syncAccounts);
-
-                /** Forecast models handling */
-                this.handleForecastModelResult(forecastModels);
 
                 /** Handle the get categories response */
                 this.handleGetCategoryTreeResult(categoryTree);
@@ -886,6 +883,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.createDragImage();
 
         document.addEventListener('keydown', this.keyDownEventHandler, true);
+    }
+
+    getForecastModels() {
+        return this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId)
+            .pipe(tap((forecastModels) => this.handleForecastModelResult(forecastModels)));
     }
 
     createDragImage() {
@@ -1287,7 +1289,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let createForecastModelInput: CreateForecastModelInput = CreateForecastModelInput.fromJS({ name: modelName });
                 thisComponent.addForecastModel(createForecastModelInput)
                 .subscribe(
-                    result => {},
+                    (modelId) => { 
+                        thisComponent.getForecastModels().subscribe((models) => {
+                            let modelIndex;
+                            thisComponent.initFooterToolbar();
+                            thisComponent.changeSelectedForecastModel({
+                                itemData: models.find((item, index) => {
+                                    modelIndex = index;
+                                    return item.id == modelId;
+                                }),
+                                itemIndex: modelIndex
+                            });
+                        });
+                    },
                     error => { console.log('unable to add forecast model'); }
                 );
             }
