@@ -17,6 +17,7 @@ import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, BehaviorSubject, Subject, from, combineLatest, forkJoin, of } from 'rxjs';
 import {
+    tap,
     finalize,
     first,
     filter,
@@ -77,7 +78,8 @@ import {
     UpdateForecastsInput,
     CreateForecastsInput,
     CashflowGridGeneralSettingsDtoSplitMonthType,
-    CategoryDto
+    CategoryDto,
+    UpdateTransactionsCategoryInput
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
@@ -841,20 +843,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Monthly;
         /** Create parallel operations */
         let getCashFlowInitialData$ = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
-        let getForecastModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         let getCategoryTree$ = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false);
 
         this.userPreferencesService.removeLocalModel();
         let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
         this._bankAccountsService.load();
         const syncAccounts$ = this._bankAccountsService.syncAccounts$.pipe(first());
-        forkJoin(getCashFlowInitialData$, getForecastModels$, getCategoryTree$, getCashflowGridSettings, syncAccounts$)
+        forkJoin(getCashFlowInitialData$, this.getForecastModels(), getCategoryTree$, getCashflowGridSettings, syncAccounts$)
             .subscribe(([initialData, forecastModels, categoryTree, cashflowSettings, syncAccounts]) => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(initialData, syncAccounts);
-
-                /** Forecast models handling */
-                this.handleForecastModelResult(forecastModels);
 
                 /** Handle the get categories response */
                 this.handleGetCategoryTreeResult(categoryTree);
@@ -886,6 +884,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.createDragImage();
 
         document.addEventListener('keydown', this.keyDownEventHandler, true);
+    }
+
+    getForecastModels() {
+        return this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId)
+            .pipe(tap((forecastModels) => this.handleForecastModelResult(forecastModels)));
     }
 
     createDragImage() {
@@ -1287,7 +1290,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let createForecastModelInput: CreateForecastModelInput = CreateForecastModelInput.fromJS({ name: modelName });
                 thisComponent.addForecastModel(createForecastModelInput)
                 .subscribe(
-                    result => {},
+                    (modelId) => {
+                        thisComponent.getForecastModels().subscribe((models) => {
+                            let modelIndex;
+                            thisComponent.initFooterToolbar();
+                            thisComponent.changeSelectedForecastModel({
+                                itemData: models.find((item, index) => {
+                                    modelIndex = index;
+                                    return item.id == modelId;
+                                }),
+                                itemIndex: modelIndex
+                            });
+                        });
+                    },
                     error => { console.log('unable to add forecast model'); }
                 );
             }
@@ -5288,7 +5303,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     detailsCellIsEditable(e) {
-        return e.data && e.data.forecastId && ['forecastDate', 'description', 'descriptor', 'debit', 'credit'].indexOf(e.column.dataField) !== -1;
+        return e.data && ((e.column.dataField == 'descriptor') || (e.data.forecastId && ['forecastDate', 'description', 'debit', 'credit'].indexOf(e.column.dataField) !== -1));
     }
 
     onDetailsCellPrepared(e) {
@@ -5350,11 +5365,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     /**
-     * Editing only for forecasts
+     * Editing only for forecasts and transaction descriptor
      * @param e
      */
     onDetailsEditingStart(e) {
-        if (e.data.date) {
+        if (e.data.date && e.column.dataField != 'descriptor') {
             e.cancel = true;
         }
     }
@@ -5368,13 +5383,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** If date is lower then the current date - return false */
     validateForecastDate = e => {
+        if (e.data.date) //ignore for historical
+            return true;
+
+        if (!e.value || e.value == '') {
+            e.rule.message = '';
+            return false;
+        }
+
+        e.rule.message = this.l('ForecastDateUpdating_validation_message');
         let currentDate = this.cashflowService.getUtcCurrentDate();
         let timezoneOffset = e.value.getTimezoneOffset();
         let forecastDate = moment(e.value).utc().subtract(timezoneOffset, 'minutes');
         let dateIsValid = forecastDate.isSameOrAfter(currentDate);
-        if (!dateIsValid) {
-            this.notify.error(this.l('ForecastDateUpdating_validation_message'));
-        }
+
         return dateIsValid;
     }
 
@@ -5512,6 +5534,27 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let isHistoricalTransaction = !!oldData.date;
 
             if (isHistoricalTransaction) { //historical transaction edit
+                if (paramName == 'descriptor') {
+                    if (paramValue == '') paramValue = null;
+
+                    var updateModel = new UpdateTransactionsCategoryInput({
+                        transactionIds: [oldData.id],
+                        categoryId: oldData.categoryId,
+                        standardDescriptor: paramValue,
+                        descriptorAttributeTypeId: null,
+                        suppressCashflowMismatch: true
+                    });
+
+                    apiMethod = this._classificationServiceProxy.updateTransactionsCategory(
+                        InstanceType[this.instanceType],
+                        this.instanceId,
+                        updateModel
+                    );
+                }
+                else {
+                    e.component.cancelEditData();
+                    return;
+                }
             } else {
                 let data = new UpdateForecastInput();
                 data.id = e.key.id;
@@ -5588,6 +5631,61 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     updateHistoricalStatsDescriptor(descriptor, oldData: CashFlowStatsDetailDto) {
+        let targetStat: TransactionStatsDto;
+
+        let targetDate = moment(oldData.date);
+        this.addLocalTimezoneOffset(targetDate);
+        let yearStart = targetDate.clone().startOf('year');
+
+        let possibleCashflowDataItems: TransactionStatsDto[] = [];
+
+        let amount = oldData.credit || -oldData.debit;
+        for (let i = this.cashflowData.length - 1; i >= 0; i--) {
+            let item: TransactionStatsDto = this.cashflowData[i];
+
+            if (item.accountId == oldData.accountId &&
+                item.cashflowTypeId == oldData.cashflowTypeId &&
+                (item.subCategoryId || item.categoryId) == oldData.categoryId &&
+                item.currencyId == oldData.currencyId &&
+                item['initialDate'] >= yearStart && item['initialDate'] <= targetDate &&
+                (item.transactionDescriptor == oldData.descriptor || !item.transactionDescriptor))
+            {
+                if (item['initialDate'] == targetDate && item.transactionDescriptor == oldData.descriptor && item.amount == amount) {
+                    targetStat = item;
+                    break;
+                }
+                else {
+                    possibleCashflowDataItems.push(item);
+                }
+            }
+        }
+
+        if (!targetStat && possibleCashflowDataItems.length) {
+            possibleCashflowDataItems = underscore.chain(possibleCashflowDataItems)
+                .sortBy(x => x.amount == amount)
+                .sortBy(x => !!x.transactionDescriptor)
+                .sortBy(x => x.initialDate).value();
+            targetStat = possibleCashflowDataItems[possibleCashflowDataItems.length - 1];
+        }
+
+        if (targetStat) {
+            if (targetStat.count == 1) {
+                targetStat.transactionDescriptor = descriptor;
+
+                this.updateTreePathes(targetStat, true);
+                this.addCategorizationLevels(targetStat);
+            }
+            else {
+                targetStat.count--;
+                targetStat.amount -= amount
+                let newStat = { ...targetStat };
+                newStat.count = 1;
+                newStat.amount = amount;
+                newStat.transactionDescriptor = descriptor;
+
+                this.cashflowData.push(this.createStubTransaction(newStat));
+            }
+        }
     }
 
     deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, key, oldDataDate, hideFromCashflow) {
