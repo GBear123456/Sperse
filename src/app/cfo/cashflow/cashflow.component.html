@@ -102,6 +102,7 @@
             </dxi-column>
             <dxi-column dataField="descriptor"
                         [minWidth]="130"
+                        cellTemplate="descriptorCell"
                         [width]="detailsDescriptorColumnWidth()"
                         [allowEditing]="false"
                         [caption]="l('DetailsHeaders_Descriptor')">
@@ -172,6 +173,7 @@
             <div *dxTemplate="let cellData of 'descriptionTemplate'">
                 <span id="transactionDetailTarget-{{cellData.data.id}}">{{cellData.text}}</span>
             </div>
+            <div *dxTemplate="let cellData of 'descriptorCell'" [class.calculated]="cellData.data.date && cellData.data.isDescriptorCalculated">{{cellData.value}}</div>
             <div *dxTemplate="let cell of 'accountsEditSelect'">
                 <dx-select-box [items]="activeBankAccounts"
                                [displayExpr]="getBankAccountName"
