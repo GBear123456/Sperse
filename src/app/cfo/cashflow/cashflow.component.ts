@@ -26,6 +26,7 @@ import {
     map,
     publishReplay,
     refCount,
+    switchMap,
     toArray
 } from 'rxjs/operators';
 import { difference } from 'lodash';
@@ -690,6 +691,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Selected cell on cashflow grid (dxPivotGridPivotGridCell) interface */
     private selectedCell;
+    private doubleClickedCell;
 
     /** Cell to be copied (dxPivotGridPivotGridCell) interface */
     private copiedCell;
@@ -1172,7 +1174,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'forecastModelAdd',
-                        action: (event) => { 
+                        action: (event) => {
                             if (!event.element.getElementsByClassName('addModel').length)
                                 this.showForecastAddingInput(event);
                         }
@@ -1290,7 +1292,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let createForecastModelInput: CreateForecastModelInput = CreateForecastModelInput.fromJS({ name: modelName });
                 thisComponent.addForecastModel(createForecastModelInput)
                 .subscribe(
-                    (modelId) => { 
+                    (modelId) => {
                         thisComponent.getForecastModels().subscribe((models) => {
                             let modelIndex;
                             thisComponent.initFooterToolbar();
@@ -1579,7 +1581,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             const category: CategoryDto = this.categoryTree.categories[categoryId];
             /** Get category path in tree */
             const categoryPath: string[] = this.cashflowService.getCategoryFullPath(+categoryId, category, this.categoryTree);
-            if (this.cashflowService.categoryHasTransactions(this.treePathes, categoryPath)) {
+            if (!this.cashflowService.categoryHasTransactions(this.treePathes, categoryPath)) {
                 /** Create stub for category */
                 const stubTransaction = this.createStubTransaction({
                     'cashflowTypeId': this.categoryTree.accountingTypes[category.accountingTypeId].typeId,
@@ -1958,6 +1960,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.monthsDaysLoadedPathes = [];
         this.anotherPeriodAccountsValues.clear();
         this._bankAccountsService.load().subscribe(() => {
+            this.setBankAccountsFilter(true);
             this.finishLoading();
         });
         this.initHeadlineConfig();
@@ -2167,7 +2170,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                     break;
                 case 46: // delete
-                    if (this.statsDetailResult)
+                    if (this.statsDetailResult && e.target.closest('#cashflowGridContainer'))
                         this.onDetailsRowDelete(e);
                     else
                         this.onDelete(e);
@@ -3627,14 +3630,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** if the operation is update - then also remove the old objects (income or expense, net change and total balance) */
         forecasts.forEach((forecastInCashflow, index) => {
             /** Add stub to avoid hiding of old period from cashflow */
-            let stubCopy = this.createStubTransaction(forecastInCashflow);
+            let stubCopy = { ...forecastInCashflow };
             stubCopy.amount = 0;
             stubCopy.forecastId = null;
-            this.cashflowData.push(stubCopy);
+            stubCopy.transactionDescriptor = null;
+            this.cashflowData.push(this.createStubTransaction(stubCopy));
 
             let date = moment(targetData.date.startDate).utc();
             let timezoneOffset = date.toDate().getTimezoneOffset();
             let correctedDate = date.add(timezoneOffset, 'minutes');
+
+            /** Update pathTree before forecast has changed */
+            this.updateTreePathes(forecastInCashflow, true);
 
             /** Change forecast locally */
             forecastInCashflow.accountingTypeId = targetData.accountingTypeId;
@@ -3652,7 +3659,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
             }
             forecasts[index] = this.addCategorizationLevels(forecastInCashflow);
-            this.updateTreePathes(forecastInCashflow, true);
         });
 
     }
@@ -4146,7 +4152,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this._cellsCopyingService.elem.remove();
             }
             this.selectedCell = cellObj;
-            this.handleDoubleSingleClick(cellObj, null, this.handleDataCellDoubleClick.bind(this));
+            this.handleDoubleSingleClick(cellObj, null, () => {
+                this.doubleClickedCell = this.selectedCell;
+                this.handleDataCellDoubleClick(cellObj);
+            });
         }
     }
 
@@ -4202,7 +4211,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     .subscribe(
                         res => {
                             if (copyItemsModels && copyItemsModels.forecasts && copyItemsModels.forecasts.length) {
-                                let localItems = this.getDataItemsByCell(sourceCellObject);
                                 this.createForecastsFromCopiedItems(res, copyItemsModels.forecasts, sourceCellInfo);
                                 this.updateDataSource()
                                     .then(() => {
@@ -4216,8 +4224,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     updateDataSource(): Promise<any> & JQueryPromise<any> {
-        this.treePathes = {};
-        this.cashflowData.forEach(item => this.updateTreePathes(item));
         this.getUserPreferencesForCell.cache = {};
         this.getCellOptionsFromCell.cache = {};
         this.getNewTextWidth.cache = {};
@@ -4273,12 +4279,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
             clickedCellPrefix !== CategorizationPrefixes.AccountName
         ) {
-            this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
-            this._cashflowServiceProxy
-                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                .subscribe(result => {
-                    if (result.length !== 0) {
-                        this.removeForecasts(result);
+            /** If we delete another cell then opened in details we get statsDetails for this cell, else - get already loaded details */
+            let statsDetails$ = of(this.statsDetailResult);
+            if (this.selectedCell !== this.doubleClickedCell) {
+                this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
+                statsDetails$ = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter);
+            }
+            statsDetails$
+                .pipe(
+                    filter(result => result.length !== 0),
+                    switchMap(result => this.removeForecasts(result))
+                ).subscribe(() => {
+                    /** If we delete cell that opened in details */
+                    if (this.selectedCell === this.doubleClickedCell) {
+                        /** Clear details result to show No Data instead of deleted rows */
+                        this._statsDetailResult.next([]);
                     }
                 });
         }
@@ -4333,10 +4348,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     initialDate: (<any>item).initialDate,
                                     amount: 0,
                                     cashflowTypeId: item.cashflowTypeId,
+                                    categoryId: item.categoryId,
+                                    subCategoryId: item.subCategoryId,
                                     accountId: item.accountId
                                 }));
-
-                            this.updateTreePathes(item, true);
+                            /** If forecast has description - then remove it from the cashflow tree */
+                            this.updateTreePathes(item, item.transactionDescriptor);
                         });
                     });
                 });
@@ -4740,6 +4757,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.showAllVisible = false;
         this.showAllDisable = false;
         this.disableAddForecastButton = true;
+        this.doubleClickedCell = null;
         this.handleBottomHorizontalScrollPosition();
         this.handleVerticalScrollPosition();
     }
@@ -5355,10 +5373,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellDoubleClick(e) {
-        if (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'descriptor' || e.column.dataField == 'accountNumber')
+        if (e.column && (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'descriptor' || e.column.dataField == 'accountNumber'))
             e.component.editCell(e.rowIndex, e.column.dataField);
 
-        if (e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
+        if (e.column && e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
 
@@ -5508,14 +5526,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 };
 
                 this.cashflowData.push(this.addCategorizationLevels(localForecastData));
-
                 this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload()
                     .then(() => {
                         deferred.resolve(false);
                         this.notify.success(this.l('Forecasts_added'));
                     });
-            }, error => {
+            }, () => {
                 deferred.resolve(true);
                 e.component.cancelEditData();
             });
@@ -5554,8 +5571,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     e.component.cancelEditData();
                     return;
                 }
-            }
-            else {
+            } else {
                 let data = new UpdateForecastInput();
                 data.id = e.key.id;
                 data[paramNameForUpdateInput] = paramValue;
@@ -5605,8 +5621,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
 
                 let hideFromCashflow = paramNameForUpdateInput == 'accountId' && !underscore.contains(this.selectedBankAccountsIds, paramValue);
-                if (isHistoricalTransaction)
+                if (isHistoricalTransaction) {
+                    if (paramName == 'descriptor')
+                        oldData.isDescriptorCalculated = !!!paramValue;
+
                     this.updateHistoricalStatsDescriptor(paramValue, oldData);
+                }
                 else
                     this.deleteStatsFromCashflow(paramNameForUpdateInput, paramValue, e.key.id, e.oldData[paramName], hideFromCashflow);
 

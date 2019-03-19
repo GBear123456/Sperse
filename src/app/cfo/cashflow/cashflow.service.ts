@@ -147,6 +147,6 @@ export class CashflowService {
     }
 
     categoryHasTransactions(treePathes, categoryPath: string[]): boolean {
-        return !Object.keys(treePathes).some(path => path.indexOf(categoryPath.join(',')) >= 0);
+        return Object.keys(treePathes).some(path => path.indexOf(categoryPath.join(',')) >= 0);
     }
 }

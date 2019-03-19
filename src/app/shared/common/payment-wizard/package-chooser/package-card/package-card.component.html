@@ -16,9 +16,9 @@
     </div>
 </div>
 <div class="planFeatures">
-    <ul>
-        <li *ngFor="let feature of features">
-            <img [src]="baseUrl + 'assets/common/icons/feature-enabled.svg'">
+    <ul [ngClass]="{ lowerMargin: features.length > 10 }">
+        <li *ngFor="let feature of features" [ngClass]="{ disabled: feature.definition.disabled }">
+            <img [src]="baseUrl + 'assets/common/icons/feature-' + (feature.definition.disabled ? 'grey-disabled' : 'enabled') + '.svg'">
             {{ localizationService.ls(feature.definition.displayName.sourceName, feature.definition.displayName.name) }}
             {{ getFeatureValue(feature) }}
             {{ feature.definition.measurementUnit ? ' ' + feature.definition.measurementUnit : '' }}
