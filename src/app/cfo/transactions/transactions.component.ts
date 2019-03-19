@@ -162,7 +162,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             },
             onChanged: () => {
                 this.dataGrid.instance.clearSelection();
-                this.getTotalValues.bind(this);
+                this.getTotalValues();
             }
         });
 

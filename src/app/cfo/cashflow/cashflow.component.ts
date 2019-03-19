@@ -5373,10 +5373,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellDoubleClick(e) {
-        if (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'descriptor' || e.column.dataField == 'accountNumber')
+        if (e.column && (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'descriptor' || e.column.dataField == 'accountNumber'))
             e.component.editCell(e.rowIndex, e.column.dataField);
 
-        if (e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
+        if (e.column && e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
 

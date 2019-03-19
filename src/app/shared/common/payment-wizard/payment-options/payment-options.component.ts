@@ -73,11 +73,11 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         }
     };
 
-    readonly GATEWAY_ECHECK = 0;
+    readonly GATEWAY_PAYPAL = 0;
     readonly GATEWAY_C_CARD = 1;
-    readonly GATEWAY_PAYPAL = 2;
+    readonly GATEWAY_ECHECK = 2;
 
-    selectedGateway: number = this.GATEWAY_ECHECK;
+    selectedGateway: number = this.GATEWAY_PAYPAL;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
     payPalEnvironmentSetting: string;
@@ -89,10 +89,10 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy
     ) {
         super(injector);
+        this.tenantSubscriptionServiceProxy.getPayPalSettings().subscribe(settings => this.payPalEnvironmentSetting = settings.environment);
     }
 
-    ngOnInit() {
-    }
+    ngOnInit() {}
 
     goToStep(i) {
         this.onChangeStep.emit(i);
@@ -106,9 +106,6 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
         if (!this.bankTransferSettings$ && e.tab.textLabel === this.l('BankTransfer')) {
             /** Load transfer data */
             this.bankTransferSettings$ = this.tenantSubscriptionServiceProxy.getBankTransferSettings();
-        } else if (!this.payPalEnvironmentSetting && e.tab.textLabel === this.l('PayPal')) {
-            this.tenantSubscriptionServiceProxy.getPayPalSettings()
-                .subscribe(settings => this.payPalEnvironmentSetting = settings.environment);
         }
     }
 

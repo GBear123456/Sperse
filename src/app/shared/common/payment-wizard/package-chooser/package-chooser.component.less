@@ -15,6 +15,7 @@
     .packageHeader {
         text-align: center;
         z-index: 1;
+        position: relative;
         .title {
             font-size: 36px;
             font-weight: 600;
@@ -176,6 +177,15 @@
             //    min-width: 0 !important;
             //}
         }
+        button.toggle {
+            position: absolute;
+            right: 0;
+            bottom: 15px;
+            background: none;
+            border: none;
+            color: #888d92;
+            cursor: pointer;
+        }
 
         /deep/ mat-slider.mat-slider:not(.mat-slider-disabled).mat-slider-horizontal {
             width: calc(100% - 83px);
@@ -268,6 +278,21 @@
         margin-bottom: 35px;
         @media (max-width: 768px) {
             flex-wrap: wrap;
+        }
+    }
+    .footerDescription {
+        color: #fff;
+        position: absolute;
+        left: 50px;
+        bottom: 30px;
+        p {
+            margin-bottom: 5px;
+        }
+        ul {
+            padding-left: 0;
+            li {
+                line-height: 20px;
+            }
         }
     }
     .footer {
