@@ -8,6 +8,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppConsts } from '@shared/AppConsts';
 import {
     CommonLookupServiceProxy,
     CreateTenantInput,
@@ -39,6 +40,8 @@ export class CreateTenantModalComponent extends AppComponentBase {
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     editionsGroups$: Observable<SubscribableEditionComboboxItemDto[][]>;
     editionsModels: { [value: string]: TenantEditEditionDto } = {};
+
+    emailRegEx = AppConsts.regexPatterns.email;
 
     constructor(
         injector: Injector,
