@@ -27,7 +27,8 @@ import {
     publishReplay,
     refCount,
     switchMap,
-    toArray
+    toArray,
+    withLatestFrom
 } from 'rxjs/operators';
 import { difference } from 'lodash';
 import * as $ from 'jquery';
@@ -197,11 +198,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private statsDetailResult: CashFlowStatsDetailDto[];
     private detailsTab: BehaviorSubject<string> = new BehaviorSubject<string>('all');
     detailsTab$: Observable<string> = this.detailsTab.asObservable();
-    displayedStatsDetails$: Observable<CashFlowStatsDetailDto[]> = combineLatest(
-        this.statsDetailResult$,
-        this.detailsTab$
-    ).pipe(
-        map(([details, tab]) => tab === 'all' ? details : details.filter(item => tab === 'history' ? !!item.date : !!item.forecastId))
+    /** changed displayedStatsDetails every time when detailsTab$ change (it change all times when statsDetailResult change (see this.detailsTab.next()) + when certain tabs chosen (history or forecast or all))*/
+    displayedStatsDetails$: Observable<CashFlowStatsDetailDto[]> = this.detailsTab$.pipe(
+        withLatestFrom(this.statsDetailResult$),
+        map(([tab, details]: [string, CashFlowStatsDetailDto[]]) => tab === 'all' ? details : details.filter(item => tab === 'history' ? !!item.date : !!item.forecastId))
     );
     displayedStatsDetails: CashFlowStatsDetailDto[];
 
@@ -838,6 +838,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.detailsContainsHistorical = this.isInstanceAdmin && details.some(item => !!item.date);
             this.detailsContainsForecasts = this.isInstanceAdmin && details.some(item => !!item.forecastId);
             this.statsDetailResult = details;
+            this.detailsTab.next('all');
         });
 
         this.requestFilter = new StatsFilter();
