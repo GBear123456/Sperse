@@ -4,12 +4,13 @@
             <h2 class="title">{{ title }}</h2>
             <h3 class="subtitle">{{ subtitle }}</h3>
             <div class="billingPeriod" [hidden]="configurator !== 'billingPeriod'">
-                <div [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('BilledMonthly') }}</div>
-                <mat-slide-toggle
-                    [checked]="selectedBillingPeriod === billingPeriod.Yearly"
-                    (change)="billingPeriodChanged($event)">
-                </mat-slide-toggle>
-                <div [ngClass]="{ 'active': getActiveStatus('year') }">{{ l('BilledYearly') }}
+                <div class="switch-wrapper">
+                    <dx-switch [value]="selectedBillingPeriod === billingPeriod.Yearly"
+                               accessKey="switchPaymentPeriod"
+                               [offText]="'Monthly'"
+                               [onText]="'Annually'"
+                               (onValueChanged)="billingPeriodChanged($event)"
+                    ></dx-switch>
                     <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
                 </div>
             </div>
@@ -43,25 +44,28 @@
                     [ngClass]="{
                     'selected': selectedPackageIndex === i,
                     'large': packages.length < 3 || package.bestValue,
+                    'last': i === packages.length - 1,
                     'heightFitContent' : packages.length > 2
                 }"
                     (click)="selectPackage(i)">
                 </package-card>
             </ng-container>
         </div>
+
         <div *ngIf="module === modules.CFO" class="footerDescription">
-            <p>All Packages Include:</p>
+            <p>Prices are in US Dollars. All packages include:</p>
             <ul>
-                <li>Cash flow transactions report with calculator</li>
-                <li>Cash flow visualt statistics and statements</li>
+                <li>Cash flow transactions report and calculator</li>
+                <li>Cash flow visual statistics and statements</li>
                 <li>Free online support and product training</li>
-                <li>Minimum 5 seats licenses</li>
+                <li>Transaction logs with export functionality</li>
+                <li>Two-form authentication for highest security</li>
+                <li>Minimum 5-seat user licenses</li>
             </ul>
         </div>
         <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
             <div>
                 <p class="downgrade" *ngIf="showDowngradeLink" (click)="downGradeToFree()">{{ l('DowngradeToFree') }}</p>
-                <p class="pricesAreShown">{{ l('PricesAreShown') }}</p>
             </div>
             <button [disabled]="selectedPackageIndex === undefined || selectedPackageIndex < 0 || (selectedPackageCardComponent && !selectedPackageCardComponent.isActive)" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
         </div>
