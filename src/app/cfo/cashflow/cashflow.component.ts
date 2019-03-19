@@ -26,6 +26,7 @@ import {
     map,
     publishReplay,
     refCount,
+    switchMap,
     toArray
 } from 'rxjs/operators';
 import { difference } from 'lodash';
@@ -690,6 +691,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Selected cell on cashflow grid (dxPivotGridPivotGridCell) interface */
     private selectedCell;
+    private doubleClickedCell;
 
     /** Cell to be copied (dxPivotGridPivotGridCell) interface */
     private copiedCell;
@@ -2168,7 +2170,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                     break;
                 case 46: // delete
-                    if (this.statsDetailResult)
+                    if (this.statsDetailResult && e.target.closest('#cashflowGridContainer'))
                         this.onDetailsRowDelete(e);
                     else
                         this.onDelete(e);
@@ -4150,7 +4152,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this._cellsCopyingService.elem.remove();
             }
             this.selectedCell = cellObj;
-            this.handleDoubleSingleClick(cellObj, null, this.handleDataCellDoubleClick.bind(this));
+            this.handleDoubleSingleClick(cellObj, null, () => {
+                this.doubleClickedCell = this.selectedCell;
+                this.handleDataCellDoubleClick(cellObj);
+            });
         }
     }
 
@@ -4274,12 +4279,21 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
             clickedCellPrefix !== CategorizationPrefixes.AccountName
         ) {
-            this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
-            this._cashflowServiceProxy
-                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                .subscribe(result => {
-                    if (result.length !== 0) {
-                        this.removeForecasts(result);
+            /** If we delete another cell then opened in details we get statsDetails for this cell, else - get already loaded details */
+            let statsDetails$ = of(this.statsDetailResult);
+            if (this.selectedCell !== this.doubleClickedCell) {
+                this.statsDetailFilter = this.getDetailFilterFromCell(cellObj);
+                statsDetails$ = this._cashflowServiceProxy.getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter);
+            }
+            statsDetails$
+                .pipe(
+                    filter(result => result.length !== 0),
+                    switchMap(result => this.removeForecasts(result))
+                ).subscribe(() => {
+                    /** If we delete cell that opened in details */
+                    if (this.selectedCell === this.doubleClickedCell) {
+                        /** Clear details result to show No Data instead of deleted rows */
+                        this._statsDetailResult.next([]);
                     }
                 });
         }
@@ -4743,6 +4757,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.showAllVisible = false;
         this.showAllDisable = false;
         this.disableAddForecastButton = true;
+        this.doubleClickedCell = null;
         this.handleBottomHorizontalScrollPosition();
         this.handleVerticalScrollPosition();
     }
