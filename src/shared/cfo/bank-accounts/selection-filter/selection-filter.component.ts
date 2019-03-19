@@ -22,9 +22,12 @@ export class SelectionFilterComponent {
     }
 
     getSelectedTitle() {
-        let totalCount = this.selectionList.length;
-        return !totalCount || this.selectedItems.length === totalCount ? this.allItemsText
-            : this.selectedItems.length + ' ' + this.localization.l('of') + ' ' + totalCount + ' ' + this.localization.l('selected');
+        let totalCount = this.selectionList.length,
+            selectedCount = this.selectedItems.length;
+        return totalCount && selectedCount ? 
+            (selectedCount != totalCount ? selectedCount + ' ' + this.localization.l('of') + ' ' : '') 
+                + totalCount + ' ' + this.localization.l('entities')
+            : this.allItemsText;
     }
 
     onMultiTagPreparing(e) {
