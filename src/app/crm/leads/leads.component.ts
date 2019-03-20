@@ -732,17 +732,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     updateLeadsStage($event) {
         if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
             this.stagesComponent.tooltipVisible = false;
-            let targetStage = $event.name;
-            this.selectedLeads.forEach((lead) => {
-                this._pipelineService.updateEntityStage(this.pipelinePurposeId, lead, lead.Stage, targetStage);
+            this._pipelineService.updateEntitiesStage(
+                this.pipelinePurposeId, 
+                this.selectedLeads, 
+                $event.name
+            ).subscribe((declinedList) => {
+                let gridInstance = this.dataGrid && this.dataGrid.instance;
+                if (gridInstance && declinedList && declinedList.length)
+                    gridInstance.selectRows(declinedList.map(item => item.Id), false);
+                else
+                    gridInstance.clearSelection();
             });
-            if (this.selectedLeads.length)
-                setTimeout(() => { //!!VP temporary solution for grid refresh
-                    this.refresh();
-                    if (this.dataGrid && this.dataGrid.instance) {
-                        this.dataGrid.instance.clearSelection();
-                    }
-                }, 1000);
         }
     }
 
