@@ -33,7 +33,7 @@
                         <dx-text-box placeholder="" [(value)]="email.emailAddress" (onValueChanged)="itemValueChanged('emailAddress', email)">
                             <dx-validator>
                                 <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
-                                <dxi-validation-rule type="email" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
                         <dx-button class="update" icon="todo" (onClick)="updateItem('emailAddress', email, $event)"></dx-button>
