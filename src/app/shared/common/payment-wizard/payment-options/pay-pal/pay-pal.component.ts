@@ -7,7 +7,8 @@ import {
     ModuleSubscriptionInfoFrequency,
     RequestPaymentDto,
     RequestPaymentDtoRequestType,
-    ModuleSubscriptionInfo
+    ModuleSubscriptionInfo,
+    RequestPaymentResult
 } from '@shared/service-proxies/service-proxies';
 import { PayPalDataModel } from '@app/shared/common/payment-wizard/models/pay-pal-data.model';
 
@@ -22,7 +23,7 @@ export class PayPalComponent extends AppComponentBase implements AfterViewInit {
     @Input() editionId: number;
     @Input() maxUserCount: number;
     @Input() billingPeriod: BillingPeriod = BillingPeriod.Monthly;
-    @Input() environment: string;
+    @Input() clientId: string;
 
     @Output() onSubmit: EventEmitter<PayPalDataModel> = new EventEmitter<PayPalDataModel>();
 
@@ -38,9 +39,12 @@ export class PayPalComponent extends AppComponentBase implements AfterViewInit {
         this.startLoading();
         if ((<any>window)['paypal'])
             setTimeout(() => { this.preparePaypalButton(); });
-        else
-            jQuery.getScript('https://www.paypalobjects.com/api/checkout.js')
+        else {
+            jQuery.ajaxSetup({ cache: true });
+            jQuery.getScript(`https://www.paypal.com/sdk/js?client-id=${this.clientId}&currency=USD`)
                 .done(() => { this.preparePaypalButton(); });
+            jQuery.ajaxSetup({ cache: false });
+        }
     }
 
     preparePaypalButton(): void {
@@ -56,30 +60,28 @@ export class PayPalComponent extends AppComponentBase implements AfterViewInit {
         model.requestType = RequestPaymentDtoRequestType.PayPal;
 
         this.finishLoading();
-        (<any>window).paypal.Button.render({
+        (<any>window).paypal.Buttons({
             style: {
-                //label: 'checkout',
-                size:  'responsive',    // small | medium | large | responsive
+                layout: 'horizontal',
                 shape: 'pill',          // pill | rect
-                color: 'blue'           // gold | blue | silver | black
+                color: 'blue',           // gold | blue | silver
+                label: 'checkout'
             },
-            env: this.environment,
-            commit: true,
-            payment(data, actions) {
+            createOrder(data, actions) {
                 return self.tenantSubscriptionServiceProxy
                     .requestPayment(model)
                     .toPromise()
-                    .then((result: string) => {
-                        return result;
+                    .then((result: RequestPaymentResult) => {
+                        return result.code;
                     });
             },
 
-            onAuthorize(data, actions) {
+            onApprove(data, actions) {
                 self.onSubmit.next({
                     payerId: data.payerID,
                     paymentId: data.paymentID
                 });
             }
-        }, '#paypal-button');
+        }).render('#paypal-button');
     }
 }

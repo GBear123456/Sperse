@@ -67,8 +67,8 @@
                 <ng-template mat-tab-label="">
                     <img [src]="'./assets/common/icons/paypal-logo.png'">
                 </ng-template>
-                <pay-pal *ngIf="payPalEnvironmentSetting && selectedGateway == GATEWAY_PAYPAL" [editionId]="plan.selectedEditionId" [maxUserCount]="plan.usersAmount" [billingPeriod]="plan.billingPeriod"
-                         [environment] ="payPalEnvironmentSetting" (onSubmit)="submitData($event, paymentMethods.PayPal)">
+                <pay-pal *ngIf="payPalClientId && selectedGateway == GATEWAY_PAYPAL" [editionId]="plan.selectedEditionId" [maxUserCount]="plan.usersAmount" [billingPeriod]="plan.billingPeriod"
+                         [clientId] ="payPalClientId" (onSubmit)="submitData($event, paymentMethods.PayPal)">
                 </pay-pal>
             </mat-tab>
             <mat-tab [label]="l('CreditCard')">
