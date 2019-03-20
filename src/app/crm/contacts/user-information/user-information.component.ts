@@ -58,6 +58,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     showInviteUserForm = false;
     userData: GetUserForEditOutput = new GetUserForEditOutput();
     selectedOrgUnits: number[] = [];
+    dependencyChanged = false;
 
     masks = AppConsts.masks;
     phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
@@ -100,7 +101,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                     this.loadData();
                 this.checkShowInviteForm();
             }
-        });
+        }, this.constructor.name);
 
         if (!(this.roles = _roleServiceProxy['data']))
             _roleServiceProxy.getRoles(undefined, undefined).subscribe((res) => {
@@ -276,6 +277,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {
             callback && callback();
             this.notify.info(this.l('SavedSuccessfully'));
+            if ([this.EMAIL_FIELD, this.PHONE_FIELD].indexOf(fieldName) >= 0)
+                this.dependencyChanged = true;
         }, (e) => {
             this.data.user[fieldName] = initialValue;
         });
@@ -315,5 +318,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     ngOnDestroy() {
         this._contactsService.unsubscribe(this.constructor.name);
+        if (this.dependencyChanged)
+            this._contactsService.invalidate();
     }
 }
