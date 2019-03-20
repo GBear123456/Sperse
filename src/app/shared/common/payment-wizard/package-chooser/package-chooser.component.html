@@ -4,13 +4,12 @@
             <h2 class="title">{{ title }}</h2>
             <h3 class="subtitle">{{ subtitle }}</h3>
             <div class="billingPeriod" [hidden]="configurator !== 'billingPeriod'">
-                <div class="switch-wrapper">
-                    <dx-switch [value]="selectedBillingPeriod === billingPeriod.Yearly"
-                               accessKey="switchPaymentPeriod"
-                               [offText]="'Monthly'"
-                               [onText]="'Annually'"
-                               (onValueChanged)="billingPeriodChanged($event)"
-                    ></dx-switch>
+                <div [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('BilledMonthly') }}</div>
+                <mat-slide-toggle
+                    [checked]="selectedBillingPeriod === billingPeriod.Yearly"
+                    (change)="billingPeriodChanged($event)">
+                </mat-slide-toggle>
+                <div [ngClass]="{ 'active': getActiveStatus('year') }">{{ l('BilledYearly') }}
                     <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
                 </div>
             </div>

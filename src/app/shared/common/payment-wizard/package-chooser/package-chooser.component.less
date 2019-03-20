@@ -34,9 +34,17 @@
             justify-content: center;
             align-items: center;
             margin: 27px 0 10px 0;
-            
-            .switch-wrapper {
+    
+            & > div {
+                font-size: 14px;
+                font-weight: 500;
+                color: #919aa3;
                 position: relative;
+    
+                &.active {
+                    font-weight: 500;
+                    color: #171c34;
+                }
             }
        
             span.year-discount {
@@ -376,58 +384,6 @@
         }
         button[disabled] {
             background-color: #fff;
-        }
-    }
-}
-
-::ng-deep {
-    dx-switch {
-        &[accessKey="switchPaymentPeriod"] {
-            width: 200px;
-    
-            .dx-switch-container {
-                border-color: #a4a4a4 !important;
-                margin: 0;
-                height: 40px;
-                border-radius: 20px;
-            }
-            
-            .dx-switch-inner {
-                width: 100%;
-                margin-left: 0 !important;
-            }
-            
-            .dx-switch-handle {
-                display: none !important;
-            }
-            
-            .dx-switch-on,
-            .dx-switch-off {
-                margin-top: -1px;
-                padding: 0 !important;
-                border-radius: 18px;
-                line-height: 40px;
-                height: 40px;
-                font-size: 15px;
-                color: #a4a4a4;
-                font-weight: 400;
-            }
-    
-            .dx-switch-off {
-                background: #009dd7;
-                color: #fff;
-            }
-            
-            &.dx-switch-on-value {
-                .dx-switch-on {
-                    background: #009dd7;
-                    color: #fff;
-                }
-                .dx-switch-off {
-                    background-color: transparent;
-                    color: #a4a4a4;
-                }
-            }
         }
     }
 }
