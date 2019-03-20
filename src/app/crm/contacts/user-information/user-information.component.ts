@@ -214,7 +214,6 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     updateValue(value, fieldName) {
-        this.data.user[fieldName] = value;
         this.update(fieldName, value);
     }
 
@@ -252,12 +251,11 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         });
     }
 
-    update(fieldName = undefined, value = undefined, callback = undefined) {
-        let sub, data = {
-            id: this.userData.user.id
-        };
-        data[fieldName] = value;
+    update(fieldName?, value?, callback?) {
+        let sub, data = { id: this.userData.user.id }, 
+            initialValue = this.data.user[fieldName];
 
+        this.data.user[fieldName] = data[fieldName] = value;
         if (fieldName == this.EMAIL_FIELD)
             sub = this._userService.updateEmail(UpdateUserEmailDto.fromJS(data));
         else if (fieldName == this.PHONE_FIELD)
@@ -278,6 +276,8 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {
             callback && callback();
             this.notify.info(this.l('SavedSuccessfully'));
+        }, (e) => {
+            this.data.user[fieldName] = initialValue;
         });
     }
 
