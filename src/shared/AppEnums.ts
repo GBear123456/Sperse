@@ -136,10 +136,3 @@ export enum ConditionsType {
     Terms = 'Terms',
     Policies = 'Policies'
 }
-
-export enum NoteType {
-    ClientNote = 'C',
-    CompanyNote = 'M',
-    IncomingCall = 'I',
-    OutcomingCall = 'O'
-}

@@ -26,10 +26,9 @@ import { AppConsts } from '@shared/AppConsts';
 import { RootStore } from '@root/store';
 import { CountriesStoreActions, CountriesStoreSelectors, OrganizationTypeStoreActions, OrganizationTypeSelectors } from '@app/store';
 import { StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, CreateContactPhotoInput } from '@shared/service-proxies/service-proxies';
+import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, CreateContactPhotoInput, CreateNoteInputNoteType } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
-import { NoteType } from '@root/shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
@@ -147,7 +146,7 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
             this._notesService.createNote(CreateNoteInput.fromJS({
                 contactId: this.company.id,
                 text: this.company.notes,
-                typeId: NoteType.CompanyNote,
+                noteType: CreateNoteInputNoteType.Note,
             })).subscribe(
                 () => this.clientService.invalidate('notes')
             );

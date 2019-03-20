@@ -25,12 +25,14 @@ import {
     PersonShortInfoDto,
     OrganizationShortInfo,
     OrganizationContactServiceProxy,
-    PersonContactServiceProxy
+    PersonContactServiceProxy,
+    NoteInfoDtoNoteType,
+    CreateNoteInputNoteType
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
 import { AppStore, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors } from '@app/store';
-import { ContactGroup, NoteType } from '@shared/AppEnums';
+import { ContactGroup } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 class PhoneNumber {
@@ -66,6 +68,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     addedBy: string;
     defaultType: string;
     type: string;
+    companyContact: boolean;
 
     types = [];
     users = [];
@@ -89,13 +92,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private orgContactService: OrganizationContactServiceProxy
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        if (_notesService['types'])
-            this.initTypes(_notesService['types']);
-        else
-            _notesService.getNoteTypes().subscribe((result) => {
-                this.initTypes(_notesService['types'] = result);
-            });
 
+        this.initTypes();
+        
         this._contactInfo = this.data.contactInfo;
         let personContactInfo = this._contactInfo.personContactInfo;
         const relatedOrganizations: any[] = personContactInfo && personContactInfo.orgRelations ?
@@ -175,12 +174,18 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
     }
 
-    initTypes(types) {
-        if (types.length) {
-            this.defaultType = types[0].id;
+    initTypes(switchToDefault = true) {
+        if (switchToDefault) {
+            this.defaultType = CreateNoteInputNoteType.Note;
             this.type = this.defaultType;
-            this.types = types;
         }
+
+        this.types = _.map(Object.keys(CreateNoteInputNoteType), x => {
+            let el = {};
+            el['id'] = x;
+            el['name'] = this.l(this.companyContact ? 'Company' : 'Client') + ' ' + this.l(x);
+            return el;
+        });
     }
 
     saveNote() {
@@ -189,7 +194,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 contactId: this.contactId || this._contactInfo.id,
                 text: this.summary,
                 contactPhoneId: this.phone || undefined,
-                typeId: this.type,
+                noteType: this.type,
                 followUpDateTime: this.followupDate || undefined,
                 dateTime: this.currentDate || undefined,
                 addedByUserId: parseInt(this.addedBy) || undefined,
@@ -250,8 +255,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
         this.contactId = contact.id;
 
-        this.type = contact instanceof OrganizationShortInfo ?
-            NoteType.CompanyNote : this.defaultType;
+        this.companyContact = contact instanceof OrganizationShortInfo;
+        
+        this.initTypes(false);
         this.applyOrdersFilter();
     }
 

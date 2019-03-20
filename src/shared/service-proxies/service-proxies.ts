@@ -12144,8 +12144,12 @@ export class EmailingServiceProxy {
     /**
      * @return Success
      */
-    payload(emailType: string, emailAddress: string): Observable<string> {
+    payload(recipientUserId: number, emailType: string, emailAddress: string): Observable<string> {
         let url_ = this.baseUrl + "/api/Emailing/Payload?";
+        if (recipientUserId === undefined || recipientUserId === null)
+            throw new Error("The parameter 'recipientUserId' must be defined and cannot be null.");
+        else
+            url_ += "recipientUserId=" + encodeURIComponent("" + recipientUserId) + "&"; 
         if (emailType === undefined || emailType === null)
             throw new Error("The parameter 'emailType' must be defined and cannot be null.");
         else
@@ -15692,62 +15696,6 @@ export class NotesServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getNoteTypes(): Observable<NoteTypeInfoDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNoteTypes";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetNoteTypes(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetNoteTypes(<any>response_);
-                } catch (e) {
-                    return <Observable<NoteTypeInfoDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<NoteTypeInfoDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetNoteTypes(response: HttpResponseBase): Observable<NoteTypeInfoDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(NoteTypeInfoDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<NoteTypeInfoDto[]>(<any>null);
     }
 }
 
@@ -48577,7 +48525,8 @@ export class NoteInfoDto implements INoteInfoDto {
     text!: string | undefined;
     dateTime!: moment.Moment | undefined;
     addedByUserName!: string | undefined;
-    typeName!: string | undefined;
+    noteType!: NoteInfoDtoNoteType | undefined;
+    noteTypeName!: string | undefined;
     contactPhoneNumber!: string | undefined;
     contactName!: string | undefined;
 
@@ -48597,7 +48546,8 @@ export class NoteInfoDto implements INoteInfoDto {
             this.text = data["text"];
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
             this.addedByUserName = data["addedByUserName"];
-            this.typeName = data["typeName"];
+            this.noteType = data["noteType"];
+            this.noteTypeName = data["noteTypeName"];
             this.contactPhoneNumber = data["contactPhoneNumber"];
             this.contactName = data["contactName"];
         }
@@ -48617,7 +48567,8 @@ export class NoteInfoDto implements INoteInfoDto {
         data["text"] = this.text;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
         data["addedByUserName"] = this.addedByUserName;
-        data["typeName"] = this.typeName;
+        data["noteType"] = this.noteType;
+        data["noteTypeName"] = this.noteTypeName;
         data["contactPhoneNumber"] = this.contactPhoneNumber;
         data["contactName"] = this.contactName;
         return data; 
@@ -48630,7 +48581,8 @@ export interface INoteInfoDto {
     text: string | undefined;
     dateTime: moment.Moment | undefined;
     addedByUserName: string | undefined;
-    typeName: string | undefined;
+    noteType: NoteInfoDtoNoteType | undefined;
+    noteTypeName: string | undefined;
     contactPhoneNumber: string | undefined;
     contactName: string | undefined;
 }
@@ -48640,7 +48592,7 @@ export class CreateNoteInput implements ICreateNoteInput {
     text!: string;
     contactPhoneId!: number | undefined;
     orderId!: number | undefined;
-    typeId!: string;
+    noteType!: CreateNoteInputNoteType;
     followUpDateTime!: moment.Moment | undefined;
     dateTime!: moment.Moment | undefined;
     addedByUserId!: number | undefined;
@@ -48660,7 +48612,7 @@ export class CreateNoteInput implements ICreateNoteInput {
             this.text = data["text"];
             this.contactPhoneId = data["contactPhoneId"];
             this.orderId = data["orderId"];
-            this.typeId = data["typeId"];
+            this.noteType = data["noteType"];
             this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
             this.addedByUserId = data["addedByUserId"];
@@ -48680,7 +48632,7 @@ export class CreateNoteInput implements ICreateNoteInput {
         data["text"] = this.text;
         data["contactPhoneId"] = this.contactPhoneId;
         data["orderId"] = this.orderId;
-        data["typeId"] = this.typeId;
+        data["noteType"] = this.noteType;
         data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
         data["addedByUserId"] = this.addedByUserId;
@@ -48693,7 +48645,7 @@ export interface ICreateNoteInput {
     text: string;
     contactPhoneId: number | undefined;
     orderId: number | undefined;
-    typeId: string;
+    noteType: CreateNoteInputNoteType;
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
     addedByUserId: number | undefined;
@@ -48741,7 +48693,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
     text!: string;
     contactPhoneId!: number | undefined;
     orderId!: number | undefined;
-    typeId!: string;
+    noteType!: UpdateNoteInputNoteType;
     followUpDateTime!: moment.Moment | undefined;
     dateTime!: moment.Moment | undefined;
     addedByUserId!: number | undefined;
@@ -48762,7 +48714,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
             this.text = data["text"];
             this.contactPhoneId = data["contactPhoneId"];
             this.orderId = data["orderId"];
-            this.typeId = data["typeId"];
+            this.noteType = data["noteType"];
             this.followUpDateTime = data["followUpDateTime"] ? moment(data["followUpDateTime"].toString()) : <any>undefined;
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
             this.addedByUserId = data["addedByUserId"];
@@ -48783,7 +48735,7 @@ export class UpdateNoteInput implements IUpdateNoteInput {
         data["text"] = this.text;
         data["contactPhoneId"] = this.contactPhoneId;
         data["orderId"] = this.orderId;
-        data["typeId"] = this.typeId;
+        data["noteType"] = this.noteType;
         data["followUpDateTime"] = this.followUpDateTime ? this.followUpDateTime.toISOString() : <any>undefined;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
         data["addedByUserId"] = this.addedByUserId;
@@ -48797,50 +48749,10 @@ export interface IUpdateNoteInput {
     text: string;
     contactPhoneId: number | undefined;
     orderId: number | undefined;
-    typeId: string;
+    noteType: UpdateNoteInputNoteType;
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
     addedByUserId: number | undefined;
-}
-
-export class NoteTypeInfoDto implements INoteTypeInfoDto {
-    id!: string | undefined;
-    name!: string | undefined;
-
-    constructor(data?: INoteTypeInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): NoteTypeInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new NoteTypeInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface INoteTypeInfoDto {
-    id: string | undefined;
-    name: string | undefined;
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {
@@ -61323,6 +61235,24 @@ export enum MemberPaymentAuthorizeRequestDtoPaymentInfoType {
 export enum RegisterMemberRequestGender {
     _0 = 0, 
     _1 = 1, 
+}
+
+export enum NoteInfoDtoNoteType {
+    Note = "Note", 
+    IncomingCall = "IncomingCall", 
+    OutcomingCall = "OutcomingCall", 
+}
+
+export enum CreateNoteInputNoteType {
+    Note = "Note", 
+    IncomingCall = "IncomingCall", 
+    OutcomingCall = "OutcomingCall", 
+}
+
+export enum UpdateNoteInputNoteType {
+    Note = "Note", 
+    IncomingCall = "IncomingCall", 
+    OutcomingCall = "OutcomingCall", 
 }
 
 export enum UserNotificationState {
