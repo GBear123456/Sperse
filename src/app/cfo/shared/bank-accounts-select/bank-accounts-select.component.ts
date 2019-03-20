@@ -61,4 +61,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
             (selectedCount != totalCount ? selectedCount + ' ' + this.l('of') + ' ' : '') 
                 + totalCount + ' ' + this.l('entities') : this.l('All_Entities');
     }
+
+    selectAllValueChanged($event) {
+        $event.component._$list.find('.dx-list-select-all-label').text(
+            ($event.value ? this.l('Clear') : this.l('Select')) + ' ' + this.l('All'));
+    }
 }

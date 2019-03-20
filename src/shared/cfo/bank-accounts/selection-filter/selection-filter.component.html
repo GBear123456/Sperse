@@ -14,6 +14,7 @@
                     tagTemplate="customTagTemplate"
                     [maxDisplayedTags]="4"
                     (onValueChanged)="selectedItemsChange()"
+                    (onSelectAllValueChanged)="selectAllValueChanged($event)"
                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
                     [(value)]="selectedItems">
             <div *dxTemplate="let tag of 'customTagTemplate'">

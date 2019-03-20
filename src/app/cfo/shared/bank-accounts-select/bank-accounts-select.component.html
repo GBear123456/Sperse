@@ -22,6 +22,7 @@
                                                     [maxDisplayedTags]="2"
                                                     [showSelectionControls]="true"
                                                     tagTemplate="customTagTemplate"
+                                                    (onSelectAllValueChanged)="selectAllValueChanged($event)"
                                                     (onValueChanged)="changeSelectedBusinessEntities($event)"
                                                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
                                                     [value]="bankAccountsService.selectedBusinessEntitiesIds$ | async">
