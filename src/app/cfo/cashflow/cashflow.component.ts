@@ -2840,8 +2840,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     cellCanBeDragged(cell, area) {
         return area === 'data' && (cell.rowPath[0] === PI || cell.rowPath[0] === PE) &&
-               !(cell.rowPath.length && cell.rowPath.length === 2 && (cell.rowPath[1] && cell.rowPath[1].slice(0, 2) !== CategorizationPrefixes.Category)) &&
+               !(cell.rowPath.length && cell.rowPath.length === 2 && (cell.rowPath[1] && this.isNotCategoryOrDescriptorCell(cell.rowPath[1]))) &&
                cell.rowPath.length !== 1;
+    }
+
+    private isNotCategoryOrDescriptorCell(rowPathItem: string): boolean {
+        const prefix = rowPathItem.slice(0, 2);
+        return prefix !== CategorizationPrefixes.Category && prefix !== CategorizationPrefixes.TransactionDescriptor;
     }
 
     getCellObjectFromCellElement(cellElement: HTMLTableCellElement) {
@@ -5864,7 +5869,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 });
 
                 this._bankAccountsServiceProxy.discardDiscrepancies(InstanceType[this.instanceType], this.instanceId, discardDiscrepanciesInput)
-                    .subscribe((result) => { this.refreshDataGrid(); });
+                    .subscribe(() => { this.refreshDataGrid(); });
             }
             document.documentElement.scrollTop = 0;
         });
