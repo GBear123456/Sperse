@@ -153,6 +153,12 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement');
     }
 
+    hideDropDown() {
+        let element: any = $('#header_notification_bar');
+        let dropDown = element.mDropdown();
+        dropDown && dropDown.hide();
+    }
+
     openPaymentWizardDialog(e) {
         this.hideDropDown();
         this._dialog.open(PaymentWizardComponent, {
