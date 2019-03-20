@@ -9,7 +9,7 @@
                     <categorization
                         [hidden]="!toggleTabContent"
                         [width]="'340px'"
-                        [height]="'calc(100vh - 300px)'"
+                        [height]="isFullscreenMode ? 'calc(100vh - 150px)': 'calc(100vh - 300px)'"
                         [showTitle]="true"
                         [showHeader]="true"
                         [showClearSelection]="true"

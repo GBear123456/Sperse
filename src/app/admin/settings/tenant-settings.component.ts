@@ -125,7 +125,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this._tenantPaymentSettingsService.getRecurlyPaymentSettings(),
                 this.isCreditReportFeatureEnabled ? this._tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
-                //this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
+                this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
                 this.isPFMApplicationsFeatureEnabled ? this._tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null)
             ];
@@ -145,7 +145,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.recurlySettings,
                     this.idcsSettings,
                     this.epcvipSettings,
-                    //this.epcvipEmailSettings,
+                    this.epcvipEmailSettings,
                     this.ongageSettings,
                     this.iageSettings
                 ] = results;
@@ -295,8 +295,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             requests.push(this._tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
         if (this.isPFMApplicationsFeatureEnabled)
             requests.push(this._tenantOfferProviderSettingsService.updateEPCVIPOfferProviderSettings(this.epcvipSettings));
-        //if (this.isPFMApplicationsFeatureEnabled)
-        //    requests.push(this._tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
+        if (this.isPFMApplicationsFeatureEnabled)
+            requests.push(this._tenantSettingsService.updateEPCVIPMailerSettings(this.epcvipEmailSettings));
         if (this.isPFMApplicationsFeatureEnabled)
             requests.push(this._tenantSettingsService.updateOngageSettings(this.ongageSettings));
         if (this.isPFMApplicationsFeatureEnabled)

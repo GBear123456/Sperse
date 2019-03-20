@@ -160,7 +160,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 }
             },
-            onChanged: this.getTotalValues.bind(this)
+            onChanged: () => {
+                this.dataGrid.instance.clearSelection();
+                this.getTotalValues();
+            }
         });
 
         this._bankAccountsService.load();
@@ -436,7 +439,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     location: 'after',
                     locateInMenu: 'auto',
                     items: [
-                        {name: 'fullscreen', action: this.toggleFullscreen.bind(this, document.documentElement)}
+                        {
+                            name: 'fullscreen', 
+                            action: () => {
+                                this.toggleFullscreen(document.documentElement);
+                                setTimeout(() => this.dataGrid.instance.repaint(), 100);
+                            }
+                        }
                     ]
                 }
             ]);
@@ -575,6 +584,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             () => this.applyTotalBankAccountFilter()
         );
         this.categorizationComponent.refreshCategories(false, false);
+        this.invalidate();
     }
 
     searchValueChange(e: object) {
@@ -835,7 +845,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.dragInProgress = true;
             e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
             e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
-            e.originalEvent.dropEffect = 'move';
+            e.originalEvent.dataTransfer.effectAllowed = 'all';
+            e.originalEvent.dataTransfer.dropEffect = 'move';
             document.addEventListener('dxpointermove', this.stopPropagation, true);
         }).on('dragend', (e) => {
             e.originalEvent.preventDefault();

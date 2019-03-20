@@ -3876,11 +3876,12 @@ export class CashFlowForecastServiceProxy {
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (forecastIds !== undefined)
-            forecastIds && forecastIds.forEach(item => { url_ += "forecastIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(forecastIds);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -3888,7 +3889,7 @@ export class CashFlowForecastServiceProxy {
             })
         };
 
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
             return this.processDeleteForecasts(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
@@ -14833,12 +14834,13 @@ export class LeadServiceProxy {
      * @return Success
      */
     deleteLeads(leadIds: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/DeleteLeads?";
-        if (leadIds !== undefined)
-            leadIds && leadIds.forEach(item => { url_ += "leadIds=" + encodeURIComponent("" + item) + "&"; });
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/DeleteLeads";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(leadIds);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -14846,7 +14848,7 @@ export class LeadServiceProxy {
             })
         };
 
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
             return this.processDeleteLeads(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
@@ -32576,6 +32578,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
     cashflowTypeId!: string | undefined;
     categoryId!: number | undefined;
     descriptor!: string | undefined;
+    isDescriptorCalculated!: boolean | undefined;
     bankName!: string | undefined;
     accountId!: number | undefined;
     accountName!: string | undefined;
@@ -32606,6 +32609,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
             this.cashflowTypeId = data["cashflowTypeId"];
             this.categoryId = data["categoryId"];
             this.descriptor = data["descriptor"];
+            this.isDescriptorCalculated = data["isDescriptorCalculated"];
             this.bankName = data["bankName"];
             this.accountId = data["accountId"];
             this.accountName = data["accountName"];
@@ -32636,6 +32640,7 @@ export class CashFlowStatsDetailDto implements ICashFlowStatsDetailDto {
         data["cashflowTypeId"] = this.cashflowTypeId;
         data["categoryId"] = this.categoryId;
         data["descriptor"] = this.descriptor;
+        data["isDescriptorCalculated"] = this.isDescriptorCalculated;
         data["bankName"] = this.bankName;
         data["accountId"] = this.accountId;
         data["accountName"] = this.accountName;
@@ -32659,6 +32664,7 @@ export interface ICashFlowStatsDetailDto {
     cashflowTypeId: string | undefined;
     categoryId: number | undefined;
     descriptor: string | undefined;
+    isDescriptorCalculated: boolean | undefined;
     bankName: string | undefined;
     accountId: number | undefined;
     accountName: string | undefined;
@@ -32926,6 +32932,7 @@ export class AddForecastInput implements IAddForecastInput {
     transactionDescriptor!: string | undefined;
     currencyId!: string;
     amount!: number;
+    description!: string | undefined;
 
     constructor(data?: IAddForecastInput) {
         if (data) {
@@ -32948,6 +32955,7 @@ export class AddForecastInput implements IAddForecastInput {
             this.transactionDescriptor = data["transactionDescriptor"];
             this.currencyId = data["currencyId"];
             this.amount = data["amount"];
+            this.description = data["description"];
         }
     }
 
@@ -32970,6 +32978,7 @@ export class AddForecastInput implements IAddForecastInput {
         data["transactionDescriptor"] = this.transactionDescriptor;
         data["currencyId"] = this.currencyId;
         data["amount"] = this.amount;
+        data["description"] = this.description;
         return data; 
     }
 }
@@ -32985,6 +32994,7 @@ export interface IAddForecastInput {
     transactionDescriptor: string | undefined;
     currencyId: string;
     amount: number;
+    description: string | undefined;
 }
 
 export class ImportForecastInput implements IImportForecastInput {
@@ -32993,6 +33003,8 @@ export class ImportForecastInput implements IImportForecastInput {
     type!: ImportForecastInputType;
     categoryID!: number | undefined;
     descriptor!: string | undefined;
+    description!: string | undefined;
+    model!: string | undefined;
     amount!: number;
     cashFlowTypeId!: string | undefined;
 
@@ -33012,6 +33024,8 @@ export class ImportForecastInput implements IImportForecastInput {
             this.type = data["type"];
             this.categoryID = data["categoryID"];
             this.descriptor = data["descriptor"];
+            this.description = data["description"];
+            this.model = data["model"];
             this.amount = data["amount"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
         }
@@ -33031,6 +33045,8 @@ export class ImportForecastInput implements IImportForecastInput {
         data["type"] = this.type;
         data["categoryID"] = this.categoryID;
         data["descriptor"] = this.descriptor;
+        data["description"] = this.description;
+        data["model"] = this.model;
         data["amount"] = this.amount;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
         return data; 
@@ -33043,6 +33059,8 @@ export interface IImportForecastInput {
     type: ImportForecastInputType;
     categoryID: number | undefined;
     descriptor: string | undefined;
+    description: string | undefined;
+    model: string | undefined;
     amount: number;
     cashFlowTypeId: string | undefined;
 }
@@ -33100,6 +33118,7 @@ export class UpdateForecastInput implements IUpdateForecastInput {
     amount!: number | undefined;
     bankAccountId!: number | undefined;
     categoryId!: number | undefined;
+    description!: string | undefined;
     transactionDescriptor!: string | undefined;
 
     constructor(data?: IUpdateForecastInput) {
@@ -33118,6 +33137,7 @@ export class UpdateForecastInput implements IUpdateForecastInput {
             this.amount = data["amount"];
             this.bankAccountId = data["bankAccountId"];
             this.categoryId = data["categoryId"];
+            this.description = data["description"];
             this.transactionDescriptor = data["transactionDescriptor"];
         }
     }
@@ -33136,6 +33156,7 @@ export class UpdateForecastInput implements IUpdateForecastInput {
         data["amount"] = this.amount;
         data["bankAccountId"] = this.bankAccountId;
         data["categoryId"] = this.categoryId;
+        data["description"] = this.description;
         data["transactionDescriptor"] = this.transactionDescriptor;
         return data; 
     }
@@ -33147,6 +33168,7 @@ export interface IUpdateForecastInput {
     amount: number | undefined;
     bankAccountId: number | undefined;
     categoryId: number | undefined;
+    description: string | undefined;
     transactionDescriptor: string | undefined;
 }
 
@@ -44052,6 +44074,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
     timezone!: string | undefined;
     timezoneForComparison!: string | undefined;
     zendeskAccountUrl!: string | undefined;
+    publicSiteUrl!: string | undefined;
 
     constructor(data?: IGeneralSettingsEditDto) {
         if (data) {
@@ -44067,6 +44090,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
             this.timezone = data["timezone"];
             this.timezoneForComparison = data["timezoneForComparison"];
             this.zendeskAccountUrl = data["zendeskAccountUrl"];
+            this.publicSiteUrl = data["publicSiteUrl"];
         }
     }
 
@@ -44082,6 +44106,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
         data["timezone"] = this.timezone;
         data["timezoneForComparison"] = this.timezoneForComparison;
         data["zendeskAccountUrl"] = this.zendeskAccountUrl;
+        data["publicSiteUrl"] = this.publicSiteUrl;
         return data; 
     }
 }
@@ -44090,6 +44115,7 @@ export interface IGeneralSettingsEditDto {
     timezone: string | undefined;
     timezoneForComparison: string | undefined;
     zendeskAccountUrl: string | undefined;
+    publicSiteUrl: string | undefined;
 }
 
 export class HostUserManagementSettingsEditDto implements IHostUserManagementSettingsEditDto {
@@ -55856,7 +55882,6 @@ export interface IIntegrationsSettings {
 
 export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings {
     apiKey!: string | undefined;
-    publicSiteUrl!: string | undefined;
 
     constructor(data?: IEPCVIPOfferProviderSettings) {
         if (data) {
@@ -55870,7 +55895,6 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     init(data?: any) {
         if (data) {
             this.apiKey = data["apiKey"];
-            this.publicSiteUrl = data["publicSiteUrl"];
         }
     }
 
@@ -55884,14 +55908,12 @@ export class EPCVIPOfferProviderSettings implements IEPCVIPOfferProviderSettings
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["apiKey"] = this.apiKey;
-        data["publicSiteUrl"] = this.publicSiteUrl;
         return data; 
     }
 }
 
 export interface IEPCVIPOfferProviderSettings {
     apiKey: string | undefined;
-    publicSiteUrl: string | undefined;
 }
 
 export class BaseCommercePaymentSettings implements IBaseCommercePaymentSettings {
@@ -56494,6 +56516,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
     apiKey!: string | undefined;
     activationEmailId!: number | undefined;
     passwordResetEmailId!: number | undefined;
+    isEnabled!: boolean | undefined;
 
     constructor(data?: IIAgeSettingsEditDto) {
         if (data) {
@@ -56509,6 +56532,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
             this.apiKey = data["apiKey"];
             this.activationEmailId = data["activationEmailId"];
             this.passwordResetEmailId = data["passwordResetEmailId"];
+            this.isEnabled = data["isEnabled"];
         }
     }
 
@@ -56524,6 +56548,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
         data["apiKey"] = this.apiKey;
         data["activationEmailId"] = this.activationEmailId;
         data["passwordResetEmailId"] = this.passwordResetEmailId;
+        data["isEnabled"] = this.isEnabled;
         return data; 
     }
 }
@@ -56532,6 +56557,7 @@ export interface IIAgeSettingsEditDto {
     apiKey: string | undefined;
     activationEmailId: number | undefined;
     passwordResetEmailId: number | undefined;
+    isEnabled: boolean | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {

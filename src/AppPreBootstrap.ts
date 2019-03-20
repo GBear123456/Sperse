@@ -87,6 +87,7 @@ export class AppPreBootstrap {
     }
 
     private static impersonatedAuthenticate(impersonationToken: string, tenantId: number, callback: () => void): JQueryPromise<any> {
+        abp.auth.clearToken();
         abp.multiTenancy.setTenantIdCookie(tenantId);
 
         const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
@@ -111,7 +112,6 @@ export class AppPreBootstrap {
             callback();
         }).fail(() => {
             abp.multiTenancy.setTenantIdCookie();
-            abp.auth.clearToken();
             location.href = AppConsts.appBaseUrl;
         });
     }

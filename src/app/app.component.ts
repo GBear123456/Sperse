@@ -43,8 +43,8 @@ export class AppComponent extends AppComponentBase implements OnInit {
                             const upperModuleName = name.toUpperCase();
                             const module = appService.getModuleSubscription(name);
                             this.dialog.open(PaymentWizardComponent, {
-                                height: '655px',
-                                width: '980px',
+                                height: '800px',
+                                width: '1200px',
                                 id: 'payment-wizard',
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {

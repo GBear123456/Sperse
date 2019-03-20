@@ -127,13 +127,14 @@ export class UserManagementService {
                : of([]);
     }
 
-    getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
+    checkLendSpaceLayout() {
         let tenant = this.appSession.tenant;
-        if (!id)
-            return tenant && tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace ? AppConsts.imageUrls.profileLendSpace : defaultUrl;
+        return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace);
+    }
 
-        let tenantId = this.appSession.tenantId;
-        return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId || 0) + '/' + id;
+    getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
+        return id ? AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (this.appSession.tenantId || 0) + '/' + id
+            : (this.checkLendSpaceLayout() ? AppConsts.imageUrls.profileLendSpace : defaultUrl);
     }
 
     showLoginAttempts(e): void {
@@ -149,7 +150,17 @@ export class UserManagementService {
     }
 
     logout(): void {
-        this.authService.logout(true, this.feature.isEnabled('PFM.Applications') ? environment.LENDSPACE_DOMAIN : undefined);
+        this.authService.logout(true, this.abpSessionService.impersonatorUserId ? undefined : this.getLogoutUrl());
+    }
+
+    getLogoutUrl() {
+        let domain = environment.LENDSPACE_DOMAIN;  
+        if (this.checkLendSpaceLayout() && this.checkSecondDomainLevel(domain))
+            return domain;
+    }
+
+    checkSecondDomainLevel(domain) {
+        return domain.indexOf(location.hostname.split('.').slice(-2).join('.')) >= 0;
     }
 
     switchToLinkedUser(linkedUser: LinkedUserDto): void {

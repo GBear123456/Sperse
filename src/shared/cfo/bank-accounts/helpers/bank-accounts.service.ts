@@ -79,7 +79,7 @@ export class BankAccountsService {
         });
         this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
         this.businessEntities$ = this._businessEntities.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
-
+/*
         this.bankAccounts$ = this.syncAccounts$
             .pipe(
                 mergeMap(x => x),
@@ -87,7 +87,7 @@ export class BankAccountsService {
                     return bankAccounts.concat(syncAccount.bankAccounts);
                 }, [])
             );
-
+*/
         this.businessEntitiesAmount$ = this.businessEntities$.pipe(
             map(businessEntities => businessEntities.length),
             distinctUntilChanged()
@@ -150,10 +150,12 @@ export class BankAccountsService {
                 distinctUntilChanged(this.arrayDistinct)
             );
 
-        this.filteredSyncAccounts$ = combineLatest(
+        let combinedFilteredSyncAccounts$ = combineLatest(
             this.filteredSyncAccountsWithType$,
             this.syncAccountsState$
-        ).pipe(
+        );
+
+        this.filteredSyncAccounts$ = combinedFilteredSyncAccounts$.pipe(
             mergeMap(([syncAccounts, state]) => {
                 return of(this.filterDataSource(
                     syncAccounts,
@@ -162,6 +164,26 @@ export class BankAccountsService {
                     state.visibleBankAccountIds,
                     state.isActive
                 ));
+            }),
+            distinctUntilChanged(this.arrayDistinct)
+        );
+
+        let filteredSyncAccountsAmount$ = combinedFilteredSyncAccounts$.pipe(
+            mergeMap(([syncAccounts, state]) => {
+                return of(this.filterDataSource(
+                    syncAccounts, [], state.selectedBankAccountIds, 
+                    state.visibleBankAccountIds, state.isActive
+                ));
+            }),
+            distinctUntilChanged(this.arrayDistinct)
+        );
+
+        let filteredBankAccountsAmount$ = filteredSyncAccountsAmount$.pipe(
+            map(syncAccounts => {
+                return syncAccounts.reduce((total, syncAccount) => {
+                        return total + syncAccount.bankAccounts.length;
+                    }, 0
+                );
             }),
             distinctUntilChanged(this.arrayDistinct)
         );
@@ -298,13 +320,13 @@ export class BankAccountsService {
                 distinctUntilChanged()
             );
 
-        this.accountsAmount$ = this.filteredBankAccounts$
+        this.accountsAmount$ = combineLatest(this.filteredBankAccounts$, filteredBankAccountsAmount$)
             .pipe(
-                map((bankAccounts: any[]) => {
+                map(([bankAccounts, totalAmount]: [any[], number]) => {
                     const selectedBankAccounts = bankAccounts.filter(bankAccount => bankAccount.selected);
-                    return selectedBankAccounts.length === bankAccounts.length
+                    return selectedBankAccounts.length === totalAmount
                         ? selectedBankAccounts.length.toString()
-                        : `${selectedBankAccounts .length} of ${bankAccounts.length}`;
+                        : `${selectedBankAccounts .length} of ${totalAmount}`;
                 }),
                 distinctUntilChanged()
             );
@@ -518,7 +540,7 @@ export class BankAccountsService {
 
     setBankAccountsFilter(filters, syncAccounts, emitFilterChange = false) {
         let accountFilter: FilterModel = _.find(filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'account'; });
-        accountFilter = this.changeAndGetBankAccountFilter(accountFilter, this.state, syncAccounts);        
+        accountFilter = this.changeAndGetBankAccountFilter(accountFilter, this.state, syncAccounts);
         emitFilterChange && this._filtersService.change(accountFilter);
         this.applyFilter();
     }

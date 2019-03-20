@@ -45,6 +45,7 @@ export class EditContactDialog extends AppComponentBase {
 
     masks = AppConsts.masks;
     urlRegEx = AppConsts.regexPatterns.url;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     constructor(injector: Injector,
                 @Inject(MAT_DIALOG_DATA) public data: any,

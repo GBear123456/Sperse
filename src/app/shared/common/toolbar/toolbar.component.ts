@@ -358,6 +358,6 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this.subscription.unsubscribe();
+        //this.subscription.unsubscribe();
     }
 }

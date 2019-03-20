@@ -55,6 +55,7 @@ export class PackageChooserComponent implements OnInit {
     @Output() onPlanChosen: EventEmitter<PackageOptions> = new EventEmitter();
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     @HostBinding('class.withBackground') @Input() showBackground;
+    modules = Module;
     packages: PackageConfigDto[];
     usersAmount = null;
     sliderInitialMinValue = 5;
@@ -71,7 +72,7 @@ export class PackageChooserComponent implements OnInit {
     private freePackages: PackageConfigDto[];
     private enableSliderScalingChange = false;
     packagesConfig$: Observable<GetPackagesConfigOutput>;
-
+    configurator = 'billingPeriod';
     constructor(
         private localizationService: AppLocalizationService,
         private packageServiceProxy: PackageServiceProxy,
@@ -114,8 +115,385 @@ export class PackageChooserComponent implements OnInit {
 
     /** Split packages to free packages and notFreePackages */
     splitPackagesForFreeAndNotFree(packagesConfig: GetPackagesConfigOutput) {
-        let [ notFreePackages, freePackages ] = partition(packagesConfig.packages, packageConfig => !!packageConfig.editions[0].annualPrice);
+        let [ notFreePackages, freePackages ]: [ any, any] = partition(packagesConfig.packages, packageConfig => !!packageConfig.editions[0].annualPrice);
         this.freePackages = freePackages;
+        /** @todo remove */
+        /** Replace packages editions with stub data */
+        if (this.module === Module.CFO) {
+            notFreePackages[0]['editions'][0]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CFO.FinancialAccounts',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Up to 5 financial accounts'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.ForecastPlanning',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Up to 1 year forecast planning'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Group by month, quarter, year'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.SingleUserInstance',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Single user instance'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                        'definition': {
+                            'name': 'CFO.RelatedBusinessEntities',
+                            'displayName': {
+                                'sourceName': 'CFO',
+                                'name': 'Up to 3 related business entities'
+                            },
+                            'isVariable': false,
+                            'sortOrder': 0,
+                            'isStatic': false,
+                            'measurementUnit': null,
+                            'isCommon': false
+                        },
+                        'value': null
+                    }
+            ];
+            notFreePackages[1]['editions'][0]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CFO.FinancialAccounts',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Up to 15 financial accounts'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.ForecastPlanning',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Up to 3 year forecast planning'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.ForecastPlanning',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Up to 10 user instances'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.ForecastPlanning',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Up to 10 related business entities'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Group by day, week, month, quarter, year'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.ForecastPlanning',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Automatically scheduled daily bank synch'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                        'definition': {
+                            'name': 'CFO.SingleUserInstance',
+                            'displayName': {
+                                'sourceName': 'CFO',
+                                'name': 'Xero and Quickbooks connections'
+                            },
+                            'isVariable': false,
+                            'sortOrder': 0,
+                            'isStatic': false,
+                            'measurementUnit': null,
+                            'isCommon': false
+                        },
+                        'value': null
+                    }
+            ];
+            notFreePackages[2]['editions'][0]['features'] =
+            notFreePackages[2]['editions'][1]['features'] =
+            notFreePackages[2]['editions'][2]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CFO.FinancialAccounts',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Unlimited financial accounts'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.ForecastPlanning',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Up to 10 years of future forecasts'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.ForecastPlanning',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Up to 100 user instances'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.ForecastPlanning',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Up to 100 related business entities'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Group by day, week, month, quarter, year'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.ForecastPlanning',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Automatically scheduled bank synch'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.SingleUserInstance',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Xero & Quickbooks connections'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.SingleUserInstance',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Multiple forecast scenarios'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.SingleUserInstance',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'KPI metrics with daily stats & alerts'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.SingleUserInstance',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Advanced forecast & series editor'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.SingleUserInstance',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'Autocomplete or postpone forecasts'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                        'definition': {
+                            'name': 'CFO.SingleUserInstance',
+                            'displayName': {
+                                'sourceName': 'CFO',
+                                'name': 'Invoices & receipts linked for auditing'
+                            },
+                            'isVariable': false,
+                            'sortOrder': 0,
+                            'isStatic': false,
+                            'measurementUnit': null,
+                            'isCommon': false,
+                            'disabled': true
+                        },
+                        'value': null
+                    }
+            ];
+        }
         this.packages = notFreePackages;
     }
 
@@ -165,7 +543,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     billingPeriodChanged(e) {
-        this.selectedBillingPeriod = e.checked ? BillingPeriod.Yearly : BillingPeriod.Monthly;
+        this.selectedBillingPeriod = e.value ? BillingPeriod.Yearly : BillingPeriod.Monthly;
     }
 
     selectPackage(packageIndex: number) {
@@ -175,11 +553,11 @@ export class PackageChooserComponent implements OnInit {
             this.selectedPackageCardComponent = selectedPlanCardComponent;
         }
     }
-
-    getActiveStatus(status: 'month' | 'year') {
-        return (status === 'month' && this.selectedBillingPeriod === BillingPeriod.Monthly) ||
-               (status === 'year' && this.selectedBillingPeriod === BillingPeriod.Yearly);
-    }
+    //
+    // getActiveStatus(status: 'month' | 'year') {
+    //     return (status === 'month' && this.selectedBillingPeriod === BillingPeriod.Monthly) ||
+    //            (status === 'year' && this.selectedBillingPeriod === BillingPeriod.Yearly);
+    // }
 
     onActiveUsersChange(event: MatSliderChange) {
         this.usersAmount = event.value;

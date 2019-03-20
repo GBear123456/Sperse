@@ -18,14 +18,13 @@
                                         <dx-tag-box [dataSource]="bankAccountsService.businessEntities$ | async"
                                                     displayExpr="name"
                                                     valueExpr="id"
-                                                    placeholder="All Entities"
+                                                    [placeholder]="l('All_Entities')"
                                                     [maxDisplayedTags]="2"
                                                     [showSelectionControls]="true"
                                                     tagTemplate="customTagTemplate"
-                                                    (onClosed)="changeSelectedBusinessEntities($event)"
+                                                    (onValueChanged)="changeSelectedBusinessEntities($event)"
                                                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
                                                     [value]="bankAccountsService.selectedBusinessEntitiesIds$ | async">
-
                                             <div *dxTemplate="let tag of 'customTagTemplate'">
                                                 <span class="tag-value"> {{ tag.name || tag }}  </span>
                                             </div>

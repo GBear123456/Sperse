@@ -25,6 +25,10 @@
                             <timezone-combo id="Timezone" [(selectedTimeZone)]="settings.general.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
                         </div>
                         <div class="form-group">
+                            <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>
+                            <input  id="PublicSiteUrl" type="url" name="PublicSiteUrl" class="form-control" [(ngModel)]="settings.general.publicSiteUrl" maxlength="128">
+                        </div>
+                        <div class="form-group">
                             <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
                             <input id="ZendeskAccountUrl" type="text" name="ZendeskAccountUrl" class="form-control" [(ngModel)]="settings.general.zendeskAccountUrl" maxlength="128">
                         </div>
@@ -438,16 +442,9 @@
                                 <label for="EPCVIPApiKey">{{l("EPCVIPApiKey")}}</label>
                                 <input id="EPCVIPApiKey" type="text" name="EPCVIPApiKey" class="form-control" [(ngModel)]="epcvipSettings.apiKey" maxlength="128">
                             </div>
-                            <div class="form-group">
-                                <label for="EPCVIPPublicSiteUrl">{{l("EPCVIPPublicSiteUrl")}}</label>
-                                <input #epcvipPublicSiteUrl="ngModel" id="EPCVIPPublicSiteUrl" type="url" name="EPCVIPPublicSiteUrl" class="form-control" [(ngModel)]="epcvipSettings.publicSiteUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
-                            </div>
-                            <div>
-                                <span class="help-block text-danger" *ngIf="!epcvipPublicSiteUrl.valid && !epcvipPublicSiteUrl.pristine">{{l("Invalid_EPCVIPPublicSiteUrl")}}</span>
-                            </div>
                         </div>
                     </tab>
-                    <!--<tab heading="{{l('EPCVIPEmail')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
+                    <tab heading="{{l('EPCVIPEmail')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
                         <div>
                             <div class="form-group">
                                 <label for="EPCVIPEmailApiKey">{{l("EPCVIPEmailApiKey")}}</label>
@@ -471,7 +468,7 @@
                                 </select>
                             </div>
                         </div>
-                    </tab>-->
+                    </tab>
                     <tab heading="{{l('IAge')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
                         <div>
                             <div class="form-group">
@@ -485,6 +482,15 @@
                             <div class="form-group">
                                 <label for="IAgePasswordResetEmailId">{{l("IAgePasswordResetEmailId")}}</label>
                                 <input id="IAgePasswordResetEmailId" type="number" name="IAgePasswordResetEmailId" class="form-control" [(ngModel)]="iageSettings.passwordResetEmailId" maxlength="128">
+                            </div>
+                            <div>
+                                <div class="form-group m-form__group">
+                                    <label for="IAgeIsEnabled" class="m-checkbox">
+                                        <input id="IAgeIsEnabled" class="m-check" type="checkbox" name="IAgeIsEnabled" [(ngModel)]="iageSettings.isEnabled">
+                                        {{l("IAgeIsEnabled")}}
+                                        <span></span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </tab>
