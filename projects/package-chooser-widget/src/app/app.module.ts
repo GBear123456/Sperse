@@ -6,7 +6,7 @@ import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser'
 /** Third party imports */
 import { GestureConfig } from '@angular/material';
 import { MatSlider, MatSliderModule } from '@angular/material/slider';
-import { MatSlideToggle, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 /** Application imports */
 import { PackageChooserComponent } from '../../../../src/app/shared/common/payment-wizard/package-chooser/package-chooser.component';
@@ -20,6 +20,7 @@ import { PackageChooserWidgetComponent } from './package-chooser-widget-componen
 import { AppConsts } from '@shared/AppConsts';
 import { WidgetsService } from '../../../widgets.service';
 import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
+import { DxSwitchModule } from '@root/node_modules/devextreme-angular';
 
 export function getRemoteUrl() {
     return AppConsts.remoteServiceBaseUrl;
@@ -40,7 +41,7 @@ export function initialize(widgetsService: WidgetsService, httpClient: HttpClien
         AbpModule,
         BrowserModule,
         MatSliderModule,
-        MatSlideToggleModule,
+        DxSwitchModule,
         HttpClientModule
     ],
     providers: [
