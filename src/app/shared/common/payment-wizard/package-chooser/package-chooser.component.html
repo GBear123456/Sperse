@@ -4,6 +4,12 @@
             <h2 class="title">{{ title }}</h2>
             <h3 class="subtitle">{{ subtitle }}</h3>
             <div class="config-wrap">
+                <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator !== 'slider'">
+                    <span class="totalSeatsLabel">{{ l('TotalSeatsLabel') }}</span>
+                    <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
+                    <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
+                    <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
+                </div>
                 <div class="billingPeriod">
                     <div class="monthly" [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('Monthly') }}</div>
                     <mat-slide-toggle
@@ -13,12 +19,6 @@
                     <div class="annually" [ngClass]="{ 'active': getActiveStatus('year') }">{{ l('Annually') }}
                         <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
                     </div>
-                </div>
-                <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator !== 'slider'">
-                    <span class="totalSeatsLabel">{{ l('TotalSeatsLabel') }}</span>
-                    <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
-                    <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
-                    <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
                 </div>
                 <button [hidden]="configurator === 'slider'"
                         class="toggle"
