@@ -31,7 +31,7 @@
             <dx-tabs *ngIf="detailsContainsForecasts && detailsContainsHistorical"
                      [dataSource]="detailsTabs"
                      [width]="300"
-                     [selectedIndex]="0"
+                     [selectedItem]="selectedDetailsTab$ | async"
                      [scrollByContent]="true"
                      [showNavButtons]="true"
                      (onSelectionChanged)="changeDetailsTab($event)">
