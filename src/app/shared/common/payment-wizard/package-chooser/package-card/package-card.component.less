@@ -1,11 +1,11 @@
 :host {
-    padding: 28px 25px 19px 27px;
-    width: 263px;
+    padding: 20px 26px;
+    width: 30%;
     border-radius: 6px;
     box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.1);
     display: block;
     position: relative;
-    margin: 25px 10px;
+    margin: 0 10px;
     cursor: default;
     background: #eee;
     height: 100%;
@@ -36,73 +36,92 @@
         }
     }
     .cardHeader {
-        display: flex;
-        justify-content: space-between;
+        //display: flex;
+        //justify-content: space-between;
         margin-bottom: 19px;
-        .left {
-            .title {
-                font-size: 11.9px;
-                font-weight: 700;
-                letter-spacing: 1.2px;
-                text-transform: uppercase;
-                margin-bottom: 8px;
-                color: grey;
-            }
-            .includesUsers,
+        .title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            color: #0bb1f0;
+        }
+        
+        sup {
+            top: 0;
+        }
+        
+        .price-block {
+            margin-top: 10px;
+            display: flex;
+            
             .amountPerMonth {
-                font-size: 10.2px;
-                font-weight: 500;
-                color: #686f76;
-                display: flex;
-                white-space: nowrap;
-                .decimal {
-                    font-size: 6px;
-                    line-height: 8px;
+                font-size: 24px;
+                line-height: 1;
+                
+                .currency-symbol {
+                    position: relative;
+                    top: 5px;
+                }
+                
+                .number {
+                    font-size: 30px;
+                    line-height: 1;
+                    font-weight: 600;
+                    color: #424c56;
                 }
             }
         }
-        .right {
-            p {
-                margin-bottom: 0;
-                display: flex;
+        
+        .includesUsers,
+        .amountPerUser,
+        .amountPerMonth {
+            font-size: 11px;
+            font-weight: 500;
+            color: #686f76;
+            display: flex;
+            white-space: nowrap;
+        }
+        
+        .amountPerUser {
+            margin-left: auto;
+            flex-direction: column;
+            
+            .top {
+                font-size: 16px;
             }
-            .currency {
-                font-weight: 500;
-                font-size: 11.9px;
-                color: #686f76;
-                margin-right: 3px;
+            
+            .bottom {
+                font-size: 11px;
+                color: #bfbfbf;
             }
-            .priceNumber {
-                font-size: 27.2px;
-                font-weight: 700;
-                color: #9c9090;
-                line-height: 0.8em;
-            }
-            .priceDecimal {
-                font-size: 18px;
-                font-weight: 600;
-            }
-            .perUserPerMonth {
-                font-size: 8.5px;
-                font-weight: 500;
-                color: #686f76;
-                margin-left: 13px;
-                margin-top: 3px;
-                white-space: nowrap;
+        }
+        
+        .number-info {
+            display: flex;
+            margin-top: 1px;
+            flex-direction: column;
+            font-size: 11px;
+            justify-content: space-evenly;
+            color: #bfbfbf;
+            
+            .decimal {
+                color: #989898;
             }
         }
     }
     .planFeatures {
-        font-size: 10px;
-        font-weight: 500;
-        color: #586377;
+        font-size: 13px;
+        font-weight: 400;
+        color: #969696;
         ul {
             list-style: none;
             padding-left: 0;
             margin-bottom: 0;
             li {
-                &:not(:last-child) {
-                    margin-bottom: 12.8px;
+                + li {
+                    margin-top: 12.8px;
                 }
                 line-height: 12px;
                 display: flex;
@@ -110,15 +129,27 @@
                     color: #d7d7d7;
                 }
                 img {
-                    margin-right: 20px;
+                    margin-right: 8px;
                 }
             }
             &.lowerMargin {
-                li:not(:last-child) {
-                    margin-bottom: 4px;
+                li + li {
+                    margin-top: 4px;
                 }
             }
         }
+    }
+}
+
+:host(.last) {
+    width: 34%;
+    
+    .planFeatures {
+        font-size: 12px;
+    }
+    
+    .title {
+        font-size: 16px !important;
     }
 }
 
@@ -157,55 +188,46 @@
     background: #fcfafb;
     box-shadow: 0 0 10px #00aeef;
     &:after {
-        content: url('../../../../../../assets/common/icons/check.svg');
+        content: '';
         display: block;
-        width: 13px;
-        height: 9px;
+        width: 40px;
+        height: 40px;
         position: absolute;
-        left: 5px;
+        right: 5px;
         top: 5px;
+        background-image: url(../../../../../../assets/common/icons/check-green.svg);
+        background-size: 70%;
+        background-color: #d5ffd1;
+        border-radius: 50%;
+        background-position: 50% 50%;
+        background-repeat: no-repeat;
+    }
+    
+    .bestValue span {
+        display: none;
+    }
+    .planFeatures {
+        ul {
+            li {
+                color: #0bb1f0;
+                
+                &.disabled {
+                    color: #d7d7d7;
+                }
+            }
+        }
     }
 }
 
 :host(.large) {
-    margin-top: 0;
-    padding-top: 30px;
-    width: 310px;
+    width: 34%;
     .cardHeader {
         padding-right: 39px;
-        .left {
-            .title {
-                font-size: 14px;
-                margin-bottom: 13px;
-            }
-            .includesUsers,
-            .amountPerMonth {
-                font-size: 12px;
-                .decimal {
-                    font-size: 7px;
-                    line-height: 9px;
-                }
-            }
-        }
-        .right {
-            .currency {
-                font-size: 14px;
-            }
-            .priceNumber {
-                font-size: 32px;
-            }
-            .priceDecimal {
-                font-size: 21px;
-            }
-            .perUserPerMonth {
-                font-size: 10px;
-            }
+        .title {
+            font-size: 15px;
         }
     }
     .planFeatures {
-        font-size: 12px;
-        ul li:not(:last-child) {
-            margin-bottom: 12.8px;
-        }
+        font-size: 13px;
     }
 }

@@ -133,8 +133,8 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
     openPaymentWizardDialog() {
         this.dialog.open(PaymentWizardComponent, {
-            height: '655px',
-            width: '980px',
+            height: '800px',
+            width: '1200px',
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {

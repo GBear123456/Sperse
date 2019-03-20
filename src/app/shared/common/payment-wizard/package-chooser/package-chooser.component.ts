@@ -72,7 +72,7 @@ export class PackageChooserComponent implements OnInit {
     private freePackages: PackageConfigDto[];
     private enableSliderScalingChange = false;
     packagesConfig$: Observable<GetPackagesConfigOutput>;
-    configurator = 'slider';
+    configurator = 'billingPeriod';
     constructor(
         private localizationService: AppLocalizationService,
         private packageServiceProxy: PackageServiceProxy,
@@ -293,7 +293,7 @@ export class PackageChooserComponent implements OnInit {
                             'name': 'CFO.SingleUserInstance',
                             'displayName': {
                                 'sourceName': 'CFO',
-                                'name': 'Xero and Quickbook integration features'
+                                'name': 'Xero and Quickbooks connections'
                             },
                             'isVariable': false,
                             'sortOrder': 0,
@@ -327,7 +327,7 @@ export class PackageChooserComponent implements OnInit {
                         'name': 'CFO.ForecastPlanning',
                         'displayName': {
                             'sourceName': 'CFO',
-                            'name': 'Up to 10 year forecast planning'
+                            'name': 'Up to 10 years of future forecasts'
                         },
                         'isVariable': false,
                         'sortOrder': 0,
@@ -372,7 +372,7 @@ export class PackageChooserComponent implements OnInit {
                         'name': 'CFO.GroupBy',
                         'displayName': {
                             'sourceName': 'CFO',
-                            'name': 'Group by day, week, month, qtr, year'
+                            'name': 'Group by day, week, month, quarter, year'
                         },
                         'isVariable': false,
                         'sortOrder': 0,
@@ -387,7 +387,7 @@ export class PackageChooserComponent implements OnInit {
                         'name': 'CFO.ForecastPlanning',
                         'displayName': {
                             'sourceName': 'CFO',
-                            'name': 'Automatically scheduled daily bank synch'
+                            'name': 'Automatically scheduled bank synch'
                         },
                         'isVariable': false,
                         'sortOrder': 0,
@@ -402,7 +402,7 @@ export class PackageChooserComponent implements OnInit {
                         'name': 'CFO.SingleUserInstance',
                         'displayName': {
                             'sourceName': 'CFO',
-                            'name': 'Xero and Quickbook integration features'
+                            'name': 'Xero & Quickbooks connections'
                         },
                         'isVariable': false,
                         'sortOrder': 0,
@@ -417,7 +417,23 @@ export class PackageChooserComponent implements OnInit {
                         'name': 'CFO.SingleUserInstance',
                         'displayName': {
                             'sourceName': 'CFO',
-                            'name': 'KPI metrics with daily stats/alerts'
+                            'name': 'Multiple forecast scenarios'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 0,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.SingleUserInstance',
+                        'displayName': {
+                            'sourceName': 'CFO',
+                            'name': 'KPI metrics with daily stats & alerts'
                         },
                         'isVariable': false,
                         'sortOrder': 0,
@@ -434,22 +450,6 @@ export class PackageChooserComponent implements OnInit {
                         'displayName': {
                             'sourceName': 'CFO',
                             'name': 'Advanced forecast & series editor'
-                        },
-                        'isVariable': false,
-                        'sortOrder': 0,
-                        'isStatic': false,
-                        'measurementUnit': null,
-                        'isCommon': false,
-                        'disabled': true
-                    },
-                    'value': null
-                },
-                {
-                    'definition': {
-                        'name': 'CFO.SingleUserInstance',
-                        'displayName': {
-                            'sourceName': 'CFO',
-                            'name': 'Multiple forecast scenarios'
                         },
                         'isVariable': false,
                         'sortOrder': 0,
@@ -494,7 +494,6 @@ export class PackageChooserComponent implements OnInit {
                     }
             ];
         }
-        console.log(notFreePackages);
         this.packages = notFreePackages;
     }
 
@@ -544,7 +543,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     billingPeriodChanged(e) {
-        this.selectedBillingPeriod = e.checked ? BillingPeriod.Yearly : BillingPeriod.Monthly;
+        this.selectedBillingPeriod = e.value ? BillingPeriod.Yearly : BillingPeriod.Monthly;
     }
 
     selectPackage(packageIndex: number) {
@@ -554,11 +553,11 @@ export class PackageChooserComponent implements OnInit {
             this.selectedPackageCardComponent = selectedPlanCardComponent;
         }
     }
-
-    getActiveStatus(status: 'month' | 'year') {
-        return (status === 'month' && this.selectedBillingPeriod === BillingPeriod.Monthly) ||
-               (status === 'year' && this.selectedBillingPeriod === BillingPeriod.Yearly);
-    }
+    //
+    // getActiveStatus(status: 'month' | 'year') {
+    //     return (status === 'month' && this.selectedBillingPeriod === BillingPeriod.Monthly) ||
+    //            (status === 'year' && this.selectedBillingPeriod === BillingPeriod.Yearly);
+    // }
 
     onActiveUsersChange(event: MatSliderChange) {
         this.usersAmount = event.value;
