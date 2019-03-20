@@ -28,6 +28,9 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     ) {
         super(injector);
         this.bankAccountsService = bankAccountsService;
+        bankAccountsService.businessEntities$.subscribe(
+            (list) => this.businessEntities = list
+        );
     }
 
     ngOnInit(): void { }
@@ -52,10 +55,15 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     }
 
     onMultiTagPreparing(e) {
-        let totalCount = e.component.getDataSource().items().length,
+        let totalCount = this.businessEntities.length,
             selectedCount = e.selectedItems.length;
         e.text = totalCount && selectedCount ? 
             (selectedCount != totalCount ? selectedCount + ' ' + this.l('of') + ' ' : '') 
                 + totalCount + ' ' + this.l('entities') : this.l('All_Entities');
+    }
+
+    selectAllValueChanged($event) {
+        $event.component._$list.find('.dx-list-select-all-label').text(
+            ($event.value ? this.l('Clear') : this.l('Select')) + ' ' + this.l('All'));
     }
 }

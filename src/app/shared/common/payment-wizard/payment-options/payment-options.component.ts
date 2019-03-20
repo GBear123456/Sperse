@@ -1,9 +1,9 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, EventEmitter, OnInit, Output, Injector, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, EventEmitter, OnInit, Output, Injector, Input, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -24,7 +24,8 @@ import {
     RequestPaymentDto,
     RequestPaymentDtoRequestType,
     ModuleSubscriptionInfo,
-    BankTransferSettingsDto
+    BankTransferSettingsDto,
+    RequestPaymentResult
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -64,7 +65,7 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
 
     private paymentMethodsConfig = {
         [PaymentMethods.BankTransfer]: {
-            successStatus: res => this.l('pendingBankTransferIntentRecorded', res),
+            successStatus: (res: RequestPaymentResult) => this.l('pendingBankTransferIntentRecorded', res.transactionId),
             showBack: false,
             skipRefreshAfterClose: true
         },
@@ -80,16 +81,20 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
     selectedGateway: number = this.GATEWAY_PAYPAL;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
-    payPalEnvironmentSetting: string;
+    payPalClientId: string;
 
     constructor(
         private injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
         private appService: AppService,
-        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy
+        private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
+        private changeDetector: ChangeDetectorRef
     ) {
         super(injector);
-        this.tenantSubscriptionServiceProxy.getPayPalSettings().subscribe(settings => this.payPalEnvironmentSetting = settings.environment);
+        this.tenantSubscriptionServiceProxy.getPayPalSettings().subscribe(x => {
+            this.payPalClientId = x.clientId;
+            changeDetector.detectChanges();
+        });
     }
 
     ngOnInit() {}

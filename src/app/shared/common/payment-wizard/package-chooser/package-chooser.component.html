@@ -3,26 +3,29 @@
         <ng-container *ngIf="packages && packages.length; else nopackages">
             <h2 class="title">{{ title }}</h2>
             <h3 class="subtitle">{{ subtitle }}</h3>
-            <div class="billingPeriod" [hidden]="configurator !== 'billingPeriod'">
-                <div class="switch-wrapper">
-                    <dx-switch [value]="selectedBillingPeriod === billingPeriod.Yearly"
-                               accessKey="switchPaymentPeriod"
-                               [offText]="'Monthly'"
-                               [onText]="'Annually'"
-                               (onValueChanged)="billingPeriodChanged($event)"
-                    ></dx-switch>
-                    <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
+            <div class="config-wrap">
+                <div class="billingPeriod">
+                    <div class="monthly" [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('Monthly') }}</div>
+                    <mat-slide-toggle
+                        [checked]="selectedBillingPeriod === billingPeriod.Yearly"
+                        (change)="billingPeriodChanged($event)">
+                    </mat-slide-toggle>
+                    <div class="annually" [ngClass]="{ 'active': getActiveStatus('year') }">{{ l('Annually') }}
+                        <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
+                    </div>
                 </div>
+                <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator !== 'slider'">
+                    <span class="totalSeatsLabel">{{ l('TotalSeatsLabel') }}</span>
+                    <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
+                    <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
+                    <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
+                </div>
+                <button [hidden]="configurator === 'slider'"
+                        class="toggle"
+                        (click)="configurator === 'slider' ? configurator = 'billingPeriod' : configurator = 'slider'">
+                    {{ configurator === 'slider' ? 'Change plan' : 'Add more seats' }}
+                </button>
             </div>
-            <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator !== 'slider'">
-                <span class="totalSeatsLabel">{{ l('TotalSeatsLabel') }}</span>
-                <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
-                <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
-                <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
-            </div>
-            <button class="toggle" (click)="configurator === 'slider' ? configurator = 'billingPeriod' : configurator = 'slider'">
-                {{ configurator === 'slider' ? 'Change plan' : 'Add more seats' }}
-            </button>
         </ng-container>
         <ng-template #nopackages>
             <h2 class="title">{{ localizationService.ls('Platform', 'ModuleIsNotUpgradable', module) }}</h2>

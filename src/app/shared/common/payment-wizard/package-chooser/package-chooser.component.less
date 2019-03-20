@@ -29,20 +29,53 @@
             letter-spacing: 0.4px;
             color: #888d92;
         }
+        
+        .config-wrap {
+            margin-top: 27px;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            
+            .toggle {
+                margin-left: auto;
+            }
+        }
+        
         .billingPeriod {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 27px 0 10px 0;
-            
-            .switch-wrapper {
+            margin: 0;
+            position: relative;
+            min-width: 190px;
+    
+            & > div {
+                font-size: 14px;
+                font-weight: 500;
+                color: #919aa3;
                 position: relative;
+                width: 80px;
+                z-index: 5;
+                pointer-events: none;
+    
+                &.monthly {
+                    margin-right: -105px;
+                }
+                
+                &.annually {
+                    margin-left: -105px;
+                }
+                
+                &.active {
+                    font-weight: 500;
+                    color: #fff;
+                }
             }
        
             span.year-discount {
                 position: absolute;
-                right: -71px;
-                top: -19px;
+                right: 6px;
+                top: -36px;
                 color: #60d956;
                 font-weight: 700;
                 @media (max-width: 768px) {
@@ -59,31 +92,35 @@
                     border-bottom: solid 1.5px #60d956;
                     position: absolute;
                     bottom: -15px;
-                    left: 2px;
+                    left: 50%;
+                    transform: translateX(-50%);
                     @media (max-width: 768px) {
                         display: none;
                     }
                 }
-        }
+            }
 
             /deep/ mat-slide-toggle.mat-slide-toggle {
                 margin: 0 18px;
+                height: 38px;
+                
                 .mat-slide-toggle-bar {
-                    width: 60px;
-                    height: 26px;
-                    border-radius: 13px;
+                    width: 190px;
+                    height: 38px;
+                    border-radius: 19px;
                     background-color: #ffffff;
-                    border: solid 1px rgba(154, 154, 154, .4);
+                    border: solid 1px #9e9e9e;
                     .mat-slide-toggle-thumb-container {
                         width: 100%;
                         height: 100%;
-                        top: 0px;
+                        top: 0;
                         transform: translate3d(0px, 0, 0);
-                        margin: 0 4px;
+                        margin: 0;
                         cursor: pointer;
                         .mat-slide-toggle-thumb {
-                            width: 18px;
-                            height: 18px;
+                            width: 50%;
+                            height: 100%;
+                            border-radius: 19px;
                             background-color: #00aeef;
                             top: 0;
                             bottom: 0;
@@ -107,7 +144,7 @@
 
                 &.mat-checked {
                     .mat-slide-toggle-bar .mat-slide-toggle-thumb-container {
-                        transform: translate3d(34px,0,0);
+                        transform: translate3d(95px,0,0);
                     }
                     &:not(.mat-disabled) .mat-slide-toggle-bar {
                         background: #fff;
@@ -121,7 +158,7 @@
             align-items: center;
             justify-content: space-between;
             width: 480px;
-            margin: auto;
+            //margin: auto;
             position: relative;
             @media (max-width: 768px) {
                 width: 90%;
@@ -286,6 +323,7 @@
         }
         ul {
             padding-left: 0;
+            list-style-position: inside;
             li {
                 line-height: 20px;
             }
@@ -325,7 +363,6 @@
             background-color: #009dd7;
             line-height: normal;
             position: absolute;
-            right: 10px;
             border: none;
             cursor: pointer;
             &[disabled] {
@@ -376,58 +413,6 @@
         }
         button[disabled] {
             background-color: #fff;
-        }
-    }
-}
-
-::ng-deep {
-    dx-switch {
-        &[accessKey="switchPaymentPeriod"] {
-            width: 200px;
-    
-            .dx-switch-container {
-                border-color: #a4a4a4 !important;
-                margin: 0;
-                height: 40px;
-                border-radius: 20px;
-            }
-            
-            .dx-switch-inner {
-                width: 100%;
-                margin-left: 0 !important;
-            }
-            
-            .dx-switch-handle {
-                display: none !important;
-            }
-            
-            .dx-switch-on,
-            .dx-switch-off {
-                margin-top: -1px;
-                padding: 0 !important;
-                border-radius: 18px;
-                line-height: 40px;
-                height: 40px;
-                font-size: 15px;
-                color: #a4a4a4;
-                font-weight: 400;
-            }
-    
-            .dx-switch-off {
-                background: #009dd7;
-                color: #fff;
-            }
-            
-            &.dx-switch-on-value {
-                .dx-switch-on {
-                    background: #009dd7;
-                    color: #fff;
-                }
-                .dx-switch-off {
-                    background-color: transparent;
-                    color: #a4a4a4;
-                }
-            }
         }
     }
 }
