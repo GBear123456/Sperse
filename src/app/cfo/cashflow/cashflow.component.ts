@@ -5010,10 +5010,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @return {number}
      */
     modifyStartingBalanceAccountCell(summaryCell, prevWithParent) {
-        let prevEndingAccountValue = this.getCellValue(prevWithParent, Total),
-            prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false,
-            prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0,
-            prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
+        const prevEndingAccountValue = this.getCellValue(prevWithParent, Total);
+        const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
+        const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
+        const prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
+        console.log('prev ending account value', prevEndingAccountValue, 'prevCellValue', prevCellValue, 'prevReconciliation', prevReconciliation, 'total', prevEndingAccountValue + prevCellValue + prevReconciliation);
         return prevEndingAccountValue + prevCellValue + prevReconciliation;
     }
 
@@ -5069,28 +5070,28 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getCellValue(summaryCell, target, isCalculatedValue = underscore.contains([StartedBalance, Reconciliation], target)) {
 
         let targetPeriodAccountCachedValue;
-        const accountId = summaryCell.value(summaryCell.field('row'), true).slice(2),
-              targetPeriodCell = summaryCell.parent('row') ? summaryCell.parent('row').slice(0, CategorizationPrefixes.CashflowType + target) : null,
-              targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', CategorizationPrefixes.AccountName + accountId) : null,
-              cellData = this.getCellData(summaryCell, accountId, target);
+        const accountId = summaryCell.value(summaryCell.field('row'), true).slice(2);
+        const targetPeriodCell = summaryCell.parent('row') ? summaryCell.parent('row').slice(0, CategorizationPrefixes.CashflowType + target) : null;
+        const targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', CategorizationPrefixes.AccountName + accountId) : null;
 
-            /** if we haven't found the value from the another period -
-             *  then it hasn't been expanded and we should find out whether the value is in cash */
-            if (targetPeriodAccountCell === null) {
-                let key = cellData.toString();
-                /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselves */
-                if (!this.anotherPeriodAccountsValues.has(key)) {
-                    /** calculate the cell value using the cell data and cashflowData */
-                    targetPeriodAccountCachedValue = this.calculateCellValue(cellData, this.cashflowData);
-                    this.setAnotherPeriodAccountCachedValue(key, targetPeriodAccountCachedValue);
-                } else {
-                    targetPeriodAccountCachedValue = this.anotherPeriodAccountsValues.get(key);
-                }
+        /** if we haven't found the value from the another period -
+         *  then it hasn't been expanded and we should find out whether the value is in cash */
+        if (targetPeriodAccountCell === null) {
+            const cellData = this.getCellData(summaryCell, accountId, target);
+            let key = cellData.toString();
+            /** if we haven't found the value in cash - then we should calculate the value in the cashflow data by ourselves */
+            if (!this.anotherPeriodAccountsValues.has(key)) {
+                /** calculate the cell value using the cell data and cashflowData */
+                targetPeriodAccountCachedValue = this.calculateCellValue(cellData, this.cashflowData);
+                this.setAnotherPeriodAccountCachedValue(key, targetPeriodAccountCachedValue);
+            } else {
+                targetPeriodAccountCachedValue = this.anotherPeriodAccountsValues.get(key);
             }
-            //else {
-            //    /** add the prevEndingAccount value to the cash */
-            //    this.setAnotherPeriodAccountCachedValue(cellData.toString(), targetPeriodAccountCell.value(isCalculatedValue));
-            //}
+        }
+        //else {
+        //    /** add the prevEndingAccount value to the cash */
+        //    this.setAnotherPeriodAccountCachedValue(cellData.toString(), targetPeriodAccountCell.value(isCalculatedValue));
+        //}
 
         return targetPeriodAccountCachedValue ?
                targetPeriodAccountCachedValue :
@@ -5148,11 +5149,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 (!cellData.quarter || (cellData.quarter === date.quarter())) &&
                 (!cellData.month || (cellData.month - 1 === date.month())) &&
                 ((cellData.day && cellData.day === date.date()) ||
-                (!cellData.day && !cellData.projected) ||
-                (cellData.projected &&
-                ((cellData.projected === Projected.Mtd && date.date() < currentDateDate) ||
-                (cellData.projected === Projected.Today && date.date() === currentDateDate) ||
-                (cellData.projected === Projected.Forecast && date.date() > currentDateDate))))
+                    (!cellData.day && !cellData.projected) ||
+                    (
+                        cellData.projected &&
+                        (
+                            (cellData.projected === Projected.Mtd && date.date() < currentDateDate) ||
+                            (cellData.projected === Projected.Today && date.date() === currentDateDate) ||
+                            (cellData.projected === Projected.Forecast && date.date() > currentDateDate) ||
+                            (this.itemIsInWeekInterval(cellData, date))
+                        )
+                    )
+                )
             ) {
                 sum += cashflowData.amount;
             }
@@ -5160,6 +5167,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }, 0);
 
         return value;
+    }
+
+    itemIsInWeekInterval(cellData, date): boolean {
+        const weekInterval = JSON.parse(cellData.projected);
+        return weekInterval
+               && date.isSameOrAfter(moment.utc(weekInterval.startDate))
+               && date.isSameOrBefore(moment.utc(weekInterval.endDate));
     }
 
     /** set the prev ending account value to the cash */
