@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { Params } from '@angular/router';
 
 @Component({
@@ -11,9 +11,16 @@ export class ItemDetailsLayoutComponent implements OnInit {
     @Input() referrerParams: Params;
     @Input() rightPanelOpened: boolean;
     @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
+
+    rightSideVisible;
+    @HostListener('window:resize') onResize(event) {
+        this.rightSideVisible = innerWidth > 1200;
+    }
+
     constructor() { }
 
-    ngOnInit() {
+    ngOnInit() { 
+        this.onResize();
     }
 
     close() {

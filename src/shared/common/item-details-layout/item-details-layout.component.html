@@ -16,11 +16,11 @@
                 </nav>
             </dx-scroll-view>
         </mat-sidenav>
-        <div class="main-content" [ngClass]="{'right-side-opened' : rightPanelOpened}">
+        <div class="main-content" [ngClass]="{'right-side-opened' : rightSideVisible && rightPanelOpened}">
             <ng-content select="[mainContent]"></ng-content>
             <router-outlet></router-outlet>
         </div>
-        <mat-sidenav class="right_sidenav" mode="side" position="end" [opened]="rightPanelOpened">
+        <mat-sidenav class="right_sidenav" mode="side" position="end" [opened]="rightSideVisible && rightPanelOpened">
             <ng-content select="[rightPanel]"></ng-content>
         </mat-sidenav>
     </mat-sidenav-container>
