@@ -320,7 +320,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(select(ListsStoreSelectors.getLists)),
+                                    dataSource$: this.store$.pipe(select(ListsStoreSelectors.getStoredLists)),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -333,7 +333,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(select(TagsStoreSelectors.getTags)),
+                                    dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
