@@ -6,7 +6,6 @@ import { HttpParams } from '@angular/common/http';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { camelCase, capitalize, cloneDeep, lowerCase, upperFirst } from 'lodash';
-
 import { ReplaySubject, Observable } from 'rxjs';
 import { map, first, pluck, publishReplay, refCount } from 'rxjs/operators';
 
