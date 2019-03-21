@@ -168,6 +168,7 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         PreferencesDialogComponent,
         ChooseResetRulesComponent,
         BusinessEntityEditDialogComponent,
+        TransactionDetailInfoComponent,
         CfoIntroComponent,
         UsersDialogComponent
     ],

@@ -145,7 +145,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(OperationsComponent) operations: OperationsComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
-    @ViewChild(TransactionDetailInfoComponent) transactionInfo: TransactionDetailInfoComponent;
     transactionId: any;
     selectedBankAccountsIds;
     sliderReportPeriod = {
@@ -5387,8 +5386,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onDetailsCellSingleClick(e) {
         if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId && !e.row.inserted) {
             this.transactionId = e.data.id;
-            this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
-            this.transactionInfo.toggleTransactionDetailsInfo();
+            //this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
+            this.showTransactionDetailsInfo();
         } else if (e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
@@ -6153,5 +6152,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onDetailsSelectionChanged(e) {
         this.detailsSomeHistoricalItemsSelected = e.selectedRowKeys.some(item => !!item.date);
         this.detailsSomeForecastsItemsSelected = e.selectedRowKeys.some(item => item.forecastId);
+    }
+
+    showTransactionDetailsInfo() {
+        this.dialog.open(TransactionDetailInfoComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                transactionId: this.transactionId
+            }
+        });
     }
 }
