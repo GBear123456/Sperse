@@ -3617,7 +3617,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                 }
                 /** Get target descriptor or if we copy to category - get transaction description */
-                target.transactionDescriptor = target.transactionDescriptor || transaction.descriptor;
+                target.transactionDescriptor = this.cashflowService.isUnclassified(target) && !isHorizontalCopying ? null : target.transactionDescriptor || transaction.descriptor;
                 data['target'] = target;
                 let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
