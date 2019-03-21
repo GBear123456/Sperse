@@ -3196,7 +3196,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
             if (this.isStartingBalanceDataColumn(cell, area)) {
                 let elements = this.adjustmentsList.filter(cashflowItem => {
-                    return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || cell.rowType == 'T') &&
+                    return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || (cell.rowPath.length === 1 && cell.rowPath[0] === CategorizationPrefixes.CashflowType + StartedBalance)) &&
                         cell.columnPath.every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
                         let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
