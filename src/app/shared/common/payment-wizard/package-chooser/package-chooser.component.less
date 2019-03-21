@@ -31,14 +31,10 @@
         }
         
         .config-wrap {
-            margin-top: 27px;
+            margin: 27px 0 12px;
             display: flex;
             align-items: center;
             justify-content: space-evenly;
-            
-            .toggle {
-                margin-left: auto;
-            }
         }
         
         .billingPeriod {
@@ -213,11 +209,11 @@
         button.toggle {
             position: absolute;
             right: 0;
-            bottom: 15px;
             background: none;
             border: none;
             color: #888d92;
             cursor: pointer;
+            font-size: 14px;
         }
 
         /deep/ mat-slider.mat-slider:not(.mat-slider-disabled).mat-slider-horizontal {
@@ -339,6 +335,8 @@
         margin: 0 auto;
         display: flex;
         align-items: center;
+        flex-direction: column;
+        
         .downgrade {
             font-size: 12px;
             font-weight: 700;
@@ -347,6 +345,7 @@
             cursor: pointer;
             display: none;
         }
+        
         .pricesAreShown {
             font-weight: 500;
             margin-bottom: 0;
@@ -362,8 +361,8 @@
             border-radius: 100px;
             background-color: #009dd7;
             line-height: normal;
-            position: absolute;
             border: none;
+            right: 10px;
             cursor: pointer;
             &[disabled] {
                 color: grey;
