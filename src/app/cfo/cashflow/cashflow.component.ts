@@ -229,8 +229,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     private expandBeforeIndex: number = null;
 
-    private detailsSearching = false;
-
     public set calculatorShowed(value: boolean) {
         if (this._calculatorShowed = value) {
             //this.filtersService.fixed = false;
@@ -5301,33 +5299,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     searchValueChange(value) {
-        if (!this.detailsSearching) {
-            this.detailsSearching = true;
-            this.searchValue = value;
-            if (this.searchValue) {
-                this.showAllVisible = true;
-                this.showAllDisable = true;
-                this.disableAddForecastButton = true;
-                let filterParams = {
-                    startDate: this.requestFilter.startDate,
-                    endDate: this.requestFilter.endDate,
-                    currencyId: this.currencyId,
-                    accountIds: this.requestFilter.accountIds || [],
-                    businessEntityIds: this.requestFilter.businessEntityIds || [],
-                    searchTerm: this.searchValue,
-                    forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
-                };
-                this.statsDetailFilter = StatsDetailFilter.fromJS(filterParams);
-                this._cashflowServiceProxy
-                    .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                    .pipe(finalize(() => this.detailsSearching = false ))
-                    .subscribe(result => {
-                        this.showTransactionDetail(result);
-                    });
-            } else {
-                this.statsDetailResult = null;
-                this.closeTransactionsDetail();
-            }
+        this.detailsStartLoading();
+        this.searchValue = value;
+        if (this.searchValue) {
+            this.showAllVisible = true;
+            this.showAllDisable = true;
+            this.disableAddForecastButton = true;
+            let filterParams = {
+                startDate: this.requestFilter.startDate,
+                endDate: this.requestFilter.endDate,
+                currencyId: this.currencyId,
+                accountIds: this.requestFilter.accountIds || [],
+                businessEntityIds: this.requestFilter.businessEntityIds || [],
+                searchTerm: this.searchValue,
+                forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
+            };
+            this.statsDetailFilter = StatsDetailFilter.fromJS(filterParams);
+            this._cashflowServiceProxy
+                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                .pipe(finalize(() => this.detailsFinishLoading()))
+                .subscribe(result => {
+                    this.showTransactionDetail(result);
+                });
+        } else {
+            this.statsDetailResult = null;
+            this.closeTransactionsDetail();
         }
     }
 
@@ -5566,14 +5562,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     detailsStartLoading() {
-        const gridElement = this.cashFlowGrid.instance.element();
+        const gridElement = this.cashFlowGrid && this.cashFlowGrid.instance.element();
         if (gridElement) {
             super.startLoading(null, gridElement);
         }
     }
 
     detailsFinishLoading() {
-        const gridElement = this.cashFlowGrid.instance.element();
+        const gridElement = this.cashFlowGrid && this.cashFlowGrid.instance.element();
         if (gridElement) {
             super.finishLoading(null, gridElement);
         }

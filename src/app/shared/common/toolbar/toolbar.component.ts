@@ -1,8 +1,9 @@
-import { Component, Injector, Input, HostListener, HostBinding, OnDestroy } from '@angular/core';
+import { Component, Injector, Input, HostBinding, OnDestroy, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolbarGroupModel, ToolbarGroupModelItem } from './toolbar.model';
-import { AppService } from '@app/app.service';
 import * as _ from 'underscore';
+import { FiltersService } from '@shared/filters/filters.service';
+import { DxToolbarComponent } from '@root/node_modules/devextreme-angular';
 
 @Component({
     selector: 'app-toolbar',
@@ -10,6 +11,7 @@ import * as _ from 'underscore';
     styleUrls: ['./toolbar.component.less']
 })
 export class ToolBarComponent extends AppComponentBase implements OnDestroy {
+    @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
     @Input() compact = false;
     private _config: ToolbarGroupModel[];
@@ -24,16 +26,12 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
     private subscription: any;
 
     constructor(injector: Injector,
-        private _appService: AppService
+                filtersService: FiltersService
     ) {
         super(injector);
-        
-        this.subscription = _appService.toolbarSubscribe(() => {
-            this.initToolbarItems();
+        this.subscription = filtersService.subjectFilterDisable.asObservable().subscribe(() => {
+            this.updateToolbarItemAttribute('filters', 'filter-selected', filtersService.hasFilterSelected);
         });
-    }
-    @HostListener('window:resize') onResize() {
-        this.initToolbarItems();
     }
 
     private getSupportedButtons() {
@@ -333,6 +331,7 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                     let mergedConfig = _.extend(internalConfig || {}, item.options);
 
                     items.push({
+                        name: item.name,
                         location: group.location,
                         locateInMenu: group.locateInMenu,
                         disabled: item.disabled,
@@ -355,6 +354,11 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                 });
             });
         this.items = items;
+    }
+
+    updateToolbarItemAttribute(itemName: string, property: string, value: any) {
+        const toolbarItemIndex = this.items.findIndex(item => item.name === itemName);
+        this.toolbarComponent && this.toolbarComponent.instance.option(`items[${toolbarItemIndex}].options.elementAttr.${property}`, true);
     }
 
     ngOnDestroy() {

@@ -569,6 +569,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
+        this.initToolbarConfig();
         this.processFilterInternal();
     }
 

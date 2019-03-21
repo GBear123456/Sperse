@@ -403,7 +403,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     searchValueChange(e) {
-
+        this.initToolbarConfig();
     }
 
     onContentReady($event) {

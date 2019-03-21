@@ -590,6 +590,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
+        this.initToolbarConfig();
         this.processFilterInternal();
     }
 

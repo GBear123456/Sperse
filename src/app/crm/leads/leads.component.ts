@@ -658,6 +658,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
+            this.initToolbarConfig();
             this.processFilterInternal();
         }
     }
