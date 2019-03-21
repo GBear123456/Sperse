@@ -14,14 +14,15 @@
                                             <span class="tag-value"> {{l('All_Entities')}} </span>
                                         </div>
                                     </ng-container>
-                                    <ng-container *ngIf="(bankAccountsService.businessEntities$ | async)?.length">
-                                        <dx-tag-box [dataSource]="bankAccountsService.businessEntities$ | async"
+                                    <ng-container *ngIf="businessEntities.length">
+                                        <dx-tag-box [dataSource]="businessEntities"
                                                     displayExpr="name"
                                                     valueExpr="id"
                                                     [placeholder]="l('All_Entities')"
                                                     [maxDisplayedTags]="2"
                                                     [showSelectionControls]="true"
                                                     tagTemplate="customTagTemplate"
+                                                    (onSelectAllValueChanged)="selectAllValueChanged($event)"
                                                     (onValueChanged)="changeSelectedBusinessEntities($event)"
                                                     (onMultiTagPreparing)="onMultiTagPreparing($event)"
                                                     [value]="bankAccountsService.selectedBusinessEntitiesIds$ | async">

@@ -2,6 +2,7 @@
 import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
+import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@node_modules/@ngrx/store';
 import { Observable, Subject, of } from 'rxjs';
@@ -14,6 +15,7 @@ import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput
     PipelineDto, ActivityServiceProxy, TransitionActivityDto } from '@shared/service-proxies/service-proxies';
 import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 
 interface StageColor {
@@ -40,6 +42,8 @@ export class PipelineService {
         private _leadService: LeadServiceProxy,
         private _activityService: ActivityServiceProxy,
         private _pipelineServiceProxy: PipelineServiceProxy,
+        private _ls: AppLocalizationService,
+        private _notify: NotifyService,
         private store$: Store<CrmStore.State>
     ) {
         this.stageChange = new Subject<any>();
@@ -106,11 +110,35 @@ export class PipelineService {
                 }
             } else {
                 this.moveEntityTo(entity, toStage, fromStage);
-                complete && complete();
+                this._notify.warn(this._ls.l('StageCannotBeUpdated', 
+                    AppConsts.localization.defaultLocalizationSourceName, entity.Name));
+                complete && setTimeout(() => complete());
             }
             return action;
         } else
             complete && complete();
+    }
+
+    updateEntitiesStage(pipelineId, entities, targetStage) {
+        let subject = new Subject<any>();
+
+        this.updateEntitiesStageInternal(pipelineId, entities.slice(0), 
+            targetStage, null, (declinedList) => subject.next(declinedList), []);
+
+        return subject.asObservable();
+    }
+
+    private updateEntitiesStageInternal(pipelineId, entities, targetStage, data, complete, declinedList) {
+        let entity = entities.pop();
+        if (entity) {
+            if (data) 
+                entity.data = data;
+            if (!this.updateEntityStage(pipelineId, entity, entity.Stage || entity.stage, targetStage, (data) => {
+                this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
+                delete entity.data;
+            })) declinedList.push(entity);
+        } else
+            complete && complete(declinedList);
     }
 
     getEntityId(entity) {
@@ -144,53 +172,67 @@ export class PipelineService {
     }
 
     processLead(fromStage, toStage, entity, complete) {
-        this._dialog.open(LeadCompleteDialogComponent, {
-            data: {
-                stages: this._pipelineDefinitions[AppConsts.PipelinePurposeIds.lead].stages
-            }
-        }).afterClosed().subscribe(data => {
-            if (data)
-                this._leadService.processLead(
-                    ProcessLeadInput.fromJS({
-                        leadId: this.getEntityId(entity),
-                        orderStageId: data.orderStageId,
-                        amount: data.amount,
-                        comment: data.comment,
-                    })
-                ).pipe(finalize(() => {
-                    entity.locked = false;
+        if (entity.data)
+            this.processLeadInternal(entity, {...entity.data, fromStage, toStage}, complete);
+        else
+            this._dialog.open(LeadCompleteDialogComponent, {
+                data: {
+                    stages: this._pipelineDefinitions[AppConsts.PipelinePurposeIds.lead].stages
+                }
+            }).afterClosed().subscribe(data => {
+                if (data)
+                    this.processLeadInternal(entity, {...data, fromStage, toStage}, complete);
+                else {
+                    this.moveEntityTo(entity, toStage, fromStage);
                     complete && complete();
-                })).subscribe((res) => {
-                    this.completeEntityUpdate(entity, fromStage, toStage);
-                });
-            else {
-                this.moveEntityTo(entity, toStage, fromStage);
-                complete && complete();
-            }
+                }
+            });
+    }
+
+    private processLeadInternal(entity, data, complete) {
+        this._leadService.processLead(
+            ProcessLeadInput.fromJS({
+                leadId: this.getEntityId(entity),
+                orderStageId: data.orderStageId,
+                amount: data.amount,
+                comment: data.comment,
+            })
+        ).pipe(finalize(() => {
+            entity.locked = false;            
+            complete && complete(data);
+        })).subscribe((res) => {
+            this.completeEntityUpdate(entity, data.fromStage, data.toStage);                        
         });
     }
 
     cancelLead(fromStage, toStage, entity, complete) {
-        this._dialog.open(LeadCancelDialogComponent, {
-            data: {}
-        }).afterClosed().subscribe(result => {
-            if (result) {
-                this._leadService.cancelLead(
-                    CancelLeadInfo.fromJS({
-                        leadId: this.getEntityId(entity),
-                        cancellationReasonId: result.reasonId,
-                        comment: result.comment
-                    })
-                ).pipe(finalize(() => {
-                    entity.locked = false;
+        if (entity.data)
+            this.cancelLeadInternal(entity, {...entity.data, fromStage, toStage}, complete);
+        else
+            this._dialog.open(LeadCancelDialogComponent, {
+                data: {}
+            }).afterClosed().subscribe(data => {
+                if (data)
+                    this.cancelLeadInternal(entity, {...data, fromStage, toStage}, complete);
+                else {
+                    this.moveEntityTo(entity, toStage, fromStage);
                     complete && complete();
-                })).subscribe((result) => {
-                    this.completeEntityUpdate(entity, fromStage, toStage);
-                });
-            } else {
-                this.moveEntityTo(entity, toStage, fromStage);
-                complete && complete();
-            }
+                }
+            });
+    }
+
+    private cancelLeadInternal(entity, data, complete) {
+        this._leadService.cancelLead(
+            CancelLeadInfo.fromJS({
+                leadId: this.getEntityId(entity),
+                cancellationReasonId: data.reasonId,
+                comment: data.comment
+            })
+        ).pipe(finalize(() => {
+            entity.locked = false;
+            complete && complete(data);
+        })).subscribe((result) => {
+            this.completeEntityUpdate(entity, data.fromStage, data.toStage);            
         });
     }
 

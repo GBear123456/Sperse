@@ -24629,7 +24629,7 @@ export class TenantSubscriptionServiceProxy {
      * @requestPaymentDto (optional) 
      * @return Success
      */
-    requestPayment(requestPaymentDto: RequestPaymentDto | null | undefined): Observable<string> {
+    requestPayment(requestPaymentDto: RequestPaymentDto | null | undefined): Observable<RequestPaymentResult> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestPayment";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -24652,14 +24652,14 @@ export class TenantSubscriptionServiceProxy {
                 try {
                     return this.processRequestPayment(<any>response_);
                 } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
+                    return <Observable<RequestPaymentResult>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string>><any>_observableThrow(response_);
+                return <Observable<RequestPaymentResult>><any>_observableThrow(response_);
         }));
     }
 
-    protected processRequestPayment(response: HttpResponseBase): Observable<string> {
+    protected processRequestPayment(response: HttpResponseBase): Observable<RequestPaymentResult> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -24670,7 +24670,7 @@ export class TenantSubscriptionServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? RequestPaymentResult.fromJS(resultData200) : new RequestPaymentResult();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -24678,7 +24678,7 @@ export class TenantSubscriptionServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string>(<any>null);
+        return _observableOf<RequestPaymentResult>(<any>null);
     }
 
     /**
@@ -56904,6 +56904,46 @@ export interface IRequestPaymentDto {
     requestType: RequestPaymentDtoRequestType | undefined;
 }
 
+export class RequestPaymentResult implements IRequestPaymentResult {
+    transactionId!: string | undefined;
+    code!: string | undefined;
+
+    constructor(data?: IRequestPaymentResult) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.transactionId = data["transactionId"];
+            this.code = data["code"];
+        }
+    }
+
+    static fromJS(data: any): RequestPaymentResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new RequestPaymentResult();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["transactionId"] = this.transactionId;
+        data["code"] = this.code;
+        return data; 
+    }
+}
+
+export interface IRequestPaymentResult {
+    transactionId: string | undefined;
+    code: string | undefined;
+}
+
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     module!: ModuleSubscriptionInfoDtoModule | undefined;
     endDate!: moment.Moment | undefined;
@@ -57197,7 +57237,7 @@ export interface IBeneficiaryInfoDto {
 }
 
 export class PayPalSettingsDto implements IPayPalSettingsDto {
-    environment!: string | undefined;
+    clientId!: string | undefined;
 
     constructor(data?: IPayPalSettingsDto) {
         if (data) {
@@ -57210,7 +57250,7 @@ export class PayPalSettingsDto implements IPayPalSettingsDto {
 
     init(data?: any) {
         if (data) {
-            this.environment = data["environment"];
+            this.clientId = data["clientId"];
         }
     }
 
@@ -57223,13 +57263,13 @@ export class PayPalSettingsDto implements IPayPalSettingsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["environment"] = this.environment;
+        data["clientId"] = this.clientId;
         return data; 
     }
 }
 
 export interface IPayPalSettingsDto {
-    environment: string | undefined;
+    clientId: string | undefined;
 }
 
 export class ListResultDtoOfNameValueDto implements IListResultDtoOfNameValueDto {

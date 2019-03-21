@@ -543,7 +543,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     billingPeriodChanged(e) {
-        this.selectedBillingPeriod = e.value ? BillingPeriod.Yearly : BillingPeriod.Monthly;
+        this.selectedBillingPeriod = e.checked ? BillingPeriod.Yearly : BillingPeriod.Monthly;
     }
 
     selectPackage(packageIndex: number) {
@@ -553,11 +553,11 @@ export class PackageChooserComponent implements OnInit {
             this.selectedPackageCardComponent = selectedPlanCardComponent;
         }
     }
-    //
-    // getActiveStatus(status: 'month' | 'year') {
-    //     return (status === 'month' && this.selectedBillingPeriod === BillingPeriod.Monthly) ||
-    //            (status === 'year' && this.selectedBillingPeriod === BillingPeriod.Yearly);
-    // }
+
+    getActiveStatus(status: 'month' | 'year') {
+        return (status === 'month' && this.selectedBillingPeriod === BillingPeriod.Monthly) ||
+               (status === 'year' && this.selectedBillingPeriod === BillingPeriod.Yearly);
+    }
 
     onActiveUsersChange(event: MatSliderChange) {
         this.usersAmount = event.value;

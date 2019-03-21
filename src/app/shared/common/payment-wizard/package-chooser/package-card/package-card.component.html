@@ -10,7 +10,7 @@
             </span>
             <div class="number-info">
                 <span class="decimal">{{ pricePerMonth | customNumber: '0.2-2' }}</span>
-                <span>{{ l('mo billed yearly') }}</span>
+                <span>{{ billingPeriod === 0 ? l('priceMonthly') : l('priceAnnually') }}</span>
             </div>
         </div>
         <div class="amountPerUser">
