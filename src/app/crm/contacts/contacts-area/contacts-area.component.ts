@@ -12,7 +12,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactInfoDto, ContactEmailServiceProxy, ContactEmailDto, ContactPhoneDto,
     ContactPhoneServiceProxy, CreateContactEmailInput, ContactInfoDetailsDto,
-    UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput,
+    UpdateContactEmailInput, CreateContactPhoneInput, UpdateContactPhoneInput, UserServiceProxy,
     OrganizationContactServiceProxy, CreateOrganizationInput, OrganizationContactInfoDto, OrganizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.component';
@@ -37,9 +37,12 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
+    
+    emailRegEx = AppConsts.regexPatterns.email;
 
     constructor(injector: Injector,
                 public dialog: MatDialog,
+                private _userService: UserServiceProxy,
                 private _contactsService: ContactsService,
                 private _contactEmailService: ContactEmailServiceProxy,
                 private _contactPhoneService: ContactPhoneServiceProxy,
@@ -182,6 +185,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
                         .push(ContactEmailDto.fromJS(updatedData));
             }
             this._contactsService.verificationUpdate();
+            this._userService['data'].raw = undefined;
         }, error => {
             dataItem[field] = dataItem.original;
         });

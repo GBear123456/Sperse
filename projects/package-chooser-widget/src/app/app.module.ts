@@ -26,7 +26,7 @@ export function getRemoteUrl() {
 }
 
 export function initialize(widgetsService: WidgetsService, httpClient: HttpClient, injector: Injector) {
-    return widgetsService.initialize(injector, httpClient, 'CRM');
+    return widgetsService.initialize(injector, httpClient, ['CRM', 'CFO']);
 }
 
 @NgModule({
