@@ -3196,7 +3196,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 options.elementsToAppend.push(actionButton);
             }
 
-            if (this.isStartingBalanceDataColumn(cell, area) && cell.value == 0) {
+            if (this.isStartingBalanceDataColumn(cell, area)) {
                 let elements = this.adjustmentsList.filter(cashflowItem => {
                     return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || cell.rowType == 'T') &&
                         cell.columnPath.every((fieldValue, index) => {
@@ -3499,7 +3499,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (targetCell && this.elementIsDataCell(targetCell) && targetCell !== relatedTargetCell) {
             let infoButton = targetCell.getElementsByClassName('dx-link-info');
             if (infoButton.length) {
-                let sum = parseInt(infoButton[0].getAttribute('data-sum'));
+                let sum = parseFloat(infoButton[0].getAttribute('data-sum'));
                 let infoTooltip = document.createElement('div');
                 infoTooltip.className = 'tootipWrapper';
                 this.infoTooltip = new Tooltip(infoTooltip, {
@@ -3514,11 +3514,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     onMouseOut(e) {
         if (this.infoTooltip) {
-            let infoTooltipParent = this.infoTooltip.element().parentElement;
-            this.infoTooltip.dispose();
-            this.infoTooltip = undefined;
-            if (infoTooltipParent) {
-                infoTooltipParent.removeChild(infoTooltipParent.querySelector('.tootipWrapper'));
+            let targetCell = this.getCellElementFromTarget(e.target);
+            let relatedTargetCell = e.relatedTarget && this.getCellElementFromTarget(e.relatedTarget);
+            if (targetCell && targetCell !== relatedTargetCell) {
+                let infoTooltipParent = this.infoTooltip.element().parentElement;
+                this.infoTooltip.dispose();
+                this.infoTooltip = undefined;
+                if (infoTooltipParent) {
+                    infoTooltipParent.removeChild(infoTooltipParent.querySelector('.tootipWrapper'));
+                }
             }
         }
     }
@@ -5020,7 +5024,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
         const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
         const prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
-        console.log('prev ending account value', prevEndingAccountValue, 'prevCellValue', prevCellValue, 'prevReconciliation', prevReconciliation, 'total', prevEndingAccountValue + prevCellValue + prevReconciliation);
         return prevEndingAccountValue + prevCellValue + prevReconciliation;
     }
 
