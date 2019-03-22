@@ -263,7 +263,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)),
+                                    dataSource$: this.store$.pipe(select(PartnerTypesStoreSelectors.getStoredPartnerTypes)),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })

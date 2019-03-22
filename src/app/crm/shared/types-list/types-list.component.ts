@@ -160,7 +160,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
                 else
                     $event.component.cancelEditData();
             });
-            if (this.filterModel)
+            if (this.filterModel && Number.isInteger($event.data.id))
                 this.addActionButton('filter', $event.cellElement, (event) => {
                     this.clearFiltersHighlight();
 
