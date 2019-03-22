@@ -2,4 +2,46 @@
     h2 {
         padding: 20px;
     }
+    
+    &.fullscreen .documentView {
+        width: 100%;
+        textarea {
+            height: 100%;
+        }
+        /deep/ app-image-viewer {
+            #imageViewer {
+                height: 100%;
+            }
+        }
+    }
+    
+    .wrapper {
+        display: flex;
+        margin: 0 23px;
+        height: 100%;
+        overflow: hidden;
+        width: 97%;
+        
+        .grid-view {
+            width: auto;
+            max-width: 100%;
+            height: 100%;
+            
+            /deep/ dx-data-grid {
+                
+                .dx-data-row {
+                    cursor: pointer;
+                }
+                
+                .campaign-name {
+                    font-weight: 600 !important;
+                }
+                
+                .campaign-type {
+                    padding-left: 15px !important;
+                    padding-right: 15px !important;
+                }
+            }
+        }
+    }
 }
