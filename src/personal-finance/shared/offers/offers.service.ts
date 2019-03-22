@@ -10,7 +10,6 @@ import capitalize from 'lodash/capitalize';
 import cloneDeep from 'lodash/cloneDeep';
 import lowerCase from 'lodash/lowerCase';
 import upperFirst from 'lodash/upperFirst';
-
 import { ReplaySubject, Observable } from 'rxjs';
 import { map, first, pluck, publishReplay, refCount } from 'rxjs/operators';
 

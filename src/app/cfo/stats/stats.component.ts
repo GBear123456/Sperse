@@ -75,7 +75,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     chartsHeight = 400;
     chartsWidth;
     isForecast = false;
-    reportPeriodTooltipVisible = false;
     bankAccountsCount: string;
     barChartTooltipFields = [
         {

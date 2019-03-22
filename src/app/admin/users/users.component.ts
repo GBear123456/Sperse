@@ -412,6 +412,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
+        this.initToolbarConfig();
         this.invalidate();
     }
 

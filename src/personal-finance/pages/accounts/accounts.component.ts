@@ -220,7 +220,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     checkQouvoActivity() {
         let idleTimeMiliseconds = new Date().getTime() - this.lastQuouvoActivity.getTime();
         if (idleTimeMiliseconds > this.MAX_IDLE_TIME_MILISECONDS) {
-            this.dialog.open(IdleCountdownDialog, { disableClose: true })
+            this.dialog.open(IdleCountdownDialog, { disableClose: true, panelClass: 'idle-coundown-dialog' })
                 .afterClosed()
                 .subscribe((result) => {
                     if (result && result.continue) {

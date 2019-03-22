@@ -52,17 +52,19 @@ export class PlatformSelectComponent extends AppComponentBase {
             this._appService.isModuleActive(switchModule.name) &&
             !this.checkModuleCustomHandler(switchModule)
         ) {
-            this.module = switchModule.name;
-            this.uri = switchModule.uri;
             let navigate = null;
             let moduleConfig = this._appService.getModuleConfig(switchModule.name);
             if (moduleConfig.defaultPath)
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
             else
-                navigate = this._router.navigate(['app/' + this.module.toLowerCase() + (this.uri ? '/' + this.uri.toLowerCase() : '')]);
+                navigate = this._router.navigate(['app/' + switchModule.name.toLowerCase() + (switchModule.uri ? '/' + switchModule.uri.toLowerCase() : '')]);
             this._dropDown.option('disabled', true);
-            navigate.then(() => {
-                this._appService.switchModule(this.module, { instance: this.uri });                
+            navigate.then((result) => {
+                if (result) {
+                    this.module = switchModule.name;
+                    this.uri = switchModule.uri;
+                    this._appService.switchModule(this.module, { instance: this.uri });
+                }
                 this._dropDown.option('disabled', false);
             });
             this._dropDown.close();
@@ -71,10 +73,9 @@ export class PlatformSelectComponent extends AppComponentBase {
 
     checkModuleCustomHandler(module) {
         if (module.name == 'PFM') {
-            let moduleConfig = this._appService.getModuleConfig(module.name);
             if (!this.permission.isGranted('Pages.PFM.Applications.ManageOffers'))
                 return window.open(location.origin + '/personal-finance', '_blank');
-        }        
+        }
     }
 
     isDisabled(item) {

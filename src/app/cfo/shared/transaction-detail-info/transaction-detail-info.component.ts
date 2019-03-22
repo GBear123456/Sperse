@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Injector, Input, OnInit, Output } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+import { CFOService } from '@shared/cfo/cfo.service';
 import {
     CategoryTreeServiceProxy,
     ClassificationServiceProxy,
@@ -18,17 +19,14 @@ import * as _ from 'underscore';
     selector: 'app-transaction-detail-info',
     templateUrl: './transaction-detail-info.component.html',
     styleUrls: ['./transaction-detail-info.component.less'],
-    providers: [ CategoryTreeServiceProxy, TransactionsServiceProxy, CommentServiceProxy ]
+    providers: [ CategoryTreeServiceProxy, TransactionsServiceProxy, CommentServiceProxy, ClassificationServiceProxy ]
 })
-export class TransactionDetailInfoComponent extends CFOComponentBase implements OnInit {
-    @Input() transactionId: number;
-    @Input() targetDetailInfoTooltip = '';
-    @Output() onTooltipClosed: EventEmitter<any> = new EventEmitter();
+export class TransactionDetailInfoComponent extends AppModalDialogComponent implements OnInit {
+    transactionId: number;
     newComment = {
         text: '',
         inplaceEdit: false
     };
-    isVisible = false;
     transactionInfo = new TransactionDetailsDto();
     transactionAttributeTypes: any;
     isEditAllowed = true;
@@ -45,45 +43,41 @@ export class TransactionDetailInfoComponent extends CFOComponentBase implements 
 
     constructor(
         injector: Injector,
+        private _cfoService: CFOService,
         private _transactionsService: TransactionsServiceProxy,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _commentServiceProxy: CommentServiceProxy
     ) {
         super(injector);
-    }
-
-    toggleTransactionDetailsInfo() {
-        setTimeout(() => {
-            this.getTransactionDetails();
-            this.isVisible = !this.isVisible;
-        }, 0);
+        
+        this.transactionId = this.data.transactionId;
     }
 
     ngOnInit() {
+        this.getTransactionDetails();
         this.getTransactionAttributeTypes();
         this.getCategoryTree();
     }
 
-    closeTooltip() {
-        this.isVisible = false;
-        this.onTooltipClosed.emit();
+    closeDialog() {
         this.accountingTypes = [];
         this.filteredCategory = [];
         this.filteredSubCategory = [];
         this.selectedAccountingType = '';
         this.selcetdCategoryId = null;
+        this.close();
     }
 
     getTransactionDetails() {
-        this._transactionsService.getTransactionDetails(InstanceType[this.instanceType], this.instanceId, this.transactionId)
+        this._transactionsService.getTransactionDetails(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, this.transactionId)
             .subscribe(result => {
                 this.transactionInfo = result.transactionDetails;
             });
     }
 
     getTransactionAttributeTypes() {
-        this._transactionsService.getTransactionAttributeTypes(InstanceType[this.instanceType], this.instanceId)
+        this._transactionsService.getTransactionAttributeTypes(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId)
             .subscribe(result => {
                 this.transactionAttributeTypes = result.transactionAttributeTypes;
             });
@@ -91,8 +85,8 @@ export class TransactionDetailInfoComponent extends CFOComponentBase implements 
 
     updateTransactionCategory(e) {
         this._classificationServiceProxy.updateTransactionsCategory(
-            InstanceType[this.instanceType],
-            this.instanceId,
+            InstanceType[this._cfoService.instanceType],
+            this._cfoService.instanceId,
             new UpdateTransactionsCategoryInput({
                 transactionIds: [this.transactionId],
                 categoryId: e.itemData.key,
@@ -134,7 +128,7 @@ export class TransactionDetailInfoComponent extends CFOComponentBase implements 
 
     getCategoryTree() {
         this._categoryTreeServiceProxy.get(
-            InstanceType[this.instanceType], this.instanceId, true
+            InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, true
         ).subscribe(data => {
             let categories = [];
             this.categorization = data;
@@ -169,8 +163,8 @@ export class TransactionDetailInfoComponent extends CFOComponentBase implements 
 
     updateDescriptor() {
         this._classificationServiceProxy.updateTransactionsCategory(
-            InstanceType[this.instanceType],
-            this.instanceId,
+            InstanceType[this._cfoService.instanceType],
+            this._cfoService.instanceId,
             new UpdateTransactionsCategoryInput({
                 transactionIds: [this.transactionId],
                 categoryId: this.transactionInfo.cashflowCategoryId,
@@ -190,8 +184,8 @@ export class TransactionDetailInfoComponent extends CFOComponentBase implements 
 
     addNewComment() {
         this._commentServiceProxy.createTransactionCommentThread(
-            InstanceType[this.instanceType],
-            this.instanceId,
+            InstanceType[this._cfoService.instanceType],
+            this._cfoService.instanceId,
             new CreateTransactionCommentThreadInput({
                 transactionId: this.transactionId,
                 comment: this.newComment.text
@@ -206,8 +200,8 @@ export class TransactionDetailInfoComponent extends CFOComponentBase implements 
 
     updateComment(field, data) {
         this._commentServiceProxy.updateComment(
-            InstanceType[this.instanceType],
-            this.instanceId,
+            InstanceType[this._cfoService.instanceType],
+            this._cfoService.instanceId,
             new UpdateCommentInput({
                 comment: data.text,
                 id: data.commentId

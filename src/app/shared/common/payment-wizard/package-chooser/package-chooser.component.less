@@ -31,7 +31,7 @@
         }
         
         .config-wrap {
-            margin: 27px 0 12px;
+            margin: 27px 10px 0;
             display: flex;
             align-items: center;
             justify-content: space-evenly;
@@ -44,6 +44,11 @@
             margin: 0;
             position: relative;
             min-width: 190px;
+    
+            &.both-active {
+                position: absolute;
+                right: 10px;
+            }
     
             & > div {
                 font-size: 14px;
@@ -99,6 +104,7 @@
             /deep/ mat-slide-toggle.mat-slide-toggle {
                 margin: 0 18px;
                 height: 38px;
+                overflow: hidden;
                 
                 .mat-slide-toggle-bar {
                     width: 190px;
@@ -206,9 +212,10 @@
             //    min-width: 0 !important;
             //}
         }
+        
         button.toggle {
             position: absolute;
-            right: 0;
+            right: 10px;
             background: none;
             border: none;
             color: #888d92;
@@ -344,13 +351,18 @@
             color: #ffffff;
             cursor: pointer;
             display: none;
+            margin-top: 15px;
         }
         
         .pricesAreShown {
             font-weight: 500;
             margin-bottom: 0;
+            margin-top: 15px;
         }
-
+    
+        .downgrade + .pricesAreShown {
+            margin-top: 0;
+        }
         button {
             padding: 16px 40px;
             font-size: 18px;

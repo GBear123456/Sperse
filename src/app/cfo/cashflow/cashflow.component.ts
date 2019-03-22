@@ -146,7 +146,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
     @ViewChild(OperationsComponent) operations: OperationsComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
-    @ViewChild(TransactionDetailInfoComponent) transactionInfo: TransactionDetailInfoComponent;
     transactionId: any;
     selectedBankAccountsIds;
     sliderReportPeriod = {
@@ -229,8 +228,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private _calculatorShowed = false;
 
     private expandBeforeIndex: number = null;
-
-    private detailsSearching = false;
 
     public set calculatorShowed(value: boolean) {
         if (this._calculatorShowed = value) {
@@ -3197,9 +3194,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 options.elementsToAppend.push(actionButton);
             }
 
-            if (this.isStartingBalanceDataColumn(cell, area) && cell.value == 0) {
+            if (this.isStartingBalanceDataColumn(cell, area)) {
                 let elements = this.adjustmentsList.filter(cashflowItem => {
-                    return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || cell.rowType == 'T') &&
+                    return (cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId || (cell.rowPath.length === 1 && cell.rowPath[0] === CategorizationPrefixes.CashflowType + StartedBalance)) &&
                         cell.columnPath.every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
                         let dateMethod = field.groupInterval === 'day' ? 'date' : field.groupInterval;
@@ -3500,7 +3497,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (targetCell && this.elementIsDataCell(targetCell) && targetCell !== relatedTargetCell) {
             let infoButton = targetCell.getElementsByClassName('dx-link-info');
             if (infoButton.length) {
-                let sum = parseInt(infoButton[0].getAttribute('data-sum'));
+                let sum = parseFloat(infoButton[0].getAttribute('data-sum'));
                 let infoTooltip = document.createElement('div');
                 infoTooltip.className = 'tootipWrapper';
                 this.infoTooltip = new Tooltip(infoTooltip, {
@@ -3515,11 +3512,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     onMouseOut(e) {
         if (this.infoTooltip) {
-            let infoTooltipParent = this.infoTooltip.element().parentElement;
-            this.infoTooltip.dispose();
-            this.infoTooltip = undefined;
-            if (infoTooltipParent) {
-                infoTooltipParent.removeChild(infoTooltipParent.querySelector('.tootipWrapper'));
+            let targetCell = this.getCellElementFromTarget(e.target);
+            let relatedTargetCell = e.relatedTarget && this.getCellElementFromTarget(e.relatedTarget);
+            if (targetCell && targetCell !== relatedTargetCell) {
+                let infoTooltipParent = this.infoTooltip.element().parentElement;
+                this.infoTooltip.dispose();
+                this.infoTooltip = undefined;
+                if (infoTooltipParent) {
+                    infoTooltipParent.removeChild(infoTooltipParent.querySelector('.tootipWrapper'));
+                }
             }
         }
     }
@@ -3618,7 +3619,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     }
                 }
                 /** Get target descriptor or if we copy to category - get transaction description */
-                target.transactionDescriptor = target.transactionDescriptor || transaction.descriptor;
+                target.transactionDescriptor = this.cashflowService.isUnclassified(target) && !isHorizontalCopying ? null : target.transactionDescriptor || transaction.descriptor;
                 data['target'] = target;
                 let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceCellInfo, target);
                 let combinedData = <any>{ ...data, ...categorizationData };
@@ -5021,7 +5022,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         const prevIsFirstColumn = this.getPrevWithParent(prevWithParent) ? true : false;
         const prevCellValue = prevWithParent ? prevWithParent.value(prevIsFirstColumn) || 0 : 0;
         const prevReconciliation = this.getCellValue(prevWithParent, Reconciliation);
-        console.log('prev ending account value', prevEndingAccountValue, 'prevCellValue', prevCellValue, 'prevReconciliation', prevReconciliation, 'total', prevEndingAccountValue + prevCellValue + prevReconciliation);
         return prevEndingAccountValue + prevCellValue + prevReconciliation;
     }
 
@@ -5299,33 +5299,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     searchValueChange(value) {
-        if (!this.detailsSearching) {
-            this.detailsSearching = true;
-            this.searchValue = value;
-            if (this.searchValue) {
-                this.showAllVisible = true;
-                this.showAllDisable = true;
-                this.disableAddForecastButton = true;
-                let filterParams = {
-                    startDate: this.requestFilter.startDate,
-                    endDate: this.requestFilter.endDate,
-                    currencyId: this.currencyId,
-                    accountIds: this.requestFilter.accountIds || [],
-                    businessEntityIds: this.requestFilter.businessEntityIds || [],
-                    searchTerm: this.searchValue,
-                    forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
-                };
-                this.statsDetailFilter = StatsDetailFilter.fromJS(filterParams);
-                this._cashflowServiceProxy
-                    .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
-                    .pipe(finalize(() => this.detailsSearching = false ))
-                    .subscribe(result => {
-                        this.showTransactionDetail(result);
-                    });
-            } else {
-                this.statsDetailResult = null;
-                this.closeTransactionsDetail();
-            }
+        this.detailsStartLoading();
+        this.searchValue = value;
+        if (this.searchValue) {
+            this.showAllVisible = true;
+            this.showAllDisable = true;
+            this.disableAddForecastButton = true;
+            let filterParams = {
+                startDate: this.requestFilter.startDate,
+                endDate: this.requestFilter.endDate,
+                currencyId: this.currencyId,
+                accountIds: this.requestFilter.accountIds || [],
+                businessEntityIds: this.requestFilter.businessEntityIds || [],
+                searchTerm: this.searchValue,
+                forecastModelId: this.selectedForecastModel ? this.selectedForecastModel.id : undefined
+            };
+            this.statsDetailFilter = StatsDetailFilter.fromJS(filterParams);
+            this._cashflowServiceProxy
+                .getStatsDetails(InstanceType[this.instanceType], this.instanceId, this.statsDetailFilter)
+                .pipe(finalize(() => this.detailsFinishLoading()))
+                .subscribe(result => {
+                    this.showTransactionDetail(result);
+                });
+        } else {
+            this.statsDetailResult = null;
+            this.closeTransactionsDetail();
         }
     }
 
@@ -5388,8 +5386,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onDetailsCellSingleClick(e) {
         if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId && !e.row.inserted) {
             this.transactionId = e.data.id;
-            this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
-            this.transactionInfo.toggleTransactionDetailsInfo();
+            //this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
+            this.showTransactionDetailsInfo();
         } else if (e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
@@ -5564,14 +5562,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     detailsStartLoading() {
-        const gridElement = this.cashFlowGrid.instance.element();
+        const gridElement = this.cashFlowGrid && this.cashFlowGrid.instance.element();
         if (gridElement) {
             super.startLoading(null, gridElement);
         }
     }
 
     detailsFinishLoading() {
-        const gridElement = this.cashFlowGrid.instance.element();
+        const gridElement = this.cashFlowGrid && this.cashFlowGrid.instance.element();
         if (gridElement) {
             super.finishLoading(null, gridElement);
         }
@@ -6154,5 +6152,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onDetailsSelectionChanged(e) {
         this.detailsSomeHistoricalItemsSelected = e.selectedRowKeys.some(item => !!item.date);
         this.detailsSomeForecastsItemsSelected = e.selectedRowKeys.some(item => item.forecastId);
+    }
+
+    showTransactionDetailsInfo() {
+        this.dialog.open(TransactionDetailInfoComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                transactionId: this.transactionId
+            }
+        });
     }
 }

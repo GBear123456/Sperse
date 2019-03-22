@@ -52,7 +52,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
-    @ViewChild(TransactionDetailInfoComponent) transactionInfo: TransactionDetailInfoComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
@@ -888,8 +887,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
         if ($event.rowType === 'data' && $event.column.dataField == 'Description') {
             this.transactionId = $event.data.Id;
-            this.transactionInfo.targetDetailInfoTooltip = '#transactionDetailTarget-' + this.transactionId;
-            this.transactionInfo.toggleTransactionDetailsInfo();
+            this.showTransactionDetailsInfo();
         }
     }
 
@@ -1074,6 +1072,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+    }
+
+    showTransactionDetailsInfo() {
+        this.dialog.open(TransactionDetailInfoComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                transactionId: this.transactionId
+            }
+        }).afterClosed().subscribe(() => this.refreshDataGrid());
     }
 
     ngOnDestroy() {
