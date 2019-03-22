@@ -73,10 +73,10 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                             checkPressed: () => {
                                 return this._filtersService.fixed;
                             },
-                            mouseover: (event) => {
+                            mouseover: () => {
                                 this._filtersService.enable();
                             },
-                            mouseout: (event) => {
+                            mouseout: () => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
                             }
@@ -99,8 +99,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                             mode: 'search',
                             placeholder: this.l('Search') + ' '
                             + this.l('Transaction').toLowerCase(),
-                            onValueChanged: this.searchValueChange.bind(this),
-                            onKeyPress: this.searchKeyPress.bind(this)
+                            onValueChanged: this.searchValueChange.bind(this)
                         }
                     }
                 ]
@@ -247,11 +246,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     searchValueChange(event) {
         this.searchValue = event['value'];
         this.onSearchValueChange.emit(this.searchValue);
-    }
-
-    searchKeyPress(event) {
-        if (this.searchValue && event.event.charCode === 13)
-            this.onSearchValueChange.emit(this.searchValue);
+        this.initToolbarConfig();
     }
 
     refresh() {

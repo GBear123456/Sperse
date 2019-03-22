@@ -23,6 +23,7 @@ export class CashflowService {
         let categorization = {};
         if (this.isUnclassified(target)) {
             categorization['cashflowTypeId'] = categorization['cashFlowTypeId'] = target.cashflowTypeId;
+            categorization['transactionDescriptor'] = target.transactionDescriptor;
             return categorization;
         }
 

@@ -14,7 +14,7 @@ export class ToolbarGroupModelItem {
 }
 
 export class ToolbarGroupModel {
-    areItemsDependent: boolean = false;
+    areItemsDependent = false;
     location: string;
     locateInMenu: string;
     itemTemplate?: string;
