@@ -6,16 +6,21 @@
 
 :host {
     padding: 34px 42px 33px 44px;
-    height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     margin: auto;
+    
+    @media all and (max-width: 680px) {
+        padding: 25px 20px;
+    }
 
     .packageHeader {
         text-align: center;
         z-index: 1;
         position: relative;
+        
         .title {
             font-size: 36px;
             font-weight: 600;
@@ -29,12 +34,31 @@
             letter-spacing: 0.4px;
             color: #888d92;
         }
+    
+        @media all and (max-width: 680px) {
+            .title {
+                font-size: 24px;
+            }
+        }
         
         .config-wrap {
             margin: 27px 10px 0;
             display: flex;
             align-items: center;
             justify-content: space-evenly;
+            
+            @media all and (max-width: 768px) {
+                flex-direction: column;
+                margin-bottom: 15px;
+            }
+    
+            @media all and (max-width: 680px) {
+                button.toggle {
+                    position: relative;
+                    right: 0;
+                    margin: 10px auto;
+                }
+            }
         }
         
         .billingPeriod {
@@ -48,6 +72,10 @@
             &.both-active {
                 position: absolute;
                 right: 10px;
+    
+                @media all and (max-width: 768px) {
+                    position: static;
+                }
             }
     
             & > div {
@@ -70,6 +98,10 @@
                 &.active {
                     font-weight: 500;
                     color: #fff;
+    
+                    span.year-discount {
+                        color: #a8ffa1;
+                    }
                 }
             }
        
@@ -313,7 +345,7 @@
         justify-content: center;
         margin-bottom: 35px;
         @media (max-width: 768px) {
-            flex-wrap: wrap;
+            flex-flow: column wrap;
         }
     }
     .footerDescription {
@@ -331,10 +363,23 @@
                 line-height: 20px;
             }
         }
+        
+        @media all and (max-width: 768px) {
+            position: relative;
+            width: 62%;
+            left: 0;
+            bottom: 15px;
+            margin: 0 auto;
+        }
+    
+        @media all and (max-width: 680px) {
+            width: 100%;
+            font-size: 12px;
+        }
     }
     .footer {
         @media (min-width: 768px) {
-            padding: 0 180px;
+            padding: 0;
         }
 
         text-align: center;
@@ -403,13 +448,13 @@
 :host(.withBackground) {
     position: relative;
     overflow-y: hidden;
+    
     &:before {
         content: '';
         background: linear-gradient(111deg, #c86dd7, #3023ae) no-repeat 100% 360px;
         height: 100%;
         position: absolute;
         width: 100%;
-        height: 100%;
         margin: auto;
         left: 0;
         right: 0;
