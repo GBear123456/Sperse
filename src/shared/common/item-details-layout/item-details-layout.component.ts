@@ -13,7 +13,7 @@ export class ItemDetailsLayoutComponent implements OnInit {
     @Output() onClose: EventEmitter<null> = new EventEmitter<null>();
 
     rightSideVisible;
-    @HostListener('window:resize') onResize(event) {
+    @HostListener('window:resize') onResize() {
         this.rightSideVisible = innerWidth > 1200;
     }
 
