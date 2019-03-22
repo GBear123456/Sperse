@@ -1,4 +1,4 @@
-import { Injector, Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Injector, Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
@@ -33,6 +33,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     readonly GENERAL_TAB_INDEX        = 0;
     readonly PERMISSIONS_TAB_INDEX    = 1;
     readonly LOGIN_ATTEMPTS_TAB_INDEX = 2;
+    readonly ORG_UNITS_TAB_INDEX      = 3;
 
     readonly EMAIL_FIELD = 'emailAddress';
     readonly PHONE_FIELD = 'phoneNumber';
@@ -73,6 +74,13 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         'phoneNumber': [{ type: 'stringLength', max: 24 }, { type: 'pattern', pattern: AppConsts.regexPatterns.phone }],
         'emailAddress': [{ type: 'pattern', pattern: AppConsts.regexPatterns.email, message: this.l('InvalidEmailAddress') }, { type: 'required', message: this.l('EmailIsRequired') }]
     };
+
+    orgUnitsDisabled;
+    @HostListener('window:resize') onResize() {
+        if (this.orgUnitsDisabled = (innerWidth > 1200))
+            if (this.selectedTabIndex == this.ORG_UNITS_TAB_INDEX)
+                this.selectedTabIndex = this.GENERAL_TAB_INDEX;
+    }
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -117,6 +125,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     ngOnInit() {
+        this.onResize();
         this.contactInfoData = this._contactService['data'];
         if ((this.data = this._userService['data']).userId)
             this.loadData();

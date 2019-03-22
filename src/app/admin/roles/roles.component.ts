@@ -241,6 +241,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
+        this.initToolbarConfig();
         if (this.searchValue)
             this.dataGrid.instance.filter(['displayName', 'contains', this.searchValue]);
         else

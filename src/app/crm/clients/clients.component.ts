@@ -307,7 +307,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(select(ListsStoreSelectors.getLists)),
+                                    dataSource$: this.store$.pipe(select(ListsStoreSelectors.getStoredLists)),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -320,7 +320,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(select(TagsStoreSelectors.getTags)),
+                                    dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -569,6 +569,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     searchValueChange(e: object) {
         this.searchValue = e['value'];
+        this.initToolbarConfig();
         this.processFilterInternal();
     }
 

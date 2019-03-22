@@ -6,14 +6,30 @@ import {
     Component,
     Injector,
     OnDestroy,
-    OnInit
+    OnInit,
+    HostListener
 } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { BehaviorSubject, Observable, Subject, merge } from 'rxjs';
-import { debounceTime, filter, finalize, map, tap, publishReplay, pluck, switchMap, refCount, withLatestFrom } from 'rxjs/operators';
+import { NotifyService } from '@abp/notify/notify.service';
+import { BehaviorSubject, Observable, Subject, combineLatest, of, merge } from 'rxjs';
+import {
+    debounceTime,
+    filter,
+    finalize,
+    map,
+    tap,
+    publishReplay,
+    pluck,
+    switchMap,
+    refCount,
+    withLatestFrom,
+    distinctUntilChanged
+} from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
+import startCase from 'lodash/startCase';
+import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
 import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -33,11 +49,12 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { NotifyService } from '@abp/notify/notify.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
+import { CloseComponentAction } from '@app/shared/common/close-component.service/close-component-action.enum';
+import { ICloseComponent } from '@app/shared/common/close-component.service/close-component.interface';
 
 @Component({
     selector: 'offer-edit',
@@ -46,7 +63,7 @@ import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info'
     providers: [ OfferManagementServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OfferEditComponent implements OnInit, OnDestroy {
+export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     rootComponent: RootComponent;
     navLinks = [
         {
@@ -66,7 +83,10 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             route: '../flags'
         }
     ];
-    offerId$: Observable<number> = this.route.paramMap.pipe(map((paramMap: ParamMap) => +paramMap.get('id')));
+    offerId$: Observable<number> = this.route.paramMap.pipe(
+        map((paramMap: ParamMap) => +paramMap.get('id')),
+        distinctUntilChanged()
+    );
     private _refresh: Subject<null> = new Subject<null>();
     refresh: Observable<null> = this._refresh.asObservable();
     offerDetails$: Observable<OfferDetailsForEditDto> = merge(
@@ -99,6 +119,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
     creditScoresEnum = CreditScores2;
     offerCollectionEnum = ExtendOfferDtoOfferCollection;
     model: OfferDetailsForEditDto;
+    initialModel: OfferDetailsForEditDto;
     section$: Observable<string>;
     offerIsUpdating = false;
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
@@ -125,6 +146,7 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         this.rootComponent.overflowHidden(true);
         this.offerDetails$.subscribe(details => {
             this.model = details;
+            this.updateInitialModel();
         });
         this.targetEntity$.pipe(
             debounceTime(300),
@@ -135,15 +157,56 @@ export class OfferEditComponent implements OnInit, OnDestroy {
             withLatestFrom(this.offerId$, this.section$),
             filter(itemFullInfo => !!itemFullInfo)
         ).subscribe(([itemFullInfo, offerId, section]: [ItemFullInfo, number, string]) => {
-            if (offerId !== itemFullInfo.itemData.CampaignId) {
-                this.router.navigate(
-                    ['../..', itemFullInfo.itemData.CampaignId, section],
-                    { relativeTo: this.route }
-                );
+            if (itemFullInfo) {
+                if (offerId !== itemFullInfo.itemData.CampaignId) {
+                    this.router.navigate(
+                        ['../..', itemFullInfo.itemData.CampaignId, section],
+                        { relativeTo: this.route }
+                    );
+                }
+                this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
+                this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
             }
-            this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
-            this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
         });
+    }
+
+    @HostListener('window:beforeunload', ['$event']) beforeUnload($event) {
+        if (this.dataChanged()) {
+            $event.returnValue = this.ls.l('UnsavedChanges');
+            return $event.returnValue;
+        }
+    }
+
+    handleDeactivate(deactivateAction: CloseComponentAction): Observable<boolean> {
+        let deactivate$: Observable<boolean>;
+        switch (deactivateAction) {
+            case CloseComponentAction.Save: {
+                deactivate$ = this.onSubmit().pipe(map(() => true));
+                break;
+            }
+            case CloseComponentAction.Discard: {
+                this.model = cloneDeep(this.initialModel);
+                deactivate$ = of(true);
+                break;
+            }
+            case CloseComponentAction.ContinueEditing: {
+                deactivate$ = of(false);
+                break;
+            }
+        }
+        return deactivate$;
+    }
+
+    dataChanged(): boolean {
+        return JSON.stringify(this.model) !== JSON.stringify(this.initialModel);
+    }
+
+    skipClosePopup(currentUrl: string, nextUrl: string): boolean {
+        const currentUrlPath = currentUrl.split('/');
+        const currentUrlLastPathItem = currentUrlPath.pop();
+        const nextUrlPath = nextUrl ? nextUrl.split('/') : [];
+        const nextUrlLastPathItem = nextUrlPath ? nextUrlPath.pop() : '';
+        return currentUrlPath.join('/') === nextUrlPath.join('/') && currentUrlLastPathItem !== nextUrlLastPathItem;
     }
 
     refreshData() {
@@ -166,19 +229,32 @@ export class OfferEditComponent implements OnInit, OnDestroy {
         this.router.navigate(['../../'], { relativeTo: this.route });
     }
 
-    onSubmit() {
+    onSubmit(): Observable<void> {
         this.offerIsUpdating = true;
         abp.ui.setBusy();
-        this.offerManagementService.extend(this.model.campaignId, this.model.extendedInfo)
-            .pipe(finalize(() => {
-                abp.ui.clearBusy();
-                this.offerIsUpdating = false;
-                this.changeDetector.detectChanges();
-            }))
-            .subscribe(
-                () => this.notifyService.info(this.ls.l('SavedSuccessfully', 'Platform')),
-                e => this.notifyService.error(e)
+        const submit$ = this.offerManagementService.extend(this.model.campaignId, this.model.extendedInfo)
+            .pipe(
+                finalize(() => {
+                    abp.ui.clearBusy();
+                    this.offerIsUpdating = false;
+                    this.changeDetector.detectChanges();
+                }),
+                publishReplay(),
+                refCount()
             );
+
+        submit$.subscribe(
+            () => {
+                this.notifyService.info(this.ls.l('SavedSuccessfully', 'Platform'));
+                this.updateInitialModel();
+            },
+            e => this.notifyService.error(e)
+        );
+        return submit$;
+    }
+
+    private updateInitialModel() {
+        this.initialModel = cloneDeep(this.model);
     }
 
     getInplaceEditData() {
