@@ -4,7 +4,7 @@
             <mat-step>
                 <package-chooser
                     *ngIf="!subscriptionIsLocked"
-                    [title]="data?.title"
+                    [widgetTitle]="data?.title"
                     [subtitle]="data?.subtitle"
                     [module]="module"
                     [showBackground]="true"
@@ -21,6 +21,7 @@
             <mat-step>
                 <ng-container *ngIf="(plan$ | async) as plan">
                     <payment-options
+                        *ngIf="stepper.selectedIndex != 0"
                         [plan]="plan"
                         (onChangeStep)="stepper.selectedIndex = $event"
                         (onClose)="close()"
