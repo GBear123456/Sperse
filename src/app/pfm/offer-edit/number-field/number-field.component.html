@@ -8,5 +8,5 @@
         [value]="value"
         (onValueChanged)="valueChange.emit($event.value)">
     </dx-number-box>
-    <span [ngClass]="!readOnly && value && 'clear-contact' || 'hidden'" (click)="valueChange.emit('')"><i class="minus-icon"></i></span>
+    <span [ngClass]="!readOnly && value && 'clear-contact' || 'hidden'" (click)="valueChange.emit()"><i class="minus-icon"></i></span>
 </div>
