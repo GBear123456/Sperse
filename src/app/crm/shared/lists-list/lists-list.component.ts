@@ -206,17 +206,21 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowRemoving($event) {
+        let itemId = $event.key;
+
+        if (!Number.isInteger(itemId))
+            return;
+
         $event.cancel = true;
-        let itemId = $event.key,
-            dialogData = {
-                deleteAllReferences: false,
-                items: _.filter(this.list, (obj) => {
-                    return (obj.id != itemId);
-                }),
-                entityPrefix: 'List',
-                reassignToItemId: undefined,
-                localization: this.localizationSourceName
-            };
+        let dialogData = {
+            deleteAllReferences: false,
+            items: _.filter(this.list, (obj) => {
+                return (obj.id != itemId);
+            }),
+            entityPrefix: 'List',
+            reassignToItemId: undefined,
+            localization: this.localizationSourceName
+        };
         this.tooltipVisible = false;
         this.dialog.open(DeleteAndReassignDialogComponent, {
             data: dialogData
@@ -252,21 +256,23 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }
 
         let id = $event.oldData.id;
-        if (Number.isInteger(id)) {
-            this.store$.dispatch(
-                new ListsStoreActions.RenameList({
-                    id: $event.oldData.id,
-                    name: listName
-                })
-            );
 
-            this.actions$.pipe(
-                ofType(ListsStoreActions.ActionTypes.RENAME_LIST_SUCCESS),
-                first()
-            ).subscribe(() => {
-                $event.cancel = true;
-            });
-        }
+        if (!Number.isInteger(id))
+            return;
+
+        this.store$.dispatch(
+            new ListsStoreActions.RenameList({
+                id: id,
+                name: listName
+            })
+        );
+
+        this.actions$.pipe(
+            ofType(ListsStoreActions.ActionTypes.RENAME_LIST_SUCCESS),
+            first()
+        ).subscribe(() => {
+            $event.cancel = true;
+        });
     }
 
     onRowInserting($event) {
