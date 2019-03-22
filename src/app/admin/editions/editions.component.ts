@@ -2,6 +2,7 @@
 import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
@@ -11,7 +12,6 @@ import { AppService } from '@app/app.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditionListDto, EditionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-modal.component';
-import { MatDialog } from '@angular/material';
 
 @Component({
     templateUrl: './editions.component.html',

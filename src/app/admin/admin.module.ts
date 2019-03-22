@@ -181,7 +181,8 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         CreateTenantModalComponent,
         EditTenantModalComponent,
         TenantFeaturesModalComponent,
-        CreateOrEditEditionModalComponent
+        CreateOrEditEditionModalComponent,
+        CreateOrEditRoleModalComponent
     ],
     exports: [
         AddMemberModalComponent

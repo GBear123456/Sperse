@@ -1,20 +1,20 @@
+/** Core imports */
 import { Component,  Injector, ViewChild, OnDestroy } from '@angular/core';
-import { PermissionServiceProxy, RoleServiceProxy, RoleListDto } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { FileDownloadService } from '@shared/utils/file-download.service';
-import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 
+/** Third party imports */
+import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 
+/** Application imports **/
+import { PermissionServiceProxy, RoleServiceProxy, RoleListDto } from '@shared/service-proxies/service-proxies';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal.component';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
 import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
-
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -24,14 +24,12 @@ import { AppConsts } from '@shared/AppConsts';
     animations: [appModuleAnimation()]
 })
 export class RolesComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild('createOrEditRoleModal') createOrEditRoleModal: CreateOrEditRoleModalComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private filters: FilterModel[];
     selectedPermission = '';
     private rootComponent: any;
     private formatting = AppConsts.formatting;
-
     public actionMenuItems: any;
     public actionRecord: any;
     public headlineConfig = {
@@ -46,7 +44,6 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             }
         ]
     };
-
     dataSource: any;
 
     constructor(
@@ -54,7 +51,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         private _roleService: RoleServiceProxy,
         private _appService: AppService,
         private _filtersService: FiltersService,
-        private _permissionService: PermissionServiceProxy
+        private _permissionService: PermissionServiceProxy,
+        private _dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -65,7 +63,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                 text: this.l('Edit'),
                 visible: this.permission.isGranted('Pages.Administration.Roles.Edit'),
                 action: () => {
-                    this.createOrEditRoleModal.show(this.actionRecord.id);
+                    this.openCreateOrEditRoleModal(this.actionRecord.id);
                 }
             },
             {
@@ -282,7 +280,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     }
 
     createRole(): void {
-        this.createOrEditRoleModal.show();
+        this.openCreateOrEditRoleModal();
     }
 
     editRole(event) {
@@ -290,9 +288,21 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
             let roleId = event.data && event.data.id;
             if (roleId) {
                 event.component.cancelEditData();
-                this.createOrEditRoleModal.show(roleId);
+                this.openCreateOrEditRoleModal(roleId);
             }
         }
+    }
+
+    openCreateOrEditRoleModal(roleId?: number) {
+        const dialogRef = this._dialog.open(CreateOrEditRoleModalComponent, {
+            panelClass: 'slider',
+            data: {
+                roleId: roleId
+            }
+        });
+        dialogRef.componentInstance.modalSave.subscribe(() => {
+            this.refreshDataGrid();
+        });
     }
 
     deleteRole(role: RoleListDto): void {
