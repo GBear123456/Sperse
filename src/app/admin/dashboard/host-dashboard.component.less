@@ -12,21 +12,6 @@
         }
     }
 
-    .primeNgDataTableTheme(@backgroundColor) {
-        thead th {
-            background-color: @backgroundColor !important;
-            color: white;
-        }
-    }
-
-    .expiring-tenants-table {
-        .primeNgDataTableTheme(#E08283);
-    }
-
-    .recent-tenants-table {
-        .primeNgDataTableTheme(#8877a9);
-    }
-
     .expiring-tenants-table {
         color: green
     }
@@ -76,7 +61,6 @@
         background-color: #6aa0ca !important
     }
 
-
     .progress.m-progress--sm {
         height: 6px
     }
@@ -125,5 +109,16 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%,-50%);
+    }
+
+    @media (min-width: 1025px) {
+        .m-portlet.m-portlet--full-height {
+            &.income-statistics,
+            &.edition-statistics {
+                .m-portlet__body {
+                    min-height: 470px;
+                }
+            }
+        }
     }
 }

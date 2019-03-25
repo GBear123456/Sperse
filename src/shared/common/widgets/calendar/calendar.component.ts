@@ -35,8 +35,8 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
             date.setTime(date.getTime() + (date.getTimezoneOffset() +
                 moment(date).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset()) * 60 * 1000);
             return date;
-        }
-    }    
+        };
+    }
 
     private setDateRageValues() {
         if (this.calendar) {

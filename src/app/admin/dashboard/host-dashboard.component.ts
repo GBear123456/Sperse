@@ -1,17 +1,35 @@
-import { AfterViewInit, Component, ElementRef, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+/** Core imports */
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy, ChangeDetectorRef,
+    Component,
+    ElementRef,
+    OnInit,
+    ViewChild,
+    ViewEncapsulation
+} from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+
+/** Third party imports */
+import * as moment from 'moment';
+import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { finalize, first, map, tap, switchMap, catchError, publishReplay, refCount } from 'rxjs/operators';
+
+/** Application imports */
 import { DateTimeService } from '@app/shared/common/timing/date-time.service';
 import { AppIncomeStatisticsDateInterval } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { HostDashboardData, HostDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
-import * as moment from 'moment';
-import { Table } from 'primeng/table';
-
-import '@node_modules/flot/jquery.flot.js';
-import '@node_modules/flot/jquery.flot.pie.js';
-import '@node_modules/flot/jquery.flot.categories.js';
-import '@node_modules/flot/jquery.flot.time.js';
-import '@node_modules/jquery.flot.tooltip/js/jquery.flot.tooltip.min.js';
+import {
+    ExpiringTenant,
+    HostDashboardData,
+    HostDashboardServiceProxy,
+    IncomeStastistic,
+    IncomeStatisticsDateInterval,
+    RecentTenant, TenantEdition
+} from '@shared/service-proxies/service-proxies';
+import { MomentFormatPipe } from '@shared/utils/moment-format.pipe';
+import { DateRangeInterface } from './date-range.interface';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: './host-dashboard.component.html',
@@ -24,352 +42,155 @@ import '@node_modules/jquery.flot.tooltip/js/jquery.flot.tooltip.min.js';
         './host-dashboard.component.less'
     ],
     encapsulation: ViewEncapsulation.None,
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    providers: [ CurrencyPipe, MomentFormatPipe ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HostDashboardComponent extends AppComponentBase implements AfterViewInit, OnInit {
+export class HostDashboardComponent implements AfterViewInit, OnInit {
     @ViewChild('DashboardDateRangePicker') dateRangePickerElement: ElementRef;
-    @ViewChild('EditionStatisticsChart') editionStatisticsChart: ElementRef;
-    @ViewChild('IncomeStatisticsChart') incomeStatisticsChart: ElementRef;
-
-    @ViewChild('RecentTenantsTable') recentTenantsTable: Table;
-    @ViewChild('ExpiringTenantsTable') expiringTenantsTable: Table;
-
-    loading = false;
-    loadingIncomeStatistics = false;
-    isInitialized: boolean;
-    hostDashboardData: HostDashboardData;
-    initialStartDate: moment.Moment = moment().add(-7, 'days').startOf('day');
-    initialEndDate: moment.Moment = moment().endOf('day');
+    selectedDateRange: BehaviorSubject<DateRangeInterface> = new BehaviorSubject({
+        startDate: moment().add(-7, 'days').startOf('day'),
+        endDate: moment().endOf('day')
+    });
+    selectedDateRange$: Observable<DateRangeInterface> = this.selectedDateRange.asObservable();
+    private refresh: BehaviorSubject<null> = new BehaviorSubject(null);
+    refresh$: Observable<null> = this.refresh.asObservable();
     currency = '$';
     appIncomeStatisticsDateInterval = AppIncomeStatisticsDateInterval;
-    selectedIncomeStatisticsDateInterval: number;
-    editionStatisticsHasData: boolean;
-    incomeStatisticsHasData: boolean;
-    selectedDateRange = {
-        startDate: this.initialStartDate,
-        endDate: this.initialEndDate
-    };
-
-    private _$editionsTable: JQuery;
-    expiringTenantsData = [];
-    recentTenantsData = [];
-
+    private selectedIncomeStatisticsDateInterval: BehaviorSubject<AppIncomeStatisticsDateInterval> = new BehaviorSubject<AppIncomeStatisticsDateInterval>(AppIncomeStatisticsDateInterval.Daily);
+    selectedIncomeStatisticsDateInterval$: Observable<AppIncomeStatisticsDateInterval> = this.selectedIncomeStatisticsDateInterval.asObservable();
+    hostDashboardData$: Observable<HostDashboardData>;
+    incomeStatistics$: Observable<IncomeStastistic[]>;
+    productStatisticData$: Observable<TenantEdition[]>;
+    expiringTenantsData$: Observable<ExpiringTenant[]>;
+    recentTenantsData$: Observable<RecentTenant[]>;
+    refreshing = false;
     constructor(
-        injector: Injector,
         private _dateTimeService: DateTimeService,
-        private _hostDashboardService: HostDashboardServiceProxy
-    ) {
-        super(injector);
-    }
+        private _hostDashboardService: HostDashboardServiceProxy,
+        private _momentFormatPipe: MomentFormatPipe,
+        private _currencyPipe: CurrencyPipe,
+        public ls: AppLocalizationService,
+        private _changeDetector: ChangeDetectorRef
+    ) {}
 
-    init(): void {
-        this.selectedIncomeStatisticsDateInterval = AppIncomeStatisticsDateInterval.Daily;
-    }
-
-    ngOnInit(): void {
-        this.init();
+    ngOnInit() {
+        this.hostDashboardData$ = combineLatest(
+            this.refresh$,
+            this.selectedIncomeStatisticsDateInterval$,
+            this.selectedDateRange$
+        ).pipe(
+            tap(() => {
+                this.refreshing = true;
+                this._changeDetector.detectChanges();
+            }),
+            switchMap(([, interval, dateRange]: [null, AppIncomeStatisticsDateInterval, DateRangeInterface]) => {
+                return this._hostDashboardService.getDashboardStatisticsData(
+                    interval as IncomeStatisticsDateInterval,
+                    dateRange.startDate,
+                    dateRange.endDate
+                ).pipe(
+                    finalize(() => this.refreshing = false),
+                    catchError(() => of(new HostDashboardData()))
+                );
+            }),
+            publishReplay(),
+            refCount()
+        );
+        this.incomeStatistics$ = this.hostDashboardData$.pipe(
+            map((data: HostDashboardData) => data.incomeStatistics.map(
+                item => ({ ...item, ...{ minAmount: 0 }})
+            ) || [] as any)
+        );
+        this.productStatisticData$ = this.hostDashboardData$.pipe(
+            map((data: HostDashboardData) => data.editionStatistics || [])
+        );
+        this.expiringTenantsData$ = this.hostDashboardData$.pipe(
+            map((data: HostDashboardData) => data.expiringTenants || [])
+        );
+        this.recentTenantsData$ = this.hostDashboardData$.pipe(
+            map((data: HostDashboardData) => data.recentTenants || [])
+        );
     }
 
     ngAfterViewInit(): void {
         setTimeout(() => {
             this.createDateRangePicker();
-            this.getDashboardStatisticsData();
-            this.bindToolTipForIncomeStatisticsChart($(this.incomeStatisticsChart.nativeElement));
         }, 0);
     }
 
     createDateRangePicker(): void {
-        $(this.dateRangePickerElement.nativeElement)
-            .daterangepicker(
-            $.extend(true, this._dateTimeService.createDateRangePickerOptions(), this.selectedDateRange),
-            (start, end, label) => {
-                this.selectedDateRange.startDate = start;
-                this.selectedDateRange.endDate = end;
-                this.getDashboardStatisticsData();
-            });
-    }
-
-    getDashboardStatisticsData(): void {
-        this.loading = true;
-        this._hostDashboardService
-            .getDashboardStatisticsData(
-            this.selectedIncomeStatisticsDateInterval,
-            this.selectedDateRange.startDate,
-            this.selectedDateRange.endDate
-            )
-            .subscribe(result => {
-                this.hostDashboardData = result;
-                this.drawEditionStatisticsData(result.editionStatistics);
-                this.drawIncomeStatisticsChart(result.incomeStatistics);
-                this.loadRecentTenantsTable(result.recentTenants);
-                this.loadExpiringTenantsTable(result.expiringTenants);
-                this.loading = false;
-            });
-    }
-
-    /*
-    * Edition statistics pie chart
-    */
-
-    normalizeEditionStatisticsData(data): Array<any> {
-        const colorPalette = ['#81A17E', '#BA9B7C', '#569BC6', '#e08283', '#888888'];
-        const chartData = new Array(data.length);
-        let pie: any;
-        for (let i = 0; i < data.length; i++) {
-            pie = {
-                label: data[i].label,
-                data: data[i].value
-            };
-
-            if (colorPalette[i]) {
-                pie.color = colorPalette[i];
+        $(this.dateRangePickerElement.nativeElement).daterangepicker(
+            $.extend(true, this._dateTimeService.createDateRangePickerOptions(), this.selectedDateRange.value),
+            (start, end) => {
+                this.selectedDateRange.next({
+                    startDate: start,
+                    endDate: end
+                });
             }
-
-            chartData[i] = pie;
-        }
-
-        return chartData;
-    }
-
-    drawEditionStatisticsData(data): void {
-        this.editionStatisticsHasData = (data && data.length > 0);
-        if (!this.editionStatisticsHasData) {
-            return;
-        }
-
-        setTimeout(() => {
-            const self = this;
-            const normalizedData = this.normalizeEditionStatisticsData(data);
-
-            ($ as any).plot($(self.editionStatisticsChart.nativeElement), normalizedData, {
-                series: {
-                    pie: {
-                        show: true,
-                        innerRadius: 0.3,
-                        radius: 1,
-                        label: {
-                            show: true,
-                            radius: 1,
-                            formatter(label, series) {
-                                return '<div class=\'pie-chart-label\'>' + label + ' : ' + Math.round(series.percent) + '%</div>';
-                            },
-                            background: {
-                                opacity: 0.8
-                            }
-                        }
-                    }
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    hoverable: true,
-                    clickable: true
-                }
-            });
-        }, 0);
-    }
-
-    /*
-     * Income statistics line chart
-     */
-
-
-    normalizeIncomeStatisticsData(data): Array<any> {
-        const chartData = [];
-        for (let i = 0; i < data.length; i++) {
-            const point = new Array(2);
-            point[0] = moment(data[i].date).utc().valueOf();
-            point[1] = data[i].amount;
-            chartData.push(point);
-        }
-
-        return chartData;
-    }
-
-    drawIncomeStatisticsChart(data): void {
-        if (this.incomeStatisticsHasData = data && data.length > 0) {
-            setTimeout(this.initIncomeStatisticChart.bind(this), 0, data);
-        }
-    }
-
-    initIncomeStatisticChart(data) {
-        const normalizedData = this.normalizeIncomeStatisticsData(data);
-        ($ as any).plot($(this.incomeStatisticsChart.nativeElement),
-        [{
-            data: normalizedData,
-            lines: {
-                fill: 0.2,
-                lineWidth: 1
-            },
-            color: ['#BAD9F5']
-        }, {
-            data: normalizedData,
-            points: {
-                show: true,
-                fill: true,
-                radius: 4,
-                fillColor: '#9ACAE6',
-                lineWidth: 2
-            },
-            color: '#9ACAE6',
-            shadowSize: 1
-        }, {
-            data: normalizedData,
-            lines: {
-                show: true,
-                fill: false,
-                lineWidth: 3
-            },
-            color: '#9ACAE6',
-            shadowSize: 0
-        }],
-        {
-            xaxis: {
-                mode: 'time',
-                timeformat: this.l('ChartDateFormat'),
-                minTickSize: [1, 'day'],
-                font: {
-                    lineHeight: 20,
-                    style: 'normal',
-                    variant: 'small-caps',
-                    color: '#6F7B8A',
-                    size: 10
-                }
-            },
-            yaxis: {
-                ticks: 5,
-                tickDecimals: 0,
-                tickColor: '#eee',
-                font: {
-                    lineHeight: 14,
-                    style: 'normal',
-                    variant: 'small-caps',
-                    color: '#6F7B8A'
-                }
-            },
-            grid: {
-                hoverable: true,
-                clickable: false,
-                tickColor: '#eee',
-                borderColor: '#eee',
-                borderWidth: 1,
-                margin: {
-                    bottom: 20
-                }
-            }
-        });
+        );
     }
 
     incomeStatisticsDateIntervalChange(interval: number) {
-        this.selectedIncomeStatisticsDateInterval = interval;
-        this.refreshIncomeStatisticsData();
-    }
-
-    refreshIncomeStatisticsData(): void {
-        this.loadingIncomeStatistics = true;
-        this._hostDashboardService.getIncomeStatistics(
-            this.selectedIncomeStatisticsDateInterval,
-            this.selectedDateRange.startDate,
-            this.selectedDateRange.endDate)
-            .subscribe(result => {
-                this.drawIncomeStatisticsChart(result.incomeStatistics);
-                this.loadingIncomeStatistics = false;
-            });
-    }
-
-    bindToolTipForIncomeStatisticsChart(incomeStatisticsChartContainer: any): void {
-        let incomeStatisticsChartLastTooltipIndex = null;
-
-        const removeChartTooltipIfExists = () => {
-            const $chartTooltip = $('#chartTooltip');
-            if ($chartTooltip.length === 0) {
-                return;
-            }
-
-            $chartTooltip.remove();
-        };
-
-        const showChartTooltip = (x, y, label, value) => {
-            removeChartTooltipIfExists();
-            $('<div id=\'chartTooltip\' class=\'chart-tooltip\'>' + label + '<br/>' + value + '</div >')
-                .css({
-                    position: 'absolute',
-                    display: 'none',
-                    top: y - 60,
-                    left: x - 40,
-                    border: '0',
-                    padding: '2px 6px',
-                    opacity: '0.9'
-                })
-                .appendTo('body')
-                .fadeIn(200);
-        };
-
-        incomeStatisticsChartContainer.bind('plothover', (event, pos, item) => {
-            if (!item) {
-                return;
-            }
-
-            if (incomeStatisticsChartLastTooltipIndex !== item.dataIndex) {
-                let label = '';
-                const isSingleDaySelected = this.selectedDateRange.startDate.format('L') === this.selectedDateRange.endDate.format('L');
-                if (this.selectedIncomeStatisticsDateInterval === AppIncomeStatisticsDateInterval.Daily ||
-                    isSingleDaySelected) {
-                    label = moment(item.datapoint[0]).format('dddd, DD MMMM YYYY');
-                } else {
-                    const isLastItem = item.dataIndex === item.series.data.length - 1;
-                    label += moment(item.datapoint[0]).format('LL');
-                    if (isLastItem) {
-                        label += ' - ' + this.selectedDateRange.endDate.format('LL');
-                    } else {
-                        const nextItem = item.series.data[item.dataIndex + 1];
-                        label += ' - ' + moment(nextItem[0]).format('LL');
-                    }
-                }
-
-                incomeStatisticsChartLastTooltipIndex = item.dataIndex;
-                const value = this.l('IncomeWithAmount', '<strong>' + item.datapoint[1] + this.currency + '</strong>');
-                showChartTooltip(item.pageX, item.pageY, label, value);
-            }
-        });
-
-        incomeStatisticsChartContainer.bind('mouseleave', () => {
-            incomeStatisticsChartLastTooltipIndex = null;
-            removeChartTooltipIfExists();
-        });
+        this.selectedIncomeStatisticsDateInterval.next(interval);
     }
 
     /*
      * Recent tenants
      */
-
-    loadRecentTenantsTable(recentTenants): void {
-        this.recentTenantsData = recentTenants;
-    }
-
     gotoAllRecentTenants(): void {
-        window.open(abp.appPath + 'app/crm/tenants?' +
-            'creationDateStart=' + encodeURIComponent(this.hostDashboardData.tenantCreationStartDate.format()));
+        this.hostDashboardData$.pipe(first()).subscribe(hostDashboardData => {
+            window.open(abp.appPath + 'app/crm/tenants?' +
+                'creationDateStart=' + encodeURIComponent(hostDashboardData.tenantCreationStartDate.format()));
+        });
     }
 
     /*
      * Expiring tenants
      */
+    gotoAllExpiringTenants(): void {
+        this.hostDashboardData$.pipe(first()).subscribe(hostDashboardData => {
+            const url = abp.appPath +
+                'app/admin/tenants?' +
+                'subscriptionEndDateStart=' +
+                encodeURIComponent(hostDashboardData.subscriptionEndDateStart.format()) +
+                '&' +
+                'subscriptionEndDateEnd=' +
+                encodeURIComponent(hostDashboardData.subscriptionEndDateEnd.format());
 
-    loadExpiringTenantsTable(expiringTenants): void {
-        this.expiringTenantsData = expiringTenants || [];
+            window.open(url);
+        });
     }
 
-    gotoAllExpiringTenants(): void {
-        const url = abp.appPath +
-            'app/admin/tenants?' +
-            'subscriptionEndDateStart=' +
-            encodeURIComponent(this.hostDashboardData.subscriptionEndDateStart.format()) +
-            '&' +
-            'subscriptionEndDateEnd=' +
-            encodeURIComponent(this.hostDashboardData.subscriptionEndDateEnd.format());
+    reformatCreationTime = (data) => {
+        return this._momentFormatPipe.transform(data.creationTime, 'L LT');
+    }
 
-        window.open(url);
+    customizePieChartLabel = (point) => {
+        return point.argumentText + ': ' + point.percentText;
+    }
+
+    customizeBottomAxis(elem) {
+        return elem.value.toLocaleString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    }
+
+    customizeIncomeTooltip = e => {
+        let html = '';
+        const isSingleDaySelected = this.selectedDateRange.value.startDate.format('L') === this.selectedDateRange.value.endDate.format('L');
+        if (this.selectedIncomeStatisticsDateInterval.value === AppIncomeStatisticsDateInterval.Daily ||
+            isSingleDaySelected) {
+            html += moment(e.argument).format('dddd, DD MMMM YYYY');
+        } else {
+            const isLastItem = e.point.index === e.point.series._points.length - 1;
+            html += moment(e.argument).format('LL');
+            if (isLastItem) {
+                html += ' - ' + this.selectedDateRange.value.endDate.format('LL');
+            } else {
+                const nextItem = e.point.series._points[e.point.index + 1];
+                html += ' - ' + moment(nextItem[0]).format('LL');
+            }
+        }
+        html += `<br/>Income: <span class="bold">${this._currencyPipe.transform(e.originalValue)}</span>`;
+        return { html: html };
     }
 }

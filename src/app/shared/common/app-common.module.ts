@@ -93,6 +93,7 @@ import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 import { StaticListComponent } from './static-list/static-list.component';
+import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 
 @NgModule({
     imports: [
@@ -191,7 +192,8 @@ import { StaticListComponent } from './static-list/static-list.component';
         RatingComponent,
         StarsListComponent,
         TypesListComponent,
-        AppModalDialogComponent
+        AppModalDialogComponent,
+        LoadingSpinnerComponent
     ],
     exports: [
         TimeZoneComboComponent,
@@ -218,7 +220,8 @@ import { StaticListComponent } from './static-list/static-list.component';
         RatingComponent,
         StarsListComponent,
         TypesListComponent,
-        AppModalDialogComponent
+        AppModalDialogComponent,
+        LoadingSpinnerComponent
     ],
     providers: [
         DateTimeService,
