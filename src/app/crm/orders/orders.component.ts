@@ -30,6 +30,7 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -38,6 +39,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
     items: any;
     showPipeline = true;
     firstRefresh = false;
@@ -123,7 +125,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     refreshDataGrid() {
-        this.dataGrid.instance.refresh();
+        this.processFilterInternal();
     }
 
     showColumnChooser() {
@@ -143,133 +145,138 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     }
 
-    ngOnInit(): void {
-        this._filtersService.setup(this.filters = [
-            new FilterModel({
-                component: FilterCalendarComponent,
-                operator: { from: 'ge', to: 'le' },
-                caption: 'creation',
-                field: 'CreationTime',
-                items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-            }),
-            new FilterModel({
-                component: FilterCheckBoxesComponent,
-                caption: 'orderStages',
-                items: {
-                    element: new FilterCheckBoxesModel(
-                        {
-                            dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({ purpose: AppConsts.PipelinePurposeIds.order }))),
-                            nameField: 'name',
-                            parentExpr: 'parentId',
-                            keyExpr: 'id'
+    initFilterConfig(): void {
+        if (this.filters) {
+            this._filtersService.setup(this.filters);
+            this._filtersService.checkIfAnySelected();
+        } else {
+            this._filtersService.setup(this.filters = [
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'creation',
+                    field: 'CreationTime',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+                }),
+                new FilterModel({
+                    component: FilterCheckBoxesComponent,
+                    caption: 'orderStages',
+                    items: {
+                        element: new FilterCheckBoxesModel(
+                            {
+                                dataSource$: this.store$.pipe(select(PipelinesStoreSelectors.getPipelineTreeSource({ purpose: AppConsts.PipelinePurposeIds.order }))),
+                                nameField: 'name',
+                                parentExpr: 'parentId',
+                                keyExpr: 'id'
+                            })
+                    }
+                }),
+                new FilterModel({
+                    component: FilterDropDownComponent,
+                    caption: 'paymentType',
+                    items: {
+                        paymentType: new FilterDropDownModel({
+                            displayName: 'Payment Type',
+                            elements: null,
+                            filterField: 'paymentTypeId',
+                            onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
+                                filter.items['paymentType'].value = event.value;
+                            }
                         })
-                }
-            }),
-            new FilterModel({
-                component: FilterDropDownComponent,
-                caption: 'paymentType',
-                items: {
-                    paymentType: new FilterDropDownModel({
-                        displayName: 'Payment Type',
-                        elements: null,
-                        filterField: 'paymentTypeId',
-                        onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
-                            filter.items['paymentType'].value = event.value;
-                        }
-                    })
-                }
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'product',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'orderTotals',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'currencies',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'recurrence',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'regions',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'zipCode',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'referringAffiliates',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'referringWebsites',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'utmSources',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'utmMediums',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'UtmCampaings',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'entryPages',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'salesAgents',
-                items: {}
-            }),
-            new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'contains',
-                caption: 'cardBins',
-                items: {}
-            })
-        ]);
+                    }
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'product',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'orderTotals',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'currencies',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'recurrence',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'regions',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'zipCode',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'referringAffiliates',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'referringWebsites',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'utmSources',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'utmMediums',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'UtmCampaings',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'entryPages',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'salesAgents',
+                    items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'cardBins',
+                    items: {}
+                })
+            ]);
 
-        this._filtersService.apply(() => {
-            this.initToolbarConfig();
-            this.processFilterInternal();
-        });
+            this._filtersService.apply(() => {
+                this.initToolbarConfig();
+                this.processFilterInternal();
+            });
+        }
     }
 
     initToolbarConfig() {
@@ -412,19 +419,21 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     processFilterInternal() {
-        if (this.dataGrid && this.dataGrid.instance) {
-            this.processODataFilter(
-                this.dataGrid.instance,
-                this.dataSourceURI,
-                this.filters,
-                (filter) => {
-                    let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
-            );
+        if (this.showPipeline) {
+            this.pipelineComponent.searchColumns = this.searchColumns;
+            this.pipelineComponent.searchValue = this.searchValue;
         }
+
+        let context = this.showPipeline ? this.pipelineComponent : this;
+        context.processODataFilter.call(context,
+            this.dataGrid.instance, this.dataSourceURI,
+                this.filters, (filter) => {
+                let filterMethod = this['filterBy' +
+                    this.capitalize(filter.caption)];
+                if (filterMethod)
+                    return filterMethod.call(this, filter);
+                }
+        );
     }
 
     searchValueChange(e: object) {
@@ -457,16 +466,41 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             );
     }
 
-    ngAfterViewInit(): void {
-        this.initDataSource();
+    activate() {
+        super.activate();
+        this.localizationService.localizationSourceName = this.localizationSourceName;
+        this._filtersService.localizationSourceName = this.localizationSourceName;
+
+        this.initFilterConfig();
+        this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+
+        this.showHostElement();
+    }
+
+    deactivate() {
+        super.deactivate();
+        this.localizationService.localizationSourceName = undefined;
+        this._filtersService.localizationSourceName =
+            AppConsts.localization.defaultLocalizationSourceName;
+
+        this._appService.updateToolbar(null);
+        this._filtersService.unsubscribe();
+        this.rootComponent.overflowHidden();
+
+        this.hideHostElement();
+    }
+
+    ngOnInit() {
+        this.activate();
+    }
+
+    ngAfterViewInit(): void {
+        this.initDataSource();
     }
 
     ngOnDestroy() {
-        this._appService.updateToolbar(null);
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-        this._filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
+        this.deactivate();
     }
 }

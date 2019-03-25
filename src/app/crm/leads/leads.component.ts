@@ -332,7 +332,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(ListsStoreSelectors.getLists)),
+                                dataSource$: this.store$.pipe(select(ListsStoreSelectors.getStoredLists)),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
@@ -345,7 +345,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(TagsStoreSelectors.getTags)),
+                                dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
@@ -658,6 +658,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
+            this.initToolbarConfig();
             this.processFilterInternal();
         }
     }
