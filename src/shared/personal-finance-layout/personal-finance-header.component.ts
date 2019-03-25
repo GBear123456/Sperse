@@ -99,10 +99,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                         routerUrl: '/personal-finance/offers/personal-loans'
                     },
                     {
-                        name: this.ls('PFM', 'Offers_PaydayLoans'),
-                        routerUrl: '/personal-finance/offers/payday-loans'
-                    },
-                    {
                         name: this.ls('PFM', 'Offers_BusinessLoans'),
                         routerUrl: '/personal-finance/offers/business-loans'
                     },
