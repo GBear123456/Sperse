@@ -175,18 +175,22 @@ export class PipelineService {
         if (entity.data)
             this.processLeadInternal(entity, {...entity.data, fromStage, toStage}, complete);
         else
-            this._dialog.open(LeadCompleteDialogComponent, {
-                data: {
-                    stages: this._pipelineDefinitions[AppConsts.PipelinePurposeIds.lead].stages
+            this.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order).subscribe(
+                (pipeline) => {
+                    this._dialog.open(LeadCompleteDialogComponent, {
+                        data: {
+                            stages: pipeline.stages
+                        }
+                    }).afterClosed().subscribe(data => {
+                        if (data)
+                            this.processLeadInternal(entity, {...data, fromStage, toStage}, complete);
+                        else {
+                            this.moveEntityTo(entity, toStage, fromStage);
+                            complete && complete();
+                        }
+                    });
                 }
-            }).afterClosed().subscribe(data => {
-                if (data)
-                    this.processLeadInternal(entity, {...data, fromStage, toStage}, complete);
-                else {
-                    this.moveEntityTo(entity, toStage, fromStage);
-                    complete && complete();
-                }
-            });
+            );
     }
 
     private processLeadInternal(entity, data, complete) {
