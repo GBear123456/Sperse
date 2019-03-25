@@ -181,7 +181,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 else
                     $event.component.cancelEditData();
             });
-            if (this.filterModel)
+            if (this.filterModel && Number.isInteger($event.data.id))
                 this.addActionButton('filter', $event.cellElement, (event) => {
                     this.clearFiltersHighlight();
 
@@ -208,17 +208,21 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
     }
 
     onRowRemoving($event) {
+        let itemId = $event.key;
+
+        if (!Number.isInteger(itemId))
+            return;
+
         $event.cancel = true;
-        let itemId = $event.key,
-            dialogData = {
-                deleteAllReferences: false,
-                items: _.filter(this.list, (obj) => {
-                    return (obj.id != itemId);
-                }),
-                entityPrefix: 'Tag',
-                reassignToItemId: undefined,
-                localization: this.localizationSourceName
-            };
+        let dialogData = {
+            deleteAllReferences: false,
+            items: _.filter(this.list, (obj) => {
+                return (obj.id != itemId);
+            }),
+            entityPrefix: 'Tag',
+            reassignToItemId: undefined,
+            localization: this.localizationSourceName
+        };
         this.tooltipVisible = false;
         this.dialog.open(DeleteAndReassignDialogComponent, {
             data: dialogData
@@ -251,9 +255,14 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
             return;
         }
 
+        let id = $event.oldData.id;
+
+        if (!Number.isInteger(id))
+            return;
+
         this.store$.dispatch(
             new TagsStoreActions.RenameTag({
-                id: $event.oldData.id,
+                id: id,
                 name: tagName
             })
         );

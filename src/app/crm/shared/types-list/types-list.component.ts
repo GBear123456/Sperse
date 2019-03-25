@@ -160,7 +160,7 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
                 else
                     $event.component.cancelEditData();
             });
-            if (this.filterModel)
+            if (this.filterModel && Number.isInteger($event.data.id))
                 this.addActionButton('filter', $event.cellElement, (event) => {
                     this.clearFiltersHighlight();
 
@@ -188,7 +188,10 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
 
     onRowRemoving($event) {
         const itemId = $event.key;
-        /** @todo fix bug - If type is added only on client - then don't do any deleting request to server */
+
+        if (!Number.isInteger(itemId))
+            return;
+
         $event.cancel = true;
         let dialogData = {
                 deleteAllReferences: false,
@@ -230,8 +233,13 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
             return;
         }
 
+        let id = $event.oldData.id;
+
+        if (!Number.isInteger(id))
+            return;
+
         this.store$.dispatch(new PartnerTypesStoreActions.RenamePartnerType({
-            id: $event.oldData.id,
+            id: id,
             name: typeName
         }));
 

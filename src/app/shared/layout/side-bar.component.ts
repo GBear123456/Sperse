@@ -21,7 +21,6 @@ import { AppConsts } from '@shared/AppConsts';
 export class SideBarComponent extends AppComponentBase {
     filters: FilterModel[] = [];
     activeFilter: FilterModel;
-    appElementRef: ElementRef;
 
     constructor(
         private _eref: ElementRef,
@@ -48,7 +47,7 @@ export class SideBarComponent extends AppComponentBase {
                 this.filters = [];
         });
 
-        this._filtersService.subjectFilterDisable.subscribe(e => { 
+        this._filtersService.subjectFilterDisable.subscribe(e => {
             this._appService.toolbarRefresh();
         });
     }

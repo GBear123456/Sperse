@@ -79,12 +79,12 @@
                 <div class="col-md-6">
                     <div class="section-item">
                         <div class="item-edit-label">{{l("EmailAddress")}}:</div>
-                        <inplace-edit [data]="this.getPropData(EMAIL_FIELD)" (valueChanged)="updateValue($event, EMAIL_FIELD)"></inplace-edit>
+                        <inplace-edit #InPlaceEmail [data]="this.getPropData(EMAIL_FIELD)" (valueChanged)="updateValue($event, EMAIL_FIELD)" (openDialog)="InPlaceEmail.showInput(true)"></inplace-edit>
                     </div>
                     <div class="section-item">
                         <div class="item-edit-label">{{l("PhoneNumber")}}:</div>
                         <ul *ngIf="!phoneInplaceEdit">
-                            <li (dblclick)="phoneInPlaceEdit()">{{ data?.user?.phoneNumber | phone }}</li>
+                            <li (dblclick)="phoneInPlaceEdit()">{{ data?.user?.phoneNumber | phone }}<i class="edit-phone fa fa-pencil" (click)="phoneInPlaceEdit()"></i></li>
                         </ul>
                         <div class="inplace-edit-wrapper" *ngIf="phoneInplaceEdit">
                             <country-phone-number [(phoneNumber)]="data.user.phoneNumber" #countryPhoneNumber></country-phone-number>
@@ -128,5 +128,8 @@
     </mat-tab>
     <mat-tab label="Login Attempts">
         <login-attemps *ngIf="selectedTabIndex == LOGIN_ATTEMPTS_TAB_INDEX"></login-attemps>
+    </mat-tab>
+    <mat-tab [label]="orgUnitsDisabled ? '' : 'Organization Units'" [disabled]="orgUnitsDisabled">
+        <oranization-units-tree></oranization-units-tree>
     </mat-tab>
 </mat-tab-group>

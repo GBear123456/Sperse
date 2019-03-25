@@ -266,10 +266,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
             {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
             {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroup.Partner || (this.leadInfo && !this.leadInfo.id)},
+            {
+                label: 'Activity Logs',
+                route: 'activity-logs',
+                disabled: !this.permission.isGranted('Pages.PFM.Applications')
+            },
             {label: 'Referral History', route: 'referral-history', disabled: true},
             {label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true},
-            {label: 'Questionnaire', route: 'questionnaire', disabled: true},
-            {label: 'Activity Logs', route: 'activity-logs', disabled: true}
+            {label: 'Questionnaire', route: 'questionnaire', disabled: true}
         ];
     }
 
