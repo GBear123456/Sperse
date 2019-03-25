@@ -54,7 +54,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private dataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     private readonly dataSourceURI = 'Order';
     private filters: FilterModel[];
-
+    private filterChanged = false;
     masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
 
@@ -136,12 +136,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
-        if (!this.firstRefresh) {
-            this.firstRefresh = true;
-            abp.ui.setBusy(
-                '',
-                this.dataGrid.instance.refresh()
-            );
+        if (this.showPipeline)
+            this.dataGrid.instance.deselectAll();
+        else {
+            this.pipelineComponent.deselectAllCards();
+            setTimeout(() => this.dataGrid.instance.repaint());
+        }
+        if (this.filterChanged) {
+            this.filterChanged = false;
+            setTimeout(() => this.processFilterInternal());
         }
     }
 
@@ -273,6 +276,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             ]);
 
             this._filtersService.apply(() => {
+                this.filterChanged = true;
                 this.initToolbarConfig();
                 this.processFilterInternal();
             });
@@ -437,8 +441,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     searchValueChange(e: object) {
-        this.searchValue = e['value'];
-        this.processFilterInternal();
+        if (this.filterChanged = (this.searchValue != e['value'])) {
+            this.searchValue = e['value'];
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        }
     }
 
     onStagesLoaded($event) {
