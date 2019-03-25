@@ -3,7 +3,7 @@
     <h3>{{ l('ConnectFinancialDataInTwoWays') }}</h3>
 </div>
 <ul class="connectors">
-    <li *ngFor="let connector of connectors" (click)="selectConnector(connector)" [ngClass]="{
+    <li *ngFor="let connector of connectors" (click)="selectConnector(connector, true)" [ngClass]="{
         disabled: connector.disabled,
         selected: connector === selectedConnector
     }">
