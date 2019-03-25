@@ -30,6 +30,7 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -38,6 +39,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
     items: any;
     showPipeline = true;
     firstRefresh = false;
@@ -123,7 +125,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     refreshDataGrid() {
-        this.dataGrid.instance.refresh();
+        this.processFilterInternal();
     }
 
     showColumnChooser() {
@@ -412,19 +414,21 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     processFilterInternal() {
-        if (this.dataGrid && this.dataGrid.instance) {
-            this.processODataFilter(
-                this.dataGrid.instance,
-                this.dataSourceURI,
-                this.filters,
-                (filter) => {
-                    let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
-                    if (filterMethod)
-                        return filterMethod.call(this, filter);
-                }
-            );
+        if (this.showPipeline) {
+            this.pipelineComponent.searchColumns = this.searchColumns;
+            this.pipelineComponent.searchValue = this.searchValue;
         }
+
+        let context = this.showPipeline ? this.pipelineComponent : this;
+        context.processODataFilter.call(context,
+            this.dataGrid.instance, this.dataSourceURI,
+                this.filters, (filter) => {
+                let filterMethod = this['filterBy' +
+                    this.capitalize(filter.caption)];
+                if (filterMethod)
+                    return filterMethod.call(this, filter);
+                }
+        );
     }
 
     searchValueChange(e: object) {
