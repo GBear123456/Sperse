@@ -3331,7 +3331,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                 let $targetCell = $(targetCell);
                 let $targetCellParent = $targetCell.parent();
-                let $availableRows = $targetCellParent.add($targetCellParent.prevUntil('.grandTotal')).add($targetCellParent.nextUntil('.grandTotal'));
+                let $availableRows = $targetCellParent.add($targetCellParent.prevUntil('.bRow.grandTotal')).add($targetCellParent.nextUntil('.ncRow.grandTotal'));
                 /** Highlight cells where we can drop cell */
                 if (moveOnlyHistorical) {
                     this.highlightHistoricalTargetCells($targetCell, $availableRows);
@@ -3533,13 +3533,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             UpdateTransactionsCategoryWithFilterInput.fromJS({
                 transactionFilter: filter,
                 destinationCategoryId: destinationCategoryId,
-                standardDescriptor: destinationCategoryId ? targetCellData.transactionDescriptor : 'Unclassified'
+                standardDescriptor: destinationCategoryId ? targetCellData.transactionDescriptor : 'Unclassified',
+                suppressCashflowMismatch: true
             })
         );
     }
 
     updateMovedHistoricals(items: TransactionStatsDtoExtended[], targetData: CellInfo) {
-        items.forEach(item => {
+        items.forEach((item: TransactionStatsDtoExtended) => {
+            item.cashflowTypeId = targetData.cashflowTypeId;
             item.categoryId = targetData.categoryId;
             item.accountingTypeId = targetData.accountingTypeId;
             item.subCategoryId = targetData.subCategoryId;
@@ -3557,6 +3559,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         forecasts.forEach(forecast => {
             date = this.getDateForForecast(targetData.fieldCaption, targetData.date.startDate, targetData.date.endDate, forecast.forecastDate.utc());
             forecastModel = new UpdateForecastInput({
+                cashflowTypeId: targetData.cashflowTypeId,
                 id: forecast.forecastId,
                 date: moment(date),
                 amount: forecast.debit !== null ? -forecast.debit : forecast.credit,
@@ -3652,6 +3655,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.updateTreePathes(forecastInCashflow, true);
 
             /** Change forecast locally */
+            forecastInCashflow.cashflowTypeId = targetData.cashflowTypeId;
             forecastInCashflow.accountingTypeId = targetData.accountingTypeId;
             forecastInCashflow.categoryId = targetData.categoryId || targetData.subCategoryId;
             forecastInCashflow.subCategoryId = targetData.subCategoryId || moveCategoryToCategory && forecastInCashflow.subCategoryId;
@@ -4089,7 +4093,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (isMonthHeaderCell) {
             let requestFilter = this.getRequestFilterFromPath(cellObj.cell.path);
             let monthIsCurrent = requestFilter.startDate.format('MM.YYYY') === moment().format('MM.YYYY');
-            let pathCopy = cellObj.cell.path.slice();
             if (!cellObj.cell.expanded) {
                 let pathForMonth = isMonthHeaderCell ? cellObj.cell.path : cellObj.cell.path.slice(0, -1);
                 if (!this.monthsDaysLoadedPathes.some(arr => arr.toString() === pathForMonth.toString())) {

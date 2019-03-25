@@ -110,7 +110,7 @@ export class PipelineService {
                 }
             } else {
                 this.moveEntityTo(entity, toStage, fromStage);
-                this._notify.warn(this._ls.l('StageCannotBeUpdated', 
+                this._notify.warn(this._ls.l('StageCannotBeUpdated',
                     AppConsts.localization.defaultLocalizationSourceName, entity.Name));
                 complete && setTimeout(() => complete());
             }
@@ -122,7 +122,7 @@ export class PipelineService {
     updateEntitiesStage(pipelineId, entities, targetStage) {
         let subject = new Subject<any>();
 
-        this.updateEntitiesStageInternal(pipelineId, entities.slice(0), 
+        this.updateEntitiesStageInternal(pipelineId, entities.slice(0),
             targetStage, null, (declinedList) => subject.next(declinedList), []);
 
         return subject.asObservable();
@@ -131,7 +131,7 @@ export class PipelineService {
     private updateEntitiesStageInternal(pipelineId, entities, targetStage, data, complete, declinedList) {
         let entity = entities.pop();
         if (entity) {
-            if (data) 
+            if (data)
                 entity.data = data;
             if (!this.updateEntityStage(pipelineId, entity, entity.Stage || entity.stage, targetStage, (data) => {
                 this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
@@ -198,10 +198,10 @@ export class PipelineService {
                 comment: data.comment,
             })
         ).pipe(finalize(() => {
-            entity.locked = false;            
+            entity.locked = false;
             complete && complete(data);
         })).subscribe((res) => {
-            this.completeEntityUpdate(entity, data.fromStage, data.toStage);                        
+            this.completeEntityUpdate(entity, data.fromStage, data.toStage);
         });
     }
 
@@ -232,7 +232,7 @@ export class PipelineService {
             entity.locked = false;
             complete && complete(data);
         })).subscribe((result) => {
-            this.completeEntityUpdate(entity, data.fromStage, data.toStage);            
+            this.completeEntityUpdate(entity, data.fromStage, data.toStage);
         });
     }
 
