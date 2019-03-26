@@ -165,7 +165,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
             panelClass: ['payment-wizard', 'setup'],
             data: {
                 module: this._appService.getModule().toUpperCase(),
-                title: this.subscriptionInfoTitle,
+                widgetTitle: this.subscriptionInfoTitle,
                 subtitle: this.subscriptionInfoText
             }
         }).afterClosed().subscribe(result => { });
