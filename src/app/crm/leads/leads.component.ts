@@ -177,8 +177,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
                 if ('addNew' == params['action'])
                     setTimeout(() => this.createLead());
-                if (params['refresh'])
+                if (params['refresh']) {
                     this.refresh();
+                    this.filterChanged = true;
+                }
             });
     }
 
@@ -804,9 +806,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     private deleteLeadsInternal(selectedIds: number[]) {
         this.leadService.deleteLeads(selectedIds).subscribe(() => {
+            this.refresh();
             this.dataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
-            this.refresh();
+            this.filterChanged = true;
         });
     }
 
