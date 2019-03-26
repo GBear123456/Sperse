@@ -23,12 +23,13 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
     templateUrl: './orders.component.html',
     styleUrls: ['./orders.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ OrderServiceProxy ]
+    providers: [ CurrencyPipe, OrderServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -40,7 +41,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
         private dialog: MatDialog,
         private _contactService: ContactServiceProxy,
         private _clientService: ContactsService,
-        private orderServiceProxy: OrderServiceProxy
+        private orderServiceProxy: OrderServiceProxy,
+        private currencyPipe: CurrencyPipe
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
@@ -130,5 +132,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                 data: data
             })
         );
+    }
+
+    customizeAmountValue = (e) => {
+        return this.currencyPipe.transform(e.value);
     }
 }
