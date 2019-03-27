@@ -393,6 +393,7 @@
         display: flex;
         align-items: center;
         flex-direction: column;
+        width: 100%;
         
         .downgrade {
             font-size: 12px;
@@ -475,5 +476,27 @@
         button[disabled] {
             background-color: #fff;
         }
+    }
+}
+
+.show-on-public-site {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 320px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #686f76;
+    font-family: Montserrat, sans-serif;
+}
+@media all and (max-width: 1300px) {
+    .show-on-public-site {
+        position: relative;
+        top: unset;
+        right: unset;
+        transform: translateY(0);
     }
 }

@@ -60,6 +60,11 @@
 
             <div>
                 <p class="downgrade" *ngIf="showDowngradeLink" (click)="downGradeToFree()">{{ l('DowngradeToFree') }}</p>
+                <div class="show-on-public-site">
+                    <div class="downgrade-info">
+                        You can downgrade to a free version with limited features
+                    </div>
+                </div>
                 <p class="pricesAreShown" *ngIf="module !== modules.CFO" >{{ l('PricesAreShown') }}</p>
             </div>
         </div>
