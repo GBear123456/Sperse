@@ -513,7 +513,7 @@ export class PackageChooserComponent implements OnInit {
 
     /** Get values of usersAmount and billing period from user previous choice */
     changeDefaultSettings(packagesConfig: GetPackagesConfigOutput) {
-        this.usersAmount = this.round(
+        const userAmount = this.round(
             packagesConfig.currentSubscriptionInfo &&
                    (
                        packagesConfig.currentSubscriptionInfo.maxUserCount ||
@@ -521,6 +521,7 @@ export class PackageChooserComponent implements OnInit {
                    ) ||
                   this.defaultUsersAmount
             );
+        this.usersAmount = userAmount > this.sliderInitialMaxValue ? this.sliderInitialMaxValue : userAmount;
         if (packagesConfig.currentSubscriptionInfo && packagesConfig.currentSubscriptionInfo.frequency) {
             this.selectedBillingPeriod = packagesConfig.currentSubscriptionInfo.frequency === ModuleSubscriptionInfoFrequency._30 ? BillingPeriod.Monthly : BillingPeriod.Yearly;
         }
