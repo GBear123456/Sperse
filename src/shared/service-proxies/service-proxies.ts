@@ -26294,7 +26294,7 @@ export class UserServiceProxy {
 
     /**
      * @filter (optional) 
-     * @permission (optional) 
+     * @permissions (optional) 
      * @role (optional) 
      * @onlyLockedUsers (optional) 
      * @group (optional) 
@@ -26303,12 +26303,12 @@ export class UserServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getUsers(filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: Group | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
+    getUsers(filter: string | null | undefined, permissions: string[] | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: Group | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
-        if (permission !== undefined)
-            url_ += "Permission=" + encodeURIComponent("" + permission) + "&"; 
+        if (permissions !== undefined)
+            permissions && permissions.forEach(item => { url_ += "Permissions=" + encodeURIComponent("" + item) + "&"; });
         if (role !== undefined)
             url_ += "Role=" + encodeURIComponent("" + role) + "&"; 
         if (onlyLockedUsers !== undefined)
