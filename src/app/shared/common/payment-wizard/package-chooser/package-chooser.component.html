@@ -57,12 +57,11 @@
         </div>
         <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
             <button [disabled]="selectedPackageIndex === undefined || selectedPackageIndex < 0 || (selectedPackageCardComponent && !selectedPackageCardComponent.isActive)" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
-
             <div>
                 <p class="downgrade" *ngIf="showDowngradeLink" (click)="downGradeToFree()">{{ l('DowngradeToFree') }}</p>
                 <div class="show-on-public-site">
                     <div class="downgrade-info">
-                        You can downgrade to a free version with limited features
+                        Free version available with limited features.
                     </div>
                 </div>
                 <p class="pricesAreShown" *ngIf="module !== modules.CFO" >{{ l('PricesAreShown') }}</p>
@@ -76,6 +75,18 @@
                 <li>Free online support and product training</li>
                 <li>Transaction logs with export functionality</li>
                 <li>Two-form authentication for highest security</li>
+                <li>Minimum 5-seat user licenses included in price</li>
+            </ul>
+        </div>
+        <div *ngIf="module === modules.CRM" class="footerDescription">
+            <p>Prices are in US Dollars. All packages include</p>
+            <ul>
+                <li>Free online support and product training</li>
+                <li>Two-factor authentication for highest security</li>
+                <li>Intelligent contact management</li>
+                <li>Alerts and notification system</li>
+                <li>Import and Export Functionality</li>
+                <li>Lead Stages, Lists, Tags and Ratings</li>
                 <li>Minimum 5-seat user licenses included in price</li>
             </ul>
         </div>
