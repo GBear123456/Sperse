@@ -358,10 +358,10 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
 
     updateToolbarItemAttribute(itemName: string, property: string, value: any) {
         const toolbarItemIndex = this.items.findIndex(item => item.name === itemName);
-        this.toolbarComponent && this.toolbarComponent.instance.option(`items[${toolbarItemIndex}].options.elementAttr.${property}`, true);
+        this.toolbarComponent && this.toolbarComponent.instance.option(`items[${toolbarItemIndex}].options.elementAttr.${property}`, value);
     }
 
     ngOnDestroy() {
-        //this.subscription.unsubscribe();
+        this.subscription.unsubscribe();
     }
 }

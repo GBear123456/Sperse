@@ -154,7 +154,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
                     options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
                 }),
-                new FilterModel({
+                this.filterModelStages = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'orderStages',
                     items: {
@@ -400,6 +400,18 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 ]
             }
         ]);
+    }
+
+    filterByOrderStages(filter: FilterModel) {
+        let data = {};
+        if (filter.items.element) {
+            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
+            data = {
+                or: filterData
+            };
+        }
+
+        return data;
     }
 
     processFilterInternal() {
