@@ -672,14 +672,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
         let sourceStage = this.leadInfo.stage;
         let targetStage = $event.itemData.text;
-        let complete = () => {
+
+        if (this._pipelineService.updateEntityStage(AppConsts.PipelinePurposeIds.lead, this.leadInfo, sourceStage, targetStage, () => {
             this.clientStageId = this.leadStages.find(stage => stage.name === targetStage).id;
-            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);
-            this.notify.success(this.l('StageSuccessfullyUpdated'));
-        };
-        if (this._pipelineService.updateEntityStage(AppConsts.PipelinePurposeIds.lead, this.leadInfo, sourceStage, targetStage, complete))
+            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);            
+        })) {
             this.leadInfo.stage = targetStage;
-        else
+            this.notify.success(this.l('StageSuccessfullyUpdated'));
+        } else
             this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));
 
         this.toolbarComponent.refresh();

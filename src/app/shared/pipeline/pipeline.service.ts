@@ -118,7 +118,7 @@ export class PipelineService {
                 }
             } else {
                 this.moveEntityTo(entity, toStage, fromStage);
-                this._notify.warn(this._ls.l('StageCannotBeUpdated',
+                entity.Name && this._notify.warn(this._ls.l('StageCannotBeUpdated',
                     AppConsts.localization.defaultLocalizationSourceName, entity.Name));
                 complete && setTimeout(() => complete());
             }
