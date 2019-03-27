@@ -16,14 +16,20 @@ import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { ContactServiceProxy, OrderServiceProxy, SetAmountInfo } from '@shared/service-proxies/service-proxies';
+import {
+    ContactServiceProxy,
+    OrderServiceProxy,
+    SetAmountInfo
+} from '@shared/service-proxies/service-proxies';
 import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
     templateUrl: './orders.component.html',
     styleUrls: ['./orders.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ OrderServiceProxy ]
+    providers: [ CurrencyPipe, OrderServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -34,13 +40,40 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     constructor(injector: Injector,
         private dialog: MatDialog,
         private _contactService: ContactServiceProxy,
-        private orderServiceProxy: OrderServiceProxy
+        private _clientService: ContactsService,
+        private orderServiceProxy: OrderServiceProxy,
+        private currencyPipe: CurrencyPipe
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this.dataSource = {
+        this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
+        this._clientService.invalidateSubscribe((area) => {
+            if (area == 'orders') {
+                this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
+                const dataSource = this.dataGrid.instance.getDataSource();
+                if (dataSource) {
+                    dataSource.load();
+                }
+            }
+        });
+    }
+
+    onContentReady(event) {
+        this.setGridDataLoaded();
+        event.component.columnOption('command:edit', {
+            visibleIndex: -1,
+            width: 40
+        });
+    }
+
+    ngOnInit(): void {
+        this.processFilterInternal();
+    }
+
+    private getDataSource(contactId) {
+        return {
             uri: this.dataSourceURI,
             requireTotalCount: true,
-            filter: [ 'ContactId', '=', +this._contactService['data'].contactInfo.id ],
+            filter: [ 'ContactId', '=', contactId],
             store: {
                 key: 'Id',
                 type: 'odata',
@@ -57,18 +90,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                 paginate: true
             }
         };
-    }
-
-    onContentReady(event) {
-        this.setGridDataLoaded();
-        event.component.columnOption('command:edit', {
-            visibleIndex: -1,
-            width: 40
-        });
-    }
-
-    ngOnInit(): void {
-        this.processFilterInternal();
     }
 
     processFilterInternal() {
@@ -91,7 +112,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
         if (e.newData.Amount !== e.oldData.Amount) {
             e.cancel = true;
             this.dataGrid.instance.beginCustomLoading('');
-            var setAmountInput = new SetAmountInfo({
+            const setAmountInput = new SetAmountInfo({
                 orderId: e.oldData.Id,
                 amount: e.newData.Amount
             });
@@ -111,5 +132,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                 data: data
             })
         );
+    }
+
+    customizeAmountValue = (e) => {
+        return this.currencyPipe.transform(e.value);
     }
 }

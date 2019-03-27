@@ -42,7 +42,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
     items: any;
     showPipeline = true;
-    firstRefresh = false;
     pipelineDataSource: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
     stages = [];
@@ -61,14 +60,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     public headlineConfig = {
         names: [this.l('Orders')],
         onRefresh: this.refreshDataGrid.bind(this),
-        icon: 'briefcase' /*,
-        buttons: [
-            {
-                enabled: true,
-                action: Function(),
-                lable: this.l('CreateNewOrder')
-            }
-        ] */
+        icon: 'briefcase'
     };
 
     constructor(injector: Injector,
@@ -408,18 +400,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 ]
             }
         ]);
-    }
-
-    filterByOrderStages(filter: FilterModel) {
-        let data = {};
-        if (filter.items.element) {
-            let filterData = FilterHelpers.ParsePipelineIds(filter.items.element.value);
-            data = {
-                or: filterData
-            };
-        }
-
-        return data;
     }
 
     processFilterInternal() {

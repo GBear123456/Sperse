@@ -583,6 +583,7 @@
                                 .dx-expand-icon-container {
                                     font: inherit;
                                     margin-right: 10px;
+                                    float: left;
 
                                     .dx-expand {
 
@@ -1628,6 +1629,20 @@
 
         .cashflow-scroll {
             height: calc(100vh - 63px) !important;
+        }
+    }
+
+    /deep/ .modifying-box {
+        max-width: 170px;
+        background: transparent;
+        float: left;
+        height: initial !important;
+        input.dx-texteditor-input {
+            background: transparent;
+            font-size: inherit;
+            font-weight: inherit;
+            padding: 0;
+            margin-top: 2px;
         }
     }
 }
