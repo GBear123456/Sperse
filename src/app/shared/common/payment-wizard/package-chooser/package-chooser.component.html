@@ -1,7 +1,7 @@
 <div class="packageHeader">
     <ng-container *ngIf="this.packagesConfig$ | async">
         <ng-container *ngIf="packages && packages.length; else nopackages">
-            <h2 class="title">{{ widgetTitle }}</h2>
+            <h2 class="title">{{ widgettitle }}</h2>
             <h3 class="subtitle">{{ subtitle }}</h3>
             <div class="config-wrap">
                 <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator !== 'slider'">
