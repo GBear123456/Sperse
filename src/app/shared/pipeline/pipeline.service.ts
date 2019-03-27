@@ -11,9 +11,10 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
-import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, PipelineServiceProxy,
-    PipelineDto, ActivityServiceProxy, TransitionActivityDto } from '@shared/service-proxies/service-proxies';
-import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
+import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, 
+    PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto, 
+    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo } from '@shared/service-proxies/service-proxies';
+import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
@@ -40,6 +41,7 @@ export class PipelineService {
         injector: Injector,
         private _dialog: MatDialog,
         private _leadService: LeadServiceProxy,
+        private _orderService: OrderServiceProxy,
         private _activityService: ActivityServiceProxy,
         private _pipelineServiceProxy: PipelineServiceProxy,
         private _ls: AppLocalizationService,
@@ -102,8 +104,14 @@ export class PipelineService {
                     this.cancelLead(fromStage, toStage, entity, complete);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE)
                     this.updateLeadStage(fromStage, toStage, entity, complete);
-                else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD) {
+                else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD)
                     this.processLead(fromStage, toStage, entity, complete);
+                else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_ORDER)
+                    this.cancelOrder(fromStage, toStage, entity, complete);
+                else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_ORDER_STAGE)
+                    this.updateOrderStage(fromStage, toStage, entity, complete);
+                else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_ORDER) {
+                    this.processOrder(fromStage, toStage, entity, complete);
                 } else {
                     entity.locked = false;
                     complete && complete();
@@ -213,8 +221,10 @@ export class PipelineService {
         if (entity.data)
             this.cancelLeadInternal(entity, {...entity.data, fromStage, toStage}, complete);
         else
-            this._dialog.open(LeadCancelDialogComponent, {
-                data: {}
+            this._dialog.open(EntityCancelDialogComponent, {
+                data: {
+                    showReasonField: true
+                }
             }).afterClosed().subscribe(data => {
                 if (data)
                     this.cancelLeadInternal(entity, {...data, fromStage, toStage}, complete);
@@ -230,6 +240,61 @@ export class PipelineService {
             CancelLeadInfo.fromJS({
                 leadId: this.getEntityId(entity),
                 cancellationReasonId: data.reasonId,
+                comment: data.comment
+            })
+        ).pipe(finalize(() => {
+            entity.locked = false;
+            complete && complete(data);
+        })).subscribe((result) => {
+            this.completeEntityUpdate(entity, data.fromStage, data.toStage);
+        });
+    }
+
+    updateOrderStage(fromStage, toStage, entity, complete) {
+        this._orderService.updateStage(
+            UpdateOrderStageInfo.fromJS({
+                orderId: this.getEntityId(entity),
+                stageId: toStage.id
+            })
+        ).pipe(finalize(() => {
+            entity.locked = false;
+            complete && complete();
+        })).subscribe((res) => {
+            this.completeEntityUpdate(entity, fromStage, toStage);
+        });
+    }
+
+    processOrder(fromStage, toStage, entity, complete) {
+        this._orderService.process(
+            this.getEntityId(entity)
+        ).pipe(finalize(() => {
+            entity.locked = false;
+            complete && complete();
+        })).subscribe((res) => {
+            this.completeEntityUpdate(entity, fromStage, toStage);
+        });
+    }
+
+    cancelOrder(fromStage, toStage, entity, complete) {
+        if (entity.data)
+            this.cancelOrderInternal(entity, {...entity.data, fromStage, toStage}, complete);
+        else
+            this._dialog.open(EntityCancelDialogComponent, {
+                data: {}
+            }).afterClosed().subscribe(data => {
+                if (data)
+                    this.cancelOrderInternal(entity, {...data, fromStage, toStage}, complete);
+                else {
+                    this.moveEntityTo(entity, toStage, fromStage);
+                    complete && complete();
+                }
+            });
+    }
+
+    private cancelOrderInternal(entity, data, complete) {
+        this._orderService.cancel(
+            CancelOrderInfo.fromJS({
+                orderId: this.getEntityId(entity),
                 comment: data.comment
             })
         ).pipe(finalize(() => {

@@ -12,8 +12,9 @@ import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { TimeAgoPipe } from 'time-ago-pipe';
-import { LeadServiceProxy, PipelineServiceProxy, ActivityServiceProxy } from '@shared/service-proxies/service-proxies';
-import { LeadCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
+import { OrderServiceProxy, LeadServiceProxy, PipelineServiceProxy, 
+    ActivityServiceProxy } from '@shared/service-proxies/service-proxies';
+import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 
 import { MatDialogModule } from '@angular/material/dialog';
@@ -47,23 +48,24 @@ import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-ren
     declarations: [
         TimeAgoPipe,
         PipelineComponent,
-        LeadCancelDialogComponent,
+        EntityCancelDialogComponent,
         LeadCompleteDialogComponent,
         ReplacePipe,
         AddRenameMergeDialogComponent
     ],
     exports: [
         PipelineComponent,
-        LeadCancelDialogComponent,
+        EntityCancelDialogComponent,
         LeadCompleteDialogComponent,
         AddRenameMergeDialogComponent
     ],
     entryComponents: [
-        LeadCancelDialogComponent,
+        EntityCancelDialogComponent,
         LeadCompleteDialogComponent,
         AddRenameMergeDialogComponent
     ],
     providers: [
+        OrderServiceProxy,
         LeadServiceProxy,
         PipelineServiceProxy,
         PipelineService,

@@ -91,7 +91,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
-import { LeadCancelDialogComponent } from '@app/shared/pipeline/confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { CompanyDialogComponent } from './company-dialog/company-dialog.component';
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 import { ContactListDialogComponent } from './contact-list-dialog/contact-list-dialog.component';
@@ -201,7 +200,6 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
         PersonDialogComponent,
         ContactPersonsDialogComponent,
         SimilarCustomersDialogComponent,
-        LeadCancelDialogComponent,
         UploadDocumentDialogComponent,
         UploadDocumentsDialogComponent,
         AddContactDialogComponent,
