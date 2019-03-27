@@ -17,6 +17,7 @@ import { FilterDatesComponent } from './dates/filter-dates.component';
 import { FilterCalendarComponent } from './calendar/filter-calendar.component';
 import { FilterMultiselectDropDownComponent } from './multiselect-dropdown/filter-multiselect-dropdown.component';
 import { FilterRadioGroupComponent } from './radio-group/filter-radio-group.component';
+import { FilterTreeListComponent } from './tree-list/tree-list.component';
 
 import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -61,6 +62,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         FilterCalendarComponent,
         FilterRangeComponent,
         FilterRadioGroupComponent,
+        FilterTreeListComponent,
         BankAccountFilterComponent,
         AdDirective
     ],
@@ -75,6 +77,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
         FilterCalendarComponent,
         FilterRangeComponent,
         FilterRadioGroupComponent,
+        FilterTreeListComponent,
         BankAccountFilterComponent
     ],
     exports: [
