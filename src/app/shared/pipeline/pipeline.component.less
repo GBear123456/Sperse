@@ -45,6 +45,13 @@
             min-width: 80px;
             margin: 0;
             padding: 0;
+
+            &:first-child, &:last-child {
+                .column-title button {
+                    display: none;
+                }
+            }
+
             .column-title {
                 height: 63px;
                 min-height: 40px;
