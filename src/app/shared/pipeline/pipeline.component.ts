@@ -47,8 +47,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private _dataSources: any = {};
     private refreshTimeout: any;
     private shiftStartEntity: any;
-    private firstStage: any;
-    private lastStage: any;
     private quiet: boolean;
     private stageId: number;
     private dataSource$: Subject<DataSource> = new Subject<DataSource>();
@@ -67,7 +65,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.selectedEntitiesChange.emit(this._selectedEntities);
     }
 
-    @Input() lockMarginalEntities = false;
     @Input() dragulaName = 'stage';
     @Input() totalsURI: string;
     @Input() selectFields: string[];
@@ -108,7 +105,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             return stage.id == entity.StageId;
                         });
 
-                        if ([this.firstStage.id, this.lastStage.id].indexOf(oldStage.id) >= 0)
+                        if (oldStage['isFinal'])
                             return false;
 
                         if (entity && oldStage.name != newStage.name)
@@ -161,9 +158,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return stage;
                 });
 
-                this.firstStage = this.lockMarginalEntities ? this.stages[0] : {};
-                this.lastStage = this.lockMarginalEntities ? this.stages[this.stages.length - 1] : {};
-
                 this.loadStagesEntities(0, this.stageId && _.findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
 
                 this.refreshTimeout = null;
@@ -177,15 +171,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             ignoreInputTextSelection: false,
             moves: (el, source) => {
                 let stage = this.getStageByElement(source);
-                if (stage.id == this.firstStage.id || stage.id == this.lastStage.id)
+                if (stage['isFinal'])
                     return false;
 
                 if (el.classList.contains('selected')) {
                     let cards = this.getSelectedCards();
                     if (cards.length)
                         el.setAttribute('count', [].filter.call(cards, (card) => {
-                            return [this.firstStage.id, this.lastStage.id]
-                                .indexOf(card.getAttribute('stage')) < 0;
+                            let cardStage = this.getStageByElement(card);
+                            return cardStage && !cardStage['isFinal'];
                         }).length);
                 }
 
