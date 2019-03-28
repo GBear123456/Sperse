@@ -11,7 +11,7 @@
                 showEvent="click">
                 <div *dxTemplate="let data = data of 'content'">
                     <ul class="stage-actions list-group">
-                        <li class="list-group-item">
+                        <li class="list-group-item" *ngIf="[firstStage.id, lastStage.id].indexOf(stage.id) < 0">
                             <a (click)="updateStage(stage, 'Add')"><i class="fa fa-plus fa-fw" style="color: greenyellow"></i> {{l('Add_New_Stage')}}</a>
                         </li>
                         <li class="list-group-item">
