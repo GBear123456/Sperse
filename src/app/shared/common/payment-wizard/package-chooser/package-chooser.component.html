@@ -59,7 +59,7 @@
             <button [disabled]="selectedPackageIndex === undefined || selectedPackageIndex < 0 || (selectedPackageCardComponent && !selectedPackageCardComponent.isActive)" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
             <div>
                 <p class="downgrade" *ngIf="showDowngradeLink" (click)="downGradeToFree()">{{ l('DowngradeToFree') }}</p>
-                <div class="show-on-public-site">
+                <div class="free-version-available">
                     <div class="downgrade-info">
                         Free version available with limited features.
                     </div>
