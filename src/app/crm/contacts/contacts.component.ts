@@ -266,10 +266,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
             {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
             {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroup.Partner || (this.leadInfo && !this.leadInfo.id)},
+            {
+                label: 'Activity Logs',
+                route: 'activity-logs',
+                disabled: !this.permission.isGranted('Pages.PFM.Applications')
+            },
             {label: 'Referral History', route: 'referral-history', disabled: true},
             {label: 'Application Status', route: 'application-status', hidden: !!this.leadId, disabled: true},
-            {label: 'Questionnaire', route: 'questionnaire', disabled: true},
-            {label: 'Activity Logs', route: 'activity-logs', disabled: true}
+            {label: 'Questionnaire', route: 'questionnaire', disabled: true}
         ];
     }
 
@@ -668,14 +672,14 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
         let sourceStage = this.leadInfo.stage;
         let targetStage = $event.itemData.text;
-        let complete = () => {
+
+        if (this._pipelineService.updateEntityStage(AppConsts.PipelinePurposeIds.lead, this.leadInfo, sourceStage, targetStage, () => {
             this.clientStageId = this.leadStages.find(stage => stage.name === targetStage).id;
-            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);
-            this.notify.success(this.l('StageSuccessfullyUpdated'));
-        };
-        if (this._pipelineService.updateEntityStage(AppConsts.PipelinePurposeIds.lead, this.leadInfo, sourceStage, targetStage, complete))
+            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);            
+        })) {
             this.leadInfo.stage = targetStage;
-        else
+            this.notify.success(this.l('StageSuccessfullyUpdated'));
+        } else
             this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));
 
         this.toolbarComponent.refresh();

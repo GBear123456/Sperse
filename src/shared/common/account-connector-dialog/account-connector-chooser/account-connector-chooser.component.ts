@@ -51,9 +51,12 @@ export class AccountConnectorChooserComponent extends AppComponentBase implement
         this.selectConnector(this.connectors[0]);
     }
 
-    selectConnector(connector: AccountConnector) {
+    selectConnector(connector: AccountConnector, next = false) {
         if (!connector.disabled) {
             this.selectedConnector = connector;
+            if (next) {
+                this.next();
+            }
         }
     }
 

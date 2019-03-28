@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 
 import { DxRadioGroupComponent } from 'devextreme-angular/ui/radio-group';
 import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
@@ -13,7 +13,7 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
     templateUrl: 'confirm-cancellation-dialog.component.html',
     styleUrls: ['confirm-cancellation-dialog.component.less']
 })
-export class LeadCancelDialogComponent extends ConfirmDialogComponent implements OnInit {
+export class EntityCancelDialogComponent extends ConfirmDialogComponent {
     @ViewChild(DxRadioGroupComponent) radioComponent: DxRadioGroupComponent;
     @ViewChild(DxTextAreaComponent) textComponent: DxTextAreaComponent;
     reasons: any = [];
@@ -26,12 +26,11 @@ export class LeadCancelDialogComponent extends ConfirmDialogComponent implements
     ) {
         super(injector);
 
-        _leadService.getCancellationReasons().subscribe((result) => {
-            this.reasons = result && result.items;
-        });
+        if (this.data.showReasonField)
+            _leadService.getCancellationReasons().subscribe((result) => {
+                this.reasons = result && result.items;
+            });
     }
-
-    ngOnInit() {}
 
     confirm() {
         if (!this.validateReason(this.comment))
@@ -44,12 +43,15 @@ export class LeadCancelDialogComponent extends ConfirmDialogComponent implements
     }
 
     validateReason(comment) {
-        let reason = _.findWhere(this.reasons, {id: this.reasonId});
-
-        let isReasonSelected = reason ? true : false;
-        this.setIsValidOption(this.radioComponent, isReasonSelected);
-        if (!isReasonSelected)
-            return false;
+        let reason;
+        if (this.data.showReasonField) {
+            reason = _.findWhere(this.reasons, {id: this.reasonId});
+            let isReasonSelected = reason ? true : false;
+            this.setIsValidOption(this.radioComponent, isReasonSelected);
+            if (!isReasonSelected)
+                return false;
+        } else
+            reason = {isCommentRequired: true};
 
         let isCommentValid = !reason.isCommentRequired || comment;
         this.setIsValidOption(this.textComponent, isCommentValid);

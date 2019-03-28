@@ -11,6 +11,12 @@
     height: 100%;
     border: 3px solid transparent;
     filter: blur(1px);
+    
+    @media all and (max-width: 768px) {
+        width: 100% !important;
+        margin: 0 0 15px;
+    }
+    
     /** Best Value Triangle */
     .bestValue {
         position: absolute;
@@ -121,7 +127,7 @@
             margin-bottom: 0;
             li {
                 + li {
-                    margin-top: 12.8px;
+                    margin-top: 6px;
                 }
                 line-height: 12px;
                 display: flex;
@@ -132,21 +138,12 @@
                     margin-right: 8px;
                 }
             }
-            &.lowerMargin {
-                li + li {
-                    margin-top: 4px;
-                }
-            }
         }
     }
 }
 
 :host(.last) {
     width: 34%;
-    
-    .planFeatures {
-        font-size: 12px;
-    }
     
     .title {
         font-size: 16px !important;
@@ -155,6 +152,7 @@
 
 :host(.heightFitContent) {
     height: fit-content;
+    height: auto;
 }
 
 :host(.bestValue) {
@@ -178,7 +176,6 @@
 }
 
 :host(.isActive.bestValue) {
-    border: solid 3px #60d956;
     .bestValue {
         border-color: transparent #61d956 transparent transparent;
     }
@@ -186,7 +183,7 @@
 
 :host(.selected.isActive) {
     background: #fcfafb;
-    box-shadow: 0 0 10px #00aeef;
+    border: solid 3px #60d956;
     &:after {
         content: '';
         display: block;

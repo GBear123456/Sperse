@@ -19,6 +19,18 @@
 
     categorization {
         display: block;
+
+        /deep/ .tree-header app-toolbar .dx-toolbar[compact="true"] {
+            .dx-toolbar-button {
+                padding: 0 5px !important;
+            }
+            .dx-toolbar-before {
+                padding-right: 0;
+            }
+            .dx-toolbar-after {
+                padding-left: 0;
+            }
+        }
     }
 
     .nav-link {

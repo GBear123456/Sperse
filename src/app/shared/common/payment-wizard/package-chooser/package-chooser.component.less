@@ -6,16 +6,21 @@
 
 :host {
     padding: 34px 42px 33px 44px;
-    height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: space-around;
     margin: auto;
+    
+    @media all and (max-width: 680px) {
+        padding: 25px 20px;
+    }
 
     .packageHeader {
         text-align: center;
         z-index: 1;
         position: relative;
+        
         .title {
             font-size: 36px;
             font-weight: 600;
@@ -29,12 +34,32 @@
             letter-spacing: 0.4px;
             color: #888d92;
         }
+    
+        @media all and (max-width: 680px) {
+            .title {
+                font-size: 24px;
+            }
+        }
         
         .config-wrap {
             margin: 27px 10px 0;
             display: flex;
             align-items: center;
-            justify-content: space-evenly;
+            //justify-content: space-evenly;
+            justify-content: center;
+            
+            @media all and (max-width: 1100px) {
+                flex-direction: column;
+                margin-bottom: 15px;
+            }
+    
+            @media all and (max-width: 680px) {
+                button.toggle {
+                    position: relative;
+                    right: 0;
+                    margin: 10px auto;
+                }
+            }
         }
         
         .billingPeriod {
@@ -48,6 +73,10 @@
             &.both-active {
                 position: absolute;
                 right: 10px;
+    
+                @media all and (max-width: 1100px) {
+                    position: static;
+                }
             }
     
             & > div {
@@ -58,6 +87,7 @@
                 width: 80px;
                 z-index: 5;
                 pointer-events: none;
+                line-height: 1.6;
     
                 &.monthly {
                     margin-right: -105px;
@@ -70,6 +100,11 @@
                 &.active {
                     font-weight: 500;
                     color: #fff;
+                    //@media all and (max-width: 768px) {
+                    //    span.year-discount {
+                    //        color: #a8ffa1;
+                    //    }
+                    //}
                 }
             }
        
@@ -79,9 +114,10 @@
                 top: -36px;
                 color: #60d956;
                 font-weight: 700;
-                @media (max-width: 768px) {
-                    position: static;
-                }
+                //@media (max-width: 768px) {
+                //    position: static;
+                //    display: block;
+                //}
                 
                 &:before {
                     content: '';
@@ -92,12 +128,12 @@
                     border-right: solid 1.5px #60d956;
                     border-bottom: solid 1.5px #60d956;
                     position: absolute;
-                    bottom: -15px;
+                    bottom: -10px;
                     left: 50%;
                     transform: translateX(-50%);
-                    @media (max-width: 768px) {
-                        display: none;
-                    }
+                    //@media (max-width: 768px) {
+                    //    display: none;
+                    //}
                 }
             }
 
@@ -162,7 +198,7 @@
             width: 480px;
             //margin: auto;
             position: relative;
-            @media (max-width: 768px) {
+            @media (max-width: 1100px) {
                 width: 90%;
                 display: block;
             }
@@ -177,10 +213,6 @@
             }
             .minus,
             .plus {
-                @media (max-width: 768px) {
-                    display: none!important;
-                }
-
                 margin-top: 2px;
                 font-family: 'FontAwesome';
                 font-size: 11px;
@@ -188,9 +220,14 @@
                 color: #00aeef;
                 cursor: pointer;
                 font-style: normal;
+                
                 &.hidden {
                     visibility: hidden;
                     display: inline-flex !important;
+                }
+                
+                @media (max-width: 768px) {
+                    display: none!important;
                 }
             }
 
@@ -227,7 +264,7 @@
             width: calc(100% - 83px);
 
             @media (max-width: 768px) {
-                width: 50%!important;
+                width: 100%!important;
             }
 
             &.cdk-focused {
@@ -312,8 +349,10 @@
         display: flex;
         justify-content: center;
         margin-bottom: 35px;
+        align-items: flex-start;
         @media (max-width: 768px) {
-            flex-wrap: wrap;
+            flex-flow: column wrap;
+            margin-bottom: 10px;
         }
     }
     .footerDescription {
@@ -331,10 +370,23 @@
                 line-height: 20px;
             }
         }
+        
+        @media all and (max-width: 768px) {
+            position: relative;
+            width: 62%;
+            left: 0;
+            top: 15px;
+            margin: 0 auto;
+        }
+    
+        @media all and (max-width: 680px) {
+            width: 100%;
+            font-size: 12px;
+        }
     }
     .footer {
         @media (min-width: 768px) {
-            padding: 0 180px;
+            padding: 0;
         }
 
         text-align: center;
@@ -343,6 +395,7 @@
         display: flex;
         align-items: center;
         flex-direction: column;
+        width: 100%;
         
         .downgrade {
             font-size: 12px;
@@ -387,10 +440,10 @@
 
         &.nextButtonPosition-center {
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column;
+            
             button {
-                margin: auto;
-                margin-bottom: 10px;
+                margin: auto auto 10px;
                 position: relative;
                 height: 50px;
                 padding: 8px 40px;
@@ -403,13 +456,13 @@
 :host(.withBackground) {
     position: relative;
     overflow-y: hidden;
+    
     &:before {
         content: '';
         background: linear-gradient(111deg, #c86dd7, #3023ae) no-repeat 100% 360px;
         height: 100%;
         position: absolute;
         width: 100%;
-        height: 100%;
         margin: auto;
         left: 0;
         right: 0;
@@ -425,5 +478,26 @@
         button[disabled] {
             background-color: #fff;
         }
+    }
+}
+
+.free-version-available {
+    display: none;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 320px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #888d92;
+    font-family: Montserrat, sans-serif;
+}
+@media all and (max-width: 1300px) {
+    .free-version-available {
+        position: relative;
+        top: unset;
+        right: unset;
+        transform: translateY(0);
     }
 }

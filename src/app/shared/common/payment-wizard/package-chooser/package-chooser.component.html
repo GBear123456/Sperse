@@ -1,7 +1,7 @@
 <div class="packageHeader">
     <ng-container *ngIf="this.packagesConfig$ | async">
         <ng-container *ngIf="packages && packages.length; else nopackages">
-            <h2 class="title">{{ title }}</h2>
+            <h2 class="title">{{ widgettitle }}</h2>
             <h3 class="subtitle">{{ subtitle }}</h3>
             <div class="config-wrap">
                 <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator !== 'slider'">
@@ -16,11 +16,12 @@
                         [checked]="selectedBillingPeriod === billingPeriod.Yearly"
                         (change)="billingPeriodChanged($event)">
                     </mat-slide-toggle>
-                    <div class="annually" [ngClass]="{ 'active': getActiveStatus('year') }">{{ l('Annually') }}
+                    <div class="annually" [ngClass]="{ 'active': getActiveStatus('year') }">
                         <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
+                        {{ l('Annually') }}
                     </div>
                 </div>
-                <button [hidden]="configurator === 'slider'"
+                <button [hidden]="module === modules.CFO || configurator === 'slider'"
                         class="toggle"
                         (click)="configurator === 'slider' ? configurator = 'billingPeriod' : configurator = 'slider'">
                     {{ configurator === 'slider' ? 'Change plan' : 'Add more seats' }}
@@ -54,7 +55,18 @@
                 </package-card>
             </ng-container>
         </div>
-
+        <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
+            <button [disabled]="selectedPackageIndex === undefined || selectedPackageIndex < 0 || (selectedPackageCardComponent && !selectedPackageCardComponent.isActive)" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
+            <div>
+                <p class="downgrade" *ngIf="showDowngradeLink" (click)="downGradeToFree()">{{ l('DowngradeToFree') }}</p>
+                <div class="free-version-available">
+                    <div class="downgrade-info">
+                        Free version available with limited features.
+                    </div>
+                </div>
+                <p class="pricesAreShown" *ngIf="module !== modules.CFO" >{{ l('PricesAreShown') }}</p>
+            </div>
+        </div>
         <div *ngIf="module === modules.CFO" class="footerDescription">
             <p>Prices are in US Dollars. All packages include:</p>
             <ul>
@@ -63,15 +75,20 @@
                 <li>Free online support and product training</li>
                 <li>Transaction logs with export functionality</li>
                 <li>Two-form authentication for highest security</li>
-                <li>Minimum 5-seat user licenses</li>
+                <li>Minimum 5-seat user licenses included in price</li>
             </ul>
         </div>
-        <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
-            <button [disabled]="selectedPackageIndex === undefined || selectedPackageIndex < 0 || (selectedPackageCardComponent && !selectedPackageCardComponent.isActive)" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
-            <div>
-                <p class="downgrade" *ngIf="showDowngradeLink" (click)="downGradeToFree()">{{ l('DowngradeToFree') }}</p>
-                <p class="pricesAreShown" *ngIf="module !== modules.CFO" >{{ l('PricesAreShown') }}</p>
-            </div>
+        <div *ngIf="module === modules.CRM" class="footerDescription">
+            <p>Prices are in US Dollars. All packages include</p>
+            <ul>
+                <li>Free online support and product training</li>
+                <li>Two-factor authentication for highest security</li>
+                <li>Intelligent contact management</li>
+                <li>Alerts and notification system</li>
+                <li>Import and Export Functionality</li>
+                <li>Lead Stages, Lists, Tags and Ratings</li>
+                <li>Minimum 5-seat user licenses included in price</li>
+            </ul>
         </div>
     </ng-container>
 </ng-container>

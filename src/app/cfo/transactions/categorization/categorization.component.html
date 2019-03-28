@@ -24,6 +24,8 @@
                   (onSelectionChanged)="onSelectedCategoryChanged($event)"
                   (onRowUpdated)="onCategoryUpdated($event)"
                   (onRowInserted)="onCategoryInserted($event)"
+                  (onRowExpanded)="onRowExpandChange()"
+                  (onRowCollapsed)="onRowExpandChange()"
                   (onRowRemoving)="onCategoryRemoving($event)"
                   (onRowPrepared)="onRowPrepared($event)"
                   (onNodesInitialized)="onNodesInitialized()">

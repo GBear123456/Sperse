@@ -1,7 +1,6 @@
 import { Directive, Component, Injector, ViewContainerRef, ViewEncapsulation,
     ComponentFactoryResolver, ViewChild, Type, OnInit } from '@angular/core';
 
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';

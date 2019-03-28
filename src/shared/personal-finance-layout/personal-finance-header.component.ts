@@ -24,7 +24,7 @@ export class AdHeaderHostDirective {
 export class PersonalFinanceHeaderComponent extends AppComponentBase {
     @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
-    @HostBinding('class.yellow') yellowTheme = 
+    @HostBinding('class.yellow') yellowTheme =
         environment.LENDSPACE_HEADER_THEME == 'yellow';
 
     loggedUserId = abp.session.userId;
@@ -97,14 +97,6 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
                     {
                         name: this.ls('PFM', 'Offers_PersonalLoans'),
                         routerUrl: '/personal-finance/offers/personal-loans'
-                    },
-                    {
-                        name: this.ls('PFM', 'Offers_PaydayLoans'),
-                        routerUrl: '/personal-finance/offers/payday-loans'
-                    },
-                    {
-                        name: this.ls('PFM', 'Offers_InstallmentLoans'),
-                        routerUrl: '/personal-finance/offers/installment-loans'
                     },
                     {
                         name: this.ls('PFM', 'Offers_BusinessLoans'),

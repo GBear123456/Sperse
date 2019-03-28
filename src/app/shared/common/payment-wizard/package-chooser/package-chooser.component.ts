@@ -45,7 +45,7 @@ export class PackageChooserComponent implements OnInit {
     @ViewChildren(PackageCardComponent) packageCardComponents: QueryList<PackageCardComponent>;
     @ViewChildren(MatSlider) slider: MatSlider;
     @Input() module: Module;
-    @Input() title: string;
+    @Input() widgettitle: string;
     @Input() subtitle = this.l('ChoosePlan');
     @Input() yearDiscount = 33;
     @Input() packagesMaxUsersAmount: number;
@@ -84,9 +84,9 @@ export class PackageChooserComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (!this.title) {
+        if (!this.widgettitle) {
             /** Default value for title if any was set in input */
-            this.title = this.l('ModuleExpired', this.module, 'trial');
+            this.widgettitle = this.l('ModuleExpired', this.module, 'trial');
         }
         this.packagesConfig$ = this.packageServiceProxy.getPackagesConfig(this.module).pipe(
             publishReplay(),
@@ -494,6 +494,1699 @@ export class PackageChooserComponent implements OnInit {
                     }
             ];
         }
+        if (this.module === Module.CRM) {
+            notFreePackages[0]['editions'][0]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 5000
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 20
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[0]['editions'][1]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 5000
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 125
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[0]['editions'][2]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 5000
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 250
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[0]['editions'][3]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 5000
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 500
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[0]['editions'][4]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 5000
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 2500
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                }
+            ];
+
+            notFreePackages[1]['editions'][0]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 50000
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 250
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TasksManagementAndCalendar',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Tasks Management and Calendar'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 6,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.FullAPIAccess',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Full API Access'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 7,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[1]['editions'][1]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 50000
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 500
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TasksManagementAndCalendar',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Tasks Management and Calendar'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 6,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.FullAPIAccess',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Full API Access'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 7,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[1]['editions'][2]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 50000
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 1000
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TasksManagementAndCalendar',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Tasks Management and Calendar'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 6,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.FullAPIAccess',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Full API Access'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 7,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[1]['editions'][3]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 50000
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 5000
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TasksManagementAndCalendar',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Tasks Management and Calendar'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 6,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.FullAPIAccess',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Full API Access'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 7,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                }
+            ];
+
+            notFreePackages[2]['editions'][0]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 'Unlimited'
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 2500
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TasksManagementAndCalendar',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Tasks Management and Calendar'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 6,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.FullAPIAccess',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Full API Access'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 7,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.OrdersAndInvoiceManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Orders & Invoice Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 8,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.AdvancedReporting',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Advanced Reporting'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 9,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.WorkflowAutomation',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Workflow Automation'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 10,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.SalesReportingAndForecasting',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Sales Reporting & Forecasting'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 11,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.EmailCommunications',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Email Communications'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 12,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.GoogleIntegration',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Google Integration'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 13,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.Customization',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Customization'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 14,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[2]['editions'][1]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 'Unlimited'
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 5000
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TasksManagementAndCalendar',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Tasks Management and Calendar'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 6,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.FullAPIAccess',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Full API Access'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 7,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.OrdersAndInvoiceManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Orders & Invoice Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 8,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.AdvancedReporting',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Advanced Reporting'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 9,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.WorkflowAutomation',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Workflow Automation'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 10,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.SalesReportingAndForecasting',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Sales Reporting & Forecasting'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 11,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.EmailCommunications',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Email Communications'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 12,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.GoogleIntegration',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Google Integration'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 13,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.Customization',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Customization'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 14,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[2]['editions'][2]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 'Unlimited'
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 10000
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TasksManagementAndCalendar',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Tasks Management and Calendar'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 6,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.FullAPIAccess',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Full API Access'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 7,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.OrdersAndInvoiceManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Orders & Invoice Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 8,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.AdvancedReporting',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Advanced Reporting'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 9,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.WorkflowAutomation',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Workflow Automation'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 10,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.SalesReportingAndForecasting',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Sales Reporting & Forecasting'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 11,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.EmailCommunications',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Email Communications'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 12,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.GoogleIntegration',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Google Integration'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 13,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.Customization',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Customization'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 14,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                }
+            ];
+            notFreePackages[2]['editions'][3]['features'] = [
+                {
+                    'definition': {
+                        'name': 'CRM.MaxActiveContactCount',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_MaxActiveContactCount'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 1,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': 'Unlimited'
+                },
+                {
+                    'definition': {
+                        'name': 'MaxSpaceGB',
+                        'displayName': {
+                            'sourceName': 'Platform',
+                            'name': 'NameOnPricingTable_AdminMaxSpaceGB'
+                        },
+                        'isVariable': true,
+                        'sortOrder': 2,
+                        'isStatic': false,
+                        'measurementUnit': 'GB',
+                        'isCommon': true
+                    },
+                    'value': 50000
+                },
+                {
+                    'definition': {
+                        'name': 'CFO.GroupBy',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_LeadManagementPipelineFunnel'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 3,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TeamPermissionManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'NameOnPricingTable_TeamPermissionManagement'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 4,
+                        'isStatic': true,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.DocumentManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Document Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 5,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.TasksManagementAndCalendar',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Tasks Management and Calendar'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 6,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.FullAPIAccess',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Full API Access'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 7,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.OrdersAndInvoiceManagement',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Orders & Invoice Management'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 8,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.AdvancedReporting',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Advanced Reporting'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 9,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.WorkflowAutomation',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Workflow Automation'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 10,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.SalesReportingAndForecasting',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Sales Reporting & Forecasting'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 11,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.EmailCommunications',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Email Communications'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 12,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.GoogleIntegration',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Google Integration'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 13,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                },
+                {
+                    'definition': {
+                        'name': 'CRM.Customization',
+                        'displayName': {
+                            'sourceName': 'CRM',
+                            'name': 'Customization'
+                        },
+                        'isVariable': false,
+                        'sortOrder': 14,
+                        'isStatic': false,
+                        'measurementUnit': null,
+                        'isCommon': false,
+                        'disabled': true
+                    },
+                    'value': null
+                }
+            ];
+        }
         this.packages = notFreePackages;
     }
 
@@ -513,7 +2206,7 @@ export class PackageChooserComponent implements OnInit {
 
     /** Get values of usersAmount and billing period from user previous choice */
     changeDefaultSettings(packagesConfig: GetPackagesConfigOutput) {
-        this.usersAmount = this.round(
+        const userAmount = this.round(
             packagesConfig.currentSubscriptionInfo &&
                    (
                        packagesConfig.currentSubscriptionInfo.maxUserCount ||
@@ -521,6 +2214,7 @@ export class PackageChooserComponent implements OnInit {
                    ) ||
                   this.defaultUsersAmount
             );
+        this.usersAmount = userAmount > this.sliderInitialMaxValue ? this.sliderInitialMaxValue : userAmount;
         if (packagesConfig.currentSubscriptionInfo && packagesConfig.currentSubscriptionInfo.frequency) {
             this.selectedBillingPeriod = packagesConfig.currentSubscriptionInfo.frequency === ModuleSubscriptionInfoFrequency._30 ? BillingPeriod.Monthly : BillingPeriod.Yearly;
         }

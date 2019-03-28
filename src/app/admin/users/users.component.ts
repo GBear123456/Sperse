@@ -20,6 +20,8 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
 import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
+import { FilterTreeListComponent } from '@shared/filters/tree-list/tree-list.component';
+import { FilterTreeListModel } from '@shared/filters/tree-list/tree-list.model';
 
 import { AppService } from '@app/app.service';
 import { forkJoin } from 'rxjs';
@@ -40,7 +42,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     //Filters
     private filters: FilterModel[];
-    selectedPermission: string;
+    selectedPermissions: string[] = [];
     role: number;
     group = Group.Employee;
 
@@ -117,7 +119,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             load: (loadOptions) => {
                 return this._userServiceProxy.getUsers(
                     this.searchValue || undefined,
-                    this.selectedPermission || undefined,
+                    this.selectedPermissions || undefined,
                     this.role || undefined,
                     false,
                     this.group,
@@ -314,16 +316,16 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             this._filtersService.setup(
                 this.filters = [
                     new FilterModel({
-                        component: FilterRadioGroupComponent,
+                        component: FilterTreeListComponent,
                         caption: 'permission',
                         items: {
-                            element: new FilterRadioGroupModel({
-                                value: this.selectedPermission,
-                                list: res[0].items.map((item) => {
+                            element: new FilterTreeListModel({
+                                value: this.selectedPermissions,
+                                list: res[0].items.map((item, index) => {                                    
                                     return {
                                         id: item.name,
-                                        name: String.fromCharCode(160/*Space to avoid trim*/)
-                                            .repeat(item.level * 5) + item.displayName,
+                                        parent: item.parentName,
+                                        name: item.displayName,
                                         displayName: item.displayName
                                     };
                                 })
@@ -374,7 +376,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 if (filter.caption == 'role')
                     this.role = filterValue;
                 else if (filter.caption == 'permission')
-                    this.selectedPermission = filterValue;
+                    this.selectedPermissions = filterValue;
                 else if (filter.caption == 'group')
                     this.group = filterValue;
             }

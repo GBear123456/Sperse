@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import DataSource from 'devextreme/data/data_source';
 import * as _ from 'underscore';
+import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -99,6 +100,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         }
     };
     private currentTypeId: any;
+    private readonly _expandedCacheKey = `Categorization_Tree_Expanded_${abp.session.tenantId}_${abp.session.userId}`;
 
     toolbarConfig: any;
     excelData = [];
@@ -106,6 +108,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _filtersService: FiltersService,
+        private _cacheService: CacheService,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy) {
         super(injector);
 
@@ -132,7 +135,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             },
             onChanged: this.setTransactionsCount.bind(this)
         });
-
     }
 
     ngAfterViewInit(): void {
@@ -214,9 +216,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                     {
                         name: 'addEntity',
                         widget: 'dxDropDownMenu',
+                        visible: !!(this.showAddEntity && this.settings.showAT),
                         options: {
                             text: this.l('AddAccountingType'),
-                            visible: this.showAddEntity && this.settings.showAT,
                             items: addEntityItems
                         }
                     },
@@ -374,20 +376,33 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     processExpandTree(expandFirstLevel, expandSecondLevel) {
-        if (this.settings.showAT) {
-            _.mapObject(this.categorization.accountingTypes, (item, key) => {
-                this.categoryList.instance[(expandFirstLevel ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
+        this.categoryList.instance.beginUpdate();
+        if (!expandFirstLevel && !expandSecondLevel) {
+            this.categoryList.expandedRowKeys = [];
+            this._cacheService.set(this._expandedCacheKey, this.categoryList.expandedRowKeys);
+        }
+        else {
+            if (this.settings.showAT) {
+                _.mapObject(this.categorization.accountingTypes, (item, key) => {
+                    this.categoryList.instance[(expandFirstLevel ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
+                });
+            }
+
+            let expandCategories = (expandFirstLevel && !this.settings.showAT) || expandSecondLevel;
+            _.mapObject(this.categorization.categories, (item, key) => {
+                if (!item.parentId) {
+                    let method = this.categoryList.instance[
+                        (expandCategories ? 'expand' : 'collapse') + 'Row'];
+                    method(parseInt(key));
+                }
             });
         }
+        this.categoryList.instance.endUpdate();
+    }
 
-        let expandCategories = (expandFirstLevel && !this.settings.showAT) || expandSecondLevel;
-        _.mapObject(this.categorization.categories, (item, key) => {
-            if (!item.parentId) {
-                let method = this.categoryList.instance[
-                    (expandCategories ? 'expand' : 'collapse') + 'Row'];
-                method(parseInt(key));
-            }
-        });
+
+    onRowExpandChange() {
+        this._cacheService.set(this._expandedCacheKey, this.categoryList.expandedRowKeys);
     }
 
     onContentReady($event) {
@@ -621,7 +636,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 this.categories = categories;
 
                 if (expandInitial) {
-                    this.processExpandTree(true, false);
+                    let expanded = this._cacheService.get(this._expandedCacheKey);
+                    if (expanded)
+                        this.categoryList.expandedRowKeys = expanded;
+                    else
+                        this.processExpandTree(true, false);
                 }
 
                 if (this.categoryId) {

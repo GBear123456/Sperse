@@ -214,7 +214,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
         return {
             id: null,
             value: this.data && this.data.user && this.data.user[field],
-            isEditDialogEnabled: false,
+            isEditDialogEnabled: true,
             validationRules: validationRules,
             lEntityName: field,
             lEditPlaceholder: this.l('EditValuePlaceholder')

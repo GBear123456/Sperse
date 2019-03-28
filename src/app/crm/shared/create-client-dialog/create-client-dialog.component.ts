@@ -75,6 +75,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     private similarCustomersTimeout: any;
     stages: any[] = [];
     stageId: number;
+    defaultStageSortOrder = 0;
     partnerTypes: any[] = [];
 
     saveButtonId = 'saveClientOptions';
@@ -861,7 +862,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
             this.listsComponent.reset();
             this.partnerTypesComponent.reset();
             this.userAssignmentComponent.selectedItemKey = this.currentUserId;
-            this.stageId = this.stages.length ? this.stages.find(v => v.name == 'New').id : undefined;
+            this.stageId = this.stages.length ? this.stages.find(v => v.sortOrder === this.defaultStageSortOrder).id : undefined;
             this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
         };
 
@@ -899,13 +900,14 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
         this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead)
             .subscribe(result => {
                 this.stages = result.stages.map((stage) => {
-                    if (stage.name === 'New') {
+                    if (stage.sortOrder === this.defaultStageSortOrder) {
                         this.stageId = stage.id;
                     }
                     return {
                         id: stage.id,
                         name: stage.name,
-                        text: stage.name
+                        text: stage.name,
+                        sortOrder: stage.sortOrder
                     };
                 });
             });

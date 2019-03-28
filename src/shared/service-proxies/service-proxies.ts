@@ -15186,6 +15186,66 @@ export class LocalizationServiceProxy {
 }
 
 @Injectable()
+export class ManageServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    reScheduleApplications(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/Manage/ReScheduleApplications";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processReScheduleApplications(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processReScheduleApplications(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processReScheduleApplications(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class MemberServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -26229,7 +26289,7 @@ export class UserServiceProxy {
 
     /**
      * @filter (optional) 
-     * @permission (optional) 
+     * @permissions (optional) 
      * @role (optional) 
      * @onlyLockedUsers (optional) 
      * @group (optional) 
@@ -26238,12 +26298,12 @@ export class UserServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getUsers(filter: string | null | undefined, permission: string | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: Group | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
+    getUsers(filter: string | null | undefined, permissions: string[] | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: Group | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfUserListDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
-        if (permission !== undefined)
-            url_ += "Permission=" + encodeURIComponent("" + permission) + "&"; 
+        if (permissions !== undefined)
+            permissions && permissions.forEach(item => { url_ += "Permissions=" + encodeURIComponent("" + item) + "&"; });
         if (role !== undefined)
             url_ += "Role=" + encodeURIComponent("" + role) + "&"; 
         if (onlyLockedUsers !== undefined)
@@ -33065,6 +33125,7 @@ export class UpdateForecastInput implements IUpdateForecastInput {
     date!: moment.Moment | undefined;
     amount!: number | undefined;
     bankAccountId!: number | undefined;
+    cashflowTypeId!: string;
     categoryId!: number | undefined;
     description!: string | undefined;
     transactionDescriptor!: string | undefined;
@@ -33084,6 +33145,7 @@ export class UpdateForecastInput implements IUpdateForecastInput {
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.amount = data["amount"];
             this.bankAccountId = data["bankAccountId"];
+            this.cashflowTypeId = data["cashflowTypeId"];
             this.categoryId = data["categoryId"];
             this.description = data["description"];
             this.transactionDescriptor = data["transactionDescriptor"];
@@ -33103,6 +33165,7 @@ export class UpdateForecastInput implements IUpdateForecastInput {
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         data["bankAccountId"] = this.bankAccountId;
+        data["cashflowTypeId"] = this.cashflowTypeId;
         data["categoryId"] = this.categoryId;
         data["description"] = this.description;
         data["transactionDescriptor"] = this.transactionDescriptor;
@@ -33115,6 +33178,7 @@ export interface IUpdateForecastInput {
     date: moment.Moment | undefined;
     amount: number | undefined;
     bankAccountId: number | undefined;
+    cashflowTypeId: string;
     categoryId: number | undefined;
     description: string | undefined;
     transactionDescriptor: string | undefined;
