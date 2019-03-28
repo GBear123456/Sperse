@@ -482,7 +482,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     }
 
     handleDeactivate(deactivateAction: CloseComponentAction): Observable<boolean> {
-        let deactivate$: Observable<boolean>;
+        let deactivate$: Observable<boolean> = of(true);
         switch (deactivateAction) {
             case CloseComponentAction.Save: {
                 deactivate$ = this.onSubmit().pipe(map(() => true));
