@@ -24,6 +24,8 @@ export class BankTransferComponent extends AppComponentBase implements OnChanges
     @Output() onSubmit: EventEmitter<null> = new EventEmitter<null>();
     @ViewChild('bankTransferSettingsContainer') bankTransferSettingsContainer: ElementRef;
 
+    requireInstractionEnabled = false;
+
     constructor(
         injector: Injector
     ) {
