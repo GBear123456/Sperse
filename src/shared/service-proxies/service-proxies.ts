@@ -16684,6 +16684,60 @@ export class OfferManagementServiceProxy {
         }
         return _observableOf<ExtendFromCSVOutput>(<any>null);
     }
+
+    /**
+     * @campaignId (optional) 
+     * @offerDetailsLink (optional) 
+     * @return Success
+     */
+    sendAnnouncement(campaignId: number | null | undefined, offerDetailsLink: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/SendAnnouncement?";
+        if (campaignId !== undefined)
+            url_ += "campaignId=" + encodeURIComponent("" + campaignId) + "&"; 
+        if (offerDetailsLink !== undefined)
+            url_ += "offerDetailsLink=" + encodeURIComponent("" + offerDetailsLink) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendAnnouncement(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendAnnouncement(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendAnnouncement(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -56468,6 +56522,7 @@ export class OngageSettingsEditDto implements IOngageSettingsEditDto {
     defaultListId!: number | undefined;
     activationEmailMessageId!: number | undefined;
     isEnabled!: boolean | undefined;
+    offerAnnouncementCampaignId!: string | undefined;
 
     constructor(data?: IOngageSettingsEditDto) {
         if (data) {
@@ -56486,6 +56541,7 @@ export class OngageSettingsEditDto implements IOngageSettingsEditDto {
             this.defaultListId = data["defaultListId"];
             this.activationEmailMessageId = data["activationEmailMessageId"];
             this.isEnabled = data["isEnabled"];
+            this.offerAnnouncementCampaignId = data["offerAnnouncementCampaignId"];
         }
     }
 
@@ -56504,6 +56560,7 @@ export class OngageSettingsEditDto implements IOngageSettingsEditDto {
         data["defaultListId"] = this.defaultListId;
         data["activationEmailMessageId"] = this.activationEmailMessageId;
         data["isEnabled"] = this.isEnabled;
+        data["offerAnnouncementCampaignId"] = this.offerAnnouncementCampaignId;
         return data; 
     }
 }
@@ -56515,6 +56572,7 @@ export interface IOngageSettingsEditDto {
     defaultListId: number | undefined;
     activationEmailMessageId: number | undefined;
     isEnabled: boolean | undefined;
+    offerAnnouncementCampaignId: string | undefined;
 }
 
 export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
