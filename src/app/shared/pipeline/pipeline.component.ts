@@ -501,7 +501,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     updateStage(data, actionType) {
         this.currentTooltip.hide();
-        this.createStageInput.sortOrder = data.sortOrder != 0 ? data.sortOrder : data.sortOrder + 1;
+        this.createStageInput.sortOrder = data.sortOrder + (data.sortOrder >= 0 ? 1 : -1);
         this.mergeLeadStagesInput.sourceStageId = this.renameStageInput.id = data.id;
         this.dialog.open(AddRenameMergeDialogComponent, {
             height: '300px',
