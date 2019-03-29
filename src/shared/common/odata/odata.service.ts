@@ -3,12 +3,39 @@ import { AppConsts } from '@shared/AppConsts';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { ODataSearchStrategy } from '@shared/AppEnums';
 import buildQuery from 'odata-query';
+import * as dxAjax from 'devextreme/core/utils/ajax';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ODataService {
+    private _dxRequestPool = {};
+
+    constructor() {        
+        dxAjax.setStrategy((options) => {
+            options.responseType = 'application/json';
+            let key = options.url.match(/odata\/(\w+)(\?|$)/)[1] + 
+                (options.headers.context || '');
+
+            return (this._dxRequestPool[key] = dxAjax.sendRequest(options));
+        });
+    }
+
+    loadDataSource(dataSource, uri, url?) {
+        if (dataSource.isLoading() && dataSource['operationId'])
+            dataSource.cancel(dataSource['operationId']);
+        if (this._dxRequestPool[uri])
+            this._dxRequestPool[uri].abort();
+
+        if (url)
+            dataSource['_store']['_url'] = url;
+        let promise = dataSource.load();
+        dataSource['operationId'] = 
+            promise.operationId;
+
+        return promise;
+    }
 
     getODataUrl(uri: String, filter?: Object, instanceData = null, params?: { name: string, value: string }[]) {
         let url = AppConsts.remoteServiceBaseUrl + '/odata/' + uri + (filter ? buildQuery({ filter }) : '');
@@ -36,10 +63,11 @@ export class ODataService {
     }
 
     private advancedODataFilter(grid: any, uri: string, query: any[], searchColumns: any[], searchValue: string, instanceData = null, params = null) {
-        let queryWithSearch = query.concat(this.getSearchFilter(searchColumns, searchValue));
-        let dataSource = grid.getDataSource();
-        dataSource['_store']['_url'] = this.getODataUrl(uri, queryWithSearch, instanceData, params);
-        dataSource.load().done(() => grid.repaint());
+        let queryWithSearch = query.concat(this.getSearchFilter(searchColumns, searchValue)),
+            url = this.getODataUrl(uri, queryWithSearch, instanceData, params);
+
+        this.loadDataSource(grid.getDataSource(), uri, url);
+
         return queryWithSearch;
     }
 

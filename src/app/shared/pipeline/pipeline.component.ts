@@ -17,6 +17,7 @@ import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
 
 /** Application imports */
+import { ODataService } from '@shared/common/odata/odata.service';
 import { CrmStore, PipelinesStoreActions } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
@@ -87,6 +88,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private subscribers = [];
 
     constructor(injector: Injector,
+        private _odataService: ODataService,
         private _dragulaService: DragulaService,
         private _pipelineService: PipelineService,
         private _stageServiceProxy: StageServiceProxy,
@@ -270,25 +272,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             stage['entities'] = [];
         else {
             if (!dataSource)
-                dataSource = this._dataSources[stage.name] =
-                    new DataSource(extend(clone(this._dataSource), {
-                        onLoadError: (error) => { this.httpInterceptor.handleError(error); },
-                        requireTotalCount: !this.totalsURI,
-                        select: this.selectFields
-                    }));
+                dataSource = this._dataSources[stage.name] = 
+                    this.getDataSourceForStage(stage);
 
             if (!isNaN(stage['lastEntityId']) && page)
                 filter['Id'] = {lt: stage['lastEntityId']};
 
             dataSource.pageSize(this.STAGE_PAGE_COUNT);
-            dataSource['_store']['_url'] =
+            dataSource.sort({getter: 'Id', desc: true});
+            response = from(this._odataService.loadDataSource(
+                dataSource, 
+                this._dataSource.uri + stage.id,
                 this.getODataUrl(this._dataSource.uri,
                     this.queryWithSearch.concat({and: [
                         extend(filter, this._dataSource.customFilter)
-                    ]})
-            );
-            dataSource.sort({getter: 'Id', desc: true});
-            response = from(dataSource.load()).pipe(
+                ]}))
+            )).pipe(
                 finalize(() => {
                     if (oneStageOnly || this.isAllStagesLoaded())
                         setTimeout(() => this.finishLoading());
@@ -317,8 +316,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     return entities;
                 })
             );
-            response.subscribe(() => {}, (e) => {
-                this.message.error(e);
+            response.subscribe(() => {}, (error) => {
+                if (error != 'canceled')
+                    this.message.error(error);
             });
         }
 
@@ -328,19 +328,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     processTotalsRequest(filter?: any) {
-        (new DataSource({
+        this._odataService.loadDataSource(new DataSource({
             requireTotalCount: false,
             store: {
                 type: 'odata',
                 url: this.getODataUrl(this.totalsURI, filter),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                },
+                beforeSend: this.getBeforeSendEvent(),
                 paginate: false
             }
-        })).load().done((res) => {
+        }), this.totalsURI).done((res) => {
             let stages = res.pop();
             stages && this.stages.forEach((stage) => {
                 stage['total'] = stages[stage.id] || 0;
@@ -348,6 +345,26 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     <= stage['entities'].length;
             });
         });
+    }
+
+    private getBeforeSendEvent(context?) {
+        return (request) => {
+            if (context)
+                request.headers['context'] = context;
+            request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+        }
+    }
+
+    private getDataSourceForStage(stage) {
+        let config = clone(this._dataSource);
+        config.store.beforeSend = this.getBeforeSendEvent(stage.id);
+
+        return new DataSource(extend(config, {
+            onLoadError: (error) => { this.httpInterceptor.handleError(error); },
+            requireTotalCount: !this.totalsURI,
+            select: this.selectFields,
+        }));
     }
 
     isAllStagesLoaded() {
