@@ -40,7 +40,6 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
     filteredCategory: any = [];
     filteredSubCategory: any = [];
 
-
     constructor(
         injector: Injector,
         private _cfoService: CFOService,
@@ -95,6 +94,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
                 suppressCashflowMismatch: false
             })
         ).subscribe(() => {
+            this.refreshParent();
             this.notify.info(this.l('SavedSuccessfully'));
         });
     }
@@ -173,6 +173,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
                 suppressCashflowMismatch: true
             })
         ).subscribe(() => {
+            this.refreshParent();
             this.transactionInfo['inplaceEdit'] = false;
             this.notify.info(this.l('SavedSuccessfully'));
         });
@@ -191,6 +192,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
                 comment: this.newComment.text
             })
         ).subscribe(() => {
+            this.refreshParent();
             this.newComment.inplaceEdit = false;
             this.newComment.text = '';
             this.notify.info(this.l('SavedSuccessfully'));
@@ -207,6 +209,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
                 id: data.commentId
             })
         ).subscribe(() => {
+            this.refreshParent();
             data.inplaceEdit = false;
             this.notify.info(this.l('SavedSuccessfully'));
         });
@@ -240,5 +243,9 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
                 this.filteredSubCategory.push(item);
             }
         });
+    }
+
+    refreshParent() {
+        this.data.refreshParent && this.data.refreshParent();
     }
 }
