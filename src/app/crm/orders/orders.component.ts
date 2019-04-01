@@ -109,6 +109,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContentReady(event) {
+        this.finishLoading();
         this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
