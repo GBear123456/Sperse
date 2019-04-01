@@ -5531,6 +5531,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (data.debit && data.credit || !data.debit && !data.credit) {
             this.notify.error('Either debit or credit should be specified');
             e.cancel = true;
+            this.detailsFinishLoading();
             return;
         }
         /** if data.forecastDate is Date - then convert it to the utc moment */
