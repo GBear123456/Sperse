@@ -19,6 +19,7 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
+import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel, FilterModelBase } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
@@ -40,13 +41,24 @@ import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
     items: any;
     showPipeline = true;
     pipelineDataSource: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.order;
     stages = [];
 
-    selectedOrders = [];
+    selectedOrderKeys = [];
+
+    private _selectedOrders: any;
+    get selectedOrders() {
+        return this._selectedOrders || [];
+    }
+    set selectedOrders(orders) {
+        this._selectedOrders = orders;
+        this.selectedOrderKeys = orders.map((item) => item.Id);
+    }
+
     filterModelStages: FilterModel;
 
     private rootComponent: any;
@@ -268,13 +280,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     items: {}
                 })
             ]);
-
-            this._filtersService.apply(() => {
-                this.filterChanged = true;
-                this.initToolbarConfig();
-                this.processFilterInternal();
-            });
         }
+        this._filtersService.apply(() => {
+            this.filterChanged = true;
+            this.initToolbarConfig();
+            this.processFilterInternal();
+        });
     }
 
     initToolbarConfig() {
@@ -333,7 +344,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 location: 'before',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'assign' }, { name: 'status' }, { name: 'delete' }
+                    { name: 'assign' }, { 
+                        name: 'stage' 
+                        action: this.toggleStages.bind(this),
+                        attr: {
+                            'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
+                        }
+                    }, { name: 'delete' }
                 ]
             },
             {
@@ -402,6 +419,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 ]
             }
         ]);
+    }
+
+    toggleStages() {
+        this.stagesComponent.toggle();
     }
 
     filterByOrderStages(filter: FilterModel) {
@@ -502,6 +523,32 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     return true;
                 }                
             });
+    }
+
+    updateOrdersStage($event) {
+        if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
+            this.stagesComponent.tooltipVisible = false;
+            this._pipelineService.updateEntitiesStage(
+                this.pipelinePurposeId, 
+                this.selectedOrders, 
+                $event.name
+            ).subscribe((declinedList) => {
+                this.filterChanged = true;
+                if (this.showPipeline)
+                    this.pipelineComponent.refresh();
+                else {
+                    let gridInstance = this.dataGrid && this.dataGrid.instance;
+                    if (gridInstance && declinedList && declinedList.length)
+                        gridInstance.selectRows(declinedList.map(item => item.Id), false);
+                    else
+                        gridInstance.clearSelection();
+                }
+            });
+        }
+    }
+
+    onSelectionChanged($event) {
+        this.selectedOrders = $event.component.getSelectedRowsData();
     }
 
     deactivate() {

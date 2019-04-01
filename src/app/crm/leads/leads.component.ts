@@ -742,11 +742,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 $event.name
             ).subscribe((declinedList) => {
                 this.filterChanged = true;
-                let gridInstance = this.dataGrid && this.dataGrid.instance;
-                if (gridInstance && declinedList && declinedList.length)
-                    gridInstance.selectRows(declinedList.map(item => item.Id), false);
-                else
-                    gridInstance.clearSelection();
+                if (this.showPipeline)
+                    this.pipelineComponent.refresh();
+                else {
+                    let gridInstance = this.dataGrid && this.dataGrid.instance;
+                    if (gridInstance && declinedList && declinedList.length)
+                        gridInstance.selectRows(declinedList.map(item => item.Id), false);
+                    else
+                        gridInstance.clearSelection();
+                }
             });
         }
     }

@@ -2,6 +2,19 @@
     <app-headline [config]="headlineConfig">
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <app-static-list
+        [width]="'210px'"
+        [title]="l('Stages')"
+        [selectedKeys]="selectedOrderKeys"
+        [filterModel]="filterModelStages"
+        [bulkUpdatePermissionKey]="'Pages.CRM.BulkUpdates'"
+        [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
+        [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
+        [targetSelector]="'[aria-label=Stage]'"
+        [funnelStyling]="true"
+        [list]="stages"
+        (onItemSelected)="updateOrdersStage($event)">
+    </app-static-list>
     <div [hidden]="isDataLoaded && !totalRowCount || showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
               <div>
@@ -16,6 +29,7 @@
                                       (onCellClick)="onCellClick($event)"
                                       [pager]="defaultGridPagerConfig"
                                       (onContentReady)="onContentReady($event)"
+                                      (onSelectionChanged)="onSelectionChanged($event)"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxo-selection selectAllMode="page"
                                            showCheckBoxesMode="always"
