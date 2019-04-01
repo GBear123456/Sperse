@@ -127,7 +127,6 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: OfferFilterCategory) => this.offersService.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
 
-    state$: Observable<string> = this.offersService.memberInfo$.pipe(pluck('stateCode'));
     creditScore$: Observable<number> = this.offersService.memberInfo$.pipe(pluck('creditScore'), map((score: GetMemberInfoResponseCreditScore) => this.offersService.convertCreditScoreToNumber(score)));
 
     filtersValues: FilterValues = this.getDefaultFilters();
@@ -687,7 +686,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
         this.visibleOffersCount += this.defaultVisibleOffersCount;
     }
 
-    getFilterScrollHeight() {        
+    getFilterScrollHeight() {
         return this.hideFilters ? 0 : window.innerHeight - 155;
     }
 }

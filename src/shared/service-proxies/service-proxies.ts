@@ -49936,7 +49936,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     expireTimeOfDay!: string | undefined;
     termsOfService!: string | undefined;
     traficSource!: OfferDetailsForEditDtoTraficSource | undefined;
-    categories!: string[] | undefined;
+    categories!: OfferCategoryDto[] | undefined;
     creditScores!: CreditScores2[] | undefined;
     description!: string | undefined;
     countries!: string[] | undefined;
@@ -49968,7 +49968,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             if (data["categories"] && data["categories"].constructor === Array) {
                 this.categories = [];
                 for (let item of data["categories"])
-                    this.categories.push(item);
+                    this.categories.push(OfferCategoryDto.fromJS(item));
             }
             if (data["creditScores"] && data["creditScores"].constructor === Array) {
                 this.creditScores = [];
@@ -50009,7 +50009,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
         if (this.categories && this.categories.constructor === Array) {
             data["categories"] = [];
             for (let item of this.categories)
-                data["categories"].push(item);
+                data["categories"].push(item.toJSON());
         }
         if (this.creditScores && this.creditScores.constructor === Array) {
             data["creditScores"] = [];
@@ -50040,7 +50040,7 @@ export interface IOfferDetailsForEditDto {
     expireTimeOfDay: string | undefined;
     termsOfService: string | undefined;
     traficSource: OfferDetailsForEditDtoTraficSource | undefined;
-    categories: string[] | undefined;
+    categories: OfferCategoryDto[] | undefined;
     creditScores: CreditScores2[] | undefined;
     description: string | undefined;
     countries: string[] | undefined;
@@ -50052,6 +50052,46 @@ export interface IOfferDetailsForEditDto {
     logoUrl: string | undefined;
     status: OfferDetailsForEditDtoStatus | undefined;
     type: OfferDetailsForEditDtoType | undefined;
+}
+
+export class OfferCategoryDto implements IOfferCategoryDto {
+    name!: string | undefined;
+    category!: OfferCategoryDtoCategory | undefined;
+
+    constructor(data?: IOfferCategoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.category = data["category"];
+        }
+    }
+
+    static fromJS(data: any): OfferCategoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new OfferCategoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["category"] = this.category;
+        return data; 
+    }
+}
+
+export interface IOfferCategoryDto {
+    name: string | undefined;
+    category: OfferCategoryDtoCategory | undefined;
 }
 
 export class ExtendOfferDto implements IExtendOfferDto {
@@ -61638,6 +61678,27 @@ export enum OfferDetailsForEditDtoType {
     TrafficDistribution = "TrafficDistribution", 
     DirectPost = "DirectPost", 
     Carrier = "Carrier", 
+}
+
+export enum OfferCategoryDtoCategory {
+    PaydayLoans = "PaydayLoans", 
+    PersonalLoans = "PersonalLoans", 
+    Beauty = "Beauty", 
+    InstallmentLoans = "InstallmentLoans", 
+    AutoLoans = "AutoLoans", 
+    Legal = "Legal", 
+    CreditRepair = "CreditRepair", 
+    CreditScore = "CreditScore", 
+    Travel = "Travel", 
+    Jobs = "Jobs", 
+    BusinessLoans = "BusinessLoans", 
+    DebtConsolidation = "DebtConsolidation", 
+    CreditCards = "CreditCards", 
+    MerchantServices = "MerchantServices", 
+    Dating = "Dating", 
+    Miscellaneous = "Miscellaneous", 
+    Crypto = "Crypto", 
+    CreditMonitoring = "CreditMonitoring", 
 }
 
 export enum ExtendOfferDtoCardNetwork {

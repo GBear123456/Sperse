@@ -91,15 +91,15 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
             this.filteredGroup = _.uniq(this.creditCardCollection, 'offerCollection').sort(this.sortCollection.bind(this, itemOfOfferCollections));
             /** @todo fix in new version with the getting the whole categories from backend */
             this.filteredGroup.unshift(
-                    OfferDto.fromJS({
-                        name: 'Special Deals',
-                        offerCollection: CustomItemOfOfferCollection.SpecialDeals
-                    }),
-                    OfferDto.fromJS({
-                        name: 'Newest Offers',
-                        offerCollection: CustomItemOfOfferCollection.Newest
-                    })
-                );
+                OfferDto.fromJS({
+                    name: 'Special Deals',
+                    offerCollection: CustomItemOfOfferCollection.SpecialDeals
+                }),
+                OfferDto.fromJS({
+                    name: 'Newest Offers',
+                    offerCollection: CustomItemOfOfferCollection.Newest
+                })
+            );
         });
 
         const creditCards$ = this.offerCollection$.pipe(
