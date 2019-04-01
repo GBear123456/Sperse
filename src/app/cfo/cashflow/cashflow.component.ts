@@ -3508,7 +3508,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             UpdateTransactionsCategoryWithFilterInput.fromJS({
                 transactionFilter: filter,
                 destinationCategoryId: destinationCategoryId,
-                standardDescriptor: destinationCategoryId ? targetCellData.transactionDescriptor : 'Unclassified',
+                standardDescriptor: destinationCategoryId
+                    ? (targetCellData.transactionDescriptor ? targetCellData.transactionDescriptor : filter.transactionDescriptor)
+                    : 'Unclassified',
                 suppressCashflowMismatch: true
             })
         );
