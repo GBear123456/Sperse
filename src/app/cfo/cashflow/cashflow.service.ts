@@ -170,8 +170,7 @@ export class CashflowService {
     }
 
     isCategoryCell(cellObj, area): boolean {
-        // return cellObj.area === 'row' && cellObj.cell.path && this.hasCategoryOrSubcategoryPrefix(cellObj.cell.path[cellObj.cell.path.length - 1]);
-        return area === 'row' && cellObj.path && this.hasCategoryOrSubcategoryPrefix(cellObj.path[cellObj.path.length - 1]);
+        return area === 'row' && !cellObj.isWhiteSpace && cellObj.path && this.hasCategoryOrSubcategoryPrefix(cellObj.path[cellObj.path.length - 1]);
     }
 
     hasCategoryOrSubcategoryPrefix(item: string): boolean {
