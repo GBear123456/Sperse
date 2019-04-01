@@ -77,6 +77,7 @@
                         [pipelinePurposeId]="pipelinePurposeId"
                         [filterModelStages]="filterModelStages"
                         [(selectedEntities)]="selectedOrders"
+                        (onEntityStageChanged)="onOrderStageChanged($event)"
                         (onStagesLoaded)="onStagesLoaded($event)"
                         (onCardClick)="onCardClick($event)">
                         Loading...

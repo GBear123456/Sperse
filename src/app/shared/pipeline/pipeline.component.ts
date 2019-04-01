@@ -40,6 +40,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCardClick: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onEntityStageChanged: EventEmitter<any> = new EventEmitter<any>();
 
     private _selectedEntities: any;
     private _dataSource: any;
@@ -112,16 +113,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
                         if (entity && oldStage.name != newStage.name)
                             this.updateEntityStage(entity.Id, newStage.name, oldStage.name, () => {
+                                this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);
                                 if (entity.Id != entityId) {
                                     newStage['entities'].unshift(entity);
-                                    oldStage['entities'].splice(oldStage['entities'].indexOf(entity), 1);
+                                    oldStage['entities'].splice(oldStage['entities'].indexOf(entity), 1);                                    
                                 }
                             });
                     });
                     this.selectedEntities = [];
                 } else
                     this.updateEntityStage(entityId, newStage.name,
-                        this.getStageByElement(value[3]).name);
+                        this.getStageByElement(value[3]).name, () => {
+                            this.onEntityStageChanged && this.onEntityStageChanged
+                                .emit(this.getEntityById(entityId, newStage));
+                        });
             }
         }));
         this.subscribers.push(
@@ -231,10 +236,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    getEntityByElement(el, stage) {
+    getEntityById(id, stage) {
         return stage && _.find(stage.entities, (entity) => {
-            return entity && (entity['Id'] == parseInt(this.getAccessKey(el.closest('.card'))));
+            return entity && (entity['Id'] == id);
         });
+    }
+
+    getEntityByElement(el, stage) {
+        return stage && this.getEntityById(parseInt(this.getAccessKey(el.closest('.card'))), stage);
     }
 
     getStageByElement(el) {

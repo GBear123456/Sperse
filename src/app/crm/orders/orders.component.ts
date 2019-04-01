@@ -59,7 +59,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     public headlineConfig = {
         names: [this.l('Orders')],
-        onRefresh: this.refreshDataGrid.bind(this),
+        onRefresh: this.processFilterInternal.bind(this),
         icon: 'briefcase'
     };
 
@@ -117,8 +117,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    refreshDataGrid() {
+    invalidate() {     
         this.processFilterInternal();
+        this.filterChanged = true;
     }
 
     showColumnChooser() {
@@ -477,6 +478,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.rootComponent.overflowHidden(true);
 
         this.showHostElement();
+    }
+
+    onOrderStageChanged(order) {
+        if (this.dataGrid && this.dataGrid.instance)
+            this.dataGrid.instance.getVisibleRows().some((row) => {
+                if (order.Id == row.data.Id) {
+                    row.data.Stage = order.Stage;
+                    row.data.StageId = order.StageId;
+                    return true;
+                }                
+            });
     }
 
     deactivate() {

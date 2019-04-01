@@ -7,10 +7,10 @@ import {
     Injector,
     ViewChild
 } from '@angular/core';
+import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { RouteReuseStrategy } from '@angular/router';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Store, select } from '@ngrx/store';
@@ -877,6 +877,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             );
             this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, entityStageDataSource, loadMethod);
         }
+    }
+
+    onLeadStageChanged(lead) {  
+        if (this.dataGrid && this.dataGrid.instance)
+            this.dataGrid.instance.getVisibleRows().some((row) => {
+                if (lead.Id == row.data.Id) {
+                    row.data.Stage = lead.Stage;
+                    row.data.StageId = lead.StageId;
+                    return true;
+                }                
+            });    
     }
 
     getAssignedUsersStoreSelectors() {
