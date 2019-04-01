@@ -13542,6 +13542,58 @@ export class InvoiceServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    create(input: CreateInvoiceInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @id (optional) 
      * @return Success
      */
@@ -45707,6 +45759,121 @@ export class GetUserInstanceInfoOutput implements IGetUserInstanceInfoOutput {
 export interface IGetUserInstanceInfoOutput {
     id: number | undefined;
     status: GetUserInstanceInfoOutputStatus | undefined;
+}
+
+export class CreateInvoiceInput implements ICreateInvoiceInput {
+    contactId!: number;
+    orderId!: number | undefined;
+    date!: moment.Moment;
+    dueDate!: moment.Moment;
+    description!: string | undefined;
+    note!: string | undefined;
+    lines!: CreateInvoiceLineInput[];
+
+    constructor(data?: ICreateInvoiceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.lines = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.orderId = data["orderId"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.description = data["description"];
+            this.note = data["note"];
+            if (data["lines"] && data["lines"].constructor === Array) {
+                this.lines = [];
+                for (let item of data["lines"])
+                    this.lines.push(CreateInvoiceLineInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateInvoiceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateInvoiceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["orderId"] = this.orderId;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        data["note"] = this.note;
+        if (this.lines && this.lines.constructor === Array) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICreateInvoiceInput {
+    contactId: number;
+    orderId: number | undefined;
+    date: moment.Moment;
+    dueDate: moment.Moment;
+    description: string | undefined;
+    note: string | undefined;
+    lines: CreateInvoiceLineInput[];
+}
+
+export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
+    quantity!: number;
+    rate!: number;
+    description!: string | undefined;
+
+    constructor(data?: ICreateInvoiceLineInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.quantity = data["quantity"];
+            this.rate = data["rate"];
+            this.description = data["description"];
+        }
+    }
+
+    static fromJS(data: any): CreateInvoiceLineInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateInvoiceLineInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["quantity"] = this.quantity;
+        data["rate"] = this.rate;
+        data["description"] = this.description;
+        return data; 
+    }
+}
+
+export interface ICreateInvoiceLineInput {
+    quantity: number;
+    rate: number;
+    description: string | undefined;
 }
 
 export class InvoiceDto implements IInvoiceDto {
