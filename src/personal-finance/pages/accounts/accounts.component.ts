@@ -143,6 +143,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         Quovo.embed(settings);
         this.lastQuouvoActivity = new Date();
         this.resetQuovoActivityCheck();
+        document.querySelector('body').classList.add('finance-page');
     }
 
     private refreshQuovoSection(sectionName: string) {
@@ -239,6 +240,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     ngOnDestroy() {
         super.ngOnDestroy();
         this.stopQuovoActivityCheck();
+        document.querySelector('body').classList.remove('finance-page');
     }
 
 }
