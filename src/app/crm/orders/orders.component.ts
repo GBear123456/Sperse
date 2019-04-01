@@ -455,6 +455,19 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.initToolbarConfig();
     }
 
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
+    }
+
+    onCellClick(event) {
+        let col = event.column;
+        if (col && col.command)
+            return;
+
+        this.onCardClick(event.data);
+    }
+
     onCardClick(order) {
         if (order && order.ContactId)
             this._router.navigate(
