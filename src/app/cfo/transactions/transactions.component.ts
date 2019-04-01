@@ -1086,9 +1086,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             disableClose: true,
             closeOnNavigation: false,
             data: {
+                refreshParent: this.invalidate.bind(this),
                 transactionId: this.transactionId
             }
-        }).afterClosed().subscribe(() => this.refreshDataGrid());
+        });
     }
 
     ngOnDestroy() {
