@@ -282,6 +282,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             ]);
         }
         this._filtersService.apply(() => {
+            this.selectedOrderKeys = [];
             this.filterChanged = true;
             this.initToolbarConfig();
             this.processFilterInternal();
@@ -327,6 +328,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         options: {
                             width: '279',
                             mode: 'search',
+                            value: this.searchValue,
                             placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
@@ -336,21 +338,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 ]
             },
             {
-                location: 'before', items: [
-                    { name: 'back' }
-                ]
-            },
-            {
                 location: 'before',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'assign' }, { 
-                        name: 'stage' 
+                    { name: 'assign', disabled: true }, { 
+                        name: 'stage',
                         action: this.toggleStages.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
                         }
-                    }, { name: 'delete' }
+                    }, { name: 'delete', disabled: true }
                 ]
             },
             {
