@@ -14,7 +14,6 @@ import {
     ExternalAuthenticateResultModel,
     ExternalLoginProviderInfoModel,
     TokenAuthServiceProxy,
-    TenantHostType,
     SendPasswordResetCodeInput,
     AccountServiceProxy,
     SendPasswordResetCodeOutput,
@@ -73,7 +72,6 @@ export class LoginService {
     resetPasswordResult: SendPasswordResetCodeOutput;
 
     externalLoginProviders$: Observable<ExternalLoginProvider[]>;
-    signUpData: SignUpMemberRequest = new SignUpMemberRequest();
 
     constructor(
         private _tokenAuthService: TokenAuthServiceProxy,

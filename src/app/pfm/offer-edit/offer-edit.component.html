@@ -10,7 +10,10 @@
                     </inplace-edit>
                 </ng-container>
             </ng-container>
-            <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">Save</button>
+            <div class="buttons">
+                <button class="button-layout button-primary" *ngIf="sentAnnouncementPermissionGranted" (click)="onNotify()">{{ ls.l('Notify') }}</button>
+                <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">{{ ls.l('Save') }}</button>
+            </div>
             <div class="vertical-delimiter ng-star-inserted"></div>
             <div class="navigation">
                 <dx-button icon="chevronprev" class="prev" [hint]="ls.l('Previous')" (click)="onPrev()" [disabled]="prevButtonIsDisabled"></dx-button>
@@ -136,8 +139,8 @@
                                                 <dx-text-box [valueChangeEvent]="'focusout'"
                                                              [disabled]="isReadOnly(detail) | async"
                                                              [placeholder]="!(isReadOnly(detail) | async) ? ls.ls('PFM', 'Enter_Value') : ''"
-                                                             [value]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail][i]"
-                                                             (onValueChanged)="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail][i] = $event.value">
+                                                             [value]="model.hasOwnProperty(detail) ? model[detail][i].name || model[detail][i] : model.extendedInfo[detail][i]"
+                                                             (onValueChanged)="model.hasOwnProperty(detail) ? (model[detail][i].name ? model[detail][i].name = $event.value : model[detail][i] = $event.value ) : model.extendedInfo[detail][i] = $event.value">
                                                 </dx-text-box>
                                                 <span *ngIf="!(isReadOnly(detail) | async)" class="clear-contact" (click)="remove(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail], i)"><i class="minus-icon"></i></span>
                                             </div>
