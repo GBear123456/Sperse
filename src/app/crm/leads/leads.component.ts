@@ -708,6 +708,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             data: {
                 refreshParent: () => {
                     this.refresh();
+                    this.filterChanged = true;
                 },
                 isInLeadMode: true,
                 customerType: ContactGroup.Client
@@ -740,6 +741,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.selectedLeads, 
                 $event.name
             ).subscribe((declinedList) => {
+                this.filterChanged = true;
                 let gridInstance = this.dataGrid && this.dataGrid.instance;
                 if (gridInstance && declinedList && declinedList.length)
                     gridInstance.selectRows(declinedList.map(item => item.Id), false);

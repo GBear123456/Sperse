@@ -1,7 +1,17 @@
 <img [ngClass]="(_paymentStatusData.icon || _paymentStatusData.status)" [src]="'./assets/common/icons/' + (_paymentStatusData.icon || _paymentStatusData.status) + '.svg'">
 <h2>{{ statusTitle }}</h2>
-<p *ngIf="_paymentStatusData.statusText">{{ _paymentStatusData.statusText }}</p>
-<p *ngIf="_paymentStatusData.errorDetailsText">{{ _paymentStatusData.errorDetailsText }}</p>
+<ng-container *ngIf="!_paymentStatusData.downloadPdf; else download;">
+    <p *ngIf="_paymentStatusData.statusText">{{ _paymentStatusData.statusText }}</p>
+    <p *ngIf="_paymentStatusData.errorDetailsText">{{ _paymentStatusData.errorDetailsText }}</p>
+</ng-container>
+
+<ng-template #download>
+    <a [href]="_paymentStatusData.downloadPdf" class="download-wrapper" target="_blank" download>
+        <span class="pdf-link">{{ l('downloadTransferInstructions') }}</span>
+        <p *ngIf="_paymentStatusData.statusText">{{ _paymentStatusData.statusText }}</p>
+    </a>
+</ng-template>
+
 <button mat-button
         matStepperPrevious
         type="button"

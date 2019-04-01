@@ -65,9 +65,11 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
 
     private paymentMethodsConfig = {
         [PaymentMethods.BankTransfer]: {
-            successStatus: (res: RequestPaymentResult) => this.l('pendingBankTransferIntentRecorded', res.transactionId),
+            successStatus: (res: RequestPaymentResult) => this.l('pendingBankTransferIntentRecorded'),
+            successStatusText: (res: RequestPaymentResult) => this.l('pendingBankTransferReference', res.transactionId),
             showBack: false,
-            skipRefreshAfterClose: true
+            skipRefreshAfterClose: true,
+            downloadPdf: 'assets/documents/Sperse Bank Transfer Sending Instructions.pdf'
         },
         [PaymentMethods.Free]: {
             successStatus: this.l('PaymentStatus_payment-free-confirmed')
@@ -204,7 +206,9 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     this.appService.loadModeuleSubscriptions();
                     this.onStatusChange.emit({
                         status: this.getPaymentStatus(paymentMethod, res),
-                        icon: PaymentStatusEnum.Confirmed,
+                        statusText: this.getPaymentStatusText(paymentMethod, res),
+                        icon: PaymentStatusEnum.Confirmed,                        
+                        downloadPdf: this.paymentMethodsConfig[paymentMethod] && this.paymentMethodsConfig[paymentMethod].downloadPdf,
                         showBack: this.paymentMethodsConfig[paymentMethod] && this.paymentMethodsConfig[paymentMethod].showBack
                     });
                 },
@@ -216,6 +220,14 @@ export class PaymentOptionsComponent extends AppComponentBase implements OnInit 
                     });
                 }
             );
+    }
+
+    getPaymentStatusText(paymentMethod: PaymentMethods, res: any) {
+        let config = this.paymentMethodsConfig[paymentMethod];
+        return config && config.successStatusText ?
+            typeof config.successStatusText === 'function' ?
+                config['successStatusText'](res) : config.successStatusText
+            : '';
     }
 
     getPaymentStatus(paymentMethod: PaymentMethods, res: any) {
