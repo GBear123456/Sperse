@@ -1,542 +1,553 @@
 <div [@routerTransition]>
-    <div class="m-subheader">
-        <div class="d-flex align-items-center">
-            <div class="mr-auto col-sm-12 col-md-6">
-                <h3 class="m-subheader__title m-subheader__title--separator">
-                    <span>{{l("Settings")}}</span>
-                </h3>
-                <span class="m-section__sub">
-                    {{l("SettingsHeaderInfo")}}
-                </span>
-            </div>
-            <div class="col-sm-12 col-md-6 text-right">
-                <button class="btn btn-primary" (click)="saveAll()"><i class="la la-floppy-o"></i> {{l("SaveAll")}}</button>
-            </div>
-        </div>
-    </div>
+    <app-headline [config]="headlineConfig"></app-headline>
 
-    <div class="m-content">
-        <div class="m-portlet m-portlet--mobile">
-            <div class="m-portlet__body">
-                <tabset class="tab-container" *ngIf="settings">
-                    <tab heading="{{l('General')}}" *ngIf="showTimezoneSelection" [active]="activeTabIndex == 0" customClass="m-tabs__item">
-                        <div class="form-group" *ngIf="showTimezoneSelection">
-                            <label for="Timezone">{{l("Timezone")}}</label>
-                            <timezone-combo id="Timezone" [(selectedTimeZone)]="settings.general.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
-                        </div>
-                        <div class="form-group">
-                            <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>
-                            <input  id="PublicSiteUrl" type="url" name="PublicSiteUrl" class="form-control" [(ngModel)]="settings.general.publicSiteUrl" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
-                            <input id="ZendeskAccountUrl" type="text" name="ZendeskAccountUrl" class="form-control" [(ngModel)]="settings.general.zendeskAccountUrl" maxlength="128">
-                        </div>
-                        <div class="row m-form">
-                            <div class="col-md-6">
-                                <h5>{{l("PrivacyPolicy")}}</h5>
-                                <p *ngIf="appSession.tenant.customPrivacyPolicyDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
-                                <form #privacyPolicyUploadForm>
-                                    <div class="form-group">
-                                        <input type="file" ng2FileSelect [uploader]="customPrivacyPolicyUploader" class="col-lg-12" required accept=".html" />
-                                        <span class="m-form__help col-lg-12">{{l("UploadPrivacyPolicy_Info")}}</span>
-                                    </div>
-                                    <button class="btn btn-primary" type="button" (click)="uploadCustomPrivacyPolicy()">{{l("Upload")}}</button>
-                                    <button class="btn btn-default" type="button" (click)="clearCustomPrivacyPolicy()">{{l("Clear")}}</button>
-                                </form>
-                            </div>
-                            <div class="col-md-6">
-                                <h5>{{l("TermsOfService")}}</h5>
-                                <p *ngIf="appSession.tenant.customToSDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
-                                <form #toSUploadForm>
-                                    <div class="form-group">
-                                        <input type="file" ng2FileSelect [uploader]="customToSUploader" class="col-lg-12" required accept=".html" />
-                                        <span class="m-form__help col-lg-12">{{l("UploadToS_Info")}}</span>
-                                    </div>
-                                    <button class="btn btn-primary" type="button" (click)="uploadCustomToS()">{{l("Upload")}}</button>
-                                    <button class="btn btn-default" type="button" (click)="clearCustomToS()">{{l("Clear")}}</button>
-                                </form>
-                            </div>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('Appearance')}}" [active]="activeTabIndex == 1" customClass="m-tabs__item">
-                        <div class="row m-form">
-                            <div class="col-md-4">
-                                <h5>{{l("ApplicationLogo")}}</h5>
-                                <form #logoUploadForm>
-                                    <div class="form-group">
-                                        <input type="file" ng2FileSelect [uploader]="logoUploader" class="col-lg-12" required />
-                                        <span class="m-form__help col-lg-12">{{l("UploadLogo_Info")}}</span>
-                                    </div>
-                                    <button class="btn btn-primary" type="button" (click)="uploadLogo()">{{l("Upload")}}</button>
-                                    <button class="btn btn-default" type="button" (click)="clearLogo()">{{l("Clear")}}</button>
-                                </form>
-                            </div>
-                            <div class="col-md-4">
-                                <h5>{{l("CustomCSS")}}</h5>
-                                <p *ngIf="appSession.tenant.customCssId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.customCssId + '/' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
-                                <form #cssUploadForm>
-                                    <div class="form-group">
-                                        <input type="file" ng2FileSelect [uploader]="customCssUploader" class="col-lg-12" required />
-                                        <span class="m-form__help col-lg-12">{{l("UploadCSS_Info")}}</span>
-                                    </div>
-                                    <button class="btn btn-primary" type="button" (click)="uploadCustomCss()">{{l("Upload")}}</button>
-                                    <button class="btn btn-default" type="button" (click)="clearCustomCss()">{{l("Clear")}}</button>
-                                </form>
-                            </div>
-                            <div class="col-md-4">
-                                <h5>{{l('CustomFavicons')}}</h5>
-                                <form #faviconsUploadForm>
-                                    <div class="form-group">
-                                        <input type="file" ng2FileSelect [uploader]="faviconsUploader" class="col-lg-12" required />
-                                        <span class="m-form__help col-lg-12">{{l("UploadFavicons_Info")}}</span>
-                                    </div>
-                                    <button class="btn btn-primary" type="button" (click)="uploadFavicons()">{{l("Upload")}}</button>
-                                    <button class="btn btn-default" type="button" (click)="clearFavicons()">{{l("Clear")}}</button>
-                                </form>
-                            </div>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('UserManagement')}}" customClass="m-tabs__item">
-                        <div class="m-form">
-                            <h5>{{l("FormBasedRegistration")}}</h5>
-                            <div class="m-checkbox-list">
-                                <div class="form-group m-form__group">
-                                    <label for="Setting_AllowSelfRegistration" class="m-checkbox">
-                                        <input id="Setting_AllowSelfRegistration" class="m-check" type="checkbox" name="AllowSelfRegistration" [(ngModel)]="settings.userManagement.allowSelfRegistration">
-                                        {{l("AllowUsersToRegisterThemselves")}}
-                                        <span></span>
-                                    </label>
-                                    <span class="m-form__help">{{l("AllowUsersToRegisterThemselves_Hint")}}</span>
+    <div class="wrapper">
+        <mat-tab-group *ngIf="settings">
+            <mat-tab label="{{l('General')}}" *ngIf="showTimezoneSelection">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="form-group" *ngIf="showTimezoneSelection">
+                        <label for="Timezone">{{l("Timezone")}}</label>
+                        <timezone-combo id="Timezone" [(selectedTimeZone)]="settings.general.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
+                    </div>
+                    <div class="form-group">
+                        <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>
+                        <input  id="PublicSiteUrl" type="url" name="PublicSiteUrl" class="form-control" [(ngModel)]="settings.general.publicSiteUrl" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
+                        <input id="ZendeskAccountUrl" type="text" name="ZendeskAccountUrl" class="form-control" [(ngModel)]="settings.general.zendeskAccountUrl" maxlength="128">
+                    </div>
+                    <div class="row m-form">
+                        <div class="col-md-6">
+                            <h5>{{l("PrivacyPolicy")}}</h5>
+                            <p *ngIf="appSession.tenant.customPrivacyPolicyDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
+                            <form #privacyPolicyUploadForm>
+                                <div class="form-group">
+                                    <input type="file" ng2FileSelect [uploader]="customPrivacyPolicyUploader" class="col-lg-12" required accept=".html" />
+                                    <span class="m-form__help col-lg-12">{{l("UploadPrivacyPolicy_Info")}}</span>
                                 </div>
-                                <div class="form-group m-form__group">
-                                    <label for="Setting_IsNewRegisteredUserActiveByDefault" class="m-checkbox">
-                                        <input id="Setting_IsNewRegisteredUserActiveByDefault" type="checkbox" name="IsNewRegisteredUserActiveByDefault" [(ngModel)]="settings.userManagement.isNewRegisteredUserActiveByDefault">
-                                        {{l("NewRegisteredUsersIsActiveByDefault")}}
-                                        <span></span>
-                                    </label>
-                                    <span class="m-form__help">{{l("NewRegisteredUsersIsActiveByDefault_Hint")}}</span>
+                                <button class="btn btn-primary" type="button" (click)="uploadCustomPrivacyPolicy()">{{l("Upload")}}</button>
+                                <button class="btn btn-default" type="button" (click)="clearCustomPrivacyPolicy()">{{l("Clear")}}</button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>{{l("TermsOfService")}}</h5>
+                            <p *ngIf="appSession.tenant.customToSDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetTermsOfServiceDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
+                            <form #toSUploadForm>
+                                <div class="form-group">
+                                    <input type="file" ng2FileSelect [uploader]="customToSUploader" class="col-lg-12" required accept=".html" />
+                                    <span class="m-form__help col-lg-12">{{l("UploadToS_Info")}}</span>
                                 </div>
-                                <label for="Setting_UseCaptchaOnRegistration" class="m-checkbox" [hidden]="!settings.userManagement.allowSelfRegistration">
-                                    <input id="Setting_UseCaptchaOnRegistration" type="checkbox" name="UseCaptchaOnRegistration" [(ngModel)]="settings.userManagement.useCaptchaOnRegistration">
-                                    {{l("UseCaptchaOnRegistration")}}
-                                    <span></span>
-                                </label>
-                            </div>
+                                <button class="btn btn-primary" type="button" (click)="uploadCustomToS()">{{l("Upload")}}</button>
+                                <button class="btn btn-default" type="button" (click)="clearCustomToS()">{{l("Clear")}}</button>
+                            </form>
                         </div>
-                        <div *ngIf="!isMultiTenancyEnabled && settings.ldap.isModuleEnabled">
-                            <h5 class="margin-top-20">{{l("LdapSettings")}}</h5>
-                            <label for="Setting_LdapIsEnabled" class="m-checkbox">
-                                <input id="Setting_LdapIsEnabled" type="checkbox" name="LdapIsEnabled" [(ngModel)]="settings.ldap.isEnabled">
-                                {{l("EnableLdapAuthentication")}}
-                                <span></span>
-                            </label>
-                            <div class="form-group" [hidden]="!settings.ldap.isEnabled">
-                                <label for="LdapDomainName">{{l("DomainName")}}</label>
-                                <input id="LdapDomainName" type="text" name="LdapDomainName" class="form-control" [(ngModel)]="settings.ldap.domain" maxlength="128">
-                            </div>
-                            <div class="form-group" [hidden]="!settings.ldap.isEnabled">
-                                <label for="LdapUserName">{{l("UserName")}}</label>
-                                <input id="LdapUserName" type="text" name="LdapUserName" class="form-control" [(ngModel)]="settings.ldap.userName" maxlength="128">
-                            </div>
-                            <div class="form-group" [hidden]="!settings.ldap.isEnabled">
-                                <label for="LdapPassword">{{l("Password")}}</label>
-                                <input id="LdapPassword" type="password" name="LdapPassword" class="form-control" [(ngModel)]="settings.ldap.password" maxlength="128">
-                            </div>
-                        </div>
-                        <div>
-                            <h5 class="margin-top-20">{{l("OtherSettings")}}</h5>
-                            <label for="Setting_IsEmailConfirmationRequiredForLogin" class="m-checkbox">
-                                <input id="Setting_IsEmailConfirmationRequiredForLogin" type="checkbox" name="IsEmailConfirmationRequiredForLogin" [(ngModel)]="settings.userManagement.isEmailConfirmationRequiredForLogin">
-                                {{l("EmailConfirmationRequiredForLogin")}}
-                                <span></span>
-                            </label>
-                        </div>
-                    </tab>
-                    <tab *ngIf="true" heading="{{l('Security')}}" customClass="m-tabs__item">
-                        <!-- *ngIf="true" is a workaround for https://github.com/valor-software/ng2-bootstrap/issues/823 -->
-                        <div>
-                            <h5>{{l("PasswordComplexity")}}</h5>
-                            <label for="Setting_PasswordComplexity_UseDefaultSettings" class="m-checkbox">
-                                <input id="Setting_PasswordComplexity_UseDefaultSettings" type="checkbox" name="Setting_PasswordComplexity_UseDefaultSettings" [(ngModel)]="settings.security.useDefaultPasswordComplexitySettings">
-                                {{l("UseDefaultSettings")}}
-                                <span></span>
-                            </label>
-                            <div class="m-checkbox-list">
-                                <label for="Setting_PasswordComplexity_RequireDigit" class="m-checkbox">
-                                    <input id="Setting_PasswordComplexity_RequireDigit" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
-                                           [(ngModel)]="settings.security.passwordComplexity.requireDigit" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
-                                    <input id="Setting_PasswordComplexity_RequireDigit" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
-                                           [(ngModel)]="settings.security.defaultPasswordComplexity.requireDigit" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
-                                           disabled>
-                                    {{l("PasswordComplexity_RequireDigit")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_PasswordComplexity_RequireLowercase" class="m-checkbox">
-                                    <input id="Setting_PasswordComplexity_RequireLowercase" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
-                                           [(ngModel)]="settings.security.passwordComplexity.requireLowercase" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
-                                    <input id="Setting_PasswordComplexity_RequireLowercase" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
-                                           [(ngModel)]="settings.security.defaultPasswordComplexity.requireLowercase" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
-                                           disabled>
-                                    {{l("PasswordComplexity_RequireLowercase")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_PasswordComplexity_RequireNonAlphanumeric" class="m-checkbox">
-                                    <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
-                                           [(ngModel)]="settings.security.passwordComplexity.requireNonAlphanumeric" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
-                                    <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
-                                           [(ngModel)]="settings.security.defaultPasswordComplexity.requireNonAlphanumeric" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
-                                           disabled>
-                                    {{l("PasswordComplexity_RequireNonAlphanumeric")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_PasswordComplexity_RequireUppercase" class="m-checkbox">
-                                    <input id="Setting_PasswordComplexity_RequireUppercase" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
-                                           [(ngModel)]="settings.security.passwordComplexity.requireUppercase" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
-                                    <input id="Setting_PasswordComplexity_RequireUppercase" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
-                                           [(ngModel)]="settings.security.defaultPasswordComplexity.requireUppercase" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
-                                           disabled>
-                                    {{l("PasswordComplexity_RequireUppercase")}}
-                                    <span></span>
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label>{{l("PasswordComplexity_RequiredLength")}}</label>
-                                <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':settings.security.passwordComplexity.requiredLength}"
-                                       [(ngModel)]="settings.security.passwordComplexity.requiredLength" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
-                                <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':settings.security.defaultPasswordComplexity.requiredLength}"
-                                       [(ngModel)]="settings.security.defaultPasswordComplexity.requiredLength" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
-                                       disabled>
-                            </div>
-                        </div>
-                        <div>
-                            <h5>{{l("UserLockOut")}}</h5>
-                            <div class="md-checkbox-list">
-                                <div>
-                                    <label for="Setting_UserLockOut_IsEnabled" class="m-checkbox">
-                                        <input id="Setting_UserLockOut_IsEnabled" type="checkbox" name="Setting_UserLockOut_IsEnabled" [(ngModel)]="settings.security.userLockOut.isEnabled">
-                                        {{l("EnableUserAccountLockingOnFailedLoginAttemts")}}
-                                        <span></span>
-                                    </label>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Appearance')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="row m-form">
+                        <div class="col-md-4">
+                            <h5>{{l("ApplicationLogo")}}</h5>
+                            <form #logoUploadForm>
+                                <div class="form-group">
+                                    <input type="file" ng2FileSelect [uploader]="logoUploader" class="col-lg-12" required />
+                                    <span class="m-form__help col-lg-12">{{l("UploadLogo_Info")}}</span>
                                 </div>
-                            </div>
-                            <div class="form-group" *ngIf="settings.security.userLockOut.isEnabled">
-                                <label for="MaxFailedAccessAttemptsBeforeLockout">{{l("MaxFailedAccessAttemptsBeforeLockout")}}</label>
-                                <input id="MaxFailedAccessAttemptsBeforeLockout" type="number" name="MaxFailedAccessAttemptsBeforeLockout" class="form-control" [ngClass]="{'edited':settings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout}" [(ngModel)]="settings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout">
-                            </div>
-                            <div class="form-group" *ngIf="settings.security.userLockOut.isEnabled">
-                                <label for="DefaultAccountLockoutSeconds">{{l("DefaultAccountLockoutDurationAsSeconds")}}</label>
-                                <input id="DefaultAccountLockoutSeconds" type="number" name="DefaultAccountLockoutSeconds" class="form-control" [ngClass]="{'edited':settings.security.userLockOut.defaultAccountLockoutSeconds}" [(ngModel)]="settings.security.userLockOut.defaultAccountLockoutSeconds">
-                            </div>
+                                <button class="btn btn-primary" type="button" (click)="uploadLogo()">{{l("Upload")}}</button>
+                                <button class="btn btn-default" type="button" (click)="clearLogo()">{{l("Clear")}}</button>
+                            </form>
                         </div>
-                        <div *ngIf="!isMultiTenancyEnabled || settings.security.twoFactorLogin.isEnabledForApplication">
-                            <h5>{{l("TwoFactorLogin")}}</h5>
-                            <div class="m-checkbox-list">
-                                <label for="Setting_TwoFactorLogin_IsEnabled" class="m-checkbox">
-                                    <input id="Setting_TwoFactorLogin_IsEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsEnabled" [(ngModel)]="settings.security.twoFactorLogin.isEnabled">
-                                    {{l("EnableTwoFactorLogin")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_TwoFactorLogin_IsEmailProviderEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled && !isMultiTenancyEnabled">
-                                    <input id="Setting_TwoFactorLogin_IsEmailProviderEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsEmailProviderEnabled" [(ngModel)]="settings.security.twoFactorLogin.isEmailProviderEnabled">
-                                    {{l("IsEmailVerificationEnabled")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_TwoFactorLogin_IsSmsProviderEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled && !isMultiTenancyEnabled">
-                                    <input id="Setting_TwoFactorLogin_IsSmsProviderEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsSmsProviderEnabled" [(ngModel)]="settings.security.twoFactorLogin.isSmsProviderEnabled">
-                                    {{l("IsSmsVerificationEnabled")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled && !isMultiTenancyEnabled">
-                                    <input id="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled"
-                                           [(ngModel)]="settings.security.twoFactorLogin.isGoogleAuthenticatorEnabled">
-                                    {{l("IsGoogleAuthenticatorEnabled")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_TwoFactorLogin_IsRememberBrowserEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled">
-                                    <input id="Setting_TwoFactorLogin_IsRememberBrowserEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsRememberBrowserEnabled" [(ngModel)]="settings.security.twoFactorLogin.isRememberBrowserEnabled">
-                                    {{l("AllowToRememberBrowserForTwoFactorLogin")}}
-                                    <span></span>
-                                </label>
-                            </div>
+                        <div class="col-md-4">
+                            <h5>{{l("CustomCSS")}}</h5>
+                            <p *ngIf="appSession.tenant.customCssId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.customCssId + '/' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
+                            <form #cssUploadForm>
+                                <div class="form-group">
+                                    <input type="file" ng2FileSelect [uploader]="customCssUploader" class="col-lg-12" required />
+                                    <span class="m-form__help col-lg-12">{{l("UploadCSS_Info")}}</span>
+                                </div>
+                                <button class="btn btn-primary" type="button" (click)="uploadCustomCss()">{{l("Upload")}}</button>
+                                <button class="btn btn-default" type="button" (click)="clearCustomCss()">{{l("Clear")}}</button>
+                            </form>
                         </div>
-                    </tab>
-                    <tab heading="{{l('EmailSmtp')}}" *ngIf="!isMultiTenancyEnabled" customClass="m-tabs__item">
-                        <div class="form-group">
-                            <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
-                            <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [ngClass]="{'edited':settings.email.defaultFromAddress}" [(ngModel)]="settings.email.defaultFromAddress" maxlength="128">
+                        <div class="col-md-4">
+                            <h5>{{l('CustomFavicons')}}</h5>
+                            <form #faviconsUploadForm>
+                                <div class="form-group">
+                                    <input type="file" ng2FileSelect [uploader]="faviconsUploader" class="col-lg-12" required />
+                                    <span class="m-form__help col-lg-12">{{l("UploadFavicons_Info")}}</span>
+                                </div>
+                                <button class="btn btn-primary" type="button" (click)="uploadFavicons()">{{l("Upload")}}</button>
+                                <button class="btn btn-default" type="button" (click)="clearFavicons()">{{l("Clear")}}</button>
+                            </form>
                         </div>
-                        <div class="form-group">
-                            <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
-                            <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [ngClass]="{'edited':settings.email.defaultFromDisplayName}" [(ngModel)]="settings.email.defaultFromDisplayName" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="SmtpHost">{{l("SmtpHost")}}</label>
-                            <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':settings.email.smtpHost}" [(ngModel)]="settings.email.smtpHost" maxlength="64">
-                        </div>
-                        <div class="form-group">
-                            <label for="SmtpPort">{{l("SmtpPort")}}</label>
-                            <input id="SmtpPort" type="number" name="SmtpPort" class="form-control" [ngClass]="{'edited':settings.email.smtpPort}" [(ngModel)]="settings.email.smtpPort" maxlength="5">
-                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('UserManagement')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="m-form">
+                        <h5>{{l("FormBasedRegistration")}}</h5>
                         <div class="m-checkbox-list">
-                            <label for="Settings_SmtpEnableSsl" class="m-checkbox">
-                                <input id="Settings_SmtpEnableSsl" type="checkbox" name="SmtpEnableSsl" [(ngModel)]="settings.email.smtpEnableSsl">
-                                {{l("UseSsl")}}
+                            <div class="form-group m-form__group">
+                                <label for="Setting_AllowSelfRegistration" class="m-checkbox">
+                                    <input id="Setting_AllowSelfRegistration" class="m-check" type="checkbox" name="AllowSelfRegistration" [(ngModel)]="settings.userManagement.allowSelfRegistration">
+                                    {{l("AllowUsersToRegisterThemselves")}}
+                                    <span></span>
+                                </label>
+                                <span class="m-form__help">{{l("AllowUsersToRegisterThemselves_Hint")}}</span>
+                            </div>
+                            <div class="form-group m-form__group">
+                                <label for="Setting_IsNewRegisteredUserActiveByDefault" class="m-checkbox">
+                                    <input id="Setting_IsNewRegisteredUserActiveByDefault" type="checkbox" name="IsNewRegisteredUserActiveByDefault" [(ngModel)]="settings.userManagement.isNewRegisteredUserActiveByDefault">
+                                    {{l("NewRegisteredUsersIsActiveByDefault")}}
+                                    <span></span>
+                                </label>
+                                <span class="m-form__help">{{l("NewRegisteredUsersIsActiveByDefault_Hint")}}</span>
+                            </div>
+                            <label for="Setting_UseCaptchaOnRegistration" class="m-checkbox" [hidden]="!settings.userManagement.allowSelfRegistration">
+                                <input id="Setting_UseCaptchaOnRegistration" type="checkbox" name="UseCaptchaOnRegistration" [(ngModel)]="settings.userManagement.useCaptchaOnRegistration">
+                                {{l("UseCaptchaOnRegistration")}}
                                 <span></span>
                             </label>
-                            <label for="Settings_SmtpUseDefaultCredentials" class="m-checkbox">
-                                <input id="Settings_SmtpUseDefaultCredentials" type="checkbox" name="SmtpUseDefaultCredentials" [(ngModel)]="settings.email.smtpUseDefaultCredentials">
-                                {{l("UseDefaultCredentials")}}
+                        </div>
+                    </div>
+                    <div *ngIf="!isMultiTenancyEnabled && settings.ldap.isModuleEnabled">
+                        <h5 class="margin-top-20">{{l("LdapSettings")}}</h5>
+                        <label for="Setting_LdapIsEnabled" class="m-checkbox">
+                            <input id="Setting_LdapIsEnabled" type="checkbox" name="LdapIsEnabled" [(ngModel)]="settings.ldap.isEnabled">
+                            {{l("EnableLdapAuthentication")}}
+                            <span></span>
+                        </label>
+                        <div class="form-group" [hidden]="!settings.ldap.isEnabled">
+                            <label for="LdapDomainName">{{l("DomainName")}}</label>
+                            <input id="LdapDomainName" type="text" name="LdapDomainName" class="form-control" [(ngModel)]="settings.ldap.domain" maxlength="128">
+                        </div>
+                        <div class="form-group" [hidden]="!settings.ldap.isEnabled">
+                            <label for="LdapUserName">{{l("UserName")}}</label>
+                            <input id="LdapUserName" type="text" name="LdapUserName" class="form-control" [(ngModel)]="settings.ldap.userName" maxlength="128">
+                        </div>
+                        <div class="form-group" [hidden]="!settings.ldap.isEnabled">
+                            <label for="LdapPassword">{{l("Password")}}</label>
+                            <input id="LdapPassword" type="password" name="LdapPassword" class="form-control" [(ngModel)]="settings.ldap.password" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="margin-top-20">{{l("OtherSettings")}}</h5>
+                        <label for="Setting_IsEmailConfirmationRequiredForLogin" class="m-checkbox">
+                            <input id="Setting_IsEmailConfirmationRequiredForLogin" type="checkbox" name="IsEmailConfirmationRequiredForLogin" [(ngModel)]="settings.userManagement.isEmailConfirmationRequiredForLogin">
+                            {{l("EmailConfirmationRequiredForLogin")}}
+                            <span></span>
+                        </label>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Security')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <h5>{{l("PasswordComplexity")}}</h5>
+                        <label for="Setting_PasswordComplexity_UseDefaultSettings" class="m-checkbox">
+                            <input id="Setting_PasswordComplexity_UseDefaultSettings" type="checkbox" name="Setting_PasswordComplexity_UseDefaultSettings" [(ngModel)]="settings.security.useDefaultPasswordComplexitySettings">
+                            {{l("UseDefaultSettings")}}
+                            <span></span>
+                        </label>
+                        <div class="m-checkbox-list">
+                            <label for="Setting_PasswordComplexity_RequireDigit" class="m-checkbox">
+                                <input id="Setting_PasswordComplexity_RequireDigit" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
+                                       [(ngModel)]="settings.security.passwordComplexity.requireDigit" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
+                                <input id="Setting_PasswordComplexity_RequireDigit" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
+                                       [(ngModel)]="settings.security.defaultPasswordComplexity.requireDigit" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
+                                       disabled>
+                                {{l("PasswordComplexity_RequireDigit")}}
+                                <span></span>
+                            </label>
+                            <label for="Setting_PasswordComplexity_RequireLowercase" class="m-checkbox">
+                                <input id="Setting_PasswordComplexity_RequireLowercase" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
+                                       [(ngModel)]="settings.security.passwordComplexity.requireLowercase" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
+                                <input id="Setting_PasswordComplexity_RequireLowercase" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
+                                       [(ngModel)]="settings.security.defaultPasswordComplexity.requireLowercase" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
+                                       disabled>
+                                {{l("PasswordComplexity_RequireLowercase")}}
+                                <span></span>
+                            </label>
+                            <label for="Setting_PasswordComplexity_RequireNonAlphanumeric" class="m-checkbox">
+                                <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
+                                       [(ngModel)]="settings.security.passwordComplexity.requireNonAlphanumeric" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
+                                <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
+                                       [(ngModel)]="settings.security.defaultPasswordComplexity.requireNonAlphanumeric" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
+                                       disabled>
+                                {{l("PasswordComplexity_RequireNonAlphanumeric")}}
+                                <span></span>
+                            </label>
+                            <label for="Setting_PasswordComplexity_RequireUppercase" class="m-checkbox">
+                                <input id="Setting_PasswordComplexity_RequireUppercase" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
+                                       [(ngModel)]="settings.security.passwordComplexity.requireUppercase" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
+                                <input id="Setting_PasswordComplexity_RequireUppercase" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
+                                       [(ngModel)]="settings.security.defaultPasswordComplexity.requireUppercase" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
+                                       disabled>
+                                {{l("PasswordComplexity_RequireUppercase")}}
                                 <span></span>
                             </label>
                         </div>
-                        <div class="form-group" [hidden]="settings.email.smtpUseDefaultCredentials">
-                            <label for="SmtpDomainName">{{l("DomainName")}}</label>
-                            <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control" [ngClass]="{'edited':settings.email.smtpDomain}" [(ngModel)]="settings.email.smtpDomain" maxlength="128">
+                        <div class="form-group">
+                            <label>{{l("PasswordComplexity_RequiredLength")}}</label>
+                            <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':settings.security.passwordComplexity.requiredLength}"
+                                   [(ngModel)]="settings.security.passwordComplexity.requiredLength" *ngIf="!settings.security.useDefaultPasswordComplexitySettings">
+                            <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':settings.security.defaultPasswordComplexity.requiredLength}"
+                                   [(ngModel)]="settings.security.defaultPasswordComplexity.requiredLength" *ngIf="settings.security.useDefaultPasswordComplexitySettings"
+                                   disabled>
                         </div>
-                        <div class="form-group" [hidden]="settings.email.smtpUseDefaultCredentials">
-                            <label for="SmtpUserName">{{l("UserName")}}</label>
-                            <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control" [ngClass]="{'edited':settings.email.smtpUserName}" [(ngModel)]="settings.email.smtpUserName" maxlength="128">
-                        </div>
-                        <div class="form-group" *ngIf="!setRandomPassword" [hidden]="settings.email.smtpUseDefaultCredentials">
-                            <label for="SmtpPassword">{{l("Password")}}</label>
-                            <input type="text" class="hidden-field">
-                            <input type="password" class="hidden-field">
-                            <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control" [ngClass]="{'edited':settings.email.smtpPassword}" [(ngModel)]="settings.email.smtpPassword"
-                                   maxlength="128" autocomplete="off">
-                        </div>
-                        <hr />
-                        <h5>{{l("TestEmailSettingsHeader")}}</h5>
-                        <div class="row">
-                            <div class="form-group col-md-4">
-                                <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
-                            </div>
-                            <div class="form-group col-md-2">
-                                <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{l("SendTestEmail")}}</button>
-                            </div>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('IDCS Link')}}" *ngIf="isCreditReportFeatureEnabled" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="IdcsRequestSource">{{l("Request Source")}}</label>
-                                <input id="IdcsRequestSource" type="text" name="IdcsRequestSource" class="form-control" [(ngModel)]="idcsSettings.requestSource" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="IdcsPartnerCode">{{l("Partner Code")}}</label>
-                                <input id="IdcsPartnerCode" type="text" name="IdcsPartnerCode" class="form-control" [(ngModel)]="idcsSettings.partnerCode" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="IdcsPartnerAccount">{{l("Partner Account")}}</label>
-                                <input id="IdcsPartnerAccount" type="text" name="IdcsPartnerAccount" class="form-control" [(ngModel)]="idcsSettings.partnerAccount" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="IdcsPassword">{{l("Password")}}</label>
-                                <input id="IdcsPassword" type="password" name="IdcsPassword" class="form-control" [(ngModel)]="idcsSettings.password" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="IdcsBranding">{{l("Branding")}}</label>
-                                <input id="IdcsBranding" type="text" name="IdcsBranding" class="form-control" [(ngModel)]="idcsSettings.branding" maxlength="128">
-                            </div>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('Base Commerce Link')}}" *ngIf="true" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="BCUserName">{{l("User Name")}}</label>
-                                <input id="BCUserName" type="text" name="BCUserName" class="form-control" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="BCPassword">{{l("Password")}}</label>
-                                <input id="BCPassword" type="password" name="BCPassword" class="form-control" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="BCKey">{{l("Key")}}</label>
-                                <input id="BCKey" type="text" name="BCKey" class="form-control" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
-                            </div>
-                            <h5>{{l("Environment")}}</h5>
-                            <div class="md-checkbox-list">
-                                <label for="BCIsSandBox" class="m-checkbox">
-                                    <input id="BCIsSandBox" class="md-check" type="checkbox" name="BCIsSandBox" [(ngModel)]="baseCommercePaymentSettings.sandBox">
-                                    {{l("SandBox")}}
+                    </div>
+                    <div>
+                        <h5>{{l("UserLockOut")}}</h5>
+                        <div class="md-checkbox-list">
+                            <div>
+                                <label for="Setting_UserLockOut_IsEnabled" class="m-checkbox">
+                                    <input id="Setting_UserLockOut_IsEnabled" type="checkbox" name="Setting_UserLockOut_IsEnabled" [(ngModel)]="settings.security.userLockOut.isEnabled">
+                                    {{l("EnableUserAccountLockingOnFailedLoginAttemts")}}
                                     <span></span>
                                 </label>
                             </div>
                         </div>
-                    </tab>
-                    <tab heading="{{l('PayPal')}}" *ngIf="true" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
-                                <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
-                            </div>
-                            <div class="form-group">
-                                <label for="PayPalClientId">{{l("Client ID")}}</label>
-                                <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="payPalPaymentSettings.clientId">
-                            </div>
-                            <div class="form-group">
-                                <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
-                                <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="payPalPaymentSettings.clientSecret">
-                            </div>
+                        <div class="form-group" *ngIf="settings.security.userLockOut.isEnabled">
+                            <label for="MaxFailedAccessAttemptsBeforeLockout">{{l("MaxFailedAccessAttemptsBeforeLockout")}}</label>
+                            <input id="MaxFailedAccessAttemptsBeforeLockout" type="number" name="MaxFailedAccessAttemptsBeforeLockout" class="form-control" [ngClass]="{'edited':settings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout}" [(ngModel)]="settings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout">
                         </div>
-                    </tab>
-                    <tab heading="{{l('ACH Works')}}" *ngIf="true" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="achWorksSSS">{{l("SSS")}}</label>
-                                <input id="achWorksSSS" type="text" name="achWorksSSS" class="form-control" [(ngModel)]="achWorksSettings.sss" maxlength="3">
-                            </div>
-                            <div class="form-group">
-                                <label for="achWorksLocID">{{l("LocID")}}</label>
-                                <input id="achWorksLocID" type="text" name="achWorksLocID" class="form-control" [(ngModel)]="achWorksSettings.locID" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="achWorksSOAPUser">{{l("SOAPUser")}}</label>
-                                <input id="achWorksSOAPUser" type="text" name="achWorksSOAPUser" class="form-control" [(ngModel)]="achWorksSettings.soapUser" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="achWorksSOAPKey">{{l("SOAPKey")}}</label>
-                                <input id="achWorksSOAPKey" type="text" name="achWorksSOAPKey" class="form-control" [(ngModel)]="achWorksSettings.soapKey" maxlength="128">
-                            </div>
+                        <div class="form-group" *ngIf="settings.security.userLockOut.isEnabled">
+                            <label for="DefaultAccountLockoutSeconds">{{l("DefaultAccountLockoutDurationAsSeconds")}}</label>
+                            <input id="DefaultAccountLockoutSeconds" type="number" name="DefaultAccountLockoutSeconds" class="form-control" [ngClass]="{'edited':settings.security.userLockOut.defaultAccountLockoutSeconds}" [(ngModel)]="settings.security.userLockOut.defaultAccountLockoutSeconds">
                         </div>
-                    </tab>
-                    <tab heading="{{l('RecurlyLink')}}" *ngIf="true" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="RecurlySubdomain">{{l("RecurlySubdomain")}}</label>
-                                <input id="RecurlySubdomain" type="text" name="RecurlySubdomain" class="form-control" [(ngModel)]="recurlySettings.subdomain" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="RecurlyApiKey">{{l("RecurlyApiKey")}}</label>
-                                <input id="RecurlyApiKey" type="text" name="RecurlyApiKey" class="form-control" [(ngModel)]="recurlySettings.apiKey" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="RecurlyPrivateKey">{{l("RecurlyPrivateKey")}}</label>
-                                <input id="RecurlyPrivateKey" type="text" name="RecurlyPrivateKey" class="form-control" [(ngModel)]="recurlySettings.privateKey" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="RecurlyPageSize">{{l("RecurlyPageSize")}}</label>
-                                <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
-                            </div>
+                    </div>
+                    <div *ngIf="!isMultiTenancyEnabled || settings.security.twoFactorLogin.isEnabledForApplication">
+                        <h5>{{l("TwoFactorLogin")}}</h5>
+                        <div class="m-checkbox-list">
+                            <label for="Setting_TwoFactorLogin_IsEnabled" class="m-checkbox">
+                                <input id="Setting_TwoFactorLogin_IsEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsEnabled" [(ngModel)]="settings.security.twoFactorLogin.isEnabled">
+                                {{l("EnableTwoFactorLogin")}}
+                                <span></span>
+                            </label>
+                            <label for="Setting_TwoFactorLogin_IsEmailProviderEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled && !isMultiTenancyEnabled">
+                                <input id="Setting_TwoFactorLogin_IsEmailProviderEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsEmailProviderEnabled" [(ngModel)]="settings.security.twoFactorLogin.isEmailProviderEnabled">
+                                {{l("IsEmailVerificationEnabled")}}
+                                <span></span>
+                            </label>
+                            <label for="Setting_TwoFactorLogin_IsSmsProviderEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled && !isMultiTenancyEnabled">
+                                <input id="Setting_TwoFactorLogin_IsSmsProviderEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsSmsProviderEnabled" [(ngModel)]="settings.security.twoFactorLogin.isSmsProviderEnabled">
+                                {{l("IsSmsVerificationEnabled")}}
+                                <span></span>
+                            </label>
+                            <label for="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled && !isMultiTenancyEnabled">
+                                <input id="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled"
+                                       [(ngModel)]="settings.security.twoFactorLogin.isGoogleAuthenticatorEnabled">
+                                {{l("IsGoogleAuthenticatorEnabled")}}
+                                <span></span>
+                            </label>
+                            <label for="Setting_TwoFactorLogin_IsRememberBrowserEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled">
+                                <input id="Setting_TwoFactorLogin_IsRememberBrowserEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsRememberBrowserEnabled" [(ngModel)]="settings.security.twoFactorLogin.isRememberBrowserEnabled">
+                                {{l("AllowToRememberBrowserForTwoFactorLogin")}}
+                                <span></span>
+                            </label>
                         </div>
-                    </tab>
-                    <tab *ngIf="true" heading="{{l('Invoice')}}" customClass="m-tabs__item">
-                        <!-- *ngIf="true" is a workaround for https://github.com/valor-software/ng2-bootstrap/issues/823 -->
-                        <h5>{{l("InvoiceInformation")}}</h5>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('EmailSmtp')}}" *ngIf="!isMultiTenancyEnabled">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="form-group">
+                        <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
+                        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [ngClass]="{'edited':settings.email.defaultFromAddress}" [(ngModel)]="settings.email.defaultFromAddress" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
+                        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [ngClass]="{'edited':settings.email.defaultFromDisplayName}" [(ngModel)]="settings.email.defaultFromDisplayName" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="SmtpHost">{{l("SmtpHost")}}</label>
+                        <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':settings.email.smtpHost}" [(ngModel)]="settings.email.smtpHost" maxlength="64">
+                    </div>
+                    <div class="form-group">
+                        <label for="SmtpPort">{{l("SmtpPort")}}</label>
+                        <input id="SmtpPort" type="number" name="SmtpPort" class="form-control" [ngClass]="{'edited':settings.email.smtpPort}" [(ngModel)]="settings.email.smtpPort" maxlength="5">
+                    </div>
+                    <div class="m-checkbox-list">
+                        <label for="Settings_SmtpEnableSsl" class="m-checkbox">
+                            <input id="Settings_SmtpEnableSsl" type="checkbox" name="SmtpEnableSsl" [(ngModel)]="settings.email.smtpEnableSsl">
+                            {{l("UseSsl")}}
+                            <span></span>
+                        </label>
+                        <label for="Settings_SmtpUseDefaultCredentials" class="m-checkbox">
+                            <input id="Settings_SmtpUseDefaultCredentials" type="checkbox" name="SmtpUseDefaultCredentials" [(ngModel)]="settings.email.smtpUseDefaultCredentials">
+                            {{l("UseDefaultCredentials")}}
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="form-group" [hidden]="settings.email.smtpUseDefaultCredentials">
+                        <label for="SmtpDomainName">{{l("DomainName")}}</label>
+                        <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control" [ngClass]="{'edited':settings.email.smtpDomain}" [(ngModel)]="settings.email.smtpDomain" maxlength="128">
+                    </div>
+                    <div class="form-group" [hidden]="settings.email.smtpUseDefaultCredentials">
+                        <label for="SmtpUserName">{{l("UserName")}}</label>
+                        <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control" [ngClass]="{'edited':settings.email.smtpUserName}" [(ngModel)]="settings.email.smtpUserName" maxlength="128">
+                    </div>
+                    <div class="form-group" *ngIf="!setRandomPassword" [hidden]="settings.email.smtpUseDefaultCredentials">
+                        <label for="SmtpPassword">{{l("Password")}}</label>
+                        <input type="text" class="hidden-field">
+                        <input type="password" class="hidden-field">
+                        <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control" [ngClass]="{'edited':settings.email.smtpPassword}" [(ngModel)]="settings.email.smtpPassword"
+                               maxlength="128" autocomplete="off">
+                    </div>
+                    <hr />
+                    <h5>{{l("TestEmailSettingsHeader")}}</h5>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{l("SendTestEmail")}}</button>
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('IDCS Link')}}" *ngIf="isCreditReportFeatureEnabled">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
                         <div class="form-group">
-                            <label for="LegalName">{{l("LegalName")}}</label>
-                            <input id="LegalName" type="text" name="legalName" class="form-control" [ngClass]="{'edited':settings.billing.legalName}" [(ngModel)]="settings.billing.legalName" maxlength="64">
+                            <label for="IdcsRequestSource">{{l("Request Source")}}</label>
+                            <input id="IdcsRequestSource" type="text" name="IdcsRequestSource" class="form-control" [(ngModel)]="idcsSettings.requestSource" maxlength="128">
                         </div>
                         <div class="form-group">
-                            <label for="Address">{{l("Address")}}</label>
-                            <textarea id="Address" rows="5" name="address" class="form-control" [ngClass]="{'edited':settings.billing.address}" [(ngModel)]="settings.billing.address" maxlength="256"></textarea>
+                            <label for="IdcsPartnerCode">{{l("Partner Code")}}</label>
+                            <input id="IdcsPartnerCode" type="text" name="IdcsPartnerCode" class="form-control" [(ngModel)]="idcsSettings.partnerCode" maxlength="128">
                         </div>
                         <div class="form-group">
-                            <label for="taxVatNo">{{l("Tax/VatNo")}}</label>
-                            <input id="taxVatNo" type="text" name="taxVatNo" class="form-control" [ngClass]="{'edited':settings.billing.taxVatNo}" [(ngModel)]="settings.billing.taxVatNo" maxlength="32">
+                            <label for="IdcsPartnerAccount">{{l("Partner Account")}}</label>
+                            <input id="IdcsPartnerAccount" type="text" name="IdcsPartnerAccount" class="form-control" [(ngModel)]="idcsSettings.partnerAccount" maxlength="128">
                         </div>
-                    </tab>
-                    <tab heading="{{l('EPCVIPLink')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="EPCVIPApiKey">{{l("EPCVIPApiKey")}}</label>
-                                <input id="EPCVIPApiKey" type="text" name="EPCVIPApiKey" class="form-control" [(ngModel)]="epcvipSettings.apiKey" maxlength="128">
-                            </div>
+                        <div class="form-group">
+                            <label for="IdcsPassword">{{l("Password")}}</label>
+                            <input id="IdcsPassword" type="password" name="IdcsPassword" class="form-control" [(ngModel)]="idcsSettings.password" maxlength="128">
                         </div>
-                    </tab>
-                    <tab heading="{{l('EPCVIPEmail')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="EPCVIPEmailApiKey">{{l("EPCVIPEmailApiKey")}}</label>
-                                <input id="EPCVIPEmailApiKey" type="text" name="EPCVIPEmailApiKey" class="form-control" [(ngModel)]="epcvipEmailSettings.apiKey" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="EPCVIPEmailBaseUrl">{{l("EPCVIPEmailBaseUrl")}}</label>
-                                <input #epcvipEmailBaseUrl="ngModel" id="EPCVIPEmailBaseUrl" type="url" name="EPCVIPEmailBaseUrl" class="form-control" [(ngModel)]="epcvipEmailSettings.baseUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
-                            </div>
-                            <div>
-                                <span class="help-block text-danger" *ngIf="!epcvipEmailBaseUrl.valid && !epcvipEmailBaseUrl.pristine">{{l("Invalid_EPCVIPEmailBaseUrl")}}</span>
-                            </div>
-                            <div class="form-group">
-                                <label for="EPCVIPEmailServer">{{l("EPCVIPEmailServer")}}</label>
-                                <select id="EPCVIPEmailServer"
-                                        name="EPCVIPEmailServer"
-                                        class="form-control"
-                                        [(ngModel)]="epcvipEmailSettings.server">
-                                    <option></option>
-                                    <option *ngFor="let server of epcvipEmailServers" [value]="server">{{server}}</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label for="IdcsBranding">{{l("Branding")}}</label>
+                            <input id="IdcsBranding" type="text" name="IdcsBranding" class="form-control" [(ngModel)]="idcsSettings.branding" maxlength="128">
                         </div>
-                    </tab>
-                    <tab heading="{{l('IAge')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="IAgeApiKey">{{l("IAgeApiKey")}}</label>
-                                <input id="IAgeApiKey" type="text" name="IAgeApiKey" class="form-control" [(ngModel)]="iageSettings.apiKey" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="IAgeActivationEmailId">{{l("IAgeActivationEmailId")}}</label>
-                                <input id="IAgeActivationEmailId" type="number" name="IAgeActivationEmailId" class="form-control" [(ngModel)]="iageSettings.activationEmailId" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="IAgePasswordResetEmailId">{{l("IAgePasswordResetEmailId")}}</label>
-                                <input id="IAgePasswordResetEmailId" type="number" name="IAgePasswordResetEmailId" class="form-control" [(ngModel)]="iageSettings.passwordResetEmailId" maxlength="128">
-                            </div>
-                            <div>
-                                <div class="form-group m-form__group">
-                                    <label for="IAgeIsEnabled" class="m-checkbox">
-                                        <input id="IAgeIsEnabled" class="m-check" type="checkbox" name="IAgeIsEnabled" [(ngModel)]="iageSettings.isEnabled">
-                                        {{l("IAgeIsEnabled")}}
-                                        <span></span>
-                                    </label>
-                                </div>
-                            </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Base Commerce Link')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="BCUserName">{{l("User Name")}}</label>
+                            <input id="BCUserName" type="text" name="BCUserName" class="form-control" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
                         </div>
-                    </tab>
-                    <tab heading="{{l('Ongage')}}" *ngIf="isPFMApplicationsFeatureEnabled" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="OngageUserName">{{l("OngageUserName")}}</label>
-                                <input id="OngageUserName" type="text" name="OngageUserName" class="form-control" [(ngModel)]="ongageSettings.userName" maxlength="128">
-                            </div>
+                        <div class="form-group">
+                            <label for="BCPassword">{{l("Password")}}</label>
+                            <input id="BCPassword" type="password" name="BCPassword" class="form-control" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="BCKey">{{l("Key")}}</label>
+                            <input id="BCKey" type="text" name="BCKey" class="form-control" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
+                        </div>
+                        <h5>{{l("Environment")}}</h5>
+                        <div class="md-checkbox-list">
+                            <label for="BCIsSandBox" class="m-checkbox">
+                                <input id="BCIsSandBox" class="md-check" type="checkbox" name="BCIsSandBox" [(ngModel)]="baseCommercePaymentSettings.sandBox">
+                                {{l("SandBox")}}
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('PayPal')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
+                            <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalClientId">{{l("Client ID")}}</label>
+                            <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="payPalPaymentSettings.clientId">
+                        </div>
+                        <div class="form-group">
+                            <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
+                            <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="payPalPaymentSettings.clientSecret">
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('ACH Works')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="achWorksSSS">{{l("SSS")}}</label>
+                            <input id="achWorksSSS" type="text" name="achWorksSSS" class="form-control" [(ngModel)]="achWorksSettings.sss" maxlength="3">
+                        </div>
+                        <div class="form-group">
+                            <label for="achWorksLocID">{{l("LocID")}}</label>
+                            <input id="achWorksLocID" type="text" name="achWorksLocID" class="form-control" [(ngModel)]="achWorksSettings.locID" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="achWorksSOAPUser">{{l("SOAPUser")}}</label>
+                            <input id="achWorksSOAPUser" type="text" name="achWorksSOAPUser" class="form-control" [(ngModel)]="achWorksSettings.soapUser" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="achWorksSOAPKey">{{l("SOAPKey")}}</label>
+                            <input id="achWorksSOAPKey" type="text" name="achWorksSOAPKey" class="form-control" [(ngModel)]="achWorksSettings.soapKey" maxlength="128">
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('RecurlyLink')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="RecurlySubdomain">{{l("RecurlySubdomain")}}</label>
+                            <input id="RecurlySubdomain" type="text" name="RecurlySubdomain" class="form-control" [(ngModel)]="recurlySettings.subdomain" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="RecurlyApiKey">{{l("RecurlyApiKey")}}</label>
+                            <input id="RecurlyApiKey" type="text" name="RecurlyApiKey" class="form-control" [(ngModel)]="recurlySettings.apiKey" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="RecurlyPrivateKey">{{l("RecurlyPrivateKey")}}</label>
+                            <input id="RecurlyPrivateKey" type="text" name="RecurlyPrivateKey" class="form-control" [(ngModel)]="recurlySettings.privateKey" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="RecurlyPageSize">{{l("RecurlyPageSize")}}</label>
+                            <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Invoice')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <h5>{{l("InvoiceInformation")}}</h5>
+                    <div class="form-group">
+                        <label for="LegalName">{{l("LegalName")}}</label>
+                        <input id="LegalName" type="text" name="legalName" class="form-control" [ngClass]="{'edited':settings.billing.legalName}" [(ngModel)]="settings.billing.legalName" maxlength="64">
+                    </div>
+                    <div class="form-group">
+                        <label for="Address">{{l("Address")}}</label>
+                        <textarea id="Address" rows="5" name="address" class="form-control" [ngClass]="{'edited':settings.billing.address}" [(ngModel)]="settings.billing.address" maxlength="256"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="taxVatNo">{{l("Tax/VatNo")}}</label>
+                        <input id="taxVatNo" type="text" name="taxVatNo" class="form-control" [ngClass]="{'edited':settings.billing.taxVatNo}" [(ngModel)]="settings.billing.taxVatNo" maxlength="32">
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('EPCVIPLink')}}" *ngIf="isPFMApplicationsFeatureEnabled">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="EPCVIPApiKey">{{l("EPCVIPApiKey")}}</label>
+                            <input id="EPCVIPApiKey" type="text" name="EPCVIPApiKey" class="form-control" [(ngModel)]="epcvipSettings.apiKey" maxlength="128">
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('EPCVIPEmail')}}" *ngIf="isPFMApplicationsFeatureEnabled">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="EPCVIPEmailApiKey">{{l("EPCVIPEmailApiKey")}}</label>
+                            <input id="EPCVIPEmailApiKey" type="text" name="EPCVIPEmailApiKey" class="form-control" [(ngModel)]="epcvipEmailSettings.apiKey" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="EPCVIPEmailBaseUrl">{{l("EPCVIPEmailBaseUrl")}}</label>
+                            <input #epcvipEmailBaseUrl="ngModel" id="EPCVIPEmailBaseUrl" type="url" name="EPCVIPEmailBaseUrl" class="form-control" [(ngModel)]="epcvipEmailSettings.baseUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
                         </div>
                         <div>
-                            <div class="form-group">
-                                <label for="OngagePassword">{{l("OngagePassword")}}</label>
-                                <input id="OngagePassword" type="password" name="OngagePassword" class="form-control" [(ngModel)]="ongageSettings.password" maxlength="128">
-                            </div>
+                            <span class="help-block text-danger" *ngIf="!epcvipEmailBaseUrl.valid && !epcvipEmailBaseUrl.pristine">{{l("Invalid_EPCVIPEmailBaseUrl")}}</span>
                         </div>
-                        <div>
-                            <div class="form-group">
-                                <label for="OngageAccountCode">{{l("OngageAccountCode")}}</label>
-                                <input id="OngageAccountCode" type="text" name="OngageAccountCode" class="form-control" [(ngModel)]="ongageSettings.accountCode" maxlength="128">
-                            </div>
+                        <div class="form-group">
+                            <label for="EPCVIPEmailServer">{{l("EPCVIPEmailServer")}}</label>
+                            <select id="EPCVIPEmailServer"
+                                    name="EPCVIPEmailServer"
+                                    class="form-control"
+                                    [(ngModel)]="epcvipEmailSettings.server">
+                                <option></option>
+                                <option *ngFor="let server of epcvipEmailServers" [value]="server">{{server}}</option>
+                            </select>
                         </div>
-                        <div>
-                            <div class="form-group">
-                                <label for="OngageDefaultListId">{{l("OngageDefaultListId")}}</label>
-                                <input id="OngageDefaultListId" type="number" name="OngageDefaultListId" class="form-control" [(ngModel)]="ongageSettings.defaultListId" maxlength="128">
-                            </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('IAge')}}" *ngIf="isPFMApplicationsFeatureEnabled">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="IAgeApiKey">{{l("IAgeApiKey")}}</label>
+                            <input id="IAgeApiKey" type="text" name="IAgeApiKey" class="form-control" [(ngModel)]="iageSettings.apiKey" maxlength="128">
                         </div>
-                        <div>
-                            <div class="form-group">
-                                <label for="OngageActivationEmailMessageId">{{l("OngageActivationEmailMessageId")}}</label>
-                                <input id="OngageActivationEmailMessageId" type="number" name="OngageActivationEmailMessageId" class="form-control" [(ngModel)]="ongageSettings.activationEmailMessageId" maxlength="128">
-                            </div>
+                        <div class="form-group">
+                            <label for="IAgeActivationEmailId">{{l("IAgeActivationEmailId")}}</label>
+                            <input id="IAgeActivationEmailId" type="number" name="IAgeActivationEmailId" class="form-control" [(ngModel)]="iageSettings.activationEmailId" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="IAgePasswordResetEmailId">{{l("IAgePasswordResetEmailId")}}</label>
+                            <input id="IAgePasswordResetEmailId" type="number" name="IAgePasswordResetEmailId" class="form-control" [(ngModel)]="iageSettings.passwordResetEmailId" maxlength="128">
                         </div>
                         <div>
                             <div class="form-group m-form__group">
-                                <label for="OngageIsEnabled" class="m-checkbox">
-                                    <input id="OngageIsEnabled" class="m-check" type="checkbox" name="OngageIsEnabled" [(ngModel)]="ongageSettings.isEnabled">
-                                    {{l("OngageIsEnabled")}}
+                                <label for="IAgeIsEnabled" class="m-checkbox">
+                                    <input id="IAgeIsEnabled" class="m-check" type="checkbox" name="IAgeIsEnabled" [(ngModel)]="iageSettings.isEnabled">
+                                    {{l("IAgeIsEnabled")}}
                                     <span></span>
                                 </label>
                             </div>
                         </div>
-                    </tab>
-                </tabset>
-            </div>
-        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Ongage')}}" *ngIf="isPFMApplicationsFeatureEnabled">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="OngageUserName">{{l("OngageUserName")}}</label>
+                            <input id="OngageUserName" type="text" name="OngageUserName" class="form-control" [(ngModel)]="ongageSettings.userName" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="OngagePassword">{{l("OngagePassword")}}</label>
+                            <input id="OngagePassword" type="password" name="OngagePassword" class="form-control" [(ngModel)]="ongageSettings.password" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="OngageAccountCode">{{l("OngageAccountCode")}}</label>
+                            <input id="OngageAccountCode" type="text" name="OngageAccountCode" class="form-control" [(ngModel)]="ongageSettings.accountCode" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="OngageDefaultListId">{{l("OngageDefaultListId")}}</label>
+                            <input id="OngageDefaultListId" type="number" name="OngageDefaultListId" class="form-control" [(ngModel)]="ongageSettings.defaultListId" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="OngageActivationEmailMessageId">{{l("OngageActivationEmailMessageId")}}</label>
+                            <input id="OngageActivationEmailMessageId" type="number" name="OngageActivationEmailMessageId" class="form-control" [(ngModel)]="ongageSettings.activationEmailMessageId" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group m-form__group">
+                            <label for="OngageIsEnabled" class="m-checkbox">
+                                <input id="OngageIsEnabled" class="m-check" type="checkbox" name="OngageIsEnabled" [(ngModel)]="ongageSettings.isEnabled">
+                                {{l("OngageIsEnabled")}}
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+
+        </mat-tab-group>
     </div>
 </div>

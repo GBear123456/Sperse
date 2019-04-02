@@ -2,15 +2,13 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantSslBindingInfo } from '@shared/service-proxies/service-proxies';
-import { DxFileUploaderComponent } from 'devextreme-angular/ui/file-uploader';
-import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
-import { DxButtonComponent } from 'devextreme-angular/ui/button';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-modal.component';
 import { AddOrEditSSLBindingModal } from './modals/add-or-edit-ssl-binding-modal.component';
 
 @Component({
     templateUrl: './system-settings.component.html',
+    styleUrls: ['./system-settings.component.less'],
     animations: [appModuleAnimation()],
     providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })
@@ -30,6 +28,11 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit,
     ];
 
     private rootComponent;
+    public headlineConfig = {
+        names: [this.l('SystemSettings')],
+        icon: '',
+        buttons: []
+    };
 
     constructor(
         injector: Injector,
@@ -38,7 +41,7 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit,
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.pageHeaderFixed();
+        this.rootComponent.overflowHidden(true);
     }
 
     ngOnInit(): void {
@@ -97,6 +100,6 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     ngOnDestroy() {
-        this.rootComponent.pageHeaderFixed(true);
+        this.rootComponent.overflowHidden(false);
     }
 }

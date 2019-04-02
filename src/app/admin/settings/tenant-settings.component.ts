@@ -1,6 +1,6 @@
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { TokenService } from '@abp/auth/token.service';
-import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
+import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -23,8 +23,8 @@ import {
     TenantOfferProviderSettingsServiceProxy,
     TenantCustomizationInfoDto,
     EPCVIPMailerSettingsEditDto,
-    TenantLoginInfoDtoCustomLayoutType,
-    EPCVIPMailerSettingsEditDtoServer,
+    EPCVIPMailerSettingsEditDtoServer,
+
     OngageSettingsEditDto,
     IAgeSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
@@ -43,7 +43,7 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
         TenantOfferProviderSettingsServiceProxy
     ]
 })
-export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
+export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
 
     usingDefaultTimeZone = false;
     initialTimeZone: string = null;
@@ -81,6 +81,18 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.Tenant;
 
     private rootComponent;
+    public headlineConfig = {
+        names: [this.l('Settings')],
+        icon: '',
+        buttons: [
+            {
+                enabled: this.isGranted('Pages.Administration.Languages.Create'),
+                action: this.saveAll.bind(this),
+                icon: 'la la la-floppy-o',
+                lable: this.l('SaveAll')
+            }
+        ]
+    };
 
     constructor(
         injector: Injector,
@@ -95,7 +107,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.pageHeaderFixed();
+        this.rootComponent.overflowHidden(true);
     }
 
     ngOnInit(): void {
@@ -104,14 +116,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.initUploaders();
     }
 
-    ngAfterViewChecked(): void {
-        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
-        $('tabset ul.nav').addClass('m-tabs-line');
-        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
-    }
-
     ngOnDestroy() {
-        this.rootComponent.pageHeaderFixed(true);
+        this.rootComponent.overflowHidden(false);
     }
 
     getSettings(): void {
