@@ -183,7 +183,6 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             enum: ExtendOfferDtoTargetAudience
         },
         securingType: {
-            readOnly: true,
             enum: ExtendOfferDtoSecuringType
         },
         issuingBank: {
