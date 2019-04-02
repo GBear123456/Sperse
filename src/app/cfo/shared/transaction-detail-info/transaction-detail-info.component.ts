@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Injector, Input, OnInit, Output } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { CFOService } from '@shared/cfo/cfo.service';
 import {
@@ -49,7 +49,6 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         private _commentServiceProxy: CommentServiceProxy
     ) {
         super(injector);
-        
         this.transactionId = this.data.transactionId;
     }
 
@@ -57,15 +56,6 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         this.getTransactionDetails();
         this.getTransactionAttributeTypes();
         this.getCategoryTree();
-    }
-
-    closeDialog() {
-        this.accountingTypes = [];
-        this.filteredCategory = [];
-        this.filteredSubCategory = [];
-        this.selectedAccountingType = '';
-        this.selcetdCategoryId = null;
-        this.close();
     }
 
     getTransactionDetails() {
@@ -114,7 +104,6 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
             this._itemInEditMode = item;
         }
     }
-
 
     closeInPlaceEdit(field, item) {
         item.inplaceEdit = false;
@@ -201,17 +190,25 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
     }
 
     updateComment(field, data) {
-        this._commentServiceProxy.updateComment(
-            InstanceType[this._cfoService.instanceType],
-            this._cfoService.instanceId,
-            new UpdateCommentInput({
-                comment: data.text,
-                id: data.commentId
-            })
-        ).subscribe(() => {
+        let request$ = data.text
+            ? this._commentServiceProxy.updateComment(
+                InstanceType[this._cfoService.instanceType],
+                this._cfoService.instanceId,
+                new UpdateCommentInput({
+                    comment: data.text,
+                    id: data.commentId
+                })
+            )
+            : this._commentServiceProxy.deleteComment(
+                InstanceType[this._cfoService.instanceType],
+                this._cfoService.instanceId,
+                data.commentId
+            );
+        request$.subscribe(() => {
             this.refreshParent();
             data.inplaceEdit = false;
             this.notify.info(this.l('SavedSuccessfully'));
+            this.getTransactionDetails();
         });
     }
 
