@@ -1,24 +1,22 @@
-<app-modal-dialog> 
+<app-modal-dialog>
    <header class="container">
         <h1>
-            <span (click)="inPlaceEdit('descriptor', transactionInfo, $event, i)" *ngIf="transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
+            <span (click)="inPlaceEdit('transactionDescriptor', transactionInfo, $event, i)" *ngIf="transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
                 {{ transactionInfo?.transactionDescriptor }} <i class="icon blue-edit-pencil">&nbsp;</i>
             </span>
             <span *ngIf="!transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
-                <a (click)="inPlaceEdit('descriptor', transactionInfo)">
+                <a (click)="inPlaceEdit('transactionDescriptor', transactionInfo)">
                     {{l("Add_descriptor")}} <i class="plus">+</i>
                 </a>
             </span>
             <span *ngIf="transactionInfo['inplaceEdit']" class="inplace-edit-wrapper">
                 <dx-text-box class="tabular"
                              placeholder=""
-                             [(value)]="transactionInfo.transactionDescriptor"
-                             (onValueChanged)="itemValueChanged('descriptor', transactionInfo)"></dx-text-box>
+                             [(value)]="transactionInfo.transactionDescriptor"></dx-text-box>
                 <dx-button class="update" icon="todo" (onClick)="updateDescriptor()"></dx-button>
-                <dx-button class="exit" icon="close" (onClick)="closeInPlaceEdit('descriptor', transactionInfo)"></dx-button>
+                <dx-button class="exit" icon="close" (onClick)="closeInPlaceEdit('transactionDescriptor', transactionInfo)"></dx-button>
             </span>
         </h1>
-
         <span class="type" [ngClass]="transactionInfo?.cashFlowTypeId == 'I' ? 'inflows' : 'outflows'">
             <ng-container *ngIf="transactionInfo?.cashFlowTypeId == 'I'; else outflowsTemplate">
                 {{l("TransactionDetail_Inflows")}}
@@ -114,15 +112,14 @@
                 <div class="col-3 text-right light-gray">{{l("TransactionDetail_Notes")}}</div>
                 <div class="col-9">
                     <div class="comments" *ngFor="let comment of transactionInfo?.comments; let i = index;">
-                        <div (click)="inPlaceEdit('comment', comment)" *ngIf="!comment.inplaceEdit">
+                        <div (click)="inPlaceEdit('text', comment)" *ngIf="!comment.inplaceEdit">
                             {{comment.text}} <i class="icon blue-edit-pencil">&nbsp;</i>
                         </div>
                         <span *ngIf="comment.inplaceEdit" class="inplace-edit-wrapper">
                             <dx-text-box class="tabular"
-                                         [(value)]="comment.text"
-                                         (onValueChanged)="itemValueChanged('comment', comment)"></dx-text-box>
-                            <dx-button class="update" icon="todo" (onClick)="updateComment('comment', comment)"></dx-button>
-                            <dx-button class="exit" icon="close" (onClick)="closeInPlaceEdit('comment', comment)"></dx-button>
+                                         [(value)]="comment.text"></dx-text-box>
+                            <dx-button class="update" icon="todo" (onClick)="updateComment('text', comment)"></dx-button>
+                            <dx-button class="exit" icon="close" (onClick)="closeInPlaceEdit('text', comment)"></dx-button>
                         </span>
                     </div>
 

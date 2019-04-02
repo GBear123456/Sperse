@@ -30,7 +30,6 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
     transactionInfo = new TransactionDetailsDto();
     transactionAttributeTypes: any;
     isEditAllowed = true;
-    private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
     categorization: GetCategoryTreeOutput;
     categories: any;
@@ -92,9 +91,6 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
     inPlaceEdit(field, item) {
         if (this.isEditAllowed) {
 
-            if (!this._isInPlaceEditAllowed)
-                return;
-
             item.inplaceEdit = true;
             item.original = item[field];
 
@@ -108,11 +104,6 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
     closeInPlaceEdit(field, item) {
         item.inplaceEdit = false;
         item[field] = item.original;
-        this._isInPlaceEditAllowed = true;
-    }
-
-    itemValueChanged(field, item) {
-        this._isInPlaceEditAllowed = item[field] == item.original;
     }
 
     getCategoryTree() {
