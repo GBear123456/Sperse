@@ -172,18 +172,19 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             cssClass: 'center'
         },
         cardNetwork: {
-            readOnly: true,
-            enum: ExtendOfferDtoCardNetwork
+            enum: ExtendOfferDtoCardNetwork,
+            position: FieldPositionEnum.Left
         },
         cartType: {
             readOnly: true
         },
         targetAudience: {
-            readOnly: true,
-            enum: ExtendOfferDtoTargetAudience
+            enum: ExtendOfferDtoTargetAudience,
+            position: FieldPositionEnum.Right
         },
         securingType: {
-            enum: ExtendOfferDtoSecuringType
+            enum: ExtendOfferDtoSecuringType,
+            position: FieldPositionEnum.Right
         },
         issuingBank: {
             readOnly: true
@@ -354,10 +355,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             'systemType',
             'type',
             'campaignProviderType',
-            'cardNetwork',
             'cartType',
-            'targetAudience',
-            'securingType',
             'countries',
             'daysOfWeekAvailability',
             'effectiveTimeOfDay',
@@ -404,7 +402,10 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         ],
         'flags': [
             'offerCollection',
-            'flags'
+            'flags',
+            'cardNetwork',
+            'targetAudience',
+            'securingType'
         ]
     };
     offerIsUpdating = false;
