@@ -1,4 +1,7 @@
-import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
+/** Core imports */
+/** Third party imports */
+/** Application imports */
+import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -12,13 +15,10 @@ import { forkJoin } from 'rxjs';
 @Component({
     templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()],
-    styleUrls: [
-        '../../../shared/metronic/m-checkbox.less',
-        './host-settings.component.less'
-    ],
+    styleUrls: ['./host-settings.component.less'],
     providers: [TenantPaymentSettingsServiceProxy]
 })
-export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
+export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
 
     loading = false;
     hostSettings: HostSettingsEditDto;
@@ -34,6 +34,18 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     usingDefaultTimeZone = false;
     initialTimeZone: string = undefined;
     private rootComponent;
+    public headlineConfig = {
+        names: [this.l('Settings')],
+        icon: '',
+        buttons: [
+            {
+                enabled: this.isGranted('Pages.Administration.Languages.Create'),
+                action: this.saveAll.bind(this),
+                icon: 'la la la-floppy-o',
+                lable: this.l('SaveAll')
+            }
+        ]
+    };
 
     constructor(
         injector: Injector,
@@ -44,7 +56,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.pageHeaderFixed();
+        this.rootComponent.overflowHidden(true);
     }
 
     loadHostSettings(): void {
@@ -92,14 +104,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         self.init();
     }
 
-    ngAfterViewChecked(): void {
-        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
-        $('tabset ul.nav').addClass('m-tabs-line');
-        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
-    }
-
     ngOnDestroy() {
-        this.rootComponent.pageHeaderFixed(true);
+        this.rootComponent.overflowHidden(false);
     }
 
     sendTestEmail(): void {

@@ -13594,6 +13594,58 @@ export class InvoiceServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    update(input: UpdateInvoiceInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @id (optional) 
      * @return Success
      */
@@ -45764,11 +45816,12 @@ export interface IGetUserInstanceInfoOutput {
 export class CreateInvoiceInput implements ICreateInvoiceInput {
     contactId!: number;
     orderId!: number | undefined;
+    status!: CreateInvoiceInputStatus;
     date!: moment.Moment;
     dueDate!: moment.Moment;
     description!: string | undefined;
     note!: string | undefined;
-    lines!: CreateInvoiceLineInput[];
+    lines!: CreateInvoiceLineInput[] | undefined;
 
     constructor(data?: ICreateInvoiceInput) {
         if (data) {
@@ -45777,15 +45830,13 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.lines = [];
-        }
     }
 
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
             this.orderId = data["orderId"];
+            this.status = data["status"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
@@ -45809,6 +45860,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["orderId"] = this.orderId;
+        data["status"] = this.status;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
@@ -45825,17 +45877,19 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
 export interface ICreateInvoiceInput {
     contactId: number;
     orderId: number | undefined;
+    status: CreateInvoiceInputStatus;
     date: moment.Moment;
     dueDate: moment.Moment;
     description: string | undefined;
     note: string | undefined;
-    lines: CreateInvoiceLineInput[];
+    lines: CreateInvoiceLineInput[] | undefined;
 }
 
 export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     quantity!: number;
     rate!: number;
     description!: string | undefined;
+    sortOrder!: number;
 
     constructor(data?: ICreateInvoiceLineInput) {
         if (data) {
@@ -45851,6 +45905,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
             this.quantity = data["quantity"];
             this.rate = data["rate"];
             this.description = data["description"];
+            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -45866,6 +45921,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
         data["description"] = this.description;
+        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
@@ -45874,6 +45930,127 @@ export interface ICreateInvoiceLineInput {
     quantity: number;
     rate: number;
     description: string | undefined;
+    sortOrder: number;
+}
+
+export class UpdateInvoiceInput implements IUpdateInvoiceInput {
+    id!: number;
+    status!: UpdateInvoiceInputStatus;
+    date!: moment.Moment;
+    dueDate!: moment.Moment;
+    description!: string | undefined;
+    note!: string | undefined;
+    lines!: UpdateInvoiceLineInput[] | undefined;
+
+    constructor(data?: IUpdateInvoiceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.status = data["status"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.description = data["description"];
+            this.note = data["note"];
+            if (data["lines"] && data["lines"].constructor === Array) {
+                this.lines = [];
+                for (let item of data["lines"])
+                    this.lines.push(UpdateInvoiceLineInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateInvoiceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateInvoiceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["status"] = this.status;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        data["note"] = this.note;
+        if (this.lines && this.lines.constructor === Array) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateInvoiceInput {
+    id: number;
+    status: UpdateInvoiceInputStatus;
+    date: moment.Moment;
+    dueDate: moment.Moment;
+    description: string | undefined;
+    note: string | undefined;
+    lines: UpdateInvoiceLineInput[] | undefined;
+}
+
+export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
+    id!: number | undefined;
+    quantity!: number;
+    rate!: number;
+    description!: string | undefined;
+    sortOrder!: number;
+
+    constructor(data?: IUpdateInvoiceLineInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.quantity = data["quantity"];
+            this.rate = data["rate"];
+            this.description = data["description"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateInvoiceLineInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateInvoiceLineInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["quantity"] = this.quantity;
+        data["rate"] = this.rate;
+        data["description"] = this.description;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateInvoiceLineInput {
+    id: number | undefined;
+    quantity: number;
+    rate: number;
+    description: string | undefined;
+    sortOrder: number;
 }
 
 export class InvoiceDto implements IInvoiceDto {
@@ -61480,6 +61657,22 @@ export enum GetUserInstanceInfoOutputStatus {
     NotInitialized = "NotInitialized", 
     Active = "Active", 
     Inactive = "Inactive", 
+}
+
+export enum CreateInvoiceInputStatus {
+    Draft = "Draft", 
+    Submitted = "Submitted", 
+    Sent = "Sent", 
+    Paid = "Paid", 
+    Canceled = "Canceled", 
+}
+
+export enum UpdateInvoiceInputStatus {
+    Draft = "Draft", 
+    Submitted = "Submitted", 
+    Sent = "Sent", 
+    Paid = "Paid", 
+    Canceled = "Canceled", 
 }
 
 export enum SubmitTenantCreationRequestInputPaymentPeriodType {
