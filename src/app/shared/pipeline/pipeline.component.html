@@ -17,7 +17,7 @@
                         <li class="list-group-item">
                             <a (click)="updateStage(stage, 'Rename')"><i class="fa fa-pencil fa-fw" style="color: orange"></i> {{l('Rename_Stage')}}</a>
                         </li>
-                        <li class="list-group-item">
+                        <li class="list-group-item" [hidden]="stage['isFinal']">
                             <a (click)="updateStage(stage, 'Merge')"><i class="fa fa-minus fa-fw" style="color: red"></i> {{l('Delete_Stage')}}</a>
                         </li>
                     </ul>

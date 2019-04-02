@@ -26,8 +26,8 @@ export class LeadCompleteDialogComponent extends ConfirmDialogComponent {
     ) {
         super(injector);
 
-        this.orderStages = this.data.stages;
-        this.orderStageId = _.findWhere(this.data.stages, {sortOrder: 0}).id;
+        this.orderStages = this.data.stages.filter((item) => !item['isFinal']);
+        this.orderStageId = _.findWhere(this.orderStages, {sortOrder: 0}).id;
         this.dialogRef['_overlayRef'].hostElement.classList.add('lead-complete');
     }
 
