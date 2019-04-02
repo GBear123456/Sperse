@@ -680,19 +680,19 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
                 const offerCategory = this.offersService.getCategoryRouteNameByCategoryEnum(this.model.categories[0].category as any);
                 const offerPublicLink = AppConsts.appBaseHref + 'personal-finance/offers/' + offerCategory + '/' + offerId;
                 const el = document.createElement('div');
-                el.innerHTML = `<h5>${this.ls.l('OfferLinkWillBeSentToUsers')}:</h5>
+                el.innerHTML = `<h5>${this.ls.ls('PFM', 'OfferLinkWillBeSentToUsers')}:</h5>
                                 <a href="${offerPublicLink}" target="_blank">${offerPublicLink}</a>`;
                 const swalParams: any = {
                     title: '',
                     content: el,
                     buttons: {
                         confirm: {
-                            text: this.ls.l('Confirm'),
+                            text: this.ls.ls('PFM', 'Confirm'),
                             value: true,
                             visible: true
                         },
                         cancel: {
-                            text: this.ls.l('Cancel'),
+                            text: this.ls.ls('PFM', 'Cancel'),
                             value: false,
                             visible: true
                         }
@@ -705,7 +705,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
                             offerId,
                             offerPublicLink
                         ).pipe(finalize(() => abp.ui.clearBusy()))
-                            .subscribe(() => this.notifyService.success(this.ls.l('AnnouncementsHaveBeenSent')));
+                            .subscribe(() => this.notifyService.success(this.ls.ls('PFM', 'AnnouncementsHaveBeenSent')));
                     }
                 });
             });
