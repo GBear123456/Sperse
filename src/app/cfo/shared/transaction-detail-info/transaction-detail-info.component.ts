@@ -34,11 +34,10 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
     categorization: GetCategoryTreeOutput;
     categories: any;
     selectedAccountingType: string;
-    selcetdCategoryId: number;
+    selectedCategoryId: number;
     accountingTypes: any = [];
     filteredCategory: any = [];
     filteredSubCategory: any = [];
-
     constructor(
         injector: Injector,
         private _cfoService: CFOService,
@@ -64,6 +63,11 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
             });
     }
 
+    get categoryPathTitle() {
+        return [ this.transactionInfo.accountingType, this.transactionInfo.cashflowCategory, this.transactionInfo.cashflowSubCategory ]
+                .filter(Boolean).join(' > ');
+    }
+
     getTransactionAttributeTypes() {
         this._transactionsService.getTransactionAttributeTypes(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId)
             .subscribe(result => {
@@ -84,6 +88,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
             })
         ).subscribe(() => {
             this.refreshParent();
+            this.getTransactionDetails();
             this.notify.info(this.l('SavedSuccessfully'));
         });
     }
@@ -215,7 +220,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
 
     filterCategoriesData(e) {
         this.filteredCategory = [];
-        this.selcetdCategoryId = e.value;
+        this.selectedCategoryId = e.value;
         this.categories.filter(item => {
             if (item['parent'] == e.value) {
                 this.filteredCategory.push(item);
@@ -225,7 +230,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
 
     filterSubCategoriesData(e) {
         this.filteredSubCategory = [];
-        this.selcetdCategoryId = e.value;
+        this.selectedCategoryId = e.value;
         this.categories.filter(item => {
             if (item['parent'] == e.value) {
                 this.filteredSubCategory.push(item);
