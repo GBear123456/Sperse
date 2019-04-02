@@ -49935,7 +49935,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     effectiveTimeOfDay!: string | undefined;
     expireTimeOfDay!: string | undefined;
     termsOfService!: string | undefined;
-    traficSource!: OfferDetailsForEditDtoTraficSource | undefined;
+    trafficSource!: OfferDetailsForEditDtoTrafficSource | undefined;
     categories!: OfferCategoryDto[] | undefined;
     creditScores!: CreditScores2[] | undefined;
     description!: string | undefined;
@@ -49964,7 +49964,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             this.effectiveTimeOfDay = data["effectiveTimeOfDay"];
             this.expireTimeOfDay = data["expireTimeOfDay"];
             this.termsOfService = data["termsOfService"];
-            this.traficSource = data["traficSource"];
+            this.trafficSource = data["trafficSource"];
             if (data["categories"] && data["categories"].constructor === Array) {
                 this.categories = [];
                 for (let item of data["categories"])
@@ -50005,7 +50005,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
         data["effectiveTimeOfDay"] = this.effectiveTimeOfDay;
         data["expireTimeOfDay"] = this.expireTimeOfDay;
         data["termsOfService"] = this.termsOfService;
-        data["traficSource"] = this.traficSource;
+        data["trafficSource"] = this.trafficSource;
         if (this.categories && this.categories.constructor === Array) {
             data["categories"] = [];
             for (let item of this.categories)
@@ -50039,7 +50039,7 @@ export interface IOfferDetailsForEditDto {
     effectiveTimeOfDay: string | undefined;
     expireTimeOfDay: string | undefined;
     termsOfService: string | undefined;
-    traficSource: OfferDetailsForEditDtoTraficSource | undefined;
+    trafficSource: OfferDetailsForEditDtoTrafficSource | undefined;
     categories: OfferCategoryDto[] | undefined;
     creditScores: CreditScores2[] | undefined;
     description: string | undefined;
@@ -53141,6 +53141,7 @@ export class StageDto implements IStageDto {
     name!: string | undefined;
     sortOrder!: number | undefined;
     color!: string | undefined;
+    isFinal!: boolean | undefined;
     accessibleActions!: ActionDto[] | undefined;
 
     constructor(data?: IStageDto) {
@@ -53158,6 +53159,7 @@ export class StageDto implements IStageDto {
             this.name = data["name"];
             this.sortOrder = data["sortOrder"];
             this.color = data["color"];
+            this.isFinal = data["isFinal"];
             if (data["accessibleActions"] && data["accessibleActions"].constructor === Array) {
                 this.accessibleActions = [];
                 for (let item of data["accessibleActions"])
@@ -53179,6 +53181,7 @@ export class StageDto implements IStageDto {
         data["name"] = this.name;
         data["sortOrder"] = this.sortOrder;
         data["color"] = this.color;
+        data["isFinal"] = this.isFinal;
         if (this.accessibleActions && this.accessibleActions.constructor === Array) {
             data["accessibleActions"] = [];
             for (let item of this.accessibleActions)
@@ -53193,6 +53196,7 @@ export interface IStageDto {
     name: string | undefined;
     sortOrder: number | undefined;
     color: string | undefined;
+    isFinal: boolean | undefined;
     accessibleActions: ActionDto[] | undefined;
 }
 
@@ -61632,7 +61636,7 @@ export enum GetMemberInfoResponseCreditScore {
     Poor = "Poor", 
 }
 
-export enum OfferDetailsForEditDtoTraficSource {
+export enum OfferDetailsForEditDtoTrafficSource {
     PPC_Default = "PPC_Default", 
     Email = "Email", 
     SEO = "SEO", 

@@ -332,7 +332,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         termsOfService: {
             readOnly: true
         },
-        traficSource: {
+        trafficSource: {
             readOnly: true
         },
         isPublished: {
@@ -364,7 +364,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             'expireTimeOfDay',
             'asfdasdf',
             'termsOfService',
-            'traficSource',
+            'trafficSource',
             'pros',
             'details',
             'cons',
