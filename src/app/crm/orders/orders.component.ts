@@ -10,6 +10,7 @@ import {
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
+import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 
 /** Application imports */
@@ -30,6 +31,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
+import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -58,14 +60,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     public headlineConfig = {
         names: [this.l('Orders')],
         onRefresh: this.refreshDataGrid.bind(this),
-        icon: 'briefcase'
+        icon: 'briefcase',
+        buttons: [
+            {
+                enabled: true,
+                action: this.createInvoice.bind(this),
+                lable: this.l('CreateInvoice')
+            }
+        ]
     };
 
     constructor(injector: Injector,
-                private _filtersService: FiltersService,
-                private _appService: AppService,
-                private _pipelineService: PipelineService,
-                private store$: Store<CrmStore.State>
+        public dialog: MatDialog,
+        private _filtersService: FiltersService,
+        private _appService: AppService,
+        private _pipelineService: PipelineService,
+        private store$: Store<CrmStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -461,6 +471,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     }
                 }
             );
+    }
+
+    createInvoice() {
+        this.dialog.open(CreateInvoiceDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                refreshParent: this.invalidate.bind(this)
+            }
+        });
     }
 
     activate() {

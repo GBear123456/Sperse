@@ -1,0 +1,101 @@
+<dx-context-menu
+    [selectByClick]="true"
+    [selectionMode]="'single'"
+    [dataSource]="saveContextMenuItems"
+    [position]="{ my: 'top right', at: 'bottom right' }"
+    (onSelectionChanged)="onSaveOptionSelectionChanged($event)"
+    target="#{{saveButtonId}}">
+</dx-context-menu>
+
+<app-modal-dialog (onTitleKeyUp)="onInvoiceNumberKeyUp($event)">
+    <div class="toolbar-wraper">
+        <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
+    </div>
+
+    <div class="form-content">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="field">
+                <label class="customer-label">{{l('Customer')}}</label>
+                <dx-select-box
+                    name="customer"
+                    width="370px"
+                    displayExpr="name"
+                    valueExpr="name"
+                    [acceptCustomValue]="true"
+                    [placeholder]="l('Customer.Name')"
+                    [(value)]="customer"
+                    [dataSource]="customers"
+                    [searchEnabled]="true"
+                    [searchTimeout]="0"
+                    (onInput)="customerLookupItems($event)"
+                    (onOptionChanged)="customerOptionChanged($event)">
+                </dx-select-box>
+            </div>
+            <div class="field" *ngIf="order">
+                <label class="order-label">{{l('Order')}}</label>
+                <dx-text-box
+                    maxLength="10"
+                    placeholder="{{l('Order')}}"
+                    [width]="'370px'"
+                    [value]="order.Id">
+                </dx-text-box>
+            </div>
+            <div class="field">
+                <label class="date-label">{{l('Date')}}</label>
+                <dx-date-box
+                    [min]="currentDate"
+                    [width]="'370px'"
+                    [(value)]="date">
+                </dx-date-box>
+            </div>
+            <div class="field">
+                <label class="date-label">{{l('Due Date')}}</label>
+                <dx-date-box
+                    [min]="currentDate"
+                    [width]="'370px'"
+                    [(value)]="dueDate">
+                </dx-date-box>
+            </div>
+            <div class="field description">
+                <label class="description-label">{{l('Description')}}</label>
+                <dx-text-area
+                    name="description"
+                    [width]="'370px'"
+                    [height]="'60px'"
+                    [(value)]="description">
+                </dx-text-area>
+            </div>
+            <div class="field notes">
+                <label class="notes-label">{{l('Notes')}}</label>
+                <dx-text-area
+                    name="comment"
+                    [width]="'370px'"
+                    [height]="'60px'"
+                    [(value)]="notes">
+                </dx-text-area>
+            </div>
+
+            <div class="field lines">
+                <dx-data-grid
+                    width="620px"
+                    height="200px"
+                    [(dataSource)]="lines"
+                    [allowColumnReordering]="false"
+                    [columnAutoWidth]="true"
+                    [focusStateEnabled]="true"
+                    [showColumnLines]="false"
+                    [allowColumnResizing]="false"
+                    (onToolbarPreparing)="onToolbarPreparing($event)">
+
+                    <dxo-editing mode="cell" [allowAdding]="true" [allowUpdating]="true" [allowDeleting]="true" [texts]="{deleteRow: ''}"></dxo-editing>
+
+                    <dxi-column dataField="Description" caption="{{l('Description')}}" [allowSorting]="false" dataType="string"></dxi-column>
+                    <dxi-column dataField="Quantity" caption="{{l('Quantity')}}" [allowSorting]="false" dataType="number"></dxi-column>
+                    <dxi-column dataField="Rate" caption="{{l('Rate')}}" [allowSorting]="false" format="$ #,##0.##" dataType="number"></dxi-column>
+                    <dxi-column dataField="Amount" caption="{{l('Amount')}}" format="$ #,##0.##" dataType="number" [allowSorting]="false" [allowEditing]="false"></dxi-column>
+
+                </dx-data-grid>
+            </div>
+        </dx-scroll-view>
+    </div>
+</app-modal-dialog>

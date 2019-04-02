@@ -1,0 +1,133 @@
+:host {
+    /deep/ .mat-dialog-actions {
+        #saveOrderOptions {
+            width: 227px;
+        }
+    }
+
+    .toolbar-wraper {
+        width: 100%;
+        app-toolbar {
+            float: right;
+        }
+    }
+
+    .form-content {
+        display: flex;
+        margin-top: 70px;
+        flex-direction: column;
+        padding: 30px 0px 30px 50px;
+        height: calc(~"100vh - 150px");
+
+        .drop-down-box-wrapper {
+            width: 130px;
+            height: 34px;
+            overflow: hidden;
+            display: inline-block;
+            /deep/ .dx-widget {
+                margin: 0px;
+                input {
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                    padding: 0px;
+                }
+                .dx-texteditor-buttons-container {
+                    left: 97px;
+                    .dx-dropdowneditor-button {
+                        float: left;
+                    }
+                }
+            }
+        }
+
+        /deep/ .field {
+            margin-bottom: 30px;
+            &.addr {
+                margin-bottom: 0px;
+            }
+            &.notes {
+                margin-top: 20px;
+                span.clear-contact {
+                    align-self: flex-start;
+                }
+            }
+            &.lines {
+                width: 600px;
+            }
+            label {
+                min-width: 100px;
+            }
+
+            p {
+                width: 100%;
+                height: 22px;
+                max-width: 750px;
+                position: relative;
+                padding-left: 290px;
+                padding-right: 32px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            dx-text-box, dx-text-area, dx-select-box, 
+            dx-drop-down-box, dx-date-box {
+                display: inline-block;
+                margin-left: 30px;
+                &.dx-invalid {
+                    input {
+                        color: #d9534f!important;
+                    }
+                }
+                &.dx-state-focused {
+                    .dx-placeholder {
+                        top: -30px;
+                    }
+                }
+                input, textarea {
+                    color: #424c56;
+                }
+                .dx-placeholder, input, textarea {
+                    font-size: 15px;
+                    font-weight: 400;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    padding: 0px;
+                }
+            }
+            dx-select-box[name="customer"] {
+                .dx-texteditor-buttons-container {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    /deep/ dx-data-grid {
+        .dx-command-edit {
+            .dx-link-delete {
+                width: 16px;
+                height: 16px;
+                display: inline-block;
+                border-radius: 50%;
+                background: #F9E6E6;
+                position: absolute;
+                cursor: pointer;
+
+                &:before {
+                    content: '';
+                    width: 8px;
+                    height: 2px;
+                    background: #e7326a;
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                }
+            }
+        }
+    }
+}
