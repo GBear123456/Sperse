@@ -1,5 +1,5 @@
 import { FilterModel } from './filter.model';
-import { capitalize } from 'underscore.string/capitalize';
+import capitalize from 'underscore.string/capitalize';
 
 export class FilterItemModel {
     protected _value: any = '';

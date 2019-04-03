@@ -5,7 +5,7 @@ import { ExportGoogleSheetService } from './export-google-sheets/export-google-s
 import { Angular5Csv } from './export-csv/export-csv';
 import DataSource from 'devextreme/data/data_source';
 
-import { capitalize } from 'underscore.string/capitalize';
+import capitalize from 'underscore.string/capitalize';
 import * as _ from 'underscore';
 import * as moment from 'moment';
 

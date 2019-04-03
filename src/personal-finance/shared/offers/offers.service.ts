@@ -6,6 +6,7 @@ import { HttpParams } from '@angular/common/http';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import camelCase from 'lodash/camelCase';
+import kebabCase from 'lodash/kebabCase';
 import capitalize from 'lodash/capitalize';
 import cloneDeep from 'lodash/cloneDeep';
 import lowerCase from 'lodash/lowerCase';

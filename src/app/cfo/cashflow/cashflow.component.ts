@@ -30,11 +30,11 @@ import {
     toArray,
     withLatestFrom
 } from 'rxjs/operators';
-import { difference } from 'lodash';
+import difference from 'lodash/difference';
 import * as $ from 'jquery';
 import * as underscore from 'underscore';
-import { capitalize } from 'underscore.string/capitalize';
-import { dasherize } from 'underscore.string/dasherize';
+import capitalize from 'underscore.string/capitalize';
+import dasherize from 'underscore.string/dasherize';
 
 /** Application imports */
 import { AppService } from '@app/app.service';

@@ -737,8 +737,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
             this.stagesComponent.tooltipVisible = false;
             this._pipelineService.updateEntitiesStage(
-                this.pipelinePurposeId, 
-                this.selectedLeads, 
+                this.pipelinePurposeId,
+                this.selectedLeads,
                 $event.name
             ).subscribe((declinedList) => {
                 this.filterChanged = true;
@@ -874,15 +874,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, entityStageDataSource, loadMethod);
     }
 
-    onLeadStageChanged(lead) {  
+    onLeadStageChanged(lead) {
         if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.getVisibleRows().some((row) => {
                 if (lead.Id == row.data.Id) {
                     row.data.Stage = lead.Stage;
                     row.data.StageId = lead.StageId;
                     return true;
-                }                
-            });    
+                }
+            });
     }
 
     getAssignedUsersStoreSelectors() {

@@ -13,7 +13,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
 import { NotifyService } from '@abp/notify/notify.service';
-import { BehaviorSubject, Observable, Subject, combineLatest, of, merge } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, of, merge } from 'rxjs';
 import {
     debounceTime,
     first,
@@ -29,7 +29,6 @@ import {
     distinctUntilChanged
 } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
-import startCase from 'lodash/startCase';
 import cloneDeep from 'lodash/cloneDeep';
 import swal from 'sweetalert';
 
@@ -49,7 +48,6 @@ import {
     OfferDetailsForEditDtoSystemType,
     ExtendOfferDtoTargetAudience,
     OfferDetailsForEditDtoType,
-    OfferFilterCategory,
     OfferServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -135,6 +133,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
     prevButtonIsDisabled = true;
     nextButtonIsDisabled = true;
+    sentAnnouncementPermissionGranted: boolean;
     constructor(
         injector: Injector,
         private route: ActivatedRoute,

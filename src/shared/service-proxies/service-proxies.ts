@@ -13646,6 +13646,58 @@ export class InvoiceServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateStatus(input: UpdateInvoiceStatusInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/UpdateStatus";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateStatus(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @id (optional) 
      * @return Success
      */
@@ -46107,6 +46159,46 @@ export interface IUpdateInvoiceLineInput {
     sortOrder: number;
 }
 
+export class UpdateInvoiceStatusInput implements IUpdateInvoiceStatusInput {
+    id!: number;
+    status!: UpdateInvoiceStatusInputStatus;
+
+    constructor(data?: IUpdateInvoiceStatusInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.status = data["status"];
+        }
+    }
+
+    static fromJS(data: any): UpdateInvoiceStatusInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateInvoiceStatusInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["status"] = this.status;
+        return data; 
+    }
+}
+
+export interface IUpdateInvoiceStatusInput {
+    id: number;
+    status: UpdateInvoiceStatusInputStatus;
+}
+
 export class InvoiceDto implements IInvoiceDto {
     amount!: number | undefined;
     editionDisplayName!: string | undefined;
@@ -57458,6 +57550,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     module!: ModuleSubscriptionInfoDtoModule | undefined;
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
+    isInTrial!: boolean | undefined;
     isLocked!: boolean | undefined;
     trackingCode!: string | undefined;
     hasRecurringBilling!: boolean | undefined;
@@ -57476,6 +57569,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.module = data["module"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.editionName = data["editionName"];
+            this.isInTrial = data["isInTrial"];
             this.isLocked = data["isLocked"];
             this.trackingCode = data["trackingCode"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
@@ -57494,6 +57588,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["module"] = this.module;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
+        data["isInTrial"] = this.isInTrial;
         data["isLocked"] = this.isLocked;
         data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
@@ -57505,6 +57600,7 @@ export interface IModuleSubscriptionInfoDto {
     module: ModuleSubscriptionInfoDtoModule | undefined;
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
+    isInTrial: boolean | undefined;
     isLocked: boolean | undefined;
     trackingCode: string | undefined;
     hasRecurringBilling: boolean | undefined;
@@ -61770,6 +61866,14 @@ export enum CreateInvoiceInputStatus {
 }
 
 export enum UpdateInvoiceInputStatus {
+    Draft = "Draft", 
+    Submitted = "Submitted", 
+    Sent = "Sent", 
+    Paid = "Paid", 
+    Canceled = "Canceled", 
+}
+
+export enum UpdateInvoiceStatusInputStatus {
     Draft = "Draft", 
     Submitted = "Submitted", 
     Sent = "Sent", 
