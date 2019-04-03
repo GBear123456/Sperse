@@ -13,6 +13,9 @@ import * as moment from 'moment';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import {
     ActivityServiceProxy,
+    CustomerServiceProxy,
+    LeadServiceProxy,
+    OrderServiceProxy,
     CreateActivityDtoType,
     CreateActivityDto,
     UpdateActivityDto
@@ -27,7 +30,12 @@ import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.compon
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
     styleUrls: ['create-activity-dialog.component.less'],
-    providers: [ActivityServiceProxy, DialogService]
+    providers: [
+        ActivityServiceProxy,
+        CustomerServiceProxy,
+        LeadServiceProxy,
+        OrderServiceProxy,
+        DialogService]
 })
 export class CreateActivityDialogComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
@@ -77,7 +85,11 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
         public dialog: MatDialog,
         private _cacheService: CacheService,
         private _activityProxy: ActivityServiceProxy,
-        private dialogService: DialogService
+        private dialogService: DialogService,
+
+        private ClientsProxy: CustomerServiceProxy,
+        private LeadsProxy: LeadServiceProxy,
+        private OrdersProxy: OrderServiceProxy,
     ) {
         super(injector);
 
@@ -137,7 +149,7 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
 
     lookup(uri, search = '') {
         return new Promise((resolve, reject) => {
-            this._activityProxy['get' + uri](search, this.LOOKUP_RECORDS_COUNT).subscribe((res) => {
+            this[uri + 'Proxy']['getAllByPhrase'](search, this.LOOKUP_RECORDS_COUNT).subscribe((res) => {
                 resolve(res);
             });
         });

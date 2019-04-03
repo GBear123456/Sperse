@@ -14,7 +14,7 @@ import * as _ from 'underscore';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { ActivityServiceProxy, InvoiceServiceProxy, CreateInvoiceInput, 
+import { InvoiceServiceProxy, CustomerServiceProxy, CreateInvoiceInput,
     CreateInvoiceInputStatus, CreateInvoiceLineInput } from '@shared/service-proxies/service-proxies';
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
@@ -23,7 +23,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
     styleUrls: [ '../../../shared/form.less', 'create-invoice-dialog.component.less' ],
-    providers: [ DialogService, InvoiceServiceProxy ]
+    providers: [ DialogService, InvoiceServiceProxy, CustomerServiceProxy ]
 })
 export class CreateInvoiceDialogComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
@@ -60,8 +60,8 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _lookupProxy: ActivityServiceProxy,
         private _invoiceProxy: InvoiceServiceProxy,
+        private _customerProxy: CustomerServiceProxy,
         private _cacheService: CacheService,
         private _dialogService: DialogService
     ) {
@@ -73,7 +73,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             {text: this.l('SaveAndClose'), selected: false}
         ];
 
-        this._lookupProxy.getClients('', 10).subscribe((res) => {
+        this._customerProxy.getAllByPhrase('', 10).subscribe((res) => {
             this.customers = res;
         });
 
@@ -223,7 +223,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.l('LookingForItems'));
 
-            this._lookupProxy.getClients(search, 10).subscribe((res) => {
+            this._customerProxy.getAllByPhrase(search, 10).subscribe((res) => {
                 if (search == this.customer) {
                     if (!res['length'])
                         $event.component.option('noDataText', this.l('NoItemsFound'));
