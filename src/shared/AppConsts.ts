@@ -67,7 +67,7 @@ export class AppConsts {
     };
 
     static readonly formatting = {
-        date: 'MM/DD/YYYY',
+        date: 'MM/dd/yyyy',
         dateTime: 'MM/dd/yyyy hh:mm a'
     };
 

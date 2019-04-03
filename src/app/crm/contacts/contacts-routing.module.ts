@@ -14,9 +14,11 @@ import { PaymentInformationComponent } from './payment-information/payment-infor
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { ActivityLogsComponent } from './activity-logs/activity-logs.component';
 import { NotesComponent } from './notes/notes.component';
+import { OrdersComponent } from './orders/orders.component';
+import { InvoicesComponent } from './invoices/invoices.component';
 
 import { RP_USER_INFO_ID } from './contacts.const';
-import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
+
 
 @NgModule({
     imports: [
@@ -38,6 +40,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'orders', component: OrdersComponent },
+                    { path: 'invoices', component: InvoicesComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     { path: 'activity-logs', component: ActivityLogsComponent },
@@ -58,6 +61,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
                     { path: 'orders', component: OrdersComponent },
+                    { path: 'invoices', component: InvoicesComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } },
                     { path: 'activity-logs', component: ActivityLogsComponent },
@@ -96,6 +100,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
                     { path: 'orders', component: OrdersComponent },
+                    { path: 'invoices', component: InvoicesComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
@@ -115,6 +120,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
                     { path: 'orders', component: OrdersComponent },
+                    { path: 'invoices', component: InvoicesComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
@@ -134,6 +140,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
                     { path: 'orders', component: OrdersComponent },
+                    { path: 'invoices', component: InvoicesComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]
@@ -170,6 +177,7 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent, data: { rightPanelOpened: false } },
                     { path: 'orders', component: OrdersComponent },
+                    { path: 'invoices', component: InvoicesComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
                     { path: 'payment-information', component: PaymentInformationComponent, data: { rightPanelOpened: false } }
                 ]

@@ -100,6 +100,7 @@ import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialo
 import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
+import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component';
 
 @NgModule({
     declarations: [
@@ -148,7 +149,8 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
         ContactListDialogComponent,
         NotSupportedTypeDialogComponent,
         HistoryListDialogComponent,
-        OrdersComponent
+        OrdersComponent,
+        InvoicesComponent
     ],
     imports: [
         FormsModule,

@@ -77,7 +77,16 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             this.customers = res;
         });
 
+        let invoice = this.data.invoice;
+        if (invoice)
+            this.initInvoiceData(invoice);
+
         this.initToolbarConfig();
+    }
+
+    initInvoiceData(invoice) {        
+        this.data.title = invoice.Number;
+        this.status = invoice.Status;
     }
 
     initToolbarConfig() {

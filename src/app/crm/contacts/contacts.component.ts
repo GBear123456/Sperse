@@ -263,6 +263,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             {label: 'Documents', route: 'documents'},
             {label: 'Notes', route: 'notes'},
             {label: 'Orders', route: 'orders', hidden: this.customerType !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective},
+            {label: 'Invoices', route: 'invoices', hidden: this.customerType !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective},
             {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
             {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
             {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroup.Partner || (this.leadInfo && !this.leadInfo.id)},
