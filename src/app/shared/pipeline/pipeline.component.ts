@@ -21,12 +21,12 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { CrmStore, PipelinesStoreActions } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
-PipelineDto,
-StageDto,
-StageServiceProxy,
-CreateStageInput,
-RenameStageInput,
-MergeLeadStagesInput
+    PipelineDto,
+    StageDto,
+    StageServiceProxy,
+    CreateStageInput,
+    RenameStageInput,
+    MergeLeadStagesInput
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
@@ -45,6 +45,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @HostBinding('class.disabled') public disabled = false;
     @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCardClick: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onEntityStageChanged: EventEmitter<any> = new EventEmitter<any>();
 
     private _selectedEntities: any;
     private _dataSource: any;
@@ -115,6 +116,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
                         if (entity && oldStage.name != newStage.name)
                             this.updateEntityStage(entity.Id, newStage.name, oldStage.name, () => {
+                                this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);
                                 if (entity.Id != entityId) {
                                     newStage['entities'].unshift(entity);
                                     oldStage['entities'].splice(oldStage['entities'].indexOf(entity), 1);
@@ -124,7 +126,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.selectedEntities = [];
                 } else
                     this.updateEntityStage(entityId, newStage.name,
-                        this.getStageByElement(value[3]).name);
+                        this.getStageByElement(value[3]).name, () => {
+                            this.onEntityStageChanged && this.onEntityStageChanged
+                                .emit(this.getEntityById(entityId, newStage));
+                        });
             }
         }));
         this.subscribers.push(
@@ -231,10 +236,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    getEntityByElement(el, stage) {
+    getEntityById(id, stage) {
         return stage && find(stage.entities, (entity) => {
-            return entity && (entity['Id'] == parseInt(this.getAccessKey(el.closest('.card'))));
+            return entity && (entity['Id'] == id);
         });
+    }
+
+    getEntityByElement(el, stage) {
+        return stage && this.getEntityById(parseInt(this.getAccessKey(el.closest('.card'))), stage);
     }
 
     getStageByElement(el) {
@@ -272,7 +281,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             stage['entities'] = [];
         else {
             if (!dataSource)
-                dataSource = this._dataSources[stage.name] = 
+                dataSource = this._dataSources[stage.name] =
                     this.getDataSourceForStage(stage);
 
             if (!isNaN(stage['lastEntityId']) && page)
@@ -281,7 +290,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             dataSource.pageSize(this.STAGE_PAGE_COUNT);
             dataSource.sort({getter: 'Id', desc: true});
             response = from(this._odataService.loadDataSource(
-                dataSource, 
+                dataSource,
                 this._dataSource.uri + stage.id,
                 this.getODataUrl(this._dataSource.uri,
                     this.queryWithSearch.concat({and: [
@@ -520,7 +529,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     updateStage(data, actionType) {
         this.currentTooltip.hide();
-        this.createStageInput.sortOrder = data.sortOrder != 0 ? data.sortOrder : data.sortOrder + 1;
+        this.createStageInput.sortOrder = data.sortOrder + (data.sortOrder >= 0 ? 1 : -1);
         this.mergeLeadStagesInput.sourceStageId = this.renameStageInput.id = data.id;
         this.dialog.open(AddRenameMergeDialogComponent, {
             height: '300px',

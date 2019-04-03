@@ -7,4 +7,5 @@ export interface StatusInfo {
     statusText?: string;
     errorDetailsText?: string;
     showBack?: boolean;
+    downloadPdf?: string;    
 }

@@ -1,5 +1,6 @@
 /** Core imports */
 import { Injectable, Injector } from '@angular/core';
+import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
 import { NotifyService } from '@abp/notify/notify.service';
@@ -17,6 +18,7 @@ import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CustomReuseStrategy } from '@root/root-routing.module';
 import { AppConsts } from '@shared/AppConsts';
 
 interface StageColor {
@@ -40,6 +42,7 @@ export class PipelineService {
     constructor(
         injector: Injector,
         private _dialog: MatDialog,
+        private _reuseService: RouteReuseStrategy,
         private _leadService: LeadServiceProxy,
         private _orderService: OrderServiceProxy,
         private _activityService: ActivityServiceProxy,
@@ -212,6 +215,7 @@ export class PipelineService {
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete(data);
+            (this._reuseService as CustomReuseStrategy).invalidate('orders');
         })).subscribe((res) => {
             this.completeEntityUpdate(entity, data.fromStage, data.toStage);
         });

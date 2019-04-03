@@ -2,27 +2,41 @@
     <app-headline [config]="headlineConfig">
         <import-progress-bar></import-progress-bar>
     </app-headline>
+    <app-static-list
+        [width]="'210px'"
+        [title]="l('Stages')"
+        [selectedKeys]="selectedOrderKeys"
+        [filterModel]="filterModelStages"
+        [bulkUpdatePermissionKey]="'Pages.CRM.BulkUpdates'"
+        [updateConfirmationTitle]="l('LeadStatusUpdateConfirmationTitle')"
+        [updateConfirmationMessage]="l('LeadsUpdateStatusWarningMessage')"
+        [targetSelector]="'[aria-label=Stage]'"
+        [funnelStyling]="true"
+        [list]="stages"
+        (onItemSelected)="updateOrdersStage($event)">
+    </app-static-list>
     <div [hidden]="isDataLoaded && !totalRowCount || showPipeline" class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
               <div>
                     <div id="ClientsTable">
                         <dx-data-grid id="gridContainer"
                                       accesskey="narrowHeaderPanel"
-                                      [dataSource]="dataSource"
                                       [allowColumnReordering]="true"
                                       [columnAutoWidth]="true"
                                       [allowColumnResizing]="true"
                                       [hoverStateEnabled]="true"
-                                      (onCellClick)="onCardClick($event.data)"
+                                      (onEditingStart)="onCardClick($event.data)"
+                                      (onCellClick)="onCellClick($event)"
                                       [pager]="defaultGridPagerConfig"
                                       (onContentReady)="onContentReady($event)"
+                                      (onSelectionChanged)="onSelectionChanged($event)"
                                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                             <dxo-selection selectAllMode="page"
                                            showCheckBoxesMode="always"
                                            mode="multiple">
                             </dxo-selection>
                             <dxo-editing mode="popup"
-                                         [allowUpdating]="true">
+                                [popup]="{onShowing: onShowingPopup, height: '0px', width: '0px'}" [allowUpdating]="true">
                             </dxo-editing>
                             <dxi-column [width]="40" [fixed]="true" [fixedPosition]="'left'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column dataField="Id" caption="{{l('Id')}}" [visible]="false" sortOrder="asc"></dxi-column>
@@ -42,7 +56,7 @@
                                 }">
                             </dxi-column>
                             <dxi-column dataField="Stage" caption="{{l('Stage')}}"></dxi-column>
-                            <dxi-column dataField="Amount" caption="{{l('Amount')}}"></dxi-column>
+                            <dxi-column dataField="Amount" caption="{{l('Amount')}}" format="$ #,##0.##"></dxi-column>
                             <dxi-column dataField="OrderType" caption="{{l('Type')}}"></dxi-column>
                             <dxi-column dataField="CurrentNumber" caption="{{l('CurrentNumber')}}" [visible]="false"></dxi-column>
                             <dxi-column dataField="TotalNumber" caption="{{l('TotalNumber')}}" [visible]="false"></dxi-column>
@@ -77,6 +91,7 @@
                         [pipelinePurposeId]="pipelinePurposeId"
                         [filterModelStages]="filterModelStages"
                         [(selectedEntities)]="selectedOrders"
+                        (onEntityStageChanged)="onOrderStageChanged($event)"
                         (onStagesLoaded)="onStagesLoaded($event)"
                         (onCardClick)="onCardClick($event)">
                         Loading...

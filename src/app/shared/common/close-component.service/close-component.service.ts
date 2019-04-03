@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable, from, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import swal from 'sweetalert';
 
 /** Application imports */

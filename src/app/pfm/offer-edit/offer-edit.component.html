@@ -10,7 +10,10 @@
                     </inplace-edit>
                 </ng-container>
             </ng-container>
-            <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">Save</button>
+            <div class="buttons">
+                <button class="button-layout button-primary" *ngIf="sentAnnouncementPermissionGranted" (click)="onNotify()">{{ ls.l('Notify') }}</button>
+                <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">{{ ls.l('Save') }}</button>
+            </div>
             <div class="vertical-delimiter ng-star-inserted"></div>
             <div class="navigation">
                 <dx-button icon="chevronprev" class="prev" [hint]="ls.l('Previous')" (click)="onPrev()" [disabled]="prevButtonIsDisabled"></dx-button>
@@ -22,298 +25,145 @@
     </ng-container>
     <ng-container mainContent>
         <form class="offerEditForm">
-
-            <ng-container [ngSwitch]="section$ | async" *ngIf="model">
-
-                <div *ngSwitchCase="'general'">
-
-                    <div class="row">
-                        <div class="col-md-5">
-                            <text-field name="campaignId"
-                                        [value]="model.campaignId"
-                                        [readOnly]="true">
-                            </text-field>
-
-                            <checkbox-field name="isPublished"
-                                            [(value)]="model.extendedInfo.isPublished"
-                                            class="leftAlignment">
-                            </checkbox-field>
-
-                            <text-field name="categories"
-                                        [readOnly]="true"
-                                        [value]="model.categories">
-                            </text-field>
-
-                            <text-field name="subId"
-                                        [(value)]="model.extendedInfo.subId">
-                            </text-field>
-
-                            <dropdown-field name="type"
-                                            [readOnly]="true"
-                                            [value]="model.type"
-                                            [dataSource]="getEnumDataSource(typeEnum)">
-                            </dropdown-field>
-
-                            <dropdown-field name="cardNetwork"
-                                            [(value)]="model.extendedInfo.cardNetwork"
-                                            [readOnly]="true"
-                                            [dataSource]="getEnumDataSource(cardNetworkEnum)">
-                            </dropdown-field>
-
-                            <dropdown-field name="targetAudience"
-                                            [(value)]="model.extendedInfo.targetAudience"
-                                            [readOnly]="true"
-                                            [dataSource]="getEnumDataSource(targetAudienceEnum)">
-                            </dropdown-field>
-
-                            <text-field name="issuingBank"
-                                        [readOnly]="true"
-                                        [(value)]="model.extendedInfo.issuingBank">
-                            </text-field>
-
-                            <text-field name="daysOfWeekAvailability"
-                                        [readOnly]="true"
-                                        [value]="model.daysOfWeekAvailability">
-                            </text-field>
-
-                            <text-field name="expireTimeOfDay"
-                                        [readOnly]="true"
-                                        [value]="model.expireTimeOfDay">
-                            </text-field>
-
-                            <text-field name="traficSource"
-                                        [readOnly]="true"
-                                        [value]="model.traficSource">
-                            </text-field>
-
-                            <text-multiple-field name="details"
-                                                 [(value)]="model.extendedInfo.details"
-                                                 class="valuesBelow">
-                            </text-multiple-field>
-
-                        </div>
-                        <div class="offset-md-1"></div>
-                        <div class="col-md-5">
-                            <text-field name="name"
-                                        [value]="model.name"
-                                        [readOnly]="true">
-                            </text-field>
-
-                            <dropdown-field name="status"
-                                            [value]="model.status"
-                                            [readOnly]="true"
-                                            [dataSource]="getEnumDataSource(statusEnum)">
-                            </dropdown-field>
-
-                            <text-field name="description"
-                                        [readOnly]="true"
-                                        [value]="model.description">
-                            </text-field>
-
-                            <dropdown-field name="systemType"
-                                            [readOnly]="true"
-                                            [value]="model.systemType"
-                                            [dataSource]="getEnumDataSource(systemTypeEnum)">
-                            </dropdown-field>
-
-                            <dropdown-field name="campaignProviderType"
-                                            [(value)]="model.extendedInfo.campaignProviderType"
-                                            [dataSource]="getEnumDataSource(campaignProviderTypeEnum)">
-                            </dropdown-field>
-
-                            <dropdown-field name="parameterHandlerType"
-                                            [(value)]="model.extendedInfo.parameterHandlerType"
-                                            [dataSource]="getEnumDataSource(parameterHandlerTypeEnum)">
-                            </dropdown-field>
-
-                            <dropdown-field name="cardType"
-                                            [readOnly]="true"
-                                            [(value)]="model.extendedInfo.cardType"
-                                            [dataSource]="getEnumDataSource(cardTypeEnum)">
-                            </dropdown-field>
-
-                            <dropdown-field name="securingType"
-                                            [(value)]="model.extendedInfo.securingType"
-                                            [readOnly]="true"
-                                            [dataSource]="getEnumDataSource(securingTypeEnum)">
-                            </dropdown-field>
-
-                            <text-multiple-field name="countries"
-                                                [readOnly]="true"
-                                                [value]="model.countries">
-                            </text-multiple-field>
-
-                            <text-field name="effectiveTimeOfDay"
-                                        [readOnly]="true"
-                                        [value]="model.effectiveTimeOfDay">
-                            </text-field>
-
-                            <text-field name="termsOfService"
-                                        [readOnly]="true"
-                                        [value]="model.termsOfService">
-                            </text-field>
-
-                            <text-multiple-field name="pros"
-                                                 [(value)]="model.extendedInfo.pros"
-                                                 class="valuesBelow">
-                            </text-multiple-field>
-
-                            <text-multiple-field name="cons"
-                                                 [(value)]="model.extendedInfo.cons"
-                                                 class="valuesBelow">
-                            </text-multiple-field>
-                        </div>
-                        <div class="col-md-12">
-                            <text-field name="campaignUrl"
-                                        [readOnly]="true"
-                                        class="center"
-                                        [value]="model.campaignUrl">
-                            </text-field>
-                        </div>
-                    </div>
+            <div class="row">
+                <div class="col-md-5" *ngIf="detailsFieldsByPosition[fieldPositions.Left].length">
+                    <ng-container *ngTemplateOutlet="detailsFields; context: {$implicit: detailsFieldsByPosition[fieldPositions.Left]}"></ng-container>
                 </div>
-
-                <div *ngSwitchCase="'rating'">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <rating-field name="overallRating"
-                                          [(value)]="model.extendedInfo.overallRating">
-                            </rating-field>
-
-                            <rating-field name="feesRating"
-                                          [(value)]="model.extendedInfo.feesRating">
-                            </rating-field>
-
-                            <rating-field name="rewardsRating"
-                                          [(value)]="model.extendedInfo.rewardsRating">
-                            </rating-field>
-                        </div>
-                        <div class="offset-md-1"></div>
-                        <div class="col-md-5">
-                            <rating-field name="interestRating"
-                                          [(value)]="model.extendedInfo.interestRating">
-                            </rating-field>
-
-                            <rating-field name="benefitsRating"
-                                          [(value)]="model.extendedInfo.benefitsRating">
-                            </rating-field>
-
-                            <rating-field name="serviceRating"
-                                          [(value)]="model.extendedInfo.serviceRating">
-                            </rating-field>
-                        </div>
-                    </div>
+                <div class="offset-md-1"></div>
+                <div class="col-md-5"  *ngIf="detailsFieldsByPosition[fieldPositions.Right].length">
+                    <ng-container *ngTemplateOutlet="detailsFields; context: {$implicit: detailsFieldsByPosition[fieldPositions.Right]}"></ng-container>
                 </div>
-
-                <div *ngSwitchCase="'attributes'">
-                    <div class="row">
-                        <div class="col-md-5">
-
-                            <tag-field name="states"
-                                       displayExpr="name"
-                                       valueExpr="code"
-                                       [dataSource]="states$ | async"
-                                       [(value)]="model.extendedInfo.states">
-                            </tag-field>
-
-                            <dropdown-field name="creditScores"
-                                            [(value)]="model.creditScores"
-                                            [readOnly]="true"
-                                            [dataSource]="getEnumDataSource(creditScoresEnum)">
-                            </dropdown-field>
-
-                            <from-to-field fromName="minAnnualIncome"
-                                           toName="maxAnnualIncome"
-                                           [isCurrency]="true"
-                                           [(fromValue)]="model.extendedInfo.minAnnualIncome"
-                                           [(toValue)]="model.extendedInfo.maxAnnualIncome"
-                                           label="Annual Income">
-                            </from-to-field>
-
-                            <from-to-field fromName="minLoanAmount"
-                                           toName="maxLoanAmount"
-                                           [isCurrency]="true"
-                                           [(fromValue)]="model.extendedInfo.minLoanAmount"
-                                           [(toValue)]="model.extendedInfo.maxLoanAmount"
-                                           label="Loan Amount">
-                            </from-to-field>
-
-                            <from-to-field fromName="minLoanTermMonths"
-                                           toName="maxLoanTermMonths"
-                                           [(fromValue)]="model.extendedInfo.minLoanTermMonths"
-                                           [(toValue)]="model.extendedInfo.maxLoanTermMonths"
-                                           label="Loan Term Months">
-                            </from-to-field>
-
-                            <text-field name="introAPR"
-                                        [(value)]="model.extendedInfo.introAPR">
-                            </text-field>
-
-                            <text-field name="regularAPR"
-                                        [(value)]="model.extendedInfo.regularAPR">
-                            </text-field>
-
-                            <text-field name="introRewardsBonus"
-                                        [(value)]="model.extendedInfo.introRewardsBonus">
-                            </text-field>
-
-                            <number-field name="rewardsRate"
-                                          [(value)]="model.extendedInfo.rewardsRate">
-                            </number-field>
-
-                            <text-field name="annualFee"
-                                        [(value)]="model.extendedInfo.annualFee">
-                            </text-field>
-
-                            <text-field name="monthlyFee"
-                                        [(value)]="model.extendedInfo.monthlyFee">
-                            </text-field>
-
-                            <text-field name="balanceTransferFee"
-                                        [(value)]="model.extendedInfo.balanceTransferFee">
-                            </text-field>
-
-                            <text-field name="activationFee"
-                                        [(value)]="model.extendedInfo.activationFee">
-                            </text-field>
-
-                            <text-field name="zeroPercentageInterestTransfers"
-                                        [(value)]="model.extendedInfo.zeroPercentageInterestTransfers">
-                            </text-field>
-
-                            <group-field label="Duration For Zero Percentage (Months)">
-                                <number-field name="durationForZeroPercentageTransfersInMonths"
-                                              [(value)]="model.extendedInfo.durationForZeroPercentageTransfersInMonths"
-                                            label="Transfers"></number-field>
-                                <number-field name="durationForZeroPercentagePurchasesInMonths"
-                                              [(value)]="model.extendedInfo.durationForZeroPercentagePurchasesInMonths"
-                                              label="Purchases"></number-field>
-                            </group-field>
-                        </div>
-                    </div>
+                <div class="col-md-12" *ngIf="detailsFieldsByPosition[fieldPositions.Center].length">
+                    <ng-container *ngTemplateOutlet="detailsFields; context: {$implicit: detailsFieldsByPosition[fieldPositions.Center]}"></ng-container>
                 </div>
+            </div>
+            <ng-template #detailsFields let-details>
+                <ng-container *ngFor="let detail of details">
+                    <div *ngIf="!detailsConfig[detail] || !detailsConfig[detail].hidden"
+                         [ngClass]="['detail', detailsConfig[detail] && detailsConfig[detail].cssClass ? detailsConfig[detail].cssClass : '']">
+                        <ng-container *ngIf="getDetailGroupLabel(detail) as detailGroupLabel">
+                            <div class="groupLabel" [title]="detailGroupLabel">{{ detailGroupLabel }}</div>
+                        </ng-container>
+                        <ng-container *ngIf="isEnum(detail) || (isMultiple(detail) && detailsConfig[detail].dataSourceConfig); else a">
+                            <div class="field">
+                                <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
+                                    <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
+                                </ng-container>
+                                <div class="drop-down-box-wrapper">
+                                    <ng-container *ngIf="isMultiple(detail); else single">
+                                        <dx-tag-box
+                                            [inputAttr]="{ id: detail }"
+                                            [placeholder]="!(isReadOnly(detail) | async) ? ls.l('Select') : ''"
+                                            [displayExpr]="detailsConfig[detail].dataSourceConfig && detailsConfig[detail].dataSourceConfig.displayExpr"
+                                            [valueExpr]="detailsConfig[detail].dataSourceConfig && detailsConfig[detail].dataSourceConfig.valueExpr"
+                                            [dataSource]="detailsConfig[detail].dataSourceConfig
+                                                          ? detailsConfig[detail].dataSourceConfig.async ? (detailsConfig[detail].dataSourceConfig.source | async) : detailsConfig[detail].dataSourceConfig.source
+                                                          : keys(detailsConfig[detail].enum)"
+                                            [(value)]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail]"
+                                            [disabled]="isReadOnly(detail) | async">
+                                        </dx-tag-box>
+                                    </ng-container>
+                                    <ng-template #single>
+                                        <dx-select-box
+                                            [inputAttr]="{ id: detail }"
+                                            [placeholder]="!(isReadOnly(detail) | async) ? ls.l('Select') : ''"
+                                            displayExpr="name"
+                                            valueExpr="value"
+                                            [dataSource]="getEnumDataSource(detailsConfig[detail].enum)"
+                                            [(value)]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail]"
+                                            [disabled]="isReadOnly(detail) | async">
+                                        </dx-select-box>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-template #a>
+                            <ng-container *ngIf="isRatingDetail(detail); else b">
+                                <div class="field">
+                                    <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
+                                        <label [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
+                                    </ng-container>
+                                    <stars-rating [isEditable]="true" [(currentRating)]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail]" color="#f0d500"></stars-rating>
+                                    <span [ngClass]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail] && 'clear-contact' || 'hidden'" (click)="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail] = ''"><i class="minus-icon"></i></span>
+                                </div>
+                            </ng-container>
+                            <ng-template #b>
+                                <ng-container *ngIf="isPrimitive(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail])">
+                                    <div class="field" *ngIf="!isBool(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail])">
+                                        <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
+                                            <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
+                                        </ng-container>
+                                        <div *ngIf="isNumberType(detail); else string" class="numberBox">
+                                            <dx-number-box
+                                                [inputAttr]="{ id: detail }"
+                                                [placeholder]="detailHasMaxValue(detail) ? ls.l('Min') : ((isReadOnly(detail) | async) ? '' : ls.ls('PFM', 'Enter_Value'))"
+                                                [format]="isCurrencyType(detail) ? '$ #,##0.##;($ #,##0.##)' : ''"
+                                                [disabled]="isReadOnly(detail) | async"
+                                                [(value)]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail]">
+                                            </dx-number-box>
+                                            <ng-container *ngIf="detailHasMaxValue(detail)">
+                                                <span> - </span>
+                                                <dx-number-box
+                                                    [placeholder]="ls.l('Max')"
+                                                    [disabled]="isReadOnly(detail) | async"
+                                                    [format]="isCurrencyType(detail) ? '$ #,##0.##;($ #,##0.##)' : ''"
+                                                    [(value)]="model.hasOwnProperty('max' + detail.slice(3)) ? model['max' + detail.slice(3)] : model.extendedInfo['max' + detail.slice(3)]">
+                                                </dx-number-box>
+                                            </ng-container>
+                                        </div>
+                                        <ng-template #string>
+                                            <dx-text-box [inputAttr]="{ id: detail }"
+                                                         [valueChangeEvent]="'focusout'"
+                                                         [(value)]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail]"
+                                                         [placeholder]="!(isReadOnly(detail) | async) ? ls.ls('PFM', 'Enter_Value') : ''"
+                                                         [disabled]="isReadOnly(detail) | async">
+                                            </dx-text-box>
+                                        </ng-template>
+                                        <span [ngClass]="(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail] || (detailHasMaxValue(detail) && model['max' + detail.slice(3)])) && !(isReadOnly(detail) | async) && 'clear-contact' || 'hidden'" (click)="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail] = model['max' + detail.slice(3)] = ''"><i class="minus-icon"></i></span>
+                                    </div>
+                                    <div class="field" *ngIf="isBool(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail])">
+                                        <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
+                                            <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
+                                        </ng-container>
+                                        <dx-check-box [(value)]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail]" [disabled]="isReadOnly(detail) | async"></dx-check-box>
+                                    </div>
+                                </ng-container>
 
-                <div *ngSwitchCase="'flags'">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <dropdown-field name="offerCollection"
-                                            [(value)]="model.extendedInfo.offerCollection"
-                                            [readOnly]="offerNotInCardCategory$ | async"
-                                            [dataSource]="getEnumDataSource(offerCollectionEnum)">
-                            </dropdown-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-5" *ngFor="let key of keys(model.extendedInfo.flags)">
-                            <checkbox-field [name]="key"
-                                            [(value)]="!!model.extendedInfo.flags[key]"
-                                            [readOnly]="offerNotInCardCategory$ | async">
-                            </checkbox-field>
-                        </div>
-                    </div>
-                </div>
+                                <div *ngIf="isArray(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail]); else object">
+                                    <div class="field">
+                                        <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
+                                            <label [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
+                                        </ng-container>
+                                        <div>
+                                            <div *ngFor="let i of keys(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail])" class="detailItem">
+                                                <dx-text-box [valueChangeEvent]="'focusout'"
+                                                             [disabled]="isReadOnly(detail) | async"
+                                                             [placeholder]="!(isReadOnly(detail) | async) ? ls.ls('PFM', 'Enter_Value') : ''"
+                                                             [value]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail][i]"
+                                                             (onValueChanged)="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail][i] = $event.value">
+                                                </dx-text-box>
+                                                <span *ngIf="!(isReadOnly(detail) | async)" class="clear-contact" (click)="remove(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail], i)"><i class="minus-icon"></i></span>
+                                            </div>
+                                            <div *ngIf="!(isReadOnly(detail) | async)" class="add-new-button" (click)="addNew(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail])">
+                                                <span>+ Add new</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-            </ng-container>
+                                <ng-template #object>
+                                    <div *ngIf="isObject(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail])" class="row">
+                                        <div class="field col-md-5" *ngFor="let value of keys(model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail])">
+                                            <label>{{ startCase(value) }}</label>
+                                            <dx-check-box [disabled]="isReadOnly(detail) | async" [(value)]="model.hasOwnProperty(detail) ? !!model[detail][value] : !!model.extendedInfo[detail][value]"></dx-check-box>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </ng-template>
+                        </ng-template>
+                    </div>
+                </ng-container>
+            </ng-template>
         </form>
     </ng-container>
 </item-details-layout>

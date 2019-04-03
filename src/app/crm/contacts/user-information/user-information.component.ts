@@ -1,23 +1,26 @@
+/** Core imports */
 import { Injector, Component, OnInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
-    UpdateUserOptionsDto, UpdateUserRoleInput, ContactInfoDto, ContactServiceProxy, PersonContactServiceProxy,
-    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput } from '@shared/service-proxies/service-proxies';
-import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
-import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
-import { ContactsService } from '../contacts.service';
-import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
-import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
+
+/** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-
+import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { finalize } from 'rxjs/operators';
-
 import find from 'lodash/find';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 import map from 'lodash/map';
 import filter from 'lodash/filter';
+
+/** Application imports */
+import { AppConsts } from '@shared/AppConsts';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { UserServiceProxy, GetUserForEditOutput, UpdateUserPhoneDto, RoleServiceProxy,
+    UpdateUserOptionsDto, UpdateUserRoleInput, ContactServiceProxy, PersonContactServiceProxy,
+    CreateOrUpdateUserInput, TenantHostType, UpdateUserEmailDto, CreateUserForContactInput } from '@shared/service-proxies/service-proxies';
+import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
+import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
+import { ContactsService } from '../contacts.service';
+import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
 
 @Component({
     selector: 'user-information',
@@ -105,14 +108,6 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 this.data.raw.memberedOrganizationUnits.push(
                     find(this.data.raw.allOrganizationUnits, {id: item})['code']);
             });
-        }, this.constructor.name);
-
-        _contactsService.invalidateSubscribe((area) => {
-            if (area == 'user-information') {
-                if ((this.data = this._userService['data']).userId)
-                    this.loadData();
-                this.checkShowInviteForm();
-            }
         }, this.constructor.name);
 
         if (!(this.roles = _roleServiceProxy['data']))
@@ -266,7 +261,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
     }
 
     update(fieldName?, value?, callback?) {
-        let sub, data = { id: this.userData.user.id }, 
+        let sub, data = { id: this.userData.user.id },
             initialValue = this.data.user[fieldName];
 
         this.data.user[fieldName] = data[fieldName] = value;

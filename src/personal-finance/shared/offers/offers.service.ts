@@ -13,7 +13,6 @@ import upperFirst from 'lodash/upperFirst';
 import { ReplaySubject, Observable } from 'rxjs';
 import { map, first, pluck, publishReplay, refCount } from 'rxjs/operators';
 
-
 /** Application imports */
 import {
     OfferDto,
@@ -50,9 +49,13 @@ export class OffersService {
             name: 'Retrieving Response'
         }
     ];
-    readonly routeToCategoryMapping = {
+    readonly routeToCategoryMapping: { [key: string]: OfferFilterCategory } = {
         'credit-scores': OfferFilterCategory.CreditScore,
         'id-theft-protection': OfferFilterCategory.CreditMonitoring
+    };
+    readonly categoryToRouteMapping = {
+        [OfferFilterCategory.CreditScore]: 'credit-scores',
+        [OfferFilterCategory.CreditMonitoring]: 'id-theft-protection'
     };
     readonly categoriesDisplayNames = {
         [OfferFilterCategory.CreditScore]: this.ls.l('CreditScore_CreditScores')
@@ -104,6 +107,10 @@ export class OffersService {
         return route.url.pipe(
             map((urlSegment: UrlSegment) => this.routeToCategoryMapping[urlSegment[0].path] || OfferFilterCategory[upperFirst(camelCase(urlSegment[0].path))])
         );
+    }
+
+    getCategoryRouteNameByCategoryEnum(category: OfferFilterCategory): string {
+        return this.categoryToRouteMapping[category] || kebabCase(category);
     }
 
     getCategoryDisplayName(category: OfferFilterCategory): string {

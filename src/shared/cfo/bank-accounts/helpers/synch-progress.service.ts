@@ -102,7 +102,10 @@ export class SynchProgressService {
         this.getSyncProgressSubscription = this.syncServiceProxy.getSyncProgress(
             InstanceType[this.cfoService.instanceType],
             this.cfoService.instanceId
-        ).pipe(finalize(() => this.appHttpConfiguration.avoidErrorHandling = false))
+        ).pipe(finalize(() => {
+            this.appHttpConfiguration.avoidErrorHandling = false;
+            this.runGetStatus();
+        }))
          .subscribe(syncData => this.syncData$.next(syncData));
     }
 
@@ -121,7 +124,7 @@ export class SynchProgressService {
                     if (result.totalProgress.progressPercent != 100) {
                         this.syncCompleted.next(false);
                         this.timeoutsIds.push(setTimeout(
-                            () => this.runSynchProgress(), this.calcAndrunSynchProgressDelay()
+                            () => this.runSynchProgress(), this.calcAndRunSynchProgressDelay()
                         ));
                     } else {
                         /** Replace with initial delay */
@@ -177,7 +180,7 @@ export class SynchProgressService {
     }
 
     /** Increase delay by 1.1 with every new call until max has reached */
-    private calcAndrunSynchProgressDelay(): number {
+    private calcAndRunSynchProgressDelay(): number {
         this.synchProgressDelay = this.synchProgressDelay * this.synchProgressDelayMultiplier;
         if (this.synchProgressDelay > this.maxSynchProgressDelay) {
             this.synchProgressDelay = this.maxSynchProgressDelay;

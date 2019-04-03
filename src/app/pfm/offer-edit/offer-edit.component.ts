@@ -16,6 +16,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { BehaviorSubject, Observable, Subject, combineLatest, of, merge } from 'rxjs';
 import {
     debounceTime,
+    first,
     filter,
     finalize,
     map,
@@ -30,6 +31,7 @@ import {
 import { Store, select } from '@ngrx/store';
 import startCase from 'lodash/startCase';
 import cloneDeep from 'lodash/cloneDeep';
+import swal from 'sweetalert';
 
 /** Application imports */
 import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -40,12 +42,15 @@ import {
     ExtendOfferDtoCampaignProviderType,
     ExtendOfferDtoCardNetwork,
     ExtendOfferDtoCardType,
-    ExtendOfferDtoOfferCollection, ExtendOfferDtoParameterHandlerType,
+    ExtendOfferDtoOfferCollection,
+    ExtendOfferDtoParameterHandlerType,
     ExtendOfferDtoSecuringType,
-    ExtendOfferDtoTargetAudience,
     OfferDetailsForEditDtoStatus,
     OfferDetailsForEditDtoSystemType,
-    OfferDetailsForEditDtoType
+    ExtendOfferDtoTargetAudience,
+    OfferDetailsForEditDtoType,
+    OfferFilterCategory,
+    OfferServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -55,12 +60,16 @@ import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 import { CloseComponentAction } from '@app/shared/common/close-component.service/close-component-action.enum';
 import { ICloseComponent } from '@app/shared/common/close-component.service/close-component.interface';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppConsts } from '@shared/AppConsts';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
     selector: 'offer-edit',
     templateUrl: './offer-edit.component.html',
     styleUrls: [ '../../shared/form.less', './offer-edit.component.less' ],
-    providers: [ OfferManagementServiceProxy ],
+    providers: [ CurrencyPipe, OfferManagementServiceProxy, OffersService, OfferServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
@@ -136,9 +145,12 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         private store$: Store<RootStore.State>,
         private notifyService: NotifyService,
         private changeDetector: ChangeDetectorRef,
-        private itemDetailsService: ItemDetailsService
+        private itemDetailsService: ItemDetailsService,
+        private permissionChecker: PermissionCheckerService,
+        private offersService: OffersService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
+        this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted('Pages.PFM.Applications.SendOfferAnnouncements');
     }
 
     ngOnInit() {
@@ -178,7 +190,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     }
 
     handleDeactivate(deactivateAction: CloseComponentAction): Observable<boolean> {
-        let deactivate$: Observable<boolean>;
+        let deactivate$: Observable<boolean> = of(true);
         switch (deactivateAction) {
             case CloseComponentAction.Save: {
                 deactivate$ = this.onSubmit().pipe(map(() => true));
@@ -282,4 +294,41 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         );
     }
 
+    onNotify() {
+        if (this.sentAnnouncementPermissionGranted) {
+            this.offerId$.pipe(first()).subscribe((offerId: number) => {
+                const offerCategory = this.offersService.getCategoryRouteNameByCategoryEnum(this.model.categories[0].category as any);
+                const offerPublicLink = AppConsts.appBaseUrl + 'personal-finance/offers/' + offerCategory + '/' + offerId;
+                const el = document.createElement('div');
+                el.innerHTML = `<h5>${this.ls.ls('PFM', 'OfferLinkWillBeSentToUsers')}:</h5>
+                                <a href="${offerPublicLink}" target="_blank">${offerPublicLink}</a>`;
+                const swalParams: any = {
+                    title: '',
+                    content: el,
+                    buttons: {
+                        confirm: {
+                            text: this.ls.ls('PFM', 'Confirm'),
+                            value: true,
+                            visible: true
+                        },
+                        cancel: {
+                            text: this.ls.ls('PFM', 'Cancel'),
+                            value: false,
+                            visible: true
+                        }
+                    }
+                };
+                swal(swalParams).then((confirmed) => {
+                    if (confirmed) {
+                        abp.ui.setBusy();
+                        this.offerManagementService.sendAnnouncement(
+                            offerId,
+                            offerPublicLink
+                        ).pipe(finalize(() => abp.ui.clearBusy()))
+                            .subscribe(() => this.notifyService.success(this.ls.ls('PFM', 'AnnouncementsHaveBeenSent')));
+                    }
+                });
+            });
+        }
+    }
 }
