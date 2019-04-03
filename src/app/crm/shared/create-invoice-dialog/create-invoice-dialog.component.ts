@@ -1,21 +1,21 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, Injector } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { Store, select } from '@ngrx/store';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { CacheService } from 'ng2-cache-service';
 import { finalize, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { CreateInvoiceInput } from '@shared/service-proxies/service-proxies';
+import { ActivityServiceProxy, InvoiceServiceProxy, CreateInvoiceInput, 
+    CreateInvoiceInputStatus, CreateInvoiceLineInput } from '@shared/service-proxies/service-proxies';
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -23,26 +23,27 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
     styleUrls: [ '../../../shared/form.less', 'create-invoice-dialog.component.less' ],
-    providers: [ DialogService ]
+    providers: [ DialogService, InvoiceServiceProxy ]
 })
-export class CreateInvoiceDialogComponent extends AppModalDialogComponent implements OnInit, OnDestroy, AfterViewInit {
+export class CreateInvoiceDialogComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
+    @ViewChild('contact') contactComponent: DxSelectBoxComponent;
 
     private lookupTimeout;
-    private readonly SAVE_OPTION_DEFAULT = 2;
+    private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
     private validationError: string;
-    private isStatusSelected;
 
     statuses: any[] = [];
-    statusId: number;
+    status = CreateInvoiceInputStatus.Draft;
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
 
     customer: any;
+    contactId: number;
     customers = [];
 
     currentDate = new Date();
@@ -59,18 +60,22 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     constructor(
         injector: Injector,
         public dialog: MatDialog,
+        private _lookupProxy: ActivityServiceProxy,
+        private _invoiceProxy: InvoiceServiceProxy,
         private _cacheService: CacheService,
-        private _pipelineService: PipelineService,
         private _dialogService: DialogService
     ) {
         super(injector);
 
         this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.saveContextMenuItems = [
-            {text: this.l('SaveDraft'), selected: false},
             {text: this.l('SaveAndAddNew'), selected: false},
             {text: this.l('SaveAndClose'), selected: false}
         ];
+
+        this._lookupProxy.getClients('', 10).subscribe((res) => {
+            this.customers = res;
+        });
 
         this.initToolbarConfig();
     }
@@ -83,22 +88,15 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
                 items: [
                     {
                         name: 'status',
-                        widget: 'dxDropDownMenu',
-                        disabled: true,
+                        widget: 'dxSelectBox',
+                        disabled: false,
                         options: {
                             hint: 'Status',
-                            items: [
-                                {
-                                    action: Function(),
-                                    text: 'Active',
-                                }, {
-                                    action: Function(),
-                                    text: 'Inactive',
-                                }
-                            ]
-                        },
-                        attr: {
-                            'filter-selected': this.isStatusSelected
+                            value: this.status,
+                            items: Object.keys(CreateInvoiceInputStatus),
+                            onValueChanged: (event) => {
+                                this.status = event.value;
+                            }
                         }
                     }
                 ]
@@ -157,51 +155,59 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         this.saveOptionsInit();
     }
 
-    ngAfterViewInit() {
-        //setTimeout(() => this.lines = [], 2000);  
-        //this.linesComponent.instance.option('dataSource', this.lines);
-    }
-
     private createEntity(): void {
+        this._invoiceProxy.create(new CreateInvoiceInput({
+            contactId: this.contactId,
+            orderId: this.order && this.order.id,
+            status: CreateInvoiceInputStatus[this.status],
+            date: this.date,
+            dueDate: this.dueDate,
+            description: this.description,
+            note: this.notes,
+            lines: this.lines.map((row, index) => {
+                return new CreateInvoiceLineInput({
+                    quantity: row.Quantity,
+                    rate: row.Rate,
+                    description: row.Description,
+                    sortOrder: index
+                });
+            })
+        })).subscribe((res) => {
+            this.afterSave();
+        })
     }
 
     private afterSave(): void {
-        if (this.saveContextMenuItems[0].selected) {
+        if (this.saveContextMenuItems[0].selected)
             this.resetFullDialog();
-            this.notify.info(this.l('SavedSuccessfully'));
-            this.data.refreshParent(true);
-        } else if (this.saveContextMenuItems[1].selected) {
-            this.data.refreshParent(true);
-        } else {
-            this.data.refreshParent(false);
+        else
             this.close();
-        }
+
+        this.notify.info(this.l('SavedSuccessfully'));
+        this.data.refreshParent();
     }
 
     save(event?): void {
-        if (event && event.offsetX > 195)
+        if (event && event.offsetX > 140)
             return this.saveContextComponent
                 .instance.option('visible', true);
 
+        if (!this.data.title) {
+            this.data.isTitleValid = false;
+            return this.data.isTitleValid;
+        }
+
+        if (isNaN(this.contactId))
+            return this.contactComponent.instance.option('isValid', false);
+
+        if (!this.lines.length)
+            return this.notify.error(this.l('InvoiceLinesShouldBeDefined'));
 
         this.createEntity();
     }
 
-    getDialogPossition(event, shiftX) {
-        return this._dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
-    }
-
-    getInputElementValue(event) {
-        return event.element.getElementsByTagName('input')[0].value;
-    }
-
-    resetComponent(component) {
-        component.reset();
-        component.option('isValid', true);
-    }
-
-    initValidationGroup($event, validator) {
-        this[validator].push($event.component);
+    onFieldFocus(event) {
+        event.component.option('isValid', true);
     }
 
     customerLookupItems($event) {
@@ -209,25 +215,38 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         if (this.customers.length)
             this.customers = [];
 
+        $event.component.option('opened', true);
+        $event.component.option('noDataText', this.l('LookingForItems'));
+
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
-/*
-            this._orgServiceProxy.getOrganizations(search, this.data.customerType || ContactGroup.Client, 10).subscribe((res) => {
-                if (search == this.company)
-                    this.customers = res;
-                setTimeout(() => this.companyOptionChanged($event, true));
-            });
-*/
-        }, 500);
-    }
+            $event.component.option('opened', true);
+            $event.component.option('noDataText', this.l('LookingForItems'));
 
-    customerOptionChanged($event, forced = false) {
-        if (!this.customer || !this.customers.length || forced)
-            $event.component.option('opened', Boolean(this.customers.length));
+            this._lookupProxy.getClients(search, 10).subscribe((res) => {
+                if (search == this.customer) {
+                    if (!res['length'])
+                        $event.component.option('noDataText', this.l('NoItemsFound'));
+
+                    this.customers = res;
+                }
+            });
+        }, 500);
     }
 
     resetFullDialog(forced = true) {
         let resetInternal = () => {
+            this.data.title = undefined;
+            this.data.isTitleValid = true;
+            this.status = CreateInvoiceInputStatus.Draft;
+            this.customer = undefined;
+            this.date = this.currentDate;
+            this.dueDate = this.date;
+            this.description = '';
+            this.notes = '';
+            this.lines = [];
+
+            this.initToolbarConfig();
         };
 
         if (forced)
@@ -239,16 +258,25 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             });
     }
 
-    ngOnDestroy(): void {
+    calculateLineAmount(data) {
+        return data.Quantity * data.Rate || '';
     }
 
-    onStatusChanged(event) {
-    }
-
-    onInvoiceNumberKeyUp(event) {
+    calculateSummary(options) {
+        if (options.name === "RowsSummary") {
+            if (options.summaryProcess === "start") {
+                options.totalValue = 0;
+            } else if (options.summaryProcess === "calculate") {
+                options.totalValue = options.totalValue + (options.value.Quantity * options.value.Rate || 0);
+            }
+        }
     }
 
     onToolbarPreparing(event) {
         event.toolbarOptions.items[0].locateInMenu = 'never';
+    }
+
+    selectContact(event) {
+        this.contactId = event.selectedItem && event.selectedItem.id;
     }
 }

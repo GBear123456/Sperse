@@ -7,7 +7,7 @@
     target="#{{saveButtonId}}">
 </dx-context-menu>
 
-<app-modal-dialog (onTitleKeyUp)="onInvoiceNumberKeyUp($event)">
+<app-modal-dialog>
     <div class="toolbar-wraper">
         <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
     </div>
@@ -16,7 +16,7 @@
         <dx-scroll-view showScrollbar="onHover">
             <div class="field">
                 <label class="customer-label">{{l('Customer')}}</label>
-                <dx-select-box
+                <dx-select-box #contact
                     name="customer"
                     width="370px"
                     displayExpr="name"
@@ -27,8 +27,9 @@
                     [dataSource]="customers"
                     [searchEnabled]="true"
                     [searchTimeout]="0"
-                    (onInput)="customerLookupItems($event)"
-                    (onOptionChanged)="customerOptionChanged($event)">
+                    (onFocusIn)="onFieldFocus($event)"
+                    (onSelectionChanged)="selectContact($event)"
+                    (onInput)="customerLookupItems($event)">
                 </dx-select-box>
             </div>
             <div class="field" *ngIf="order">
@@ -92,7 +93,17 @@
                     <dxi-column dataField="Description" caption="{{l('Description')}}" [allowSorting]="false" dataType="string"></dxi-column>
                     <dxi-column dataField="Quantity" caption="{{l('Quantity')}}" [allowSorting]="false" dataType="number"></dxi-column>
                     <dxi-column dataField="Rate" caption="{{l('Rate')}}" [allowSorting]="false" format="$ #,##0.##" dataType="number"></dxi-column>
-                    <dxi-column dataField="Amount" caption="{{l('Amount')}}" format="$ #,##0.##" dataType="number" [allowSorting]="false" [allowEditing]="false"></dxi-column>
+                    <dxi-column dataField="Amount" caption="{{l('Amount')}}" format="$ #,##0.##" dataType="number" [allowSorting]="false" [allowEditing]="false" [calculateCellValue]="calculateLineAmount"></dxi-column>
+
+                    <dxo-summary [calculateCustomSummary]="calculateSummary">
+                        <dxi-total-item
+                            name="RowsSummary"
+                            summaryType="custom"
+                            valueFormat="$ #,##0.##"
+                            displayFormat="Balance: {0}"
+                            showInColumn="Amount">
+                        </dxi-total-item>
+                    </dxo-summary>
 
                 </dx-data-grid>
             </div>
