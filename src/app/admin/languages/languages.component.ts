@@ -5,6 +5,7 @@ import { Component, ElementRef, Injector, OnDestroy, ViewChild } from '@angular/
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
+import { MatDialog } from '@angular/material';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -24,7 +25,6 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 export class LanguagesComponent extends AppComponentBase implements OnDestroy {
 
     @ViewChild('languagesTable') languagesTable: ElementRef;
-    @ViewChild('createOrEditLanguageModal') createOrEditLanguageModal: CreateOrEditLanguageModalComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(DxTooltipComponent) tooltip: DxTooltipComponent;
     dataSource: DataSource;
@@ -52,6 +52,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         private _filtersService: FiltersService,
         private _appService: AppService,
         private _sessionService: AbpSessionService,
+        private _dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -78,7 +79,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
                 text: this.l('Edit'),
                 visible: this.permission.isGranted('Pages.Administration.Languages.Edit'),
                 action: () => {
-                    this.createOrEditLanguageModal.show(this.actionRecord.id);
+                    this.openCreateOrEditLanguageModal(this.actionRecord.id);
                 }
             },
             {
@@ -220,7 +221,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     }
 
     createNewLanguage(): void {
-        this.createOrEditLanguageModal.show();
+        this.openCreateOrEditLanguageModal();
     }
 
     changeTexts(language: ApplicationLanguageListDto): void {
@@ -279,5 +280,17 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
         this._appService.updateToolbar(null);
+    }
+
+    openCreateOrEditLanguageModal(languageId?: number) {
+        const dialogRef = this._dialog.open(CreateOrEditLanguageModalComponent, {
+            panelClass: 'slider',
+            data: {
+                languageId: languageId
+            }
+        });
+        dialogRef.componentInstance.modalSave.subscribe(() => {
+            this.refreshDataGrid();
+        });
     }
 }
