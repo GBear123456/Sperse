@@ -1,24 +1,22 @@
-<app-modal-dialog> 
+<app-modal-dialog>
    <header class="container">
         <h1>
-            <span (click)="inPlaceEdit('descriptor', transactionInfo, $event, i)" *ngIf="transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
+            <span (click)="inPlaceEdit('transactionDescriptor', transactionInfo, $event, i)" *ngIf="transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
                 {{ transactionInfo?.transactionDescriptor }} <i class="icon blue-edit-pencil">&nbsp;</i>
             </span>
             <span *ngIf="!transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
-                <a (click)="inPlaceEdit('descriptor', transactionInfo)">
+                <a (click)="inPlaceEdit('transactionDescriptor', transactionInfo)">
                     {{l("Add_descriptor")}} <i class="plus">+</i>
                 </a>
             </span>
             <span *ngIf="transactionInfo['inplaceEdit']" class="inplace-edit-wrapper">
                 <dx-text-box class="tabular"
                              placeholder=""
-                             [(value)]="transactionInfo.transactionDescriptor"
-                             (onValueChanged)="itemValueChanged('descriptor', transactionInfo)"></dx-text-box>
+                             [(value)]="transactionInfo.transactionDescriptor"></dx-text-box>
                 <dx-button class="update" icon="todo" (onClick)="updateDescriptor()"></dx-button>
-                <dx-button class="exit" icon="close" (onClick)="closeInPlaceEdit('descriptor', transactionInfo)"></dx-button>
+                <dx-button class="exit" icon="close" (onClick)="closeInPlaceEdit('transactionDescriptor', transactionInfo)"></dx-button>
             </span>
         </h1>
-
         <span class="type" [ngClass]="transactionInfo?.cashFlowTypeId == 'I' ? 'inflows' : 'outflows'">
             <ng-container *ngIf="transactionInfo?.cashFlowTypeId == 'I'; else outflowsTemplate">
                 {{l("TransactionDetail_Inflows")}}
@@ -32,100 +30,113 @@
     <main class="text-left container">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row aligned-center">
-            <div class="col-3 text-right light-gray">{{l("Category")}}</div>
-            <div class="col-6 truncate category-row" title="{{transactionInfo?.accountingType ? transactionInfo?.accountingType + ' > ' + transactionInfo?.cashflowCategory + ' > ' + transactionInfo?.cashflowSubCategory : ''}}">
-                <ng-container *ngIf="transactionInfo.accountingType">
-                    <dx-select-box [items]="accountingTypes"
-                                   #accountingTypeValue
-                                   displayExpr="name"
-                                   accessKey="accType-select"
-                                   valueExpr="key"
-                                   [placeholder]="transactionInfo?.accountingType"
-                                   (onOpened)="getAccountingTypes()"
-                                   (onItemClick)="getAccountingTypes()"
-                                   (onValueChanged)="filterCategoriesData($event)">
-                    </dx-select-box>
-                    <ng-container *ngIf="transactionInfo?.cashflowCategory">
-                        <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        <dx-select-box [items]="filteredCategory"
-                                       #cashflowCategoryValue
+                <div class="col-3 text-right light-gray">{{l("Category")}}</div>
+                <div class="col-6 truncate category-row" [title]="categoryPathTitle">
+                    <ng-container *ngIf="transactionInfo.accountingType">
+                        <dx-select-box [items]="accountingTypes"
+                                       #accountingTypeValue
                                        displayExpr="name"
-                                       accessKey="category-select"
-                                       [disabled]="!selectedAccountingType"
-                                       [placeholder]="transactionInfo?.cashflowCategory"
+                                       accessKey="accType-select"
                                        valueExpr="key"
-                                       (onValueChanged)="filterSubCategoriesData($event)"
-                                       (onItemClick)="updateTransactionCategory($event)">
+                                       itemTemplate="itemTemplate"
+                                       [placeholder]="transactionInfo?.accountingType"
+                                       (onOpened)="getAccountingTypes()"
+                                       (onItemClick)="getAccountingTypes()"
+                                       (onValueChanged)="filterCategoriesData($event)">
+                            <div *dxTemplate="let item of 'itemTemplate'"><span [title]="item.name">{{ item.name }}</span></div>
                         </dx-select-box>
-                        <ng-container *ngIf="transactionInfo?.cashflowSubCategory || filteredSubCategory.length">
+                        <ng-container *ngIf="transactionInfo?.cashflowCategory">
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                            <dx-select-box [items]="filteredCategory"
+                                           #cashflowCategoryValue
+                                           displayExpr="name"
+                                           accessKey="category-select"
+                                           itemTemplate="itemTemplate"
+                                           [disabled]="!selectedAccountingType"
+                                           [placeholder]="transactionInfo?.cashflowCategory"
+                                           valueExpr="key"
+                                           (onValueChanged)="filterSubCategoriesData($event)"
+                                           (onItemClick)="updateTransactionCategory($event)">
+                                <div *dxTemplate="let item of 'itemTemplate'"><span [title]="item.name">{{ item.name }}</span></div>
+                            </dx-select-box>
+                            <ng-container *ngIf="transactionInfo?.cashflowSubCategory || filteredSubCategory.length">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                <dx-select-box [items]="filteredSubCategory"
+                                               #cashflowSubCategoryValue
+                                               accessKey="category-select"
+                                               itemTemplate="itemTemplate"
+                                               [disabled]="!selectedCategoryId"
+                                               [attr]="{ title: transactionInfo?.cashflowSubCategory ? null : l('TransactionDetail_Choose_Transaction_Category') }"
+                                               [placeholder]="transactionInfo?.cashflowSubCategory ? transactionInfo?.cashflowSubCategory : l('TransactionDetail_Choose_Transaction_Category')"
+                                               displayExpr="name"
+                                               valueExpr="key"
+                                               (onItemClick)="updateTransactionCategory($event)">
+                                    <div *dxTemplate="let item of 'itemTemplate'"><span [title]="item.name">{{ item.name }}</span></div>
+                                </dx-select-box>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="!transactionInfo.accountingType">
+                        <div *ngIf="!selectedAccountingType" class="unclassified-label">{{l("TransactionDetail_Unclassified")}}</div>
+                        <dx-select-box [items]="accountingTypes"
+                                       displayExpr="name"
+                                       valueExpr="key"
+                                       accessKey="category-select"
+                                       [attr]="{ title: accountingTypes.length ? '' : l('TransactionDetail_Choose_Accounting_Type')}"
+                                       [placeholder]="l('TransactionDetail_Choose_Accounting_Type')"
+                                       [(value)]="selectedAccountingType"
+                                       itemTemplate="itemTemplate"
+                                       (onOpened)="getAccountingTypes()"
+                                       (onItemClick)="getAccountingTypes()"
+                                       (onValueChanged)="filterCategoriesData($event)">
+                            <div *dxTemplate="let item of 'itemTemplate'"><span [title]="item.name">{{ item.name }}</span></div>
+                        </dx-select-box>
+                        <ng-container *ngIf="filteredCategory.length">
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                            <dx-select-box [items]="filteredCategory"
+                                           [attr]="{ title: l('TransactionDetail_Choose_Transaction_Category') }"
+                                           displayExpr="name"
+                                           valueExpr="key"
+                                           accessKey="category-select"
+                                           itemTemplate="itemTemplate"
+                                           [placeholder]="l('TransactionDetail_Choose_Transaction_Category')"
+                                           (onValueChanged)="filterSubCategoriesData($event)"
+                                           (onItemClick)="updateTransactionCategory($event)">
+                                <div *dxTemplate="let item of 'itemTemplate'"><span [title]="item.name">{{ item.name }}</span></div>
+                            </dx-select-box>
+                        </ng-container>
+                        <ng-container *ngIf="filteredSubCategory.length">
                             <i class="fa fa-angle-right" aria-hidden="true"></i>
                             <dx-select-box [items]="filteredSubCategory"
-                                           #cashflowSubCategoryValue
-                                           accessKey="category-select"
-                                           [disabled]="!selcetdCategoryId"
-                                           [placeholder]="transactionInfo?.cashflowSubCategory ? transactionInfo?.cashflowSubCategory : l('Choose_Transaction_Category')"
                                            displayExpr="name"
+                                           accessKey="category-select"
+                                           itemTemplate="itemTemplate"
+                                           [attr]="{ title: l('TransactionDetail_Choose_Transaction_SubCategory') }"
+                                           [placeholder]="l('TransactionDetail_Choose_Transaction_SubCategory')"
                                            (onItemClick)="updateTransactionCategory($event)"
                                            valueExpr="key">
+                                <div *dxTemplate="let item of 'itemTemplate'"><span [title]="item.name">{{ item.name }}</span></div>
                             </dx-select-box>
                         </ng-container>
                     </ng-container>
-                </ng-container>
-
-                <ng-container *ngIf="!transactionInfo.accountingType">
-                    <div *ngIf="!selectedAccountingType" class="unclassified-label">{{l("TransactionDetail_Unclassified")}}</div>
-                    <dx-select-box [items]="accountingTypes"
-                                   displayExpr="name"
-                                   valueExpr="key"
-                                   accessKey="category-select"
-                                   [placeholder]="l('Choose_Accounting_Type')"
-                                   [(value)]="selectedAccountingType"
-                                   (onOpened)="getAccountingTypes()"
-                                   (onItemClick)="getAccountingTypes()"
-                                   (onValueChanged)="filterCategoriesData($event)">
-                    </dx-select-box>
-                    <ng-container *ngIf="filteredCategory.length">
-                        <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        <dx-select-box [items]="filteredCategory"
-                                       displayExpr="name"
-                                       valueExpr="key"
-                                       accessKey="category-select"
-                                       [placeholder]="l('Choose_Transaction_Category')"
-                                       (onValueChanged)="filterSubCategoriesData($event)"
-                                       (onItemClick)="updateTransactionCategory($event)">
-                        </dx-select-box>
-                    </ng-container>
-                    <ng-container *ngIf="filteredSubCategory.length">
-                        <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        <dx-select-box [items]="filteredSubCategory"
-                                       displayExpr="name"
-                                       accessKey="category-select"
-                                       [placeholder]="l('Choose_Transaction_SubCategory')"
-                                       (onItemClick)="updateTransactionCategory($event)"
-                                       valueExpr="key">
-                        </dx-select-box>
-                    </ng-container>
-                </ng-container>
-            </div>
-            <div class="col-1 text-right light-gray">ID</div>
-            <div class="col-2 text-right tabular">{{transactionInfo?.id}}</div>
+                </div>
+                <div class="col-1 text-right light-gray">ID</div>
+                <div class="col-2 text-right tabular">{{transactionInfo?.id}}</div>
             </div>
             <div class="row">
                 <div class="col-3 text-right light-gray">{{l("TransactionDetail_Notes")}}</div>
                 <div class="col-9">
                     <div class="comments" *ngFor="let comment of transactionInfo?.comments; let i = index;">
-                        <div (click)="inPlaceEdit('comment', comment)" *ngIf="!comment.inplaceEdit">
+                        <div (click)="inPlaceEdit('text', comment)" *ngIf="!comment.inplaceEdit">
                             {{comment.text}} <i class="icon blue-edit-pencil">&nbsp;</i>
                         </div>
                         <span *ngIf="comment.inplaceEdit" class="inplace-edit-wrapper">
                             <dx-text-box class="tabular"
-                                         [(value)]="comment.text"
-                                         (onValueChanged)="itemValueChanged('comment', comment)"></dx-text-box>
-                            <dx-button class="update" icon="todo" (onClick)="updateComment('comment', comment)"></dx-button>
-                            <dx-button class="exit" icon="close" (onClick)="closeInPlaceEdit('comment', comment)"></dx-button>
+                                         [(value)]="comment.text"></dx-text-box>
+                            <dx-button class="update" icon="todo" (onClick)="updateComment('text', comment)"></dx-button>
+                            <dx-button class="exit" icon="close" (onClick)="closeInPlaceEdit('text', comment)"></dx-button>
                         </span>
                     </div>
-
                     <div class="add-comment">
                         <a (click)="inPlaceCreateComment($event)" *ngIf="!newComment.inplaceEdit">
                             {{l("TransactionDetail_Add_comment")}} <i class="plus">+</i>
@@ -145,7 +156,6 @@
                     <hr>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-3 text-right light-gray">{{l("TransactionDetail_Date")}}</div>
                 <div class="col-4">{{transactionInfo?.date | date : 'MMM d, y'}}</div>
@@ -164,7 +174,6 @@
                     <hr>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-3 text-right light-gray">{{l("TransactionDetail_Description")}}</div>
                 <div class="col-9 wrap uppercase">{{transactionInfo?.description}}</div>

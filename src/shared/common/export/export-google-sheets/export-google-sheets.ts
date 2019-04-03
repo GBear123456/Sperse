@@ -1,7 +1,7 @@
 ﻿import { Injectable } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 
-import { capitalize } from 'underscore.string/capitalize';
+import capitalize from 'underscore.string/capitalize';
 import * as _ from 'underscore';
 
 declare const gapi: any;

@@ -30,11 +30,11 @@ import {
     toArray,
     withLatestFrom
 } from 'rxjs/operators';
-import { difference } from 'lodash';
+import difference from 'lodash/difference';
 import * as $ from 'jquery';
 import * as underscore from 'underscore';
-import { capitalize } from 'underscore.string/capitalize';
-import { dasherize } from 'underscore.string/dasherize';
+import capitalize from 'underscore.string/capitalize';
+import dasherize from 'underscore.string/dasherize';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -1286,7 +1286,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * Handle get categories result
      * @param getCategoriesResult
      */
-    handleGetCategoryTreeResult(getCategoriesResult) {
+    handleGetCategoryTreeResult(getCategoriesResult: GetCategoryTreeOutput) {
         this.categoryTree = getCategoriesResult;
         /** Add starting balance, ending balance, netchange and balance discrepancy */
         for (let type in this.cashflowTypes) {
@@ -1927,6 +1927,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.getNewTextWidth.cache = {};
         this.monthsDaysLoadedPathes = [];
         this.anotherPeriodAccountsValues.clear();
+        this.reloadCategoryTree();
         this._bankAccountsService.load().subscribe(() => {
             this.setBankAccountsFilter(true);
             this.finishLoading();
@@ -3509,7 +3510,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             UpdateTransactionsCategoryWithFilterInput.fromJS({
                 transactionFilter: filter,
                 destinationCategoryId: destinationCategoryId,
-                standardDescriptor: destinationCategoryId ? targetCellData.transactionDescriptor : 'Unclassified',
+                standardDescriptor: destinationCategoryId
+                    ? (targetCellData.transactionDescriptor ? targetCellData.transactionDescriptor : filter.transactionDescriptor)
+                    : 'Unclassified',
                 suppressCashflowMismatch: true
             })
         );
@@ -4008,7 +4011,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     bindCollapseActionOnWhiteSpaceColumn(cellObj) {
         let rowSpan = cellObj.cellElement.rowSpan || 1;
         let totalCell = $(cellObj.cellElement).parent().nextAll().eq(rowSpan - 1).first().find('td.dx-total');
-        totalCell.trigger('click');
+        setTimeout(() => totalCell.trigger('click'));
     }
 
     getRequestFilterFromPath(path) {
@@ -4192,11 +4195,19 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.cashflowService.removeModifyingCellInput();
                 this.cashflowService.valueIsChanging = false;
             })
-        ).subscribe(x => {
+        ).subscribe(() => {
+            this.reloadCategoryTree();
             this.categoryTree.categories[id].name = e.value;
             this.cashflowService.modifyingInputObj.cell.text = e.value;
             this.pivotGrid.instance.getDataSource().reload();
         });
+    }
+
+    private reloadCategoryTree() {
+        this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false)
+            .subscribe((categoryTreeResult: GetCategoryTreeOutput) => {
+                this.handleGetCategoryTreeResult(categoryTreeResult);
+            });
     }
 
     projectedFieldIsVisible() {
@@ -5521,6 +5532,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (data.debit && data.credit || !data.debit && !data.credit) {
             this.notify.error('Either debit or credit should be specified');
             e.cancel = true;
+            this.detailsFinishLoading();
             return;
         }
         /** if data.forecastDate is Date - then convert it to the utc moment */

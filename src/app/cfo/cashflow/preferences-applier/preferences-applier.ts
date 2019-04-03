@@ -4,7 +4,7 @@
 import { UserPreferencesService } from '../preferences-dialog/preferences.service';
 import { GeneralScope } from '../enums/general-scope.enum';
 import { CashflowCellsChecker } from '../cashflow-cells-checker/cashflow-cells-checker';
-import { dasherize } from 'underscore.string/dasherize';
+import dasherize from 'underscore.string/dasherize';
 import { CashflowHelper } from '../cashflow.helper/cashflow.helper';
 
 export class PreferencesApplier {

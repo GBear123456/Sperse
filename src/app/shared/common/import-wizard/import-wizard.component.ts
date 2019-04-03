@@ -11,7 +11,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
 
 import * as _ from 'underscore';
-import { capitalize } from 'underscore.string/capitalize';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -400,7 +400,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
 
     checkFileDataValid() {
         let errors = this.fileData && this.fileData.errors || [];
-        return this.fileData 
+        return this.fileData
             && (!errors.length || (errors.length == 1 && errors[0].code == "UndetectableDelimiter"))
             && this.fileData.data.length;
     }

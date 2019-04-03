@@ -6,13 +6,13 @@ import { HttpParams } from '@angular/common/http';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import camelCase from 'lodash/camelCase';
+import kebabCase from 'lodash/kebabCase';
 import capitalize from 'lodash/capitalize';
 import cloneDeep from 'lodash/cloneDeep';
 import lowerCase from 'lodash/lowerCase';
 import upperFirst from 'lodash/upperFirst';
 import { ReplaySubject, Observable } from 'rxjs';
 import { map, first, pluck, publishReplay, refCount } from 'rxjs/operators';
-
 
 /** Application imports */
 import {
@@ -50,9 +50,13 @@ export class OffersService {
             name: 'Retrieving Response'
         }
     ];
-    readonly routeToCategoryMapping = {
+    readonly routeToCategoryMapping: { [key: string]: OfferFilterCategory } = {
         'credit-scores': OfferFilterCategory.CreditScore,
         'id-theft-protection': OfferFilterCategory.CreditMonitoring
+    };
+    readonly categoryToRouteMapping = {
+        [OfferFilterCategory.CreditScore]: 'credit-scores',
+        [OfferFilterCategory.CreditMonitoring]: 'id-theft-protection'
     };
     readonly categoriesDisplayNames = {
         [OfferFilterCategory.CreditScore]: this.ls.l('CreditScore_CreditScores')
@@ -104,6 +108,10 @@ export class OffersService {
         return route.url.pipe(
             map((urlSegment: UrlSegment) => this.routeToCategoryMapping[urlSegment[0].path] || OfferFilterCategory[upperFirst(camelCase(urlSegment[0].path))])
         );
+    }
+
+    getCategoryRouteNameByCategoryEnum(category: OfferFilterCategory): string {
+        return this.categoryToRouteMapping[category] || kebabCase(category);
     }
 
     getCategoryDisplayName(category: OfferFilterCategory): string {

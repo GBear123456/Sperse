@@ -10,7 +10,10 @@
                     </inplace-edit>
                 </ng-container>
             </ng-container>
-            <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">Save</button>
+            <div class="buttons">
+                <button class="button-layout button-primary" *ngIf="sentAnnouncementPermissionGranted" (click)="onNotify()">{{ ls.l('Notify') }}</button>
+                <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">{{ ls.l('Save') }}</button>
+            </div>
             <div class="vertical-delimiter ng-star-inserted"></div>
             <div class="navigation">
                 <dx-button icon="chevronprev" class="prev" [hint]="ls.l('Previous')" (click)="onPrev()" [disabled]="prevButtonIsDisabled"></dx-button>
@@ -41,7 +44,7 @@
 
                             <text-field name="categories"
                                         [readOnly]="true"
-                                        [value]="model.categories">
+                                        [value]="categoriesNames$ | async">
                             </text-field>
 
                             <text-field name="subId"
@@ -52,18 +55,6 @@
                                             [readOnly]="true"
                                             [value]="model.type"
                                             [dataSource]="getEnumDataSource(typeEnum)">
-                            </dropdown-field>
-
-                            <dropdown-field name="cardNetwork"
-                                            [(value)]="model.extendedInfo.cardNetwork"
-                                            [readOnly]="true"
-                                            [dataSource]="getEnumDataSource(cardNetworkEnum)">
-                            </dropdown-field>
-
-                            <dropdown-field name="targetAudience"
-                                            [(value)]="model.extendedInfo.targetAudience"
-                                            [readOnly]="true"
-                                            [dataSource]="getEnumDataSource(targetAudienceEnum)">
                             </dropdown-field>
 
                             <text-field name="issuingBank"
@@ -79,11 +70,6 @@
                             <text-field name="expireTimeOfDay"
                                         [readOnly]="true"
                                         [value]="model.expireTimeOfDay">
-                            </text-field>
-
-                            <text-field name="traficSource"
-                                        [readOnly]="true"
-                                        [value]="model.traficSource">
                             </text-field>
 
                             <text-multiple-field name="details"
@@ -110,12 +96,6 @@
                                         [value]="model.description">
                             </text-field>
 
-                            <dropdown-field name="systemType"
-                                            [readOnly]="true"
-                                            [value]="model.systemType"
-                                            [dataSource]="getEnumDataSource(systemTypeEnum)">
-                            </dropdown-field>
-
                             <dropdown-field name="campaignProviderType"
                                             [(value)]="model.extendedInfo.campaignProviderType"
                                             [dataSource]="getEnumDataSource(campaignProviderTypeEnum)">
@@ -130,12 +110,6 @@
                                             [readOnly]="true"
                                             [(value)]="model.extendedInfo.cardType"
                                             [dataSource]="getEnumDataSource(cardTypeEnum)">
-                            </dropdown-field>
-
-                            <dropdown-field name="securingType"
-                                            [(value)]="model.extendedInfo.securingType"
-                                            [readOnly]="true"
-                                            [dataSource]="getEnumDataSource(securingTypeEnum)">
                             </dropdown-field>
 
                             <text-multiple-field name="countries"
@@ -300,6 +274,23 @@
                                             [(value)]="model.extendedInfo.offerCollection"
                                             [readOnly]="offerNotInCardCategory$ | async"
                                             [dataSource]="getEnumDataSource(offerCollectionEnum)">
+                            </dropdown-field>
+                            <dropdown-field name="cardNetwork"
+                                            [(value)]="model.extendedInfo.cardNetwork"
+                                            [readOnly]="offerNotInCardCategory$ | async"
+                                            [dataSource]="getEnumDataSource(cardNetworkEnum)">
+                            </dropdown-field>
+                        </div>
+                        <div class="col-md-5">
+                            <dropdown-field name="targetAudience"
+                                            [(value)]="model.extendedInfo.targetAudience"
+                                            [readOnly]="offerNotInCardCategory$ | async"
+                                            [dataSource]="getEnumDataSource(targetAudienceEnum)">
+                            </dropdown-field>
+                            <dropdown-field name="securingType"
+                                            [(value)]="model.extendedInfo.securingType"
+                                            [readOnly]="offerNotInCardCategory$ | async"
+                                            [dataSource]="getEnumDataSource(securingTypeEnum)">
                             </dropdown-field>
                         </div>
                     </div>

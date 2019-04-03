@@ -103,6 +103,7 @@
                         [pipelinePurposeId]="pipelinePurposeId"
                         [filterModelStages]="filterModelStages"
                         [(selectedEntities)]="selectedLeads"
+                        (onEntityStageChanged)="onLeadStageChanged($event)"
                         (onStagesLoaded)="onStagesLoaded($event)"
                         (onCardClick)="onCardClick($event)">
                         Loading...

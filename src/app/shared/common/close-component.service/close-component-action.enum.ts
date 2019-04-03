@@ -1,5 +1,6 @@
 export enum CloseComponentAction {
     Save = 'Save',
     Discard = 'Discard',
-    ContinueEditing = 'ContinueEditing'
+    ContinueEditing = 'ContinueEditing',
+    SkipAction = 'SkipAction'
 }

@@ -738,19 +738,25 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     filterByAccount(filter) {
         let data = {};
         if (filter.items.element) {
-            let filterData = [];
+            let bankAccountIds = [];
             filter.items.element.dataSource.forEach((syncAccount, i) => {
                 syncAccount.bankAccounts.forEach((bankAccount, i) => {
                     if (bankAccount['selected']) {
-                        filterData.push({
-                            BankAccountId: + bankAccount.id
-                        });
+                        bankAccountIds.push(bankAccount.id);
                     }
                 });
             });
-            data = {
-                or: filterData
-            };
+
+            if (bankAccountIds.length) {
+                //Should be like this, but IN is not currently implemented by odata-query lib >:-(. https://github.com/techniq/odata-query/issues/22
+                //data = {
+                //    BankAccountId: {
+                //        in: bankAccountIds
+                //    }
+                //};
+
+                data = `BankAccountId in (${bankAccountIds.join(',')})`;
+            }
         }
 
         return data;
@@ -1080,9 +1086,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             disableClose: true,
             closeOnNavigation: false,
             data: {
+                refreshParent: this.invalidate.bind(this),
                 transactionId: this.transactionId
             }
-        }).afterClosed().subscribe(() => this.refreshDataGrid());
+        });
     }
 
     ngOnDestroy() {

@@ -17,7 +17,7 @@ export class CloseComponentGuard implements CanDeactivate<any> {
     canDeactivate(component: any, currentRoute: ActivatedRouteSnapshot, currentState: RouterStateSnapshot, nextState?: RouterStateSnapshot): Observable<boolean> {
         let result$: Observable<CloseComponentAction>;
         if (component.skipClosePopup && component.skipClosePopup(currentState.url, nextState.url)) {
-            result$ = of(CloseComponentAction.Discard);
+            result$ = of(CloseComponentAction.SkipAction);
         } else {
             result$ = this.closeComponentService.checkDataChangeAndGetMovingAction(component);
         }

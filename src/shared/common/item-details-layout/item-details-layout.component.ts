@@ -19,7 +19,7 @@ export class ItemDetailsLayoutComponent implements OnInit {
 
     constructor() { }
 
-    ngOnInit() { 
+    ngOnInit() {
         this.onResize();
     }
 

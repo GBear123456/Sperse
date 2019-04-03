@@ -13,9 +13,10 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
 import { NotifyService } from '@abp/notify/notify.service';
-import { BehaviorSubject, Observable, Subject, combineLatest, of, merge } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, of, merge } from 'rxjs';
 import {
     debounceTime,
+    first,
     filter,
     finalize,
     map,
@@ -28,8 +29,8 @@ import {
     distinctUntilChanged
 } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
-import startCase from 'lodash/startCase';
 import cloneDeep from 'lodash/cloneDeep';
+import swal from 'sweetalert';
 
 /** Application imports */
 import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -40,12 +41,14 @@ import {
     ExtendOfferDtoCampaignProviderType,
     ExtendOfferDtoCardNetwork,
     ExtendOfferDtoCardType,
-    ExtendOfferDtoOfferCollection, ExtendOfferDtoParameterHandlerType,
+    ExtendOfferDtoOfferCollection,
+    ExtendOfferDtoParameterHandlerType,
     ExtendOfferDtoSecuringType,
-    ExtendOfferDtoTargetAudience,
     OfferDetailsForEditDtoStatus,
-    OfferDetailsForEditDtoSystemType,
-    OfferDetailsForEditDtoType
+    ExtendOfferDtoTargetAudience,
+    OfferDetailsForEditDtoType,
+    OfferServiceProxy,
+    OfferCategoryDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -55,12 +58,16 @@ import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 import { CloseComponentAction } from '@app/shared/common/close-component.service/close-component-action.enum';
 import { ICloseComponent } from '@app/shared/common/close-component.service/close-component.interface';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppConsts } from '@shared/AppConsts';
+import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
     selector: 'offer-edit',
     templateUrl: './offer-edit.component.html',
     styleUrls: [ '../../shared/form.less', './offer-edit.component.less' ],
-    providers: [ OfferManagementServiceProxy ],
+    providers: [ CurrencyPipe, OfferManagementServiceProxy, OffersService, OfferServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
@@ -83,32 +90,14 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             route: '../flags'
         }
     ];
-    offerId$: Observable<number> = this.route.paramMap.pipe(
-        map((paramMap: ParamMap) => +paramMap.get('id')),
-        distinctUntilChanged()
-    );
+    offerId$: Observable<number>;
     private _refresh: Subject<null> = new Subject<null>();
     refresh: Observable<null> = this._refresh.asObservable();
-    offerDetails$: Observable<OfferDetailsForEditDto> = merge(
-        this.refresh,
-        this.offerId$
-    ).pipe(
-        withLatestFrom(this.offerId$),
-        tap(() => abp.ui.setBusy()),
-        switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(
-            finalize(() => abp.ui.clearBusy())
-        )),
-        publishReplay(),
-        refCount()
-    );
-    states$: Observable<CountryStateDto[]> = this.offerDetails$.pipe(
-        map(offerDetails => offerDetails.countries ? offerDetails.countries[0] : 'US'),
-        tap(countryCode => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode))),
-        switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode})))
-    );
-    offerNotInCardCategory$ = this.offerDetails$.pipe(pluck('categories'), map((categories: any[]) => categories.indexOf('Credit Cards') === -1));
+    offerDetails$: Observable<OfferDetailsForEditDto>;
+    states$: Observable<CountryStateDto[]>;
+    categoriesNames$: Observable<string[]>;
+    offerNotInCardCategory$: Observable<boolean>;
     statusEnum = OfferDetailsForEditDtoStatus;
-    systemTypeEnum = OfferDetailsForEditDtoSystemType;
     typeEnum = OfferDetailsForEditDtoType;
     campaignProviderTypeEnum = ExtendOfferDtoCampaignProviderType;
     parameterHandlerTypeEnum = ExtendOfferDtoParameterHandlerType;
@@ -126,6 +115,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
     prevButtonIsDisabled = true;
     nextButtonIsDisabled = true;
+    sentAnnouncementPermissionGranted: boolean;
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
@@ -136,14 +126,49 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         private store$: Store<RootStore.State>,
         private notifyService: NotifyService,
         private changeDetector: ChangeDetectorRef,
-        private itemDetailsService: ItemDetailsService
+        private itemDetailsService: ItemDetailsService,
+        private permissionChecker: PermissionCheckerService,
+        private offersService: OffersService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
+        this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted('Pages.PFM.Applications.SendOfferAnnouncements');
     }
 
     ngOnInit() {
+        this.offerId$ = this.route.paramMap.pipe(
+            map((paramMap: ParamMap) => +paramMap.get('id')),
+            distinctUntilChanged()
+        );
+        this.offerDetails$ = merge(
+            this.refresh,
+            this.offerId$
+        ).pipe(
+            withLatestFrom(this.offerId$),
+            tap(() => abp.ui.setBusy()),
+            switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(
+                finalize(() => abp.ui.clearBusy())
+            )),
+            publishReplay(),
+            refCount()
+        );
         this.section$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => paramMap.get('section') || 'general'));
+        this.states$  = this.offerDetails$.pipe(
+            map(offerDetails => offerDetails.countries ? offerDetails.countries[0] : 'US'),
+            tap(countryCode => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode))),
+            switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode})))
+        );
+        this.categoriesNames$ = this.offerDetails$.pipe(
+            pluck('categories'),
+            map((categories: OfferCategoryDto[]) => categories.map(category => category.name))
+        );
+        this.offerNotInCardCategory$ = this.categoriesNames$.pipe(
+            map((categoriesNames: any[]) => categoriesNames.every(categoryName => categoryName.indexOf('Credit Cards') === -1))
+        );
         this.rootComponent.overflowHidden(true);
+        this.offerNotInCardCategory$.subscribe((offerNotInCardCategory: boolean) => {
+            const creditCardLinkIndex = this.navLinks.findIndex(link => link.route === '../flags');
+            this.navLinks[creditCardLinkIndex]['disabled'] = offerNotInCardCategory;
+        });
         this.offerDetails$.subscribe(details => {
             this.model = details;
             this.updateInitialModel();
@@ -157,16 +182,14 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             withLatestFrom(this.offerId$, this.section$),
             filter(itemFullInfo => !!itemFullInfo)
         ).subscribe(([itemFullInfo, offerId, section]: [ItemFullInfo, number, string]) => {
-            if (itemFullInfo) {
-                if (offerId !== itemFullInfo.itemData.CampaignId) {
-                    this.router.navigate(
-                        ['../..', itemFullInfo.itemData.CampaignId, section],
-                        { relativeTo: this.route }
-                    );
-                }
-                this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
-                this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
+            if (offerId !== itemFullInfo.itemData.CampaignId) {
+                this.router.navigate(
+                    ['../..', itemFullInfo.itemData.CampaignId, section],
+                    { relativeTo: this.route }
+                );
             }
+            this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
+            this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
         });
     }
 
@@ -178,7 +201,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     }
 
     handleDeactivate(deactivateAction: CloseComponentAction): Observable<boolean> {
-        let deactivate$: Observable<boolean>;
+        let deactivate$: Observable<boolean> = of(true);
         switch (deactivateAction) {
             case CloseComponentAction.Save: {
                 deactivate$ = this.onSubmit().pipe(map(() => true));
@@ -282,4 +305,41 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         );
     }
 
+    onNotify() {
+        if (this.sentAnnouncementPermissionGranted) {
+            this.offerId$.pipe(first()).subscribe((offerId: number) => {
+                const offerCategory = this.offersService.getCategoryRouteNameByCategoryEnum(this.model.categories[0].category as any);
+                const offerPublicLink = AppConsts.appBaseUrl + 'personal-finance/offers/' + offerCategory + '/' + offerId;
+                const el = document.createElement('div');
+                el.innerHTML = `<h5>${this.ls.ls('PFM', 'OfferLinkWillBeSentToUsers')}:</h5>
+                                <a href="${offerPublicLink}" target="_blank">${offerPublicLink}</a>`;
+                const swalParams: any = {
+                    title: '',
+                    content: el,
+                    buttons: {
+                        confirm: {
+                            text: this.ls.ls('PFM', 'Confirm'),
+                            value: true,
+                            visible: true
+                        },
+                        cancel: {
+                            text: this.ls.ls('PFM', 'Cancel'),
+                            value: false,
+                            visible: true
+                        }
+                    }
+                };
+                swal(swalParams).then((confirmed) => {
+                    if (confirmed) {
+                        abp.ui.setBusy();
+                        this.offerManagementService.sendAnnouncement(
+                            offerId,
+                            offerPublicLink
+                        ).pipe(finalize(() => abp.ui.clearBusy()))
+                            .subscribe(() => this.notifyService.success(this.ls.ls('PFM', 'AnnouncementsHaveBeenSent')));
+                    }
+                });
+            });
+        }
+    }
 }
