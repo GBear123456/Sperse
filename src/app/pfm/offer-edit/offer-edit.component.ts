@@ -45,10 +45,10 @@ import {
     ExtendOfferDtoParameterHandlerType,
     ExtendOfferDtoSecuringType,
     OfferDetailsForEditDtoStatus,
-    OfferDetailsForEditDtoSystemType,
     ExtendOfferDtoTargetAudience,
     OfferDetailsForEditDtoType,
-    OfferServiceProxy
+    OfferServiceProxy,
+    OfferCategoryDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -90,32 +90,14 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             route: '../flags'
         }
     ];
-    offerId$: Observable<number> = this.route.paramMap.pipe(
-        map((paramMap: ParamMap) => +paramMap.get('id')),
-        distinctUntilChanged()
-    );
+    offerId$: Observable<number>;
     private _refresh: Subject<null> = new Subject<null>();
     refresh: Observable<null> = this._refresh.asObservable();
-    offerDetails$: Observable<OfferDetailsForEditDto> = merge(
-        this.refresh,
-        this.offerId$
-    ).pipe(
-        withLatestFrom(this.offerId$),
-        tap(() => abp.ui.setBusy()),
-        switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(
-            finalize(() => abp.ui.clearBusy())
-        )),
-        publishReplay(),
-        refCount()
-    );
-    states$: Observable<CountryStateDto[]> = this.offerDetails$.pipe(
-        map(offerDetails => offerDetails.countries ? offerDetails.countries[0] : 'US'),
-        tap(countryCode => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode))),
-        switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode})))
-    );
-    offerNotInCardCategory$ = this.offerDetails$.pipe(pluck('categories'), map((categories: any[]) => categories.indexOf('Credit Cards') === -1));
+    offerDetails$: Observable<OfferDetailsForEditDto>;
+    states$: Observable<CountryStateDto[]>;
+    categoriesNames$: Observable<string[]>;
+    offerNotInCardCategory$: Observable<boolean>;
     statusEnum = OfferDetailsForEditDtoStatus;
-    systemTypeEnum = OfferDetailsForEditDtoSystemType;
     typeEnum = OfferDetailsForEditDtoType;
     campaignProviderTypeEnum = ExtendOfferDtoCampaignProviderType;
     parameterHandlerTypeEnum = ExtendOfferDtoParameterHandlerType;
@@ -153,8 +135,40 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     }
 
     ngOnInit() {
+        this.offerId$ = this.route.paramMap.pipe(
+            map((paramMap: ParamMap) => +paramMap.get('id')),
+            distinctUntilChanged()
+        );
+        this.offerDetails$ = merge(
+            this.refresh,
+            this.offerId$
+        ).pipe(
+            withLatestFrom(this.offerId$),
+            tap(() => abp.ui.setBusy()),
+            switchMap(([, offerId])  => this.offerManagementService.getDetailsForEdit(offerId).pipe(
+                finalize(() => abp.ui.clearBusy())
+            )),
+            publishReplay(),
+            refCount()
+        );
         this.section$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => paramMap.get('section') || 'general'));
+        this.states$  = this.offerDetails$.pipe(
+            map(offerDetails => offerDetails.countries ? offerDetails.countries[0] : 'US'),
+            tap(countryCode => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode))),
+            switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getState, { countryCode: countryCode})))
+        );
+        this.categoriesNames$ = this.offerDetails$.pipe(
+            pluck('categories'),
+            map((categories: OfferCategoryDto[]) => categories.map(category => category.name))
+        );
+        this.offerNotInCardCategory$ = this.categoriesNames$.pipe(
+            map((categoriesNames: any[]) => categoriesNames.every(categoryName => categoryName.indexOf('Credit Cards') === -1))
+        );
         this.rootComponent.overflowHidden(true);
+        this.offerNotInCardCategory$.subscribe((offerNotInCardCategory: boolean) => {
+            const creditCardLinkIndex = this.navLinks.findIndex(link => link.route === '../flags');
+            this.navLinks[creditCardLinkIndex]['disabled'] = offerNotInCardCategory;
+        });
         this.offerDetails$.subscribe(details => {
             this.model = details;
             this.updateInitialModel();
@@ -168,16 +182,14 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             withLatestFrom(this.offerId$, this.section$),
             filter(itemFullInfo => !!itemFullInfo)
         ).subscribe(([itemFullInfo, offerId, section]: [ItemFullInfo, number, string]) => {
-            if (itemFullInfo) {
-                if (offerId !== itemFullInfo.itemData.CampaignId) {
-                    this.router.navigate(
-                        ['../..', itemFullInfo.itemData.CampaignId, section],
-                        { relativeTo: this.route }
-                    );
-                }
-                this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
-                this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
+            if (offerId !== itemFullInfo.itemData.CampaignId) {
+                this.router.navigate(
+                    ['../..', itemFullInfo.itemData.CampaignId, section],
+                    { relativeTo: this.route }
+                );
             }
+            this.nextButtonIsDisabled = itemFullInfo && itemFullInfo.isLastOnList;
+            this.prevButtonIsDisabled = itemFullInfo && itemFullInfo.isFirstOnList;
         });
     }
 

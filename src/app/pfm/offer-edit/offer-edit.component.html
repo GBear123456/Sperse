@@ -44,7 +44,7 @@
 
                             <text-field name="categories"
                                         [readOnly]="true"
-                                        [value]="model.categories">
+                                        [value]="categoriesNames$ | async">
                             </text-field>
 
                             <text-field name="subId"
@@ -277,17 +277,19 @@
                             </dropdown-field>
                             <dropdown-field name="cardNetwork"
                                             [(value)]="model.extendedInfo.cardNetwork"
+                                            [readOnly]="offerNotInCardCategory$ | async"
                                             [dataSource]="getEnumDataSource(cardNetworkEnum)">
                             </dropdown-field>
                         </div>
-                        <div class="offset-md-1"></div>
                         <div class="col-md-5">
                             <dropdown-field name="targetAudience"
                                             [(value)]="model.extendedInfo.targetAudience"
+                                            [readOnly]="offerNotInCardCategory$ | async"
                                             [dataSource]="getEnumDataSource(targetAudienceEnum)">
                             </dropdown-field>
                             <dropdown-field name="securingType"
                                             [(value)]="model.extendedInfo.securingType"
+                                            [readOnly]="offerNotInCardCategory$ | async"
                                             [dataSource]="getEnumDataSource(securingTypeEnum)">
                             </dropdown-field>
                         </div>
