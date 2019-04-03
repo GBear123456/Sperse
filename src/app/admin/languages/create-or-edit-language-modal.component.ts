@@ -1,26 +1,30 @@
-import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { ApplicationLanguageEditDto, ComboboxItemDto, CreateOrUpdateLanguageInput, LanguageServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ModalDirective } from 'ngx-bootstrap';
+import { Component, ViewEncapsulation, ElementRef, EventEmitter, Injector, Output, ViewChild, OnInit } from '@angular/core';
+import {
+    ApplicationLanguageEditDto,
+    ComboboxItemDto,
+    CreateOrUpdateLanguageInput,
+    LanguageServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { finalize } from 'rxjs/operators';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'createOrEditLanguageModal',
+    encapsulation: ViewEncapsulation.None,
+    styleUrls: [ '../../../shared/metronic/dropdown-menu.less', './create-or-edit-language-modal.component.less' ],
     templateUrl: './create-or-edit-language-modal.component.html'
 })
-export class CreateOrEditLanguageModalComponent extends AppComponentBase {
-
-    @ViewChild('createOrEditModal') modal: ModalDirective;
+export class CreateOrEditLanguageModalComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild('languageCombobox') languageCombobox: ElementRef;
     @ViewChild('iconCombobox') iconCombobox: ElementRef;
-
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
+    selectBoxData: any;
     active = false;
     saving = false;
-
+    data: any;
     language: ApplicationLanguageEditDto = new ApplicationLanguageEditDto();
-
     languageNames: ComboboxItemDto[] = [];
     flags: ComboboxItemDto[] = [];
 
@@ -29,34 +33,27 @@ export class CreateOrEditLanguageModalComponent extends AppComponentBase {
         private _languageService: LanguageServiceProxy
     ) {
         super(injector);
+        this.data = injector.get(MAT_DIALOG_DATA);
     }
 
-    show(languageId?: number): void {
-        this.active = true;
-
-        this._languageService.getLanguageForEdit(languageId).subscribe(result => {
+    ngOnInit() {
+        this._languageService.getLanguageForEdit(this.data.languageId).subscribe(result => {
+            this.selectBoxData = result;
             this.language = result.language;
             this.languageNames = result.languageNames;
             this.flags = result.flags;
 
-            if (!languageId) {
+            if (!this.data.languageId) {
                 this.language.isEnabled = true;
             }
-
-            this.modal.show();
-            setTimeout(() => {
-                    $(this.languageCombobox.nativeElement).selectpicker('refresh');
-                    $(this.iconCombobox.nativeElement).selectpicker('refresh');
-            }, 0);
         });
     }
 
     save(): void {
-        let input = new CreateOrUpdateLanguageInput();
-        input.language = this.language;
-
         this.saving = true;
-        this._languageService.createOrUpdateLanguage(input)
+        this.language && this._languageService.createOrUpdateLanguage(CreateOrUpdateLanguageInput.fromJS({
+            language: this.language
+        }))
             .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
                 this.notify.info(this.l('SavedSuccessfully'));
@@ -66,7 +63,6 @@ export class CreateOrEditLanguageModalComponent extends AppComponentBase {
     }
 
     close(): void {
-        this.active = false;
-        this.modal.hide();
+        this.dialogRef.close();
     }
 }

@@ -154,7 +154,6 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         LanguagesComponent,
         LanguageTextsComponent,
         CreateOrEditLanguageModalComponent,
-        CreateOrEditLanguageModalComponent,
         EditTextModalComponent,
         OrganizationUnitsComponent,
         OrganizationTreeComponent,
@@ -186,6 +185,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         EditTenantModalComponent,
         TenantFeaturesModalComponent,
         CreateOrEditEditionModalComponent,
+        CreateOrEditLanguageModalComponent,
         CreateOrEditRoleModalComponent
     ],
     exports: [

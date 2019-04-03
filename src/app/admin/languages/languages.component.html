@@ -29,13 +29,11 @@
             <dxi-column dataField="name" caption="{{l('Code')}}"></dxi-column>
             <dxi-column dataField="displayName" caption="{{l('Name')}}"></dxi-column>
             <div *dxTemplate="let cellData of 'isEnabledTemplate'">
-                <span class="status" [ngClass]="cellData ? 'enabled' : 'disabled'" (click)="test(cellData)">{{ cellData ? 'Yes' : 'No' }}</span>
+                <span class="status" [ngClass]="cellData ? 'enabled' : 'disabled'">{{ cellData ? 'Yes' : 'No' }}</span>
             </div>
             <dxo-sorting mode="multiple"></dxo-sorting>
             <dxo-paging [pageSize]="20"></dxo-paging>
             <dxo-group-panel [visible]="false"></dxo-group-panel>
         </dx-data-grid>
     </div>
-
-    <createOrEditLanguageModal #createOrEditLanguageModal (modalSave)="refreshDataGrid()"></createOrEditLanguageModal>
 </div>
