@@ -30000,22 +30000,22 @@ export class PersonalInformation implements IPersonalInformation {
     middleName!: string | undefined;
     email!: string;
     alternateEmail!: string | undefined;
-    doB!: moment.Moment;
-    ssn!: string;
+    doB!: moment.Moment | undefined;
+    ssn!: string | undefined;
     licenseNumber!: string | undefined;
     licenseState!: string | undefined;
-    isActiveMilitary!: boolean;
-    phone!: string;
+    isActiveMilitary!: boolean | undefined;
+    phone!: string | undefined;
     phoneMobile!: string | undefined;
-    preferredContactTOD!: PersonalInformationPreferredContactTOD;
-    address1!: string;
+    preferredContactTOD!: PersonalInformationPreferredContactTOD | undefined;
+    address1!: string | undefined;
     address2!: string | undefined;
-    city!: string;
-    stateCode!: string;
-    postalCode!: string;
+    city!: string | undefined;
+    stateCode!: string | undefined;
+    postalCode!: string | undefined;
     countryCode!: string | undefined;
-    isHomeOwner!: boolean;
-    monthsAtAddress!: number;
+    isHomeOwner!: boolean | undefined;
+    monthsAtAddress!: number | undefined;
     creditScoreRating!: PersonalInformationCreditScoreRating | undefined;
     gender!: string | undefined;
 
@@ -30098,22 +30098,22 @@ export interface IPersonalInformation {
     middleName: string | undefined;
     email: string;
     alternateEmail: string | undefined;
-    doB: moment.Moment;
-    ssn: string;
+    doB: moment.Moment | undefined;
+    ssn: string | undefined;
     licenseNumber: string | undefined;
     licenseState: string | undefined;
-    isActiveMilitary: boolean;
-    phone: string;
+    isActiveMilitary: boolean | undefined;
+    phone: string | undefined;
     phoneMobile: string | undefined;
-    preferredContactTOD: PersonalInformationPreferredContactTOD;
-    address1: string;
+    preferredContactTOD: PersonalInformationPreferredContactTOD | undefined;
+    address1: string | undefined;
     address2: string | undefined;
-    city: string;
-    stateCode: string;
-    postalCode: string;
+    city: string | undefined;
+    stateCode: string | undefined;
+    postalCode: string | undefined;
     countryCode: string | undefined;
-    isHomeOwner: boolean;
-    monthsAtAddress: number;
+    isHomeOwner: boolean | undefined;
+    monthsAtAddress: number | undefined;
     creditScoreRating: PersonalInformationCreditScoreRating | undefined;
     gender: string | undefined;
 }
@@ -30163,7 +30163,7 @@ export interface IDebtInformation {
 }
 
 export class LoanInformation implements ILoanInformation {
-    requestedLoanAmount!: number;
+    requestedLoanAmount!: number | undefined;
     approvedLoanAmount!: number | undefined;
     loanReason!: LoanInformationLoanReason | undefined;
 
@@ -30201,7 +30201,7 @@ export class LoanInformation implements ILoanInformation {
 }
 
 export interface ILoanInformation {
-    requestedLoanAmount: number;
+    requestedLoanAmount: number | undefined;
     approvedLoanAmount: number | undefined;
     loanReason: LoanInformationLoanReason | undefined;
 }
@@ -30222,7 +30222,7 @@ export class EmploymentInformation implements IEmploymentInformation {
     payFrequency!: EmploymentInformationPayFrequency | undefined;
     payNextDate!: moment.Moment | undefined;
     payAfterNextDate!: moment.Moment | undefined;
-    incomeType!: EmploymentInformationIncomeType;
+    incomeType!: EmploymentInformationIncomeType | undefined;
 
     constructor(data?: IEmploymentInformation) {
         if (data) {
@@ -30299,16 +30299,16 @@ export interface IEmploymentInformation {
     payFrequency: EmploymentInformationPayFrequency | undefined;
     payNextDate: moment.Moment | undefined;
     payAfterNextDate: moment.Moment | undefined;
-    incomeType: EmploymentInformationIncomeType;
+    incomeType: EmploymentInformationIncomeType | undefined;
 }
 
 export class BankInformation implements IBankInformation {
-    bankAccountType!: BankInformationBankAccountType;
-    bankName!: string;
-    bankAccountNumber!: string;
-    bankABA!: string;
+    bankAccountType!: BankInformationBankAccountType | undefined;
+    bankName!: string | undefined;
+    bankAccountNumber!: string | undefined;
+    bankABA!: string | undefined;
     bankPhone!: string | undefined;
-    isDirectDeposit!: boolean;
+    isDirectDeposit!: boolean | undefined;
     monthsAtBank!: number | undefined;
 
     constructor(data?: IBankInformation) {
@@ -30353,12 +30353,12 @@ export class BankInformation implements IBankInformation {
 }
 
 export interface IBankInformation {
-    bankAccountType: BankInformationBankAccountType;
-    bankName: string;
-    bankAccountNumber: string;
-    bankABA: string;
+    bankAccountType: BankInformationBankAccountType | undefined;
+    bankName: string | undefined;
+    bankAccountNumber: string | undefined;
+    bankABA: string | undefined;
     bankPhone: string | undefined;
-    isDirectDeposit: boolean;
+    isDirectDeposit: boolean | undefined;
     monthsAtBank: number | undefined;
 }
 

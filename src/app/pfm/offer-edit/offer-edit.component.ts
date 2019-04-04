@@ -678,7 +678,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         if (this.sentAnnouncementPermissionGranted) {
             this.offerId$.pipe(first()).subscribe((offerId: number) => {
                 const offerCategory = this.offersService.getCategoryRouteNameByCategoryEnum(this.model.categories[0].category as any);
-                const offerPublicLink = AppConsts.appBaseUrl + 'personal-finance/offers/' + offerCategory + '/' + offerId;
+                const offerPublicLink = AppConsts.appBaseUrl + '/personal-finance/offers/' + offerCategory + '/' + offerId;
                 const el = document.createElement('div');
                 el.innerHTML = `<h5>${this.ls.ls('PFM', 'OfferLinkWillBeSentToUsers')}:</h5>
                                 <a href="${offerPublicLink}" target="_blank">${offerPublicLink}</a>`;
