@@ -312,11 +312,12 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                                 };
                             }));
         dataSource$.pipe(finalize(() => this.finishLoading())).subscribe((documents: DocumentInfo[]) => {
-            this.dataSource = documents;
-            if (!this.dataSource || !this.dataSource.length) {
-                setTimeout(() => this.openDocumentAddAddDialog());
-            }
-            callback && callback();
+            if (this.componentIsActivated) {
+                this.dataSource = documents;
+                if (!this.dataSource || !this.dataSource.length)
+                    setTimeout(() => this.openDocumentAddAddDialog());
+                callback && callback();
+            } 
         });
     }
 
