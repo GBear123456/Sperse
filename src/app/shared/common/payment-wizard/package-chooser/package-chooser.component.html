@@ -46,17 +46,17 @@
                     [editions]="package.editions"
                     [module]="module"
                     [ngClass]="{
-                    'selected': selectedPackageIndex === i,
-                    'large': packages.length < 3 || package.bestValue,
-                    'last': i === packages.length - 1,
-                    'heightFitContent' : packages.length > 2
-                }"
+                        'selected': selectedPackageIndex === i,
+                        'large': packages.length < 3 || package.bestValue,
+                        'last': i === packages.length - 1,
+                        'heightFitContent' : packages.length > 2
+                    }"
                     (click)="selectPackage(i)">
                 </package-card>
             </ng-container>
         </div>
         <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
-            <button [disabled]="selectedPackageIndex === undefined || selectedPackageIndex < 0 || (selectedPackageCardComponent && !selectedPackageCardComponent.isActive)" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
+            <button [disabled]="nextButtonDisabled" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
             <div>
                 <p class="downgrade" *ngIf="showDowngradeLink" (click)="downGradeToFree()">{{ l('DowngradeToFree') }}</p>
                 <div class="free-version-available">

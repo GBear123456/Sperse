@@ -30,7 +30,9 @@ import {
     Module,
     PackageConfigDto,
     PackageEditionConfigDto,
-    PackageServiceProxy
+    PackageServiceProxy,
+    ModuleSubscriptionInfoExtended,
+    ModuleSubscriptionInfoExtendedFrequency
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -52,6 +54,8 @@ export class PackageChooserComponent implements OnInit {
     @Input() nextStepButtonText = this.l('Next');
     @Input() nextButtonPosition: 'right' | 'center' = 'right';
     @Input() showDowngradeLink = false;
+    @Input() preselect = true;
+    @Input() preventNextButtonDisabling = false;
     @Output() onPlanChosen: EventEmitter<PackageOptions> = new EventEmitter();
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
     @HostBinding('class.withBackground') @Input() showBackground;
@@ -73,6 +77,9 @@ export class PackageChooserComponent implements OnInit {
     private enableSliderScalingChange = false;
     packagesConfig$: Observable<GetPackagesConfigOutput>;
     configurator = 'billingPeriod';
+    tenantSubscriptionIsTrial: boolean;
+    tenantSubscriptionIsFree: boolean;
+
     constructor(
         private localizationService: AppLocalizationService,
         private packageServiceProxy: PackageServiceProxy,
@@ -94,9 +101,12 @@ export class PackageChooserComponent implements OnInit {
         );
         this.packagesConfig$.subscribe((packagesConfig: GetPackagesConfigOutput) => {
             this.splitPackagesForFreeAndNotFree(packagesConfig);
+            this.getCurrentSubscriptionInfo(packagesConfig.currentSubscriptionInfo);
             this.getCurrentPackageAndEdition(packagesConfig);
-            this.changeDefaultSettings(packagesConfig);
-            this.preselectPackage();
+            this.changeDefaultSettings(packagesConfig.currentSubscriptionInfo);
+            if (this.preselectionIsNeeded) {
+                this.preselectPackage();
+            }
             this.changeDetectionRef.detectChanges();
         });
         this.getMaxUsersAmount(this.packagesConfig$).subscribe(maxAmount => {
@@ -105,7 +115,18 @@ export class PackageChooserComponent implements OnInit {
         });
     }
 
-    getCurrentPackageAndEdition(packagesConfig: GetPackagesConfigOutput) {
+    get preselectionIsNeeded() {
+        return this.preselect && !this.tenantSubscriptionIsFree && !this.tenantSubscriptionIsTrial;
+    }
+
+    private getCurrentSubscriptionInfo(currentSubscriptionInfo: ModuleSubscriptionInfoExtended): void {
+        if (currentSubscriptionInfo) {
+            this.tenantSubscriptionIsTrial = currentSubscriptionInfo.isInTrial;
+            this.tenantSubscriptionIsFree = this.freePackages && this.freePackages.length ? currentSubscriptionInfo.editionId === this.freePackages[0].editions[0].id : false;
+        }
+    }
+
+    private getCurrentPackageAndEdition(packagesConfig: GetPackagesConfigOutput): void {
         let currentEditionId = packagesConfig.currentSubscriptionInfo ? packagesConfig.currentSubscriptionInfo.editionId : undefined;
         this.currentPackage = this.packages.find(packageConfig => {
             this.currentEdition = packageConfig.editions.find(edition => edition.id === currentEditionId);
@@ -114,7 +135,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     /** Split packages to free packages and notFreePackages */
-    splitPackagesForFreeAndNotFree(packagesConfig: GetPackagesConfigOutput) {
+    private splitPackagesForFreeAndNotFree(packagesConfig: GetPackagesConfigOutput) {
         let [ notFreePackages, freePackages ]: [ any, any] = partition(packagesConfig.packages, packageConfig => !!packageConfig.editions[0].annualPrice);
         this.freePackages = freePackages;
         /** @todo remove */
@@ -2197,7 +2218,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     /** Preselect package if current edition is in list of not free packages, else - preselect best value package */
-    preselectPackage() {
+    private preselectPackage() {
         const selectedPackage = this.currentPackage || this.packages.find(packageConfig => packageConfig.bestValue);
         if (selectedPackage) {
             this.selectedPackageIndex = this.packages.indexOf(selectedPackage);
@@ -2211,19 +2232,36 @@ export class PackageChooserComponent implements OnInit {
     }
 
     /** Get values of usersAmount and billing period from user previous choice */
-    changeDefaultSettings(packagesConfig: GetPackagesConfigOutput) {
-        const userAmount = this.round(
-            packagesConfig.currentSubscriptionInfo &&
-                   (
-                       packagesConfig.currentSubscriptionInfo.maxUserCount ||
-                       (this.currentEdition && this.currentEdition.maxUserCount)
-                   ) ||
-                  this.defaultUsersAmount
+    private changeDefaultSettings(currentSubscriptionInfo: ModuleSubscriptionInfoExtended) {
+        this.usersAmount = this.getDefaultUserAmount(currentSubscriptionInfo);
+        this.selectedBillingPeriod = this.getDefaultBillingPeriod(currentSubscriptionInfo);
+    }
+
+    private getDefaultUserAmount(currentSubscriptionInfo: ModuleSubscriptionInfoExtended): number {
+        let usersAmount;
+        if (this.tenantSubscriptionIsTrial || this.tenantSubscriptionIsFree) {
+            usersAmount = this.defaultUsersAmount;
+        } else {
+            usersAmount = this.round(
+                currentSubscriptionInfo &&
+                (
+                    currentSubscriptionInfo.maxUserCount ||
+                    (this.currentEdition && this.currentEdition.maxUserCount)
+                ) ||
+                this.defaultUsersAmount
             );
-        this.usersAmount = userAmount > this.sliderInitialMaxValue || userAmount < this.sliderInitialMinValue ? this.sliderInitialMaxValue : userAmount;
-        if (packagesConfig.currentSubscriptionInfo && packagesConfig.currentSubscriptionInfo.frequency) {
-            this.selectedBillingPeriod = packagesConfig.currentSubscriptionInfo.frequency === ModuleSubscriptionInfoFrequency._30 ? BillingPeriod.Monthly : BillingPeriod.Yearly;
+            usersAmount = usersAmount > this.sliderInitialMaxValue || usersAmount < this.sliderInitialMinValue
+                ? this.sliderInitialMaxValue
+                : usersAmount;
         }
+        return usersAmount;
+    }
+
+    private getDefaultBillingPeriod(currentSubscriptionInfo: ModuleSubscriptionInfoExtended) {
+        return currentSubscriptionInfo && currentSubscriptionInfo.frequency === ModuleSubscriptionInfoExtendedFrequency._30
+               && !this.tenantSubscriptionIsFree && !this.tenantSubscriptionIsTrial
+               ? BillingPeriod.Monthly
+               : BillingPeriod.Yearly;
     }
 
     private round(amount: number): number {
@@ -2231,7 +2269,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     /** Return the highest users count from all packages */
-    getMaxUsersAmount(packagesConfig$: Observable<GetPackagesConfigOutput>): Observable<number> {
+    private getMaxUsersAmount(packagesConfig$: Observable<GetPackagesConfigOutput>): Observable<number> {
         return packagesConfig$.pipe(
             pluck('packages'),
             concatAll(),
@@ -2308,6 +2346,10 @@ export class PackageChooserComponent implements OnInit {
 
     goToNextStep() {
         if (!this.selectedPackageCardComponent) {
+            if (!this.selectedPackageIndex) {
+                /** Get last package if noone hasn't been chosen */
+                this.selectedPackageIndex = this.packages.length - 1;
+            }
             this.selectPackage(this.selectedPackageIndex);
         }
 
@@ -2349,4 +2391,11 @@ export class PackageChooserComponent implements OnInit {
         return plan;
     }
 
+    get nextButtonDisabled(): boolean {
+        let disabled = false;
+        if (!this.preventNextButtonDisabling) {
+            disabled = this.selectedPackageIndex === undefined || this.selectedPackageIndex < 0 || (this.selectedPackageCardComponent && !this.selectedPackageCardComponent.isActive);
+        }
+        return disabled;
+    }
 }
