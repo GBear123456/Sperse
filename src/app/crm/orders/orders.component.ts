@@ -11,6 +11,7 @@ import {
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import each from 'lodash/each';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
@@ -129,7 +130,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    invalidate() {     
+    invalidate() {
         this.processFilterInternal();
         this.filterChanged = true;
     }
@@ -278,6 +279,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     operator: 'contains',
                     caption: 'cardBins',
                     items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'Amount',
+                    field: 'Amount',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 })
             ]);
         }
@@ -341,7 +349,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 location: 'before',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'assign', disabled: true }, { 
+                    { name: 'assign', disabled: true }, {
                         name: 'stage',
                         action: this.toggleStages.bind(this),
                         attr: {
@@ -518,16 +526,25 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     row.data.Stage = order.Stage;
                     row.data.StageId = order.StageId;
                     return true;
-                }                
+                }
             });
+    }
+
+    filterByAmount(filter) {
+        let data = {};
+        data[filter.field] = {};
+        each(filter.items, (item: FilterItemModel, key) => {
+            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
+        });
+        return data;
     }
 
     updateOrdersStage($event) {
         if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
             this.stagesComponent.tooltipVisible = false;
             this._pipelineService.updateEntitiesStage(
-                this.pipelinePurposeId, 
-                this.selectedOrders, 
+                this.pipelinePurposeId,
+                this.selectedOrders,
                 $event.name
             ).subscribe((declinedList) => {
                 this.filterChanged = true;
