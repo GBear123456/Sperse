@@ -52,7 +52,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private _dataSources: any = {};
     private refreshTimeout: any;
     private shiftStartEntity: any;
-    private quiet: boolean;
     private stageId: number;
     private dataSource$: Subject<DataSource> = new Subject<DataSource>();
 
@@ -153,9 +152,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 this.pipeline = pipeline;
                 this.createStageInput.pipelineId = this.pipeline.id;
                 this.mergeLeadStagesInput.pipelineId = this.pipeline.id;
-                if (!this.stages && !this.quiet)
-                    this.onStagesLoaded.emit(pipeline);
 
+                this.onStagesLoaded.emit(pipeline);
                 this.stages = pipeline.stages.map((stage) => {
                     extend(stage, {
                         entities: [],
@@ -220,10 +218,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     refresh(quiet = false, stageId?: number, skipAlreadyLoadedChecking = false) {
         this.selectedEntities = [];
-        this.quiet = quiet;
         this.stageId = stageId;
         if (!this.refreshTimeout) {
-            !this.quiet && this.startLoading();
+            quiet && this.startLoading();
             this.refreshTimeout = setTimeout(() => {
                 if (this.pipeline) {
                     this.loadData(0, stageId &&
@@ -505,7 +502,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCardClickInternal(entity, event) {
-        let clickedOnCheckbox = event.target.classList.contains('dx-checkbox-icon');
+        let clickedOnCheckbox = event.target.classList.contains('dx-checkbox');
         if (event.ctrlKey || event.shiftKey || clickedOnCheckbox) {
             let checkedCard = this.highlightSelectedCard(event);
             if (!checkedCard && event.ctrlKey && event.shiftKey)

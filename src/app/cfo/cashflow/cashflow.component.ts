@@ -5651,6 +5651,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let data = new UpdateForecastInput();
                 data.id = e.key.id;
                 data[paramNameForUpdateInput] = paramValue;
+                data.cashflowTypeId = oldData.cashflowTypeId;
                 data.description = paramName == 'description' ? paramValue : oldData.description;
                 data.transactionDescriptor = paramName == 'descriptor' ? paramValue : oldData.descriptor;
 

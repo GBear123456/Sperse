@@ -13179,12 +13179,15 @@ export class InstanceServiceProxy {
 
     /**
      * @instanceType (optional) 
+     * @accountingTreeType (optional) 
      * @return Success
      */
-    setup(instanceType: InstanceType73 | null | undefined): Observable<SetupOutput> {
+    setup(instanceType: InstanceType73 | null | undefined, accountingTreeType: AccountingTreeType | null | undefined): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (accountingTreeType !== undefined)
+            url_ += "accountingTreeType=" + encodeURIComponent("" + accountingTreeType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -45947,6 +45950,7 @@ export interface ISetupOutput {
 
 export class SetupInput implements ISetupInput {
     userId!: number | undefined;
+    accountingTreeType!: SetupInputAccountingTreeType | undefined;
 
     constructor(data?: ISetupInput) {
         if (data) {
@@ -45960,6 +45964,7 @@ export class SetupInput implements ISetupInput {
     init(data?: any) {
         if (data) {
             this.userId = data["userId"];
+            this.accountingTreeType = data["accountingTreeType"];
         }
     }
 
@@ -45973,12 +45978,14 @@ export class SetupInput implements ISetupInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
+        data["accountingTreeType"] = this.accountingTreeType;
         return data; 
     }
 }
 
 export interface ISetupInput {
     userId: number | undefined;
+    accountingTreeType: SetupInputAccountingTreeType | undefined;
 }
 
 export class GetUserInstanceInfoOutput implements IGetUserInstanceInfoOutput {
@@ -61468,6 +61475,11 @@ export enum InstanceType73 {
     Main = "Main", 
 }
 
+export enum AccountingTreeType {
+    Simple = "Simple", 
+    Standard = "Standard", 
+}
+
 export enum State {
     _0 = 0, 
     _1 = 1, 
@@ -61999,6 +62011,11 @@ export enum GetStatusOutputStatus {
     NotInitialized = "NotInitialized", 
     Active = "Active", 
     Inactive = "Inactive", 
+}
+
+export enum SetupInputAccountingTreeType {
+    Simple = "Simple", 
+    Standard = "Standard", 
 }
 
 export enum GetUserInstanceInfoOutputStatus {

@@ -12,6 +12,7 @@ import {
 import { Store, select } from '@ngrx/store';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import each from 'lodash/each';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
@@ -286,6 +287,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     operator: 'contains',
                     caption: 'cardBins',
                     items: {}
+                }),
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: { from: 'ge', to: 'le' },
+                    caption: 'Amount',
+                    field: 'Amount',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() }
                 })
             ]);
         }
@@ -539,6 +547,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     return true;
                 }
             });
+    }
+
+    filterByAmount(filter) {
+        let data = {};
+        data[filter.field] = {};
+        each(filter.items, (item: FilterItemModel, key) => {
+            item && item.value && (data[filter.field][filter.operator[key]] = +item.value);
+        });
+        return data;
     }
 
     updateOrdersStage($event) {
