@@ -55,23 +55,20 @@ export class PipelineService {
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string): Observable<PipelineDto> {
-        if (this._pipelineDefinitions[pipelinePurposeId])
-            return of(this._pipelineDefinitions[pipelinePurposeId]);
-        else
-            return this.store$.pipe(
-                select(PipelinesStoreSelectors.getSortedPipeline({
-                    purpose: pipelinePurposeId
-                })),
-                filter(pipelineDefinition => pipelineDefinition),
-                map(pipelineDefinition => {
-                    this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
-                    pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
-                        (stage) => {
-                            return stage.sortOrder;
-                        });
-                    return pipelineDefinition;
-                })
-            );
+        return this.store$.pipe(
+            select(PipelinesStoreSelectors.getSortedPipeline({
+                purpose: pipelinePurposeId
+            })),
+            filter(pipelineDefinition => pipelineDefinition),
+            map(pipelineDefinition => {
+                this._pipelineDefinitions[pipelinePurposeId] = pipelineDefinition;
+                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
+                    (stage) => {
+                        return stage.sortOrder;
+                    });
+                return pipelineDefinition;
+            })
+        );
     }
 
     getStages(pipelinePurposeId: string): any {

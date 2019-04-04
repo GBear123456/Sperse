@@ -280,7 +280,8 @@ export class AppService extends AppServiceBase {
                         let request = new ActivateUserForContactInput();
                         request.contactId = contactId;
                         this.userServiceProxy.activateUserForContact(request).subscribe(result => {
-                            let setupInput = new SetupInput({ userId: result.userId });
+                            let setupInput = new SetupInput();
+                            setupInput.userId = result.userId;
                             this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(() => {
                                 abp.notify.info('User was activated and email sent successfully');
                                 observer.next(result.userId);

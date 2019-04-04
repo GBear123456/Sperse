@@ -5,6 +5,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { AppConsts } from '@shared/AppConsts';
 
 import * as _ from 'underscore';
+import startCase from 'lodash/startCase';
 
 @Component({
   selector: 'app-static-list',
@@ -33,7 +34,15 @@ export class StaticListComponent extends AppComponentBase {
     @Input() pageLoadMode = 'nextButton';
     @Input() searchExprType = 'name';
     @Input() bulkUpdatePermissionKey = '';
-    @Input() list: any;
+    @Input('list') 
+    set list(value: any[]) {
+        this._list = value.map((item) => {
+            return _.extend(item, {name: startCase(item.name.toLowerCase())});
+        });
+    }
+    get list(): any[] {
+        return this._list;
+    }
     @Input() showTitle = true;
     @Input() selectionMode;
 
@@ -45,6 +54,8 @@ export class StaticListComponent extends AppComponentBase {
     @HostBinding('class.highlightSelected') @Input() highlightSelected = false;
     @HostBinding('class.disableHindmost') @Input() disableHindmost = false;
     @HostBinding('class.funnel-styling') @Input() funnelStyling = false;
+
+    private _list: any[];
 
     constructor(
         injector: Injector,
