@@ -64,9 +64,10 @@ export class NotesComponent extends AppComponentBase implements OnInit {
                             ? of(notesData.source)
                             : this.loadData();
         dataSource$.subscribe((notes: NoteInfoDto[]) => {
-            this.dataSource = notes;
-            if (!notes || !notes.length) {
-                setTimeout(() => this.openNoteAddDialog());
+            if (this.componentIsActivated) {
+                this.dataSource = notes;
+                if (!notes || !notes.length) 
+                    setTimeout(() => this.openNoteAddDialog());
             }
         });
     }
