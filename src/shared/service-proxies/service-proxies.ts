@@ -21285,7 +21285,7 @@ export class StageServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    mergeStages(input: MergeLeadStagesInput | null | undefined): Observable<void> {
+    mergeStages(input: MergeStagesInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Stage/MergeStages";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -21315,6 +21315,58 @@ export class StageServiceProxy {
     }
 
     protected processMergeStages(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateStageSortOrder(input: UpdateSortOrderInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/UpdateStageSortOrder";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateStageSortOrder(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateStageSortOrder(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateStageSortOrder(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -30153,22 +30205,22 @@ export class PersonalInformation implements IPersonalInformation {
     middleName!: string | undefined;
     email!: string;
     alternateEmail!: string | undefined;
-    doB!: moment.Moment;
-    ssn!: string;
+    doB!: moment.Moment | undefined;
+    ssn!: string | undefined;
     licenseNumber!: string | undefined;
     licenseState!: string | undefined;
-    isActiveMilitary!: boolean;
-    phone!: string;
+    isActiveMilitary!: boolean | undefined;
+    phone!: string | undefined;
     phoneMobile!: string | undefined;
-    preferredContactTOD!: PersonalInformationPreferredContactTOD;
-    address1!: string;
+    preferredContactTOD!: PersonalInformationPreferredContactTOD | undefined;
+    address1!: string | undefined;
     address2!: string | undefined;
-    city!: string;
-    stateCode!: string;
-    postalCode!: string;
+    city!: string | undefined;
+    stateCode!: string | undefined;
+    postalCode!: string | undefined;
     countryCode!: string | undefined;
-    isHomeOwner!: boolean;
-    monthsAtAddress!: number;
+    isHomeOwner!: boolean | undefined;
+    monthsAtAddress!: number | undefined;
     creditScoreRating!: PersonalInformationCreditScoreRating | undefined;
     gender!: string | undefined;
 
@@ -30251,22 +30303,22 @@ export interface IPersonalInformation {
     middleName: string | undefined;
     email: string;
     alternateEmail: string | undefined;
-    doB: moment.Moment;
-    ssn: string;
+    doB: moment.Moment | undefined;
+    ssn: string | undefined;
     licenseNumber: string | undefined;
     licenseState: string | undefined;
-    isActiveMilitary: boolean;
-    phone: string;
+    isActiveMilitary: boolean | undefined;
+    phone: string | undefined;
     phoneMobile: string | undefined;
-    preferredContactTOD: PersonalInformationPreferredContactTOD;
-    address1: string;
+    preferredContactTOD: PersonalInformationPreferredContactTOD | undefined;
+    address1: string | undefined;
     address2: string | undefined;
-    city: string;
-    stateCode: string;
-    postalCode: string;
+    city: string | undefined;
+    stateCode: string | undefined;
+    postalCode: string | undefined;
     countryCode: string | undefined;
-    isHomeOwner: boolean;
-    monthsAtAddress: number;
+    isHomeOwner: boolean | undefined;
+    monthsAtAddress: number | undefined;
     creditScoreRating: PersonalInformationCreditScoreRating | undefined;
     gender: string | undefined;
 }
@@ -30316,7 +30368,7 @@ export interface IDebtInformation {
 }
 
 export class LoanInformation implements ILoanInformation {
-    requestedLoanAmount!: number;
+    requestedLoanAmount!: number | undefined;
     approvedLoanAmount!: number | undefined;
     loanReason!: LoanInformationLoanReason | undefined;
 
@@ -30354,7 +30406,7 @@ export class LoanInformation implements ILoanInformation {
 }
 
 export interface ILoanInformation {
-    requestedLoanAmount: number;
+    requestedLoanAmount: number | undefined;
     approvedLoanAmount: number | undefined;
     loanReason: LoanInformationLoanReason | undefined;
 }
@@ -30375,7 +30427,7 @@ export class EmploymentInformation implements IEmploymentInformation {
     payFrequency!: EmploymentInformationPayFrequency | undefined;
     payNextDate!: moment.Moment | undefined;
     payAfterNextDate!: moment.Moment | undefined;
-    incomeType!: EmploymentInformationIncomeType;
+    incomeType!: EmploymentInformationIncomeType | undefined;
 
     constructor(data?: IEmploymentInformation) {
         if (data) {
@@ -30452,16 +30504,16 @@ export interface IEmploymentInformation {
     payFrequency: EmploymentInformationPayFrequency | undefined;
     payNextDate: moment.Moment | undefined;
     payAfterNextDate: moment.Moment | undefined;
-    incomeType: EmploymentInformationIncomeType;
+    incomeType: EmploymentInformationIncomeType | undefined;
 }
 
 export class BankInformation implements IBankInformation {
-    bankAccountType!: BankInformationBankAccountType;
-    bankName!: string;
-    bankAccountNumber!: string;
-    bankABA!: string;
+    bankAccountType!: BankInformationBankAccountType | undefined;
+    bankName!: string | undefined;
+    bankAccountNumber!: string | undefined;
+    bankABA!: string | undefined;
     bankPhone!: string | undefined;
-    isDirectDeposit!: boolean;
+    isDirectDeposit!: boolean | undefined;
     monthsAtBank!: number | undefined;
 
     constructor(data?: IBankInformation) {
@@ -30506,12 +30558,12 @@ export class BankInformation implements IBankInformation {
 }
 
 export interface IBankInformation {
-    bankAccountType: BankInformationBankAccountType;
-    bankName: string;
-    bankAccountNumber: string;
-    bankABA: string;
+    bankAccountType: BankInformationBankAccountType | undefined;
+    bankName: string | undefined;
+    bankAccountNumber: string | undefined;
+    bankABA: string | undefined;
     bankPhone: string | undefined;
-    isDirectDeposit: boolean;
+    isDirectDeposit: boolean | undefined;
     monthsAtBank: number | undefined;
 }
 
@@ -55288,12 +55340,12 @@ export interface IRenameStageInput {
     name: string;
 }
 
-export class MergeLeadStagesInput implements IMergeLeadStagesInput {
+export class MergeStagesInput implements IMergeStagesInput {
     pipelineId!: number;
     sourceStageId!: number;
     destinationStageId!: number | undefined;
 
-    constructor(data?: IMergeLeadStagesInput) {
+    constructor(data?: IMergeStagesInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -55310,9 +55362,9 @@ export class MergeLeadStagesInput implements IMergeLeadStagesInput {
         }
     }
 
-    static fromJS(data: any): MergeLeadStagesInput {
+    static fromJS(data: any): MergeStagesInput {
         data = typeof data === 'object' ? data : {};
-        let result = new MergeLeadStagesInput();
+        let result = new MergeStagesInput();
         result.init(data);
         return result;
     }
@@ -55326,10 +55378,50 @@ export class MergeLeadStagesInput implements IMergeLeadStagesInput {
     }
 }
 
-export interface IMergeLeadStagesInput {
+export interface IMergeStagesInput {
     pipelineId: number;
     sourceStageId: number;
     destinationStageId: number | undefined;
+}
+
+export class UpdateSortOrderInput implements IUpdateSortOrderInput {
+    id!: number;
+    sortOrder!: number;
+
+    constructor(data?: IUpdateSortOrderInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSortOrderInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSortOrderInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateSortOrderInput {
+    id: number;
+    sortOrder: number;
 }
 
 export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
