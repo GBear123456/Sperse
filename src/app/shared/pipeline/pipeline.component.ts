@@ -19,7 +19,8 @@ import {
     StageServiceProxy,
     CreateStageInput,
     RenameStageInput,
-    MergeStagesInput
+    MergeStagesInput,
+    UpdateSortOrderInput
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
@@ -549,10 +550,48 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         });
                     }
                     break;
-                default:
-                    break;
             }
 
+        });
+    }
+
+    getTargetStage(stage, reverse) {
+        let stages = reverse ? _.clone(this.stages).reverse(): this.stages, result;
+        stages.some((lookupStage) => {
+            if (stage.id == lookupStage.id)
+                return true;
+            else 
+                result = lookupStage;
+        });
+        return result;
+    }
+
+    moveStage(stage, reverse) {
+        if (this.disallowMove(stage, reverse))
+            return ;      
+                    
+        let direction = (reverse ? 1 : -1),
+            targetStage = this.getTargetStage(stage, reverse);
+        
+        this.startLoading(true);
+        this._stageServiceProxy.updateStageSortOrder(new UpdateSortOrderInput({
+            id: stage.id,
+            sortOrder: (targetStage.sortOrder + direction) || direction
+        })).pipe(
+            finalize(() => { this.finishLoading(true); })
+        ).subscribe((res) => {
+            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+            this.notify.info(this.l('SavedSuccessfully'));            
+        });
+    }
+
+    disallowMove(stage, reverse?) {
+        let stages = reverse ? _.clone(this.stages).reverse(): this.stages, targetStage;
+        return !stage.sortOrder || stage['isFinal'] || stages.some((lookupStage) => { 
+            if (lookupStage.id == stage.id && targetStage && targetStage['isFinal'])
+                return true;
+            else     
+                targetStage = lookupStage;
         });
     }
 }

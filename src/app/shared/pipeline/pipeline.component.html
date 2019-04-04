@@ -20,6 +20,12 @@
                         <li class="list-group-item" [hidden]="stage['isFinal']">
                             <a (click)="updateStage(stage, 'Merge')"><i class="fa fa-minus fa-fw" style="color: red"></i> {{l('Delete_Stage')}}</a>
                         </li>
+                        <li class="list-group-item" [hidden]="disallowMove(stage, true)">
+                            <a (click)="moveStage(stage, true)"><i class="fa fa-chevron-right fa-fw" style="color: #b6cf5e"></i> {{l('Move_Right_Stage')}}</a>
+                        </li>
+                        <li class="list-group-item" [hidden]="disallowMove(stage)">
+                            <a (click)="moveStage(stage)"><i class="fa fa-chevron-left fa-fw" style="color: #f7d15e"></i> {{l('Move_Left_Stage')}}</a>
+                        </li>
                     </ul>
                 </div>
             </dx-tooltip>
