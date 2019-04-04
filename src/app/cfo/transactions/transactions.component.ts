@@ -439,7 +439,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     locateInMenu: 'auto',
                     items: [
                         {
-                            name: 'fullscreen', 
+                            name: 'fullscreen',
                             action: () => {
                                 this.toggleFullscreen(document.documentElement);
                                 setTimeout(() => this.dataGrid.instance.repaint(), 100);
@@ -689,7 +689,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     applyTotalBankAccountFilter(emitFilterChange = false) {
         emitFilterChange && this.setDataSource();
-        this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);        
+        this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
     }
 
     processFilterInternal() {
