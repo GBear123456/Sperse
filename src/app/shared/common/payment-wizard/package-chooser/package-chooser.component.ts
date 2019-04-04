@@ -2216,7 +2216,7 @@ export class PackageChooserComponent implements OnInit {
             );
         this.usersAmount = userAmount > this.sliderInitialMaxValue || userAmount < this.sliderInitialMinValue ? this.sliderInitialMaxValue : userAmount;
         if (packagesConfig.currentSubscriptionInfo && packagesConfig.currentSubscriptionInfo.frequency) {
-            this.selectedBillingPeriod = packagesConfig.currentSubscriptionInfo.frequency === ModuleSubscriptionInfoFrequency._30 ? BillingPeriod.Monthly : BillingPeriod.Yearly;
+            this.selectedBillingPeriod = packagesConfig.currentSubscriptionInfo.frequency == ModuleSubscriptionInfoFrequency._30 ? BillingPeriod.Monthly : BillingPeriod.Yearly;
         }
     }
 
