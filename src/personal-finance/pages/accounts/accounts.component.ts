@@ -178,7 +178,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             this.addAccount();
         else {
             abp.ui.setBusy(this.contentElement);
-            this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType], null)
+            this._instanceServiceProxy.setup(InstanceType[this._cfoService.instanceType], undefined)
                 .subscribe(
                     () => {
                         this.checkInstanceChangeProcess();

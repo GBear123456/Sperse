@@ -15,7 +15,7 @@ export class CfoInstanceStatusGuard implements CanActivate {
     canActivate() {
         /** Setup instance before moving to the page if it hasn't initialized yet */
         if (!this.cfoService.statusActive.value) {
-            const setupInstanceRequest = this.instanceServiceProxy.setup(InstanceType[this.cfoService.instanceType], null);
+            const setupInstanceRequest = this.instanceServiceProxy.setup(InstanceType[this.cfoService.instanceType], undefined);
             return setupInstanceRequest.pipe(
                 map(() => true),
                 catchError(() => of(false))
