@@ -172,19 +172,19 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             cssClass: 'center'
         },
         cardNetwork: {
-            readOnly: true,
-            enum: ExtendOfferDtoCardNetwork
+            enum: ExtendOfferDtoCardNetwork,
+            position: FieldPositionEnum.Left
         },
         cartType: {
             readOnly: true
         },
         targetAudience: {
-            readOnly: true,
-            enum: ExtendOfferDtoTargetAudience
+            enum: ExtendOfferDtoTargetAudience,
+            position: FieldPositionEnum.Right
         },
         securingType: {
-            readOnly: true,
-            enum: ExtendOfferDtoSecuringType
+            enum: ExtendOfferDtoSecuringType,
+            position: FieldPositionEnum.Right
         },
         issuingBank: {
             readOnly: true
@@ -333,7 +333,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         termsOfService: {
             readOnly: true
         },
-        traficSource: {
+        trafficSource: {
             readOnly: true
         },
         isPublished: {
@@ -355,17 +355,14 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             'systemType',
             'type',
             'campaignProviderType',
-            'cardNetwork',
             'cartType',
-            'targetAudience',
-            'securingType',
             'countries',
             'daysOfWeekAvailability',
             'effectiveTimeOfDay',
             'expireTimeOfDay',
             'asfdasdf',
             'termsOfService',
-            'traficSource',
+            'trafficSource',
             'pros',
             'details',
             'cons',
@@ -405,7 +402,10 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         ],
         'flags': [
             'offerCollection',
-            'flags'
+            'flags',
+            'cardNetwork',
+            'targetAudience',
+            'securingType'
         ]
     };
     offerIsUpdating = false;
@@ -678,7 +678,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         if (this.sentAnnouncementPermissionGranted) {
             this.offerId$.pipe(first()).subscribe((offerId: number) => {
                 const offerCategory = this.offersService.getCategoryRouteNameByCategoryEnum(this.model.categories[0].category as any);
-                const offerPublicLink = AppConsts.appBaseHref + 'personal-finance/offers/' + offerCategory + '/' + offerId;
+                const offerPublicLink = AppConsts.appBaseUrl + 'personal-finance/offers/' + offerCategory + '/' + offerId;
                 const el = document.createElement('div');
                 el.innerHTML = `<h5>${this.ls.ls('PFM', 'OfferLinkWillBeSentToUsers')}:</h5>
                                 <a href="${offerPublicLink}" target="_blank">${offerPublicLink}</a>`;
