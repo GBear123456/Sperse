@@ -1,20 +1,17 @@
 <div #bankTransferSettingsContainer class="bankTransferSettingsContainer">
-    <header>
-        <h2>{{ titleText }}</h2>
-    </header>
     <div class="sections">
         <div class="request-step">
             <dx-check-box 
                 width="430px"
-                [(value)]="requireInstractionEnabled" 
+                [(value)]="requireInstructionEnabled" 
                 [text]="l('SendPaymentByWireTransfer')">
             </dx-check-box>        
-            <p>{{l('PleaseSendWireInstractions')}}</p>
+            <p>{{l('PleaseSendWireInstructions')}}</p>
         </div>
     </div>
 </div>
 <payment-options-footer
-    [submitButtonText]="l('RequestWireInstractions')"
-    [submitButtonDisabled]="!requireInstractionEnabled"
+    [submitButtonText]="l('RequestWireInstructions')"
+    [submitButtonDisabled]="!requireInstructionEnabled"
     (onSubmit)="submit()">
 </payment-options-footer>
