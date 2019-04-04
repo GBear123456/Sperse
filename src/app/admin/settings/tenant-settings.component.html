@@ -26,8 +26,12 @@
                         </div>
                         <div class="form-group">
                             <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>
-                            <input  id="PublicSiteUrl" type="url" name="PublicSiteUrl" class="form-control" [(ngModel)]="settings.general.publicSiteUrl" maxlength="128">
+                            <input #publicSiteUrl="ngModel" id="PublicSiteUrl" type="url" name="PublicSiteUrl" class="form-control" [(ngModel)]="settings.general.publicSiteUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
                         </div>
+                        <div>
+                            <span class="help-block text-danger" *ngIf="!publicSiteUrl.valid && !publicSiteUrl.pristine">{{l("Invalid_PublicSiteUrl")}}</span>
+                        </div>
+
                         <div class="form-group">
                             <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
                             <input id="ZendeskAccountUrl" type="text" name="ZendeskAccountUrl" class="form-control" [(ngModel)]="settings.general.zendeskAccountUrl" maxlength="128">
