@@ -28,7 +28,7 @@ export class SetupComponent extends CFOComponentBase implements OnInit, OnDestro
 
     onStart(): void {
         this.isDisabled = true;
-        this._instanceServiceProxy.setup(InstanceType[this.instanceType]).subscribe((data) => {
+        this._instanceServiceProxy.setup(InstanceType[this.instanceType], null).subscribe((data) => {
             this._cfoService.instanceChangeProcess();
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
         });

@@ -71,7 +71,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         this.startLoading(false, this.setupContainerElement);
         this.addAccount();
         if (this._cfoService.instanceId == null)
-            this._instanceServiceProxy.setup(InstanceType[this.instanceType]).subscribe(
+            this._instanceServiceProxy.setup(InstanceType[this.instanceType], null).subscribe(
                 data => { this._cfoService.instanceChangeProcess(); },
                 () => this.isDisabled = false
             );
