@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Injector, OnInit } from '@angular/core';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CachingServiceProxy, EntityDtoOfString, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -11,11 +11,16 @@ import { finalize } from 'rxjs/operators';
     styleUrls: [ '../../../shared/metronic/table.less', './maintenance.component.less' ],
     animations: [appModuleAnimation()]
 })
-export class MaintenanceComponent extends AppComponentBase implements OnInit, AfterViewInit, AfterViewChecked {
+export class MaintenanceComponent extends AppComponentBase implements OnInit, AfterViewInit {
 
     loading = false;
     caches: any = null;
     logs: any = '';
+    public headlineConfig = {
+        names: [this.l('Maintenance')],
+        icon: '',
+        buttons: []
+    };
 
     constructor(
         injector: Injector,
@@ -23,12 +28,6 @@ export class MaintenanceComponent extends AppComponentBase implements OnInit, Af
         private _webLogService: WebLogServiceProxy,
         private _fileDownloadService: FileDownloadService) {
         super(injector);
-    }
-
-    ngAfterViewChecked(): void {
-        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
-        $('tabset ul.nav').addClass('m-tabs-line');
-        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
     }
 
     getCaches(): void {
