@@ -21032,7 +21032,7 @@ export class StageServiceProxy {
      * @input (optional) 
      * @return Success
      */
-    mergeStages(input: MergeLeadStagesInput | null | undefined): Observable<void> {
+    mergeStages(input: MergeStagesInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Stage/MergeStages";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -21062,6 +21062,58 @@ export class StageServiceProxy {
     }
 
     protected processMergeStages(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateStageSortOrder(input: UpdateSortOrderInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Stage/UpdateStageSortOrder";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateStageSortOrder(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateStageSortOrder(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateStageSortOrder(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -54779,12 +54831,12 @@ export interface IRenameStageInput {
     name: string;
 }
 
-export class MergeLeadStagesInput implements IMergeLeadStagesInput {
+export class MergeStagesInput implements IMergeStagesInput {
     pipelineId!: number;
     sourceStageId!: number;
     destinationStageId!: number | undefined;
 
-    constructor(data?: IMergeLeadStagesInput) {
+    constructor(data?: IMergeStagesInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -54801,9 +54853,9 @@ export class MergeLeadStagesInput implements IMergeLeadStagesInput {
         }
     }
 
-    static fromJS(data: any): MergeLeadStagesInput {
+    static fromJS(data: any): MergeStagesInput {
         data = typeof data === 'object' ? data : {};
-        let result = new MergeLeadStagesInput();
+        let result = new MergeStagesInput();
         result.init(data);
         return result;
     }
@@ -54817,10 +54869,50 @@ export class MergeLeadStagesInput implements IMergeLeadStagesInput {
     }
 }
 
-export interface IMergeLeadStagesInput {
+export interface IMergeStagesInput {
     pipelineId: number;
     sourceStageId: number;
     destinationStageId: number | undefined;
+}
+
+export class UpdateSortOrderInput implements IUpdateSortOrderInput {
+    id!: number;
+    sortOrder!: number;
+
+    constructor(data?: IUpdateSortOrderInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSortOrderInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSortOrderInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateSortOrderInput {
+    id: number;
+    sortOrder: number;
 }
 
 export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {

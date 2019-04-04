@@ -19,7 +19,7 @@ import {
     StageServiceProxy,
     CreateStageInput,
     RenameStageInput,
-    MergeLeadStagesInput
+    MergeStagesInput
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
@@ -52,7 +52,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     createStageInput: CreateStageInput = new CreateStageInput();
     renameStageInput: RenameStageInput = new RenameStageInput();
-    mergeLeadStagesInput: MergeLeadStagesInput = new MergeLeadStagesInput();
+    mergeStagesInput: MergeStagesInput = new MergeStagesInput();
     currentTooltip: dxTooltip;
 
     @Output() selectedEntitiesChange = new EventEmitter<any>();
@@ -145,7 +145,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             ).subscribe((pipeline: PipelineDto) => {
                 this.pipeline = pipeline;
                 this.createStageInput.pipelineId = this.pipeline.id;
-                this.mergeLeadStagesInput.pipelineId = this.pipeline.id;
+                this.mergeStagesInput.pipelineId = this.pipeline.id;
 
                 this.onStagesLoaded.emit(pipeline);
                 this.stages = pipeline.stages.map((stage) => {
@@ -502,7 +502,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     updateStage(data, actionType) {
         this.currentTooltip.hide();
         this.createStageInput.sortOrder = data.sortOrder + (data.sortOrder >= 0 ? 1 : -1);
-        this.mergeLeadStagesInput.sourceStageId = this.renameStageInput.id = data.id;
+        this.mergeStagesInput.sourceStageId = this.renameStageInput.id = data.id;
         this.dialog.open(AddRenameMergeDialogComponent, {
             height: '300px',
             width: '270px',
@@ -538,13 +538,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     break;
                 case 'Merge':
                     if (result && result.moveToStage) {
-                        this.mergeLeadStagesInput.destinationStageId = result.moveToStage;
-                        this._stageServiceProxy.mergeStages(this.mergeLeadStagesInput).subscribe(() => {
+                        this.mergeStagesInput.destinationStageId = result.moveToStage;
+                        this._stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
                                 this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
                             }
                         );
                     } else if (result && !result.moveToStage) {
-                        this._stageServiceProxy.mergeStages(this.mergeLeadStagesInput).subscribe(() => {
+                        this._stageServiceProxy.mergeStages(this.mergeStagesInput).subscribe(() => {
                             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
                         });
                     }
