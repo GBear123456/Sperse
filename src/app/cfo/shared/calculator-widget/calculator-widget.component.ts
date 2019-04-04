@@ -248,6 +248,12 @@ export class CalculatorComponent extends CFOComponentBase implements OnChanges {
             this.clearAll();
         }
     }
+
+    changeSign() {
+        if (this.input) {
+            this.input = this.input[0] === '-' ? this.input.slice(1) : '-' + this.input;
+        }
+    }
 }
 
 class CalcHistory {
