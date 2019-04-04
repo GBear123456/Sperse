@@ -39,7 +39,7 @@
         <!-- common settings for charts -->
         <dxo-common-series-settings
             argumentField="date"
-            ignoreEmptyPoints="true">
+            [ignoreEmptyPoints]="true">
         </dxo-common-series-settings>
 
         <!-- Bottom axis -->
@@ -57,7 +57,7 @@
         <dxo-legend [visible]="false"></dxo-legend>
 
         <!-- Common settings for axis -->
-        <dxo-common-axis-settings allowDecimals="false" [visible]="false">
+        <dxo-common-axis-settings [allowDecimals]="false" [visible]="false">
             <dxo-label alignment="center" [visible]="false">
                 <dxo-font weight="300" color="#677380" size="12px"></dxo-font>
             </dxo-label>
