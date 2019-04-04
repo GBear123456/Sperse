@@ -52364,7 +52364,7 @@ export interface IPackageDto {
 }
 
 export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
-    currentSubscriptionInfo!: ModuleSubscriptionInfo | undefined;
+    currentSubscriptionInfo!: ModuleSubscriptionInfoExtended | undefined;
     packages!: PackageConfigDto[] | undefined;
 
     constructor(data?: IGetPackagesConfigOutput) {
@@ -52378,7 +52378,7 @@ export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
 
     init(data?: any) {
         if (data) {
-            this.currentSubscriptionInfo = data["currentSubscriptionInfo"] ? ModuleSubscriptionInfo.fromJS(data["currentSubscriptionInfo"]) : <any>undefined;
+            this.currentSubscriptionInfo = data["currentSubscriptionInfo"] ? ModuleSubscriptionInfoExtended.fromJS(data["currentSubscriptionInfo"]) : <any>undefined;
             if (data["packages"] && data["packages"].constructor === Array) {
                 this.packages = [];
                 for (let item of data["packages"])
@@ -52407,16 +52407,17 @@ export class GetPackagesConfigOutput implements IGetPackagesConfigOutput {
 }
 
 export interface IGetPackagesConfigOutput {
-    currentSubscriptionInfo: ModuleSubscriptionInfo | undefined;
+    currentSubscriptionInfo: ModuleSubscriptionInfoExtended | undefined;
     packages: PackageConfigDto[] | undefined;
 }
 
-export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
+export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoExtended {
+    isInTrial!: boolean | undefined;
     editionId!: number;
     maxUserCount!: number | undefined;
-    frequency!: ModuleSubscriptionInfoFrequency;
+    frequency!: ModuleSubscriptionInfoExtendedFrequency;
 
-    constructor(data?: IModuleSubscriptionInfo) {
+    constructor(data?: IModuleSubscriptionInfoExtended) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -52427,21 +52428,23 @@ export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
 
     init(data?: any) {
         if (data) {
+            this.isInTrial = data["isInTrial"];
             this.editionId = data["editionId"];
             this.maxUserCount = data["maxUserCount"];
             this.frequency = data["frequency"];
         }
     }
 
-    static fromJS(data: any): ModuleSubscriptionInfo {
+    static fromJS(data: any): ModuleSubscriptionInfoExtended {
         data = typeof data === 'object' ? data : {};
-        let result = new ModuleSubscriptionInfo();
+        let result = new ModuleSubscriptionInfoExtended();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["isInTrial"] = this.isInTrial;
         data["editionId"] = this.editionId;
         data["maxUserCount"] = this.maxUserCount;
         data["frequency"] = this.frequency;
@@ -52449,10 +52452,11 @@ export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
     }
 }
 
-export interface IModuleSubscriptionInfo {
+export interface IModuleSubscriptionInfoExtended {
+    isInTrial: boolean | undefined;
     editionId: number;
     maxUserCount: number | undefined;
-    frequency: ModuleSubscriptionInfoFrequency;
+    frequency: ModuleSubscriptionInfoExtendedFrequency;
 }
 
 export class PackageConfigDto implements IPackageConfigDto {
@@ -57568,6 +57572,50 @@ export interface ISetupSubscriptionInfoDto {
     billingInfo: PaymentRequestInfoDto | undefined;
 }
 
+export class ModuleSubscriptionInfo implements IModuleSubscriptionInfo {
+    editionId!: number;
+    maxUserCount!: number | undefined;
+    frequency!: ModuleSubscriptionInfoFrequency;
+
+    constructor(data?: IModuleSubscriptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.editionId = data["editionId"];
+            this.maxUserCount = data["maxUserCount"];
+            this.frequency = data["frequency"];
+        }
+    }
+
+    static fromJS(data: any): ModuleSubscriptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ModuleSubscriptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["editionId"] = this.editionId;
+        data["maxUserCount"] = this.maxUserCount;
+        data["frequency"] = this.frequency;
+        return data; 
+    }
+}
+
+export interface IModuleSubscriptionInfo {
+    editionId: number;
+    maxUserCount: number | undefined;
+    frequency: ModuleSubscriptionInfoFrequency;
+}
+
 export class RequestPaymentDto implements IRequestPaymentDto {
     subscriptionInfo!: ModuleSubscriptionInfo | undefined;
     requestType!: RequestPaymentDtoRequestType | undefined;
@@ -62534,7 +62582,7 @@ export enum OfferFilterTargetAudience {
     Students = "Students", 
 }
 
-export enum ModuleSubscriptionInfoFrequency {
+export enum ModuleSubscriptionInfoExtendedFrequency {
     _30 = 30, 
     _365 = 365, 
 }
@@ -62629,6 +62677,11 @@ export enum PaymentRequestInfoDtoPaymentInfoType {
     BankCard = "BankCard", 
     ACH = "ACH", 
     PayPal = "PayPal", 
+}
+
+export enum ModuleSubscriptionInfoFrequency {
+    _30 = 30, 
+    _365 = 365, 
 }
 
 export enum RequestPaymentDtoRequestType {
