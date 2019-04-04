@@ -54,7 +54,14 @@ export class PackageChooserComponent implements OnInit {
     @Input() nextStepButtonText = this.l('Next');
     @Input() nextButtonPosition: 'right' | 'center' = 'right';
     @Input() showDowngradeLink = false;
-    @Input() preselect = true;
+    private _preselect = true;
+    @Input('preselect')
+    get preselect(): boolean {
+        return this._preselect;
+    }
+    set preselect(value: boolean) {
+        this._preselect = '' + value !== 'false';
+    }
     @Input() preventNextButtonDisabling = false;
     @Output() onPlanChosen: EventEmitter<PackageOptions> = new EventEmitter();
     @Output() moveToNextStep: EventEmitter<null> = new EventEmitter();
