@@ -255,10 +255,17 @@
                             position: absolute;
                             bottom: 11px;
                             left: 10px;
+                            height: 18px;
+                            line-height: 0;
 
                             /deep/ .dx-checkbox-icon {
                                 width: 18px;
                                 height: 18px;
+                            }
+                            
+                            /deep/ .dx-checkbox-icon,
+                            /deep/ .dx-checkbox-container {
+                                pointer-events: none;
                             }
                         }
                     }
@@ -639,10 +646,17 @@
             position: absolute;
             bottom: 11px;
             left: 10px;
+            height: 18px;
+            line-height: 0;
 
             /deep/ .dx-checkbox-icon {
                 width: 18px;
                 height: 18px;
+            }
+            
+            /deep/ .dx-checkbox-icon,
+            /deep/ .dx-checkbox-container {
+                pointer-events: none;
             }
         }
     }

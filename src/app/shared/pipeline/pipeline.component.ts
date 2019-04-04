@@ -477,7 +477,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCardClickInternal(entity, event) {
-        let clickedOnCheckbox = event.target.classList.contains('dx-checkbox-icon');
+        let clickedOnCheckbox = event.target.classList.contains('dx-checkbox');
         if (event.ctrlKey || event.shiftKey || clickedOnCheckbox) {
             let checkedCard = this.highlightSelectedCard(event);
             if (!checkedCard && event.ctrlKey && event.shiftKey)
