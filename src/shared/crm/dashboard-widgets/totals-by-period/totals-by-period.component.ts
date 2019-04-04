@@ -1,8 +1,11 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Injector, Inject, OnDestroy, ViewChild } from '@angular/core';
+import { DOCUMENT, DecimalPipe } from '@angular/common';
 
 /** Third party imports */
-import { Observable, combineLatest, of } from 'rxjs';
+import { AbpSessionService } from '@abp/session/abp-session.service';
+import { DxChartComponent } from 'devextreme-angular/ui/chart';
+import { BehaviorSubject, Observable, combineLatest, fromEvent, of } from 'rxjs';
 import {
     distinct,
     distinctUntilChanged,
@@ -23,26 +26,24 @@ import {
 import { Store, select } from '@ngrx/store';
 import * as moment from 'moment-timezone';
 import 'moment-timezone';
+import { CacheService } from 'ng2-cache-service';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { TotalsByPeriodModel } from './totals-by-period.model';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { DashboardServiceProxy, GroupBy, GroupBy2 } from 'shared/service-proxies/service-proxies';
+import { DashboardServiceProxy, GroupBy, GroupBy2 } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsService } from '../dashboard-widgets.service';
-import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { BehaviorSubject } from '@node_modules/rxjs';
-import { CacheService } from '@node_modules/ng2-cache-service';
-import { AbpSessionService } from '@abp/session/abp-session.service';
 
 @Component({
     selector: 'totals-by-period',
     templateUrl: './totals-by-period.component.html',
     styleUrls: ['./totals-by-period.component.less'],
-    providers: [ DashboardServiceProxy ]
+    providers: [ DashboardServiceProxy, DecimalPipe ]
 })
 export class TotalsByPeriodComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
@@ -76,12 +77,12 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     ];
     selectItems = [
         {
-            name: this.l('CumulativeLeadStageRatioAndMemberCount'),
-            value: true
-        },
-        {
             name: this.l('NetLeadStageRatioAndMemberCount'),
             value: false
+        },
+        {
+            name: this.l('CumulativeLeadStageRatioAndMemberCount'),
+            value: true
         }
     ];
 
@@ -106,14 +107,19 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     allSeries$: Observable<any>;
     allSeriesColors: { [seriaName: string]: string } = {};
     leadStagesSeries$: Observable<any>;
+    showFullLegend = false;
+    startCase = startCase;
 
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         private _dashboardServiceProxy: DashboardServiceProxy,
         private _dashboardWidgetsService: DashboardWidgetsService,
         private store$: Store<CrmStore.State>,
         private _pipelineService: PipelineService,
         private cacheService: CacheService,
-        private sessionService: AbpSessionService
+        private sessionService: AbpSessionService,
+        private decimalPipe: DecimalPipe,
+        @Inject(DOCUMENT) private document: Document
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
@@ -127,6 +133,19 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             switchMap(([period, isCumulative]) => this.loadCustomersAndLeadsStats(period, isCumulative)),
             publishReplay(),
             refCount()
+        );
+
+        /** Listen body click */
+        fromEvent(this.document.body, 'click').pipe(
+            /** Stop listen after component destroy */
+            takeUntil(this.destroy$),
+            /** Get click target */
+            map((clickEvent: any) => clickEvent.target),
+            /** If target is not in legend */
+            filter(clickTarget => !clickTarget.closest('.legend'))
+        ).subscribe(
+            /** Close full legend */
+            () => this.showFullLegend = false
         );
 
         /** Save is cumulative change to cache */
@@ -235,7 +254,8 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
 
         const leadsArePresent = pointInfo.points.length > this.series.length;
-        html += `<header class="tooltip-header">${date.format('MMM YYYY')}</header>`;
+        const headerFormattedDate = this.getHeaderFormattedDate(date);
+        html += `<header class="tooltip-header">${headerFormattedDate}</header>`;
         if (leadsArePresent) {
             html += `<div class="label">Leads:</div>`;
         }
@@ -248,11 +268,26 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
             }
             html += `<div class="tooltip-item">
                         <span class="tooltip-item-marker" style="background-color: ${color}"></span>
-                        ${point.seriesName}
-                        <span class="tooltip-item-value">${point.value}</span>
-                     </div>`;
+                        ${startCase(point.seriesName.toLowerCase())}`;
+
+            if (!isClientsPoint) {
+                html += `<span class="tooltip-item-percent">${point.percentText}</span>`;
+            }
+
+            html += `<span class="tooltip-item-value">${this.decimalPipe.transform(point.value)}</span></div>`;
         }
         return { html: html };
+    }
+
+    private getHeaderFormattedDate(date: moment.Moment): string {
+        let formattedDate;
+        if (this.selectedPeriod.key !== GroupBy.Monthly) {
+            const dateEnding = date.format('Do').slice(-2);
+            formattedDate = `${date.format('MMM D')}<sup>${dateEnding}</sup> ${date.format('YYYY')}`;
+        } else {
+            formattedDate = date.format('MMM YYYY');
+        }
+        return formattedDate;
     }
 
     getColorBySeriesNames(seriaName: string): string {
@@ -276,6 +311,10 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     render(component?: any) {
         this.nativeElement = this.getElementRef().nativeElement;
+    }
+
+    toggleFullLegend() {
+        this.showFullLegend = !this.showFullLegend;
     }
 
     ngOnDestroy() {

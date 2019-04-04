@@ -8,11 +8,20 @@
             [value]="isCumulative$ | async"
             (onSelectionChanged)="changeCumulative($event)">
         </dx-select-box>
-        <div class="legend">
-            <ul class="legend-list">
+        <div class="legend" [class.opened]="showFullLegend">
+            <div class="short-legend" (click)="toggleFullLegend()">
+                <ul class="legend-list">
+                    <li class="legend-item" *ngFor="let seria of allSeries$ | async">
+                        <span class="legendMarker" [ngStyle]="{'backgroundColor' : seria.color }"></span>
+                    </li>
+                </ul>
+                <span class="legendText">{{ l('Legend') }}</span>
+                <i [class]="'fa fa-angle-' + (showFullLegend ? 'up' : 'down')" aria-hidden="true"></i>
+            </div>
+            <ul class="full legend-list" [hidden]="!showFullLegend">
                 <li class="legend-item" *ngFor="let seria of allSeries$ | async">
                     <span class="legendMarker" [ngStyle]="{'backgroundColor' : seria.color }"></span>
-                    {{ seria.name }}
+                    {{ startCase(seria.name.toLowerCase()) }}
                 </li>
             </ul>
         </div>
@@ -22,7 +31,7 @@
     <dx-chart
         id="bar"
         [barWidth]="1"
-        [size]="{height: 245, width: nativeElement ? nativeElement.offsetWidth - 60: 0}"
+        [size]="{ height: 280, width: nativeElement ? nativeElement.offsetWidth - 60 : 0 }"
         [series]="allSeries$ | async"
         [dataSource]="totalsData">
 

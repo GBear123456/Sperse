@@ -30,30 +30,49 @@
                 color: #212c36;
                 margin: 0;
                 line-height: 1;
-                padding: 12px 0;
+                padding: 5px 0;
                 margin-right: 23px;
             }
 
             .legend {
                 display: none;
-                flex-flow: column wrap;
-                margin: 0 0 0 auto;
-                flex-basis: 40%;
-                margin-left: 20px;
+                flex-direction: column;
+                position: absolute;
+                top: 6px;
+                right: 20px;
+                padding: 5px 5px 0 10px;
+                background: #fff;
+                border: 2px solid transparent;
+                &.opened {
+                    z-index: 1;
+                    border: 2px solid rgb(211, 211, 211);
+                }
 
                 @media (min-width: 651px) {
                     display: flex;
                 }
 
+                .short-legend {
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    margin-bottom: 10px;
+                    span.legendText {
+                        font-size: 12px;
+                        margin-right: 5px;
+                        color: #677380;
+                    }
+                }
+
                 .legend-list {
                     padding-left: 0;
                     margin-bottom: 0;
+                    margin-right: 5px;
 
                     .legend-item {
                         display: inline-block;
                         font-weight: 400;
                         font-size: 12px;
-                        margin-right: 15px;
                         &:last-child {
                             margin-right: 0px;
                         }
@@ -62,9 +81,23 @@
                             width: 8px;
                             height: 8px;
                             display: inline-block;
-                            margin-right: 5px;
+                            margin-right: 2px;
                             position: relative;
                             top: -1px;
+                        }
+                    }
+
+                    &.full {
+                        width: 100%;
+                        background: #fff;
+                        z-index: 1;
+                        border-top: none;
+                        margin-right: 0;
+                        padding-bottom: 7px;
+                        .legend-item {
+                            display: block;
+                            margin-bottom: 3px;
+                            font-size: 14px;
                         }
                     }
                 }
@@ -73,7 +106,7 @@
             /deep/ dx-select-box {
                 border-radius: 0;
                 background-color: transparent;
-                @media (min-width: 768px) {
+                @media (min-width: 1410px) {
                     width: 350px;
                 }
                 .dx-texteditor-input, input.form-control {
