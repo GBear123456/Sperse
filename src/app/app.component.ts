@@ -11,7 +11,8 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less',
-        '../../node_modules/ng2-image-viewer/imageviewer.scss'
+        '../../node_modules/ng2-image-viewer/imageviewer.scss',
+        '../shared/metronic/m-toas.less'
     ],
     encapsulation: ViewEncapsulation.None
 })
