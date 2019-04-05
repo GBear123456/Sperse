@@ -11,7 +11,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import {
-    UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, TenantHostType, UpdateUserPermissionsInput
+    UserServiceProxy, ProfileServiceProxy, GetUserForEditOutput, CreateOrUpdateUserInput, UpdateUserPermissionsInput
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { OperationsWidgetComponent } from './operations-widget.component';
@@ -38,14 +38,13 @@ export class UserDetailsComponent extends AppComponentBase implements OnInit, On
     ];
 
     private rootComponent: any;
-    private referrerParams;
 
-    private readonly LOCAL_STORAGE = 0;
-
-    constructor(injector: Injector,
+    constructor(
+        injector: Injector,
         private _dialog: MatDialog,
         private _userService: UserServiceProxy,
-        private _profileService: ProfileServiceProxy) {
+        private _profileService: ProfileServiceProxy
+    ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
 
         this.rootComponent = this.getRootComponent();
