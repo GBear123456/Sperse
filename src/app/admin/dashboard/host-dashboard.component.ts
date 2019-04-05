@@ -53,7 +53,7 @@ export class HostDashboardComponent implements AfterViewInit, OnInit {
         endDate: moment().endOf('day')
     });
     selectedDateRange$: Observable<DateRangeInterface> = this.selectedDateRange.asObservable();
-    private refresh: BehaviorSubject<null> = new BehaviorSubject(null);
+    refresh: BehaviorSubject<null> = new BehaviorSubject(null);
     refresh$: Observable<null> = this.refresh.asObservable();
     currency = '$';
     appIncomeStatisticsDateInterval = AppIncomeStatisticsDateInterval;
