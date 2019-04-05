@@ -10,8 +10,6 @@ import { OrganizationUnitsComponent } from './organization-units/organization-un
 import { RolesComponent } from './roles/roles.component';
 import { HostSettingsComponent } from './settings/host-settings.component';
 import { TenantSettingsComponent } from './settings/tenant-settings.component';
-import { InvoiceComponent } from './subscription-management/invoice/invoice.component';
-import { SubscriptionManagementComponent } from './subscription-management/subscription-management.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { UsersComponent } from './users/users.component';
@@ -34,8 +32,6 @@ import { SystemSettingsComponent } from './settings/system-settings.component';
                     { path: 'languages', component: LanguagesComponent, data: { permission: 'Pages.Administration.Languages' } },
                     { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: 'Pages.Administration.Languages.ChangeTexts' } },
                     { path: 'organization-units', component: OrganizationUnitsComponent, data: { permission: 'Pages.Administration.OrganizationUnits' } },
-                    { path: 'subscription-management', component: SubscriptionManagementComponent, data: { permission: 'Pages.Administration.Tenant.SubscriptionManagement' } },
-                    { path: 'invoice/:paymentId', component: InvoiceComponent, data: { permission: 'Pages.Administration.Tenant.SubscriptionManagement' } },
                     { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings' } },
                     { path: 'systemSettings', component: SystemSettingsComponent, data: { permission: 'Pages.Administration.Tenant.Settings' } },
                     { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: 'Pages.Administration.Host.Dashboard' } },
