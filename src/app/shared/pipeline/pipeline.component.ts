@@ -581,7 +581,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getTargetStage(stage, reverse) {
-        let stages = reverse ? _.clone(this.stages).reverse(): this.stages, result;
+        let stages = reverse ? clone(this.stages).reverse(): this.stages, result;
         stages.some((lookupStage) => {
             if (stage.id == lookupStage.id)
                 return true;
@@ -611,7 +611,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     disallowMove(stage, reverse?) {
-        let stages = reverse ? _.clone(this.stages).reverse(): this.stages, targetStage;
+        let stages = reverse ? clone(this.stages).reverse(): this.stages, targetStage;
         return !stage.sortOrder || stage['isFinal'] || stages.some((lookupStage) => { 
             if (lookupStage.id == stage.id && targetStage && targetStage['isFinal'])
                 return true;
