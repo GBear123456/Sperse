@@ -93,7 +93,7 @@ export class SynchProgressService {
 
     private runGetStatus() {
         if (!this.cfoService.hasTransactions) {
-            this.cfoService.instanceChangeProcess();
+            this.cfoService.instanceChangeProcess(null, true);
         }
     }
 
