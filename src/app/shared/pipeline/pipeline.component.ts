@@ -267,10 +267,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     loadData(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
-        const enitities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly);
+        const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly);
         if (this.totalsURI && !oneStageOnly)
             this.processTotalsRequest(this.queryWithSearch);
-        return enitities$;
+        return entities$;
     }
 
     loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
@@ -404,7 +404,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     loadMore(stageIndex): Observable<any> {
         this.startLoading();
         return this.loadData(
-            Math.floor(this.stages[stageIndex]['enitities'].length
+            Math.floor(this.stages[stageIndex]['entities'].length
                 / this.STAGE_PAGE_COUNT), stageIndex, true);
     }
 
@@ -413,6 +413,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.disabled = true;
             this._pipelineService.updateEntityStageById(
                 this.pipelinePurposeId, entityId, oldStage, newStage, () => {
+                    complete && complete();
                     this.stages.every((stage, index) => {
                         let result = (stage.name == oldStage);
                         if (result && stage['total'] && !stage['entities'].length) {
@@ -422,7 +423,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         return !result;
                     });
                     this.disabled = false;
-                    complete && complete();
                 }
             );
         }
@@ -449,62 +449,36 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getSelectedEntities() {
-        return [].map.call(this.getSelectedCards(), (card) => {
-            return !card.classList.contains('gu-mirror') &&
-                this.getEntityByElement(card, this.getStageByElement(card));
-        }).filter(Boolean);
+        return this.stages.reduce((selectedEntities, stage) => {
+            return selectedEntities.concat(this.getStageSelectedEntities(stage));
+        }, []);
     }
 
-    private setCardSelection(card, selectedValue) {
-        let method = selectedValue ? 'add' : 'remove';
-        card.classList[method]('selected');
-        let checkBoxElm = card.getElementsByTagName('dx-check-box')[0];
-        if (checkBoxElm)
-            checkBoxElm.classList[method]('dx-checkbox-checked');
+    private getStageById(stageId: number): StageDto {
+        return this.stages.find(stage => stage.id === stageId);
     }
 
-    private highlightSelectedCard(event) {
-        let card;
-        (event.path || event.composedPath()).every((elm) => {
-            let isCard = elm.classList.contains('card');
-            if (isCard) {
-                card = elm;
-                this.setCardSelection(card, !elm.classList.contains('selected'));
-            }
-            return !isCard;
-        });
-        return card && card.classList
-            .contains('selected');
-    }
-
-    private toogleHighlightShiftArea(entity, checked) {
+    private toogleHighlightShiftArea(entity, checked: boolean) {
         if (this.shiftStartEntity &&
             this.shiftStartEntity.StageId == entity.StageId
         ) {
-            let startCard: any = document.querySelector('[accessKey="' + this.shiftStartEntity.Id + '"]'),
-                endCard: any = document.querySelector('[accessKey="' + entity.Id + '"]');
-
-            if (startCard.offsetTop > endCard.offsetTop) {
-                let stored = startCard;
-                startCard = endCard;
-                endCard = stored;
+            const stage = this.getStageById(entity.StageId);
+            let startEntityIndex: any = stage['entities'].findIndex(entity => entity.Id === this.shiftStartEntity.Id);
+            let endEntityIndex: any = stage['entities'].findIndex(e => e.Id === entity.Id);
+            if (startEntityIndex > endEntityIndex) {
+                [ startEntityIndex, endEntityIndex ] = [ endEntityIndex, startEntityIndex ];
             }
 
-            while (startCard != endCard) {
-                if (startCard.nodeType == Node.ELEMENT_NODE)
-                    this.setCardSelection(startCard, checked);
-                startCard = startCard.nextSibling;
+            while (startEntityIndex < endEntityIndex) {
+                stage['entities'][startEntityIndex].selected = checked;
+                startEntityIndex++;
             }
-            this.setCardSelection(endCard, checked);
         } else
             this.shiftStartEntity = entity;
     }
 
     deselectAllCards() {
-        let elements = this.getSelectedCards();
-        while (elements.length) {
-            this.setCardSelection(elements[0], false);
-        }
+        this.stages['entities'].forEach(entity => entity.selected = false);
     }
 
     onKeyUp(event) {
@@ -512,14 +486,36 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.shiftStartEntity = null;
     }
 
+    getStageSelectedEntitiesCount(stage): number {
+        const stageSelectedEntities = this.getStageSelectedEntities(stage);
+        return stageSelectedEntities.length;
+    }
+
+    getStageSelectedEntities(stage) {
+        return stage.entities.filter(entity => entity.selected);
+    }
+
+    allEntitiesAreSelected(stage): boolean {
+        return stage.entities.every(entity => entity.selected);
+    }
+
+    toggleAllEntitiesInStage(e, stage) {
+        if (e.event) {
+            stage.entities.forEach(entity => {
+                entity.selected = e.value;
+            });
+            this.selectedEntities = this.getSelectedEntities();
+        }
+    }
+
     onCardClickInternal(entity, event) {
         let clickedOnCheckbox = event.target.classList.contains('dx-checkbox');
         if (event.ctrlKey || event.shiftKey || clickedOnCheckbox) {
-            let checkedCard = this.highlightSelectedCard(event);
-            if (!checkedCard && event.ctrlKey && event.shiftKey)
+            entity.selected = !entity.selected;
+            if (!entity.selected && event.ctrlKey && event.shiftKey)
                 this.deselectAllCards();
             else if (event.shiftKey)
-                this.toogleHighlightShiftArea(entity, checkedCard);
+                this.toogleHighlightShiftArea(entity, entity.selected);
             this.selectedEntities = this.getSelectedEntities();
         } else {
             this.onCardClick.emit({

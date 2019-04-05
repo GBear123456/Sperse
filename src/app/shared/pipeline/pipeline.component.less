@@ -52,16 +52,23 @@
                 border-radius: 0px;
                 border: none;
                 padding: 5px;
-                //background-color: #fff;
                 border-right: 0;
                 margin-bottom: 12px;
-                text-transform: uppercase;
                 font-size: 13px;
                 font-weight: 600; // 500
                 letter-spacing: 0.5px;
                 color: #4b657e;
                 position: relative;
                 background-color: #076943;
+                .toggleAll {
+                    position: absolute;
+                    left: 0;
+                    height: 20px;
+                    z-index: 1;
+                    top: 0;
+                    bottom: 0;
+                    margin: auto;
+                }
                 span {
                     font-size: 15px;
                     font-weight: 500;
@@ -77,6 +84,9 @@
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
+                & > span {
+                    text-transform: uppercase;
+                }
                 div {
                     width: 100%;
                     bottom: 19px;
@@ -89,8 +99,8 @@
                     span {
                         width: auto;
                         display: inline-flex;
-                        &:first-child {
-                            margin-right: 5px;
+                        &:last-child {
+                            margin-left: 10px;
                         }
                     }
                 }
@@ -309,6 +319,9 @@
                     & > span, div {
                         padding-left: 30px;
                     }
+                    .toggleAll {
+                        left: 45px;
+                    }
                 }
                 &.column1 {
                     z-index: 16;
@@ -422,6 +435,10 @@
                     }
                     .edit-button {
                         left: 0px!important;
+                    }
+                    .toggleAll {
+                        left: auto;
+                        right: 40px;
                     }
                 }
                 &.column1 {
