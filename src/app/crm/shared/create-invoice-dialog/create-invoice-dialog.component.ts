@@ -145,12 +145,12 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             {
                 location: 'after',
                 locateInMenu: 'auto',
-                areItemsDependent: true,                
+                areItemsDependent: true,
                 items: [
                     {
                         name: 'delete',
-                        visible: this.data.invoice,
-                        disabled: !this.data.invoice || 
+                        visible: Boolean(this.data.invoice),
+                        disabled: !this.data.invoice ||
                             (this.data.invoice.Status == CreateInvoiceInputStatus.Paid),
                         action: this.deleteInvoice.bind(this)
                     }
