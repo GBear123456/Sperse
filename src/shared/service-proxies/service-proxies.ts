@@ -13308,14 +13308,17 @@ export class InstanceServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @invalidateCache (optional) 
      * @return Success
      */
-    getStatus(instanceType: InstanceType72 | null | undefined, instanceId: number | null | undefined): Observable<GetStatusOutput> {
+    getStatus(instanceType: InstanceType72 | null | undefined, instanceId: number | null | undefined, invalidateCache: boolean | null | undefined): Observable<GetStatusOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/GetStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (invalidateCache !== undefined)
+            url_ += "invalidateCache=" + encodeURIComponent("" + invalidateCache) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {

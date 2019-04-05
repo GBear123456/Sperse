@@ -15,8 +15,8 @@ export class UserOnlyCFOService extends CFOServiceBase {
         this.statusActive = new BehaviorSubject(false);
     }
 
-    instanceChangeProcess(callback: any = null) {
-        this._instanceServiceProxy.getStatus(<any>InstanceType.User, this.instanceId).subscribe((data) => {
+    instanceChangeProcess(callback: any = null, invalidateServerCache: boolean = false) {
+        this._instanceServiceProxy.getStatus(<any>InstanceType.User, this.instanceId, invalidateServerCache).subscribe((data) => {
             const statusActive = data.status == GetStatusOutputStatus.Active;
             this.statusActive.next(statusActive);
             this.initialized = statusActive && data.hasSyncAccounts;

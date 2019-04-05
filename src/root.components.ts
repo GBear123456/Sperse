@@ -34,12 +34,12 @@ export class RootComponent implements AfterViewInit {
         classList.add.apply(classList, loggedUser ? loggedClass : accountClass);
     }
 
-    public pageHeaderFixed(value) {
+    public pageHeaderFixed(value?: boolean) {
         this.hostElement.nativeElement.classList[
             value ? 'add' : 'remove']('page-header-fixed');
     }
 
-    public overflowHidden(value) {
+    public overflowHidden(value?: boolean) {
         this.hostElement.nativeElement.classList[
             value ? 'add' : 'remove']('overflow-hidden');
     }
