@@ -13411,6 +13411,61 @@ export class InvoiceServiceProxy {
     }
 
     /**
+     * @id (optional) 
+     * @return Success
+     */
+    getInvoiceInfo(id: number | null | undefined): Observable<InvoiceInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetInvoiceInfo?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoiceInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoiceInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<InvoiceInfo>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<InvoiceInfo>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetInvoiceInfo(response: HttpResponseBase): Observable<InvoiceInfo> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? InvoiceInfo.fromJS(resultData200) : new InvoiceInfo();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<InvoiceInfo>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -13598,113 +13653,6 @@ export class InvoiceServiceProxy {
     }
 
     protected processDeleteInvoices(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @id (optional) 
-     * @return Success
-     */
-    getInvoiceInfo(id: number | null | undefined): Observable<InvoiceDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/Invoice/GetInvoiceInfo?";
-        if (id !== undefined)
-            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetInvoiceInfo(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetInvoiceInfo(<any>response_);
-                } catch (e) {
-                    return <Observable<InvoiceDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<InvoiceDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetInvoiceInfo(response: HttpResponseBase): Observable<InvoiceDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? InvoiceDto.fromJS(resultData200) : new InvoiceDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<InvoiceDto>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    createInvoice(input: CreateInvoiceDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/Invoice/CreateInvoice";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateInvoice(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateInvoice(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateInvoice(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -18852,67 +18800,6 @@ export class PaymentServiceProxy {
             }));
         }
         return _observableOf<PaymentMethodInfo[]>(<any>null);
-    }
-
-    /**
-     * @sorting (optional) 
-     * @maxResultCount (optional) 
-     * @skipCount (optional) 
-     * @return Success
-     */
-    getPaymentHistory(sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<PagedResultDtoOfSubscriptionPaymentListDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/Payment/GetPaymentHistory?";
-        if (sorting !== undefined)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&"; 
-        if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
-        if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPaymentHistory(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetPaymentHistory(<any>response_);
-                } catch (e) {
-                    return <Observable<PagedResultDtoOfSubscriptionPaymentListDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PagedResultDtoOfSubscriptionPaymentListDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetPaymentHistory(response: HttpResponseBase): Observable<PagedResultDtoOfSubscriptionPaymentListDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PagedResultDtoOfSubscriptionPaymentListDto.fromJS(resultData200) : new PagedResultDtoOfSubscriptionPaymentListDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PagedResultDtoOfSubscriptionPaymentListDto>(<any>null);
     }
 }
 
@@ -46200,6 +46087,134 @@ export interface ICreateInvoiceLineInput {
     sortOrder: number;
 }
 
+export class InvoiceInfo implements IInvoiceInfo {
+    contactName!: string | undefined;
+    number!: string | undefined;
+    status!: InvoiceInfoStatus | undefined;
+    date!: moment.Moment | undefined;
+    dueDate!: moment.Moment | undefined;
+    description!: string | undefined;
+    note!: string | undefined;
+    lines!: InvoiceLineInfo[] | undefined;
+
+    constructor(data?: IInvoiceInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactName = data["contactName"];
+            this.number = data["number"];
+            this.status = data["status"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
+            this.description = data["description"];
+            this.note = data["note"];
+            if (data["lines"] && data["lines"].constructor === Array) {
+                this.lines = [];
+                for (let item of data["lines"])
+                    this.lines.push(InvoiceLineInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): InvoiceInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactName"] = this.contactName;
+        data["number"] = this.number;
+        data["status"] = this.status;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        data["note"] = this.note;
+        if (this.lines && this.lines.constructor === Array) {
+            data["lines"] = [];
+            for (let item of this.lines)
+                data["lines"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IInvoiceInfo {
+    contactName: string | undefined;
+    number: string | undefined;
+    status: InvoiceInfoStatus | undefined;
+    date: moment.Moment | undefined;
+    dueDate: moment.Moment | undefined;
+    description: string | undefined;
+    note: string | undefined;
+    lines: InvoiceLineInfo[] | undefined;
+}
+
+export class InvoiceLineInfo implements IInvoiceLineInfo {
+    id!: number | undefined;
+    quantity!: number | undefined;
+    rate!: number | undefined;
+    amount!: number | undefined;
+    description!: string | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: IInvoiceLineInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.quantity = data["quantity"];
+            this.rate = data["rate"];
+            this.amount = data["amount"];
+            this.description = data["description"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceLineInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceLineInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["quantity"] = this.quantity;
+        data["rate"] = this.rate;
+        data["amount"] = this.amount;
+        data["description"] = this.description;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IInvoiceLineInfo {
+    id: number | undefined;
+    quantity: number | undefined;
+    rate: number | undefined;
+    amount: number | undefined;
+    description: string | undefined;
+    sortOrder: number | undefined;
+}
+
 export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     id!: number;
     status!: UpdateInvoiceInputStatus;
@@ -46358,126 +46373,6 @@ export class UpdateInvoiceStatusInput implements IUpdateInvoiceStatusInput {
 export interface IUpdateInvoiceStatusInput {
     id: number;
     status: UpdateInvoiceStatusInputStatus;
-}
-
-export class InvoiceDto implements IInvoiceDto {
-    amount!: number | undefined;
-    editionDisplayName!: string | undefined;
-    invoiceNo!: string | undefined;
-    invoiceDate!: moment.Moment | undefined;
-    tenantLegalName!: string | undefined;
-    tenantAddress!: string[] | undefined;
-    tenantTaxNo!: string | undefined;
-    hostLegalName!: string | undefined;
-    hostAddress!: string[] | undefined;
-
-    constructor(data?: IInvoiceDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.amount = data["amount"];
-            this.editionDisplayName = data["editionDisplayName"];
-            this.invoiceNo = data["invoiceNo"];
-            this.invoiceDate = data["invoiceDate"] ? moment(data["invoiceDate"].toString()) : <any>undefined;
-            this.tenantLegalName = data["tenantLegalName"];
-            if (data["tenantAddress"] && data["tenantAddress"].constructor === Array) {
-                this.tenantAddress = [];
-                for (let item of data["tenantAddress"])
-                    this.tenantAddress.push(item);
-            }
-            this.tenantTaxNo = data["tenantTaxNo"];
-            this.hostLegalName = data["hostLegalName"];
-            if (data["hostAddress"] && data["hostAddress"].constructor === Array) {
-                this.hostAddress = [];
-                for (let item of data["hostAddress"])
-                    this.hostAddress.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): InvoiceDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new InvoiceDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["amount"] = this.amount;
-        data["editionDisplayName"] = this.editionDisplayName;
-        data["invoiceNo"] = this.invoiceNo;
-        data["invoiceDate"] = this.invoiceDate ? this.invoiceDate.toISOString() : <any>undefined;
-        data["tenantLegalName"] = this.tenantLegalName;
-        if (this.tenantAddress && this.tenantAddress.constructor === Array) {
-            data["tenantAddress"] = [];
-            for (let item of this.tenantAddress)
-                data["tenantAddress"].push(item);
-        }
-        data["tenantTaxNo"] = this.tenantTaxNo;
-        data["hostLegalName"] = this.hostLegalName;
-        if (this.hostAddress && this.hostAddress.constructor === Array) {
-            data["hostAddress"] = [];
-            for (let item of this.hostAddress)
-                data["hostAddress"].push(item);
-        }
-        return data; 
-    }
-}
-
-export interface IInvoiceDto {
-    amount: number | undefined;
-    editionDisplayName: string | undefined;
-    invoiceNo: string | undefined;
-    invoiceDate: moment.Moment | undefined;
-    tenantLegalName: string | undefined;
-    tenantAddress: string[] | undefined;
-    tenantTaxNo: string | undefined;
-    hostLegalName: string | undefined;
-    hostAddress: string[] | undefined;
-}
-
-export class CreateInvoiceDto implements ICreateInvoiceDto {
-    subscriptionPaymentId!: number | undefined;
-
-    constructor(data?: ICreateInvoiceDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.subscriptionPaymentId = data["subscriptionPaymentId"];
-        }
-    }
-
-    static fromJS(data: any): CreateInvoiceDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateInvoiceDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["subscriptionPaymentId"] = this.subscriptionPaymentId;
-        return data; 
-    }
-}
-
-export interface ICreateInvoiceDto {
-    subscriptionPaymentId: number | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -53111,150 +53006,6 @@ export interface IBankCardShortInfo {
     cardNumber: string | undefined;
     expirationMonth: string | undefined;
     expirationYear: string | undefined;
-}
-
-export class PagedResultDtoOfSubscriptionPaymentListDto implements IPagedResultDtoOfSubscriptionPaymentListDto {
-    totalCount!: number | undefined;
-    items!: SubscriptionPaymentListDto[] | undefined;
-
-    constructor(data?: IPagedResultDtoOfSubscriptionPaymentListDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.totalCount = data["totalCount"];
-            if (data["items"] && data["items"].constructor === Array) {
-                this.items = [];
-                for (let item of data["items"])
-                    this.items.push(SubscriptionPaymentListDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): PagedResultDtoOfSubscriptionPaymentListDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PagedResultDtoOfSubscriptionPaymentListDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["totalCount"] = this.totalCount;
-        if (this.items && this.items.constructor === Array) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IPagedResultDtoOfSubscriptionPaymentListDto {
-    totalCount: number | undefined;
-    items: SubscriptionPaymentListDto[] | undefined;
-}
-
-export class SubscriptionPaymentListDto implements ISubscriptionPaymentListDto {
-    gateway!: string | undefined;
-    amount!: number | undefined;
-    editionId!: number | undefined;
-    dayCount!: number | undefined;
-    paymentPeriodType!: string | undefined;
-    paymentId!: string | undefined;
-    payerId!: string | undefined;
-    status!: string | undefined;
-    editionDisplayName!: string | undefined;
-    tenantId!: number | undefined;
-    invoiceNo!: string | undefined;
-    lastModificationTime!: moment.Moment | undefined;
-    lastModifierUserId!: number | undefined;
-    creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
-    id!: number | undefined;
-
-    constructor(data?: ISubscriptionPaymentListDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.gateway = data["gateway"];
-            this.amount = data["amount"];
-            this.editionId = data["editionId"];
-            this.dayCount = data["dayCount"];
-            this.paymentPeriodType = data["paymentPeriodType"];
-            this.paymentId = data["paymentId"];
-            this.payerId = data["payerId"];
-            this.status = data["status"];
-            this.editionDisplayName = data["editionDisplayName"];
-            this.tenantId = data["tenantId"];
-            this.invoiceNo = data["invoiceNo"];
-            this.lastModificationTime = data["lastModificationTime"] ? moment(data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = data["lastModifierUserId"];
-            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
-            this.id = data["id"];
-        }
-    }
-
-    static fromJS(data: any): SubscriptionPaymentListDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubscriptionPaymentListDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["gateway"] = this.gateway;
-        data["amount"] = this.amount;
-        data["editionId"] = this.editionId;
-        data["dayCount"] = this.dayCount;
-        data["paymentPeriodType"] = this.paymentPeriodType;
-        data["paymentId"] = this.paymentId;
-        data["payerId"] = this.payerId;
-        data["status"] = this.status;
-        data["editionDisplayName"] = this.editionDisplayName;
-        data["tenantId"] = this.tenantId;
-        data["invoiceNo"] = this.invoiceNo;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-}
-
-export interface ISubscriptionPaymentListDto {
-    gateway: string | undefined;
-    amount: number | undefined;
-    editionId: number | undefined;
-    dayCount: number | undefined;
-    paymentPeriodType: string | undefined;
-    paymentId: string | undefined;
-    payerId: string | undefined;
-    status: string | undefined;
-    editionDisplayName: string | undefined;
-    tenantId: number | undefined;
-    invoiceNo: string | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
-    id: number | undefined;
 }
 
 export class ListResultDtoOfFlatPermissionWithLevelDto implements IListResultDtoOfFlatPermissionWithLevelDto {
@@ -62117,6 +61868,14 @@ export enum GetUserInstanceInfoOutputStatus {
 }
 
 export enum CreateInvoiceInputStatus {
+    Draft = "Draft", 
+    Submitted = "Submitted", 
+    Sent = "Sent", 
+    Paid = "Paid", 
+    Canceled = "Canceled", 
+}
+
+export enum InvoiceInfoStatus {
     Draft = "Draft", 
     Submitted = "Submitted", 
     Sent = "Sent", 

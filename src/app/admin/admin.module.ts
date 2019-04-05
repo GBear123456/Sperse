@@ -64,8 +64,6 @@ import { OrganizationUnitsTreeComponent } from './shared/organization-unit-tree.
 import { PermissionComboComponent } from './shared/permission-combo.component';
 import { PermissionTreeComponent } from './shared/permission-tree.component';
 import { RoleComboComponent } from './shared/role-combo.component';
-import { InvoiceComponent } from './subscription-management/invoice/invoice.component';
-import { SubscriptionManagementComponent } from './subscription-management/subscription-management.component';
 import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component';
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
@@ -164,8 +162,6 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         UploadSSLCertificateModalComponent,
         AddOrEditSSLBindingModal,
         HostDashboardComponent,
-        InvoiceComponent,
-        SubscriptionManagementComponent,
         AddMemberModalComponent,
         UiCustomizationComponent,
         EditionsComponent,
