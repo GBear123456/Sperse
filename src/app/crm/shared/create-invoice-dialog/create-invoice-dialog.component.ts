@@ -14,8 +14,9 @@ import * as _ from 'underscore';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { InvoiceServiceProxy, CustomerServiceProxy, CreateInvoiceInput,
-    CreateInvoiceInputStatus, CreateInvoiceLineInput } from '@shared/service-proxies/service-proxies';
+import { ActivityServiceProxy, InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput,
+    InvoiceInfo, UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus, 
+    UpdateInvoiceStatusInputStatus, CreateInvoiceLineInput } from '@shared/service-proxies/service-proxies';
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -36,6 +37,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
 
     private validationError: string;
 
+    invoiceId: number;
     statuses: any[] = [];
     status = CreateInvoiceInputStatus.Draft;
 
@@ -56,6 +58,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     lines = [];
 
     toolbarConfig = [];
+    disabledForUpdate = false;
 
     constructor(
         injector: Injector,
@@ -77,16 +80,36 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             this.customers = res;
         });
 
-        let invoice = this.data.invoice;
-        if (invoice)
-            this.initInvoiceData(invoice);
-
+        this.initInvoiceData();
         this.initToolbarConfig();
     }
 
-    initInvoiceData(invoice) {        
-        this.data.title = invoice.Number;
-        this.status = invoice.Status;
+    initInvoiceData() {        
+        let invoice = this.data.invoice;
+        if (invoice) {
+            this.invoiceId = invoice.Id;
+            this.data.title = invoice.Number;
+            this.status = invoice.Status;
+            this.date = invoice.Date;
+            this.dueDate = invoice.DueDate;
+            this.contactId = invoice.ContactId;
+            this.disabledForUpdate = this.status != CreateInvoiceInputStatus.Draft 
+                && this.status != CreateInvoiceInputStatus.Submitted;
+
+            this._invoiceProxy.getInvoiceInfo(invoice.Id).subscribe((res) => {
+                this.description = res.description;
+                this.notes = res.note;                
+                this.customer = res.contactName;
+                this.lines = res.lines.map((res) => {
+                    return {
+                        id: res.id,
+                        Quantity: res.quantity,
+                        Rate: res.rate,
+                        Description: res.description
+                    };
+                });
+            });
+        }
     }
 
     initToolbarConfig() {
@@ -102,7 +125,16 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
                         options: {
                             hint: 'Status',
                             value: this.status,
-                            items: Object.keys(CreateInvoiceInputStatus),
+                            valueExpr: 'text',
+                            displayExpr: 'text',
+                            items: Object.keys(CreateInvoiceInputStatus).map((item) => {
+                                return {
+                                    text: item,
+                                    disabled: (item == CreateInvoiceInputStatus.Paid
+                                        || item == CreateInvoiceInputStatus.Canceled)
+                                        && (!this.data.invoice || this.data.invoice.Status != CreateInvoiceInputStatus.Sent)
+                                }
+                            }),
                             onValueChanged: (event) => {
                                 this.status = event.value;
                             }
@@ -113,10 +145,25 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             {
                 location: 'after',
                 locateInMenu: 'auto',
+                areItemsDependent: true,                
+                items: [
+                    {
+                        name: 'delete',
+                        visible: this.data.invoice,
+                        disabled: !this.data.invoice || 
+                            (this.data.invoice.Status == CreateInvoiceInputStatus.Paid),
+                        action: this.deleteInvoice.bind(this)
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
                 areItemsDependent: true,
                 items: [
                     {
                         name: 'discard',
+                        visible: !this.data.invoice,
                         action: this.resetFullDialog.bind(this, false)
                     }
                 ]
@@ -152,8 +199,8 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     ngOnInit() {
         super.ngOnInit();
 
-        this.data.editTitle = true;
         this.data.titleClearButton = true;
+        this.data.editTitle = !this.disabledForUpdate;
         this.data.placeholder = this.l('Invoice #');
         this.data.buttons = [{
             id: this.saveButtonId,
@@ -164,26 +211,64 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         this.saveOptionsInit();
     }
 
+    private setRequestCommonFields(data) {
+        data.date = new Date(this.date);
+        data.dueDate = new Date(this.dueDate);
+        data.description = this.description;
+        data.note = this.notes;
+    }
+
     private createEntity(): void {
-        this._invoiceProxy.create(new CreateInvoiceInput({
-            contactId: this.contactId,
-            orderId: this.order && this.order.id,
-            status: CreateInvoiceInputStatus[this.status],
-            date: this.date,
-            dueDate: this.dueDate,
-            description: this.description,
-            note: this.notes,
-            lines: this.lines.map((row, index) => {
+        let subscription, 
+            saveButton: any = document.getElementById(this.saveButtonId);
+        if (this.invoiceId) {
+            let data = new UpdateInvoiceInput();
+            this.setRequestCommonFields(data);
+            data.id = this.invoiceId;
+            data.status = UpdateInvoiceInputStatus[this.status];
+            data.lines = this.lines.map((row, index) => {
+                return new UpdateInvoiceLineInput({
+                    id: row.id,
+                    quantity: row.Quantity,
+                    rate: row.Rate,
+                    description: row.Description,
+                    sortOrder: index
+                });
+            });
+            subscription = this._invoiceProxy.update(data);
+        } else {
+            let data = new CreateInvoiceInput();
+            this.setRequestCommonFields(data);
+            data.contactId = this.contactId;
+            data.orderId = this.order && this.order.id;
+            data.status = CreateInvoiceInputStatus[this.status];
+            data.lines = this.lines.map((row, index) => {
                 return new CreateInvoiceLineInput({
                     quantity: row.Quantity,
                     rate: row.Rate,
                     description: row.Description,
                     sortOrder: index
                 });
-            })
-        })).subscribe((res) => {
+            });
+            subscription = this._invoiceProxy.create(data);
+        }
+
+        saveButton.disabled = true;
+        subscription.pipe(finalize(() => {
+            saveButton.disabled = false;
+        })).subscribe((res) => {            
             this.afterSave();
-        })
+        });
+    }
+
+    updateStatus() {
+        if (this.status != this.data.invoice.Status)
+            this._invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
+                id: this.invoiceId,
+                status: UpdateInvoiceStatusInputStatus[this.status]
+            })).subscribe((res) => {
+                this.afterSave();
+            });
     }
 
     private afterSave(): void {
@@ -193,7 +278,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             this.close();
 
         this.notify.info(this.l('SavedSuccessfully'));
-        this.data.refreshParent();
+        this.data.refreshParent && this.data.refreshParent();
     }
 
     save(event?): void {
@@ -212,7 +297,10 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         if (!this.lines.length)
             return this.notify.error(this.l('InvoiceLinesShouldBeDefined'));
 
-        this.createEntity();
+        if (this.disabledForUpdate)
+            this.updateStatus();
+        else
+            this.createEntity();
     }
 
     onFieldFocus(event) {
@@ -287,5 +375,24 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
 
     selectContact(event) {
         this.contactId = event.selectedItem && event.selectedItem.id;
+    }
+
+    deleteInvoice() {
+        if (this.invoiceId)
+            this.message.confirm(
+                this.l('InvoiceDeleteWarningMessage', this.data.title),
+                isConfirmed => {
+                    if (isConfirmed) {
+                        this.startLoading(true)
+                        this._invoiceProxy.deleteInvoice(this.invoiceId).pipe(
+                            finalize(() => this.finishLoading(true))
+                        ).subscribe((response) => {   
+                            this.notify.info(this.l('SuccessfullyDeleted'));
+                            this.data.refreshParent && this.data.refreshParent();
+                            this.close();
+                        });
+                    }
+                }
+            );
     }
 }

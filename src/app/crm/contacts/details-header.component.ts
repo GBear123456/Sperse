@@ -27,6 +27,7 @@ import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
+import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import {
     ContactInfoDto,
     PersonContactInfoDto,
@@ -85,6 +86,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     private readonly ADD_FILES_OPTION   = 0;
     private readonly ADD_NOTES_OPTION   = 1;
     private readonly ADD_CONTACT_OPTION = 2;
+    private readonly ADD_INVOICE_OPTION = 3;
     private readonly ADD_OPTION_DEFAULT = this.ADD_FILES_OPTION;
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
 
@@ -106,6 +108,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             text: this.l('AddContact'),
             selected: false,
             icon: 'add-contact',
+            contactGroups: [ ContactGroup.Client, ContactGroup.Partner ]
+        },
+        {
+            text: this.l('AddInvoice'),
+            selected: false,
+            icon: 'money',
             contactGroups: [ ContactGroup.Client, ContactGroup.Partner ]
         }
     ];
@@ -375,6 +383,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     data: {
                         contactInfo: this.data,
                     }
+                });
+            });
+        else if (this.addContextMenuItems[this.ADD_INVOICE_OPTION] && this.addContextMenuItems[this.ADD_INVOICE_OPTION].selected)
+            setTimeout(() => {
+                this.dialog.open(CreateInvoiceDialogComponent, {
+                    panelClass: 'slider',
+                    disableClose: true,
+                    closeOnNavigation: false,
+                    data: { }
                 });
             });
     }

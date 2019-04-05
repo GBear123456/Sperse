@@ -11,6 +11,7 @@ import {
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { MatDialog } from '@angular/material/dialog';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -137,7 +138,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
-                    this._invoiceService.deleteInvoice(this.actionRecordData.Id).subscribe((response) => {
+                    this._invoiceService.deleteInvoice(this.actionRecordData.Id).pipe(
+                        finalize(() => this.finishLoading(true))
+                    ).subscribe((response) => {
                         this.dataGrid.instance.refresh();
                     });
                 }
