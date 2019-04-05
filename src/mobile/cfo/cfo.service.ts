@@ -10,7 +10,7 @@ export class CFOService extends CFOServiceBase {
     }
 
     instanceChangeProcess() {
-        this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId).subscribe((data) => {
+        this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId, false).subscribe((data) => {
             this.initialized = (data.status == GetStatusOutputStatus.Active) && data.hasSyncAccounts;
         });
     }
