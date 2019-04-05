@@ -29918,17 +29918,17 @@ export interface IRegisterApplicantRequest {
 }
 
 export class TrackingInformation implements ITrackingInformation {
-    campaignId!: number;
+    campaignId!: number | undefined;
     applicantId!: string;
     applicationId!: string;
     applicationDate!: moment.Moment | undefined;
     subId!: string | undefined;
     affiliateId!: number;
-    vertical!: TrackingInformationVertical;
-    ipAddress!: string;
-    userAgent!: string;
+    vertical!: TrackingInformationVertical | undefined;
+    ipAddress!: string | undefined;
+    userAgent!: string | undefined;
     siteId!: string | undefined;
-    siteUrl!: string;
+    siteUrl!: string | undefined;
     clickId!: string | undefined;
 
     constructor(data?: ITrackingInformation) {
@@ -29983,17 +29983,17 @@ export class TrackingInformation implements ITrackingInformation {
 }
 
 export interface ITrackingInformation {
-    campaignId: number;
+    campaignId: number | undefined;
     applicantId: string;
     applicationId: string;
     applicationDate: moment.Moment | undefined;
     subId: string | undefined;
     affiliateId: number;
-    vertical: TrackingInformationVertical;
-    ipAddress: string;
-    userAgent: string;
+    vertical: TrackingInformationVertical | undefined;
+    ipAddress: string | undefined;
+    userAgent: string | undefined;
     siteId: string | undefined;
-    siteUrl: string;
+    siteUrl: string | undefined;
     clickId: string | undefined;
 }
 
@@ -61085,8 +61085,6 @@ export enum OfferAttribute {
 }
 
 export enum OfferFlag {
-    Special = "Special", 
-    Newest = "Newest", 
     Choice = "Choice", 
     Best = "Best", 
     TravelAndAirlineMiles = "TravelAndAirlineMiles", 
@@ -61106,6 +61104,8 @@ export enum OfferFlag {
     HasNoRewards = "HasNoRewards", 
     ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     ZeroPercentageInterestTransfers = "ZeroPercentageInterestTransfers", 
+    Special = "Special", 
+    Newest = "Newest", 
 }
 
 export enum Module {
