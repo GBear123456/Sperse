@@ -13,9 +13,12 @@
                             <ng-container *ngIf="field.type == 'currency'">
                                 <ng-container *ngIf="data[field.name.replace('total', 'new')] == 0; else notZero">
                                     {{ data[field.name.replace('total', 'new')] | currency: 'USD' : true : '1.0-0' }}
+                                    <ng-container *ngIf="">
+                                        of {{ data[field.name] | currency : 'USD' : true : '1.0-0' }}
+                                    </ng-container>
                                 </ng-container>
                                 <ng-template #notZero>
-                                    {{ data[field.name.replace('total', 'new')] | currency: 'USD' : true : '1.0-0' }} of {{ data[field.name] | currency : 'USD' : true : '1.0-0' }}
+                                    {{ data[field.name.replace('total', 'new')] | currency: 'USD' : true : '1.0-0' }}
                                 </ng-template>
                             </ng-container>
                             <ng-container *ngIf="field.type == 'number'">{{ data[field.name.replace('total', 'new')] | number }} of {{ data[field.name] | number }}</ng-container>

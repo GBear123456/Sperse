@@ -48,13 +48,13 @@ export class CFOService extends CFOServiceBase {
         });
     }
 
-    instanceChangeProcess(callback: any = null) {
+    instanceChangeProcess(callback: any = null, invalidateServerCache: boolean = false) {
         if (this.instanceId != null) {
             this._appService.setContactInfoVisibility(true);
             this._layoutService.hideDefaultPageHeader();
         }
         if (!this.getStatusSubscription) {
-            this.getStatusSubscription = this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId)
+            this.getStatusSubscription = this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId, invalidateServerCache)
             .pipe(finalize(() => this.getStatusSubscription = undefined))
             .subscribe((data) => {
                 if (this.instanceId && data.userId)
