@@ -555,12 +555,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    getStages(reverse?) {
+        return reverse ? _.clone(this.stages).reverse() : this.stages;
+    }
+
     getTargetStage(stage, reverse) {
-        let stages = reverse ? _.clone(this.stages).reverse(): this.stages, result;
-        stages.some((lookupStage) => {
+        let result;
+        this.getStages(reverse).some((lookupStage) => {
             if (stage.id == lookupStage.id)
                 return true;
-            else 
+            else
                 result = lookupStage;
         });
         return result;
@@ -568,11 +572,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     moveStage(stage, reverse) {
         if (this.disallowMove(stage, reverse))
-            return ;      
-                    
+            return ;
+
         let direction = (reverse ? 1 : -1),
             targetStage = this.getTargetStage(stage, reverse);
-        
+
         this.startLoading(true);
         this._stageServiceProxy.updateStageSortOrder(new UpdateSortOrderInput({
             id: stage.id,
@@ -581,17 +585,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             finalize(() => { this.finishLoading(true); })
         ).subscribe((res) => {
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
-            this.notify.info(this.l('SavedSuccessfully'));            
+            this.notify.info(this.l('SavedSuccessfully'));
         });
     }
 
     disallowMove(stage, reverse?) {
-        let stages = reverse ? _.clone(this.stages).reverse(): this.stages, targetStage;
-        return !stage.sortOrder || stage['isFinal'] || stages.some((lookupStage) => { 
-            if (lookupStage.id == stage.id && targetStage && targetStage['isFinal'])
-                return true;
-            else     
-                targetStage = lookupStage;
-        });
+        let targetStage;
+        return !stage.sortOrder || stage['isFinal'] ||
+            this.getStages(reverse).some((lookupStage) => {
+                if (lookupStage.id == stage.id && targetStage && targetStage['isFinal'])
+                    return true;
+                else
+                    targetStage = lookupStage;
+            });
     }
 }
