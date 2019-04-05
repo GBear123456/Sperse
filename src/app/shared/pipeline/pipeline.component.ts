@@ -360,7 +360,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 request.headers['context'] = context;
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-        }
+        };
     }
 
     private getDataSourceForStage(stage) {
@@ -581,7 +581,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     getStages(reverse?) {
-        return reverse ? _.clone(this.stages).reverse() : this.stages;
+        return reverse ? clone(this.stages).reverse() : this.stages;
     }
 
     getTargetStage(stage, reverse) {
