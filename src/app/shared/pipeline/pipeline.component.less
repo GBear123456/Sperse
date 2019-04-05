@@ -62,15 +62,6 @@
                 color: #4b657e;
                 position: relative;
                 background-color: #076943;
-                div {
-                    width: 100%;
-                    bottom: 15px;
-                    color: #FFF;
-                    font-size: 12px;
-                    font-weight: 500;
-                    position: relative;
-                    text-align: center;
-                }
                 span {
                     font-size: 15px;
                     font-weight: 500;
@@ -85,6 +76,23 @@
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                }
+                div {
+                    width: 100%;
+                    bottom: 19px;
+                    color: #FFF;
+                    font-size: 12px;
+                    font-weight: 500;
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+                    span {
+                        width: auto;
+                        display: inline-flex;
+                        &:first-child {
+                            margin-right: 5px;
+                        }
+                    }
                 }
                 .edit-button {
                     padding: 0;
@@ -262,7 +270,7 @@
                                 width: 18px;
                                 height: 18px;
                             }
-                            
+
                             /deep/ .dx-checkbox-icon,
                             /deep/ .dx-checkbox-container {
                                 pointer-events: none;
@@ -298,7 +306,7 @@
                         right: -31px;
                         top: 0px;
                     }
-                    span, div {
+                    & > span, div {
                         padding-left: 30px;
                     }
                 }
@@ -409,7 +417,7 @@
                         right: 0px;
                         top: 0px;
                     }
-                    span, div {
+                    & > span, div {
                         padding-right: 30px;
                     }
                     .edit-button {
@@ -653,7 +661,7 @@
                 width: 18px;
                 height: 18px;
             }
-            
+
             /deep/ .dx-checkbox-icon,
             /deep/ .dx-checkbox-container {
                 pointer-events: none;

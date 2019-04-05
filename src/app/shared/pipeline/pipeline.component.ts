@@ -83,6 +83,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     pipeline: PipelineDto;
     stages: StageDto[];
+    allStagesEntitiesTotal: number;
 
     private queryWithSearch: any = [];
     private readonly STAGE_PAGE_COUNT = 5;
@@ -240,6 +241,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    getStageRatio(stageTotal): string {
+        return ((stageTotal / this.allStagesEntitiesTotal) * 100).toFixed(1) + '%';
+    }
+
     getEntityByElement(el, stage) {
         return stage && this.getEntityById(parseInt(this.getAccessKey(el.closest('.card'))), stage);
     }
@@ -318,7 +323,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stage['full'] = true;
                     }
 
-                    dataSource['entities'] = stage['leads'];
+                    this.calcAllStagesEntitiesTotal();
+                    dataSource['entities'] = stage['entities'];
                     dataSource['total'] = stage['total'];
                     return entities;
                 })
@@ -332,6 +338,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         if (!oneStageOnly && stages[index + 1])
             response = this.loadStagesEntities(page, index + 1);
         return response;
+    }
+
+    calcAllStagesEntitiesTotal() {
+        this.allStagesEntitiesTotal = this.stages.reduce((sum, stage) => sum + stage['total'], 0);
     }
 
     processTotalsRequest(filter?: any) {
@@ -608,7 +618,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             sortOrder: (targetStage.sortOrder + direction) || direction
         })).pipe(
             finalize(() => { this.finishLoading(true); })
-        ).subscribe((res) => {
+        ).subscribe(() => {
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
             this.notify.info(this.l('SavedSuccessfully'));
         });
