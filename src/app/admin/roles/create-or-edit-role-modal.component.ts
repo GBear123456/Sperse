@@ -33,8 +33,16 @@ export class CreateOrEditRoleModalComponent extends AppModalDialogComponent impl
     }
 
     ngOnInit() {
+        this.data.buttons = [
+            {
+                title: this.l('Save'),
+                class: 'primary',
+                action: this.save.bind(this)
+            }
+        ];
         this._roleService.getRoleForEdit(this.data.roleId).subscribe(result => {
             this.role = result.role;
+            this.data.title = this.role.id ? this.l('EditRole') + ': ' + this.role.displayName : this.l('CreateNewRole');
             this.editData = result;
         });
     }
