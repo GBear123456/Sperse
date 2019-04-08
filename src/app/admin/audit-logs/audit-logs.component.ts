@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail-modal.component';
 import { EntityChangeDetailModalComponent } from '@app/admin/audit-logs/entity-change-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -10,15 +10,17 @@ import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import DataSource from 'devextreme/data/data_source';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './audit-logs.component.html',
     styleUrls: ['./audit-logs.component.less'],
-    encapsulation: ViewEncapsulation.None,
     animations: [appModuleAnimation()]
 })
 export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
-
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild('auditLogDetailModal') auditLogDetailModal: AuditLogDetailModalComponent;
     @ViewChild('entityChangeDetailModal') entityChangeDetailModal: EntityChangeDetailModalComponent;
     @ViewChild('dataTableAuditLogs') dataTableAuditLogs: Table;
@@ -43,15 +45,75 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
     primengTableHelperAuditLogs = new PrimengTableHelper();
     primengTableHelperEntityChanges = new PrimengTableHelper();
     advancedFiltersAreShown = false;
+    public headlineConfig = {
+        names: [this.l('AuditLogs')],
+        icon: '',
+        onRefresh: this.refreshData.bind(this),
+        buttons: []
+    };
+    operationLogsDataSource: DataSource;
+    changeLogsDataSource: DataSource;
 
     constructor(
         injector: Injector,
         private _auditLogService: AuditLogServiceProxy,
+        private _appService: AppService,
         private _fileDownloadService: FileDownloadService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.pageHeaderFixed();
+        this.rootComponent.overflowHidden(true);
+
+
+        this.operationLogsDataSource = new DataSource({
+            key: 'id',
+            load: (loadOptions) => {
+                return this._auditLogService.getAuditLogs(
+                    this.startDate,
+                    this.endDate,
+                    undefined,
+                    this.usernameAuditLog,
+                    this.serviceName,
+                    this.methodName,
+                    this.browserInfo,
+                    this.hasException,
+                    this.minExecutionDuration,
+                    this.maxExecutionDuration,
+                    (loadOptions.sort || []).map((item) => {
+                        return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
+                    }).join(','),
+                    loadOptions.take,
+                    loadOptions.skip
+                ).toPromise().then(response => {
+                    return {
+                        data: response.items,
+                        totalCount: response.totalCount
+                    };
+                });
+            }
+        });
+
+        this.changeLogsDataSource = new DataSource({
+            key: 'id',
+            load: (loadOptions) => {
+                return this._auditLogService.getEntityChanges(
+                    this.startDate,
+                    this.endDate,
+                    undefined,
+                    this.entityTypeFullName,
+                    (loadOptions.sort || []).map((item) => {
+                        return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
+                    }).join(','),
+                    loadOptions.take,
+                    loadOptions.skip
+                ).toPromise().then(response => {
+                    return {
+                        data: response.items,
+                        totalCount: response.totalCount
+                    };
+                });
+            }
+        });
     }
 
     showAuditLogDetails(record: AuditLogListDto): void {
@@ -160,8 +222,12 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
     truncateStringWithPostfix(text: string, length: number): string {
         return abp.utils.truncateStringWithPostfix(text, length);
     }
+    
+    refreshData(): void {
+        this.getAuditLogs();
+    }
 
     ngOnDestroy() {
-        this.rootComponent.pageHeaderFixed(true);
+        this.rootComponent.overflowHidden(false);
     }
 }
