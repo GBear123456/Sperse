@@ -322,8 +322,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stage['total'] = stage['entities'].length;
                         stage['full'] = true;
                     }
-
-                    this.calcAllStagesEntitiesTotal();
                     dataSource['entities'] = stage['entities'];
                     dataSource['total'] = stage['total'];
                     return entities;
@@ -340,10 +338,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return response;
     }
 
-    calcAllStagesEntitiesTotal() {
-        this.allStagesEntitiesTotal = this.stages.reduce((sum, stage) => sum + stage['total'], 0);
-    }
-
     processTotalsRequest(filter?: any) {
         this._odataService.loadDataSource(new DataSource({
             requireTotalCount: false,
@@ -356,10 +350,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             }
         }), this.totalsURI).done((res) => {
             let stages = res.pop();
+            this.allStagesEntitiesTotal = 0;
             stages && this.stages.forEach((stage) => {
                 stage['total'] = stages[stage.id] || 0;
                 stage['full'] = stage['total']
                     <= stage['entities'].length;
+                this.allStagesEntitiesTotal += stage['total'];
             });
         });
     }
