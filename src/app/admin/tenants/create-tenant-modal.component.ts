@@ -50,6 +50,13 @@ export class CreateTenantModalComponent extends AppModalDialogComponent implemen
 
     ngOnInit() {
         this.data.title = this.l('CreateNewTenant');
+        this.data.buttons = [
+            {
+                title: this.l('Save'),
+                class: 'primary',
+                action: this.save.bind(this)
+            }
+        ];
         this.init();
         this._profileService.getPasswordComplexitySetting().subscribe(result => {
             this.passwordComplexitySetting = result.setting;
