@@ -80,6 +80,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_WORK_FULL_ADDRESS_ZIP_CODE = 'businessInfo_workFullAddress_zipCode';
     private readonly BUSINESS_WORK_FULL_ADDRESS_COUNTRY_NAME = 'businessInfo_workFullAddress_countryName';
     private readonly BUSINESS_WORK_FULL_ADDRESS_COUNTRY_CODE = 'businessInfo_workFullAddress_countryCode';
+    private readonly BUSINESS_ANNUAL_REVENUE = 'businessInfo_annualRevenue';
     private readonly PERSONAL_MOBILE_PHONE = 'personalInfo_mobilePhone';
     private readonly PERSONAL_HOME_PHONE = 'personalInfo_homePhone';
     private readonly BUSINESS_COMPANY_PHONE = 'businessInfo_companyPhone';
@@ -338,6 +339,20 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         return true;
     }
 
+    private parseCurrency(field, value, dataSource) {
+        let amount = parseFloat(value);
+        if (amount)
+            amount *= ({
+                'H': 100,
+                'K': 1000,
+                'M': 1000000,
+                'B': 1000000000
+            }[value.trim().split('').pop()] || 1);
+
+        this.setFieldIfDefined(amount || value, field.mappedField, dataSource);
+        return true;
+    }
+
     cancel() {
         this.reset(() => {
             this._router.navigate(['app/crm/dashboard'], { queryParams: { refresh: true } });
@@ -517,6 +532,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return this.parseZipCode(field, sourceValue, reviewDataSource);
         } else if (this.PHONE_FIELDS.indexOf(field.mappedField) >= 0) {
             return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
+        } else if(this.BUSINESS_ANNUAL_REVENUE.indexOf(field.mappedField) >= 0) {
+            return this.parseCurrency(field, sourceValue, reviewDataSource);
         }
         return false;
     }
@@ -529,9 +546,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
         let result = { isMapped: false, error: null };
         result.isMapped = rows.every((row) => {
-            isFistName = isFistName || (row.mappedField && row.mappedField == this.FIRST_NAME_FIELD),
-            isLastName = isLastName || (row.mappedField && row.mappedField == this.LAST_NAME_FIELD),
-            isFullName  = isFullName || (row.mappedField && row.mappedField == this.FULL_NAME_FIELD),
+            isFistName = isFistName || (row.mappedField && row.mappedField == this.FIRST_NAME_FIELD);
+            isLastName = isLastName || (row.mappedField && row.mappedField == this.LAST_NAME_FIELD);
+            isFullName  = isFullName || (row.mappedField && row.mappedField == this.FULL_NAME_FIELD);
             isCompanyName = isCompanyName || (row.mappedField && row.mappedField == this.COMPANY_NAME_FIELD);
             return !!row.mappedField;
         });
