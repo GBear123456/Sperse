@@ -97,7 +97,6 @@ import { CategorizationModel } from './models/categorization-model';
 import { CellInfo } from './models/cell-info';
 import { CellInterval } from './models/cell-interval';
 import { IExpandLevel } from './models/expand-level';
-import { IGroupbyItem } from './models/groupbyItem';
 import { IEventDescription } from './models/event-description';
 import { TransactionStatsDtoExtended } from './models/transaction-stats-dto-extended';
 import { WeekInfo } from './models/week-info';
@@ -231,10 +230,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private expandBeforeIndex: number = null;
 
     public set calculatorShowed(value: boolean) {
-        if (this._calculatorShowed = value) {
-            //this.filtersService.fixed = false;
-            //this.filtersService.disable();
-        }
+        this._calculatorShowed = value;
     }
 
     public get calculatorShowed(): boolean {
@@ -282,24 +278,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     ];
 
-    /** posible groupIntervals year, quarter, month, dayofweek, day */
-    private groupbyItems: IGroupbyItem[] = [
-        {
-            'groupInterval': 'year',
-            'optionText': this.l('Years').toUpperCase()
-        },
-        {
-            'groupInterval': 'quarter',
-            'optionText': this.l('Quarters').toUpperCase(),
-            'customizeTextFunction': this.getQuarterHeaderCustomizer
-        },
-        {
-            'groupInterval': 'month',
-            'optionText': this.l('Months').toUpperCase(),
-            'customizeTextFunction': this.getMonthHeaderCustomizer
-        }
-    ];
-
     /** First categorization level items order */
     private leftMenuOrder = [
         StartedBalance,
@@ -320,7 +298,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             allowExpandAll: false,
             allowExpand: false,
             sortOrder: 'asc',
-            dataField: 'level0',
+            dataField: 'levels.level0',
             rowHeaderLayout: 'tree',
             showTotals: true,
             sortingMethod: (firstItem, secondItem) => {
@@ -332,7 +310,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             caption: 'Account Type',
             width: 120,
             area: 'row',
-            dataField: 'level1',
+            dataField: 'levels.level1',
             sortBy: 'displayText',
             sortOrder: 'asc',
             expanded: false,
@@ -348,7 +326,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
-            dataField: 'level2',
+            dataField: 'levels.level2',
             customizeText: this.customizeFieldText.bind(this)
         },
         {
@@ -358,7 +336,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
-            dataField: 'level3',
+            dataField: 'levels.level3',
             customizeText: this.customizeFieldText.bind(this)
         },
         {
@@ -368,7 +346,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
-            dataField: 'level4',
+            dataField: 'levels.level4',
             customizeText: this.customizeFieldText.bind(this)
         },
         {
@@ -1653,15 +1631,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                    transactionObj.cashflowTypeId === Reconciliation ||
                                    transactionObj.cashflowTypeId === NetChange;
         let key = null;
-        if (transactionObj[`level${levelNumber}`]) {
-            for (let i = levelNumber; i < 5; i++) {
-                if (transactionObj[`level${i}`]) {
-                    delete transactionObj[`level${i}`];
-                }
-            }
-        }
+        transactionObj['levels'] = {};
         this.categorization.every((level) => {
-            if (transactionObj[level.statsKeyName]) {
+            if (transactionObj[level.statsKeyName] || (level.prefix === CategorizationPrefixes.SubCategory && !transactionObj.categoryId)) {
 
                 /** If user doesn't want to show accounting type row - skip it */
                 if (level.prefix === CategorizationPrefixes.AccountingType && !this.cashflowGridSettings.general.showAccountingTypeRow) {
@@ -1672,15 +1644,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (level.prefix === CategorizationPrefixes.AccountName) {
                     if (isAccountTransaction) {
                         key = level.prefix + transactionObj[level.statsKeyName];
-                        transactionObj[`level${levelNumber++}`] = key;
+                        transactionObj['levels'][`level${levelNumber++}`] = key;
                         return false;
                     } else {
                         return true;
                     }
                 }
 
-                key = level.prefix + transactionObj[level.statsKeyName];
-                transactionObj[`level${levelNumber++}`] = key;
+                key = transactionObj[level.statsKeyName] ? level.prefix + transactionObj[level.statsKeyName] : transactionObj[level.statsKeyName];
+                transactionObj['levels'][`level${levelNumber++}`] = key;
             }
             return true;
         });
@@ -1694,13 +1666,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     updateTreePathes(transactionObj, removePath = false) {
         let fullPath = [];
-        for (let i = 0; i < 5; i++) {
-            let levelValue = transactionObj[`level${i}`];
-            if (levelValue || i === 1) {
-                fullPath.push(levelValue);
-            }
+        for (let level in transactionObj['levels']) {
+            fullPath.push(transactionObj['levels'][level]);
         }
-
         let stringPath = fullPath.join(',');
         if (!this.treePathes.hasOwnProperty(stringPath)) {
             this.treePathes[stringPath] = 1;
@@ -2270,7 +2238,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let rowPathPropertyName = cellObj.area === 'data' ? 'rowPath' : 'path';
             let columnPathPropertyName = cellObj.area === 'data' ? 'columnPath' : 'path';
             return cashflowItem.amount &&
-                   (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => (!fieldValue && !cashflowItem[`level${index}`]) || fieldValue === cashflowItem[`level${index}`])) &&
+                   (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => (!fieldValue && !cashflowItem['levels'][`level${index}`]) || fieldValue === cashflowItem['levels'][`level${index}`])) &&
                    (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
                         if (field.caption === 'Projected' && fieldValue !== Projected.PastTotal && fieldValue !== Projected.FutureTotal) {
@@ -3637,7 +3605,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             forecastInCashflow.cashflowTypeId = targetData.cashflowTypeId;
             forecastInCashflow.accountingTypeId = targetData.accountingTypeId;
             forecastInCashflow.categoryId = targetData.categoryId || targetData.subCategoryId;
-            forecastInCashflow.subCategoryId = targetData.subCategoryId || moveCategoryToCategory && forecastInCashflow.subCategoryId;
+            forecastInCashflow.subCategoryId = targetData.subCategoryId
+                || (moveCategoryToCategory ? forecastInCashflow.subCategoryId : undefined);
             forecastInCashflow.transactionDescriptor = targetData.transactionDescriptor || forecastInCashflow.transactionDescriptor;
 
             /** Update forecast, its totals and net change items with new date if date changed */
@@ -4847,9 +4816,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     hasChildsByPath(path): boolean {
         let cellPath = path.join(',');
         let keys = Object.keys(this.treePathes);
-        return path.slice(-1)[0] && keys.some(path => {
+        const containsUnclassified = !path.slice(-1)[0];
+        return keys.some(path => {
             let currentPathIndex = path.indexOf(cellPath);
-            return currentPathIndex !== -1 && path.split(',').length > cellPath.split(',').length;
+            return (!containsUnclassified && currentPathIndex !== -1 && path.split(',').length > cellPath.split(',').length)
+                   || (containsUnclassified && path.indexOf(cellPath + ',') !== -1);
         });
     }
 
@@ -5238,7 +5209,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     isStartingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'level1' &&
+            summaryCell.field('row').dataField === 'levels.level1' &&
             summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === PSB;
     }
 
@@ -5256,13 +5227,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return summaryCell.field('row') &&
                 (
                     summaryCell.value(summaryCell.field('row').dataField) !== undefined ||
-                    summaryCell.field('row').dataField === 'level1'
+                    summaryCell.field('row').dataField === 'levels.level1'
                 );
     }
 
     isEndingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
-               summaryCell.field('row').dataField === 'level1' &&
+               summaryCell.field('row').dataField === 'levels.level1' &&
                summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === PT;
     }
 
