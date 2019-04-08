@@ -34,7 +34,7 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
     maxDate = new Date();
     phoneRegEx = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
-    dateFormat = AppConsts.formatting.date;
+    dateFormat = AppConsts.formatting.dateMoment;
 
     googleAutoComplete = Boolean(window['google']);
     address = {

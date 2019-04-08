@@ -7,19 +7,16 @@ import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { CacheService } from 'ng2-cache-service';
-import { finalize, filter } from 'rxjs/operators';
-import * as _ from 'underscore';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
 
-import { ActivityServiceProxy, InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput,
-    InvoiceInfo, UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus, 
+import { InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput,
+    UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus, 
     UpdateInvoiceStatusInputStatus, CreateInvoiceLineInput } from '@shared/service-proxies/service-proxies';
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
-import { ValidationHelper } from '@shared/helpers/ValidationHelper';
-import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -65,8 +62,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         public dialog: MatDialog,
         private _invoiceProxy: InvoiceServiceProxy,
         private _customerProxy: CustomerServiceProxy,
-        private _cacheService: CacheService,
-        private _dialogService: DialogService
+        private _cacheService: CacheService
     ) {
         super(injector);
 
@@ -84,7 +80,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         this.initToolbarConfig();
     }
 
-    initInvoiceData() {        
+    initInvoiceData() {
         let invoice = this.data.invoice;
         if (invoice) {
             this.invoiceId = invoice.Id;
@@ -93,12 +89,12 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             this.date = invoice.Date;
             this.dueDate = invoice.DueDate;
             this.contactId = invoice.ContactId;
-            this.disabledForUpdate = this.status != CreateInvoiceInputStatus.Draft 
+            this.disabledForUpdate = this.status != CreateInvoiceInputStatus.Draft
                 && this.status != CreateInvoiceInputStatus.Submitted;
 
             this._invoiceProxy.getInvoiceInfo(invoice.Id).subscribe((res) => {
                 this.description = res.description;
-                this.notes = res.note;                
+                this.notes = res.note;
                 this.customer = res.contactName;
                 this.lines = res.lines.map((res) => {
                     return {
@@ -219,7 +215,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     }
 
     private createEntity(): void {
-        let subscription, 
+        let subscription,
             saveButton: any = document.getElementById(this.saveButtonId);
         if (this.invoiceId) {
             let data = new UpdateInvoiceInput();
@@ -256,7 +252,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         saveButton.disabled = true;
         subscription.pipe(finalize(() => {
             saveButton.disabled = false;
-        })).subscribe((res) => {            
+        })).subscribe((res) => {
             this.afterSave();
         });
     }
@@ -360,10 +356,10 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     }
 
     calculateSummary(options) {
-        if (options.name === "RowsSummary") {
-            if (options.summaryProcess === "start") {
+        if (options.name === 'RowsSummary') {
+            if (options.summaryProcess === 'start') {
                 options.totalValue = 0;
-            } else if (options.summaryProcess === "calculate") {
+            } else if (options.summaryProcess === 'calculate') {
                 options.totalValue = options.totalValue + (options.value.Quantity * options.value.Rate || 0);
             }
         }
@@ -386,7 +382,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
                         this.startLoading(true)
                         this._invoiceProxy.deleteInvoice(this.invoiceId).pipe(
                             finalize(() => this.finishLoading(true))
-                        ).subscribe((response) => {   
+                        ).subscribe((response) => {
                             this.notify.info(this.l('SuccessfullyDeleted'));
                             this.data.refreshParent && this.data.refreshParent();
                             this.close();

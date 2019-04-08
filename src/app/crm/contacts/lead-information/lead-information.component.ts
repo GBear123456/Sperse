@@ -108,7 +108,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         if (!value)
             return null;
 
-        return value instanceof moment ? value.format(this.formatting.date) : value;
+        return value instanceof moment ? value.format(this.formatting.dateMoment) : value;
     }
 
     updateValue(value, item) {
