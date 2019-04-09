@@ -1,8 +1,13 @@
-import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+/** Core imports */
+import { Component, OnInit, OnDestroy, Injector, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+
+/** Third party imports */
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+
+/** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantSslBindingInfo } from '@shared/service-proxies/service-proxies';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-modal.component';
 import { AddOrEditSSLBindingModal } from './modals/add-or-edit-ssl-binding-modal.component';
 
@@ -10,6 +15,7 @@ import { AddOrEditSSLBindingModal } from './modals/add-or-edit-ssl-binding-modal
     templateUrl: './system-settings.component.html',
     styleUrls: ['./system-settings.component.less'],
     animations: [appModuleAnimation()],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })
 export class SystemSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
@@ -37,7 +43,8 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit,
     constructor(
         injector: Injector,
         private _tenantSslCertificateService: TenantSslCertificateServiceProxy,
-        private _tenantHostService: TenantHostServiceProxy
+        private _tenantHostService: TenantHostServiceProxy,
+        private _changeDetection: ChangeDetectorRef
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -61,10 +68,11 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit,
 
     refreshSSLGrid() {
         this._tenantSslCertificateService.getTenantSslCertificates()
-        .subscribe(result => {
-            this.sslGridDataSource = result;
-            this.sslGrid.instance.refresh();
-        });
+            .subscribe(result => {
+                this.sslGridDataSource = result;
+                this.sslGrid.instance.refresh();
+                this._changeDetection.detectChanges();
+            });
     }
 
     refreshSSLBindingGrid() {
@@ -72,6 +80,7 @@ export class SystemSettingsComponent extends AppComponentBase implements OnInit,
             .subscribe(result => {
                 this.sslBindingsDataSource = result;
                 this.customDomainsGrid.instance.refresh();
+                this._changeDetection.detectChanges();
             });
     }
 

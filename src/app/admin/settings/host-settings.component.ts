@@ -1,7 +1,11 @@
 /** Core imports */
+import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+
 /** Third party imports */
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+
 /** Application imports */
-import { Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -10,12 +14,12 @@ import {
     ComboboxItemDto, CommonLookupServiceProxy, DefaultTimezoneScope, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
     BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings
 } from '@shared/service-proxies/service-proxies';
-import { forkJoin } from 'rxjs';
 
 @Component({
     templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()],
     styleUrls: ['./host-settings.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantPaymentSettingsServiceProxy]
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
@@ -52,7 +56,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         private _hostSettingService: HostSettingsServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
         private _tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
-        private _appSessionService: AppSessionService
+        private _appSessionService: AppSessionService,
+        private _changeDetection: ChangeDetectorRef
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -66,11 +71,12 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             this._tenantPaymentSettingsService.getPayPalSettings(),
             this._tenantPaymentSettingsService.getACHWorksSettings(),
             this._tenantPaymentSettingsService.getRecurlyPaymentSettings()
+        ).pipe(
+            finalize(() => { this._changeDetection.detectChanges(); })
         ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings]) => {
             this.hostSettings = allSettings;
             this.initialTimeZone = allSettings.general.timezone;
             this.usingDefaultTimeZone = allSettings.general.timezoneForComparison === this.setting.get('Abp.Timing.TimeZone');
-
             this.baseCommercePaymentSettings = baseCommerceSettings;
             this.payPalPaymentSettings = payPalSettings;
             this.achWorksSettings = achWorksSettings;
