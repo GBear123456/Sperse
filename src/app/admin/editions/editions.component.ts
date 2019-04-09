@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -16,7 +16,8 @@ import { CreateOrEditEditionModalComponent } from './create-or-edit-edition-moda
 @Component({
     templateUrl: './editions.component.html',
     styleUrls: [ '../../../shared/metronic/dropdown-menu.less', './editions.component.less' ],
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditionsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;

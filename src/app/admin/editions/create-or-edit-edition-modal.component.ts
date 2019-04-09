@@ -1,6 +1,7 @@
 import {
     AfterViewChecked,
     Component,
+    ChangeDetectionStrategy,
     ElementRef,
     EventEmitter,
     Injector,
@@ -17,7 +18,8 @@ import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-mo
 @Component({
     selector: 'createOrEditEditionModal',
     templateUrl: './create-or-edit-edition-modal.component.html',
-    styleUrls: [ '../../../shared/metronic/m-radio.less' ]
+    styleUrls: [ '../../../shared/metronic/m-radio.less', './create-or-edit-edition-modal.component.less' ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateOrEditEditionModalComponent extends AppModalDialogComponent implements AfterViewChecked, OnInit {
 
@@ -46,6 +48,13 @@ export class CreateOrEditEditionModalComponent extends AppModalDialogComponent i
     ) {
         super(injector);
         this.data.title = this.data.editionId ? '' : this.l('CreateNewEdition');
+        this.data.buttons = [
+            {
+                title: this.l('Save'),
+                class: 'primary',
+                action: this.save.bind(this)
+            }
+        ];
         this._commonLookupService.getEditionsForCombobox(true).subscribe(editionsResult => {
             this.expiringEditions = editionsResult.items;
             this.expiringEditions.unshift(new ComboboxItemDto({ value: null, displayText: this.l('NotAssigned'), isSelected: true }));
