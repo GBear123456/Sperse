@@ -1,13 +1,16 @@
-import { Component, ViewEncapsulation, ElementRef, EventEmitter, Injector, Output, ViewChild, OnInit } from '@angular/core';
+/** Core imports */
+import { Component, ElementRef, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
+/** Third party imports */
+import { finalize } from 'rxjs/operators';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+/** Application imports */
 import {
     ApplicationLanguageEditDto,
     ComboboxItemDto,
     CreateOrUpdateLanguageInput,
     LanguageServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { finalize } from 'rxjs/operators';
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'createOrEditLanguageModal',

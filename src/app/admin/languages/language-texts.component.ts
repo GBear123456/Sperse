@@ -7,6 +7,7 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { MatDialog } from '@angular/material';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -23,12 +24,6 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 })
 export class LanguageTextsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild('targetLanguageNameCombobox') targetLanguageNameCombobox: ElementRef;
-    @ViewChild('baseLanguageNameCombobox') baseLanguageNameCombobox: ElementRef;
-    @ViewChild('sourceNameCombobox') sourceNameCombobox: ElementRef;
-    @ViewChild('targetValueFilterCombobox') targetValueFilterCombobox: ElementRef;
-    @ViewChild('textsTable') textsTable: ElementRef;
-    @ViewChild('editTextModal') editTextModal: EditTextModalComponent;
 
     private rootComponent: any;
     dataSource: DataSource;
@@ -53,6 +48,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         injector: Injector,
         private _languageService: LanguageServiceProxy,
         private _filtersService: FiltersService,
+        private _dialog: MatDialog,
         private _appService: AppService
     ) {
         super(injector);
@@ -213,15 +209,6 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
         return abp.utils.truncateStringWithPostfix(text, 32, '...');
     }
 
-    refreshTextValueFromModal(): void {
-        for (let i = 0; i < this.primengTableHelper.records.length; i++) {
-            if (this.primengTableHelper.records[i].key === this.editTextModal.model.key) {
-                this.primengTableHelper.records[i].targetValue = this.editTextModal.model.value;
-                return;
-            }
-        }
-    }
-
     showCompactRowsHeight() {
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
     }
@@ -241,6 +228,23 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     refreshDataGrid() {
         if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.refresh();
+    }
+
+    openEditTextLanguageModal(baseLanguageName?, targetLanguageName?, sourceName?, key?, baseValue?, targetValue?) {
+        const dialogRef = this._dialog.open(EditTextModalComponent, {
+            panelClass: 'slider',
+            data: {
+                baseLanguageName: baseLanguageName,
+                targetLanguageName: targetLanguageName,
+                sourceName: sourceName,
+                key: key,
+                baseValue: baseValue,
+                targetValue: targetValue,
+            }
+        });
+        dialogRef.componentInstance.modalSave.subscribe(() => {
+            this.refreshDataGrid();
+        });
     }
 
     ngOnDestroy() {
