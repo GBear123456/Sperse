@@ -733,6 +733,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         let value = dataCell.value;
         if (field == 'phone')
             return this._phoneNumberService.isPhoneNumberValid(value);
+        else if (field == 'annualRevenue')
+            return !value || !isNaN(parseFloat(value));
         else
             return !value || AppConsts.regexPatterns[field].test(value);
     }
