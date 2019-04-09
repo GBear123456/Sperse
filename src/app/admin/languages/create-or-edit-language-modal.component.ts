@@ -11,8 +11,9 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'createOrEditLanguageModal',
-    encapsulation: ViewEncapsulation.None,
-    styleUrls: [ '../../../shared/metronic/dropdown-menu.less', './create-or-edit-language-modal.component.less' ],
+    styleUrls: [
+        './create-or-edit-language-modal.component.less'
+    ],
     templateUrl: './create-or-edit-language-modal.component.html'
 })
 export class CreateOrEditLanguageModalComponent extends AppModalDialogComponent implements OnInit {
@@ -34,19 +35,27 @@ export class CreateOrEditLanguageModalComponent extends AppModalDialogComponent 
     ) {
         super(injector);
         this.data = injector.get(MAT_DIALOG_DATA);
-    }
-
-    ngOnInit() {
         this._languageService.getLanguageForEdit(this.data.languageId).subscribe(result => {
             this.selectBoxData = result;
-            this.language = result.language;
             this.languageNames = result.languageNames;
+            this.language = result.language;
             this.flags = result.flags;
+            this.data.title = this.language.name ? this.l('EditLanguage') + ': ' + this.language.name : this.l('CreateNewLanguage');
 
             if (!this.data.languageId) {
                 this.language.isEnabled = true;
             }
         });
+    }
+
+    ngOnInit() {
+        this.data.buttons = [
+            {
+                title: this.l('Save'),
+                class: 'primary',
+                action: this.save.bind(this)
+            }
+        ];
     }
 
     save(): void {

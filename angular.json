@@ -45,8 +45,7 @@
               }
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/famfamfam-flags/dist/sprite/famfamfam-flags.css"
+              "src/styles.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.js",
