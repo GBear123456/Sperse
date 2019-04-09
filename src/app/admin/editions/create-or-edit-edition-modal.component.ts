@@ -1,6 +1,7 @@
 import {
     AfterViewChecked,
     Component,
+    ChangeDetectorRef,
     ChangeDetectionStrategy,
     ElementRef,
     EventEmitter,
@@ -44,7 +45,8 @@ export class CreateOrEditEditionModalComponent extends AppModalDialogComponent i
     constructor(
         injector: Injector,
         private _editionService: EditionServiceProxy,
-        private _commonLookupService: CommonLookupServiceProxy
+        private _commonLookupService: CommonLookupServiceProxy,
+        private _changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
         this.data.title = this.data.editionId ? '' : this.l('CreateNewEdition');
@@ -58,7 +60,10 @@ export class CreateOrEditEditionModalComponent extends AppModalDialogComponent i
         this._commonLookupService.getEditionsForCombobox(true).subscribe(editionsResult => {
             this.expiringEditions = editionsResult.items;
             this.expiringEditions.unshift(new ComboboxItemDto({ value: null, displayText: this.l('NotAssigned'), isSelected: true }));
-            this._editionService.getEditionForEdit(this.data.editionId).pipe(finalize(() => this.active = true)).subscribe(editionResult => {
+            this._editionService.getEditionForEdit(this.data.editionId).pipe(finalize(() => {
+                this.active = true;
+                this._changeDetectorRef.detectChanges();
+            })).subscribe(editionResult => {
                 this.edition = editionResult.edition;
                 this.data.title = this.data.editionId ? this.l('EditEdition') + ' ' + this.edition.displayName : this.l('CreateNewEdition');
                 this.editData = editionResult;
