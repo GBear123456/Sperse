@@ -32,7 +32,6 @@ export class EditTextModalComponent extends AppModalDialogComponent implements O
     ) {
         super(injector);
         this.data = injector.get(MAT_DIALOG_DATA);
-        console.log(this.data);
         if (this.data) {
             this.data.title = this.l('EditText');
             this.model.sourceName = this.data.sourceName;
