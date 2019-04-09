@@ -2,8 +2,10 @@
     <div *ngFor="let stage of stages; let i = index;" class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}} color-{{stage.color}}">
         <div class="column-title">
             <dx-check-box
-                class="toggleAll"
+                [ngClass]="{ 'toggleAll': true, 'visible': allEntitiesAreSelected(stage) }"
                 *ngIf="stage?.entities.length"
+                width="15px"
+                height="15px"
                 [value]="allEntitiesAreSelected(stage)"
                 (onValueChanged)="toggleAllEntitiesInStage($event, stage)">
             </dx-check-box>

@@ -62,12 +62,23 @@
                 background-color: #076943;
                 .toggleAll {
                     position: absolute;
-                    left: 0;
-                    height: 20px;
+                    left: 2px;
                     z-index: 1;
-                    top: 0;
-                    bottom: 0;
+                    top: 2px;
                     margin: auto;
+                    width: 15px;
+                    height: 15px;
+                    display: none;
+                    /deep/ .dx-checkbox-icon {
+                        width: 15px;
+                        height: 15px;
+                    }
+                    &.visible {
+                        display: block;
+                    }
+                }
+                &:hover .toggleAll {
+                    display: block;
                 }
                 span {
                     font-size: 15px;
@@ -320,7 +331,7 @@
                         padding-left: 30px;
                     }
                     .toggleAll {
-                        left: 45px;
+                        left: 30px;
                     }
                 }
                 &.column1 {
@@ -435,10 +446,6 @@
                     }
                     .edit-button {
                         left: 0px!important;
-                    }
-                    .toggleAll {
-                        left: auto;
-                        right: 40px;
                     }
                 }
                 &.column1 {
