@@ -14,7 +14,6 @@
                                 {{ data[field.name.replace('total', 'new')] | currency: 'USD' : true : '1.0-0' }}
                                 <ng-container *ngIf="data[field.name.replace('total', 'new')] != 0">
                                     of {{ data[field.name] | currency : 'USD' : true : '1.0-0' }}
-                                    </ng-container>
                                 </ng-container>
                             </ng-container>
                             <ng-container *ngIf="field.type == 'number'">{{ data[field.name.replace('total', 'new')] | number }} of {{ data[field.name] | number }}</ng-container>
