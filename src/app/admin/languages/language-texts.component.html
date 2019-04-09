@@ -16,16 +16,14 @@
                     <dxi-column caption="{{l('TargetValue')}}" dataField="targetValue"></dxi-column>
                     <dxi-column caption="{{l('Edit')}}" cellTemplate="editTemplate"></dxi-column>
                     <ng-container *dxTemplate="let data of 'editTemplate'">
-                        <button class="btn btn-layout"
-                                (click)="editTextModal.show(baseLanguageName, targetLanguageName, sourceName, data.data.key, data.data.baseValue, data.data.targetValue)">
-                            <i class="fa fa-edit"></i> {{l('Edit')}}
-                        </button>
+                            <button class="btn btn-layout"
+                                    (click)="openEditTextLanguageModal(baseLanguageName, targetLanguageName, sourceName, data.data.key, data.data.baseValue, data.data.targetValue)">
+                                <i class="fa fa-edit"></i> {{l('Edit')}}
+                            </button>
                     </ng-container>
                 </dx-data-grid>
             </div>
         </div>
 
     </div>
-
-    <editTextModal #editTextModal (modalSave)="refreshTextValueFromModal()"></editTextModal>
 </div>

@@ -23,8 +23,6 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
     animations: [appModuleAnimation()]
 })
 export class LanguagesComponent extends AppComponentBase implements OnDestroy {
-
-    @ViewChild('languagesTable') languagesTable: ElementRef;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(DxTooltipComponent) tooltip: DxTooltipComponent;
     dataSource: DataSource;
