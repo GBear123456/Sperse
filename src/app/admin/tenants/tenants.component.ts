@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -10,12 +10,10 @@ import * as _ from 'underscore';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
-import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     CommonLookupServiceProxy,
     EntityDtoOfInt64,
-    FindUsersInput,
     NameValueDto,
     PermissionServiceProxy,
     TenantListDto,
@@ -30,15 +28,15 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { MatDialog } from '@angular/material';
+import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 
 @Component({
     templateUrl: './tenants.component.html',
     styleUrls: [ './tenants.component.less' ],
     animations: [appModuleAnimation()]
 })
-export class TenantsComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class TenantsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild('impersonateUserLookupModal') impersonateUserLookupModal: CommonLookupModalComponent;
 
     private filters: FilterModel[];
     public actionMenuItems: any;
@@ -58,6 +56,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
     };
     dataSource: DataSource;
     private rootComponent: any;
+    impersonateTenantId: number;
 
     constructor(
         injector: Injector,
@@ -145,7 +144,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        action: event => {
+                        action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
@@ -155,10 +154,10 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
                             checkPressed: () => {
                                 return this._filtersService.fixed;
                             },
-                            mouseover: event => {
+                            mouseover: () => {
                                 this._filtersService.enable();
                             },
-                            mouseout: event => {
+                            mouseout: () => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
                             }
@@ -286,7 +285,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
                         }
                     } else {
                         _.pairs(filter.items).forEach((pair) => {
-                            let val = pair.pop().value, key = pair.pop(), operator = {};
+                            let val = pair.pop().value, key = pair.pop();
                             if (val)
                                 dataSourceFilters.push([key, filter.operator, val]);
                         });
@@ -300,23 +299,15 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
         });
     }
 
-    ngOnInit(): void {
-        this.impersonateUserLookupModal.configure({
-            title: this.l('SelectAUser'),
-            dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => {
-                let input = new FindUsersInput();
-                input.filter = filter;
-                input.maxResultCount = maxResultCount;
-                input.skipCount = skipCount;
-                input.tenantId = tenantId;
-                return this._commonLookupService.findUsers(input);
-            }
-        });
-    }
-
     showUserImpersonateLookUpModal(record: any): void {
-        this.impersonateUserLookupModal.tenantId = record.id;
-        this.impersonateUserLookupModal.show();
+        this.impersonateTenantId = record.id;
+        const impersonateDialog = this.dialog.open(CommonLookupModalComponent, {
+            panelClass: [ 'slider', 'common-lookup' ],
+            data: { tenantId: this.impersonateTenantId }
+        });
+        impersonateDialog.componentInstance.itemSelected.subscribe((item: NameValueDto) => {
+            this.impersonateUser(item);
+        });
     }
 
     unlockUser(record: any): void {
@@ -384,11 +375,10 @@ export class TenantsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     impersonateUser(item: NameValueDto): void {
-        this._impersonationService
-            .impersonate(
+        this._impersonationService.impersonate(
             parseInt(item.value),
-            this.impersonateUserLookupModal.tenantId
-            );
+            this.impersonateTenantId
+        );
     }
 
     showCompactRowsHeight() {

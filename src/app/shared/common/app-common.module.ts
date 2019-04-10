@@ -232,7 +232,8 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
         UploadPhotoDialogComponent,
         ConfirmDialogComponent,
         PaymentWizardComponent,
-        AppModalDialogComponent
+        AppModalDialogComponent,
+        CommonLookupModalComponent
     ]
 })
 export class AppCommonModule {

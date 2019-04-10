@@ -20,7 +20,7 @@
 
     <div *dxTemplate="let cell of 'actionsTemplate'" class="billing-actions">
         <a *ngIf="cell.data.tenantId && permission.isGranted('Pages.Tenants.Impersonation')"
-           (click)="cell.data.status == 'Active' && showUserImpersonateLookUpModal(cell.data)">{{l('LoginAsThisTenant')}}</a>
+           (click)="cell.data.status == 'Active' && showUserImpersonateLookUpModal($event, cell.data)">{{l('LoginAsThisTenant')}}</a>
         <br />
         <a *ngIf="cell.data.statusCode === 'A' && permission.isGranted('Pages.CRM.Orders.Manage')" (click)="cancelSubscription(cell.data.id)">{{l('cancel')}}</a>
     </div>
@@ -45,4 +45,3 @@
         </dx-data-grid>
     </div>
 </dx-data-grid>
-<commonLookupModal #impersonateUserLookupModal (itemSelected)="impersonateUser($event)"></commonLookupModal>
