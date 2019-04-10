@@ -183,7 +183,8 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         CreateOrEditEditionModalComponent,
         CreateOrEditLanguageModalComponent,
         CreateOrEditRoleModalComponent,
-        EditTextModalComponent
+        EditTextModalComponent,
+        AuditLogDetailModalComponent
     ],
     exports: [
         AddMemberModalComponent

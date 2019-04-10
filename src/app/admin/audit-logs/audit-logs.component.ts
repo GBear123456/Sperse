@@ -1,32 +1,28 @@
-import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
+/** Core imports */
+import { Component, Injector, ViewChild, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+
+/** Third party imports */
+import * as moment from 'moment';
+import { MatDialog } from '@angular/material/dialog';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+
+/** Application imports */
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail-modal.component';
-import { EntityChangeDetailModalComponent } from '@app/admin/audit-logs/entity-change-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AuditLogListDto, AuditLogServiceProxy, EntityChangeListDto, NameValueDto } from '@shared/service-proxies/service-proxies';
+import { AuditLogListDto, AuditLogServiceProxy, NameValueDto } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
-import * as moment from 'moment';
-import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
-import { PrimengTableHelper } from 'shared/helpers/PrimengTableHelper';
-import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './audit-logs.component.html',
     styleUrls: ['./audit-logs.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [appModuleAnimation()]
 })
 export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild('auditLogDetailModal') auditLogDetailModal: AuditLogDetailModalComponent;
-    @ViewChild('entityChangeDetailModal') entityChangeDetailModal: EntityChangeDetailModalComponent;
-    @ViewChild('dataTableAuditLogs') dataTableAuditLogs: Table;
-    @ViewChild('dataTableEntityChanges') dataTableEntityChanges: Table;
-    @ViewChild('paginatorAuditLogs') paginatorAuditLogs: Paginator;
-    @ViewChild('paginatorEntityChanges') paginatorEntityChanges: Paginator;
 
     //Filters
     public startDate: moment.Moment = moment().startOf('day');
@@ -42,9 +38,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
     public entityTypeFullName: string;
     public objectTypes: NameValueDto[];
     private rootComponent: any;
-    primengTableHelperAuditLogs = new PrimengTableHelper();
-    primengTableHelperEntityChanges = new PrimengTableHelper();
-    advancedFiltersAreShown = false;
     public headlineConfig = {
         names: [this.l('AuditLogs')],
         icon: '',
@@ -58,7 +51,8 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
         injector: Injector,
         private _auditLogService: AuditLogServiceProxy,
         private _appService: AppService,
-        private _fileDownloadService: FileDownloadService
+        private _fileDownloadService: FileDownloadService,
+        private _dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -93,94 +87,121 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
             }
         });
 
-        this.changeLogsDataSource = new DataSource({
-            key: 'id',
-            load: (loadOptions) => {
-                return this._auditLogService.getEntityChanges(
-                    this.startDate,
-                    this.endDate,
-                    undefined,
-                    this.entityTypeFullName,
-                    (loadOptions.sort || []).map((item) => {
-                        return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
-                    }).join(','),
-                    loadOptions.take,
-                    loadOptions.skip
-                ).toPromise().then(response => {
-                    return {
-                        data: response.items,
-                        totalCount: response.totalCount
-                    };
-                });
+        this.initToolbarConfig();
+    }
+
+    initToolbarConfig() {
+        this._appService.updateToolbar([
+            {
+                location: 'before', items: [
+                    {
+                        name: 'filters',
+                        action: Function(),
+                        enabled: false,
+                        attr: {
+                            'filter-selected': false
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',
+                        widget: 'dxTextBox',
+                        options: {
+                            value: this.searchValue,
+                            width: '279',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' ' + this.l('Logs by action').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [{
+                                action: Function(),
+                                text: this.l('Save as PDF'),
+                                icon: 'pdf',
+                            }, {
+                                action: this.exportToXLS.bind(this),
+                                text: this.l('Export to Excel'),
+                                icon: 'xls',
+                            }, {
+                                action: this.exportToCSV.bind(this),
+                                text: this.l('Export to CSV'),
+                                icon: 'sheet'
+                            }, {
+                                action: this.exportToGoogleSheet.bind(this),
+                                text: this.l('Export to Google Sheets'),
+                                icon: 'sheet'
+                            }, { type: 'downloadOptions' }]
+                        }
+                    },
+                    { name: 'print', action: Function() }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
+                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'fullscreen',
+                        action: () => {
+                            this.toggleFullscreen(document.documentElement);
+                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
+                        }
+                    }
+                ]
+            }
+        ]);
+    }
+
+    showCompactRowsHeight() {
+        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
+    }
+
+    showColumnChooser() {
+        this.dataGrid.instance.showColumnChooser();
+    }
+
+    searchValueChange(e: object) {
+        this.searchValue = e['value'];
+        this.initToolbarConfig();
+        if (this.searchValue)
+            this.dataGrid.instance.filter(['displayName', 'contains', this.searchValue]);
+        else
+            this.dataGrid.instance.clearFilter();
+    }
+
+    openAuditLogDetailModal(record: AuditLogListDto) {
+        const dialogRef = this._dialog.open(AuditLogDetailModalComponent, {
+            panelClass: 'slider',
+            data: {
+                record: record
             }
         });
-    }
-
-    showAuditLogDetails(record: AuditLogListDto): void {
-        this.auditLogDetailModal.show(record);
-    }
-
-    showEntityChangeDetails(record: EntityChangeListDto): void {
-        this.entityChangeDetailModal.show(record);
-    }
-
-    getAuditLogs(event?: LazyLoadEvent) {
-        if (this.primengTableHelperAuditLogs.shouldResetPaging(event)) {
-            this.paginatorAuditLogs.changePage(0);
-
-            return;
-        }
-
-        this.primengTableHelperAuditLogs.showLoadingIndicator();
-
-        this._auditLogService.getAuditLogs(
-            this.startDate,
-            this.endDate,
-            undefined,
-            this.usernameAuditLog,
-            this.serviceName,
-            this.methodName,
-            this.browserInfo,
-            this.hasException,
-            this.minExecutionDuration,
-            this.maxExecutionDuration,
-            this.primengTableHelperAuditLogs.getSorting(this.dataTableAuditLogs),
-            this.primengTableHelperAuditLogs.getMaxResultCount(this.paginatorAuditLogs, event),
-            this.primengTableHelperAuditLogs.getSkipCount(this.paginatorAuditLogs, event)
-        ).subscribe((result) => {
-            this.primengTableHelperAuditLogs.totalRecordsCount = result.totalCount;
-            this.primengTableHelperAuditLogs.records = result.items;
-            this.primengTableHelperAuditLogs.hideLoadingIndicator();
-        });
-    }
-
-    getEntityChanges(event?: LazyLoadEvent) {
-        this._auditLogService.getEntityHistoryObjectTypes()
-            .subscribe((result) => {
-                this.objectTypes = result;
-            });
-
-        if (this.primengTableHelperEntityChanges.shouldResetPaging(event)) {
-            this.paginatorEntityChanges.changePage(0);
-
-            return;
-        }
-
-        this.primengTableHelperEntityChanges.showLoadingIndicator();
-
-        this._auditLogService.getEntityChanges(
-            this.startDate,
-            this.endDate,
-            this.usernameEntityChange,
-            this.entityTypeFullName,
-            this.primengTableHelperEntityChanges.getSorting(this.dataTableEntityChanges),
-            this.primengTableHelperEntityChanges.getMaxResultCount(this.paginatorEntityChanges, event),
-            this.primengTableHelperEntityChanges.getSkipCount(this.paginatorEntityChanges, event)
-        ).subscribe((result) => {
-            this.primengTableHelperEntityChanges.totalRecordsCount = result.totalCount;
-            this.primengTableHelperEntityChanges.records = result.items;
-            this.primengTableHelperEntityChanges.hideLoadingIndicator();
-        });
+        dialogRef.afterClosed().subscribe(() => {});
     }
 
     exportToExcelAuditLogs(): void {
@@ -222,12 +243,13 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
     truncateStringWithPostfix(text: string, length: number): string {
         return abp.utils.truncateStringWithPostfix(text, length);
     }
-    
+
     refreshData(): void {
-        this.getAuditLogs();
+        this.dataGrid.instance.refresh();
     }
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden(false);
+        this._appService.updateToolbar(null);
     }
 }
