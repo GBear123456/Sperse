@@ -1529,12 +1529,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Get category path in tree */
             const categoryPath: string[] = this.cashflowService.getCategoryFullPath(+categoryId, category, this.categoryTree);
             if (!this.cashflowService.categoryHasTransactions(this.treePathes, categoryPath)) {
+                const parentExists: boolean = !!this.categoryTree.categories[category.parentId];
                 /** Create stub for category */
                 const stubTransaction = this.createStubTransaction({
                     'cashflowTypeId': this.categoryTree.accountingTypes[category.accountingTypeId].typeId,
                     'accountingTypeId': category.accountingTypeId,
-                    'categoryId': category.parentId ? category.parentId : categoryId,
-                    'subCategoryId': category.parentId ? categoryId : undefined,
+                    'categoryId': category.parentId && parentExists ? category.parentId : categoryId,
+                    'subCategoryId': category.parentId && parentExists ? categoryId : undefined,
                     'amount': 0,
                     'date': date,
                     'initialDate': initialDate
