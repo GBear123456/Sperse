@@ -3490,13 +3490,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     updateMovedHistoricals(items: TransactionStatsDtoExtended[], targetData: CellInfo) {
         items.forEach((item: TransactionStatsDtoExtended) => {
+            this.updateTreePathes(item, true);
             item.cashflowTypeId = targetData.cashflowTypeId;
             item.categoryId = targetData.categoryId;
             item.accountingTypeId = targetData.accountingTypeId;
             item.subCategoryId = targetData.subCategoryId;
-            item.transactionDescriptor = targetData.categoryId || targetData.subCategoryId
-                ? targetData.transactionDescriptor || item.transactionDescriptor
-                : null;
+            item.transactionDescriptor = targetData.transactionDescriptor || item.transactionDescriptor;
             this.addCategorizationLevels(item);
         });
     }
