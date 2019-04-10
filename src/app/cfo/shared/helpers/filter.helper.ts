@@ -1,5 +1,6 @@
 import { BankDto, StatsFilter } from '@shared/service-proxies/service-proxies';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 export class FilterHelpers {
 
@@ -52,9 +53,9 @@ export class FilterHelpers {
         for (let key of keys) {
             let item = filter.items[key];
             if (item && item.value) {
-                let date = new Date(item.value.getTime());
-                date.setTime(date.getTime() - (date.getTimezoneOffset() * 60 * 1000));
-                requestFilter[(key == 'to' ? 'end': 'start') + 'Date'] = date;
+                let date =  new Date(item.value.getTime());
+                DateHelper.removeTimezoneOffset(date);
+                requestFilter[(key == 'to' ? 'end' : 'start') + 'Date'] = date;
             }
         }
     }

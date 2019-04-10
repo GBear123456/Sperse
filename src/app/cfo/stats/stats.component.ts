@@ -35,6 +35,7 @@ import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-selec
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     'selector': 'app-stats',
@@ -596,7 +597,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         if (period.start) {
             let from = new Date(period.start + '-01-01');
-            from.setTime(from.getTime() + from.getTimezoneOffset() * 60 * 1000);
+            DateHelper.addTimezoneOffset(from);
             dateFilter.items['from'].setValue(from, dateFilter);
         } else {
             dateFilter.items['from'].setValue('', dateFilter);
@@ -604,7 +605,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
         if (period.end) {
             let end = new Date(period.end + '-12-31');
-            end.setTime(end.getTime() + end.getTimezoneOffset() * 60 * 1000);
+            DateHelper.addTimezoneOffset(end);
             dateFilter.items['to'].setValue(end, dateFilter);
         } else {
             dateFilter.items['to'].setValue('', dateFilter);

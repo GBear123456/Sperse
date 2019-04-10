@@ -3,8 +3,8 @@ import { FilterItemModel, DisplayElement } from './filter-item.model';
 import { FilterComponent } from './filter-component';
 import { Observable } from 'rxjs';
 import * as _ from 'underscore';
-import * as moment from 'moment-timezone';
 import capitalize from 'underscore.string/capitalize';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 export class FilterModelBase<T extends FilterItemModel> {
     component: Type<FilterComponent>;
@@ -93,13 +93,8 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
         data[this.field] = {};
         _.each(this.items, (item: FilterItemModel, key) => {
             if (item && item.value) {
-                Date.prototype.setHours.apply(item.value,
-                    key == 'to' ? [23, 59, 59, 999] : [0, 0, 0, 0]);
-
                 let clone = new Date(item.value.getTime());
-                clone.setTime(clone.getTime() - (clone.getTimezoneOffset() + (params && params.useUserTimezone ?
-                    moment(clone).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset() : 0)) * 60 * 1000);
-
+                DateHelper.removeTimezoneOffset(clone, true, key);
                 data[this.field][this.operator[key]] = clone;
             }
         });

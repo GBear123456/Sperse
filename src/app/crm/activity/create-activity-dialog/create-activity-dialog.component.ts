@@ -347,7 +347,7 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
 
     getDateWithoutTimezone(date, propertyName = null) {
         if (this.isAllDay) {
-            date = date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate();
+            date = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
             date = moment.utc(date);
 
             if (propertyName === 'startDate')
@@ -356,8 +356,7 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
                 date = date.endOf('day');
 
             return date;
-        }
-        else {
+        } else {
             date.setTime(date.getTime() - ((date.getTimezoneOffset() + moment().utcOffset()) * 60 * 1000));
             return moment.utc(date);
         }

@@ -1,6 +1,5 @@
 /** Core imports */
 import {
-    AfterViewInit,
     ChangeDetectionStrategy, ChangeDetectorRef,
     Component,
     ElementRef,
@@ -8,10 +7,10 @@ import {
     ViewChild,
     ViewEncapsulation
 } from '@angular/core';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 /** Third party imports */
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import { finalize, first, map, tap, switchMap, catchError, publishReplay, refCount } from 'rxjs/operators';
 
@@ -28,8 +27,9 @@ import {
     RecentTenant, TenantEdition
 } from '@shared/service-proxies/service-proxies';
 import { MomentFormatPipe } from '@shared/utils/moment-format.pipe';
-import { DateRangeInterface } from './date-range.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     templateUrl: './host-dashboard.component.html',
@@ -42,17 +42,16 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         './host-dashboard.component.less'
     ],
     encapsulation: ViewEncapsulation.None,
-    animations: [appModuleAnimation()],
-    providers: [ CurrencyPipe, MomentFormatPipe ],
+    animations: [ appModuleAnimation() ],
+    providers: [ CurrencyPipe, DatePipe, MomentFormatPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HostDashboardComponent implements AfterViewInit, OnInit {
+export class HostDashboardComponent implements OnInit {
     @ViewChild('DashboardDateRangePicker') dateRangePickerElement: ElementRef;
-    selectedDateRange: BehaviorSubject<DateRangeInterface> = new BehaviorSubject({
-        startDate: moment().add(-7, 'days').startOf('day'),
-        endDate: moment().endOf('day')
-    });
-    selectedDateRange$: Observable<DateRangeInterface> = this.selectedDateRange.asObservable();
+    selectedDateRange: BehaviorSubject<CalendarValuesModel>;
+    selectedDateRange$: Observable<CalendarValuesModel>;
+    calendarOptions = { allowFutureDates: true };
+    calendarValues: CalendarValuesModel;
     refresh: BehaviorSubject<null> = new BehaviorSubject(null);
     refresh$: Observable<null> = this.refresh.asObservable();
     currency = '$';
@@ -71,8 +70,21 @@ export class HostDashboardComponent implements AfterViewInit, OnInit {
         private _momentFormatPipe: MomentFormatPipe,
         private _currencyPipe: CurrencyPipe,
         public ls: AppLocalizationService,
-        private _changeDetector: ChangeDetectorRef
-    ) {}
+        private _changeDetector: ChangeDetectorRef,
+        private _datePipe: DatePipe
+    ) {
+        const startDate = DateHelper.addTimezoneOffset(moment().subtract(7, 'days').startOf('day').toDate(), true);
+        const endDate = DateHelper.addTimezoneOffset(moment().endOf('day').toDate(), true);
+        this.calendarValues = {
+            from: { value: startDate },
+            to: { value: endDate }
+        };
+        this.selectedDateRange = new BehaviorSubject({
+            from: { value: new Date(startDate) },
+            to: { value: new Date(endDate) }
+        });
+        this.selectedDateRange$ = this.selectedDateRange.asObservable();
+    }
 
     ngOnInit() {
         this.hostDashboardData$ = combineLatest(
@@ -84,11 +96,11 @@ export class HostDashboardComponent implements AfterViewInit, OnInit {
                 this.refreshing = true;
                 this._changeDetector.detectChanges();
             }),
-            switchMap(([, interval, dateRange]: [null, AppIncomeStatisticsDateInterval, DateRangeInterface]) => {
+            switchMap(([, interval, dateRange]: [null, AppIncomeStatisticsDateInterval, CalendarValuesModel]) => {
                 return this._hostDashboardService.getDashboardStatisticsData(
                     interval as IncomeStatisticsDateInterval,
-                    dateRange.startDate,
-                    dateRange.endDate
+                    DateHelper.removeTimezoneOffset(dateRange.from.value, true, 'from'),
+                    DateHelper.removeTimezoneOffset(dateRange.to.value, true, 'to')
                 ).pipe(
                     finalize(() => this.refreshing = false),
                     catchError(() => of(new HostDashboardData()))
@@ -110,24 +122,6 @@ export class HostDashboardComponent implements AfterViewInit, OnInit {
         );
         this.recentTenantsData$ = this.hostDashboardData$.pipe(
             map((data: HostDashboardData) => data.recentTenants || [])
-        );
-    }
-
-    ngAfterViewInit(): void {
-        setTimeout(() => {
-            this.createDateRangePicker();
-        }, 0);
-    }
-
-    createDateRangePicker(): void {
-        $(this.dateRangePickerElement.nativeElement).daterangepicker(
-            $.extend(true, this._dateTimeService.createDateRangePickerOptions(), this.selectedDateRange.value),
-            (start, end) => {
-                this.selectedDateRange.next({
-                    startDate: start,
-                    endDate: end
-                });
-            }
         );
     }
 
@@ -176,7 +170,7 @@ export class HostDashboardComponent implements AfterViewInit, OnInit {
 
     customizeIncomeTooltip = e => {
         let html = '';
-        const isSingleDaySelected = this.selectedDateRange.value.startDate.format('L') === this.selectedDateRange.value.endDate.format('L');
+        const isSingleDaySelected = this.selectedDateRange.value.from.value.getTime() === this.selectedDateRange.value.to.value.getTime();
         if (this.selectedIncomeStatisticsDateInterval.value === AppIncomeStatisticsDateInterval.Daily ||
             isSingleDaySelected) {
             html += moment(e.argument).format('dddd, DD MMMM YYYY');
@@ -184,7 +178,7 @@ export class HostDashboardComponent implements AfterViewInit, OnInit {
             const isLastItem = e.point.index === e.point.series._points.length - 1;
             html += moment(e.argument).format('LL');
             if (isLastItem) {
-                html += ' - ' + this.selectedDateRange.value.endDate.format('LL');
+                html += ' - ' + this._datePipe.transform(this.selectedDateRange.value.to.value, 'MMMM dd, yyyy');
             } else {
                 const nextItem = e.point.series._points[e.point.index + 1];
                 html += ' - ' + moment(nextItem[0]).format('LL');
@@ -192,5 +186,9 @@ export class HostDashboardComponent implements AfterViewInit, OnInit {
         }
         html += `<br/>Income: <span class="bold">${this._currencyPipe.transform(e.originalValue)}</span>`;
         return { html: html };
+    }
+
+    changeDateRange(dateRange: CalendarValuesModel) {
+        this.selectedDateRange.next(dateRange);
     }
 }

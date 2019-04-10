@@ -2,6 +2,8 @@ import { Component, AfterViewInit, OnDestroy, Injector, Input, Output, EventEmit
 import { AppComponentBase } from '../../app-component-base';
 import * as moment from 'moment-timezone';
 import * as JQCalendarInit from 'jquery-calendar';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'calendar',
@@ -18,9 +20,9 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
         this._options = options;
     }
 
-    private _values: any;
+    private _values: CalendarValuesModel;
     @Input()
-    set values(values: any) {
+    set values(values: CalendarValuesModel) {
         this._values = values;
         this.setDateRageValues();
     }
@@ -31,9 +33,8 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
         super(injector);
 
         moment.tz.setDefault(undefined);
-        window['getUserTimezoneDate'] = (date) => {
-            date.setTime(date.getTime() + (date.getTimezoneOffset() +
-                moment(date).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset()) * 60 * 1000);
+        window['getUserTimezoneDate'] = (date: Date) => {
+            DateHelper.addTimezoneOffset(date, true);
             return date;
         };
     }
@@ -62,6 +63,7 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
             (event, obj) => {
                 this._values.from.value = new Date(obj.date1.getTime());
                 this._values.to.value = new Date(obj.date2.getTime());
+                this.onChange.emit(this._values);
             }
         );
         this.setDateRageValues();

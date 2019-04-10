@@ -32,6 +32,7 @@ import {
     InstanceType
 } from '@shared/service-proxies/service-proxies';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -437,7 +438,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
         if (period.start) {
             let from = new Date(period.start + '-01-01');
-            from.setTime(from.getTime() + from.getTimezoneOffset() * 60 * 1000);
+            DateHelper.addTimezoneOffset(from);
             dateFilter.items['from'].setValue(from, dateFilter);
         } else {
             dateFilter.items['from'].setValue('', dateFilter);
@@ -445,7 +446,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
         if (period.end) {
             let end = new Date(period.end + '-12-31');
-            end.setTime(end.getTime() + end.getTimezoneOffset() * 60 * 1000);
+            DateHelper.addTimezoneOffset(end);
             dateFilter.items['to'].setValue(end, dateFilter);
         } else {
             dateFilter.items['to'].setValue('', dateFilter);
