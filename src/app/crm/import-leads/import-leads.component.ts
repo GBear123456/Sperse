@@ -340,7 +340,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private parseCurrency(field, value, dataSource) {
-        let amount = parseFloat(value.replace(/\D/g, ''));
+        let amount = isNaN(value) ? parseFloat(value.replace(/\D/g, '')) : value;
         if (amount)
             amount *= ({
                 'H': 100,

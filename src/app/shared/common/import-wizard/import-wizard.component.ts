@@ -734,7 +734,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         if (field == 'phone')
             return this._phoneNumberService.isPhoneNumberValid(value);
         else if (field == 'revenue')
-            return !value || !isNaN(parseFloat(value.replace(/\D/g, '')));
+            return !value || !isNaN(value) || !isNaN(parseFloat(value.replace(/\D/g, '')));
         else
             return !value || AppConsts.regexPatterns[field].test(value);
     }
