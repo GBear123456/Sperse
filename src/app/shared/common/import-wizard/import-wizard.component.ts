@@ -68,7 +68,7 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
     private files: UploadFile[] = [];
     private duplicateCounts: any = {};
     private reviewGroups: any = [];
-    private validateFieldList: string[] = ['email', 'phone', 'url'];
+    private validateFieldList: string[] = ['email', 'phone', 'url', 'revenue'];
     private invalidRowKeys: any = {};
     private similarFieldsIndex: any = {};
 
@@ -733,8 +733,8 @@ export class ImportWizardComponent extends AppComponentBase implements OnInit, A
         let value = dataCell.value;
         if (field == 'phone')
             return this._phoneNumberService.isPhoneNumberValid(value);
-        else if (field == 'annualRevenue')
-            return !value || !isNaN(parseFloat(value));
+        else if (field == 'revenue')
+            return !value || !isNaN(parseFloat(value.replace(/\D/g, '')));
         else
             return !value || AppConsts.regexPatterns[field].test(value);
     }
