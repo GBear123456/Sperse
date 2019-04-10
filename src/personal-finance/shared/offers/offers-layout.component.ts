@@ -67,6 +67,7 @@ import { ChooserFilterSetting, ChooserDesign, ChooserType } from '@root/personal
 import { ChooserOption } from '@root/personal-finance/shared/offers/filters/chooser-filter/chooser-filter.component';
 import { ScoreFilterSetting } from '@root/personal-finance/shared/offers/filters/filters-settings/score-filter-setting';
 import { CreditScoreItem } from '@root/personal-finance/shared/offers/filters/interfaces/score-filter.interface';
+import { AppConsts } from '@shared/AppConsts';
 
 export class FilterValues {
     category: OfferFilterCategory;
@@ -103,7 +104,8 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     offers$: Observable<any>;
     displayedOffers$: Observable<any>;
 
-    hideFilters = true;
+    isMobile = AppConsts.isMobile;
+    hideFilters = this.isMobile;
     offersCount: number;
     offersAreLoading = false;
     sortings = [

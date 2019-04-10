@@ -15,7 +15,7 @@
             </div>
             <!--Default left section-->
             <div *ngIf="leftRef.childNodes.length === 0" class="sticky">
-                <h2 class="text-left filters-toogle" (click)="hideFilters = !hideFilters">
+                <h2 class="text-left filters-toogle" (click)="hideFilters = !hideFilters && isMobile">
                     {{ ls.l('Refine_Your_Search') }}<i class="mat-select-arrow" [ngClass]="{collapsed: hideFilters}"></i>
                 </h2>
                 <dx-scroll-view showScrollbar="onHover" [height]="getFilterScrollHeight()">

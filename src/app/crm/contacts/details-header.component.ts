@@ -345,7 +345,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     addEntity(event?) {
-        if (event && event.offsetX > 155)
+        if (event && event.offsetX > event.target.offsetWidth - 32)
             return this.addContextComponent
                 .instance.option('visible', true);
 
