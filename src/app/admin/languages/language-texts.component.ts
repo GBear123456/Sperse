@@ -7,7 +7,7 @@ import map from 'lodash/map';
 import filter from 'lodash/filter';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppService } from '@app/app.service';

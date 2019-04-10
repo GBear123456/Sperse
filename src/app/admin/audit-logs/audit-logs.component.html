@@ -1,75 +1,46 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig"></app-headline>
 
-    <div class="wrapper">
-        <mat-tab-group>
-            <mat-tab label="{{l('OperationLogs')}}">
-                <dx-scroll-view showScrollbar="onHover">
-                    <div id="operationsLogsGridContainer">
-                        <dx-data-grid id="operationsLogsGrid"
-                                      [remoteOperations]="true"
-                                      [dataSource]="operationLogsDataSource"
-                                      [allowColumnReordering]="true"
-                                      [columnAutoWidth]="true"
-                                      [allowColumnResizing]="true"
-                                      [hoverStateEnabled]="true"
-                                      [pager]="defaultGridPagerConfig">
-                            <dxi-column caption="{{l('Browser')}}" width="350px" dataField="browserInfo" cellTemplate="browserInfoTemplate"></dxi-column>
-                            <dxi-column caption="{{l('Client')}}" dataField="clientName"></dxi-column>
-                            <dxi-column caption="{{l('IpAddress')}}" dataField="clientIpAddress"></dxi-column>
-                            <dxi-column caption="{{l('Duration')}}" dataField="executionDuration" cellTemplate="executionDurationTemplate"></dxi-column>
-                            <dxi-column caption="{{l('Action')}}" dataField="methodName"></dxi-column>
-                            <dxi-column caption="{{l('Service')}}" dataField="serviceName"></dxi-column>
-                            <dxi-column caption="{{l('UserName')}}" dataField="userName"></dxi-column>
-                            <dxi-column caption="{{l('Time')}}" dataField="executionTime" dataType="datetime" sortOrder="desc" sortIndex="0"></dxi-column>
-                            <dxi-column caption="" width="30px" cellTemplate="statusTemplate"></dxi-column>
-                            <dxi-column caption="" width="45px" alignment="center" cellTemplate="editTemplate"></dxi-column>
-                            <ng-container *dxTemplate="let record of 'editTemplate'">
-                                <i class="fa fa-search show-details" (click)="showAuditLogDetails(record)"></i>
-                            </ng-container>
-                            <ng-container *dxTemplate="let record of 'statusTemplate'">
-                                <i *ngIf="record.exception" class="fa fa-warning" style="color: red;"></i>
-                                <i *ngIf="!record.exception" class="fa fa-check-circle" style="color: #37d749;"></i>
-                            </ng-container>
-                            <ng-container *dxTemplate="let browser of 'browserInfoTemplate'">
-                                <div class="truncated" title="{{browser.value}}">
-                                    {{browser.value}}
-                                </div>
-                            </ng-container>
-                            <ng-container *dxTemplate="let duration of 'executionDurationTemplate'">
-                                {{duration.value}} ms
-                            </ng-container>
-                        </dx-data-grid>
-                    </div>
-                </dx-scroll-view>
-            </mat-tab>
-
-            <mat-tab label="{{l('ChangeLogs')}}">
-                <dx-scroll-view showScrollbar="onHover">
-                    <div id="changeLogsGridContainer">
-                        <dx-data-grid id="changeLogsGrid"
-                                      [remoteOperations]="true"
-                                      [dataSource]="changeLogsDataSource"
-                                      [allowColumnReordering]="true"
-                                      [columnAutoWidth]="true"
-                                      [allowColumnResizing]="true"
-                                      [hoverStateEnabled]="true"
-                                      [pager]="defaultGridPagerConfig">
-                            <dxi-column caption="{{l('Time')}}" dataField="changeTime"></dxi-column>
-                            <dxi-column caption="{{l('UserName')}}" dataField="userName"></dxi-column>
-                            <dxi-column caption="{{l('Object')}}" dataField="entityTypeFullName"></dxi-column>
-                            <dxi-column caption="{{l('Action')}}" dataField="changeTypeName"></dxi-column>
-                            <dxi-column caption="" dataField="showDetailsTemplate"></dxi-column>
-                            <ng-container *dxTemplate="let record of 'showDetailsTemplate'">
-                                <i class="fa fa-search show-details" (click)="showAuditLogDetails(record)"></i>
-                            </ng-container>
-                        </dx-data-grid>
-                    </div>
-                </dx-scroll-view>
-            </mat-tab>
-        </mat-tab-group>
+    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
+        <div class="portlet-body">
+            <dx-scroll-view showScrollbar="onHover">
+                <div id="operationsLogsGridContainer">
+                    <dx-data-grid id="operationsLogsGrid"
+                                  [remoteOperations]="true"
+                                  [dataSource]="operationLogsDataSource"
+                                  [allowColumnReordering]="true"
+                                  [columnAutoWidth]="true"
+                                  [allowColumnResizing]="true"
+                                  [hoverStateEnabled]="true"
+                                  [pager]="defaultGridPagerConfig">
+                        <dxi-column caption="{{l('Browser')}}" width="350px" dataField="browserInfo" cellTemplate="browserInfoTemplate"></dxi-column>
+                        <dxi-column caption="{{l('Client')}}" dataField="clientName"></dxi-column>
+                        <dxi-column caption="{{l('IpAddress')}}" dataField="clientIpAddress"></dxi-column>
+                        <dxi-column caption="{{l('Duration')}}" dataField="executionDuration" cellTemplate="executionDurationTemplate"></dxi-column>
+                        <dxi-column caption="{{l('Action')}}" dataField="methodName"></dxi-column>
+                        <dxi-column caption="{{l('Service')}}" dataField="serviceName"></dxi-column>
+                        <dxi-column caption="{{l('UserName')}}" [allowSorting]="false" dataField="userName"></dxi-column>
+                        <dxi-column caption="{{l('Time')}}" dataField="executionTime" dataType="datetime" sortOrder="desc" sortIndex="0"></dxi-column>
+                        <dxi-column caption="" width="30px" cellTemplate="statusTemplate"></dxi-column>
+                        <dxi-column caption="" width="45px" alignment="center" cellTemplate="editTemplate"></dxi-column>
+                        <ng-container *dxTemplate="let record of 'editTemplate'">
+                            <i class="fa fa-search show-details" (click)="openAuditLogDetailModal(record.data)"></i>
+                        </ng-container>
+                        <ng-container *dxTemplate="let record of 'statusTemplate'">
+                            <i *ngIf="record.exception" class="fa fa-warning" style="color: red;"></i>
+                            <i *ngIf="!record.exception" class="fa fa-check-circle" style="color: #37d749;"></i>
+                        </ng-container>
+                        <ng-container *dxTemplate="let browser of 'browserInfoTemplate'">
+                            <div class="truncated" title="{{browser.value}}">
+                                {{browser.value}}
+                            </div>
+                        </ng-container>
+                        <ng-container *dxTemplate="let duration of 'executionDurationTemplate'">
+                            {{duration.value}} ms
+                        </ng-container>
+                    </dx-data-grid>
+                </div>
+            </dx-scroll-view>
+        </div>
     </div>
-
-    <auditLogDetailModal #auditLogDetailModal></auditLogDetailModal>
-    <entityChangeDetailModal #entityChangeDetailModal></entityChangeDetailModal>
 </div>

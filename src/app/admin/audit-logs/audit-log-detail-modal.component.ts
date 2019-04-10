@@ -1,24 +1,28 @@
-import { Component, Injector, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { ChangeDetectionStrategy, Component, Injector, OnInit } from '@angular/core';
 import { AuditLogListDto } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
-import { ModalDirective } from 'ngx-bootstrap';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
     selector: 'auditLogDetailModal',
-    templateUrl: './audit-log-detail-modal.component.html'
+    templateUrl: './audit-log-detail-modal.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuditLogDetailModalComponent extends AppComponentBase {
-
-    @ViewChild('auditLogDetailModal') modal: ModalDirective;
-
-    active = false;
+export class AuditLogDetailModalComponent extends AppModalDialogComponent implements OnInit {
     auditLog: AuditLogListDto;
 
     constructor(
         injector: Injector
     ) {
         super(injector);
+        this.data = injector.get(MAT_DIALOG_DATA);
+        this.data.title = this.l('AuditLogDetail');
+    }
+
+    ngOnInit() {
+        const self = this;
+        self.auditLog = this.data.record;
     }
 
     getExecutionTime(): string {
@@ -41,16 +45,7 @@ export class AuditLogDetailModalComponent extends AppComponentBase {
         }
     }
 
-    show(record: AuditLogListDto): void {
-        const self = this;
-        self.active = true;
-        self.auditLog = record;
-
-        self.modal.show();
-    }
-
     close(): void {
-        this.active = false;
-        this.modal.hide();
+        this.dialogRef.close();
     }
 }
