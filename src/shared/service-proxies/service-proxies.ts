@@ -19285,6 +19285,63 @@ export class PipelineServiceProxy {
         }
         return _observableOf<PipelineDto[]>(<any>null);
     }
+
+    /**
+     * @pipelineId (optional) 
+     * @entityId (optional) 
+     * @sortOrder (optional) 
+     * @return Success
+     */
+    updateEntitySortOrder(pipelineId: number | null | undefined, entityId: number | null | undefined, sortOrder: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/UpdateEntitySortOrder?";
+        if (pipelineId !== undefined)
+            url_ += "pipelineId=" + encodeURIComponent("" + pipelineId) + "&"; 
+        if (entityId !== undefined)
+            url_ += "entityId=" + encodeURIComponent("" + entityId) + "&"; 
+        if (sortOrder !== undefined)
+            url_ += "sortOrder=" + encodeURIComponent("" + sortOrder) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateEntitySortOrder(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateEntitySortOrder(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateEntitySortOrder(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -29700,6 +29757,7 @@ export interface IMoveActivityDto {
 export class TransitionActivityDto implements ITransitionActivityDto {
     id!: number;
     stageId!: number | undefined;
+    sortOrder!: number | undefined;
 
     constructor(data?: ITransitionActivityDto) {
         if (data) {
@@ -29714,6 +29772,7 @@ export class TransitionActivityDto implements ITransitionActivityDto {
         if (data) {
             this.id = data["id"];
             this.stageId = data["stageId"];
+            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -29728,6 +29787,7 @@ export class TransitionActivityDto implements ITransitionActivityDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["stageId"] = this.stageId;
+        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
@@ -29735,6 +29795,7 @@ export class TransitionActivityDto implements ITransitionActivityDto {
 export interface ITransitionActivityDto {
     id: number;
     stageId: number | undefined;
+    sortOrder: number | undefined;
 }
 
 export class AssignActivityUserDto implements IAssignActivityUserDto {
@@ -46045,6 +46106,7 @@ export interface ICreateInvoiceInput {
 export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     quantity!: number;
     rate!: number;
+    unitId!: string;
     description!: string | undefined;
     sortOrder!: number;
 
@@ -46061,6 +46123,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         if (data) {
             this.quantity = data["quantity"];
             this.rate = data["rate"];
+            this.unitId = data["unitId"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -46077,6 +46140,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         data = typeof data === 'object' ? data : {};
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
+        data["unitId"] = this.unitId;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -46086,6 +46150,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
 export interface ICreateInvoiceLineInput {
     quantity: number;
     rate: number;
+    unitId: string;
     description: string | undefined;
     sortOrder: number;
 }
@@ -46166,6 +46231,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     id!: number | undefined;
     quantity!: number | undefined;
     rate!: number | undefined;
+    unitId!: string | undefined;
     amount!: number | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
@@ -46184,6 +46250,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.id = data["id"];
             this.quantity = data["quantity"];
             this.rate = data["rate"];
+            this.unitId = data["unitId"];
             this.amount = data["amount"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
@@ -46202,6 +46269,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["id"] = this.id;
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
+        data["unitId"] = this.unitId;
         data["amount"] = this.amount;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
@@ -46213,6 +46281,7 @@ export interface IInvoiceLineInfo {
     id: number | undefined;
     quantity: number | undefined;
     rate: number | undefined;
+    unitId: string | undefined;
     amount: number | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
@@ -46290,6 +46359,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     id!: number | undefined;
     quantity!: number;
     rate!: number;
+    unitId!: string;
     description!: string | undefined;
     sortOrder!: number;
 
@@ -46307,6 +46377,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
             this.id = data["id"];
             this.quantity = data["quantity"];
             this.rate = data["rate"];
+            this.unitId = data["unitId"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -46324,6 +46395,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
         data["id"] = this.id;
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
+        data["unitId"] = this.unitId;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -46334,6 +46406,7 @@ export interface IUpdateInvoiceLineInput {
     id: number | undefined;
     quantity: number;
     rate: number;
+    unitId: string;
     description: string | undefined;
     sortOrder: number;
 }
@@ -48151,6 +48224,7 @@ export interface IImportOutput {
 export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
     leadId!: number;
     stageId!: number;
+    sortOrder!: number | undefined;
 
     constructor(data?: IUpdateLeadStageInfo) {
         if (data) {
@@ -48165,6 +48239,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
         if (data) {
             this.leadId = data["leadId"];
             this.stageId = data["stageId"];
+            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -48179,6 +48254,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
         data = typeof data === 'object' ? data : {};
         data["leadId"] = this.leadId;
         data["stageId"] = this.stageId;
+        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
@@ -48186,6 +48262,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
 export interface IUpdateLeadStageInfo {
     leadId: number;
     stageId: number;
+    sortOrder: number | undefined;
 }
 
 export class ProcessLeadInput implements IProcessLeadInput {
@@ -51055,6 +51132,7 @@ export interface ISetAmountInfo {
 export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
     orderId!: number;
     stageId!: number;
+    sortOrder!: number | undefined;
 
     constructor(data?: IUpdateOrderStageInfo) {
         if (data) {
@@ -51069,6 +51147,7 @@ export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
         if (data) {
             this.orderId = data["orderId"];
             this.stageId = data["stageId"];
+            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -51083,6 +51162,7 @@ export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
         data = typeof data === 'object' ? data : {};
         data["orderId"] = this.orderId;
         data["stageId"] = this.stageId;
+        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
@@ -51090,6 +51170,7 @@ export class UpdateOrderStageInfo implements IUpdateOrderStageInfo {
 export interface IUpdateOrderStageInfo {
     orderId: number;
     stageId: number;
+    sortOrder: number | undefined;
 }
 
 export class CancelOrderInfo implements ICancelOrderInfo {
@@ -61353,6 +61434,8 @@ export enum OfferAttribute {
 }
 
 export enum OfferFlag {
+    Special = "Special", 
+    Newest = "Newest", 
     Choice = "Choice", 
     Best = "Best", 
     TravelAndAirlineMiles = "TravelAndAirlineMiles", 
@@ -61372,8 +61455,6 @@ export enum OfferFlag {
     HasNoRewards = "HasNoRewards", 
     ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     ZeroPercentageInterestTransfers = "ZeroPercentageInterestTransfers", 
-    Special = "Special", 
-    Newest = "Newest", 
 }
 
 export enum Module {
