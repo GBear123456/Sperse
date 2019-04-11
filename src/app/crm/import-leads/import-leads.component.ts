@@ -291,7 +291,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private setFieldIfDefined(value, fieldName, dataSource) {
-        value && (dataSource[fieldName] = value);
+        (value || !isNaN(value)) && (dataSource[fieldName] = value);
     }
 
     private parseFullNameIntoDataSource(fullName, dataSource) {
@@ -340,7 +340,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private parseCurrency(field, value, dataSource) {
-        let amount = parseFloat(value);
+        let amount = isNaN(value) ? parseFloat(value.replace(/\D/g, '')) : value;
         if (amount)
             amount *= ({
                 'H': 100,
@@ -349,7 +349,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 'B': 1000000000
             }[value.trim().split('').pop()] || 1);
 
-        this.setFieldIfDefined(amount || value, field.mappedField, dataSource);
+        this.setFieldIfDefined(isNaN(amount) ? value : amount, field.mappedField, dataSource);
         return true;
     }
 
