@@ -227,6 +227,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
                     id: row.id,
                     quantity: row.Quantity,
                     rate: row.Rate,
+                    unitId: 'UT',
                     description: row.Description,
                     sortOrder: index
                 });
@@ -242,6 +243,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
                 return new CreateInvoiceLineInput({
                     quantity: row.Quantity,
                     rate: row.Rate,
+                    unitId: 'UT',
                     description: row.Description,
                     sortOrder: index
                 });
