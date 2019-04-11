@@ -93,7 +93,7 @@
                         [(selectedEntities)]="selectedOrders"
                         (onEntityStageChanged)="onOrderStageChanged($event)"
                         (onStagesLoaded)="onStagesLoaded($event)"
-                        (onCardClick)="onCardClick($event)">
+                        (onCardClick)="onCardClick($event.entity)">
                         Loading...
                     </app-pipeline>
                 </div>
