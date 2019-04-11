@@ -90,7 +90,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             this.dueDate = invoice.DueDate;
             this.contactId = invoice.ContactId;
             this.disabledForUpdate = this.status != CreateInvoiceInputStatus.Draft
-                && this.status != CreateInvoiceInputStatus.Submitted;
+                && this.status != CreateInvoiceInputStatus.Final;
 
             this._invoiceProxy.getInvoiceInfo(invoice.Id).subscribe((res) => {
                 this.description = res.description;
