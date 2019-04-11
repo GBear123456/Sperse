@@ -347,4 +347,9 @@ export class TypesListComponent extends AppComponentBase implements OnInit {
         return this.permission.isGranted('Pages.CRM.Customers.ManageListsAndTags') &&
             (!this.bulkUpdateMode || this.permission.isGranted('Pages.CRM.BulkUpdates'));
     }
+
+    radioClick(event, cell) {
+        event.stopPropagation();
+        this.selectedTypes = [cell.data.id];
+    }
 }
