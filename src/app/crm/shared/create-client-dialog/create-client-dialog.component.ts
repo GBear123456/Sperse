@@ -902,8 +902,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
                     return {
                         id: stage.id,
                         name: stage.name,
-                        text: stage.name,
-                        sortOrder: stage.sortOrder
+                        index: stage.sortOrder
                     };
                 });
             });

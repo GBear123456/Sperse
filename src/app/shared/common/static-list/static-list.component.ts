@@ -37,7 +37,9 @@ export class StaticListComponent extends AppComponentBase {
     @Input('list') 
     set list(value: any[]) {
         this._list = value.map((item) => {
-            return _.extend(item, {name: startCase(item.name.toLowerCase())});
+            return _.extend(item, {
+                name: startCase(item.name.toLowerCase())
+            });
         });
     }
     get list(): any[] {
