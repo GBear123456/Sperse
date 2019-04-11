@@ -61953,7 +61953,7 @@ export enum GetUserInstanceInfoOutputStatus {
 
 export enum CreateInvoiceInputStatus {
     Draft = "Draft", 
-    Submitted = "Submitted", 
+    Final = "Final", 
     Sent = "Sent", 
     Paid = "Paid", 
     Canceled = "Canceled", 
@@ -61961,7 +61961,7 @@ export enum CreateInvoiceInputStatus {
 
 export enum InvoiceInfoStatus {
     Draft = "Draft", 
-    Submitted = "Submitted", 
+    Final = "Final", 
     Sent = "Sent", 
     Paid = "Paid", 
     Canceled = "Canceled", 
@@ -61969,7 +61969,7 @@ export enum InvoiceInfoStatus {
 
 export enum UpdateInvoiceInputStatus {
     Draft = "Draft", 
-    Submitted = "Submitted", 
+    Final = "Final", 
     Sent = "Sent", 
     Paid = "Paid", 
     Canceled = "Canceled", 
@@ -61977,7 +61977,7 @@ export enum UpdateInvoiceInputStatus {
 
 export enum UpdateInvoiceStatusInputStatus {
     Draft = "Draft", 
-    Submitted = "Submitted", 
+    Final = "Final", 
     Sent = "Sent", 
     Paid = "Paid", 
     Canceled = "Canceled", 
