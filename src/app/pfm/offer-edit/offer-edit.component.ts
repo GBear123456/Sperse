@@ -681,7 +681,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
                 const offerPublicLink = AppConsts.appBaseUrl + '/personal-finance/offers/' + offerCategory + '/' + offerId;
                 const el = document.createElement('div');
                 el.innerHTML = `<h5>${this.ls.ls('PFM', 'OfferLinkWillBeSentToUsers')}:</h5>
-                                <a href="${offerPublicLink}" target="_blank">${offerPublicLink}</a>`;
+                                <a href="${offerPublicLink}" target="_blank" style="font-weight:600;">${offerPublicLink}</a>`;
                 const swalParams: any = {
                     title: '',
                     content: el,
