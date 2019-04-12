@@ -725,8 +725,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return {
                 id: this._pipelineService.getPipeline(
                     this.pipelinePurposeId).id + ':' + stage.id,
-                name: stage.name,
-                text: stage.name
+                index: stage.sortOrder,
+                name: stage.name
             };
         });
 

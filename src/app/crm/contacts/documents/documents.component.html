@@ -62,7 +62,8 @@
                     <crm-document-types-list  #documentTypeslist
                         [selectedItem]="data.data.typeId"
                         [documentTypes]="documentTypes"
-                        (onItemSelected)="onDocumentTypeSelected(documentTypeslist.selectedDocumentTypeId, data.data)">
+                        (onItemSelected)="onDocumentTypeSelected(documentTypeslist.selectedDocumentTypeId, data.data)"
+                        (onListUpdated)="onTypeListUpdated($event)">
                     </crm-document-types-list>
                 </span>
             </div>

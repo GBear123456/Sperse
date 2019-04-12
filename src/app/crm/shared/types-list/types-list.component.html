@@ -39,7 +39,19 @@
                           (onRowInserted)="onRowInserted($event)"
                           (onEditorPrepared)="editorPrepared($event)"
                           [ngClass]="(!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
+                <dxi-column cellTemplate="radiogroup" width="50px" allowEditing="false" [visible]="selectedKeys.length"
+                    allowFiltering="false" allowFixing="true" allowHeaderFiltering="false" allowHiding="false" 
+                    allowReordering="false" allowResizing="false" allowSearch="false" allowSorting="false"></dxi-column>
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>
+
+                <div *dxTemplate="let cellData of 'radiogroup'">
+                    <label class="radio-container">
+                        <input type="radio" name="selectType" [checked]="selectedTypes[0] == cellData.data.id" value="{{cellData.data.id}}" 
+                            (click)="radioClick($event, cellData)" (mousedown)="$event.stopPropagation();">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+
                 <dxo-editing mode="row"
                              [texts]="{confirmDeleteMessage: ''}"
                              [allowUpdating]="true"

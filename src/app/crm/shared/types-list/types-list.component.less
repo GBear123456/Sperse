@@ -41,6 +41,70 @@
         cursor: pointer;
         color: #00AEEF;
     }
+    
+    /deep/ dx-tree-list {
+        /* Customize radio container */
+        .dx-editor-cell {
+            .radio-container {
+                .checkmark {
+                    left: 23px;
+                }
+            }
+        }
+
+        .radio-container {
+            height: 20px;
+            display: block;
+            position: relative;
+            margin-bottom: 0px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+
+            &:hover input ~ .checkmark {
+                background-color: #ccc;
+            }
+
+            input {
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+                height: 0;
+                width: 0;
+
+                &:checked ~ .checkmark {
+                    background-color: #2196F3;
+                }
+                &:checked ~ .checkmark:after {
+                   display: block;
+                }
+
+            }
+
+            .checkmark {
+                position: absolute;
+                top: 0;
+                right: 0;
+                height: 20px;
+                width: 20px;
+                background-color: #eee;
+                border-radius: 50%;
+                &:after {
+                    content: "";
+                    position: absolute;
+                    display: none;
+                    top: 7px;
+                    left: 7px;
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                    background: white;
+                }
+            }
+        }
+    }
 
     /deep/ .dx-widget {
         .dx-placeholder {

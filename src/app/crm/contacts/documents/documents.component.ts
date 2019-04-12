@@ -691,4 +691,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             this.actionsTooltip.instance.hide();
         }
     }
+
+    onTypeListUpdated(list) {
+        this._documentTypeService['data'] = this.documentTypes = list;
+    }
 }

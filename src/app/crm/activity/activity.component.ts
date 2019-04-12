@@ -553,8 +553,8 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 this.stages = result.stages.map((stage) => {
                     return {
                         id: stage.id,
-                        name: stage.name,
-                        text: stage.name
+                        index: stage.sortOrder,
+                        name: stage.name
                     };
                 });
             });

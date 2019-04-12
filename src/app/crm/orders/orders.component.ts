@@ -481,8 +481,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             return {
                 id: this._pipelineService.getPipeline(
                     this.pipelinePurposeId).id + ':' + stage.id,
+                index: stage.sortOrder,
                 name: stage.name,
-                text: stage.name
             };
         });
 
