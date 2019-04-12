@@ -19089,12 +19089,15 @@ export class PipelineServiceProxy {
 
     /**
      * @purposeId (optional) 
+     * @contactGroupId (optional) 
      * @return Success
      */
-    getPipelineDefinitions(purposeId: string | null | undefined): Observable<PipelineDto[]> {
+    getPipelineDefinitions(purposeId: string | null | undefined, contactGroupId: string | null | undefined): Observable<PipelineDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinitions?";
         if (purposeId !== undefined)
             url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -50010,6 +50013,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     logoUrl!: string | undefined;
     status!: OfferDetailsForEditDtoStatus | undefined;
     type!: OfferDetailsForEditDtoType | undefined;
+    isPublished!: boolean | undefined;
 
     constructor(data?: IOfferDetailsForEditDto) {
         if (data) {
@@ -50051,6 +50055,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             this.logoUrl = data["logoUrl"];
             this.status = data["status"];
             this.type = data["type"];
+            this.isPublished = data["isPublished"];
         }
     }
 
@@ -50092,6 +50097,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
         data["logoUrl"] = this.logoUrl;
         data["status"] = this.status;
         data["type"] = this.type;
+        data["isPublished"] = this.isPublished;
         return data; 
     }
 }
@@ -50114,6 +50120,7 @@ export interface IOfferDetailsForEditDto {
     logoUrl: string | undefined;
     status: OfferDetailsForEditDtoStatus | undefined;
     type: OfferDetailsForEditDtoType | undefined;
+    isPublished: boolean | undefined;
 }
 
 export class OfferCategoryDto implements IOfferCategoryDto {
@@ -61085,6 +61092,8 @@ export enum OfferAttribute {
 }
 
 export enum OfferFlag {
+    Special = "Special", 
+    Newest = "Newest", 
     Choice = "Choice", 
     Best = "Best", 
     TravelAndAirlineMiles = "TravelAndAirlineMiles", 
@@ -61104,8 +61113,6 @@ export enum OfferFlag {
     HasNoRewards = "HasNoRewards", 
     ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases", 
     ZeroPercentageInterestTransfers = "ZeroPercentageInterestTransfers", 
-    Special = "Special", 
-    Newest = "Newest", 
 }
 
 export enum Module {
