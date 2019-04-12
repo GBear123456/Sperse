@@ -1,5 +1,13 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig">
+        <dx-select-box 
+            accessKey="contactGroup"
+            [rtlEnabled]="true"
+            [items]="contactGroups"
+            [width]="'300px'"
+            [(value)]="selectedContactGroup"
+            (onValueChanged)="onContactGroupChanged($event)">
+        </dx-select-box>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-static-list
@@ -103,8 +111,9 @@
                         [pipelinePurposeId]="pipelinePurposeId"
                         [filterModelStages]="filterModelStages"
                         [(selectedEntities)]="selectedLeads"
+                        [contactGroupId]="contactGroupId"
                         (onEntityStageChanged)="onLeadStageChanged($event)"
-                        (onStagesLoaded)="onStagesLoaded($event)"
+                        (onStagesLoaded)="onStagesLoaded($event)"                        
                         (onCardClick)="onCardClick($event)">
                         Loading...
                     </app-pipeline>

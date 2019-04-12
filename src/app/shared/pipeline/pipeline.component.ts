@@ -27,6 +27,7 @@ import { PipelineService } from './pipeline.service';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import dxTooltip from 'devextreme/ui/tooltip';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     selector: 'app-pipeline',
@@ -75,6 +76,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.dataSource$.next(dataSource);
     }
     @Input() pipelinePurposeId: string;
+    @Input() get contactGroupId(): ContactGroup { 
+        return this._contactGroupId;
+    }
+    set contactGroupId(value: ContactGroup) { 
+        if (this._contactGroupId) {
+            this.destroyPipeline();
+            setTimeout(this.initPipeline.bind(this), 100);
+        }
+
+        this._contactGroupId = value;        
+    }
 
     pipeline: PipelineDto;
     stages: StageDto[];
@@ -82,6 +94,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     private queryWithSearch: any = [];
     private readonly STAGE_PAGE_COUNT = 5;
     private subscribers = [];
+    private _contactGroupId: ContactGroup;
 
     constructor(injector: Injector,
         private _dragulaService: DragulaService,
@@ -93,7 +106,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    ngOnInit() {
+    initPipeline() {
         this.startLoading();
         this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             if (value[0] == this.dragulaName) {
@@ -134,15 +147,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             )
         );
         this.subscribers.push(
-            this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId).pipe(
-                map((pipeline) => {
-                    return this._dataSource ?
-                        of(pipeline) :
-                        of(pipeline).pipe(delayWhen(() => {
-                            return this.dataSource$;
-                        }));
-                }),
-                mergeMap(pipeline => pipeline)
+            this._pipelineService.getPipelineDefinitionObservable(
+                this.pipelinePurposeId, this.contactGroupId).pipe(
+                    map((pipeline) => {
+                        return this._dataSource ?
+                            of(pipeline) :
+                            of(pipeline).pipe(delayWhen(() => {
+                                return this.dataSource$;
+                            }));
+                    }),
+                    mergeMap(pipeline => pipeline)
             ).subscribe((pipeline: PipelineDto) => {
                 this.pipeline = pipeline;
                 this.createStageInput.pipelineId = this.pipeline.id;
@@ -211,6 +225,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     }
 
+    ngOnInit() {
+        this.initPipeline();
+    }
+
     refresh(quiet = false, stageId?: number, skipAlreadyLoadedChecking = false) {
         this.selectedEntities = [];
         this.stageId = stageId;
@@ -277,12 +295,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 filter['Id'] = {lt: stage['lastEntityId']};
 
             dataSource.pageSize(this.STAGE_PAGE_COUNT);
-            dataSource['_store']['_url'] =
+            dataSource['_store']['_url'] = 
                 this.getODataUrl(this._dataSource.uri,
                     this.queryWithSearch.concat({and: [
                         _.extend(filter, this._dataSource.customFilter)
                     ]})
-            );
+                );
             dataSource.sort({getter: 'Id', desc: true});
             response = from(dataSource.load()).pipe(
                 finalize(() => {
@@ -331,7 +349,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 type: 'odata',
                 url: this.getODataUrl(this.totalsURI, filter),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
+                    request.params.contactGroupId = this.contactGroupId;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -393,9 +412,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    ngOnDestroy() {
+    destroyPipeline() {
         this._dragulaService.destroy(this.dragulaName);
         this.subscribers.forEach((sub) => sub.unsubscribe());
+        this.subscribers = [];
+    }
+
+    ngOnDestroy() {
+        this.destroyPipeline();
     }
 
     getDateWithTimezone(utcDateTime) {

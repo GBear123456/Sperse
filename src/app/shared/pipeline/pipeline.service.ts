@@ -20,6 +20,7 @@ import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lea
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { AppConsts } from '@shared/AppConsts';
+import { ContactGroup } from '@shared/AppEnums';
 
 interface StageColor {
     [stageSortOrder: string]: string;
@@ -54,10 +55,11 @@ export class PipelineService {
         this.stageChange = new Subject<any>();
     }
 
-    getPipelineDefinitionObservable(pipelinePurposeId: string): Observable<PipelineDto> {
+    getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId?: ContactGroup): Observable<PipelineDto> {
         return this.store$.pipe(
             select(PipelinesStoreSelectors.getSortedPipeline({
-                purpose: pipelinePurposeId
+                purpose: pipelinePurposeId,
+                contactGroupId: contactGroupId
             })),
             filter(pipelineDefinition => pipelineDefinition),
             map(pipelineDefinition => {

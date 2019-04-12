@@ -89,6 +89,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.initToolbarConfig();
     }
 
+    contactGroups = Object.keys(ContactGroup);
+    selectedContactGroup = Object.keys(ContactGroup).shift();
+    contactGroupId = ContactGroup[this.selectedContactGroup];
+
     stages = [];
     pipelineDataSource: any;
     collection: any;
@@ -147,7 +151,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 type: 'odata',
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
+                beforeSend: (request) => {
+                    request.params.contactGroupId = this.contactGroupId;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -711,7 +716,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     this.filterChanged = true;
                 },
                 isInLeadMode: true,
-                customerType: ContactGroup.Client
+                customerType: ContactGroup[this.selectedContactGroup]
             }
         });
     }
@@ -896,5 +901,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     getAssignedUsersStoreSelectors() {
         return LeadAssignedUsersStoreSelectors.getAssignedUsers;
+    }
+
+    onContactGroupChanged(event) {
+        if (event.previousValue != event.value)
+            this.contactGroupId = ContactGroup[event.value];
     }
 }

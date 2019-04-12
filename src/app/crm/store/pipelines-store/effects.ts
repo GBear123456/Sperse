@@ -31,7 +31,7 @@ export class PipelinesStoreEffects {
                 return empty();
             }
 
-            return this.pipelineService.getPipelineDefinitions(undefined)
+            return this.pipelineService.getPipelineDefinitions(undefined, undefined)
                 .pipe(
                     map((pipelines: PipelineDto[]) => {
                         return new pipelinesActions.LoadSuccessAction(pipelines);
