@@ -44,7 +44,7 @@
     </dx-context-menu>
 
     <div class="header_buttons" *ngIf="addContextMenuItems.length">
-        <button id="addEntity" class="button-layout button-primary menu" (click)="addEntity($event)">{{'+ ' + addButtonTitle}}</button>
+        <button id="addEntity" class="button-layout button-primary menu" (click)="addEntity($event)">+ <span>{{addButtonTitle}}</span></button>
 
         <div class="vertical-delimiter"></div>
         <button class="refresh-button" (click)="refresh($event)"></button>
