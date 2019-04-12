@@ -470,7 +470,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                         return {
                             id: stage.id,
                             name: stage.name,
-                            text: stage.name,
+                            index: stage.sortOrder,
                             action: this.updateLeadStage.bind(this)
                         };
                     });

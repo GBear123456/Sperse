@@ -20,6 +20,7 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
     }
     @Input() documentTypes: DocumentTypeInfo[];
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
+    @Output() onListUpdated: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
 
@@ -46,8 +47,10 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
 
     onValueChanged(event) {
         let value = event.value;
-        if (!value)
+        if (!value && this.selectedDocumentTypes.length) {
             this.selectedDocumentTypes = [];
+            this.apply();
+        }
     }
 
     apply() {
@@ -111,13 +114,16 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
         let isItemDeleted = false;
         this._documentTypeService.delete($event.key)
         .pipe(finalize(() => {
-            if (!isItemDeleted && this.dropDownComponent)
-                this.dropDownComponent.close();
-        }))
-        .subscribe((response) => {
-            isItemDeleted = true;
-            if (response)
+            if (!isItemDeleted) {
+                this.refresh();
                 $event.cancel = true;
+                if (this.dropDownComponent)
+                    this.dropDownComponent.close();
+            }
+        }))
+        .subscribe(() => {
+            isItemDeleted = true;
+            this.onListUpdated.emit(this.list);
         });
     }
 
@@ -132,9 +138,8 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
         this._documentTypeService.update(UpdateDocumentTypeInput.fromJS({
             id: $event.oldData.id,
             name: name
-        })).subscribe((response) => {
-            if (response)
-                $event.cancel = true;
+        })).subscribe(() => {
+            this.onListUpdated.emit(this.list);
         });
     }
 
@@ -153,8 +158,10 @@ export class DocumentTypesListComponent extends AppComponentBase implements OnIn
             name: name
         })).subscribe((id) => {
             if (id) {
-                this.refresh();
+                this.list[this.list.length - 1].id = id;
                 this.selectedDocumentTypes = [id];
+                this.onListUpdated.emit(this.list);
+                this.apply();
             } else {
                 $event.cancel = true;
             }
