@@ -589,11 +589,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    disallowDelete(stage) {
+        return !stage.sortOrder || stage['isFinal'];
+    }
+
     disallowMove(stage, reverse?) {
         let targetStage;
         return !stage.sortOrder || stage['isFinal'] ||
-            this.getStages(reverse).some((lookupStage) => {
-                if (lookupStage.id == stage.id && targetStage && targetStage['isFinal'])
+            this.getStages(reverse).some((lookupStage, index) => {
+                if (lookupStage.id == stage.id && (targetStage && targetStage['isFinal'] || !index))
                     return true;
                 else
                     targetStage = lookupStage;
