@@ -37255,7 +37255,7 @@ export class CreateContactInput implements ICreateContactInput {
     lists!: ContactListInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
-    contactGroupId!: string | undefined;
+    contactGroupId!: string;
     partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateContactInput) {
@@ -37395,7 +37395,7 @@ export interface ICreateContactInput {
     lists: ContactListInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
-    contactGroupId: string | undefined;
+    contactGroupId: string;
     partnerTypeName: string | undefined;
 }
 
@@ -46590,7 +46590,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     lists!: ContactListInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
-    contactGroupId!: string | undefined;
+    contactGroupId!: string;
     partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
@@ -46736,7 +46736,7 @@ export interface ICreateLeadInput {
     lists: ContactListInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
-    contactGroupId: string | undefined;
+    contactGroupId: string;
     partnerTypeName: string | undefined;
 }
 
@@ -53157,6 +53157,7 @@ export class PipelineDto implements IPipelineDto {
     id!: number | undefined;
     name!: string | undefined;
     purpose!: string | undefined;
+    contactGroupId!: string | undefined;
     stages!: StageDto[] | undefined;
 
     constructor(data?: IPipelineDto) {
@@ -53173,6 +53174,7 @@ export class PipelineDto implements IPipelineDto {
             this.id = data["id"];
             this.name = data["name"];
             this.purpose = data["purpose"];
+            this.contactGroupId = data["contactGroupId"];
             if (data["stages"] && data["stages"].constructor === Array) {
                 this.stages = [];
                 for (let item of data["stages"])
@@ -53193,6 +53195,7 @@ export class PipelineDto implements IPipelineDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["purpose"] = this.purpose;
+        data["contactGroupId"] = this.contactGroupId;
         if (this.stages && this.stages.constructor === Array) {
             data["stages"] = [];
             for (let item of this.stages)
@@ -53206,6 +53209,7 @@ export interface IPipelineDto {
     id: number | undefined;
     name: string | undefined;
     purpose: string | undefined;
+    contactGroupId: string | undefined;
     stages: StageDto[] | undefined;
 }
 
