@@ -37,7 +37,8 @@ import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/cr
 
 @Component({
     templateUrl: './orders.component.html',
-    styleUrls: ['./orders.component.less']
+    styleUrls: ['./orders.component.less'],
+    providers: [ PipelineService ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -69,7 +70,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private filterChanged = false;
     masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
-
     public headlineConfig = {
         names: [this.l('Orders')],
         onRefresh: this.processFilterInternal.bind(this),
@@ -112,6 +112,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.initToolbarConfig();
     }
 
+    ngOnInit() {
+        this.activate();
+    }
+
+    ngAfterViewInit(): void {
+        this.initDataSource();
+    }
+
     initDataSource() {
         if (this.showPipeline) {
             if (!this.pipelineDataSource)
@@ -147,8 +155,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.dataGrid.instance.showColumnChooser();
     }
 
-    toggleDataLayout(dataLayoutType) {
-        this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
+    toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this._pipelineService.toggleDataLayoutType(dataLayoutType);
+        this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
         if (this.showPipeline)
@@ -400,6 +409,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             {
                 location: 'after',
                 locateInMenu: 'auto',
+                items: [
+                    { name: 'showCompactRowsHeight', action: () => this.toggleContactView() }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
                 areItemsDependent: true,
                 items: [
                     // {
@@ -436,6 +452,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     toggleStages() {
         this.stagesComponent.toggle();
+    }
+
+    private toggleContactView() {
+        this._pipelineService.toggleContactView();
+        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
+        this.dataGrid.instance.updateDimensions();
     }
 
     filterByOrderStages(filter: FilterModel) {
@@ -595,14 +617,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.rootComponent.overflowHidden();
 
         this.hideHostElement();
-    }
-
-    ngOnInit() {
-        this.activate();
-    }
-
-    ngAfterViewInit(): void {
-        this.initDataSource();
     }
 
     ngOnDestroy() {

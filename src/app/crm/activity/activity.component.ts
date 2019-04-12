@@ -362,6 +362,13 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
             },
             {
                 location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    { name: 'showCompactRowsHeight', action: () => this._pipelineService.toggleContactView() }
+                ]
+            },
+            {
+                location: 'after',
                 areItemsDependent: true,
                 items: [
                     {
@@ -434,8 +441,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
         this.showActivityDialog(event.appointmentData);
     }
 
-    toggleDataLayout(dataLayoutType) {
-        let showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
+    toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this._pipelineService.toggleDataLayoutType(dataLayoutType);
+        let showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         if (this.showPipeline != showPipeline) {
             this.dataLayoutType = dataLayoutType;
             this.showPipeline = showPipeline;

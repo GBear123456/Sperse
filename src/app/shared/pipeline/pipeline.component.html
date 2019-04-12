@@ -51,7 +51,7 @@
         </div>
         <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.entities" accessKey="{{stage?.id}}" (click)="hideStageHighlighting()">
             <ng-container *ngFor="let entity of stage.entities">
-                <div class="card" [ngClass]="{ locked: entity?.locked, selected: entity?.selected }" [accessKey]="entity?.Id" (click)="onCardClickInternal(entity, $event)" [attr.stage]="entity?.StageId" count="">
+                <div class="card" [ngClass]="{ locked: entity?.locked, selected: entity?.selected, compact: compactView }" [accessKey]="entity?.Id" (click)="onCardClickInternal(entity, $event)" [attr.stage]="entity?.StageId" count="">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="full-name">

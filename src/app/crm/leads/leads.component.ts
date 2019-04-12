@@ -61,7 +61,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [ LeadServiceProxy, LifecycleSubjectsService ],
+    providers: [ LeadServiceProxy, LifecycleSubjectsService, PipelineService ],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -217,10 +217,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataGrid.instance.showColumnChooser();
     }
 
-    toggleDataLayout(dataLayoutType) {
+    toggleDataLayout(dataLayoutType: DataLayoutType) {
         this.selectedClientKeys = [];
-        this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
+        this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
+        this._pipelineService.toggleDataLayoutType(this.dataLayoutType);
         this.initDataSource();
         if (this.showPipeline)
             this.dataGrid.instance.deselectAll();
@@ -531,7 +532,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
+                    { name: 'showCompactRowsHeight', action: this.toggleCompactView.bind(this) },
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
                 ]
             },
@@ -616,7 +617,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             callback(options);
     }
 
-    showCompactRowsHeight() {
+    toggleCompactView() {
+        this._pipelineService.toggleContactView();
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
         this.dataGrid.instance.updateDimensions();
     }

@@ -6,20 +6,21 @@ import { RouteReuseStrategy } from '@angular/router';
 import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@node_modules/@ngrx/store';
-import { Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, map, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
-import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, 
-    PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto, 
+import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput,
+    PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto,
     OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo } from '@shared/service-proxies/service-proxies';
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { AppConsts } from '@shared/AppConsts';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
 interface StageColor {
     [stageSortOrder: string]: string;
@@ -38,6 +39,10 @@ export class PipelineService {
         '2': '#86c45d',
         '3': '#46aa6e'
     };
+    private _dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject<DataLayoutType>(DataLayoutType.Pipeline);
+    dataLayoutType$: Observable<DataLayoutType> = this._dataLayoutType.asObservable();
+    private _compactView: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    compactView$: Observable<boolean> = this._compactView.asObservable();
 
     constructor(
         injector: Injector,
@@ -52,6 +57,14 @@ export class PipelineService {
         private store$: Store<CrmStore.State>
     ) {
         this.stageChange = new Subject<any>();
+    }
+
+    toggleDataLayoutType(dataLayoutType: DataLayoutType) {
+        this._dataLayoutType.next(dataLayoutType);
+    }
+
+    toggleContactView() {
+        this._compactView.next(!this._compactView.value);
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string): Observable<PipelineDto> {

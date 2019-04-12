@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of } from 'rxjs';
-import { finalize, delayWhen, map, mergeMap } from 'rxjs/operators';
+import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import extend from 'lodash/extend';
@@ -32,6 +32,7 @@ import {
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
 @Component({
     selector: 'app-pipeline',
@@ -86,7 +87,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     allStagesEntitiesTotal: number;
 
     private queryWithSearch: any = [];
-    private readonly STAGE_PAGE_COUNT = 5;
+    private readonly DEFAULT_PAGE_COUNT = 5;
+    private readonly COMPACT_VIEW_PAGE_COUNT = 10;
+    compactView: boolean;
+    private stagePageCount;
     private subscribers = [];
 
     constructor(injector: Injector,
@@ -135,10 +139,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }));
         this.subscribers.push(
             this._dragulaService.dragend.subscribe((value) => {
-                    if (value[0] == this.dragulaName)
-                        this.hideStageHighlighting();
-                }
-            )
+                if (value[0] == this.dragulaName)
+                    this.hideStageHighlighting();
+            })
         );
         this.subscribers.push(
             this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId).pipe(
@@ -216,6 +219,29 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             }
         });
 
+        this._pipelineService.compactView$.pipe(takeUntil(this.destroy$)).subscribe((compactView: boolean) => {
+            this.compactView = compactView;
+            this.stagePageCount = compactView ? this.COMPACT_VIEW_PAGE_COUNT : this.DEFAULT_PAGE_COUNT;
+        });
+        this._pipelineService.compactView$.pipe(
+            takeUntil(this.destroy$),
+            /** If user choose compact view  */
+            filter((compactView: boolean) => compactView),
+            /** Listen dataLayoutType stream */
+            switchMap(() => this._pipelineService.dataLayoutType$),
+            /** Wait until layout type will became Pipeline (it may already be pipeline) */
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType === DataLayoutType.Pipeline),
+            /** Switch to stages stream */
+            switchMap(() => of(this.stages)),
+            /** switch to the streams of stages items */
+            mergeMap(stage => stage),
+            /** filter by stages which are not full or their entities count is less then compact view items count) */
+            filter((stage: StageDto) => !stage['full'] && stage['entities'].length < this.COMPACT_VIEW_PAGE_COUNT),
+            /** Map to stages ids */
+            map((stage: StageDto) => stage['stageIndex']),
+            /** Reload entities for each filtered stage*/
+            mergeMap((stageIndex: number) => this.loadStagesEntities(0, stageIndex, true))
+        ).subscribe();
     }
 
     refresh(quiet = false, stageId?: number, skipAlreadyLoadedChecking = false) {
@@ -290,7 +316,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (!isNaN(stage['lastEntityId']) && page)
                 filter['Id'] = {lt: stage['lastEntityId']};
 
-            dataSource.pageSize(this.STAGE_PAGE_COUNT);
+            dataSource.pageSize(this.stagePageCount);
             dataSource.sort({getter: 'Id', desc: true});
             response = from(this._odataService.loadDataSource(
                 dataSource,
@@ -322,6 +348,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         stage['total'] = stage['entities'].length;
                         stage['full'] = true;
                     }
+                    stage['stageIndex'] = index;
                     dataSource['entities'] = stage['entities'];
                     dataSource['total'] = stage['total'];
                     return entities;
@@ -401,7 +428,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.startLoading();
         return this.loadData(
             Math.floor(this.stages[stageIndex]['entities'].length
-                / this.STAGE_PAGE_COUNT), stageIndex, true);
+                / this.stagePageCount), stageIndex, true);
     }
 
     updateEntityStage(entityId, newStage, oldStage, complete = null) {
@@ -474,7 +501,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     deselectAllCards() {
-        this.stages['entities'].forEach(entity => entity.selected = false);
+        this.stages.forEach(stage => stage['entities'].forEach(entity => entity.selected = false));
     }
 
     onKeyUp(event) {
