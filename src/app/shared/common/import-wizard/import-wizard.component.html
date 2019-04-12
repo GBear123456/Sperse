@@ -161,6 +161,10 @@
                     {{cellData.value | phone}}
                 </div>
 
+                <div *dxTemplate="let cellData of 'revenueCell'" [ngClass]="{invalid: !checkFieldValid('revenue', cellData)}">
+                    {{cellData.value | currency}}
+                </div>
+
                 <div *dxTemplate="let cellData of 'emailCell'" [ngClass]="{invalid: !checkFieldValid('email', cellData)}">
                     {{cellData.value}}
                 </div>
