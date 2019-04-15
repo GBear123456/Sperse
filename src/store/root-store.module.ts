@@ -31,6 +31,7 @@ export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionRedu
         ],
         /** to load entities states from storage instead of their initial state */
         rehydrate: true,
+        storage: sessionStorage,
         storageKeySerializer: (key: string) => tenantSpecificFeatures.indexOf(key) > -1 ? key + '_' + abp.session.tenantId : key
     })(reducer);
 }
