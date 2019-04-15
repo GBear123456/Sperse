@@ -32,6 +32,7 @@ import {
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
+import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
 @Component({
@@ -81,6 +82,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.dataSource$.next(dataSource);
     }
     @Input() pipelinePurposeId: string;
+    @Input() get contactGroupId(): ContactGroup {
+        return this._contactGroupId;
+    }
+    set contactGroupId(value: ContactGroup) {
+        if (this._contactGroupId) {
+            this.destroyPipeline();
+            setTimeout(this.initPipeline.bind(this), 100);
+        }
+
+        this._contactGroupId = value;
+    }
 
     pipeline: PipelineDto;
     stages: StageDto[];
@@ -92,6 +104,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     compactView: boolean;
     private stagePageCount;
     private subscribers = [];
+    private _contactGroupId: ContactGroup;
 
     constructor(injector: Injector,
         private _odataService: ODataService,
@@ -104,7 +117,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
     }
 
-    ngOnInit() {
+    initPipeline() {
         this.startLoading();
         this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             if (value[0] == this.dragulaName) {
@@ -144,15 +157,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             })
         );
         this.subscribers.push(
-            this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId).pipe(
-                map((pipeline) => {
-                    return this._dataSource ?
-                        of(pipeline) :
-                        of(pipeline).pipe(delayWhen(() => {
-                            return this.dataSource$;
-                        }));
-                }),
-                mergeMap(pipeline => pipeline)
+            this._pipelineService.getPipelineDefinitionObservable(
+                this.pipelinePurposeId, this.contactGroupId).pipe(
+                    map((pipeline) => {
+                        return this._dataSource ?
+                            of(pipeline) :
+                            of(pipeline).pipe(delayWhen(() => {
+                                return this.dataSource$;
+                            }));
+                    }),
+                    mergeMap(pipeline => pipeline)
             ).subscribe((pipeline: PipelineDto) => {
                 this.pipeline = pipeline;
                 this.createStageInput.pipelineId = this.pipeline.id;
@@ -242,6 +256,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             /** Reload entities for each filtered stage*/
             mergeMap((stageIndex: number) => this.loadStagesEntities(0, stageIndex, true))
         ).subscribe();
+    }
+
+    ngOnInit() {
+        this.initPipeline();
     }
 
     refresh(quiet = false, stageId?: number, skipAlreadyLoadedChecking = false) {
@@ -451,9 +469,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
-    ngOnDestroy() {
+    destroyPipeline() {
         this._dragulaService.destroy(this.dragulaName);
         this.subscribers.forEach((sub) => sub.unsubscribe());
+        this.subscribers = [];
+    }
+
+    ngOnDestroy() {
+        this.destroyPipeline();
     }
 
     getDateWithTimezone(utcDateTime) {
@@ -643,11 +666,15 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    disallowDelete(stage) {
+        return !stage.sortOrder || stage['isFinal'];
+    }
+
     disallowMove(stage, reverse?) {
         let targetStage;
         return !stage.sortOrder || stage['isFinal'] ||
-            this.getStages(reverse).some((lookupStage) => {
-                if (lookupStage.id == stage.id && targetStage && targetStage['isFinal'])
+            this.getStages(reverse).some((lookupStage, index) => {
+                if (lookupStage.id == stage.id && (targetStage && targetStage['isFinal'] || !index))
                     return true;
                 else
                     targetStage = lookupStage;

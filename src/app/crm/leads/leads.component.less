@@ -23,5 +23,20 @@
         height: calc(~'100vh - 210px');
         overflow-x: hidden;
         overflow-y: auto;
-    }    
+    }
+
+    /deep/ dx-select-box[accessKey="contactGroup"] {
+        background: transparent;
+
+        &.dx-state-hover, &.dx-state-active, &.dx-dropdowneditor-active {
+            .dx-dropdowneditor-icon {
+                background-color: transparent;
+            }
+        }
+        input {
+            text-align: left;
+            background: transparent;
+            border: none;
+        }  
+    }
 }

@@ -19229,12 +19229,15 @@ export class PipelineServiceProxy {
 
     /**
      * @purposeId (optional) 
+     * @contactGroupId (optional) 
      * @return Success
      */
-    getPipelineDefinitions(purposeId: string | null | undefined): Observable<PipelineDto[]> {
+    getPipelineDefinitions(purposeId: string | null | undefined, contactGroupId: string | null | undefined): Observable<PipelineDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinitions?";
         if (purposeId !== undefined)
             url_ += "purposeId=" + encodeURIComponent("" + purposeId) + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -37405,7 +37408,7 @@ export class CreateContactInput implements ICreateContactInput {
     lists!: ContactListInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
-    contactGroupId!: string | undefined;
+    contactGroupId!: string;
     partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateContactInput) {
@@ -37545,7 +37548,7 @@ export interface ICreateContactInput {
     lists: ContactListInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
-    contactGroupId: string | undefined;
+    contactGroupId: string;
     partnerTypeName: string | undefined;
 }
 
@@ -47096,7 +47099,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     lists!: ContactListInput[] | undefined;
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
-    contactGroupId!: string | undefined;
+    contactGroupId!: string;
     partnerTypeName!: string | undefined;
 
     constructor(data?: ICreateLeadInput) {
@@ -47242,7 +47245,7 @@ export interface ICreateLeadInput {
     lists: ContactListInput[] | undefined;
     assignedUserId: number | undefined;
     ratingId: number | undefined;
-    contactGroupId: string | undefined;
+    contactGroupId: string;
     partnerTypeName: string | undefined;
 }
 
@@ -50487,6 +50490,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     logoUrl!: string | undefined;
     status!: OfferDetailsForEditDtoStatus | undefined;
     type!: OfferDetailsForEditDtoType | undefined;
+    isPublished!: boolean | undefined;
 
     constructor(data?: IOfferDetailsForEditDto) {
         if (data) {
@@ -50528,6 +50532,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             this.logoUrl = data["logoUrl"];
             this.status = data["status"];
             this.type = data["type"];
+            this.isPublished = data["isPublished"];
         }
     }
 
@@ -50569,6 +50574,7 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
         data["logoUrl"] = this.logoUrl;
         data["status"] = this.status;
         data["type"] = this.type;
+        data["isPublished"] = this.isPublished;
         return data; 
     }
 }
@@ -50591,6 +50597,7 @@ export interface IOfferDetailsForEditDto {
     logoUrl: string | undefined;
     status: OfferDetailsForEditDtoStatus | undefined;
     type: OfferDetailsForEditDtoType | undefined;
+    isPublished: boolean | undefined;
 }
 
 export class OfferCategoryDto implements IOfferCategoryDto {
@@ -53487,6 +53494,7 @@ export class PipelineDto implements IPipelineDto {
     id!: number | undefined;
     name!: string | undefined;
     purpose!: string | undefined;
+    contactGroupId!: string | undefined;
     stages!: StageDto[] | undefined;
 
     constructor(data?: IPipelineDto) {
@@ -53503,6 +53511,7 @@ export class PipelineDto implements IPipelineDto {
             this.id = data["id"];
             this.name = data["name"];
             this.purpose = data["purpose"];
+            this.contactGroupId = data["contactGroupId"];
             if (data["stages"] && data["stages"].constructor === Array) {
                 this.stages = [];
                 for (let item of data["stages"])
@@ -53523,6 +53532,7 @@ export class PipelineDto implements IPipelineDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["purpose"] = this.purpose;
+        data["contactGroupId"] = this.contactGroupId;
         if (this.stages && this.stages.constructor === Array) {
             data["stages"] = [];
             for (let item of this.stages)
@@ -53536,6 +53546,7 @@ export interface IPipelineDto {
     id: number | undefined;
     name: string | undefined;
     purpose: string | undefined;
+    contactGroupId: string | undefined;
     stages: StageDto[] | undefined;
 }
 

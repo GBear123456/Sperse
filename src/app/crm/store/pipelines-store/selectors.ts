@@ -2,11 +2,13 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { State } from './state';
 import { PipelineDto } from 'shared/service-proxies/service-proxies';
 import { StageDto } from '@shared/service-proxies/service-proxies';
+import { ContactGroup } from '@shared/AppEnums';
 
 interface Filter {
     id?: number;
     purpose?: any;
     stageId?: number;
+    contactGroupId?: ContactGroup;
 }
 
 export const getPipelinesState = createFeatureSelector<State>('pipelines');
@@ -28,7 +30,9 @@ export const getPipeline = (filter: Filter) => createSelector(
         /** @todo change for using of entity adapter */
         return pipelines && pipelines.length
                ? pipelines.find(pipeline => {
-                    return filter.id !== undefined ? pipeline.id === filter.id : (filter.purpose ? pipeline.purpose === filter.purpose : false);
+                    return filter.id !== undefined ? pipeline.id === filter.id : 
+                        (filter.purpose ? pipeline.purpose === filter.purpose && 
+                            (!filter.contactGroupId || pipeline.contactGroupId == filter.contactGroupId) : false);
                 })
                : null;
     }

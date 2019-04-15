@@ -21,11 +21,11 @@
                     {{ getStageRatio(stage.total) }}
                 </span>
             </div>
-            <button id="{{stage.name | lowercase | replace:' ':'-'}}" class="edit-button">
+            <button id="{{'ident' + stage.id}}" class="edit-button">
                 <img src="./assets/common/icons/edit-icon.svg" alt="Edit">
             </button>
             <dx-tooltip
-                target="#{{stage.name | lowercase | replace:' ':'-'}}"
+                target="#{{'ident' + stage.id}}"
                 (onShowing)="onTooltipShowing($event)"
                 showEvent="click">
                 <div *dxTemplate="let data = data of 'content'">
@@ -36,7 +36,7 @@
                         <li class="list-group-item">
                             <a (click)="updateStage(stage, 'Rename')"><i class="fa fa-pencil fa-fw" style="color: orange"></i> {{l('Rename_Stage')}}</a>
                         </li>
-                        <li class="list-group-item" [hidden]="stage['isFinal']">
+                        <li class="list-group-item" [hidden]="disallowDelete(stage)">
                             <a (click)="updateStage(stage, 'Merge')"><i class="fa fa-minus fa-fw" style="color: red"></i> {{l('Delete_Stage')}}</a>
                         </li>
                         <li class="list-group-item" [hidden]="disallowMove(stage, true)">
