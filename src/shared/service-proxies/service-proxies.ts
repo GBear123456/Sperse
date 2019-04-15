@@ -61585,6 +61585,9 @@ export enum ImportInputImportType {
     Lead = "Lead", 
     Client = "Client", 
     Partner = "Partner", 
+    Investor = "Investor", 
+    Vendor = "Vendor", 
+    Employee = "Employee", 
     Order = "Order", 
 }
 
@@ -61599,6 +61602,9 @@ export enum ImportContactInputImportType {
     Lead = "Lead", 
     Client = "Client", 
     Partner = "Partner", 
+    Investor = "Investor", 
+    Vendor = "Vendor", 
+    Employee = "Employee", 
     Order = "Order", 
 }
 
