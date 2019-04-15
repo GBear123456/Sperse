@@ -47805,6 +47805,7 @@ export interface IProcessLeadInput {
 
 export class LeadInfoDto implements ILeadInfoDto {
     id!: number | undefined;
+    contactGroupId!: string | undefined;
     stage!: string | undefined;
     amount!: number | undefined;
     creationDate!: moment.Moment | undefined;
@@ -47837,6 +47838,7 @@ export class LeadInfoDto implements ILeadInfoDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.contactGroupId = data["contactGroupId"];
             this.stage = data["stage"];
             this.amount = data["amount"];
             this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
@@ -47869,6 +47871,7 @@ export class LeadInfoDto implements ILeadInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["contactGroupId"] = this.contactGroupId;
         data["stage"] = this.stage;
         data["amount"] = this.amount;
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
@@ -47894,6 +47897,7 @@ export class LeadInfoDto implements ILeadInfoDto {
 
 export interface ILeadInfoDto {
     id: number | undefined;
+    contactGroupId: string | undefined;
     stage: string | undefined;
     amount: number | undefined;
     creationDate: moment.Moment | undefined;
@@ -61277,6 +61281,8 @@ export enum Group {
     Employee = "Employee", 
     Member = "Member", 
     Partner = "Partner", 
+    Investor = "Investor", 
+    Vendor = "Vendor", 
 }
 
 export enum ModuleType2 {
