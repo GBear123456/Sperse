@@ -618,7 +618,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         widget: 'dxDropDownMenu',
                         options: {
                             width: 130,
-                            selectedIndex: this.contactGroupId,
+                            selectedIndex: Object['values'](ContactGroup).indexOf(this.contactGroupId),
                             items: Object.keys(ContactGroup).map((group) => {
                                 return {
                                     action: this.contactGroupChanged.bind(this),
@@ -633,8 +633,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         name: 'select-box',
                         widget: 'dxDropDownMenu',
                         options: {
-                            width: 130,
-                            selectedIndex: this.contactStatusId,
+                            width: 150,
+                            selectedIndex: Object['values'](ContactStatus).indexOf(this.contactStatusId),
                             items: Object.keys(ContactStatus).map((status) => {
                                 return {
                                     action: this.contactStatusChanged.bind(this),
@@ -644,6 +644,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             })
                         }
                     },
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
                     {
                         name: 'assign',
                         action: () => this.userAssignmentComponent.toggle(),
