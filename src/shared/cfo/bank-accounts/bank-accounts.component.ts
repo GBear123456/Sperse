@@ -90,7 +90,8 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
                     connector: syncAccount.syncTypeId === 'Q' ? AccountConnectors.Quovo : AccountConnectors.Xero,
                     config: {
                         accountId: syncAccount.syncTypeId === 'Q' ? syncAccount.syncRef : syncAccount.syncAccountId,
-                    }
+                    },
+                    operationType: 'update'
                 }
             }};
         this.dialog.open(AccountConnectorDialogComponent, dialogConfig);

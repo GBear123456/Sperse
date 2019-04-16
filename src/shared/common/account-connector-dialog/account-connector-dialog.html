@@ -9,6 +9,7 @@
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.Xero">
         <xero-login
+            [operationType]="data?.operationType"
             [accountId]="data?.config?.accountId"
             [isSyncBankAccountsEnabled]="(data?.config?.isSyncBankAccountsEnabled !== null) ? data?.config?.isSyncBankAccountsEnabled : xeroLogin.isSyncBankAccountsEnabled"
             (onClose)="closeDialog($event)"
