@@ -893,7 +893,7 @@ export class CreateClientDialogComponent extends AppModalDialogComponent impleme
     }
 
     leadStagesLoad() {
-        this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead)
+        this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.data.customerType)
             .subscribe(result => {
                 this.stages = result.stages.map((stage) => {
                     if (stage.sortOrder === this.defaultStageSortOrder) {

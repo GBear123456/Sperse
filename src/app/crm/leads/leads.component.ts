@@ -170,7 +170,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 paginate: true
             }
         };
-        this.searchValue = '';        
+        this.searchValue = '';
     }
 
     contactGroupOptionInit() {
@@ -178,7 +178,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this._cacheService.exists(cacheKey)) {
             this.selectedContactGroup = this._cacheService.get(cacheKey);
             this.contactGroupId = ContactGroup[this.selectedContactGroup];
-        }            
+        }
     }
 
     private isActivated() {
@@ -906,15 +906,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    onLeadStageChanged(lead) {  
+    onLeadStageChanged(lead) {
         if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.getVisibleRows().some((row) => {
                 if (lead.Id == row.data.Id) {
                     row.data.Stage = lead.Stage;
                     row.data.StageId = lead.StageId;
                     return true;
-                }                
-            });    
+                }
+            });
     }
 
     getAssignedUsersStoreSelectors() {
