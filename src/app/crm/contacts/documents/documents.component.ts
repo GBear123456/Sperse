@@ -317,7 +317,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 if (!this.dataSource || !this.dataSource.length)
                     setTimeout(() => this.openDocumentAddAddDialog());
                 callback && callback();
-            } 
+            }
         });
     }
 
