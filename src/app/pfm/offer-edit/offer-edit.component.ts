@@ -443,7 +443,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             for (let detail in details) {
                 if (detail === 'extendedInfo') {
                     res = res.concat(this.keys(details.extendedInfo));
-                } else {
+                } else if (detail !== 'isPublished') {
                     res.push(detail);
                 }
             }

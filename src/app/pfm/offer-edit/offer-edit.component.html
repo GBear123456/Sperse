@@ -125,7 +125,7 @@
                                         <ng-container *ngIf="getDetailDisplayValue(detail) as detailDisplayValue">
                                             <label [for]="detail" [title]="detailDisplayValue">{{ detailDisplayValue }}</label>
                                         </ng-container>
-                                        <dx-check-box [(value)]="model.hasOwnProperty(detail) ? model[detail] : model.extendedInfo[detail]" [disabled]="isReadOnly(detail) | async"></dx-check-box>
+                                        <dx-check-box [(value)]="model.hasOwnProperty(detail) && detail !== 'isPublished' ? model[detail] : model.extendedInfo[detail]" [disabled]="isReadOnly(detail) | async"></dx-check-box>
                                     </div>
                                 </ng-container>
 
