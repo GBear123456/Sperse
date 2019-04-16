@@ -30,7 +30,7 @@ import {
     ImportServiceProxy, ImportInputImportType, PartnerServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
-import { ImportStatus } from '@shared/AppEnums';
+import { ImportStatus, ContactGroup } from '@shared/AppEnums';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -96,11 +96,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly BUSINESS_WORK_EMAIL3 = 'businessInfo_workEmail3';
     private readonly PERSONAL_PREFERREDTOD = 'personalInfo_preferredToD';
     private readonly PERSONAL_CREDITSCORERATING = 'personalInfo_creditScoreRating';
-
-    private readonly IMPORT_TYPE_LEAD_INDEX = 0;
-    private readonly IMPORT_TYPE_CLIENT_INDEX = 1;
-    private readonly IMPORT_TYPE_PARTNER_INDEX = 2;
-    private readonly IMPORT_TYPE_ORDER_INDEX = 3;
 
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
@@ -171,7 +166,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     failedCount = 0;
     mappingFields: any[] = [];
     importTypeIndex: number = 0;
-    importType: ImportInputImportType = ImportInputImportType.Lead;
+    importType = ImportInputImportType.Lead;
+    contactGroupId = ContactGroup.Client;
 
     fullName: ImportFullName;
     fullAddress: ImportAddressInput;
@@ -187,7 +183,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     selectedStageId: number;
     selectedPartnerTypeName: string;
     defaultRating = 5;
-    leadStages = [];
+    stages = [];
     partnerTypes = [];
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
@@ -234,15 +230,21 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.importTypeIndex = event.itemIndex;
         this.importType = event.itemData.value;
 
-        if (this.importTypeIndex != this.IMPORT_TYPE_LEAD_INDEX)
+        if (this.importType != ImportInputImportType.Lead)
             this.selectedStageId = null;
 
-        if (this.importTypeIndex != this.IMPORT_TYPE_PARTNER_INDEX)
+        if (this.importType != ImportInputImportType.Partner)
             this.selectedPartnerTypeName = null;
 
         this.userAssignmentComponent.getAssignedUsersSelector = this.getAssignedUsersStoreSelectors();
         this.userAssignmentComponent.refreshList();
 
+        let contactGroupId = this.importType == ImportInputImportType.Client ? undefined :
+            (ContactGroup[this.importType == ImportInputImportType.Lead ? 'Client': this.importType]);
+        if (contactGroupId != this.contactGroupId) {
+            if (this.contactGroupId = contactGroupId)
+                this.getStages();
+        }        
         this.initToolbarConfig();
     }
 
@@ -490,9 +492,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     getStages() {
-        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)
             .subscribe(result => {
-                this.leadStages = result.stages;
+                this.stages = result.stages.map((stage) => {
+                    return {
+                        id: stage.id,
+                        index: stage.sortOrder,
+                        name: stage.name
+                    };
+                });
             });
     }
 
@@ -607,26 +615,18 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         options: {
                             width: 130,
                             selectedIndex: this.importTypeIndex,
-                            items: [
-                                {
+                            items: Object.keys(ImportInputImportType).map((type) => {
+                                let isClient = type == ImportInputImportType.Client;
+                                return {
+                                    disabled: type == ImportInputImportType.Order || type != ImportInputImportType.Lead 
+                                        && !this.isGranted(type == ImportInputImportType.Employee ?
+                                            'Pages.Administration.Users' :
+                                            'Pages.CRM.' + (isClient ? 'Customers' : type + 's')),
                                     action: this.importTypeChanged.bind(this),
-                                    text: this.l('Leads'),
-                                    value: ImportInputImportType.Lead
-                                }, {
-                                    action: this.importTypeChanged.bind(this),
-                                    text: this.l('Clients'),
-                                    value: ImportInputImportType.Client
-                                }, {
-                                    action: this.importTypeChanged.bind(this),
-                                    text: this.l('Partners'),
-                                    value: ImportInputImportType.Partner
-                                }, {
-                                    disabled: true,
-                                    action: this.importTypeChanged.bind(this),
-                                    text: this.l('Orders'),
-                                    value: ImportInputImportType.Order
+                                    text: this.l(type + 's'),
+                                    value: ImportInputImportType[type]
                                 }
-                            ]
+                            }) 
                         }
                     }
                 ]
@@ -648,7 +648,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         attr: {
                             'filter-selected': !!this.selectedStageId
                         },
-                        disabled: this.importTypeIndex != this.IMPORT_TYPE_LEAD_INDEX
+                        disabled: !this.contactGroupId
                     },
                     {
                         name: 'partnerType',
@@ -656,7 +656,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         attr: {
                             'filter-selected': !!this.selectedPartnerTypeName
                         },
-                        disabled: this.importTypeIndex != this.IMPORT_TYPE_PARTNER_INDEX
+                        disabled: this.importType != ImportInputImportType.Partner
                     },
                     {
                         name: 'lists',
