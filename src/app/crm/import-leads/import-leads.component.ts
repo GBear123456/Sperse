@@ -165,7 +165,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     importedCount = 0;
     failedCount = 0;
     mappingFields: any[] = [];
-    importTypeIndex: number = 0;
+    importTypeIndex = 0;
     importType = ImportInputImportType.Lead;
     contactGroupId = ContactGroup.Client;
 
@@ -240,11 +240,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.userAssignmentComponent.refreshList();
 
         let contactGroupId = this.importType == ImportInputImportType.Client ? undefined :
-            (ContactGroup[this.importType == ImportInputImportType.Lead ? 'Client': this.importType]);
+            (ContactGroup[this.importType == ImportInputImportType.Lead ? 'Client' : this.importType]);
         if (contactGroupId != this.contactGroupId) {
             if (this.contactGroupId = contactGroupId)
                 this.getStages();
-        }        
+        }
         this.initToolbarConfig();
     }
 
@@ -618,15 +618,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             items: Object.keys(ImportInputImportType).map((type) => {
                                 let isClient = type == ImportInputImportType.Client;
                                 return {
-                                    disabled: type == ImportInputImportType.Order || type != ImportInputImportType.Lead 
+                                    disabled: type == ImportInputImportType.Order || type != ImportInputImportType.Lead
                                         && !this.isGranted(type == ImportInputImportType.Employee ?
                                             'Pages.Administration.Users' :
                                             'Pages.CRM.' + (isClient ? 'Customers' : type + 's')),
                                     action: this.importTypeChanged.bind(this),
                                     text: this.l(type + 's'),
                                     value: ImportInputImportType[type]
-                                }
-                            }) 
+                                };
+                            })
                         }
                     }
                 ]
