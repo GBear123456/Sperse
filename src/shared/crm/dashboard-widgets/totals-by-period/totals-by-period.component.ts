@@ -307,7 +307,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     getDailyBottomAxisCustomizer(elem) {
         const [ , date, month ] = elem.value.toUTCString().split(' ');
-        return month + ' ' + date;
+        return `${date}<br/>${month}`;
     }
 
     render(component?: any) {

@@ -141,10 +141,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }));
         this.subscribers.push(
             this._dragulaService.dragend.subscribe((value) => {
-                    if (value[0] == this.dragulaName)
-                        this.hideStageHighlighting();
-                }
-            )
+                if (value[0] == this.dragulaName)
+                    this.hideStageHighlighting();
+            })
         );
         this.subscribers.push(
             this._pipelineService.getPipelineDefinitionObservable(
