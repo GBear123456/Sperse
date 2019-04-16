@@ -54,7 +54,7 @@ export class FilterHelpers {
             if (item && item.value) {
                 let date = new Date(item.value.getTime());
                 date.setTime(date.getTime() - (date.getTimezoneOffset() * 60 * 1000));
-                requestFilter[(key == 'to' ? 'end': 'start') + 'Date'] = date;
+                requestFilter[(key == 'to' ? 'end' : 'start') + 'Date'] = date;
             }
         }
     }

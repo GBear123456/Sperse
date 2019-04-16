@@ -76,16 +76,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.dataSource$.next(dataSource);
     }
     @Input() pipelinePurposeId: string;
-    @Input() get contactGroupId(): ContactGroup { 
+    @Input() get contactGroupId(): ContactGroup {
         return this._contactGroupId;
     }
-    set contactGroupId(value: ContactGroup) { 
+    set contactGroupId(value: ContactGroup) {
         if (this._contactGroupId) {
             this.destroyPipeline();
             setTimeout(this.initPipeline.bind(this), 100);
         }
 
-        this._contactGroupId = value;        
+        this._contactGroupId = value;
     }
 
     pipeline: PipelineDto;
@@ -126,7 +126,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                                 this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);
                                 if (entity.Id != entityId) {
                                     newStage['entities'].unshift(entity);
-                                    oldStage['entities'].splice(oldStage['entities'].indexOf(entity), 1);                                    
+                                    oldStage['entities'].splice(oldStage['entities'].indexOf(entity), 1);
                                 }
                             });
                     });
@@ -295,7 +295,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 filter['Id'] = {lt: stage['lastEntityId']};
 
             dataSource.pageSize(this.STAGE_PAGE_COUNT);
-            dataSource['_store']['_url'] = 
+            dataSource['_store']['_url'] =
                 this.getODataUrl(this._dataSource.uri,
                     this.queryWithSearch.concat({and: [
                         _.extend(filter, this._dataSource.customFilter)
@@ -579,13 +579,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    getStages(reverse?) {
+    getStages(reverse?: boolean): StageDto[] {
         return reverse ? _.clone(this.stages).reverse() : this.stages;
     }
 
-    getTargetStage(stage, reverse) {
+    getTargetStage(stage: StageDto, reverse: boolean) {
         let result;
-        this.getStages(reverse).some((lookupStage) => {
+        this.getStages(reverse).some((lookupStage: StageDto) => {
             if (stage.id == lookupStage.id)
                 return true;
             else
@@ -594,20 +594,20 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return result;
     }
 
-    moveStage(stage, reverse) {
+    moveStage(stage: StageDto, reverse) {
         if (this.disallowMove(stage, reverse))
             return ;
 
-        let direction = (reverse ? 1 : -1),
-            targetStage = this.getTargetStage(stage, reverse);
+        let direction = reverse ? 1 : -1,
+            targetStage: StageDto = this.getTargetStage(stage, reverse);
 
         this.startLoading(true);
         this._stageServiceProxy.updateStageSortOrder(new UpdateSortOrderInput({
             id: stage.id,
             sortOrder: (targetStage.sortOrder + direction) || direction
         })).pipe(
-            finalize(() => { this.finishLoading(true); })
-        ).subscribe((res) => {
+            finalize(() => this.finishLoading(true))
+        ).subscribe(() => {
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
             this.notify.info(this.l('SavedSuccessfully'));
         });
