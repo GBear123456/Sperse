@@ -105,8 +105,8 @@ export class ContactGroup {
     static Client = 'C';
     static Partner = 'P';
     static UserProfile = 'U';
-    static Investor = "I";
-    static Vendor = "V";
+    static Investor = 'I';
+    static Vendor = 'V';
 }
 
 export class PersonOrgRelationType {
