@@ -2,6 +2,8 @@
     <app-headline [config]="headlineConfig">
         <dx-select-box 
             accessKey="contactGroup"
+            displayExpr="text"
+            valueExpr="value"
             [rtlEnabled]="true"
             [items]="contactGroups"
             [width]="'300px'"
