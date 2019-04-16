@@ -87,7 +87,7 @@ export class LinkType {
 export class LinkUsageType {
     static Home = 'H';
     static Mobile = 'M';
-    static Work	= 'W';
+    static Work = 'W';
 }
 
 export class ContactTypes {
@@ -107,7 +107,6 @@ export class ContactGroup {
     static UserProfile = 'U';
     static Investor = "I";
     static Vendor = "V";
-    static Competitor = "C";
 }
 
 export class PersonOrgRelationType {

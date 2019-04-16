@@ -66,7 +66,7 @@
                                                accessKey="category-select"
                                                itemTemplate="itemTemplate"
                                                [disabled]="!selectedCategoryId"
-                                               [attr]="{ title: transactionInfo?.cashflowSubCategory ? null : l('TransactionDetail_Choose_Transaction_Category') }"
+                                               [inputAttr]="{ title: transactionInfo?.cashflowSubCategory ? null : l('TransactionDetail_Choose_Transaction_Category') }"
                                                [placeholder]="transactionInfo?.cashflowSubCategory ? transactionInfo?.cashflowSubCategory : l('TransactionDetail_Choose_Transaction_Category')"
                                                displayExpr="name"
                                                valueExpr="key"
@@ -82,7 +82,7 @@
                                        displayExpr="name"
                                        valueExpr="key"
                                        accessKey="category-select"
-                                       [attr]="{ title: accountingTypes.length ? '' : l('TransactionDetail_Choose_Accounting_Type')}"
+                                       [inputAttr]="{ title: accountingTypes.length ? '' : l('TransactionDetail_Choose_Accounting_Type')}"
                                        [placeholder]="l('TransactionDetail_Choose_Accounting_Type')"
                                        [(value)]="selectedAccountingType"
                                        itemTemplate="itemTemplate"
@@ -94,7 +94,7 @@
                         <ng-container *ngIf="filteredCategory.length">
                             <i class="fa fa-angle-right" aria-hidden="true"></i>
                             <dx-select-box [items]="filteredCategory"
-                                           [attr]="{ title: l('TransactionDetail_Choose_Transaction_Category') }"
+                                           [inputAttr]="{ title: l('TransactionDetail_Choose_Transaction_Category') }"
                                            displayExpr="name"
                                            valueExpr="key"
                                            accessKey="category-select"
@@ -111,7 +111,7 @@
                                            displayExpr="name"
                                            accessKey="category-select"
                                            itemTemplate="itemTemplate"
-                                           [attr]="{ title: l('TransactionDetail_Choose_Transaction_SubCategory') }"
+                                           [inputAttr]="{ title: l('TransactionDetail_Choose_Transaction_SubCategory') }"
                                            [placeholder]="l('TransactionDetail_Choose_Transaction_SubCategory')"
                                            (onItemClick)="updateTransactionCategory($event)"
                                            valueExpr="key">
@@ -188,7 +188,7 @@
                 </div>
                 <ng-container></ng-container>
                 <div class="row align-items-center" *ngFor="let attr of transactionInfo?.attributes">
-                    <div class="col-3 text-right light-gray">{{transactionAttributeTypes[attr.typeId].name}}</div>
+                    <div class="col-3 text-right light-gray">{{ transactionAttributeTypes ? transactionAttributeTypes[attr.typeId].name : '' }}</div>
                     <div class="col-9">{{attr.value}}</div>
                 </div>
             </ng-container>
