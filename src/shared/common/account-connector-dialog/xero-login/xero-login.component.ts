@@ -18,9 +18,9 @@ export class XeroLoginComponent extends CFOComponentBase implements OnInit {
     @Output() onClose: EventEmitter<null> = new EventEmitter();
     @Input() accountId: number;
     @Input() isSyncBankAccountsEnabled = true;
-    showForm = false;
     consumerKey: string;
     consumerSecret: string;
+    xeroAppsLink = 'https://developer.xero.com/myapps';
     getXeroCertificateUrl: string;
     overlayElement;
 
@@ -56,7 +56,7 @@ export class XeroLoginComponent extends CFOComponentBase implements OnInit {
                 isSyncBankAccountsEnabled: this.isSyncBankAccountsEnabled
             }))
             .pipe(finalize(this.finalize))
-            .subscribe((result) => {
+            .subscribe(() => {
                 this.onComplete.emit();
             });
     }
@@ -70,7 +70,7 @@ export class XeroLoginComponent extends CFOComponentBase implements OnInit {
                 consumerSecret: this.consumerSecret
             }))
             .pipe(finalize(this.finalize))
-            .subscribe((res) => {
+            .subscribe(() => {
                 this.onComplete.emit();
             });
     }
