@@ -167,9 +167,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     importStatus: ImportStatus;
     hideLeftMenu = false;
 
-    totalCount: number = 0;
-    importedCount: number = 0;
-    failedCount: number = 0;
+    totalCount = 0;
+    importedCount = 0;
+    failedCount = 0;
     mappingFields: any[] = [];
     importType = this.IMPORT_TYPE_LEAD;
 
@@ -544,7 +544,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return this.parseZipCode(field, sourceValue, reviewDataSource);
         } else if (this.PHONE_FIELDS.indexOf(field.mappedField) >= 0) {
             return this.normalizePhoneNumber(field, sourceValue, reviewDataSource);
-        } else if(this.BUSINESS_ANNUAL_REVENUE.indexOf(field.mappedField) >= 0) {
+        } else if (this.BUSINESS_ANNUAL_REVENUE.indexOf(field.mappedField) >= 0) {
             return this.parseCurrency(field, sourceValue, reviewDataSource);
         }
         return false;
@@ -624,7 +624,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                     action: this.contactGroupChanged.bind(this),
                                     text: this.l(group),
                                     value: ContactGroup[group]
-                                };                      
+                                };
                             })
                         }
                     },
@@ -640,10 +640,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                     action: this.contactStatusChanged.bind(this),
                                     text: this.l(status),
                                     value: ContactStatus[status]
-                                };                      
+                                };
                             })
                         }
-                    },
+                    }
+                ]
             },
             {
                 location: 'before',
