@@ -21283,9 +21283,10 @@ export class SyncServiceProxy {
      * @instanceId (optional) 
      * @forcedSync (optional) 
      * @newOnly (optional) 
+     * @syncType (optional) 
      * @return Success
      */
-    syncAllAccounts(instanceType: InstanceType82 | null | undefined, instanceId: number | null | undefined, forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined): Observable<SyncAllAccountsOutput> {
+    syncAllAccounts(instanceType: InstanceType82 | null | undefined, instanceId: number | null | undefined, forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined, syncType: string | null | undefined): Observable<SyncAllAccountsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Sync/SyncAllAccounts?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -21295,6 +21296,8 @@ export class SyncServiceProxy {
             url_ += "forcedSync=" + encodeURIComponent("" + forcedSync) + "&"; 
         if (newOnly !== undefined)
             url_ += "newOnly=" + encodeURIComponent("" + newOnly) + "&"; 
+        if (syncType !== undefined)
+            url_ += "syncType=" + encodeURIComponent("" + syncType) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -47030,9 +47033,8 @@ export interface ISubmitContactUsRequestOutput {
 
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
     companyName!: string;
-    editionName!: string;
     paymentPeriodType!: SubmitTenantCreationRequestInputPaymentPeriodType;
-    leadInterests!: InterestDto[];
+    interests!: InterestDto[];
     leadRequestXref!: string | undefined;
     firstName!: string;
     lastName!: string;
@@ -47052,19 +47054,18 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
             }
         }
         if (!data) {
-            this.leadInterests = [];
+            this.interests = [];
         }
     }
 
     init(data?: any) {
         if (data) {
             this.companyName = data["companyName"];
-            this.editionName = data["editionName"];
             this.paymentPeriodType = data["paymentPeriodType"];
-            if (data["leadInterests"] && data["leadInterests"].constructor === Array) {
-                this.leadInterests = [];
-                for (let item of data["leadInterests"])
-                    this.leadInterests.push(InterestDto.fromJS(item));
+            if (data["interests"] && data["interests"].constructor === Array) {
+                this.interests = [];
+                for (let item of data["interests"])
+                    this.interests.push(InterestDto.fromJS(item));
             }
             this.leadRequestXref = data["leadRequestXref"];
             this.firstName = data["firstName"];
@@ -47089,12 +47090,11 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
-        data["editionName"] = this.editionName;
         data["paymentPeriodType"] = this.paymentPeriodType;
-        if (this.leadInterests && this.leadInterests.constructor === Array) {
-            data["leadInterests"] = [];
-            for (let item of this.leadInterests)
-                data["leadInterests"].push(item.toJSON());
+        if (this.interests && this.interests.constructor === Array) {
+            data["interests"] = [];
+            for (let item of this.interests)
+                data["interests"].push(item.toJSON());
         }
         data["leadRequestXref"] = this.leadRequestXref;
         data["firstName"] = this.firstName;
@@ -47112,9 +47112,8 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 
 export interface ISubmitTenantCreationRequestInput {
     companyName: string;
-    editionName: string;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
-    leadInterests: InterestDto[];
+    interests: InterestDto[];
     leadRequestXref: string | undefined;
     firstName: string;
     lastName: string;
@@ -47128,9 +47127,9 @@ export interface ISubmitTenantCreationRequestInput {
 }
 
 export class InterestDto implements IInterestDto {
-    productId!: number | undefined;
+    productId!: number;
+    productName!: string;
     quantity!: number;
-    amount!: number | undefined;
 
     constructor(data?: IInterestDto) {
         if (data) {
@@ -47144,8 +47143,8 @@ export class InterestDto implements IInterestDto {
     init(data?: any) {
         if (data) {
             this.productId = data["productId"];
+            this.productName = data["productName"];
             this.quantity = data["quantity"];
-            this.amount = data["amount"];
         }
     }
 
@@ -47159,24 +47158,21 @@ export class InterestDto implements IInterestDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["productId"] = this.productId;
+        data["productName"] = this.productName;
         data["quantity"] = this.quantity;
-        data["amount"] = this.amount;
         return data; 
     }
 }
 
 export interface IInterestDto {
-    productId: number | undefined;
+    productId: number;
+    productName: string;
     quantity: number;
-    amount: number | undefined;
 }
 
 export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationRequestOutput {
     leadRequestXref!: string | undefined;
     contactId!: number | undefined;
-    paymentPeriodType!: SubmitTenantCreationRequestOutputPaymentPeriodType | undefined;
-    totalMonthlyAmount!: number | undefined;
-    trialDayCount!: number | undefined;
 
     constructor(data?: ISubmitTenantCreationRequestOutput) {
         if (data) {
@@ -47191,9 +47187,6 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
         if (data) {
             this.leadRequestXref = data["leadRequestXref"];
             this.contactId = data["contactId"];
-            this.paymentPeriodType = data["paymentPeriodType"];
-            this.totalMonthlyAmount = data["totalMonthlyAmount"];
-            this.trialDayCount = data["trialDayCount"];
         }
     }
 
@@ -47208,9 +47201,6 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
         data = typeof data === 'object' ? data : {};
         data["leadRequestXref"] = this.leadRequestXref;
         data["contactId"] = this.contactId;
-        data["paymentPeriodType"] = this.paymentPeriodType;
-        data["totalMonthlyAmount"] = this.totalMonthlyAmount;
-        data["trialDayCount"] = this.trialDayCount;
         return data; 
     }
 }
@@ -47218,9 +47208,6 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
 export interface ISubmitTenantCreationRequestOutput {
     leadRequestXref: string | undefined;
     contactId: number | undefined;
-    paymentPeriodType: SubmitTenantCreationRequestOutputPaymentPeriodType | undefined;
-    totalMonthlyAmount: number | undefined;
-    trialDayCount: number | undefined;
 }
 
 export class LeadBusinessInfoInput implements ILeadBusinessInfoInput {
@@ -57367,13 +57354,7 @@ export interface IModuleSubscriptionInfoDto {
 export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {
     requestXref!: string;
     tenantName!: string | undefined;
-    tenancyName!: string | undefined;
-    adminEmailAddress!: string | undefined;
     adminPassword!: string;
-    editionId!: number | undefined;
-    paymentPeriodType!: CompleteTenantRegistrationInputPaymentPeriodType | undefined;
-    interests!: InterestDto[] | undefined;
-    tenantHostType!: CompleteTenantRegistrationInputTenantHostType | undefined;
 
     constructor(data?: ICompleteTenantRegistrationInput) {
         if (data) {
@@ -57388,17 +57369,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
         if (data) {
             this.requestXref = data["requestXref"];
             this.tenantName = data["tenantName"];
-            this.tenancyName = data["tenancyName"];
-            this.adminEmailAddress = data["adminEmailAddress"];
             this.adminPassword = data["adminPassword"];
-            this.editionId = data["editionId"];
-            this.paymentPeriodType = data["paymentPeriodType"];
-            if (data["interests"] && data["interests"].constructor === Array) {
-                this.interests = [];
-                for (let item of data["interests"])
-                    this.interests.push(InterestDto.fromJS(item));
-            }
-            this.tenantHostType = data["tenantHostType"];
         }
     }
 
@@ -57413,17 +57384,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
         data = typeof data === 'object' ? data : {};
         data["requestXref"] = this.requestXref;
         data["tenantName"] = this.tenantName;
-        data["tenancyName"] = this.tenancyName;
-        data["adminEmailAddress"] = this.adminEmailAddress;
         data["adminPassword"] = this.adminPassword;
-        data["editionId"] = this.editionId;
-        data["paymentPeriodType"] = this.paymentPeriodType;
-        if (this.interests && this.interests.constructor === Array) {
-            data["interests"] = [];
-            for (let item of this.interests)
-                data["interests"].push(item.toJSON());
-        }
-        data["tenantHostType"] = this.tenantHostType;
         return data; 
     }
 }
@@ -57431,13 +57392,7 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
 export interface ICompleteTenantRegistrationInput {
     requestXref: string;
     tenantName: string | undefined;
-    tenancyName: string | undefined;
-    adminEmailAddress: string | undefined;
     adminPassword: string;
-    editionId: number | undefined;
-    paymentPeriodType: CompleteTenantRegistrationInputPaymentPeriodType | undefined;
-    interests: InterestDto[] | undefined;
-    tenantHostType: CompleteTenantRegistrationInputTenantHostType | undefined;
 }
 
 export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistrationOutput {
@@ -61632,11 +61587,6 @@ export enum SubmitTenantCreationRequestInputPaymentPeriodType {
     _365 = 365, 
 }
 
-export enum SubmitTenantCreationRequestOutputPaymentPeriodType {
-    _30 = 30, 
-    _365 = 365, 
-}
-
 export enum MemberInfoDtoGender {
     _0 = 0, 
     _1 = 1, 
@@ -62273,15 +62223,6 @@ export enum ModuleSubscriptionInfoDtoModule {
     CRM = "CRM", 
     HUB = "HUB", 
     PFM = "PFM", 
-}
-
-export enum CompleteTenantRegistrationInputPaymentPeriodType {
-    _30 = 30, 
-    _365 = 365, 
-}
-
-export enum CompleteTenantRegistrationInputTenantHostType {
-    PlatformApp = "PlatformApp", 
 }
 
 export enum TransactionDetailsDtoTransactionStatus {
