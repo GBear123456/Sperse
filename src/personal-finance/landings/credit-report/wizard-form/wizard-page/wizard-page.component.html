@@ -55,7 +55,7 @@
                                             <dx-validator>
                                                 <dxi-validation-rule type="required"
                                                                      message="{{l('EmailIsRequired')}}."></dxi-validation-rule>
-                                                <dxi-validation-rule type="email"
+                                                <dxi-validation-rule type="pattern" [pattern]="emailRegEx"
                                                                      message="{{l('EmailIsNotValid')}}."></dxi-validation-rule>
                                             </dx-validator>
                                         </dx-text-box>

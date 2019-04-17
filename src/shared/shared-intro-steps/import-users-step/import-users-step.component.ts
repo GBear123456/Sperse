@@ -2,6 +2,7 @@
 import { Component, Injector, Input, OnInit } from '@angular/core';
 
 /** Third party imports */
+import * as nameParser from 'parse-full-name';
 
 /** Application imports */
 import {
@@ -15,7 +16,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from 'shared/common/app-component-base';
 import { ImportUserData } from '@app/crm/shared/crm-intro/crm-intro.model';
-import * as nameParser from 'parse-full-name';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'app-import-users-step',
@@ -31,6 +32,7 @@ export class ImportUsersStepComponent extends AppComponentBase implements OnInit
     importValidators: any[] = [];
     roles: RoleListDto[] = [];
     validationResult: boolean;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     constructor(
         injector: Injector,
