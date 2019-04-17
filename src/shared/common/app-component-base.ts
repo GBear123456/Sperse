@@ -218,7 +218,9 @@ export abstract class AppComponentBase implements OnDestroy {
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
         let tenant = this.appSession.tenant;
         if (!id)
-            return tenant && tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace ? AppConsts.imageUrls.profileLendSpace : defaultUrl;
+            return tenant && [TenantLoginInfoDtoCustomLayoutType.LendSpace, 
+                TenantLoginInfoDtoCustomLayoutType.CFOMembers].indexOf(tenant.customLayoutType) >= 0
+                    ? AppConsts.imageUrls.profileLendSpace : defaultUrl;
 
         let tenantId = this.appSession.tenantId;
         return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId || 0) + '/' + id;

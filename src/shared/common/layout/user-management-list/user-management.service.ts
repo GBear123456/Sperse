@@ -131,9 +131,14 @@ export class UserManagementService {
         return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace);
     }
 
+    checkCFOMembersLayout() {
+        let tenant = this.appSession.tenant;
+        return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.CFOMembers);
+    }
+
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
         return id ? AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (this.appSession.tenantId || 0) + '/' + id
-            : (this.checkLendSpaceLayout() ? AppConsts.imageUrls.profileLendSpace : defaultUrl);
+            : (this.checkLendSpaceLayout() || this.checkCFOMembersLayout() ? AppConsts.imageUrls.profileLendSpace : defaultUrl);
     }
 
     showLoginAttempts(e): void {

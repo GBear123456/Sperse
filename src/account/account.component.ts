@@ -5,6 +5,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
+import { CFOMemberLayoutComponent } from './layouts/cfo-member/cfo-member-layout.component';
 import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 
 @Directive({
@@ -39,9 +40,18 @@ export class AccountComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
-        let tenant = this._appSession.tenant;
-        this.loadLayoutComponent(tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
-            ? LendSpaceLayoutComponent : HostLayoutComponent);
+        this.loadLayoutComponent(this.getLayoutComponent(this._appSession.tenant));
+    }
+
+    private getLayoutComponent(tenant) {
+        switch (tenant && tenant.customLayoutType) {
+            case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
+                return LendSpaceLayoutComponent;
+            case TenantLoginInfoDtoCustomLayoutType.CFOMembers: 
+                return CFOMemberLayoutComponent;
+            default: 
+                return HostLayoutComponent;
+        }
     }
 
     private loadLayoutComponent(component: Type<AppComponentBase>) {

@@ -20,8 +20,9 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { LoginService } from '../login/login.service';
 import { ResetPasswordModel } from './reset-password.model';
-import {LendSpaceResetPasswordComponent} from '@root/account/password/layouts/lend-space/lend-space-reset-password.component';
-import {HostResetPasswordComponent} from '@root/account/password/layouts/host/host-reset-password.component';
+import { LendSpaceResetPasswordComponent } from './layouts/lend-space/lend-space-reset-password.component';
+import { CFOMemberResetPasswordComponent } from './layouts/cfo-member/cfo-member-reset-password.component';
+import { HostResetPasswordComponent } from './layouts/host/host-reset-password.component';
 
 @Directive({
     selector: '[ad-reset-password-host]'
@@ -54,10 +55,18 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit(): void {
+        this.loadLayoutComponent(this.getLayoutComponent(this._appSessionService.tenant));
+    }
 
-        let tenant = this._appSessionService.tenant;
-        this.loadLayoutComponent(tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
-            ? LendSpaceResetPasswordComponent : HostResetPasswordComponent);
+    private getLayoutComponent(tenant) {
+        switch (tenant && tenant.customLayoutType) {
+            case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
+                return LendSpaceResetPasswordComponent;
+            case TenantLoginInfoDtoCustomLayoutType.CFOMembers: 
+                return CFOMemberResetPasswordComponent;
+            default: 
+                return HostResetPasswordComponent;
+        }
     }
 
     private loadLayoutComponent(component: Type<HostResetPasswordComponent>) {

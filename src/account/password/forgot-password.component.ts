@@ -13,8 +13,9 @@ import { SendPasswordResetCodeInput, TenantLoginInfoDtoCustomLayoutType } from '
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { LoginService } from 'account/login/login.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import {LendSpaceForgotPasswordComponent} from '@root/account/password/layouts/lend-space/lend-space-forgot-password.component';
-import {HostForgotPasswordComponent} from '@root/account/password/layouts/host/host-forgot-password.component';
+import { LendSpaceForgotPasswordComponent } from './layouts/lend-space/lend-space-forgot-password.component';
+import { CFOMemberForgotPasswordComponent } from './layouts/cfo-member/cfo-member-forgot-password.component';
+import { HostForgotPasswordComponent } from '@root/account/password/layouts/host/host-forgot-password.component';
 
 @Directive({
     selector: '[ad-forgot-password-host]'
@@ -44,9 +45,18 @@ export class ForgotPasswordComponent extends AppComponentBase implements OnInit 
 
 
     ngOnInit() {
-        let tenant = this._appSession.tenant;
-        this.loadLayoutComponent(tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.LendSpace)
-            ? LendSpaceForgotPasswordComponent : HostForgotPasswordComponent);
+        this.loadLayoutComponent(this.getLayoutComponent(this._appSession.tenant));
+    }
+
+    private getLayoutComponent(tenant) {
+        switch (tenant && tenant.customLayoutType) {
+            case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
+                return LendSpaceForgotPasswordComponent;
+            case TenantLoginInfoDtoCustomLayoutType.CFOMembers: 
+                return CFOMemberForgotPasswordComponent;
+            default: 
+                return HostForgotPasswordComponent;
+        }
     }
 
     private loadLayoutComponent(component: Type<HostForgotPasswordComponent>) {
