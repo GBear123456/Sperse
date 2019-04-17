@@ -24,12 +24,12 @@
             </div>
             <div *dxTemplate="let item of 'emailItemTemplate'">
                 <div class="email-item-wrapper">
-                    <span>{{item?.emailAddress}}</span>          
+                    <span>{{item?.emailAddress}}</span>
                 </div>
             </div>
             <dx-validator>
-                <dxi-validation-rule type="required" message="{{l('EmailIsRequired')}}"></dxi-validation-rule>
-                <dxi-validation-rule type="email" message="{{l('InvalidEmailAddress')}}"></dxi-validation-rule>
+                <dxi-validation-rule type="required" [message]="l('EmailIsRequired')"></dxi-validation-rule>
+                <dxi-validation-rule type="pattern" [pattern]="emailRegEx" [message]="l('InvalidEmailAddress')"></dxi-validation-rule>
             </dx-validator>
         </dx-select-box>
         <dx-select-box #phoneNumber
@@ -56,7 +56,7 @@
             </div>
             <div *dxTemplate="let item of 'phoneItemTemplate'">
                 <div class="phone-item-wrapper">
-                    <span>{{phoneFormatPipe.transform(item?.phoneNumber)}}</span>          
+                    <span>{{phoneFormatPipe.transform(item?.phoneNumber)}}</span>
                 </div>
             </div>
             <dx-validator>
@@ -92,7 +92,7 @@
                             <dx-button class="exit" icon="refresh" (onClick)="closePhoneInPlaceEdit()"></dx-button>
                         </div>
                     </div>
-                    <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{l('PasswordReset')}}</button>                    
+                    <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{l('PasswordReset')}}</button>
                     <div class="title">
                         {{l('Options') + ':'}}
                     </div>

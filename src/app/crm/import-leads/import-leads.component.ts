@@ -30,7 +30,7 @@ import {
     ImportServiceProxy, ImportInputImportType, PartnerServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
-import { ImportStatus, ContactGroup, ContactStatus } from '@shared/AppEnums';
+import { ImportStatus, ContactGroup } from '@shared/AppEnums';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -97,10 +97,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly PERSONAL_PREFERREDTOD = 'personalInfo_preferredToD';
     private readonly PERSONAL_CREDITSCORERATING = 'personalInfo_creditScoreRating';
 
-    private readonly IMPORT_TYPE_LEAD    = 0;
-    private readonly IMPORT_TYPE_PARTNER = 1;
-    private readonly IMPORT_TYPE_OTHER   = 2;
-
     private readonly FIELDS_TO_CAPITALIZE = [
         this.FIRST_NAME_FIELD,
         this.MIDDLE_NAME_FIELD,
@@ -161,8 +157,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_CREDITSCORERATING
     ];
 
-    contactGroupId = ContactGroup.Client;
-    contactStatusId = ContactStatus.Prospective;
     importStatuses: any = ImportStatus;
     importStatus: ImportStatus;
     hideLeftMenu = false;
@@ -171,7 +165,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     importedCount = 0;
     failedCount = 0;
     mappingFields: any[] = [];
-    importType = this.IMPORT_TYPE_LEAD;
+    importTypeIndex = 0;
+    importType = ImportInputImportType.Lead;
+    contactGroupId = ContactGroup.Client;
 
     fullName: ImportFullName;
     fullAddress: ImportAddressInput;
@@ -187,7 +183,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     selectedStageId: number;
     selectedPartnerTypeName: string;
     defaultRating = 5;
-    leadStages = [];
+    stages = [];
     partnerTypes = [];
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
@@ -230,42 +226,37 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.selectedClientKeys.push(this.userId);
     }
 
-    private contactGroupChanged(event) {
-        this.contactGroupId = event.itemData.value;
-        this.importTypeChanged();
-    }
+    private importTypeChanged(event) {
+        this.importTypeIndex = event.itemIndex;
+        this.importType = event.itemData.value;
 
-    private contactStatusChanged(event) {
-        this.contactStatusId = event.itemData.value;
-        this.importTypeChanged();
-    }
-
-    private importTypeChanged() {
-        this.importType = this.contactGroupId == ContactGroup.Client
-            && this.contactStatusId == ContactStatus.Prospective ? this.IMPORT_TYPE_LEAD :
-            (this.contactGroupId == ContactGroup.Partner && this.contactStatusId != ContactStatus.Prospective
-                ? this.IMPORT_TYPE_PARTNER : this.IMPORT_TYPE_OTHER);
-
-        if (this.importType != this.IMPORT_TYPE_LEAD)
+        if (this.importType != ImportInputImportType.Lead)
             this.selectedStageId = null;
 
-        if (this.importType != this.IMPORT_TYPE_PARTNER)
+        if (this.importType != ImportInputImportType.Partner)
             this.selectedPartnerTypeName = null;
 
         this.userAssignmentComponent.getAssignedUsersSelector = this.getAssignedUsersStoreSelectors();
         this.userAssignmentComponent.refreshList();
 
+        let contactGroupId = this.importType == ImportInputImportType.Client ? undefined :
+            (ContactGroup[this.importType == ImportInputImportType.Lead ? 'Client' : this.importType]);
+        if (contactGroupId != this.contactGroupId) {
+            if (this.contactGroupId = contactGroupId)
+                this.getStages();
+        }
         this.initToolbarConfig();
     }
 
     getAssignedUsersStoreSelectors() {
-        if (this.importType == this.IMPORT_TYPE_LEAD)
-            return LeadAssignedUsersStoreSelectors.getAssignedUsers;
+        if (this.importType === ImportInputImportType.Client)
+            return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
 
-        if (this.importType == this.IMPORT_TYPE_PARTNER)
+        if (this.importType === ImportInputImportType.Partner)
             return PartnerAssignedUsersStoreSelectors.getAssignedUsers;
 
-        return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
+        if (this.importType === ImportInputImportType.Lead)
+            return LeadAssignedUsersStoreSelectors.getAssignedUsers;
     }
 
     private initFieldsConfig() {
@@ -390,7 +381,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     complete(data) {
-        let uri = (ContactGroup[this.contactGroupId] + 's').toLowerCase();
+        let uri = (this.importType + 's').toLowerCase();
         this.totalCount = data.records.length;
         this.message.confirm(
             this.l('LeadsImportComfirmation', this.totalCount, uri),
@@ -460,8 +451,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             result.items.push(lead);
         });
 
-        //!!TODO should be added contact group/status
-        //result.importType = this.importType;
+        result.importType = this.importType;
         return ImportInput.fromJS(result);
     }
 
@@ -502,9 +492,15 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     getStages() {
-        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId)
+        this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)
             .subscribe(result => {
-                this.leadStages = result.stages;
+                this.stages = result.stages.map((stage) => {
+                    return {
+                        id: stage.id,
+                        index: stage.sortOrder,
+                        name: stage.name
+                    };
+                });
             });
     }
 
@@ -618,28 +614,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         widget: 'dxDropDownMenu',
                         options: {
                             width: 130,
-                            selectedIndex: Object['values'](ContactGroup).indexOf(this.contactGroupId),
-                            items: Object.keys(ContactGroup).map((group) => {
+                            selectedIndex: this.importTypeIndex,
+                            items: Object.keys(ImportInputImportType).map((type) => {
+                                let isClient = type == ImportInputImportType.Client;
                                 return {
-                                    action: this.contactGroupChanged.bind(this),
-                                    text: this.l(group),
-                                    value: ContactGroup[group]
-                                };
-                            })
-                        }
-                    },
-                    {
-                        text: '',
-                        name: 'select-box',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            width: 150,
-                            selectedIndex: Object['values'](ContactStatus).indexOf(this.contactStatusId),
-                            items: Object.keys(ContactStatus).map((status) => {
-                                return {
-                                    action: this.contactStatusChanged.bind(this),
-                                    text: this.l(status),
-                                    value: ContactStatus[status]
+                                    disabled: type == ImportInputImportType.Order || type != ImportInputImportType.Lead
+                                        && !this.isGranted(type == ImportInputImportType.Employee ?
+                                            'Pages.Administration.Users' :
+                                            'Pages.CRM.' + (isClient ? 'Customers' : type + 's')),
+                                    action: this.importTypeChanged.bind(this),
+                                    text: this.l(type + 's'),
+                                    value: ImportInputImportType[type]
                                 };
                             })
                         }
@@ -663,7 +648,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         attr: {
                             'filter-selected': !!this.selectedStageId
                         },
-                        disabled: this.importType != this.IMPORT_TYPE_LEAD
+                        disabled: !this.contactGroupId
                     },
                     {
                         name: 'partnerType',
@@ -671,7 +656,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         attr: {
                             'filter-selected': !!this.selectedPartnerTypeName
                         },
-                        disabled: this.importType != this.IMPORT_TYPE_PARTNER
+                        disabled: this.importType != ImportInputImportType.Partner
                     },
                     {
                         name: 'lists',

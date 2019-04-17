@@ -80,7 +80,7 @@ export class CreditWizardPageComponent extends AppComponentBase implements OnIni
     passwordComplexityWord = 'empty';
     showPassword = false;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-
+    emailRegEx = AppConsts.regexPatterns.email;
     googleAutoComplete: Boolean;
     public options = {
         types: ['address'],

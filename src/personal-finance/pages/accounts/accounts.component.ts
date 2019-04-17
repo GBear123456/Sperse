@@ -112,7 +112,8 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
                         InstanceType[this._cfoService.instanceType],
                         this._cfoService.instanceId,
                         false,
-                        false
+                        false,
+                        'Q'
                     ).subscribe();
                 })
             ).subscribe(

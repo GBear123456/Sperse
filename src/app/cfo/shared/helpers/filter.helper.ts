@@ -55,6 +55,7 @@ export class FilterHelpers {
             if (item && item.value) {
                 let date =  new Date(item.value.getTime());
                 DateHelper.removeTimezoneOffset(date);
+
                 requestFilter[(key == 'to' ? 'end' : 'start') + 'Date'] = date;
             }
         }

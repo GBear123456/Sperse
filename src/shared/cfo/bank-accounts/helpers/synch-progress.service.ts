@@ -59,9 +59,9 @@ export class SynchProgressService {
         this.needRefreshSync.next();
     }
 
-    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false) {
+    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q') {
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.runSyncAll(forcedSync, newOnly)
+        this.runSyncAll(forcedSync, newOnly, syncType)
             .subscribe(() => {
                 this.tryCount = 0;
                 this.hasFailedAccounts = false;
@@ -79,12 +79,13 @@ export class SynchProgressService {
         this.cancelRequests();
     }
 
-    private runSyncAll(forcedSync: boolean = false, newOnly: boolean = false) {
+    private runSyncAll(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q') {
         return this.syncServiceProxy.syncAllAccounts(
             InstanceType[this.cfoService.instanceType],
             this.cfoService.instanceId,
             forcedSync,
-            newOnly
+            newOnly,
+            syncType === 'all' ? undefined : 'Q'
         ).pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;
             this.runGetStatus();

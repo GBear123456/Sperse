@@ -39,7 +39,7 @@
                           (onRowInserted)="onRowInserted($event)"
                           (onEditorPrepared)="editorPrepared($event)"
                           [ngClass]="(!bulkUpdateMode || selectedKeys?.length) ? 'add-new-item-mode' : ''">
-                <dxi-column cellTemplate="radiogroup" width="50px" allowEditing="false" [visible]="selectedKeys.length"
+                <dxi-column cellTemplate="radiogroup" width="50px" allowEditing="false" [visible]="selectedKeys && selectedKeys.length"
                     allowFiltering="false" allowFixing="true" allowHeaderFiltering="false" allowHiding="false" 
                     allowReordering="false" allowResizing="false" allowSearch="false" allowSorting="false"></dxi-column>
                 <dxi-column dataField="name" [sortingMethod]="customSortingMethod" [sortIndex]="0" sortOrder="asc"></dxi-column>

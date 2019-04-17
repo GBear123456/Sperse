@@ -409,6 +409,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return (request) => {
             if (context)
                 request.headers['context'] = context;
+            request.params.contactGroupId = this.contactGroupId;
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
         };
@@ -636,9 +637,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return reverse ? clone(this.stages).reverse() : this.stages;
     }
 
-    getTargetStage(stage, reverse) {
+    getTargetStage(stage: StageDto, reverse: boolean) {
         let result;
-        this.getStages(reverse).some((lookupStage) => {
+        this.getStages(reverse).some((lookupStage: StageDto) => {
             if (stage.id == lookupStage.id)
                 return true;
             else
@@ -647,19 +648,32 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return result;
     }
 
-    moveStage(stage, reverse) {
+    moveStage(stage: StageDto, reverse) {
         if (this.disallowMove(stage, reverse))
             return ;
 
-        let direction = (reverse ? 1 : -1),
-            targetStage = this.getTargetStage(stage, reverse);
+        let direction = reverse ? 1 : -1,
+            targetStage: StageDto = this.getTargetStage(stage, reverse),
+            sortOrder;
+        const stageIsNegative = stage.sortOrder < 0,
+              moveNegativeToRight = stageIsNegative && reverse,
+              moveNegativeToLeft = stageIsNegative && !reverse,
+              movePositiveToLeft = !stageIsNegative && !reverse,
+              movePositiveToRight = !stageIsNegative && reverse;
+        if (moveNegativeToRight) {
+            sortOrder = targetStage.sortOrder || direction;
+        } else if (movePositiveToLeft) {
+            sortOrder = (targetStage.sortOrder + direction) || targetStage.sortOrder;
+        } else if (moveNegativeToLeft || movePositiveToRight) {
+            sortOrder = targetStage.sortOrder + direction;
+        }
 
         this.startLoading(true);
         this._stageServiceProxy.updateStageSortOrder(new UpdateSortOrderInput({
             id: stage.id,
-            sortOrder: (targetStage.sortOrder + direction) || direction
+            sortOrder: sortOrder
         })).pipe(
-            finalize(() => { this.finishLoading(true); })
+            finalize(() => this.finishLoading(true))
         ).subscribe(() => {
             this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
             this.notify.info(this.l('SavedSuccessfully'));

@@ -1,7 +1,9 @@
 import { Component, Injector, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
 import {
-    SyncAccountServiceProxy, CreateSyncAccountInput, InstanceType,
+    SyncAccountServiceProxy,
+    CreateSyncAccountInput,
+    InstanceType,
     UpdateSyncAccountInput
 } from 'shared/service-proxies/service-proxies';
 import { finalize } from 'rxjs/operators';
@@ -14,13 +16,14 @@ import { AppConsts } from 'shared/AppConsts';
     providers: [ SyncAccountServiceProxy ]
 })
 export class XeroLoginComponent extends CFOComponentBase implements OnInit {
-    @Output() onComplete: EventEmitter<null> = new EventEmitter();
-    @Output() onClose: EventEmitter<null> = new EventEmitter();
+    @Input() operationType: 'add' | 'update' = 'add';
     @Input() accountId: number;
     @Input() isSyncBankAccountsEnabled = true;
-    showForm = false;
+    @Output() onComplete: EventEmitter<null> = new EventEmitter();
+    @Output() onClose: EventEmitter<null> = new EventEmitter();
     consumerKey: string;
     consumerSecret: string;
+    xeroAppsLink = 'https://developer.xero.com/myapps';
     getXeroCertificateUrl: string;
     overlayElement;
 
@@ -56,7 +59,7 @@ export class XeroLoginComponent extends CFOComponentBase implements OnInit {
                 isSyncBankAccountsEnabled: this.isSyncBankAccountsEnabled
             }))
             .pipe(finalize(this.finalize))
-            .subscribe((result) => {
+            .subscribe(() => {
                 this.onComplete.emit();
             });
     }
@@ -70,7 +73,7 @@ export class XeroLoginComponent extends CFOComponentBase implements OnInit {
                 consumerSecret: this.consumerSecret
             }))
             .pipe(finalize(this.finalize))
-            .subscribe((res) => {
+            .subscribe(() => {
                 this.onComplete.emit();
             });
     }

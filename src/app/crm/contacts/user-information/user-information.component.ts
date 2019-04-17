@@ -70,12 +70,13 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     masks = AppConsts.masks;
     phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     validationRules = {
         'name': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'surname': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
         'phoneNumber': [{ type: 'stringLength', max: 24 }, { type: 'pattern', pattern: AppConsts.regexPatterns.phone }],
-        'emailAddress': [{ type: 'pattern', pattern: AppConsts.regexPatterns.email, message: this.l('InvalidEmailAddress') }, { type: 'required', message: this.l('EmailIsRequired') }]
+        'emailAddress': [{ type: 'pattern', pattern: this.emailRegEx, message: this.l('InvalidEmailAddress') }, { type: 'required', message: this.l('EmailIsRequired') }]
     };
 
     orgUnitsDisabled;

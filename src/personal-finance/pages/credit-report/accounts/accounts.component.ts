@@ -59,8 +59,8 @@ export class AccountsComponent extends AppComponentBase implements OnInit, After
         }
         if (node == 'status') {
             if (item[node])
-                return this.l("closed");
-            else return this.l("open");
+                return this.l('closed');
+            else return this.l('open');
         }
 
         return item[node];
@@ -124,7 +124,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, After
       });
     }
 
-    getCreditHistoryYearSpan(year){
+    getCreditHistoryYearSpan(year) {
       return moment([year, 11, 29]).diff(moment.max(moment([year, 0, 1]),
         this.creditHistoryStartDate), 'months') + 1;
     }

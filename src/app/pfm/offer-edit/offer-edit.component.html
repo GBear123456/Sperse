@@ -266,7 +266,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div *ngSwitchCase="'flags'">
                     <div class="row">
                         <div class="col-md-5">
@@ -293,6 +292,7 @@
                                             [dataSource]="getEnumDataSource(securingTypeEnum)">
                             </dropdown-field>
                         </div>
+
                     </div>
                     <div class="row">
                         <div class="col-md-5" *ngFor="let key of keys(model.extendedInfo.flags)">

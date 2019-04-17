@@ -250,9 +250,10 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         let html = '';
 
         moment.tz.setDefault(undefined);
-        let date = moment(pointInfo.argument);
+        let date = new Date(pointInfo.argument.getTime());
+        date.setTime(date.getTime() + (date.getTimezoneOffset() * 60 * 1000));
+        date = moment(date);
         moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
-
         const leadsArePresent = pointInfo.points.length > this.series.length;
         const headerFormattedDate = this.getHeaderFormattedDate(date);
         html += `<header class="tooltip-header">${headerFormattedDate}</header>`;
@@ -306,7 +307,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     getDailyBottomAxisCustomizer(elem) {
         const [ , date, month ] = elem.value.toUTCString().split(' ');
-        return month + ' ' + date;
+        return `${date}<br/>${month}`;
     }
 
     render(component?: any) {

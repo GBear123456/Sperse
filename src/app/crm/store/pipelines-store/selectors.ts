@@ -30,8 +30,8 @@ export const getPipeline = (filter: Filter) => createSelector(
         /** @todo change for using of entity adapter */
         return pipelines && pipelines.length
                ? pipelines.find(pipeline => {
-                    return filter.id !== undefined ? pipeline.id === filter.id : 
-                        (filter.purpose ? pipeline.purpose === filter.purpose && 
+                    return filter.id !== undefined ? pipeline.id === filter.id :
+                        (filter.purpose ? pipeline.purpose === filter.purpose &&
                             (!filter.contactGroupId || pipeline.contactGroupId == filter.contactGroupId) : false);
                 })
                : null;

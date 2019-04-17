@@ -2,9 +2,6 @@
     <div class="header">
         <div class="logo">
             <a [href]="originUrl">
-                <img *ngIf="!appSession.tenant || !appSession.tenant.logoId"
-                     src="./assets/common/images/app-logo-on-dark.png"
-                     alt="logo" width="200" height="60"/>
                 <img *ngIf="appSession.tenant && appSession.tenant.logoId"
                      [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
                      alt="logo"
@@ -16,15 +13,10 @@
     <main class="main-content">
         <div class="account-forms">
             <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12 text-center form-wrapper">
+                <div class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
 
                 <router-outlet></router-outlet>                    
 
-                </div>
-                <div class="col-md-6 col-sm-12 d-none d-md-block text-center slogan-side">
-                    <img src="assets/common/images/brain.svg" alt="The digital brain of your business" width="488" class="img-responsive">
-                    <h2 class="slogan">The digital brain of your business</h2>
-                    <p class="slogan-description">Augumented by Artificial Intelligence</p>
                 </div>
             </div>
         </div>

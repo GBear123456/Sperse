@@ -8,12 +8,12 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import * as moment from 'moment';
 
 @Component({
-    templateUrl: './host-layout.component.html',
+    templateUrl: './cfo-member-layout.component.html',
     styleUrls: [
-        './host-layout.component.less'
+        './cfo-member-layout.component.less'
     ]
 })
-export class HostLayoutComponent extends AppComponentBase implements OnInit {
+export class CFOMemberLayoutComponent extends AppComponentBase implements OnInit {
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;

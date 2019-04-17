@@ -15,6 +15,7 @@ import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Store, select } from '@ngrx/store';
 import { first } from 'rxjs/operators';
+import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -89,7 +90,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.initToolbarConfig();
     }
 
-    contactGroups = Object.keys(ContactGroup);
+    contactGroups = Object.keys(ContactGroup).map((group) => {
+        return {
+            text: this.l('ContactGroup_' + group),
+            value: group
+        };
+    });
     selectedContactGroup = Object.keys(ContactGroup).shift();
     contactGroupId = ContactGroup[this.selectedContactGroup];
 
@@ -117,11 +123,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     formatting = AppConsts.formatting;
 
     public headlineConfig = {
-        names: [this.l('Leads')],
+        names: [],
         onRefresh: () => {
             this.refresh();
         },
-        icon: 'basket',
         buttons: [
             {
                 enabled: true,
@@ -130,6 +135,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         ]
     };
+
+    private readonly CONTACT_GROUP_CACHE_KEY = 'CONTACT_GROUP';
 
     constructor(injector: Injector,
         public dialog: MatDialog,
@@ -140,9 +147,12 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
-        private itemDetailsService: ItemDetailsService
+        private itemDetailsService: ItemDetailsService,
+        private _cacheService: CacheService
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
+
+        this.contactGroupOptionInit();
         this.dataSource = {
             uri: this.dataSourceURI,
             requireTotalCount: true,
@@ -161,6 +171,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             }
         };
         this.searchValue = '';
+    }
+
+    contactGroupOptionInit() {
+        let cacheKey = this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY);
+        if (this._cacheService.exists(cacheKey)) {
+            this.selectedContactGroup = this._cacheService.get(cacheKey);
+            this.contactGroupId = ContactGroup[this.selectedContactGroup];
+        }
     }
 
     private isActivated() {
@@ -897,7 +915,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onContactGroupChanged(event) {
-        if (event.previousValue != event.value)
+        if (event.previousValue != event.value) {
             this.contactGroupId = ContactGroup[event.value];
+            this._cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
+        }
     }
 }
