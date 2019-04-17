@@ -27,7 +27,7 @@ export class CampaignOffersComponent extends AppComponentBase {
                 _offerServiceProxy.getAll(GetAllInput.fromJS({
                     testMode: memberInfo.testMode,
                     isDirectPostSupported: memberInfo.isDirectPostSupported,
-                    campaignIds: [3174, 3179]
+                    campaignIds: [3945, 3179]
                 })).subscribe((offers) => {
                     this.offers = _offerServiceProxy['caampaignOffersData'] = offers.map((item) => {
                         return {
