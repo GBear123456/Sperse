@@ -61237,11 +61237,13 @@ export enum InstanceType91 {
 export enum LayoutType {
     Default = "Default", 
     LendSpace = "LendSpace", 
+    CFOMembers = "CFOMembers", 
 }
 
 export enum LayoutType2 {
     Default = "Default", 
     LendSpace = "LendSpace", 
+    CFOMembers = "CFOMembers", 
 }
 
 export enum TenantHostType {
@@ -62199,6 +62201,7 @@ export enum RoleListDtoModuleId {
 export enum TenantLoginInfoDtoCustomLayoutType {
     Default = "Default", 
     LendSpace = "LendSpace", 
+    CFOMembers = "CFOMembers", 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {
