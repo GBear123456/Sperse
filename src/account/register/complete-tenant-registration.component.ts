@@ -1,17 +1,22 @@
+/** Core imports */
 import { Component, Injector, OnInit } from '@angular/core';
+
+/** Third party imports */
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
 import {
-    TenantSubscriptionServiceProxy, CompleteTenantRegistrationInput, CompleteTenantRegistrationOutput, TenantHostType
+    TenantSubscriptionServiceProxy, CompleteTenantRegistrationInput, CompleteTenantRegistrationOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { LoginService } from './../login/login.service';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './complete-tenant-registration.component.html',
-    styleUrls: ['./complete-tenant-registration.component.less',],
+    styleUrls: ['./complete-tenant-registration.component.less'],
     animations: [accountModuleAnimation()],
     providers: [TenantSubscriptionServiceProxy]
 })
@@ -41,7 +46,6 @@ export class CompleteTenantRegistrationComponent extends AppComponentBase implem
 
     registerTenant(): void {
         this.model.adminPassword = this.generatePassword();
-        this.model.tenantHostType = <any>TenantHostType.PlatformApp;
         this.startLoading(true);
         this._tenantSubscriptionService.completeTenantRegistration(this.model)
             .pipe(finalize(() => { this.finishLoading(true); }))
