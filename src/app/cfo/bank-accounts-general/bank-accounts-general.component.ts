@@ -38,8 +38,8 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
             buttons: [
                 {
                     enabled: true,
-                    action: this.onNextClick.bind(this),
-                    lable: this.l('Continue'),
+                    action: this.syncAll.bind(this),
+                    lable: this.l('SyncAll'),
                     class: 'btn-layout next-button'
                 }
             ]
@@ -50,12 +50,9 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this._bankAccountsGeneralService.refreshBankAccounts();
     }
 
-    onNextClick() {
+    syncAll() {
         setTimeout(() => {
-            this._synchProgress.startSynchronization(true);
-            this._cfoService.instanceChangeProcess(() => {
-                this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
-            });
+            this._synchProgress.startSynchronization(true, false, 'all');
         }, 300);
     }
 
