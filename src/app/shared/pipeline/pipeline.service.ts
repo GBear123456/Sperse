@@ -98,17 +98,7 @@ export class PipelineService {
         return _.findWhere(this.getStages(pipelinePurposeId), {name: stageName});
     }
 
-    updateEntityStageById(pipelinePurposeId, entityId, oldStageName, newStageName, complete = null) {
-        let fromStage = this.getStageByName(pipelinePurposeId, oldStageName);
-        if (fromStage) {
-            let entity = _.findWhere(fromStage.entities, {Id: parseInt(entityId)});
-            return entity && this.updateEntityStage(pipelinePurposeId, entity, oldStageName, newStageName, complete);
-        }
-    }
-
-    updateEntityStage(pipelinePurposeId, entity, oldStageName, newStageName, complete = null) {
-        let fromStage = this.getStageByName(pipelinePurposeId, oldStageName),
-            toStage = this.getStageByName(pipelinePurposeId, newStageName);
+    updateEntityStage(pipelinePurposeId, entity, fromStage, toStage, complete = null) {
         if (fromStage && toStage) {
             let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
             if (action && action.sysId && entity && !entity.locked) {
@@ -171,7 +161,8 @@ export class PipelineService {
     activityTransition(fromStage, toStage, entity, complete) {
         this._activityService.transition(TransitionActivityDto.fromJS({
             id: this.getEntityId(entity),
-            stageId: toStage.id
+            stageId: toStage.id,
+            sortOrder: this.getEntityNewSortOrder(entity, toStage)
         })).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
@@ -181,10 +172,12 @@ export class PipelineService {
     }
 
     updateLeadStage(fromStage, toStage, entity, complete) {
+        let prevEntity = this.getPrevEntity(entity, toStage);
         this._leadService.updateLeadStage(
             UpdateLeadStageInfo.fromJS({
                 leadId: this.getEntityId(entity),
-                stageId: toStage.id
+                stageId: toStage.id,
+                sortOrder: this.getEntityNewSortOrder(entity, toStage)
             })
         ).pipe(finalize(() => {
             entity.locked = false;
@@ -270,7 +263,8 @@ export class PipelineService {
         this._orderService.updateStage(
             UpdateOrderStageInfo.fromJS({
                 orderId: this.getEntityId(entity),
-                stageId: toStage.id
+                stageId: toStage.id,
+                sortOrder: this.getEntityNewSortOrder(entity, toStage)
             })
         ).pipe(finalize(() => {
             entity.locked = false;
@@ -337,6 +331,33 @@ export class PipelineService {
         fromStage.total--;
         toStage.total++;
         this.stageChange.next(entity);
+    }
+
+    getPrevEntity(entity, stage) {
+        let entities = stage['entities'];
+        for (let i = 0; i < entities.length; i++) {
+            if (entities[i].Id == entity.Id)
+                return undefined;
+            if (entities[i + 1].Id == entity.Id)
+                return entities[i];
+        }
+    }
+
+    getEntityNewSortOrder(entity, stage) {
+        let prevEntity = this.getPrevEntity(entity, stage);
+        return prevEntity ? prevEntity.SortOrder + 1 : 0;
+    }
+
+    updateEntitySortOrder(pipelineId, entity, sortOrder, complete) {
+        if (!entity.locked) {
+            entity.locked = true;
+            this._pipelineServiceProxy.updateEntitySortOrder(
+                pipelineId, entity.Id, sortOrder
+            ).pipe(finalize(() => {
+                entity.locked = false;
+            })).subscribe(complete, complete);
+        } else 
+            complete && complete();
     }
 
     getStageDefaultColorByStageSortOrder(stageSortOrder: number) {
