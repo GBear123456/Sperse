@@ -1,7 +1,18 @@
 :host {
     display: block;
+    height: 100%;
     form {
         padding: 20px 20px 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        .primeng-datatable-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
     }
 }
 
