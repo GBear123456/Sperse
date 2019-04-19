@@ -716,11 +716,71 @@
     }
 }
 
-/deep/ .stage-actions {
-    list-style-type: none;
-    text-align: left;
+/deep/ .pipeline-actions {
+    padding: 0px!important;
 
-    .list-group-item {
+    .stage-actions {
+        list-style-type: none;
         text-align: left;
+        
+        .popup-context {
+            padding: 12px 0px;
+        }
+
+        .list-group-item {
+            min-width: 170px;
+            border: none;
+            padding: 12px 0;
+            text-align: left;
+            padding-right: 17px;
+            padding-left: 17px;
+            margin-bottom: 0;
+            &:first-child {                
+                border-bottom: 1px solid #dfdfdf;
+            }
+            &:last-child {                
+                border-top: 1px solid #dfdfdf;
+                a > span {
+                    color: #00aeef;
+                    padding: 0px 10px;
+                    font-size: 13px;
+               }
+               a.disabled {
+                   opacity: 0.5;
+                   pointer-events: none;                        
+               }
+            }
+            a > i {
+                width: 21px;
+                height: 21px;
+                display: inline-block;
+                &.add-stage {
+                    background: url(../../../assets/common/icons/pipeline/add.svg) no-repeat;
+                }
+                &.edit-stage {
+                    background: url(../../../assets/common/icons/pipeline/edit.svg) no-repeat;
+                }
+                &.delete-stage {
+                    background: url(../../../assets/common/icons/pipeline/remove.svg) no-repeat;
+                }
+                &.right-arrow {
+                    background: url(../../../assets/common/icons/pipeline/right-arrow.svg) no-repeat center;
+                }
+                &.left-arrow {
+                    background: url(../../../assets/common/icons/pipeline/left-arrow.svg) no-repeat center;
+                }                
+            }
+            a > span {    
+                vertical-align: super;
+                padding-left: 10px;
+                font-size: 14px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.71;
+                letter-spacing: 0.3px;
+                color: #424c56;
+            }
+        }
     }
 }

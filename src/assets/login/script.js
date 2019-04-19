@@ -113,7 +113,7 @@
     function handleGetCurrentLoginInformations(response) {
         var loginInformations = window.loginInfo = response;
         tenant = loginInformations && loginInformations.tenant;
-        if (tenant && tenant.customLayoutType == 'LendSpace') {
+        if (tenant && tenant.customLayoutType != 'Default') {
             window.loginPageHandler = undefined;
             appBootstrap && appBootstrap.call(appContext);
         } else {
@@ -294,7 +294,7 @@
         createMetatag("og:url", location.origin);
         createMetatag("og:image", !tenant || !tenant.logoId ?
             window.location.origin + '/assets/common/images/app-logo-on-light.png' :
-            AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
+            remoteServiceUrl + '/api/TenantCustomization/GetLogo?id=' + tenant.logoId);
     }
 
     function loginPageAfterInit() {
