@@ -12,19 +12,22 @@
                 <div *dxTemplate="let data = data of 'content'">
                     <ul class="stage-actions list-group">
                         <li class="list-group-item" [hidden]="stage['isFinal']">
-                            <a (click)="updateStage(stage, 'Add')"><i class="fa fa-plus fa-fw" style="color: greenyellow"></i> {{l('Add_New_Stage')}}</a>
+                            <a (click)="$event.preventDefault()"> 
+                                <dx-check-box width="200" [disabled]="true" [text]="l('Sellect_All_Records')"></dx-check-box>
+                            </a>
+                        </li>
+                        <li class="list-group-item" [hidden]="stage['isFinal']">
+                            <a (click)="updateStage(stage, 'Add')"><i class="add-stage"></i> <span>{{l('Add_New_Stage')}}</span></a>
                         </li>
                         <li class="list-group-item">
-                            <a (click)="updateStage(stage, 'Rename')"><i class="fa fa-pencil fa-fw" style="color: orange"></i> {{l('Rename_Stage')}}</a>
+                            <a (click)="updateStage(stage, 'Rename')"><i class="edit-stage"></i> <span>{{l('Rename_Stage')}}</span></a>
                         </li>
                         <li class="list-group-item" [hidden]="disallowDelete(stage)">
-                            <a (click)="updateStage(stage, 'Merge')"><i class="fa fa-minus fa-fw" style="color: red"></i> {{l('Delete_Stage')}}</a>
+                            <a (click)="updateStage(stage, 'Merge')"><i class="delete-stage"></i> <span>{{l('Delete_Stage')}}</span></a>
                         </li>
-                        <li class="list-group-item" [hidden]="disallowMove(stage, true)">
-                            <a (click)="moveStage(stage, true)"><i class="fa fa-chevron-right fa-fw" style="color: #b6cf5e"></i> {{l('Move_Right_Stage')}}</a>
-                        </li>
-                        <li class="list-group-item" [hidden]="disallowMove(stage)">
-                            <a (click)="moveStage(stage)"><i class="fa fa-chevron-left fa-fw" style="color: #f7d15e"></i> {{l('Move_Left_Stage')}}</a>
+                        <li class="list-group-item">
+                            <a (click)="moveStage(stage)" [ngClass]="{disabled: disallowMove(stage)}"><i class="left-arrow"></i> <span>{{l('Move_Left_Stage')}}</span></a>
+                            <a (click)="moveStage(stage, true)" [ngClass]="{disabled: disallowMove(stage, true)}"><span>{{l('Move_Right_Stage')}}</span> <i class="right-arrow"></i></a>
                         </li>
                     </ul>
                 </div>

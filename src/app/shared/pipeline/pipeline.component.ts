@@ -521,6 +521,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     onTooltipShowing(event) {
         this.currentTooltip = event.component;
+        event.component.content().classList.add('pipeline-actions');
     }
 
     updateStage(data, actionType) {
