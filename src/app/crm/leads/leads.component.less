@@ -28,18 +28,23 @@
     /deep/ dx-select-box[accessKey="contactGroup"] {
         background: transparent;
         position: relative;
-        left: -30px;
+        left: -20px;
         
+        .select-header {
+            font-size: 24px;
+            font-weight: 600;
+            color: rgb(23, 28, 29);
+
+            i {
+                margin-left: 15px;
+                position: relative;
+            }
+        }
+
         &.dx-state-hover, &.dx-state-active, &.dx-dropdowneditor-active {
             .dx-dropdowneditor-icon {
                 background-color: transparent;
             }
         }
-        input {
-            font-size: 24px;
-            text-align: left;
-            background: transparent;
-            border: none;
-        }  
     }
 }
