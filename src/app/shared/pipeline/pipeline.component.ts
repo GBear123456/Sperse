@@ -677,10 +677,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
               moveNegativeToLeft = stageIsNegative && !reverse,
               movePositiveToLeft = !stageIsNegative && !reverse,
               movePositiveToRight = !stageIsNegative && reverse;
-        if (moveNegativeToRight) {
+        if (moveNegativeToRight || movePositiveToLeft) {
             sortOrder = targetStage.sortOrder || direction;
-        } else if (movePositiveToLeft) {
-            sortOrder = (targetStage.sortOrder + direction) || targetStage.sortOrder;
         } else if (moveNegativeToLeft || movePositiveToRight) {
             sortOrder = targetStage.sortOrder + direction;
         }
