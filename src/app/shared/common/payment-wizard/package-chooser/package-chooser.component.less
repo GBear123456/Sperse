@@ -45,7 +45,7 @@
             margin: 27px 10px 0;
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: center;
             
             @media all and (max-width: 1100px) {
                 flex-direction: column;
@@ -65,7 +65,7 @@
             width: 30%;
             height: 60px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             align-items: center;
             margin: 0;
             position: relative;
@@ -78,7 +78,7 @@
             &.both-active {
                 position: absolute;
                 right: 10px;
-    
+                justify-content: flex-end;
                 @media all and (max-width: 1100px) {
                     position: static;
                 }
@@ -352,6 +352,7 @@
     }
     .packages {
         display: flex;
+        min-height: 350px;
         justify-content: center;
         margin-bottom: 35px;
         align-items: flex-start;
