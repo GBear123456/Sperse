@@ -686,24 +686,38 @@
             min-width: 170px;
             border: none;
             text-align: left;
-            &:first-child {                
+            &:first-child, &:last-child {
+                a {
+                    padding: 12px 22px;
+                }
+            }
+            &:first-child {
                 border-bottom: 1px solid #dfdfdf;
             }
-            &:last-child {                
+            &:last-child {                                
+                margin-top: 12px;
                 border-top: 1px solid #dfdfdf;
-                a > span {
-                    color: #00aeef;
-                    padding: 0px 10px;
-                    font-size: 13px;
-               }
-               a.disabled {
-                   opacity: 0.5;
-                   pointer-events: none;                        
-               }
+                a {
+                    &:first-child {
+                        padding-right: 13px;
+                    }
+                    &:last-child {
+                        padding-left: 13px;
+                    }
+                    & > span {
+                         color: #00aeef;
+                         padding: 0;
+                         font-size: 13px;
+                    }
+                    &.disabled {
+                       opacity: 0.5;
+                       pointer-events: none;                        
+                   }
+                }
             }
             a {
-                padding: 12px 17px;
                 display: inline-block;
+                padding: 12px 22px 0px 22px;
 
                 & > i {
                     width: 21px;
@@ -736,6 +750,10 @@
                     line-height: 1.71;
                     letter-spacing: 0.3px;
                     color: #424c56;
+                }
+
+                .dx-checkbox-text {
+                    margin-left: -16px;
                 }
             }
         }
