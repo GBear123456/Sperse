@@ -12022,6 +12022,66 @@ export class EmailingServiceProxy {
     /**
      * @return Success
      */
+    announcementData(userId: number, emailAddress: string): Observable<string> {
+        let url_ = this.baseUrl + "/api/Emailing/AnnouncementData?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
+        if (emailAddress === undefined || emailAddress === null)
+            throw new Error("The parameter 'emailAddress' must be defined and cannot be null.");
+        else
+            url_ += "emailAddress=" + encodeURIComponent("" + emailAddress) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAnnouncementData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAnnouncementData(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAnnouncementData(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     createIAgeMembers(): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Emailing/CreateIAgeMembers";
         url_ = url_.replace(/[?&]$/, "");
@@ -14483,6 +14543,118 @@ export class LeadServiceProxy {
     }
 
     /**
+     * @input (optional) 
+     * @return Success
+     */
+    submitFreeTrialRequest(input: SubmitFreeTrialRequestInput | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitFreeTrialRequest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSubmitFreeTrialRequest(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSubmitFreeTrialRequest(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSubmitFreeTrialRequest(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    submitDemoRequest(input: SubmitDemoRequestInput | null | undefined): Observable<SubmitDemoRequestOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitDemoRequest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSubmitDemoRequest(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSubmitDemoRequest(<any>response_);
+                } catch (e) {
+                    return <Observable<SubmitDemoRequestOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SubmitDemoRequestOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSubmitDemoRequest(response: HttpResponseBase): Observable<SubmitDemoRequestOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SubmitDemoRequestOutput.fromJS(resultData200) : new SubmitDemoRequestOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SubmitDemoRequestOutput>(<any>null);
+    }
+
+    /**
      * @leadBusinessRequests (optional) 
      * @return Success
      */
@@ -16256,6 +16428,74 @@ export class OfferServiceProxy {
     }
 
     /**
+     * @groupByPeriod (optional) 
+     * @campaignId (optional) 
+     * @from (optional) 
+     * @to (optional) 
+     * @return Success
+     */
+    getOffersStats(groupByPeriod: GroupByPeriod | null | undefined, campaignId: number | null | undefined, from: moment.Moment | null | undefined, to: moment.Moment | null | undefined): Observable<GetStatsResponse[]> {
+        let url_ = this.baseUrl + "/api/services/PFM/Offer/GetOffersStats?";
+        if (groupByPeriod !== undefined)
+            url_ += "GroupByPeriod=" + encodeURIComponent("" + groupByPeriod) + "&"; 
+        if (campaignId !== undefined)
+            url_ += "CampaignId=" + encodeURIComponent("" + campaignId) + "&"; 
+        if (from !== undefined)
+            url_ += "From=" + encodeURIComponent(from ? "" + from.toJSON() : "") + "&"; 
+        if (to !== undefined)
+            url_ += "To=" + encodeURIComponent(to ? "" + to.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetOffersStats(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetOffersStats(<any>response_);
+                } catch (e) {
+                    return <Observable<GetStatsResponse[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetStatsResponse[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetOffersStats(response: HttpResponseBase): Observable<GetStatsResponse[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetStatsResponse.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetStatsResponse[]>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -16947,17 +17187,17 @@ export class OrderServiceProxy {
     }
 
     /**
+     * @input (optional) 
      * @return Success
      */
-    process(id: number): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Order/Process?";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined and cannot be null.");
-        else
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+    process(input: ProcessOrderInfo | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Order/Process";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(input);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -28009,6 +28249,136 @@ export class UserAssignmentServiceProxy {
         }
         return _observableOf<UserInfoDto[]>(<any>null);
     }
+
+    /**
+     * @includePhotos (optional) 
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getAllowedAssignableUsersForVendor(includePhotos: boolean | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetAllowedAssignableUsersForVendor?";
+        if (includePhotos !== undefined)
+            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllowedAssignableUsersForVendor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllowedAssignableUsersForVendor(<any>response_);
+                } catch (e) {
+                    return <Observable<UserInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllowedAssignableUsersForVendor(response: HttpResponseBase): Observable<UserInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(UserInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @includePhotos (optional) 
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getAllowedAssignableUsersForInvestor(includePhotos: boolean | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetAllowedAssignableUsersForInvestor?";
+        if (includePhotos !== undefined)
+            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllowedAssignableUsersForInvestor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllowedAssignableUsersForInvestor(<any>response_);
+                } catch (e) {
+                    return <Observable<UserInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllowedAssignableUsersForInvestor(response: HttpResponseBase): Observable<UserInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(UserInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserInfoDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -29473,6 +29843,7 @@ export class ActivityDto implements IActivityDto {
     stageId!: number | undefined;
     leadId!: number | undefined;
     contactId!: number | undefined;
+    sortOrder!: number | undefined;
 
     constructor(data?: IActivityDto) {
         if (data) {
@@ -29501,6 +29872,7 @@ export class ActivityDto implements IActivityDto {
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.contactId = data["contactId"];
+            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -29529,6 +29901,7 @@ export class ActivityDto implements IActivityDto {
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["contactId"] = this.contactId;
+        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
@@ -29546,6 +29919,7 @@ export interface IActivityDto {
     stageId: number | undefined;
     leadId: number | undefined;
     contactId: number | undefined;
+    sortOrder: number | undefined;
 }
 
 export class CreateActivityDto implements ICreateActivityDto {
@@ -29559,6 +29933,7 @@ export class CreateActivityDto implements ICreateActivityDto {
     stageId!: number | undefined;
     leadId!: number | undefined;
     contactId!: number | undefined;
+    sortOrder!: number | undefined;
 
     constructor(data?: ICreateActivityDto) {
         if (data) {
@@ -29585,6 +29960,7 @@ export class CreateActivityDto implements ICreateActivityDto {
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.contactId = data["contactId"];
+            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -29611,6 +29987,7 @@ export class CreateActivityDto implements ICreateActivityDto {
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["contactId"] = this.contactId;
+        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
@@ -29626,6 +30003,7 @@ export interface ICreateActivityDto {
     stageId: number | undefined;
     leadId: number | undefined;
     contactId: number | undefined;
+    sortOrder: number | undefined;
 }
 
 export class UpdateActivityDto implements IUpdateActivityDto {
@@ -29640,6 +30018,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
     stageId!: number | undefined;
     leadId!: number | undefined;
     contactId!: number | undefined;
+    sortOrder!: number | undefined;
 
     constructor(data?: IUpdateActivityDto) {
         if (data) {
@@ -29667,6 +30046,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
             this.stageId = data["stageId"];
             this.leadId = data["leadId"];
             this.contactId = data["contactId"];
+            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -29694,6 +30074,7 @@ export class UpdateActivityDto implements IUpdateActivityDto {
         data["stageId"] = this.stageId;
         data["leadId"] = this.leadId;
         data["contactId"] = this.contactId;
+        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
@@ -29710,6 +30091,7 @@ export interface IUpdateActivityDto {
     stageId: number | undefined;
     leadId: number | undefined;
     contactId: number | undefined;
+    sortOrder: number | undefined;
 }
 
 export class MoveActivityDto implements IMoveActivityDto {
@@ -29717,6 +30099,8 @@ export class MoveActivityDto implements IMoveActivityDto {
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     allDay!: boolean | undefined;
+    sortOrder!: number | undefined;
+    stageId!: number | undefined;
 
     constructor(data?: IMoveActivityDto) {
         if (data) {
@@ -29733,6 +30117,8 @@ export class MoveActivityDto implements IMoveActivityDto {
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.allDay = data["allDay"];
+            this.sortOrder = data["sortOrder"];
+            this.stageId = data["stageId"];
         }
     }
 
@@ -29749,6 +30135,8 @@ export class MoveActivityDto implements IMoveActivityDto {
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["allDay"] = this.allDay;
+        data["sortOrder"] = this.sortOrder;
+        data["stageId"] = this.stageId;
         return data; 
     }
 }
@@ -29758,11 +30146,13 @@ export interface IMoveActivityDto {
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     allDay: boolean | undefined;
+    sortOrder: number | undefined;
+    stageId: number | undefined;
 }
 
 export class TransitionActivityDto implements ITransitionActivityDto {
     id!: number;
-    stageId!: number | undefined;
+    stageId!: number;
     sortOrder!: number | undefined;
 
     constructor(data?: ITransitionActivityDto) {
@@ -29800,13 +30190,15 @@ export class TransitionActivityDto implements ITransitionActivityDto {
 
 export interface ITransitionActivityDto {
     id: number;
-    stageId: number | undefined;
+    stageId: number;
     sortOrder: number | undefined;
 }
 
 export class AssignActivityUserDto implements IAssignActivityUserDto {
     id!: number;
     assignedUserIds!: number[] | undefined;
+    sortOrder!: number | undefined;
+    stageId!: number | undefined;
 
     constructor(data?: IAssignActivityUserDto) {
         if (data) {
@@ -29825,6 +30217,8 @@ export class AssignActivityUserDto implements IAssignActivityUserDto {
                 for (let item of data["assignedUserIds"])
                     this.assignedUserIds.push(item);
             }
+            this.sortOrder = data["sortOrder"];
+            this.stageId = data["stageId"];
         }
     }
 
@@ -29843,6 +30237,8 @@ export class AssignActivityUserDto implements IAssignActivityUserDto {
             for (let item of this.assignedUserIds)
                 data["assignedUserIds"].push(item);
         }
+        data["sortOrder"] = this.sortOrder;
+        data["stageId"] = this.stageId;
         return data; 
     }
 }
@@ -29850,6 +30246,8 @@ export class AssignActivityUserDto implements IAssignActivityUserDto {
 export interface IAssignActivityUserDto {
     id: number;
     assignedUserIds: number[] | undefined;
+    sortOrder: number | undefined;
+    stageId: number | undefined;
 }
 
 export class UserInfoDto implements IUserInfoDto {
@@ -47296,6 +47694,8 @@ export class CancelLeadInfo implements ICancelLeadInfo {
     leadId!: number;
     cancellationReasonId!: string;
     comment!: string | undefined;
+    sortOrder!: number | undefined;
+    stageId!: number | undefined;
 
     constructor(data?: ICancelLeadInfo) {
         if (data) {
@@ -47311,6 +47711,8 @@ export class CancelLeadInfo implements ICancelLeadInfo {
             this.leadId = data["leadId"];
             this.cancellationReasonId = data["cancellationReasonId"];
             this.comment = data["comment"];
+            this.sortOrder = data["sortOrder"];
+            this.stageId = data["stageId"];
         }
     }
 
@@ -47326,6 +47728,8 @@ export class CancelLeadInfo implements ICancelLeadInfo {
         data["leadId"] = this.leadId;
         data["cancellationReasonId"] = this.cancellationReasonId;
         data["comment"] = this.comment;
+        data["sortOrder"] = this.sortOrder;
+        data["stageId"] = this.stageId;
         return data; 
     }
 }
@@ -47334,6 +47738,8 @@ export interface ICancelLeadInfo {
     leadId: number;
     cancellationReasonId: string;
     comment: string | undefined;
+    sortOrder: number | undefined;
+    stageId: number | undefined;
 }
 
 export class ListResultDtoOfLeadCancellationReasonDto implements IListResultDtoOfLeadCancellationReasonDto {
@@ -47543,7 +47949,7 @@ export interface ISubmitContactUsRequestOutput {
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
     companyName!: string;
     paymentPeriodType!: SubmitTenantCreationRequestInputPaymentPeriodType;
-    interests!: InterestDto[];
+    packages!: PackageInfoDto[];
     leadRequestXref!: string | undefined;
     firstName!: string;
     lastName!: string;
@@ -47563,7 +47969,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
             }
         }
         if (!data) {
-            this.interests = [];
+            this.packages = [];
         }
     }
 
@@ -47571,10 +47977,10 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
         if (data) {
             this.companyName = data["companyName"];
             this.paymentPeriodType = data["paymentPeriodType"];
-            if (data["interests"] && data["interests"].constructor === Array) {
-                this.interests = [];
-                for (let item of data["interests"])
-                    this.interests.push(InterestDto.fromJS(item));
+            if (data["packages"] && data["packages"].constructor === Array) {
+                this.packages = [];
+                for (let item of data["packages"])
+                    this.packages.push(PackageInfoDto.fromJS(item));
             }
             this.leadRequestXref = data["leadRequestXref"];
             this.firstName = data["firstName"];
@@ -47600,10 +48006,10 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
         data["paymentPeriodType"] = this.paymentPeriodType;
-        if (this.interests && this.interests.constructor === Array) {
-            data["interests"] = [];
-            for (let item of this.interests)
-                data["interests"].push(item.toJSON());
+        if (this.packages && this.packages.constructor === Array) {
+            data["packages"] = [];
+            for (let item of this.packages)
+                data["packages"].push(item.toJSON());
         }
         data["leadRequestXref"] = this.leadRequestXref;
         data["firstName"] = this.firstName;
@@ -47622,7 +48028,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
 export interface ISubmitTenantCreationRequestInput {
     companyName: string;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
-    interests: InterestDto[];
+    packages: PackageInfoDto[];
     leadRequestXref: string | undefined;
     firstName: string;
     lastName: string;
@@ -47635,12 +48041,12 @@ export interface ISubmitTenantCreationRequestInput {
     affiliateCode: string | undefined;
 }
 
-export class InterestDto implements IInterestDto {
-    productId!: number;
-    productName!: string;
-    quantity!: number;
+export class PackageInfoDto implements IPackageInfoDto {
+    module!: PackageInfoDtoModule;
+    packageName!: string;
+    seatCount!: number;
 
-    constructor(data?: IInterestDto) {
+    constructor(data?: IPackageInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -47651,32 +48057,32 @@ export class InterestDto implements IInterestDto {
 
     init(data?: any) {
         if (data) {
-            this.productId = data["productId"];
-            this.productName = data["productName"];
-            this.quantity = data["quantity"];
+            this.module = data["module"];
+            this.packageName = data["packageName"];
+            this.seatCount = data["seatCount"];
         }
     }
 
-    static fromJS(data: any): InterestDto {
+    static fromJS(data: any): PackageInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new InterestDto();
+        let result = new PackageInfoDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["productId"] = this.productId;
-        data["productName"] = this.productName;
-        data["quantity"] = this.quantity;
+        data["module"] = this.module;
+        data["packageName"] = this.packageName;
+        data["seatCount"] = this.seatCount;
         return data; 
     }
 }
 
-export interface IInterestDto {
-    productId: number;
-    productName: string;
-    quantity: number;
+export interface IPackageInfoDto {
+    module: PackageInfoDtoModule;
+    packageName: string;
+    seatCount: number;
 }
 
 export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationRequestOutput {
@@ -47715,6 +48121,150 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
 }
 
 export interface ISubmitTenantCreationRequestOutput {
+    leadRequestXref: string | undefined;
+    contactId: number | undefined;
+}
+
+export class SubmitFreeTrialRequestInput implements ISubmitFreeTrialRequestInput {
+    email!: string;
+
+    constructor(data?: ISubmitFreeTrialRequestInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.email = data["email"];
+        }
+    }
+
+    static fromJS(data: any): SubmitFreeTrialRequestInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitFreeTrialRequestInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["email"] = this.email;
+        return data; 
+    }
+}
+
+export interface ISubmitFreeTrialRequestInput {
+    email: string;
+}
+
+export class SubmitDemoRequestInput implements ISubmitDemoRequestInput {
+    leadRequestXref!: string | undefined;
+    firstName!: string;
+    lastName!: string;
+    phone!: string | undefined;
+    phoneExt!: string | undefined;
+    email!: string;
+    city!: string;
+    state!: string;
+    comments!: string | undefined;
+
+    constructor(data?: ISubmitDemoRequestInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadRequestXref = data["leadRequestXref"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.phone = data["phone"];
+            this.phoneExt = data["phoneExt"];
+            this.email = data["email"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.comments = data["comments"];
+        }
+    }
+
+    static fromJS(data: any): SubmitDemoRequestInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitDemoRequestInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadRequestXref"] = this.leadRequestXref;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["phone"] = this.phone;
+        data["phoneExt"] = this.phoneExt;
+        data["email"] = this.email;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["comments"] = this.comments;
+        return data; 
+    }
+}
+
+export interface ISubmitDemoRequestInput {
+    leadRequestXref: string | undefined;
+    firstName: string;
+    lastName: string;
+    phone: string | undefined;
+    phoneExt: string | undefined;
+    email: string;
+    city: string;
+    state: string;
+    comments: string | undefined;
+}
+
+export class SubmitDemoRequestOutput implements ISubmitDemoRequestOutput {
+    leadRequestXref!: string | undefined;
+    contactId!: number | undefined;
+
+    constructor(data?: ISubmitDemoRequestOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadRequestXref = data["leadRequestXref"];
+            this.contactId = data["contactId"];
+        }
+    }
+
+    static fromJS(data: any): SubmitDemoRequestOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitDemoRequestOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadRequestXref"] = this.leadRequestXref;
+        data["contactId"] = this.contactId;
+        return data; 
+    }
+}
+
+export interface ISubmitDemoRequestOutput {
     leadRequestXref: string | undefined;
     contactId: number | undefined;
 }
@@ -48260,6 +48810,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
     orderStageId!: number | undefined;
     amount!: number | undefined;
     comment!: string | undefined;
+    sortOrder!: number | undefined;
 
     constructor(data?: IProcessLeadInput) {
         if (data) {
@@ -48276,6 +48827,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
             this.orderStageId = data["orderStageId"];
             this.amount = data["amount"];
             this.comment = data["comment"];
+            this.sortOrder = data["sortOrder"];
         }
     }
 
@@ -48292,6 +48844,7 @@ export class ProcessLeadInput implements IProcessLeadInput {
         data["orderStageId"] = this.orderStageId;
         data["amount"] = this.amount;
         data["comment"] = this.comment;
+        data["sortOrder"] = this.sortOrder;
         return data; 
     }
 }
@@ -48301,6 +48854,7 @@ export interface IProcessLeadInput {
     orderStageId: number | undefined;
     amount: number | undefined;
     comment: string | undefined;
+    sortOrder: number | undefined;
 }
 
 export class LeadInfoDto implements ILeadInfoDto {
@@ -50279,6 +50833,46 @@ export interface IOfferDetailsDto {
     details: string[] | undefined;
 }
 
+export class GetStatsResponse implements IGetStatsResponse {
+    date!: moment.Moment | undefined;
+    count!: number | undefined;
+
+    constructor(data?: IGetStatsResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): GetStatsResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetStatsResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface IGetStatsResponse {
+    date: moment.Moment | undefined;
+    count: number | undefined;
+}
+
 export class SubmitRequestInput implements ISubmitRequestInput {
     systemType!: SubmitRequestInputSystemType;
     campaignId!: number;
@@ -51171,9 +51765,55 @@ export interface IUpdateOrderStageInfo {
     sortOrder: number | undefined;
 }
 
+export class ProcessOrderInfo implements IProcessOrderInfo {
+    id!: number;
+    sortOrder!: number | undefined;
+    stageId!: number | undefined;
+
+    constructor(data?: IProcessOrderInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+            this.stageId = data["stageId"];
+        }
+    }
+
+    static fromJS(data: any): ProcessOrderInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProcessOrderInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        data["stageId"] = this.stageId;
+        return data; 
+    }
+}
+
+export interface IProcessOrderInfo {
+    id: number;
+    sortOrder: number | undefined;
+    stageId: number | undefined;
+}
+
 export class CancelOrderInfo implements ICancelOrderInfo {
     orderId!: number;
     comment!: string;
+    sortOrder!: number | undefined;
+    stageId!: number | undefined;
 
     constructor(data?: ICancelOrderInfo) {
         if (data) {
@@ -51188,6 +51828,8 @@ export class CancelOrderInfo implements ICancelOrderInfo {
         if (data) {
             this.orderId = data["orderId"];
             this.comment = data["comment"];
+            this.sortOrder = data["sortOrder"];
+            this.stageId = data["stageId"];
         }
     }
 
@@ -51202,6 +51844,8 @@ export class CancelOrderInfo implements ICancelOrderInfo {
         data = typeof data === 'object' ? data : {};
         data["orderId"] = this.orderId;
         data["comment"] = this.comment;
+        data["sortOrder"] = this.sortOrder;
+        data["stageId"] = this.stageId;
         return data; 
     }
 }
@@ -51209,6 +51853,8 @@ export class CancelOrderInfo implements ICancelOrderInfo {
 export interface ICancelOrderInfo {
     orderId: number;
     comment: string;
+    sortOrder: number | undefined;
+    stageId: number | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -52502,6 +53148,7 @@ export class PackageConfigDto implements IPackageConfigDto {
     name!: string | undefined;
     bestValue!: boolean | undefined;
     sortOrder!: number | undefined;
+    isForPartner!: boolean | undefined;
     editions!: PackageEditionConfigDto[] | undefined;
 
     constructor(data?: IPackageConfigDto) {
@@ -52521,6 +53168,7 @@ export class PackageConfigDto implements IPackageConfigDto {
             this.name = data["name"];
             this.bestValue = data["bestValue"];
             this.sortOrder = data["sortOrder"];
+            this.isForPartner = data["isForPartner"];
             if (data["editions"] && data["editions"].constructor === Array) {
                 this.editions = [];
                 for (let item of data["editions"])
@@ -52544,6 +53192,7 @@ export class PackageConfigDto implements IPackageConfigDto {
         data["name"] = this.name;
         data["bestValue"] = this.bestValue;
         data["sortOrder"] = this.sortOrder;
+        data["isForPartner"] = this.isForPartner;
         if (this.editions && this.editions.constructor === Array) {
             data["editions"] = [];
             for (let item of this.editions)
@@ -52560,6 +53209,7 @@ export interface IPackageConfigDto {
     name: string | undefined;
     bestValue: boolean | undefined;
     sortOrder: number | undefined;
+    isForPartner: boolean | undefined;
     editions: PackageEditionConfigDto[] | undefined;
 }
 
@@ -61382,6 +62032,14 @@ export enum State {
     _1 = 1, 
 }
 
+export enum GroupByPeriod {
+    Daily = "Daily", 
+    Weekly = "Weekly", 
+    Monthly = "Monthly", 
+    Quarterly = "Quarterly", 
+    Yearly = "Yearly", 
+}
+
 export enum OfferAttribute {
     SubId = "SubId", 
     IsPublished = "IsPublished", 
@@ -61624,6 +62282,22 @@ export enum RegisterApplicantRequestSystemType {
 }
 
 export enum TrackingInformationVertical {
+    Undefined = "Undefined", 
+    PersonalLoans = "PersonalLoans", 
+    Beauty = "Beauty", 
+    Auto = "Auto", 
+    Legal = "Legal", 
+    CreditRepair = "CreditRepair", 
+    CreditScore = "CreditScore", 
+    Travel = "Travel", 
+    Jobs = "Jobs", 
+    BusinessLoans = "BusinessLoans", 
+    DebtConsolidation = "DebtConsolidation", 
+    CreditCards = "CreditCards", 
+    MerchantServices = "MerchantServices", 
+    Dating = "Dating", 
+    Crypto = "Crypto", 
+    CreditMonitoring = "CreditMonitoring", 
     HybridLoans = "HybridLoans", 
 }
 
@@ -61966,6 +62640,13 @@ export enum UpdateInvoiceStatusInputStatus {
 export enum SubmitTenantCreationRequestInputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum PackageInfoDtoModule {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export enum MemberInfoDtoGender {

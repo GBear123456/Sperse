@@ -14,7 +14,7 @@ import * as _ from 'underscore';
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput,
     PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto,
-    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo } from '@shared/service-proxies/service-proxies';
+    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo, ProcessOrderInfo } from '@shared/service-proxies/service-proxies';
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -275,8 +275,11 @@ export class PipelineService {
     }
 
     processOrder(fromStage, toStage, entity, complete) {
+        let model: ProcessOrderInfo = new ProcessOrderInfo();
+        model.id = this.getEntityId(entity);
+        model.sortOrder = this.getEntityNewSortOrder(entity, toStage);
         this._orderService.process(
-            this.getEntityId(entity)
+            model
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
