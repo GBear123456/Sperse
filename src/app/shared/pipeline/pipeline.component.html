@@ -39,8 +39,8 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="full-name">
-                                    <span *ngIf="entity?.Name || entity?.Title">{{ entity?.Name || entity?.Title }}</span>
-                                    <span *ngIf="!entity?.Name && !entity?.Title" class="no-name">{{ l('ClientNoName') }}</span>
+                                    <span *ngIf="entity?.Name || entity?.Title || entity?.Email">{{ entity?.Name || entity?.Title || entity?.Email }}</span>
+                                    <span *ngIf="!entity?.Name && !entity?.Title && !entity?.Email" class="no-name">{{ l('ClientNoName') }}</span>
                                     <div class="company-name">
                                         <span>{{ entity?.CompanyName || entity?.Description }}</span>
                                     </div>
