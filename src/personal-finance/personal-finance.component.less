@@ -585,4 +585,30 @@
             text-decoration: none;
         }
     }
+
+    /deep/ button.teal {
+        outline: none;
+        cursor: pointer;
+        padding: 10px 20px;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 22px;
+        border: 1px solid #11CCCC;
+        background: linear-gradient(#01CCCC, #01CCCC);
+        margin-bottom: 0;
+        font-weight: 600;
+        color: #FFF;
+        &:hover {
+            background: linear-gradient(#4AB2E8, #4AB2E8);
+        }
+        &.lock {
+            min-width: 220px;
+            padding-right: 50px;
+            background: url(../assets/common/images/lend-space-dark/welcome/lock-white.png) no-repeat 92%, linear-gradient(#01CCCC, #01CCCC);
+
+            &:hover {        
+                background: url(../assets/common/images/lend-space-dark/welcome/lock-white.png) no-repeat 92%, linear-gradient(#4AB2E8, #4AB2E8);
+            }
+        }    
+    }
 }
