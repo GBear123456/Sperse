@@ -27,7 +27,7 @@
                                 <dx-check-box
                                     [ngClass]="{ 'toggleAll': true, 'visible': allEntitiesAreSelected(stage) }"
                                     *ngIf="stage?.entities.length"
-                                    width="200px"
+                                    width="210px"
                                     [text]="l('Sellect_All_Records')"
                                     [value]="allEntitiesAreSelected(stage)"
                                     (onValueChanged)="toggleAllEntitiesInStage($event, stage)">

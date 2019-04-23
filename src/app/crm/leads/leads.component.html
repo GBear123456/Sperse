@@ -4,11 +4,19 @@
             accessKey="contactGroup"
             displayExpr="text"
             valueExpr="value"
-            [rtlEnabled]="true"
             [items]="contactGroups"
-            [width]="'300px'"
+            [width]="'160px'"
+            fieldTemplate="selectTemplate"
             [(value)]="selectedContactGroup"
             (onValueChanged)="onContactGroupChanged($event)">
+            <div *dxTemplate="let data of 'selectTemplate'">
+                <div class="select-header">
+                    <span>{{data.text}}</span> <i class="dx-dropdowneditor-icon"></i>
+                    <dx-text-box style="display: none" 
+                        [readOnly]="true"
+                    ></dx-text-box>
+                </div>
+            </div>
         </dx-select-box>
         <import-progress-bar></import-progress-bar>
     </app-headline>

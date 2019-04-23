@@ -4,13 +4,13 @@
             <h2 class="title">{{ widgettitle }}</h2>
             <h3 class="subtitle">{{ subtitle }}</h3>
             <div class="config-wrap">
-                <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator !== 'slider'">
+                <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator != 'slider'">
                     <span class="totalSeatsLabel">{{ l('TotalSeatsLabel') }}</span>
                     <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
                     <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
                     <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
                 </div>
-                <div class="billingPeriod" [ngClass]="{'both-active': configurator === 'slider'}">
+                <div class="billingPeriod" [ngClass]="{'both-active': configurator == 'slider'}">
                     <div class="monthly" [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('Monthly') }}</div>
                     <mat-slide-toggle
                         [checked]="selectedBillingPeriod === billingPeriod.Yearly"
@@ -21,9 +21,9 @@
                         {{ l('Annually') }}
                     </div>
                 </div>
-                <button [hidden]="module === modules.CFO || configurator === 'slider'"
+                <button [hidden]="module === modules.CFO || configurator == 'slider'"
                         class="toggle"
-                        (click)="configurator === 'slider' ? configurator = 'billingPeriod' : configurator = 'slider'">
+                        (click)="configurator = configurator == 'slider' ? 'billingPeriod' : 'slider'">
                     {{ configurator === 'slider' ? 'Change plan' : 'Add more seats' }}
                 </button>
             </div>
