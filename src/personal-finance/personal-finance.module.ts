@@ -12,11 +12,12 @@ import { PersonalFinanceComponent } from './personal-finance.component';
 import { PackageIdService } from './shared/common/packages/package-id.service';
 import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 
 @NgModule({
     declarations: [
         PersonalFinanceComponent,
-        //ApplyOfferDialogComponent
+        ApplyOfferDialogComponent
     ],
     imports: [
         PersonalFinanceLayoutModule,
@@ -28,6 +29,9 @@ import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
     providers: [
         PackageIdService,
         InstanceServiceProxy
+    ],
+    entryComponents: [
+        ApplyOfferDialogComponent
     ]
 })
 export class PersonalFinanceModule {}
