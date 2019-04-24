@@ -6,7 +6,6 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { HostLoginComponent } from '../host/host-login.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { ConditionsType } from '@shared/AppEnums';
-import { environment } from 'environments/environment';
 
 @Component({
     templateUrl: './cfo-member-login.component.html',

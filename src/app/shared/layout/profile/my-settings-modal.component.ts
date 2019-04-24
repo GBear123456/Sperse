@@ -1,25 +1,45 @@
-import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, ViewChild, OnInit } from '@angular/core';
+/** Core imports */
+import {
+    AfterViewChecked,
+    Component,
+    ChangeDetectionStrategy,
+    ElementRef,
+    EventEmitter,
+    Output,
+    ViewChild,
+    OnInit,
+    ChangeDetectorRef
+} from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CurrentUserProfileEditDto, DefaultTimezoneScope, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
-import { finalize } from 'rxjs/operators';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { SettingService } from '@abp/settings/setting.service';
+import { MessageService } from '@abp/message/message.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
     styleUrls: ['./my-settings-modal.component.less'],
-    providers: [DialogService]
+    providers: [DialogService],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MySettingsModalComponent extends AppModalDialogComponent implements AfterViewChecked, OnInit {
+export class MySettingsModalComponent implements AfterViewChecked, OnInit {
+    @ViewChild('modalDialog') modalDialog: ModalDialogComponent;
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    public saving = false;
     public isGoogleAuthenticatorEnabled = false;
     public isPhoneNumberConfirmed: boolean;
     public isPhoneNumberEmpty = false;
@@ -29,16 +49,23 @@ export class MySettingsModalComponent extends AppModalDialogComponent implements
     public canChangeUserName: boolean;
     public defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.User;
     private _initialTimezone: string = undefined;
-
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('SaveAndClose'),
+            class: 'primary menu',
+            action: this.save.bind(this)
+        }
+    ];
     constructor(
-        injector: Injector,
         private dialog: MatDialog,
         private _profileService: ProfileServiceProxy,
-        private _appSessionService: AppSessionService
-    ) {
-        super(injector);
-        this.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-    }
+        private _appSessionService: AppSessionService,
+        private _notifyService: NotifyService,
+        private _messageService: MessageService,
+        private _settingService: SettingService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService
+    ) {}
 
     ngAfterViewChecked(): void {
         //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
@@ -47,21 +74,8 @@ export class MySettingsModalComponent extends AppModalDialogComponent implements
     }
 
     ngOnInit() {
-        super.ngOnInit();
-
-        this.data.title = this.l('MySettings');
-        this.data.editTitle = false;
-        this.data.titleClearButton = false;
-        this.data.placeholder = this.l('MySettings');
-
-        this.data.buttons = [{
-            title: this.l('SaveAndClose'),
-            class: 'primary menu',
-            action: this.save.bind(this)
-        }];
-
         this._profileService.getCurrentUserProfileForEdit().subscribe((result) => {
-            this.smsEnabled = this.setting.getBoolean('App.UserManagement.SmsVerificationEnabled');
+            this.smsEnabled = this._settingService.getBoolean('App.UserManagement.SmsVerificationEnabled');
             this.user = result;
             this._initialTimezone = result.timezone;
             this.canChangeUserName = this.user.name !== AppConsts.userManagement.defaultAdminUserName;
@@ -87,24 +101,21 @@ export class MySettingsModalComponent extends AppModalDialogComponent implements
 
     changePhoneNumberToVerified(): void {
         this.isPhoneNumberConfirmed = true;
+        this._changeDetectorRef.detectChanges();
     }
 
     save(): void {
-        this.saving = true;
         this._profileService.updateCurrentUserProfile(this.user)
-            .pipe(finalize(() => { this.saving = false; }))
             .subscribe(() => {
                 this._appSessionService.user.name = this.user.name;
                 this._appSessionService.user.surname = this.user.surname;
                 this._appSessionService.user.userName = this.user.name;
                 this._appSessionService.user.emailAddress = this.user.emailAddress;
-
-                this.notify.info(this.l('SavedSuccessfully'));
-                this.close(true);
+                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.modalDialog.close(true);
                 this.modalSave.emit(null);
-
                 if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {
-                    this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
+                    this._messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
                         window.location.reload();
                     });
                 }

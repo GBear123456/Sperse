@@ -50,11 +50,11 @@ export class ForgotPasswordComponent extends AppComponentBase implements OnInit 
 
     private getLayoutComponent(tenant) {
         switch (tenant && tenant.customLayoutType) {
-            case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
+            case TenantLoginInfoDtoCustomLayoutType.LendSpace:
                 return LendSpaceForgotPasswordComponent;
-            case TenantLoginInfoDtoCustomLayoutType.CFOMembers: 
+            case TenantLoginInfoDtoCustomLayoutType.CFOMembers:
                 return CFOMemberForgotPasswordComponent;
-            default: 
+            default:
                 return HostForgotPasswordComponent;
         }
     }

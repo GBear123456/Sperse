@@ -1,4 +1,4 @@
-<app-modal-dialog #modal>
+<modal-dialog [buttons]="buttons">
     <dx-scroll-view showScrollbar="onHover">
         <form #roleForm="ngForm" novalidate (ngSubmit)="save()" autocomplete="off">
             <div class="modal-body">
@@ -29,4 +29,4 @@
             </div>
         </form>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

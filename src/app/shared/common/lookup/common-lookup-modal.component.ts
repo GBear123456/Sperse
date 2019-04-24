@@ -4,6 +4,7 @@ import {
     ChangeDetectionStrategy,
     EventEmitter,
     Injector,
+    Inject,
     OnInit,
     Output,
     ViewChild,
@@ -11,6 +12,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
@@ -25,7 +27,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/components/paginator/paginator';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppComponentBase } from '@shared/common/app-component-base';
 
 export interface ICommonLookupModalOptions {
     title?: string;
@@ -46,7 +48,7 @@ export interface ICommonLookupModalOptions {
     templateUrl: './common-lookup-modal.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommonLookupModalComponent extends ModalDialogComponent implements OnInit, OnDestroy {
+export class CommonLookupModalComponent extends AppComponentBase implements OnInit, OnDestroy {
     @Output() itemSelected: EventEmitter<NameValueDto> = new EventEmitter<NameValueDto>();
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
@@ -72,7 +74,9 @@ export class CommonLookupModalComponent extends ModalDialogComponent implements 
     constructor(
         injector: Injector,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _changeDetectorRef: ChangeDetectorRef
+        private _changeDetectorRef: ChangeDetectorRef,
+        @Inject(MAT_DIALOG_DATA) private data: any,
+        private dialogRef: MatDialogRef<CommonLookupModalComponent>
     ) {
         super(injector);
     }

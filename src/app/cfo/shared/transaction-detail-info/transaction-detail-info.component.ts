@@ -1,5 +1,4 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { CFOService } from '@shared/cfo/cfo.service';
 import {
     CategoryTreeServiceProxy,
@@ -14,14 +13,18 @@ import {
     UpdateCommentInput
 } from '@shared/service-proxies/service-proxies';
 import * as _ from 'underscore';
+import { NotifyService } from '@abp/notify/notify.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
     selector: 'app-transaction-detail-info',
     templateUrl: './transaction-detail-info.component.html',
     styleUrls: ['./transaction-detail-info.component.less'],
-    providers: [ CategoryTreeServiceProxy, TransactionsServiceProxy, CommentServiceProxy, ClassificationServiceProxy ]
+    providers: [ CategoryTreeServiceProxy, TransactionsServiceProxy, CommentServiceProxy, ClassificationServiceProxy ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TransactionDetailInfoComponent extends AppModalDialogComponent implements OnInit {
+export class TransactionDetailInfoComponent implements OnInit {
     transactionId: number;
     newComment = {
         text: '',
@@ -39,14 +42,16 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
     filteredCategory: any = [];
     filteredSubCategory: any = [];
     constructor(
-        injector: Injector,
         private _cfoService: CFOService,
         private _transactionsService: TransactionsServiceProxy,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
-        private _commentServiceProxy: CommentServiceProxy
+        private _commentServiceProxy: CommentServiceProxy,
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _notifyService: NotifyService,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        super(injector);
         this.transactionId = this.data.transactionId;
     }
 
@@ -60,6 +65,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         this._transactionsService.getTransactionDetails(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, this.transactionId)
             .subscribe(result => {
                 this.transactionInfo = result.transactionDetails;
+                this._changeDetectorRef.detectChanges();
             });
     }
 
@@ -72,6 +78,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         this._transactionsService.getTransactionAttributeTypes(InstanceType[this._cfoService.instanceType], this._cfoService.instanceId)
             .subscribe(result => {
                 this.transactionAttributeTypes = result.transactionAttributeTypes;
+                this._changeDetectorRef.detectChanges();
             });
     }
 
@@ -89,7 +96,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         ).subscribe(() => {
             this.refreshParent();
             this.getTransactionDetails();
-            this.notify.info(this.l('SavedSuccessfully'));
+            this._notifyService.info(this.ls.l('SavedSuccessfully'));
         });
     }
 
@@ -143,6 +150,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
                 });
 
             this.categories = categories;
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -160,12 +168,14 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         ).subscribe(() => {
             this.refreshParent();
             this.transactionInfo['inplaceEdit'] = false;
-            this.notify.info(this.l('SavedSuccessfully'));
+            this._notifyService.info(this.ls.l('SavedSuccessfully'));
+            this._changeDetectorRef.detectChanges();
         });
     }
 
     inPlaceCreateComment(e) {
         this.newComment.inplaceEdit = true;
+        this._changeDetectorRef.detectChanges();
     }
 
     addNewComment() {
@@ -180,7 +190,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
             this.refreshParent();
             this.newComment.inplaceEdit = false;
             this.newComment.text = '';
-            this.notify.info(this.l('SavedSuccessfully'));
+            this._notifyService.info(this.ls.l('SavedSuccessfully'));
             this.getTransactionDetails();
         });
     }
@@ -203,7 +213,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         request$.subscribe(() => {
             this.refreshParent();
             data.inplaceEdit = false;
-            this.notify.info(this.l('SavedSuccessfully'));
+            this._notifyService.info(this.ls.l('SavedSuccessfully'));
             this.getTransactionDetails();
         });
     }
@@ -216,6 +226,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
                 this.selectedAccountingType = item['typeId'];
             }
         });
+        this._changeDetectorRef.detectChanges();
     }
 
     filterCategoriesData(e) {
@@ -226,6 +237,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
                 this.filteredCategory.push(item);
             }
         });
+        this._changeDetectorRef.detectChanges();
     }
 
     filterSubCategoriesData(e) {
@@ -236,6 +248,7 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
                 this.filteredSubCategory.push(item);
             }
         });
+        this._changeDetectorRef.detectChanges();
     }
 
     refreshParent() {

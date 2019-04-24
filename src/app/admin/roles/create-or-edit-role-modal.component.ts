@@ -1,23 +1,39 @@
-import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, OnInit, ViewChild } from '@angular/core';
+/** Core imports */
 import {
-    CreateOrUpdateRoleInput,
-    GetRoleForEditOutput,
-    RoleEditDto,
-    RoleServiceProxy
-} from '@shared/service-proxies/service-proxies';
-import { ModalDirective } from 'ngx-bootstrap';
-import { PermissionTreeComponent } from '../shared/permission-tree.component';
+    AfterViewChecked,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Output,
+    OnInit,
+    ViewChild,
+    ChangeDetectorRef
+} from '@angular/core';
+
+/** Third party imports */
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { finalize } from 'rxjs/operators';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+
+/** Application imports */
+import {
+CreateOrUpdateRoleInput,
+GetRoleForEditOutput,
+RoleEditDto,
+RoleServiceProxy
+} from '@shared/service-proxies/service-proxies';
+import { PermissionTreeComponent } from '../shared/permission-tree.component';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     selector: 'createOrEditRoleModal',
     templateUrl: './create-or-edit-role-modal.component.html'
 })
-export class CreateOrEditRoleModalComponent extends AppModalDialogComponent implements AfterViewChecked, OnInit {
+export class CreateOrEditRoleModalComponent implements AfterViewChecked, OnInit {
 
     @ViewChild('roleNameInput') roleNameInput: ElementRef;
-    @ViewChild('createOrEditModal') modal: ModalDirective;
     @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
@@ -25,25 +41,28 @@ export class CreateOrEditRoleModalComponent extends AppModalDialogComponent impl
     saving = false;
     editData: GetRoleForEditOutput;
     role: RoleEditDto = new RoleEditDto();
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('Save'),
+            class: 'primary',
+            action: this.save.bind(this)
+        }
+    ];
     constructor(
-        injector: Injector,
-        private _roleService: RoleServiceProxy
-    ) {
-        super(injector);
-    }
+        private _roleService: RoleServiceProxy,
+        private _dialogRef: MatDialogRef<CreateOrEditRoleModalComponent>,
+        private _notifyService: NotifyService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
+    ) {}
 
     ngOnInit() {
-        this.data.buttons = [
-            {
-                title: this.l('Save'),
-                class: 'primary',
-                action: this.save.bind(this)
-            }
-        ];
         this._roleService.getRoleForEdit(this.data.roleId).subscribe(result => {
             this.role = result.role;
-            this.data.title = this.role.id ? this.l('EditRole') + ': ' + this.role.displayName : this.l('CreateNewRole');
+            this.data.title = this.role.id ? this.ls.l('EditRole') + ': ' + this.role.displayName : this.ls.l('CreateNewRole');
             this.editData = result;
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -61,13 +80,13 @@ export class CreateOrEditRoleModalComponent extends AppModalDialogComponent impl
         this._roleService.createOrUpdateRole(input)
             .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
+                this._notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.close();
                 this.modalSave.emit(null);
             });
     }
 
     close(): void {
-        this.dialogRef.close();
+        this._dialogRef.close();
     }
 }

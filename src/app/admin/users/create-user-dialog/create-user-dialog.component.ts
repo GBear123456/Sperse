@@ -1,33 +1,39 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, Injector } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { CacheService } from 'ng2-cache-service';
 import * as nameParser from 'parse-full-name';
-import { finalize } from 'rxjs/operators';
+import { finalize, tap, switchMap } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import {
     UserServiceProxy, ProfileServiceProxy, UserEditDto, CreateOrUpdateUserInput,
-    UserRoleDto, PasswordComplexitySetting, TenantHostType
+    UserRoleDto, PasswordComplexitySetting, GetPasswordComplexitySettingOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { OrganizationUnitsTreeComponent, IOrganizationUnitsTreeComponentData } from '../../shared/organization-unit-tree.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { MessageService } from '@abp/message/message.service';
+import { SettingService } from '@abp/settings/setting.service';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
     styleUrls: ['create-user-dialog.component.less'],
-    providers: [ DialogService ]
+    providers: [ DialogService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateUserDialogComponent extends AppModalDialogComponent implements OnInit {
+export class CreateUserDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild('organizationUnitTree') organizationUnitTree: OrganizationUnitsTreeComponent;
     @ViewChild('phoneNumber') phoneNumber: DxTextBoxComponent;
@@ -39,8 +45,8 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
     setRandomPassword = false;
     passwordComplexityInfo = '';
 
-    isTwoFactorEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
-    isLockoutEnabled: boolean = this.setting.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
+    isTwoFactorEnabled: boolean = this._settingService.getBoolean('Abp.Zero.UserManagement.TwoFactorLogin.IsEnabled');
+    isLockoutEnabled: boolean = this._settingService.getBoolean('Abp.Zero.UserManagement.UserLockOut.IsEnabled');
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
 
     private orgUnits: any = [];
@@ -58,49 +64,69 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
     photoOriginalData: string;
     photoThumbnailData: string;
     photoSourceData: string;
-
     toolbarConfig = [];
+    title: string;
+    buttons: IDialogButton[] = [
+        {
+            id: this.saveButtonId,
+            title: this.ls.l('Save'),
+            class: 'primary menu',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
-        injector: Injector,
-        public dialog: MatDialog,
         private _userService: UserServiceProxy,
         private _profileService: ProfileServiceProxy,
         private _cacheService: CacheService,
-        private dialogService: DialogService
+        private _notifyService: NotifyService,
+        private _dialogService: DialogService,
+        private _dialogRef: MatDialogRef<CreateUserDialogComponent>,
+        private _messageService: MessageService,
+        private _settingService: SettingService,
+        private _cacheHelper: CacheHelper,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService,
+        public dialog: MatDialog,
+        @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        super(injector);
-
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+        this.ls.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.saveContextMenuItems = [
-            { text: this.l('SaveAndAddNew'), selected: false },
-//            { text: this.l('SaveAndExtend'), selected: false, disabled: true },
-            { text: this.l('SaveAndClose'), selected: false }
+            { text: this.ls.l('SaveAndAddNew'), selected: false },
+            { text: this.ls.l('SaveAndClose'), selected: false }
         ];
 
         this.userDataInit();
         this.initToolbarConfig();
     }
 
+    ngOnInit() {
+        this.saveOptionsInit();
+    }
+
     userDataInit() {
-        this._userService.getUserForEdit(undefined).subscribe(userResult => {
-            this.user = userResult.user;
-            this.roles = userResult.roles;
-            this.initialRoles = this.roles.map((role) => {
-                return _.clone(role);
-            });
+        this._userService.getUserForEdit(undefined)
+            .pipe(
+                tap(userResult => {
+                    this.user = userResult.user;
+                    this.roles = userResult.roles;
+                    this.initialRoles = this.roles.map((role) => {
+                        return _.clone(role);
+                    });
 
-            this.orgUnits = userResult.allOrganizationUnits;
-            this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
-                allOrganizationUnits: userResult.allOrganizationUnits,
-                selectedOrganizationUnits: userResult.memberedOrganizationUnits
-            };
-
-            this._profileService.getPasswordComplexitySetting().subscribe(passwordComplexityResult => {
+                    this.orgUnits = userResult.allOrganizationUnits;
+                    this.organizationUnitTree.data = <IOrganizationUnitsTreeComponentData>{
+                        allOrganizationUnits: userResult.allOrganizationUnits,
+                        selectedOrganizationUnits: userResult.memberedOrganizationUnits
+                    };
+                    this._changeDetectorRef.detectChanges();
+                }),
+                switchMap(() => this._profileService.getPasswordComplexitySetting()),
+                finalize(() => this._changeDetectorRef.detectChanges())
+            ).subscribe((passwordComplexityResult: GetPasswordComplexitySettingOutput) => {
                 this.passwordComplexitySetting = passwordComplexityResult.setting;
                 this.setPasswordComplexityInfo();
             });
-        });
     }
 
     setPasswordComplexityInfo(): void {
@@ -108,23 +134,23 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
         this.passwordComplexityInfo = '<ul>';
 
         if (this.passwordComplexitySetting.requireDigit) {
-            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireDigit_Hint') + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.ls.l('PasswordComplexity_RequireDigit_Hint') + '</li>';
         }
 
         if (this.passwordComplexitySetting.requireLowercase) {
-            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireLowercase_Hint') + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.ls.l('PasswordComplexity_RequireLowercase_Hint') + '</li>';
         }
 
         if (this.passwordComplexitySetting.requireUppercase) {
-            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireUppercase_Hint') + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.ls.l('PasswordComplexity_RequireUppercase_Hint') + '</li>';
         }
 
         if (this.passwordComplexitySetting.requireNonAlphanumeric) {
-            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequireNonAlphanumeric_Hint') + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.ls.l('PasswordComplexity_RequireNonAlphanumeric_Hint') + '</li>';
         }
 
         if (this.passwordComplexitySetting.requiredLength) {
-            this.passwordComplexityInfo += '<li>' + this.l('PasswordComplexity_RequiredLength_Hint', this.passwordComplexitySetting.requiredLength) + '</li>';
+            this.passwordComplexityInfo += '<li>' + this.ls.l('PasswordComplexity_RequiredLength_Hint', this.passwordComplexitySetting.requiredLength.toString()) + '</li>';
         }
 
         this.passwordComplexityInfo += '</ul>';
@@ -141,80 +167,58 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
                 ]
             }
         ];
+        this._changeDetectorRef.detectChanges();
     }
 
     saveOptionsInit() {
-        let cacheKey = this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+        let cacheKey = this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             selectedIndex = this.SAVE_OPTION_DEFAULT;
         if (this._cacheService.exists(cacheKey))
             selectedIndex = this._cacheService.get(cacheKey);
         this.saveContextMenuItems[selectedIndex].selected = true;
-        this.data.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
+        this.buttons[0].title = this.saveContextMenuItems[selectedIndex].text;
     }
 
     updateSaveOption(option) {
         this.data.buttons[0].title = option.text;
-        this._cacheService.set(this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+        this._cacheService.set(this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-
-        this.data.editTitle = true;
-        this.data.titleClearButton = true;
-        this.data.placeholder = this.l('FullNamePlaceholder');
-        this.data.buttons = [{
-            id: this.saveButtonId,
-            title: this.l('Save'),
-            class: 'primary menu',
-            action: this.save.bind(this)
-        }];
-        this.saveOptionsInit();
     }
 
     private afterSave(userId): void {
         if (this.saveContextMenuItems[0].selected) {
             this.resetFullDialog();
-            this.notify.info(this.l('SavedSuccessfully'));
+            this._notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent(true);
-//        } else if (this.saveContextMenuItems[1].selected) {
-//            this.redirectToUserDetails(userId);
         } else {
             this.data.refreshParent();
             this.close();
         }
     }
 
-    redirectToUserDetails(id: number) {
-        setTimeout(() => {
-            this._router.navigate([`app/admin/user/${id}/information`],
-                { queryParams: { referrer: this._router.url.split('?').shift() } }
-            );
-        }, 1000);
-        this.close();
+    private close() {
+        this._dialogRef.close();
     }
 
     validateForm() {
         if (!this.user.name || !this.user.surname)
-            return this.notify.error(this.l('FullNameIsRequired'));
+            return this._notifyService.error(this.ls.l('FullNameIsRequired'));
 
         if (this.user.emailAddress) {
             if (!this.validateEmailAddress(this.user.emailAddress))
-                return this.notify.error(this.l('EmailIsNotValid'));
+                return this._notifyService.error(this.ls.l('EmailIsNotValid'));
         } else
-            return this.notify.error(this.l('EmailIsRequired'));
+            return this._notifyService.error(this.ls.l('EmailIsRequired'));
 
         if (!this.validatePhoneNumber(this.user.phoneNumber))
-            return this.notify.error(this.l('PhoneValidationError'));
+            return this._notifyService.error(this.ls.l('PhoneValidationError'));
 
         return true;
     }
 
     save(event?): void {
         if (event && event.offsetX > 195)
-            return this.saveContextComponent
-                .instance.option('visible', true);
+            return this.saveContextComponent.instance.option('visible', true);
 
         if (!this.validateForm())
             return;
@@ -228,10 +232,9 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
         input.user.userName = this.user.emailAddress;
         input.setRandomPassword = this.setRandomPassword;
         input.sendActivationEmail = this.sendActivationEmail;
-        input.assignedRoleNames =
-            _.map(
-                _.filter(this.roles, { isAssigned: true }), role => role.roleName
-            );
+        input.assignedRoleNames = _.map(
+            _.filter(this.roles, { isAssigned: true }), role => role.roleName
+        );
 
         input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
         input.profilePicture = StringHelper.getBase64(this.photoOriginalData);
@@ -239,16 +242,11 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
         input.pictureSource = this.photoSourceData;
 
         this._userService.createOrUpdateUser(input)
-            .pipe(finalize(() => { saveButton.disabled = false; }))
+            .pipe(finalize(() => {
+                saveButton.disabled = false;
+                this._changeDetectorRef.detectChanges();
+            }))
             .subscribe((userId) => this.afterSave(userId || this.user.id));
-    }
-
-    getDialogPossition(event, shiftX) {
-        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
-    }
-
-    getInputElementValue(event) {
-        return event.element.getElementsByTagName('input')[0].value;
     }
 
     validateEmailAddress(value): boolean {
@@ -271,6 +269,7 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
                 this.photoOriginalData = result.origImage;
                 this.photoThumbnailData = result.thumImage;
                 this.photoSourceData = result.source;
+                this._changeDetectorRef.detectChanges();
             }
         });
         $event.stopPropagation();
@@ -295,15 +294,16 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
                     selectedOrganizationUnits: [this.orgUnits[0].code]
                 };
 
-            setTimeout(() =>
-                this.setComponentToValid(
-                    this.phoneNumber.instance));
+            setTimeout(() => {
+                this.setComponentToValid(this.phoneNumber.instance);
+                this._changeDetectorRef.detectChanges();
+            });
         };
 
         if (forced)
             resetInternal();
         else
-            this.message.confirm(this.l('DiscardConfirmation'), '', (confirmed) => {
+            this._messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
                 if (confirmed)
                     resetInternal();
             });
@@ -320,7 +320,6 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
     }
 
     onFullNameKeyUp(title) {
-        this.data.title = title;
         if (title) {
             let fullName = nameParser.parseFullName(title.trim());
             this.user.name = fullName.first;
@@ -329,6 +328,7 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
             this.user.name = '';
             this.user.surname = '';
         }
+        this._changeDetectorRef.detectChanges();
     }
 
     getAssignedRoleCount(): number {

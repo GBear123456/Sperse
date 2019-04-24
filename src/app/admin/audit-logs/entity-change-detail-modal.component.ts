@@ -1,27 +1,34 @@
-import { Component, Injector, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { AuditLogServiceProxy, EntityChangeListDto, EntityPropertyChangeDto } from '@shared/service-proxies/service-proxies';
+/** Core imports */
+import { Component, Inject, OnInit } from '@angular/core';
+
+/** Third party imports */
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import * as moment from 'moment';
-import { ModalDirective } from 'ngx-bootstrap';
+
+/** Application imports */
+import { AuditLogServiceProxy, EntityChangeListDto, EntityPropertyChangeDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'entityChangeDetailModal',
     templateUrl: './entity-change-detail-modal.component.html'
 })
-export class EntityChangeDetailModalComponent extends AppComponentBase {
-
-    @ViewChild('entityChangeDetailModal')
-    modal: ModalDirective;
+export class EntityChangeDetailModalComponent implements OnInit {
 
     active = false;
     entityPropertyChanges: EntityPropertyChangeDto[];
     entityChange: EntityChangeListDto;
 
     constructor(
-        injector: Injector,
-        private _auditLogService: AuditLogServiceProxy
-    ) {
-        super(injector);
+        private _auditLogService: AuditLogServiceProxy,
+        private _dialogRef: MatDialogRef<EntityChangeDetailModalComponent>,
+        @Inject(MAT_DIALOG_DATA) private data: any
+    ) {}
+
+    ngOnInit() {
+        const entityForEdit: EntityChangeListDto = this.data.entityForEdit;
+        this._auditLogService.getEntityPropertyChanges(entityForEdit.id).subscribe((result) => {
+            this.entityPropertyChanges = result;
+        });
     }
 
     getPropertyChangeValue(propertyChangeValue, propertyTypeFullName) {
@@ -41,23 +48,10 @@ export class EntityChangeDetailModalComponent extends AppComponentBase {
     }
 
     isDate(date, propertyTypeFullName): boolean {
-        return propertyTypeFullName.includes("DateTime") && !isNaN(Date.parse(date).valueOf());
-    }
-
-    show(record: EntityChangeListDto): void {
-        const self = this;
-        self.active = true;
-        self.entityChange = record;
-
-        this._auditLogService.getEntityPropertyChanges(record.id).subscribe((result) => {
-            self.entityPropertyChanges = result;
-        });
-
-        self.modal.show();
+        return propertyTypeFullName.includes('DateTime') && !isNaN(Date.parse(date).valueOf());
     }
 
     close(): void {
-        this.active = false;
-        this.modal.hide();
+        this._dialogRef.close();
     }
 }

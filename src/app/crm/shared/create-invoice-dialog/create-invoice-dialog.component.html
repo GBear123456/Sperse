@@ -7,7 +7,9 @@
     target="#{{saveButtonId}}">
 </dx-context-menu>
 
-<app-modal-dialog>
+<modal-dialog [titleClearButton]="true"
+              [editTitle]="editTitle"
+              [placeholder]="ls.l('Invoice #')">
     <div class="toolbar-wraper">
         <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
     </div>
@@ -18,7 +20,7 @@
                 <label class="customer-label">{{l('Customer')}}</label>
                 <dx-select-box #contact
                     name="customer"
-                    width="370px"                    
+                    width="370px"
                     displayExpr="name"
                     valueExpr="name"
                     [disabled]="data.invoice"
@@ -116,4 +118,4 @@
             </div>
         </dx-scroll-view>
     </div>
-</app-modal-dialog>
+</modal-dialog>

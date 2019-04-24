@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     AfterViewChecked,
     Component,
@@ -5,16 +6,24 @@ import {
     ChangeDetectionStrategy,
     ElementRef,
     EventEmitter,
-    Injector,
+    Inject,
     OnInit,
     Output,
     ViewChild
 } from '@angular/core';
+
+/** Third party imports */
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
 import { AppEditionExpireAction } from '@shared/AppEnums';
 import { ComboboxItemDto, CommonLookupServiceProxy, CreateOrUpdateEditionDto, EditionEditDto, EditionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FeatureTreeComponent } from '../shared/feature-tree.component';
-import { finalize } from 'rxjs/operators';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+import { NotifyService } from '@abp/notify/notify.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+
 
 @Component({
     selector: 'createOrEditEditionModal',
@@ -22,17 +31,14 @@ import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-mo
     styleUrls: [ '../../../shared/metronic/m-radio.less', './create-or-edit-edition-modal.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateOrEditEditionModalComponent extends AppModalDialogComponent implements AfterViewChecked, OnInit {
+export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnInit {
 
     @ViewChild('editionNameInput') editionNameInput: ElementRef;
-    @ViewChild('modal') modal: ElementRef;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     saving = false;
-
     edition: EditionEditDto = new EditionEditDto();
     expiringEditions: ComboboxItemDto[] = [];
-
     expireAction: AppEditionExpireAction = AppEditionExpireAction.DeactiveTenant;
     expireActionEnum: typeof AppEditionExpireAction = AppEditionExpireAction;
     isFree = false;
@@ -41,31 +47,39 @@ export class CreateOrEditEditionModalComponent extends AppModalDialogComponent i
     featureTree: FeatureTreeComponent;
     editData;
     active = false;
+    title: string;
+    buttons: IDialogButton[];
 
     constructor(
-        injector: Injector,
         private _editionService: EditionServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _changeDetectorRef: ChangeDetectorRef
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _notifyService: NotifyService,
+        private _dialogRef: MatDialogRef<CreateOrEditEditionModalComponent>,
+        private _changeDetector: ChangeDetectorRef,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        super(injector);
-        this.data.title = this.data.editionId ? '' : this.l('CreateNewEdition');
-        this.data.buttons = [
+        this.title = this.data.editionId ? '' : this.ls.l('CreateNewEdition');
+        this.buttons = [
             {
-                title: this.l('Save'),
+                title: this.ls.l('Save'),
                 class: 'primary',
                 action: this.save.bind(this)
             }
         ];
+    }
+
+    ngOnInit() {
         this._commonLookupService.getEditionsForCombobox(true).subscribe(editionsResult => {
             this.expiringEditions = editionsResult.items;
-            this.expiringEditions.unshift(new ComboboxItemDto({ value: null, displayText: this.l('NotAssigned'), isSelected: true }));
+            this.expiringEditions.unshift(new ComboboxItemDto({ value: null, displayText: this.ls.l('NotAssigned'), isSelected: true }));
             this._editionService.getEditionForEdit(this.data.editionId).pipe(finalize(() => {
                 this.active = true;
                 this._changeDetectorRef.detectChanges();
             })).subscribe(editionResult => {
                 this.edition = editionResult.edition;
-                this.data.title = this.data.editionId ? this.l('EditEdition') + ' ' + this.edition.displayName : this.l('CreateNewEdition');
+                this.data.title = this.data.editionId ? this.ls.l('EditEdition') + ' ' + this.edition.displayName : this.ls.l('CreateNewEdition');
                 this.editData = editionResult;
                 this.expireAction = this.edition.expiringEditionId > 0 ? AppEditionExpireAction.AssignToAnotherEdition : AppEditionExpireAction.DeactiveTenant;
                 this.isFree = !editionResult.edition.monthlyPrice && !editionResult.edition.annualPrice;
@@ -99,13 +113,13 @@ export class CreateOrEditEditionModalComponent extends AppModalDialogComponent i
         this._editionService.createOrUpdateEdition(input)
             .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
+                this._notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.close();
                 this.modalSave.emit(null);
             });
     }
 
     close(): void {
-        this.dialogRef.close();
+        this._dialogRef.close();
     }
 }

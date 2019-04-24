@@ -1,10 +1,15 @@
+/** Core imports */
 import { AfterViewInit, Component, Injector, OnInit } from '@angular/core';
+
+/** Third party imports */
+import escape from 'lodash/escape';
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CachingServiceProxy, EntityDtoOfString, WebLogServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
-import escape from 'lodash/escape';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     templateUrl: './maintenance.component.html',

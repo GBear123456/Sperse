@@ -42,11 +42,11 @@ export class LoginComponent extends AppComponentBase implements OnInit {
 
     private getLayoutComponent(tenant) {
         switch (tenant && tenant.customLayoutType) {
-            case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
+            case TenantLoginInfoDtoCustomLayoutType.LendSpace:
                 return LendSpaceLoginComponent;
-            case TenantLoginInfoDtoCustomLayoutType.CFOMembers: 
+            case TenantLoginInfoDtoCustomLayoutType.CFOMembers:
                 return CFOMemberLoginComponent;
-            default: 
+            default:
                 return HostLoginComponent;
         }
     }

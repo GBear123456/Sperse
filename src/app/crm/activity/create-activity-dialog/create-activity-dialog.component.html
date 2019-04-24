@@ -1,4 +1,8 @@
-<app-modal-dialog (onTitleKeyUp)="titleChanged($event)">
+<modal-dialog [title]="title"
+              [editTitle]="true"
+              [titleClearButton]="true"
+              [placeholder]="ls.l('Title')"
+              (onTitleKeyUp)="titleChanged($event)">
     <dx-scroll-view showScrollbar="onHover">
         <dx-context-menu
             [selectByClick]="true"
@@ -36,7 +40,7 @@
                          [width]="'330px'"
                          [height]="440"
                          [targetSelector]="'[accesskey=\'LeadsList\']'"
-                         [title]="l('Leads')"
+                         [title]="ls.l('Leads')"
                          [showConfirmation]="false"
                          [highlightSelected]="true"
                          [selectedKeys]="[data.appointment.LeadId]"
@@ -50,7 +54,7 @@
                          [width]="'330px'"
                          [height]="440"
                          [targetSelector]="'[accesskey=\'ClientsList\']'"
-                         [title]="l('Clients')"
+                         [title]="ls.l('Clients')"
                          [showConfirmation]="false"
                          [highlightSelected]="true"
                          [selectedKeys]="[data.appointment.ContactId]"
@@ -64,7 +68,7 @@
                          <!--[width]="'330px'"-->
                          <!--[height]="440"-->
                          <!--[targetSelector]="'[accesskey=\'OrdersList\']'"-->
-                         <!--[title]="l('Orders')"-->
+                         <!--[title]="ls.l('Orders')"-->
                          <!--[showConfirmation]="false"-->
                          <!--[highlightSelected]="true"-->
                          <!--[selectedKeys]="[data.appointment.OrderId]"-->
@@ -81,7 +85,7 @@
             <dx-validation-group (onInitialized)="initDateValidationGroup($event)">
                 <div class="field date-selector">
                     <div class="row">
-                        <label class="col-12">{{l('Date')}}</label>
+                        <label class="col-12">{{ls.l('Date')}}</label>
                     </div>
                     <div class="row align-items-center">
                         <div class="col-4 align-self-center">
@@ -96,7 +100,7 @@
                                              [(value)]="startDate">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
-                                                             message="{{l('StartDateIsRequired')}}."></dxi-validation-rule>
+                                                             message="{{ls.l('StartDateIsRequired')}}."></dxi-validation-rule>
                                     </dx-validator>
                                 </dx-date-box>
                             </ng-container>
@@ -118,7 +122,7 @@
                                              [(value)]="endDate">
                                     <dx-validator>
                                         <dxi-validation-rule type="required"
-                                                             message="{{l('EndDateIsRequired')}}."></dxi-validation-rule>
+                                                             message="{{ls.l('EndDateIsRequired')}}."></dxi-validation-rule>
                                     </dx-validator>
                                 </dx-date-box>
                             </ng-container>
@@ -126,7 +130,7 @@
 
                         <div class="col-3 align-self-center text-right">
                             <div class="dx-field all-day-checkbox">
-                                <div class="dx-field-label">{{l('All day')}}</div>
+                                <div class="dx-field-label">{{ls.l('All day')}}</div>
                                 <div class="dx-field-value">
                                     <dx-check-box [(value)]="isAllDay"></dx-check-box>
                                 </div>
@@ -137,7 +141,7 @@
             </dx-validation-group>
             <div class="field description">
                 <div class="row">
-                    <label class="col-12">{{l('Description')}}</label>
+                    <label class="col-12">{{ls.l('Description')}}</label>
                 </div>
 
                 <div class="row">
@@ -152,4 +156,4 @@
             </div>
         </div>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

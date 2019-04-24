@@ -6,7 +6,7 @@
             </span>
             <span *ngIf="!transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
                 <a (click)="inPlaceEdit('transactionDescriptor', transactionInfo)">
-                    {{l("Add_descriptor")}} <i class="plus">+</i>
+                    {{ls.l("Add_descriptor")}} <i class="plus">+</i>
                 </a>
             </span>
             <span *ngIf="transactionInfo['inplaceEdit']" class="inplace-edit-wrapper">
@@ -19,10 +19,10 @@
         </h1>
         <span class="type" [ngClass]="transactionInfo?.cashFlowTypeId == 'I' ? 'inflows' : 'outflows'">
             <ng-container *ngIf="transactionInfo?.cashFlowTypeId == 'I'; else outflowsTemplate">
-                {{l("TransactionDetail_Inflows")}}
+                {{ls.l("TransactionDetail_Inflows")}}
             </ng-container>
             <ng-template #outflowsTemplate>
-                {{l("TransactionDetail_Outflows")}}
+                {{ls.l("TransactionDetail_Outflows")}}
             </ng-template>
         </span>
     </header>
@@ -30,7 +30,7 @@
     <main class="text-left container">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row aligned-center">
-                <div class="col-3 text-right light-gray">{{l("Category")}}</div>
+                <div class="col-3 text-right light-gray">{{ls.l("Category")}}</div>
                 <div class="col-6 truncate category-row" [title]="categoryPathTitle">
                     <ng-container *ngIf="transactionInfo.accountingType">
                         <dx-select-box [items]="accountingTypes"
@@ -77,7 +77,7 @@
                         </ng-container>
                     </ng-container>
                     <ng-container *ngIf="!transactionInfo.accountingType">
-                        <div *ngIf="!selectedAccountingType" class="unclassified-label">{{l("TransactionDetail_Unclassified")}}</div>
+                        <div *ngIf="!selectedAccountingType" class="unclassified-label">{{ls.l("TransactionDetail_Unclassified")}}</div>
                         <dx-select-box [items]="accountingTypes"
                                        displayExpr="name"
                                        valueExpr="key"
@@ -124,7 +124,7 @@
                 <div class="col-2 text-right tabular">{{transactionInfo?.id}}</div>
             </div>
             <div class="row">
-                <div class="col-3 text-right light-gray">{{l("TransactionDetail_Notes")}}</div>
+                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Notes")}}</div>
                 <div class="col-9">
                     <div class="comments" *ngFor="let comment of transactionInfo?.comments; let i = index;">
                         <div (click)="inPlaceEdit('text', comment)" *ngIf="!comment.inplaceEdit">
@@ -139,7 +139,7 @@
                     </div>
                     <div class="add-comment">
                         <a (click)="inPlaceCreateComment($event)" *ngIf="!newComment.inplaceEdit">
-                            {{l("TransactionDetail_Add_comment")}} <i class="plus">+</i>
+                            {{ls.l("TransactionDetail_Add_comment")}} <i class="plus">+</i>
                         </a>
                         <span *ngIf="newComment.inplaceEdit" class="inplace-edit-wrapper">
                             <dx-text-box class="tabular"
@@ -157,15 +157,15 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3 text-right light-gray">{{l("TransactionDetail_Date")}}</div>
+                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Date")}}</div>
                 <div class="col-4">{{transactionInfo?.date | date : 'MMM d, y'}}</div>
                 <div class="col-3 text-right light-gray truncate" title="{{transactionInfo?.bankAccountBankName}}">{{transactionInfo?.bankAccountBankName}}</div>
                 <div class="col-2 text-right tabular"><b>{{transactionInfo?.bankAccountNumber}}</b></div>
             </div>
             <div class="row">
-                <div class="col-3 text-right light-gray">{{l("TransactionDetail_Amount")}}</div>
+                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Amount")}}</div>
                 <div class="col-4 amount">{{transactionInfo?.amount | currency:'USD':'symbol':'1.2-2'}}</div>
-                <div class="col-3 text-right light-gray">{{l("TransactionDetail_Status")}}</div>
+                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Status")}}</div>
                 <div class="col-2 text-right tabular status"><span ngClass="{{transactionInfo?.transactionStatus | lowercase}}">{{transactionInfo?.transactionStatus}}</span></div>
             </div>
             <div class="row">
@@ -175,7 +175,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-3 text-right light-gray">{{l("TransactionDetail_Description")}}</div>
+                <div class="col-3 text-right light-gray">{{ls.l("TransactionDetail_Description")}}</div>
                 <div class="col-9 wrap uppercase">{{transactionInfo?.description}}</div>
             </div>
 

@@ -1,46 +1,44 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { GetNotificationSettingsOutput, NotificationServiceProxy, NotificationSubscriptionDto, UpdateNotificationSettingsInput } from '@shared/service-proxies/service-proxies';
+/** Core imports */
+import { Component, ChangeDetectionStrategy, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
+
+/** Third party imports */
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import map from 'lodash/map';
-import { finalize } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
+
+/** Application imports */
+import { GetNotificationSettingsOutput, NotificationServiceProxy, NotificationSubscriptionDto, UpdateNotificationSettingsInput } from '@shared/service-proxies/service-proxies';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
-import { AppConsts } from '@shared/AppConsts';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     selector: 'notificationSettingsModal',
     templateUrl: './notification-settings-modal.component.html',
     styleUrls: [ '../../../../shared/metronic/m-checkbox.less' ],
-    providers: [ DialogService ]
+    providers: [ DialogService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NotificationSettingsModalComponent extends AppModalDialogComponent implements OnInit  {
-    saving = false;
-
+export class NotificationSettingsModalComponent implements OnInit  {
     settings: GetNotificationSettingsOutput;
-
-    constructor(
-        injector: Injector,
-        private dialog: MatDialog,
-        private _notificationService: NotificationServiceProxy
-    ) {
-        super(injector);
-        this.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-
-        this.data.title = this.l('NotificationSettings');
-        this.data.editTitle = false;
-        this.data.titleClearButton = false;
-        this.data.placeholder = this.l('NotificationSettings');
-
-        this.data.buttons = [{
-            title: this.l('SaveAndClose'),
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('SaveAndClose'),
             class: 'primary menu',
             action: this.save.bind(this)
-        }];
+        }
+    ];
+    constructor(
+        private dialog: MatDialog,
+        private _notificationService: NotificationServiceProxy,
+        private _notifyService: NotifyService,
+        private _dialogRef: MatDialogRef<NotificationSettingsModalComponent>,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
+    ) {}
 
+    ngOnInit() {
         this.getSettings(() => {});
     }
 
@@ -62,12 +60,10 @@ export class NotificationSettingsModalComponent extends AppModalDialogComponent 
                 return subscription;
             });
 
-        this.saving = true;
         this._notificationService.updateNotificationSettings(input)
-            .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
-                this.close();
+                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this._dialogRef.close();
             });
     }
 
@@ -75,6 +71,7 @@ export class NotificationSettingsModalComponent extends AppModalDialogComponent 
         this._notificationService.getNotificationSettings().subscribe((result: GetNotificationSettingsOutput) => {
             this.settings = result;
             callback();
+            this._changeDetectorRef.detectChanges();
         });
     }
 }

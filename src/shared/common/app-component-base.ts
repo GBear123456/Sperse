@@ -3,7 +3,6 @@ import { Injector, ApplicationRef, ElementRef, HostBinding, HostListener, OnDest
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
-import * as _ from 'underscore';
 import * as moment from 'moment-timezone';
 import { Subject, Observable } from 'rxjs';
 
@@ -27,6 +26,8 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 import capitalize from 'underscore.string/capitalize';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
@@ -76,6 +77,8 @@ export abstract class AppComponentBase implements OnDestroy {
 
     public capitalize = capitalize;
     public userTimezone = '0000';
+    public cacheHelper: CacheHelper;
+    public loadingService: LoadingService;
     public defaultGridPagerConfig = {
         showPageSizeSelector: true,
         allowedPageSizes: [20, 100, 500, 1000],
@@ -84,7 +87,7 @@ export abstract class AppComponentBase implements OnDestroy {
     };
 
     constructor(private _injector: Injector,
-        public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName
+        public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName,
     ) {
         this.localization = _injector.get(LocalizationService);
         this.permission = _injector.get(PermissionCheckerService);
@@ -103,6 +106,8 @@ export abstract class AppComponentBase implements OnDestroy {
         this.oDataService = this._injector.get(ODataService);
         this._activatedRoute = _injector.get(ActivatedRoute);
         this._router = _injector.get(Router);
+        this.cacheHelper = _injector.get(CacheHelper);
+        this.loadingService = _injector.get(LoadingService);
         this.userTimezone = this.getUserTimezone();
     }
 
@@ -128,8 +133,8 @@ export abstract class AppComponentBase implements OnDestroy {
         return moment().tz(abp.timing.timeZoneInfo.iana.timeZoneId).format('ZZ');
     }
 
-    getCacheKey(key) {
-        return this.constructor.name + '_' + this.appSession.tenantId + '_' + this.appSession.userId + '_' + key;
+    getCacheKey(key: string): string {
+        return this.cacheHelper.getCacheKey(key, this.constructor.name);
     }
 
     l(key: string, ...args: any[]): string {
@@ -218,7 +223,7 @@ export abstract class AppComponentBase implements OnDestroy {
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
         let tenant = this.appSession.tenant;
         if (!id)
-            return tenant && [TenantLoginInfoDtoCustomLayoutType.LendSpace, 
+            return tenant && [TenantLoginInfoDtoCustomLayoutType.LendSpace,
                 TenantLoginInfoDtoCustomLayoutType.CFOMembers].indexOf(tenant.customLayoutType) >= 0
                     ? AppConsts.imageUrls.profileLendSpace : defaultUrl;
 
@@ -228,11 +233,11 @@ export abstract class AppComponentBase implements OnDestroy {
 
     startLoading(globally = false, element: any = null) {
         this.loading = true;
-        abp.ui.setBusy(globally ? undefined : (element || this.getElementRef().nativeElement));
+        this.loadingService.startLoading(globally, element || this.getElementRef().nativeElement);
     }
 
     finishLoading(globally = false, element: any = null) {
-        abp.ui.clearBusy(globally ? undefined : (element || this.getElementRef().nativeElement));
+        this.loadingService.finishLoading(globally, element || this.getElementRef().nativeElement);
         this.loading = false;
     }
 

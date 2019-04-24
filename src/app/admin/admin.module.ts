@@ -69,8 +69,6 @@ import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component'
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
-import { CreateOrEditUserModalComponent } from './users/create-or-edit-user-modal.component';
-import { EditUserPermissionsModalComponent } from './users/edit-user-permissions-modal.component';
 import { ImpersonationService } from './users/impersonation.service';
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
@@ -137,8 +135,6 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         UsersComponent,
         PermissionComboComponent,
         RoleComboComponent,
-        CreateOrEditUserModalComponent,
-        EditUserPermissionsModalComponent,
         PermissionTreeComponent,
         OrganizationUnitsTreeComponent,
         RolesComponent,

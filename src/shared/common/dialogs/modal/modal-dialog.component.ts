@@ -1,29 +1,40 @@
-import { Component, Injector, OnInit, AfterViewInit, ElementRef } from '@angular/core';
-import { AppComponentBase } from 'shared/common/app-component-base';
+import {
+    Component,
+    ChangeDetectionStrategy,
+    Inject,
+    OnInit,
+    AfterViewInit,
+    ElementRef,
+    Input,
+    Output, EventEmitter
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     selector: 'modal-dialog',
     templateUrl: 'modal-dialog.component.html',
-    styleUrls: ['modal-dialog.component.less']
+    styleUrls: ['modal-dialog.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ModalDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    private elementRef: ElementRef;
+export class ModalDialogComponent implements OnInit, AfterViewInit {
+    @Input() title: string;
+    @Input() editTitle = false;
+    @Input() titleClearButton = false;
+    @Input() placeholder = null;
+    @Input() isTitleValid: boolean;
+    @Input() buttons: IDialogButton[];
+    @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onTitleChanged: EventEmitter<any> = new EventEmitter<any>();
     private slider: any;
-    public data: any;
-    public dialogRef: MatDialogRef<ModalDialogComponent, any>;
 
     constructor(
-        injector: Injector
-    ) {
-        super(injector);
-
-        this.data = injector.get(MAT_DIALOG_DATA);
-        this.elementRef = injector.get(ElementRef);
-        this.dialogRef = <any>injector.get(MatDialogRef);
-
-        this.localizationSourceName = this.data.localization;
-    }
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        public dialogRef: MatDialogRef<ModalDialogComponent>,
+        public ls: AppLocalizationService,
+        private elementRef: ElementRef
+    ) {}
 
     private fork(callback, timeout = 0) {
         setTimeout(callback.bind(this), timeout);
@@ -52,6 +63,16 @@ export class ModalDialogComponent extends AppComponentBase implements OnInit, Af
                     });
                 }, 100);
             });
+    }
+
+    titleChanged(event) {
+        let title = event.element.getElementsByTagName('input')[0].value;
+        this.isTitleValid = Boolean(title);
+        this.onTitleChanged.emit(title);
+    }
+
+    titleKeyUp(event) {
+        this.onTitleKeyUp.emit(event.element.getElementsByTagName('input')[0].value);
     }
 
     close(slide: boolean = false, closeData = null) {

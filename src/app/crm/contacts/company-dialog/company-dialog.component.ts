@@ -4,15 +4,14 @@ import {
     ChangeDetectorRef,
     Component,
     OnInit,
-    Injector,
+    Inject,
     ViewChild,
     ViewChildren,
     QueryList
 } from '@angular/core';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { MaskPipe } from 'ngx-mask';
 import { DxSelectBoxComponent, DxDateBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
@@ -30,6 +29,9 @@ import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationCo
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'company-dialog',
@@ -38,7 +40,8 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ContactPhotoServiceProxy, MaskPipe]
 })
-export class CompanyDialogComponent extends AppModalDialogComponent implements OnInit {
+export class CompanyDialogComponent implements OnInit {
+    @ViewChild('modalDialog') modalDialog: ModalDialogComponent;
     @ViewChild(DxDateBoxComponent) calendarComponent: DxDateBoxComponent;
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
@@ -83,7 +86,6 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
     currentDate = new Date();
 
     constructor(
-        injector: Injector,
         public dialog: MatDialog,
         private _organizationContactServiceProxy: OrganizationContactServiceProxy,
         private _notesService: NotesServiceProxy,
@@ -91,11 +93,11 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
         private store$: Store<RootStore.State>,
         private changeDetectorRef: ChangeDetectorRef,
         private maskPipe: MaskPipe,
-        private clientService: ContactsService
-    ) {
-        super(injector);
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-    }
+        private clientService: ContactsService,
+        private notifyService: NotifyService,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
+    ) {}
 
     ngOnInit() {
         const company: OrganizationContactInfoDto = this.data.company;
@@ -109,10 +111,10 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
         this.company.primaryPhoto = company.primaryPhoto;
         this.data.editTitle = true;
         this.data.titleClearButton = true;
-        this.data.placeholder = this.l('Customer.CompanyName');
+        this.data.placeholder = this.ls.l('Customer.CompanyName');
         this.data.buttons = [{
             id: 'saveCompany',
-            title: this.l('Save'),
+            title: this.ls.l('Save'),
             class: 'primary saveButton',
             action: this.save.bind(this)
         }];
@@ -137,8 +139,8 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
             input.sizeTo = size.to;
         }
         this._organizationContactServiceProxy.updateOrganizationInfo(input).subscribe(() => {
-            this.notify.success(this.l('SavedSuccessfully'));
-            this.close(true, {
+            this.notifyService.success(this.ls.l('SavedSuccessfully'));
+            this.modalDialog.close(true, {
                 company: this.company
             });
         });

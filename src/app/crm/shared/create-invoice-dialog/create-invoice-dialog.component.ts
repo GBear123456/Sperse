@@ -1,8 +1,8 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, Injector } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
@@ -12,18 +12,23 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
-
 import { InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput,
-    UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus, 
+    UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus,
     UpdateInvoiceStatusInputStatus, CreateInvoiceLineInput } from '@shared/service-proxies/service-proxies';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+import { NotifyService } from '@abp/notify/notify.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { MessageService } from '@abp/message/message.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
     styleUrls: [ '../../../shared/form.less', 'create-invoice-dialog.component.less' ],
-    providers: [ DialogService, InvoiceServiceProxy, CustomerServiceProxy ]
+    providers: [ DialogService, InvoiceServiceProxy, CustomerServiceProxy ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateInvoiceDialogComponent extends AppModalDialogComponent implements OnInit {
+export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
     @ViewChild('contact') contactComponent: DxSelectBoxComponent;
@@ -31,8 +36,6 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     private lookupTimeout;
     private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
-
-    private validationError: string;
 
     invoiceId: number;
     statuses: any[] = [];
@@ -56,20 +59,33 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
 
     toolbarConfig = [];
     disabledForUpdate = false;
+    editTitle = !this.disabledForUpdate;
+    buttons: IDialogButton[] = [
+        {
+            id: this.saveButtonId,
+            title: this.ls.l('Save'),
+            class: 'primary menu',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
-        injector: Injector,
-        public dialog: MatDialog,
         private _invoiceProxy: InvoiceServiceProxy,
         private _customerProxy: CustomerServiceProxy,
-        private _cacheService: CacheService
+        private _cacheService: CacheService,
+        private _notifyService: NotifyService,
+        private _messageService: MessageService,
+        private _cacheHelper: CacheHelper,
+        private _loadingService: LoadingService,
+        private _dialogRef: MatDialogRef<CreateInvoiceDialogComponent>,
+        public dialog: MatDialog,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        super(injector);
-
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+        this.ls.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.saveContextMenuItems = [
-            {text: this.l('SaveAndAddNew'), selected: false},
-            {text: this.l('SaveAndClose'), selected: false}
+            {text: this.ls.l('SaveAndAddNew'), selected: false},
+            {text: this.ls.l('SaveAndClose'), selected: false}
         ];
 
         this._customerProxy.getAllByPhrase('', 10).subscribe((res) => {
@@ -78,6 +94,10 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
 
         this.initInvoiceData();
         this.initToolbarConfig();
+    }
+
+    ngOnInit() {
+        this.saveOptionsInit();
     }
 
     initInvoiceData() {
@@ -129,7 +149,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
                                     disabled: (item == CreateInvoiceInputStatus.Paid
                                         || item == CreateInvoiceInputStatus.Canceled)
                                         && (!this.data.invoice || this.data.invoice.Status != CreateInvoiceInputStatus.Sent)
-                                }
+                                };
                             }),
                             onValueChanged: (event) => {
                                 this.status = event.value;
@@ -168,7 +188,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     }
 
     saveOptionsInit() {
-        let cacheKey = this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+        let cacheKey = this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             selectedIndex = this.SAVE_OPTION_DEFAULT;
         if (this._cacheService.exists(cacheKey))
             selectedIndex = this._cacheService.get(cacheKey);
@@ -188,23 +208,8 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
 
     updateSaveOption(option) {
         this.data.buttons[0].title = option.text;
-        this._cacheService.set(this.getCacheKey(this.SAVE_OPTION_CACHE_KEY),
+        this._cacheService.set(this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-
-        this.data.titleClearButton = true;
-        this.data.editTitle = !this.disabledForUpdate;
-        this.data.placeholder = this.l('Invoice #');
-        this.data.buttons = [{
-            id: this.saveButtonId,
-            title: this.l('Save'),
-            class: 'primary menu',
-            action: this.save.bind(this)
-        }];
-        this.saveOptionsInit();
     }
 
     private setRequestCommonFields(data) {
@@ -275,7 +280,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         else
             this.close();
 
-        this.notify.info(this.l('SavedSuccessfully'));
+        this._notifyService.info(this.ls.l('SavedSuccessfully'));
         this.data.refreshParent && this.data.refreshParent();
     }
 
@@ -293,7 +298,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             return this.contactComponent.instance.option('isValid', false);
 
         if (!this.lines.length)
-            return this.notify.error(this.l('InvoiceLinesShouldBeDefined'));
+            return this._notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
 
         if (this.disabledForUpdate)
             this.updateStatus();
@@ -311,17 +316,17 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             this.customers = [];
 
         $event.component.option('opened', true);
-        $event.component.option('noDataText', this.l('LookingForItems'));
+        $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
             $event.component.option('opened', true);
-            $event.component.option('noDataText', this.l('LookingForItems'));
+            $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
             this._customerProxy.getAllByPhrase(search, 10).subscribe((res) => {
                 if (search == this.customer) {
                     if (!res['length'])
-                        $event.component.option('noDataText', this.l('NoItemsFound'));
+                        $event.component.option('noDataText', this.ls.l('NoItemsFound'));
 
                     this.customers = res;
                 }
@@ -347,7 +352,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         if (forced)
             resetInternal();
         else
-            this.message.confirm(this.l('DiscardConfirmation'), '', (confirmed) => {
+            this._messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
                 if (confirmed)
                     resetInternal();
             });
@@ -375,17 +380,21 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         this.contactId = event.selectedItem && event.selectedItem.id;
     }
 
+    close() {
+        this._dialogRef.close();
+    }
+
     deleteInvoice() {
         if (this.invoiceId)
-            this.message.confirm(
-                this.l('InvoiceDeleteWarningMessage', this.data.title),
+            this._messageService.confirm(
+                this.ls.l('InvoiceDeleteWarningMessage', this.data.title),
                 isConfirmed => {
                     if (isConfirmed) {
-                        this.startLoading(true)
+                        this._loadingService.startLoading(true);
                         this._invoiceProxy.deleteInvoice(this.invoiceId).pipe(
-                            finalize(() => this.finishLoading(true))
+                            finalize(() => this._loadingService.finishLoading(true))
                         ).subscribe((response) => {
-                            this.notify.info(this.l('SuccessfullyDeleted'));
+                            this._notifyService.info(this.ls.l('SuccessfullyDeleted'));
                             this.data.refreshParent && this.data.refreshParent();
                             this.close();
                         });

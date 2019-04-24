@@ -1,4 +1,7 @@
-<app-modal-dialog>
+<modal-dialog [title]="ls.l('LoginAttempts')"
+              [editTitle]="false"
+              [titleClearButton]="false"
+              [placeholder]="ls.l('LoginAttempts')">
     <dx-scroll-view showScrollbar="onHover">
         <div class="content">
             <div *ngFor="let userLoginAttempt of userLoginAttempts">
@@ -11,7 +14,7 @@
                     </div>
                     <div class="m-alert__text">
                         <div class="row" *ngIf="userLoginAttempt.clientIpAddress">
-                            <label class="control-label col-sm-2 text-right">{{l("IpAddress")}}</label>
+                            <label class="control-label col-sm-2 text-right">{{ls.l("IpAddress")}}</label>
                             <div class="col-sm-10">
                                 <p class="form-control-static">
                                     {{userLoginAttempt.clientIpAddress}}
@@ -19,7 +22,7 @@
                             </div>
                         </div>
                         <div class="row" *ngIf="userLoginAttempt.clientName">
-                            <label class="control-label col-sm-2 text-right">{{l("Client")}}</label>
+                            <label class="control-label col-sm-2 text-right">{{ls.l("Client")}}</label>
                             <div class="col-sm-10">
                                 <p class="form-control-static">
                                     {{userLoginAttempt.clientName}}
@@ -27,7 +30,7 @@
                             </div>
                         </div>
                         <div class="row" *ngIf="userLoginAttempt.browserInfo">
-                            <label class="control-label col-sm-2 text-right">{{l("Browser")}}</label>
+                            <label class="control-label col-sm-2 text-right">{{ls.l("Browser")}}</label>
                             <div class="col-sm-10">
                                 <p class="form-control-static">
                                     {{userLoginAttempt.browserInfo}}
@@ -35,7 +38,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <label class="control-label col-sm-2 text-right">{{l("Time")}}</label>
+                            <label class="control-label col-sm-2 text-right">{{ls.l("Time")}}</label>
                             <div class="col-sm-10">
                                 <p class="form-control-static login-attempt-date">
                                     {{getLoginAttemptTime(userLoginAttempt)}}
@@ -47,4 +50,4 @@
             </div>
         </div>
 </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

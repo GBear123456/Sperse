@@ -1,15 +1,6 @@
 <div class="close-dialog" (click)="close(true)"></div>
 <div class="mat-dialog-header">
-    <dx-text-box
-        name="title"
-        [showClearButton]="data.titleClearButton"
-        [placeholder]="data.placeholder"
-        [(value)]="data.title"
-        [readOnly]="!data.editTitle"
-        [isValid]="data.isTitleValid == undefined || data.isTitleValid"
-        (onInput)="titleChanged($event)"
-        (onKeyUp)="titleKeyUp($event)">
-    </dx-text-box>
+
     <mat-dialog-actions>
         <div class="mat-dialog-options">
             <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">

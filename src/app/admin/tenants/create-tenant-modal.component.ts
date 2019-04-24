@@ -1,7 +1,17 @@
 /** Core imports */
-import { Component, ElementRef, EventEmitter, Injector, Output, OnInit, ViewChild, Inject } from '@angular/core';
+import {
+    Component,
+    ChangeDetectionStrategy,
+    ElementRef,
+    EventEmitter,
+    Output,
+    OnInit,
+    ViewChild,
+    ChangeDetectorRef
+} from '@angular/core';
 
 /** Third party imports */
+import { MatDialogRef } from '@angular/material';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
@@ -13,19 +23,21 @@ import {
     PasswordComplexitySetting,
     ProfileServiceProxy,
     TenantServiceProxy,
-    TenantHostType,
     TenantEditEditionDto,
     SubscribableEditionComboboxItemDto
 } from '@shared/service-proxies/service-proxies';
 import { TenantsService } from '@admin/tenants/tenants.service';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     selector: 'createTenantModal',
     templateUrl: './create-tenant-modal.component.html',
-    providers: [ TenantsService ]
+    providers: [ TenantsService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateTenantModalComponent extends AppModalDialogComponent implements OnInit {
+export class CreateTenantModalComponent implements OnInit {
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
@@ -37,28 +49,31 @@ export class CreateTenantModalComponent extends AppModalDialogComponent implemen
     editionsModels: { [value: string]: TenantEditEditionDto } = {};
 
     emailRegEx = AppConsts.regexPatterns.email;
+    title = this.ls.l('CreateNewTenant');
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('Save'),
+            class: 'primary',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
-        injector: Injector,
         private _tenantService: TenantServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
         private _profileService: ProfileServiceProxy,
-        private _tenantsService: TenantsService
-    ) {
-        super(injector);
-    }
+        private _tenantsService: TenantsService,
+        private _notifyService: NotifyService,
+        private _dialogRef: MatDialogRef<CreateTenantModalComponent>,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService
+    ) {}
 
     ngOnInit() {
-        this.data.title = this.l('CreateNewTenant');
-        this.data.buttons = [
-            {
-                title: this.l('Save'),
-                class: 'primary',
-                action: this.save.bind(this)
-            }
-        ];
         this.init();
-        this._profileService.getPasswordComplexitySetting().subscribe(result => {
+        this._profileService.getPasswordComplexitySetting()
+        .pipe(finalize(() => this._changeDetectorRef.detectChanges()))
+        .subscribe(result => {
             this.passwordComplexitySetting = result.setting;
         });
     }
@@ -81,16 +96,15 @@ export class CreateTenantModalComponent extends AppModalDialogComponent implemen
 
         this.tenant.editions = this._tenantsService.getTenantEditions();
         this._tenantService.createTenant(this.tenant)
-            .pipe(finalize(() => this.saving = false))
             .subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
+                this._notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.close();
                 this.modalSave.emit(null);
             });
     }
 
     close(): void {
-        this.dialogRef.close();
+        this._dialogRef.close();
     }
 
 }

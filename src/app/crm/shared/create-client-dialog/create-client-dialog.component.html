@@ -33,7 +33,10 @@
     (onSelectionChanged)="onUserAssignmentChanged($event)">
 </crm-user-assignment-list>
 
-<app-modal-dialog (onTitleKeyUp)="onFullNameKeyUp($event)">
+<modal-dialog [editTitle]="true"
+              [titleClearButton]="true"
+              [placeholder]="ls.l('Contact.FullName')"
+              (onTitleKeyUp)="onFullNameKeyUp($event)">
     <div class="photo-area" (click)="showUploadPhoto($event)"
         [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 
@@ -51,7 +54,7 @@
                     displayExpr="name"
                     valueExpr="name"
                     [acceptCustomValue]="true"
-                    [placeholder]="l('CompanyName')"
+                    [placeholder]="ls.l('CompanyName')"
                     [(value)]="company"
                     [dataSource]="companies"
                     [searchEnabled]="true"
@@ -62,7 +65,7 @@
                 </dx-select-box>
                 <dx-text-box #titleComponent
                     name="title"
-                    [placeholder]="l('Job title')"
+                    [placeholder]="ls.l('Job title')"
                     [valueChangeEvent]="'keyup'"
                     [width]="'270px'"
                     [(value)]="title">
@@ -138,7 +141,7 @@
                                 name="phoneExtension"
                                 width="50px"
                                 [inputAttr]="{maxlength: 5}"
-                                [placeholder]="l('Ext')"
+                                [placeholder]="ls.l('Ext')"
                                 [(value)]="phone.ext">
                                 <dx-validator>
                                     <dxi-validation-rule type="stringLength" [max]="5" message="{{l('PhoneExtensionExceedsMaxSize')}}."></dxi-validation-rule>
@@ -312,4 +315,4 @@
             </div>
         </dx-scroll-view>
     </div>
-</app-modal-dialog>
+</modal-dialog>

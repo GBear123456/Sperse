@@ -1,49 +1,41 @@
-import { Component, Injector, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { NotificationServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
+/** Core imports */
+import { Component, ChangeDetectionStrategy, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
+
+/** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
+
+/** Application imports */
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { NotificationServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: './notifications.component.html',
     styleUrls: ['./notifications.component.less'],
     encapsulation: ViewEncapsulation.None,
-    animations: [appModuleAnimation()]
+    animations: [appModuleAnimation()],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NotificationsComponent extends AppModalDialogComponent implements OnInit {
-
+export class NotificationsComponent {
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
-
     notifications: IFormattedUserNotification[] = [];
     unreadNotificationCount = 0;
-
     readStateFilter = 'ALL';
     loading = false;
 
     constructor(
-        injector: Injector,
         private dialog: MatDialog,
         private _notificationService: NotificationServiceProxy,
-        private _userNotificationHelper: UserNotificationHelper
+        private _userNotificationHelper: UserNotificationHelper,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
         this.loadNotifications();
         this.registerToEvents();
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-
-        this.data.title = this.l('Notifications');
-        this.data.editTitle = false;
-        this.data.titleClearButton = false;
-        this.data.placeholder = this.l('Notifications');
-
-        this.data.buttons = [];
     }
 
     loadNotifications(): void {
@@ -53,6 +45,7 @@ export class NotificationsComponent extends AppModalDialogComponent implements O
             $.each(result.items, (index, item: UserNotification) => {
                 this.notifications.push(this._userNotificationHelper.format(<any>item, false));
             });
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -74,6 +67,7 @@ export class NotificationsComponent extends AppModalDialogComponent implements O
             }
 
             this.unreadNotificationCount -= 1;
+            this._changeDetectorRef.detectChanges();
         });
     }
 

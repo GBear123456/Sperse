@@ -1,4 +1,4 @@
-<app-modal-dialog #modal>
+<modal-dialog [buttons]="buttons" [title]="title">
     <dx-scroll-view showScrollbar="onHover">
         <form #editForm="ngForm" novalidate (ngSubmit)="save()">
             <div class="modal-body" *ngIf="selectBoxData">
@@ -49,4 +49,4 @@
             </div>
         </form>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>
