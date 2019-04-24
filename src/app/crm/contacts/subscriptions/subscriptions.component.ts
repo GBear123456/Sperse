@@ -1,9 +1,11 @@
 /** Core imports */
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material';
 import { map } from 'rxjs/operators';
+import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -17,6 +19,7 @@ import {
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { ContactsService } from '../contacts.service';
+import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'subscriptions',
@@ -24,10 +27,13 @@ import { ContactsService } from '../contacts.service';
     styleUrls: ['./subscriptions.component.less']
 })
 export class SubscriptionsComponent extends AppComponentBase implements OnInit {
+    @ViewChild('mainGrid') dataGrid: DxDataGridComponent;
     public data: {
         contactInfo: ContactInfoDto
     };
-    public dataSource: OrderSubscriptionDto[] = [];
+
+    public dataSource: DataSource;
+    showAll = false;
     impersonateTenantId: number;
 
     constructor(
@@ -52,11 +58,22 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
         this.refreshData();
     }
 
+    setDataSource(data: OrderSubscriptionDto[]) {
+        _.mapObject(
+            _.groupBy(data, (item: OrderSubscriptionDto) => item.serviceType),
+            (values: OrderSubscriptionDto[]) => {
+                _.chain(values).sortBy('id').reverse().value()[0]['isLastSubscription'] = true;
+            });
+
+        this.dataSource = new DataSource(data);
+        this.filterDataSource();
+    }
+
     refreshData(forced = false) {
         let subData = this._orderSubscriptionService['data'],
             groupId = this.data.contactInfo.id;
         if (!forced && subData && subData.groupId == groupId)
-            this.dataSource = subData.source;
+            this.setDataSource(subData.source);
         else
             this._orderSubscriptionService
                 .getSubscriptionHistory(groupId)
@@ -65,8 +82,10 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
                 .subscribe(result => {
                     this._orderSubscriptionService['data'] = {
                         groupId: groupId,
-                        source: this.dataSource = result
+                        source: result
                     };
+
+                    this.setDataSource(result);
                 });
     }
 
@@ -100,5 +119,22 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
             parseInt(item.value),
             this.impersonateTenantId
         );
+    }
+
+    toggleHistory() {
+        this.showAll = !this.showAll;
+        this.filterDataSource();
+    }
+
+    filterDataSource() {
+        if (this.showAll)
+            this.dataSource.filter(null);
+        else
+            this.dataSource.filter([['isLastSubscription', '=', true]]);
+
+        if (this.dataGrid && this.dataGrid.instance)
+            this.dataGrid.instance.clearSorting();
+        this.dataSource.sort(['serviceType', { getter: 'id', desc: true }]);
+        this.dataSource.load();
     }
 }

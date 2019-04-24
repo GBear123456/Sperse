@@ -1,13 +1,21 @@
-<h2>Subscriptions</h2>
+<h2>
+    Subscriptions
+    <span (click)="toggleHistory()" class="clickable-item pull-right">
+        {{ showAll ? 'Hide history' : 'Show history' }}
+    </span>
+</h2>
 
-<dx-data-grid id="gridContainer"
+<dx-data-grid #mainGrid
+              id="gridContainer"
               [dataSource]="dataSource"
               keyExpr="id"
               [allowColumnReordering]="true"
               [columnAutoWidth]="true"
               [allowColumnResizing]="true"
               [masterDetail]="{ enabled: true, template: 'detail' }">
+    <dxo-sorting mode="multiple"></dxo-sorting>
 
+    <dxi-column dataField="id" [visible]="false"></dxi-column>
     <dxi-column dataField="serviceType"></dxi-column>
     <dxi-column dataField="startDate" dataType="date"></dxi-column>
     <dxi-column dataField="endDate" dataType="date"></dxi-column>
@@ -17,7 +25,6 @@
     <dxi-column dataField="orderType"></dxi-column>
     <dxi-column dataField="status" caption="{{l('Status')}}"></dxi-column>
     <dxi-column caption="" [width]="220" cellTemplate="actionsTemplate"></dxi-column>
-
     <div *dxTemplate="let cell of 'actionsTemplate'" class="billing-actions">
         <a *ngIf="cell.data.tenantId && permission.isGranted('Pages.Tenants.Impersonation')"
            (click)="cell.data.status == 'Active' && showUserImpersonateLookUpModal($event, cell.data)">{{l('LoginAsThisTenant')}}</a>
@@ -27,7 +34,6 @@
     <div *dxTemplate="let cell of 'amountTemplate'">
         <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
     </div>
-
     <div *dxTemplate="let payment of 'detail'">
         <div class="master-detail-caption">{{'Payments info'}}</div>
         <dx-data-grid [dataSource]="payment.data.orderSubscriptionPayments"
@@ -38,7 +44,6 @@
             <dxi-column dataField="fee" caption="{{l('Total Fee')}}" cellTemplate="amountTemplate"></dxi-column>
             <dxi-column dataField="startDate" dataType="date"></dxi-column>
             <dxi-column dataField="endDate" dataType="date"></dxi-column>
-
             <div *dxTemplate="let cell of 'amountTemplate'">
                 <span> {{ cell.text | currency:'USD':'symbol':'1.2-2' }} </span>
             </div>
