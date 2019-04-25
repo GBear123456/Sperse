@@ -2,8 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     GetAllInput,
-    OfferServiceProxy,
-    SubmitRequestInput
+    OfferServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { OffersService } from '../../offers/offers.service';
 
@@ -27,11 +26,11 @@ export class CampaignOffersComponent extends AppComponentBase {
                 _offerServiceProxy.getAll(GetAllInput.fromJS({
                     testMode: memberInfo.testMode,
                     isDirectPostSupported: memberInfo.isDirectPostSupported,
-                    campaignIds: [3945, 3179]
+                    campaignIds: [3945, 3171]
                 })).subscribe((offers) => {
                     this.offers = _offerServiceProxy['caampaignOffersData'] = offers.map((item) => {
                         return {
-                            url: item.redirectUrl,
+                            redirectUrl: item.redirectUrl,
                             campaignId: item.campaignId,
                             systemType: item.systemType
                         };
@@ -41,12 +40,6 @@ export class CampaignOffersComponent extends AppComponentBase {
     }
 
     open(offer) {
-        window.open(offer.url, '_blank');
-        const submitRequestInput = SubmitRequestInput.fromJS({
-            campaignId: offer.campaignId,
-            systemType: offer.systemType
-        });
-        this._offerServiceProxy.submitRequest(submitRequestInput)
-            .subscribe(() => {});
+        this._offersService.applyOffer(offer);
     }
 }

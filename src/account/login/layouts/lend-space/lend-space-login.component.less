@@ -104,25 +104,15 @@
             height: 56px;
             border-radius: 2px;
             border: 0;
-            background-color: #ffcc00;
             font-family: @font-family;
             font-size: 18px;
             font-weight: bold;
             line-height: normal;
-            letter-spacing: normal;
-            text-align: center;
-            color: #000000;
-            transition: .2s;
 
             img {
                 float: right;
                 margin-top: 7px;
                 margin-right: 7px;
-            }
-
-            &:hover {
-                background-color: darken(#ffcc00, 6%);
-                box-shadow: 0 0 3px rgba(#ffcc00, .5);
             }
 
             &[disabled] {
@@ -164,7 +154,7 @@
                         border-radius: 50%;
                         width: 20px;
                         height: 20px;
-                        border: 1px solid #ffcc00;
+                        border: 1px solid #11CCCC;
                         display: block;
                         position: absolute;
                         left: 0;
@@ -172,11 +162,11 @@
                     }
 
                     input:checked ~ span {
-                        border-color: #ffcc00;
-                        background-color: #ffcc00;
+                        border-color: #11CCCC;
+                        background-color: #11CCCC;
 
                         &::after {
-                            border: 2px solid #000;
+                            border: 2px solid #fff;
                             transform: rotate(-45deg);
                             left: 3px;
                             top: 4px;
@@ -198,7 +188,7 @@
                     font-weight: 500;
                     line-height: normal;
                     letter-spacing: 0.2px;
-                    color: #fff;
+                    //color: #fff;
                     margin-bottom: 0;
                     display: block;
                     position: relative;
@@ -274,7 +264,6 @@
         }
 
         .social-icons {
-            padding-top: 10px;
             padding: 0;
             margin: 0;
             text-align: center;

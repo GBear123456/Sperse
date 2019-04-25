@@ -19,7 +19,6 @@ import { OfferDetailsComponent } from '@root/personal-finance/shared/offers/offe
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
 import { OffersRoutingModule } from '@root/personal-finance/shared/offers/offers-routing.module';
 import { NumberAbbrPipe } from '@shared/common/pipes/number-abbr/number-abbr.pipe';
-import { ApplyOfferDialogComponent } from '@root/personal-finance/shared/offers/apply-offer-modal/apply-offer-dialog.component';
 import { CreditCardsComponent } from './credit-cards/credit-cards.component';
 import { CreditScoreComponent } from '@root/personal-finance/shared/offers/credit-score/credit-score.component';
 import { NavigationComponent } from '@root/personal-finance/shared/offers/navigation/navigation.component';
@@ -51,7 +50,6 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
         PersonalFinanceCommonModule
     ],
     declarations: [
-        ApplyOfferDialogComponent,
         OffersLayoutComponent,
         OfferDetailsComponent,
         NumberAbbrPipe,
@@ -64,10 +62,6 @@ import { StarsRatingModule } from '@shared/common/stars-rating/stars-rating.modu
         BusinessLoansComponent,
         OffersCategoryDetailsComponent,
         DebtConsolidationComponent
-    ],
-    entryComponents: [
-        ApplyOfferDialogComponent
     ]
 })
-export class OffersModule {
-}
+export class OffersModule {}

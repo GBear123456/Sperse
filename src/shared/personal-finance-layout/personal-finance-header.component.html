@@ -6,10 +6,10 @@
         <p class="date">{{currentDate | date:'longDate' : userTimezone}}</p>
     </div>
 </div>
-<div class="page-header navbar navbar-fixed-top navbar-light md-shadow-zero-light container" [ngClass]="{'pfm-app': hasPfmAppFeature}" *ngIf="showDefaultHeader">
+<div class="page-header navbar navbar-fixed-top navbar-light container" [ngClass]="{'pfm-app': hasPfmAppFeature}" *ngIf="showDefaultHeader">
     <div class="page-logo">
         <a href="javascript:void(0);" (click)="logoClick($event)">
-            <img [src]="yellowTheme ? './assets/common/images/lend-space-dark/logo-top-dark.svg' : appSession.tenant && appSession.tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId: './assets/common/images/app-logo-on-light.png'" alt="logo" class="logo-default" width="200" />
+            <img [src]="yellowTheme ? './assets/common/images/lend-space-dark/logo-top-dark.svg' : './assets/common/images/lend-space-dark/logo-yellow-black.png'" alt="logo" class="logo-default" width="200" />
         </a>
     </div>
 
