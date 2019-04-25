@@ -8,5 +8,5 @@ export const environment = {
 
     /* Custom tenant domains */
     LENDSPACE_DOMAIN: 'https://testweb.lendspace.com',
-    LENDSPACE_HEADER_THEME: 'yellow'
+    LENDSPACE_HEADER_THEME: 'black'
 };
