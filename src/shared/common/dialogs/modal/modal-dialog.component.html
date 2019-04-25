@@ -16,9 +16,9 @@
             </dx-text-box>
         </ng-container>
     </div>
-    <mat-dialog-actions *ngIf="data.options">
+    <mat-dialog-actions *ngIf="options">
         <div class="mat-dialog-options">
-            <ng-template ngFor let-option [ngForOf]="data.options" let-i="index">
+            <ng-template ngFor let-option [ngForOf]="options" let-i="index">
                 <dx-check-box class="mat-dialog-option pull-right" (onValueChanged)="option.onValueChanged && option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
             </ng-template>
         </div>

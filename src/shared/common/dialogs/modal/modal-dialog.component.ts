@@ -11,6 +11,7 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interface';
 
 @Component({
     selector: 'modal-dialog',
@@ -25,6 +26,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() placeholder = null;
     @Input() isTitleValid: boolean;
     @Input() buttons: IDialogButton[];
+    @Input() options: IDialogOption[];
     @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
     @Output() onTitleChanged: EventEmitter<any> = new EventEmitter<any>();
     private slider: any;

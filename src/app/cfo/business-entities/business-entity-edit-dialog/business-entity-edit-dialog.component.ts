@@ -1,66 +1,65 @@
 /** Core imports */
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject, ViewChild } from '@angular/core';
 
 /** Third party imports */
+import { MAT_DIALOG_DATA } from '@angular/material';
 import { Store, select } from '@ngrx/store';
-import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreSelectors, StatesStoreActions } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
-import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
 import {
-    InstanceType,
     BusinessEntityServiceProxy,
     CreateBusinessEntityDto,
     UpdateBusinessEntityDto,
     BusinessEntityInfoDto
 } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
     styleUrls: [ '../../../shared/form.less', 'business-entity-edit-dialog.component.less' ],
-    providers: [ BusinessEntityServiceProxy ]
+    providers: [ BusinessEntityServiceProxy ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent implements OnInit {
-
+export class BusinessEntityEditDialogComponent implements OnInit {
+    @ViewChild('modalDialog') modalDialog: ModalDialogComponent;
     types: any;
     states: any;
     countries: any;
-
     masks = AppConsts.masks;
     maxDate = new Date();
-    phoneRegEx = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
     dateFormat = AppConsts.formatting.dateMoment;
-
     googleAutoComplete = Boolean(window['google']);
     address = {
         state: null,
         country: null,
         address: null
     };
-
-    saving = false;
     isNew = false;
     businessEntity = new BusinessEntityInfoDto();
 
     constructor(
-        injector: Injector,
         private _businessEntityService: BusinessEntityServiceProxy,
-        private store$: Store<RootStore.State>
+        private _notifyService: NotifyService,
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _cfoService: CFOService,
+        private store$: Store<RootStore.State>,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        super(injector);
-
         this.isNew = !this.data.id;
-
         this.countriesStateLoad();
         this.loadTypes();
 
         if (!this.isNew) {
-            this._businessEntityService.get(InstanceType[this.instanceType], this.instanceId, this.data.id)
+            this._businessEntityService.get(this._cfoService.instanceType as any, this._cfoService.instanceId, this.data.id)
                 .subscribe(result => {
                     this.businessEntity = result;
 
@@ -85,28 +84,28 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
                             ].filter(val => val).join(', ');
                         }
                     }
+                    this._changeDetectorRef.detectChanges();
                 });
         }
     }
 
     ngOnInit() {
-        super.ngOnInit();
         this.initHeader();
     }
 
     initHeader(): any {
         this.data = Object.assign(this.data, {
-            title: this.isNew ? this.l('BusinessEntity_CreateHeader') : this.l('BusinessEntity_EditHeader'),
+            title: this.isNew ? this.ls.l('BusinessEntity_CreateHeader') : this.ls.l('BusinessEntity_EditHeader'),
             editTitle: false,
             buttons: [
                 {
-                    title: this.l('BusinessEntity_Cancel'),
+                    title: this.ls.l('BusinessEntity_Cancel'),
                     class: 'default',
                     action: () => {
-                        this.close(true);
+                        this.modalDialog.close(true);
                     }
                 }, {
-                    title: this.l('BusinessEntity_Save'),
+                    title: this.ls.l('BusinessEntity_Save'),
                     class: 'primary',
                     action: this.save.bind(this)
                 }
@@ -115,9 +114,10 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
     }
 
     loadTypes() {
-        this._businessEntityService.getTypes(InstanceType[this.instanceType], this.instanceId)
+        this._businessEntityService.getTypes(this._cfoService.instanceType as any, this._cfoService.instanceId)
             .subscribe(result => {
                 this.types = result;
+                this._changeDetectorRef.detectChanges();
             });
     }
 
@@ -128,6 +128,7 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
             if (this.address['country']) {
                 this.onCountryChange({ value: this.address['country'] });
             }
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -138,12 +139,13 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
             this.store$.pipe(select(StatesStoreSelectors.getState, {
                 countryCode: countryCode
             })).subscribe(result => {
-                    this.states = result;
-                    if (this.businessEntity.stateId && !this.address['state']) {
-                        let state = _.findWhere(this.states, { code: this.businessEntity.stateId });
-                        this.address['state'] = state && state.name;
-                    }
-                });
+                this.states = result;
+                if (this.businessEntity.stateId && !this.address['state']) {
+                    let state = _.findWhere(this.states, { code: this.businessEntity.stateId });
+                    this.address['state'] = state && state.name;
+                }
+                this._changeDetectorRef.detectChanges();
+            });
         }
     }
 
@@ -166,7 +168,7 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
 
     validate() {
         if (!this.businessEntity.name) {
-            return this.notify.error(this.l('BusinessEntity_NameIsRequired'));
+            return this._notifyService.error(this.ls.l('BusinessEntity_NameIsRequired'));
         }
 
         return true;
@@ -174,8 +176,6 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
 
     save() {
         if (this.validate()) {
-            this.saving = true;
-
             this.businessEntity.countryId = this.getCountryCode(this.address.country);
             this.businessEntity.stateId = this.getStateCode(this.address.state);
 
@@ -187,18 +187,14 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
             }
 
             if (this.isNew) {
-                this._businessEntityService.createBusinessEntity(InstanceType[this.instanceType], this.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
-                    .pipe(finalize(() => {
-                        this.saving = false;
-                    })).subscribe(result => {
-                        this.close(true, { update: true });
+                this._businessEntityService.createBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
+                    .subscribe(() => {
+                        this.modalDialog.close(true, { update: true });
                     });
             } else {
-                this._businessEntityService.updateBusinessEntity(InstanceType[this.instanceType], this.instanceId, UpdateBusinessEntityDto.fromJS(this.businessEntity))
-                    .pipe(finalize(() => {
-                        this.saving = false;
-                    })).subscribe(result => {
-                        this.close(true, { update: true });
+                this._businessEntityService.updateBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, UpdateBusinessEntityDto.fromJS(this.businessEntity))
+                    .subscribe(() => {
+                        this.modalDialog.close(true, { update: true });
                     });
             }
         }
@@ -208,7 +204,7 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
         return this.isNew || this.businessEntity.statusId == 'A';
     }
 
-    isActiveChanged(value) {
+    isActiveChanged(value): void {
         this.businessEntity.statusId = value ? 'A' : 'I';
     }
 
@@ -229,6 +225,7 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
             component.option('value', '');
         }
         this.businessEntity[propName] = null;
+        this._changeDetectorRef.detectChanges();
     }
 
     emptyAddress() {
@@ -237,6 +234,7 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
         this.emptyValue('zip');
         this.emptyAddressValue('country');
         this.emptyAddressValue('state');
+        this._changeDetectorRef.detectChanges();
     }
 
     emptyAddressValue(propName) {
@@ -247,5 +245,6 @@ export class BusinessEntityEditDialogComponent extends CFOModalDialogComponent i
         countryName == 'United States' ?
             this.address.country = AppConsts.defaultCountryName :
             this.address.country = countryName;
+        this._changeDetectorRef.detectChanges();
     }
 }

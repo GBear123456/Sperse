@@ -67,7 +67,6 @@ import { CalculatorComponent } from 'app/cfo/shared/calculator-widget/calculator
 import { TransactionDetailInfoComponent } from 'app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
 import { CashflowComponent } from './cashflow/cashflow.component';
 import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
-import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component';
 import { ChooseResetRulesComponent } from './transactions/choose-reset-rules/choose-reset-rules.component';
 import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
@@ -148,7 +147,6 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         CategoryDeleteDialogComponent,
         RulesComponent,
         PermissionsComponent,
-        CFOModalDialogComponent,
         BusinessEntitiesComponent,
         BusinessEntityEditDialogComponent,
         ChartOfAccountsComponent,

@@ -880,15 +880,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.dialog.open(RuleDialogComponent, {
                     panelClass: 'slider',
                     data: {
-                        instanceId: this.instanceId,
-                        instanceType: this.instanceType,
                         categoryId: $event.column.dataField == 'CashflowCategoryName' ? $event.data.CashflowCategoryId : $event.data.CashflowSubCategoryId,
                         categoryCashflowTypeId: $event.CashFlowTypeId,
                         transactions: [$event.data],
                         transactionIds: [$event.data.Id],
                         refershParent: this.refreshDataGrid.bind(this)
                     }
-                }).afterClosed().subscribe(result => { });
+                }).afterClosed().subscribe();
             }
         }
         if ($event.rowType === 'data' && $event.column.dataField == 'Description') {
@@ -990,8 +988,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         this.dialog.open(RuleDialogComponent, {
                             panelClass: 'slider',
                             data: {
-                                instanceId: this.instanceId,
-                                instanceType: this.instanceType,
                                 categoryId: $event.categoryId,
                                 categoryCashflowTypeId: $event.categoryCashType,
                                 transactions: transactions,

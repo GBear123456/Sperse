@@ -1,30 +1,37 @@
-import { AppConsts } from '@shared/AppConsts';
-import { Component, Injector, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+/** Core imports */
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
-import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
+/** Third party imports */
+import { MAT_DIALOG_DATA } from '@angular/material';
+import capitalize from 'underscore.string/capitalize';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
+import { Observable, forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import * as _ from 'underscore';
 
+/** Application imports */
 import {
     CashflowServiceProxy, ClassificationServiceProxy, EditRuleDto, GetTransactionCommonDetailsInput,
     CreateRuleDtoApplyOption, EditRuleDtoApplyOption, UpdateTransactionsCategoryInput,
     TransactionsServiceProxy, ConditionDtoCashFlowAmountFormat, ConditionAttributeDtoConditionTypeId,
-    CreateRuleDto, ConditionAttributeDto, ConditionDto, InstanceType, TransactionTypesAndCategoriesDto, TransactionAttributeDto, GetKeyAttributeValuesInput } from '@shared/service-proxies/service-proxies';
-
-import { Observable, forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-
-import * as _ from 'underscore';
+    CreateRuleDto, ConditionAttributeDto, ConditionDto, TransactionTypesAndCategoriesDto, TransactionAttributeDto, GetKeyAttributeValuesInput } from '@shared/service-proxies/service-proxies';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
-  selector: 'rule-dialog',
-  templateUrl: 'rule-edit-dialog.component.html',
-  styleUrls: ['rule-edit-dialog.component.less'],
-  providers: [CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy]
+    selector: 'rule-dialog',
+    templateUrl: 'rule-edit-dialog.component.html',
+    styleUrls: ['rule-edit-dialog.component.less'],
+    providers: [CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RuleDialogComponent extends CFOModalDialogComponent implements OnInit, AfterViewInit {
+export class RuleDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
+    @ViewChild('modalDialog') modalDialog: ModalDialogComponent;
     showSelectedTransactions = false;
     minAmount: number;
     maxAmount: number;
@@ -46,9 +53,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     keyAttributeValues: any = [];
     keyAttributeValuesDataSource: any = [];
     private transactionAttributeTypes: any;
-    private attributeEnterTimeout: any;
     private attributeEditData: any;
-
     availableGridAttributeTypes: any = [];
     transactionTypesAndCategoriesData: TransactionTypesAndCategoriesDto;
     transactionTypes: any;
@@ -57,16 +62,49 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     selectedTransactionTypes: string[] = [];
     showOverwriteWarning = false;
     isCategoryValid = true;
-
+    title: string;
+    isTitleValid: boolean;
+    buttons = [
+        {
+            title: this.ls.l(this.data.id ? 'Save' : 'Add rule'),
+            class: 'primary',
+            action: (event) => {
+                if (this.validate()) {
+                    event.target.disabled = true;
+                    if (this.data.id)
+                        this._classificationServiceProxy.editRule(
+                            this._cfoService.instanceType as any, this._cfoService.instanceId,
+                            EditRuleDto.fromJS(this.getDataObject()))
+                            .pipe(finalize(() => event.target.disabled = false))
+                            .subscribe(this.updateDataHandler.bind(this));
+                    else
+                        this._classificationServiceProxy.createRule(
+                            this._cfoService.instanceType as any,
+                            this._cfoService.instanceId,
+                            CreateRuleDto.fromJS(this.getDataObject()))
+                            .pipe(finalize(() => event.target.disabled = false))
+                            .subscribe(this.updateDataHandler.bind(this));
+                }
+            }
+        }
+    ];
+    options = [
+        {
+            text: this.ls.l('Apply this rule to other occurrences'),
+            value: true
+        }
+    ];
     constructor(
-        injector: Injector,
         private _classificationServiceProxy: ClassificationServiceProxy,
         private _cashflowServiceProxy: CashflowServiceProxy,
-        private _transactionsServiceProxy: TransactionsServiceProxy
+        private _cfoService: CFOService,
+        private _transactionsServiceProxy: TransactionsServiceProxy,
+        private _notifyService: NotifyService,
+        private _elementRef: ElementRef,
+        private _changeDetectorRef: ChangeDetectorRef,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        super(injector);
-
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.formats = _.values(ConditionDtoCashFlowAmountFormat).map((value) => {
             return {
                 format: value
@@ -79,16 +117,17 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             };
         });
 
+        this._changeDetectorRef.detectChanges();
         let requests: Observable<any>[] = [
-            _transactionsServiceProxy.getTransactionAttributeTypes(InstanceType[this.instanceType], this.instanceId),
-            _classificationServiceProxy.getKeyAttributeValues(InstanceType[this.instanceType], this.instanceId, new GetKeyAttributeValuesInput({ ruleId: this.data.id, transactionIds: <number[] > this.data.transactionIds })),
-            _cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId)
+            _transactionsServiceProxy.getTransactionAttributeTypes(this._cfoService.instanceType as any, this._cfoService.instanceId),
+            _classificationServiceProxy.getKeyAttributeValues(this._cfoService.instanceType as any, this._cfoService.instanceId, new GetKeyAttributeValuesInput({ ruleId: this.data.id, transactionIds: <number[] > this.data.transactionIds })),
+            _cashflowServiceProxy.getCashFlowInitialData(this._cfoService.instanceType as any, this._cfoService.instanceId)
         ];
 
         if (this.data.id)
-            requests.push(_classificationServiceProxy.getRuleForEdit(InstanceType[this.instanceType], this.instanceId, this.data.id));
+            requests.push(_classificationServiceProxy.getRuleForEdit(this._cfoService.instanceType as any, this._cfoService.instanceId, this.data.id));
         else if (this.data.transactionIds && this.data.transactionIds.length)
-            requests.push(_classificationServiceProxy.getTransactionCommonDetails(InstanceType[this.instanceType], this.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data)));
+            requests.push(_classificationServiceProxy.getTransactionCommonDetails(this._cfoService.instanceType as any, this._cfoService.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data)));
 
         forkJoin(requests).subscribe(([transactionAttributeTypesResult, keyAttributeValuesResult, cashFlowInitialDataResult, data]) => {
             // getTransactionAttributeTypes
@@ -132,8 +171,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                 if (this.descriptor = rule.transactionDescriptorAttributeTypeId && this.transactionAttributeTypes[rule.transactionDescriptorAttributeTypeId]
                     || rule.transactionDescriptor)
                     this.onDescriptorChanged({ value: this.descriptor });
-                this.data.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
-                this.data.title = rule.name;
+                this.options[0].value = (rule.applyOption == EditRuleDtoApplyOption['MatchedAndUnclassified']);
+                this.title = rule.name;
                 if (rule.condition) {
                     this.bankId = rule.condition.bankId;
                     this.accountId = rule.condition.bankAccountId;
@@ -149,13 +188,75 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             } else if (this.data.transactionIds && this.data.transactionIds.length) {
                 this.bankId = data.bankId;
                 if (this.descriptor = this.getCapitalizedWords(data.standardDescriptor))
-                    this.data.title = this.descriptor;
+                    this.title = this.descriptor;
                 this.keywords = this.getKeywordsFromString(data.descriptionPhrases.join(','));
                 this.attributes = this.getAttributesFromCommonDetails(data.attributes);
                 this.attributesAndKeywords = this.getAtributesAndKeywords(false);
                 this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
             }
+            this._changeDetectorRef.detectChanges();
         });
+    }
+
+    ngOnInit() {
+        if (this.data.transactions && this.data.transactions.length)
+            this.buttons.unshift({
+                title: this.ls.l('Don\'t add'),
+                class: 'default',
+                action: (event) => {
+                    if (this.data.transactionIds) {
+                        if (this.validate(true)) {
+                            event.target.disabled = true;
+
+                            let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
+                                this._classificationServiceProxy.updateTransactionsCategory(
+                                    this._cfoService.instanceType as any,
+                                    this._cfoService.instanceId,
+                                    UpdateTransactionsCategoryInput.fromJS({
+                                        transactionIds: this.data.transactionIds,
+                                        categoryId: this.data.categoryId,
+                                        standardDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
+                                        descriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
+                                        suppressCashflowMismatch: suppressCashflowTypeMismatch
+                                    })
+                                ).pipe(finalize(() => event.target.disabled = false))
+                                    .subscribe(this.updateDataHandler.bind(this));
+                            };
+
+                            if (this.data.categoryCashflowTypeId && _.some(this.data.transactions, x => x.CashFlowTypeId != this.data.categoryCashflowTypeId)) {
+                                abp.message.confirm(this.ls.l('RuleDialog_ChangeCashTypeMessage'), this.ls.l('RuleDialog_ChangeCashTypeTitle'),
+                                    (result) => {
+                                        if (result) {
+                                            updateTransactionCategoryMethod(true);
+                                        }
+                                    });
+                            } else {
+                                updateTransactionCategoryMethod(false);
+                            }
+                        }
+                    } else
+                        this.modalDialog.close(true);
+                }
+            });
+        this._transactionsServiceProxy.getTransactionTypesAndCategories().subscribe((data) => {
+            this.transactionTypesAndCategoriesData = data;
+            this.transactionTypes = data.types;
+            this.transactionCategories = data.categories;
+            if (this.selectedTransactionCategory)
+                this.onTransactionCategoryChanged(null);
+            if (this.selectedTransactionTypes && this.selectedTransactionTypes.length)
+                this.onTransactionTypesChanged(null);
+            this._changeDetectorRef.detectChanges();
+        });
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            let input = this._elementRef.nativeElement
+                .querySelector('.dx-texteditor-input');
+            input.focus();
+            input.select();
+        }, 100);
     }
 
     getCapitalizedWords(value) {
@@ -187,14 +288,14 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     getDataObject() {
         return {
             id: this.data.id,
-            name: this.data.title,
+            name: this.title,
             parentId: this.data.parentId,
             categoryId: this.data.categoryId,
             sourceTransactionList: this.data.transactionIds,
             transactionDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
             transactionDescriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
             applyOption: (this.data.id ? EditRuleDtoApplyOption : CreateRuleDtoApplyOption)[
-                this.data.options[0].value ? 'MatchedAndUnclassified' : 'SelectedOnly'
+                this.options[0].value ? 'MatchedAndUnclassified' : 'SelectedOnly'
             ],
             condition: ConditionDto.fromJS({
                 minAmount: this.minAmount,
@@ -212,105 +313,12 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
 
     updateDataHandler(error) {
         if (error)
-            this.notify.error(error);
+            this._notifyService.error(error);
         else {
-            this.notify.info(this.l('SavedSuccessfully'));
+            this._notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refershParent && this.data.refershParent();
-            this.close(true);
+            this.modalDialog.close(true);
         }
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-
-        this.data.editTitle = true;
-        this.data.placeholder = this.l('Enter the rule name');
-        this.data.buttons = [{
-            title: this.l(this.data.id ? 'Save' : 'Add rule'),
-            class: 'primary',
-            action: (event) => {
-                if (this.validate()) {
-                    event.target.disabled = true;
-                    if (this.data.id)
-                        this._classificationServiceProxy.editRule(
-                            InstanceType[this.instanceType], this.instanceId,
-                            EditRuleDto.fromJS(this.getDataObject()))
-                        .pipe(finalize(() => event.target.disabled = false))
-                        .subscribe(this.updateDataHandler.bind(this));
-                    else
-                        this._classificationServiceProxy.createRule(
-                            InstanceType[this.instanceType],
-                            this.instanceId,
-                            CreateRuleDto.fromJS(this.getDataObject()))
-                        .pipe(finalize(() => event.target.disabled = false))
-                        .subscribe(this.updateDataHandler.bind(this));
-                }
-            }
-        }];
-        if (this.data.transactions && this.data.transactions.length)
-            this.data.buttons.unshift({
-                title: this.l('Don\'t add'),
-                class: 'default',
-                action: (event) => {
-                    if (this.data.transactionIds) {
-                        if (this.validate(true)) {
-                            event.target.disabled = true;
-
-                            let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
-                                this._classificationServiceProxy.updateTransactionsCategory(
-                                    InstanceType[this.instanceType],
-                                    this.instanceId,
-                                    UpdateTransactionsCategoryInput.fromJS({
-                                        transactionIds: this.data.transactionIds,
-                                        categoryId: this.data.categoryId,
-                                        standardDescriptor: this.transactionAttributeTypes[this.descriptor] ? undefined : this.descriptor,
-                                        descriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
-                                        suppressCashflowMismatch: suppressCashflowTypeMismatch
-                                    })
-                                ).pipe(finalize(() => event.target.disabled = false))
-                                .subscribe(this.updateDataHandler.bind(this));
-                            };
-
-                            if (this.data.categoryCashflowTypeId && _.some(this.data.transactions, x => x.CashFlowTypeId != this.data.categoryCashflowTypeId)) {
-                                abp.message.confirm(this.l('RuleDialog_ChangeCashTypeMessage'), this.l('RuleDialog_ChangeCashTypeTitle'),
-                                    (result) => {
-                                        if (result) {
-                                            updateTransactionCategoryMethod(true);
-                                        }
-                                    });
-                            } else {
-                                updateTransactionCategoryMethod(false);
-                            }
-                        }
-                    } else
-                        this.close(true);
-                }
-            });
-
-        this.data.options = [{
-            text: this.l('Apply this rule to other occurences'),
-            value: true
-        }];
-
-        this._transactionsServiceProxy.getTransactionTypesAndCategories().subscribe((data) => {
-            this.transactionTypesAndCategoriesData = data;
-            this.transactionTypes = data.types;
-            this.transactionCategories = data.categories;
-            if (this.selectedTransactionCategory)
-                this.onTransactionCategoryChanged(null);
-            if (this.selectedTransactionTypes && this.selectedTransactionTypes.length)
-                this.onTransactionTypesChanged(null);
-        });
-    }
-
-    ngAfterViewInit() {
-        super.ngAfterViewInit();
-        setTimeout(() => {
-            let input = this.getElementRef().nativeElement
-                .querySelector('.dx-texteditor-input');
-            input.focus();
-            input.select();
-        }, 100);
     }
 
     getDescriptionKeywords() {
@@ -366,25 +374,25 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     validate(ruleCheckOnly: boolean = false) {
         if (!ruleCheckOnly) {
             if (!this.data.title) {
-                this.data.title = this.descriptor;
-                if (!this.data.title) {
-                    this.data.isTitleValid = false;
-                    return this.notify.error(this.l('RuleDialog_NameError'));
+                this.title = this.descriptor;
+                if (!this.title) {
+                    this.isTitleValid = false;
+                    return this._notifyService.error(this.ls.l('RuleDialog_NameError'));
                 }
             }
 
             if (!this.getDescriptionKeywords() && !Object.keys(this.getAttributes()).length) {
                 this.attributeList.instance.option('elementAttr', {invalid: true});
-                return this.notify.error(this.l('RuleDialog_AttributeOrKeywordRequired'));
+                return this._notifyService.error(this.ls.l('RuleDialog_AttributeOrKeywordRequired'));
             }
 
             if (this.minAmount && this.maxAmount && this.minAmount > this.maxAmount)
-                return this.notify.error(this.l('RuleDialog_AmountError'));
+                return this._notifyService.error(this.ls.l('RuleDialog_AmountError'));
         }
 
         if (isNaN(this.data.categoryId)) {
             this.isCategoryValid = false;
-            return this.notify.error(this.l('RuleDialog_CategoryError'));
+            return this._notifyService.error(this.ls.l('RuleDialog_CategoryError'));
         }
 
         return true;
@@ -399,9 +407,13 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     onTransactionCategoryChanged(e) {
         if (!this.transactionTypesAndCategoriesData) return;
         if (this.selectedTransactionCategory)
-            setTimeout(() => this.transactionTypes = this.transactionTypesAndCategoriesData.types.filter((t) => t.categories.some((c) => c == this.selectedTransactionCategory)), 0);
+            setTimeout(() => {
+                this.transactionTypes = this.transactionTypesAndCategoriesData.types.filter((t) => t.categories.some((c) => c == this.selectedTransactionCategory));
+                this._changeDetectorRef.detectChanges();
+            });
         else
             this.transactionTypes = this.transactionTypesAndCategoriesData.types;
+        this._changeDetectorRef.detectChanges();
     }
 
     onTransactionTypesChanged(e) {
@@ -410,16 +422,20 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
             let categories: any = this.transactionTypesAndCategoriesData.types.filter((t) => this.selectedTransactionTypes.some((c) => c == t.id))
                 .map((v) => v.categories);
             categories = _.uniq(_.flatten(categories));
-            setTimeout(() => this.transactionCategories = this.transactionTypesAndCategoriesData.categories.filter((c) => categories.some(x => x == c.id)), 0);
+            setTimeout(() => {
+                this.transactionCategories = this.transactionTypesAndCategoriesData.categories.filter((c) => categories.some(x => x == c.id));
+                this._changeDetectorRef.detectChanges();
+            });
         } else {
             this.transactionCategories = this.transactionTypesAndCategoriesData.categories;
         }
-
+        this._changeDetectorRef.detectChanges();
         this.syncTreeViewSelection(e);
     }
 
     onMultipleDropDownChange(event) {
         this.selectedTransactionTypes = event.component.getSelectedNodesKeys();
+        this._changeDetectorRef.detectChanges();
     }
 
     syncTreeViewSelection(e) {
@@ -487,7 +503,8 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         let attrType = this.transactionAttributeTypes[$event.value];
         $event.component && $event.component.option('inputAttr', {'attribute-selected': Boolean(attrType)});
         if (!this.data.title && $event.value)
-            this.data.title = attrType && attrType.name || $event.value;
+            this.title = attrType && attrType.name || $event.value;
+        this._changeDetectorRef.detectChanges();
     }
 
     onAttributeInitNewRow($event) {
@@ -498,10 +515,12 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         $event.data.id = this.attributesAndKeywords.length;
         this.attributeEditData = $event.data;
         this.keyAttributeValuesDataSource = [];
+        this._changeDetectorRef.detectChanges();
     }
 
     onEditingStart($event) {
         this.keyAttributeValuesDataSource = this.getKeyAttributeValues($event.data.attributeTypeId);
+        this._changeDetectorRef.detectChanges();
     }
 
     attributeGridDropDownInitialized($event, cell) {
@@ -513,6 +532,7 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
                     _.findWhere(this.gridAttributeTypes, {id: attrId})
                 );
                 this.availableGridAttributeTypes = list;
+                this._changeDetectorRef.detectChanges();
             }
         }
 
@@ -522,19 +542,23 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         this.keyAttributeValuesDataSource =
             this.getKeyAttributeValues($event.value);
         cell.setValue($event.value);
+        this._changeDetectorRef.detectChanges();
     }
 
     attributeGridDropDownDisposing($event, cell) {
         this.attributeEditData = null;
+        this._changeDetectorRef.detectChanges();
     }
 
     onEditorPreparing($event) {
         this.attributeEditData = $event.row.data;
+        this._changeDetectorRef.detectChanges();
     }
 
     onCustomDescriptorCreating($event) {
         setTimeout(() => {
             this.descriptor = $event.text;
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -549,8 +573,10 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
     }
 
     onAttributeKeyEnter($event, cell) {
-        if ($event.keyCode == 13)
+        if ($event.keyCode == 13) {
             this.attributeEditData = null;
+            this._changeDetectorRef.detectChanges();
+        }
     }
 
     selectedAttributeValue($event, value) {
@@ -559,12 +585,16 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         if (this.transactionAttributeTypes[this.descriptor] || !this.descriptor)
             this.descriptor = '';
         this.descriptor += (this.descriptor ? ' - ' : '') + value.name;
+        this._changeDetectorRef.detectChanges();
     }
 
     selectedGridAttributeValue($event, value) {
         this.attributeEditData.conditionTypeId = 'Equal';
         this.attributeEditData.conditionValue = value.name;
-        setTimeout(() => this.attributeList.instance.repaintRows([0]), 100);
+        setTimeout(() => {
+            this.attributeList.instance.repaintRows([0]);
+            this._changeDetectorRef.detectChanges();
+        }, 100);
     }
 
     getKeyAttribute(typeId) {
@@ -589,13 +619,14 @@ export class RuleDialogComponent extends CFOModalDialogComponent implements OnIn
         });
         if (this.availableGridAttributeTypes.length != list.length)
             this.availableGridAttributeTypes = list;
+        this._changeDetectorRef.detectChanges();
     }
 
     attributeDisplayValue = ((data) => {
         let attribute = _.findWhere(this.gridAttributeTypes,
                 {id: data.attributeTypeId});
 
-        return attribute ? attribute.name : this.capitalize(data.attributeTypeId);
+        return attribute ? attribute.name : capitalize(data.attributeTypeId);
     }).bind(this);
 
     conditionDisplayValue = ((data) => {

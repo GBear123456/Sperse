@@ -4787,8 +4787,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let config: any = {
                 panelClass: 'slider',
                 data: {
-                    instanceId: this.instanceId,
-                    instanceType: this.instanceType,
                     transactions: transactions.map((obj) => {
                         return {
                             Date: obj.date,
