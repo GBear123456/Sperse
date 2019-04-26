@@ -158,7 +158,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     }
 
     openPaymentWizardDialog(e) {
-        this.hideDropDown();       
+        this.hideDropDown();
         this._dialog.open(PaymentWizardComponent, {
             height: '800px',
             width: '1200px',

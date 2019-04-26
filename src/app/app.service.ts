@@ -146,7 +146,7 @@ export class AppService extends AppServiceBase {
     getModuleSubscription(name?: string, moduleSubscriptions = this.moduleSubscriptions) {
         let module = (name || this.getModule()).toUpperCase();
         if (moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
-            return _.find(moduleSubscriptions, (subscription) => {                 
+            return _.find(moduleSubscriptions, (subscription) => {
                 return subscription.module.includes(module);
             }) || { module: module, endDate: moment(new Date(0)) };
     }

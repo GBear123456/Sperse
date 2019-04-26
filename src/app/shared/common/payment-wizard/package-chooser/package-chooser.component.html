@@ -21,7 +21,7 @@
                         {{ l('Annually') }}
                     </div>
                 </div>
-                <button [hidden]="module === modules.CFO || configurator == 'slider'"
+                <button [hidden]="module === modules.CFO || module === 'CFO_CRM' || configurator == 'slider'"
                         class="toggle"
                         (click)="configurator = configurator == 'slider' ? 'billingPeriod' : 'slider'">
                     {{ configurator === 'slider' ? 'Change plan' : 'Add more seats' }}
