@@ -93,20 +93,19 @@ export class PackageChooserComponent implements OnInit {
         private localizationResolver: LocalizationResolver,
         private packageServiceProxy: PackageServiceProxy,
         private changeDetectionRef: ChangeDetectorRef
-    ) {
-        forkJoin([
-            localizationResolver.checkLoadLocalization(AppConsts.localization.CFOLocalizationSourceName),
-            localizationResolver.checkLoadLocalization(AppConsts.localization.CRMLocalizationSourceName)
-        ]).subscribe(() => {
-            this.loadPackages();
-        });
-    }
+    ) {}
 
     l(key: string, ...args: any[]): string {
         return this.localizationService.l(key, AppConsts.localization.defaultLocalizationSourceName, ...args);
     }
 
     ngOnInit() {
+        forkJoin([
+            this.localizationResolver.checkLoadLocalization(AppConsts.localization.CFOLocalizationSourceName),
+            this.localizationResolver.checkLoadLocalization(AppConsts.localization.CRMLocalizationSourceName)
+        ]).subscribe(() => {
+            this.loadPackages();
+        });
     }
 
     loadPackages() {
