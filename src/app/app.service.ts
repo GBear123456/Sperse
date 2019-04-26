@@ -133,7 +133,9 @@ export class AppService extends AppServiceBase {
         this.moduleSubscriptions$ = this._tenantSubscriptionProxy.getModuleSubscriptions()
             .pipe(publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res) => {
-            this.moduleSubscriptions = res;
+            this.moduleSubscriptions = res.sort((left, right) => {
+                return left.endDate > right.endDate ? -1 : 1;
+            });
             this.checkModuleExpired();
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
@@ -144,8 +146,13 @@ export class AppService extends AppServiceBase {
     getModuleSubscription(name?: string, moduleSubscriptions = this.moduleSubscriptions) {
         let module = (name || this.getModule()).toUpperCase();
         if (moduleSubscriptions && ModuleSubscriptionInfoDtoModule[module])
-            return _.find(moduleSubscriptions, {module: module})
-                || {module: module, endDate: moment(new Date(0))};
+            return _.find(moduleSubscriptions, (subscription) => {                 
+                return subscription.module.includes(module);
+            }) || { module: module, endDate: moment(new Date(0)) };
+    }
+
+    getSubscriptionName(module?: string) {
+        return this.getModuleSubscription(module).module.replace('_', ' & ');
     }
 
     subscriptionIsLocked(name?: string) {
@@ -237,6 +244,7 @@ export class AppService extends AppServiceBase {
         let expired = !this.hasModuleSubscription(name);
         if (expired)
             this.expiredModule.next(name);
+
         return expired;
     }
 
