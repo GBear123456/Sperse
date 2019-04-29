@@ -17,7 +17,7 @@
                         (change)="billingPeriodChanged($event)">
                     </mat-slide-toggle>
                     <div class="annually" [ngClass]="{ 'active': getActiveStatus('year') }">
-                        <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
+                        <span class="year-discount">{{ 'SAVE ' + yearDiscount + '% ' + 'or more' }}</span>
                         {{ l('Annually') }}
                     </div>
                 </div>

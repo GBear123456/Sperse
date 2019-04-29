@@ -50,7 +50,7 @@ export class PackageChooserComponent implements OnInit {
     @Input() module: Module;
     @Input() widgettitle: string;
     @Input() subtitle = this.l('ChoosePlan');
-    @Input() yearDiscount = 33;
+    @Input() yearDiscount = 20;
     @Input() packagesMaxUsersAmount: number;
     @Input() nextStepButtonText = this.l('Next');
     @Input() nextButtonPosition: 'right' | 'center' = 'right';
