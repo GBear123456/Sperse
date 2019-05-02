@@ -131,7 +131,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         });
     }
 
-    openPaymentWizardDialog() {       
+    openPaymentWizardDialog() {
         this.dialog.open(PaymentWizardComponent, {
             height: '800px',
             width: '1200px',
@@ -139,7 +139,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             panelClass: ['payment-wizard', 'setup'],
             data: {
                 module: this._appService.getModuleSubscription(Module.CRM).module,
-                title: this.ls('Platform', 'UpgradeYourSubscription', 
+                title: this.ls('Platform', 'UpgradeYourSubscription',
                     this._appService.getSubscriptionName(Module.CRM))
             }
         });

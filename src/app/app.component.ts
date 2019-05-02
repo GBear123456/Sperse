@@ -48,8 +48,8 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {
                                     module: sub.module,
-                                    title: this.l('ModuleExpired', appService.getSubscriptionName(name)
-                                        , sub && sub.endDate ? 'subscription' : 'trial')
+                                    title: this.l('ModuleExpired', appService.getSubscriptionName(name),
+                                        sub && sub.endDate ? 'subscription' : 'trial')
                                 }
                             }).afterClosed().subscribe(result => {});
                         }
