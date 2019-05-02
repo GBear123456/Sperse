@@ -4,6 +4,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, ViewChil
 /** Third party imports */
 import { MatDialogRef } from '@angular/material';
 import { from } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { CashflowServiceProxy, CashFlowGridSettingsDto, CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity } from '@shared/service-proxies/service-proxies';
@@ -23,10 +24,8 @@ import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PreferencesDialogComponent implements OnInit {
-    @ViewChild('modalDialog') modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     GeneralScope = GeneralScope;
-    PeriodScope = CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
-
     model: CashFlowGridSettingsDto;
     active = false;
     rememberLastSettings = true;
@@ -83,7 +82,9 @@ export class PreferencesDialogComponent implements OnInit {
             class: 'primary',
             action: () => {
                 if (this.rememberLastSettings) {
+                    this.modalDialog.startLoading();
                     this._cashflowService.saveCashFlowGridSettings(this._cfoService.instanceType as any, this._cfoService.instanceId, this.model)
+                        .pipe(finalize(() => this.modalDialog.finishLoading()))
                         .subscribe(() => {
                             this.closeSuccessful();
                         });
@@ -124,14 +125,17 @@ export class PreferencesDialogComponent implements OnInit {
             model.init(data);
             cashflowGrid$ = from([model]);
         } else {
+            this.modalDialog.startLoading();
             cashflowGrid$ = this._cashflowService.getCashFlowGridSettings(this._cfoService.instanceType as any, this._cfoService.instanceId);
         }
 
-        cashflowGrid$.subscribe(result => {
-            this.model = result;
-            this.active = true;
-            this._changeDetectorRef.detectChanges();
-        });
+        cashflowGrid$
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(result => {
+                this.model = result;
+                this.active = true;
+                this._changeDetectorRef.detectChanges();
+            });
 
         this._dialogRef.afterClosed().subscribe(closeData => {
             if (closeData && closeData.saveLocally) {

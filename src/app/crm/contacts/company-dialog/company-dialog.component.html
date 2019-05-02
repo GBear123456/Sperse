@@ -1,4 +1,6 @@
-<modal-dialog #modalDialog>
+<modal-dialog [title]="title"
+              [editTitle]="true"
+              [titleClearButton]="true">
     <div class="form-content container">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
@@ -27,7 +29,7 @@
                         </div>
                     </div>
                     <div class="field companySize">
-                        <label for="companySize">{{ l('Company_CompanySize') }}</label>
+                        <label for="companySize">{{ ls.l('Company_CompanySize') }}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
                                 [inputAttr]="{ id: 'companySize' }"
@@ -52,7 +54,7 @@
                     </div>
 
                     <div class="field country">
-                        <label for="country">{{ l('Country') }}</label>
+                        <label for="country">{{ ls.l('Country') }}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
                                 [inputAttr]="{ id: 'country' }"
@@ -66,7 +68,7 @@
                         </div>
                     </div>
                     <div class="field state">
-                        <label for="state">{{ l('State') }}</label>
+                        <label for="state">{{ ls.l('State') }}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
                                 [inputAttr]="{ id: 'state' }"

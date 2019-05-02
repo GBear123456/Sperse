@@ -4,6 +4,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject, 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Store, select } from '@ngrx/store';
+import { finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -28,7 +29,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
-    @ViewChild('modalDialog') modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     types: any;
     states: any;
     countries: any;
@@ -59,7 +60,9 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         this.loadTypes();
 
         if (!this.isNew) {
+            this.modalDialog.startLoading();
             this._businessEntityService.get(this._cfoService.instanceType as any, this._cfoService.instanceId, this.data.id)
+                .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe(result => {
                     this.businessEntity = result;
 
@@ -176,6 +179,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
 
     save() {
         if (this.validate()) {
+            this.modalDialog.startLoading();
             this.businessEntity.countryId = this.getCountryCode(this.address.country);
             this.businessEntity.stateId = this.getStateCode(this.address.state);
 
@@ -186,17 +190,13 @@ export class BusinessEntityEditDialogComponent implements OnInit {
                 ].filter(val => val).join(' ');
             }
 
-            if (this.isNew) {
-                this._businessEntityService.createBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
-                    .subscribe(() => {
-                        this.modalDialog.close(true, { update: true });
-                    });
-            } else {
-                this._businessEntityService.updateBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, UpdateBusinessEntityDto.fromJS(this.businessEntity))
-                    .subscribe(() => {
-                        this.modalDialog.close(true, { update: true });
-                    });
-            }
+            const request$ = this.isNew
+                ? this._businessEntityService.createBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, CreateBusinessEntityDto.fromJS(this.businessEntity))
+                : this._businessEntityService.updateBusinessEntity(this._cfoService.instanceType as any, this._cfoService.instanceId, UpdateBusinessEntityDto.fromJS(this.businessEntity));
+            request$.pipe(finalize(() => this.modalDialog.finishLoading()))
+                .subscribe(() => {
+                    this.modalDialog.close(true, { update: true });
+                });
         }
     }
 

@@ -1,8 +1,7 @@
 <modal-dialog [title]="ls.l('NotificationSettings')"
               [editTitle]="false"
               [titleClearButton]="false"
-              [placeholder]="ls.l('NotificationSettings')"
-              [buttons]="">
+              [placeholder]="ls.l('NotificationSettings')">
     <dx-scroll-view showScrollbar="onHover">
         <div class="modal-body" *ngIf="settings">
             <h4>{{ls.l("ReceiveNotifications")}}</h4>

@@ -17,125 +17,125 @@
         </dx-context-menu>
         <app-toolbar [config]="toolbarConfig"></app-toolbar>
         <mat-sidenav class="main_sidenav" mode="side" position="end" opened="true">
-          <mat-tab-group>
-            <mat-tab [label]="ls.l('UserInformations') | uppercase">
-              <div class="tab-content">
-                  <form #userForm="ngForm" novalidate (ngSubmit)="save()" autocomplete="off">
-                    <div class="form-group">
-                        <label>{{ls.l("EmailAddress")}}</label>
-                        <input type="email" name="EmailAddress" class="form-control" [(ngModel)]="user.emailAddress" required maxlength="256" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
+            <mat-tab-group>
+                <mat-tab [label]="ls.l('UserInformations') | uppercase">
+                    <div class="tab-content">
+                        <form #userForm="ngForm" novalidate (ngSubmit)="save()" autocomplete="off">
+                            <div class="form-group">
+                                <label>{{ls.l("EmailAddress")}}</label>
+                                <input type="email" name="EmailAddress" class="form-control" [(ngModel)]="user.emailAddress" required maxlength="256" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
+                            </div>
+
+                            <div class="form-group">
+                                <label>{{ls.l("PhoneNumber")}}</label>
+                                <dx-text-box #phoneNumber
+                                             type="tel"
+                                             name="PhoneNumber"
+                                             class="tabular"
+                                             [(value)]="user.phoneNumber"
+                                             [maskInvalidMessage]="ls.l('PhoneValidationError')"
+                                             [mask]="masks.phone"
+                                             [isValid]="true"
+                                             (onFocusIn)="focusInput($event)"
+                                             (onFocusOut)="phoneComponentFocusOut($event)"
+                                             (onInitialized)="phoneComponentInitialized($event)">
+                                </dx-text-box>
+                            </div>
+
+                            <div class="user-options-delimiter"></div>
+
+                            <div class="m-checkbox-list">
+                                <label for="EditUser_SetRandomPassword" class="m-checkbox">
+                                    <input id="EditUser_SetRandomPassword" type="checkbox" name="SetRandomPassword" [(ngModel)]="setRandomPassword">
+                                    {{ls.l("SetRandomPassword")}}
+                                    <span></span>
+                                </label>
+                            </div>
+                            <div class="form-group" *ngIf="!setRandomPassword">
+                                <div class="right form-group">
+                                    <label>{{ls.l("Password")}}</label>
+                                    <input type="password" name="Password" #Password="ngModel" id="Password" class="form-control" [(ngModel)]="user.password" [required]="!user.id && !setRandomPassword" maxlength="32"
+                                           [requireDigit]="passwordComplexitySetting?.requireDigit" [requireLowercase]="passwordComplexitySetting?.requireLowercase"
+                                           [requireUppercase]="passwordComplexitySetting?.requireUppercase" [requireNonAlphanumeric]="passwordComplexitySetting?.requireNonAlphanumeric" [requiredLength]="passwordComplexitySetting?.requiredLength"
+                                           validateEqual="PasswordRepeat" reverse="true">
+                                </div>
+                            </div>
+                            <div [hidden]="setRandomPassword || userForm.form.valid || userForm.form.pristine">
+                                <ul class="help-block text-danger" *ngIf="userForm.controls['Password'] && userForm.controls['Password'].errors">
+                                    <li [hidden]="!userForm.controls['Password'].errors.requireDigit">{{ls.l("PasswordComplexity_RequireDigit_Hint")}}</li>
+                                    <li [hidden]="!userForm.controls['Password'].errors.requireLowercase">{{ls.l("PasswordComplexity_RequireLowercase_Hint")}}</li>
+                                    <li [hidden]="!userForm.controls['Password'].errors.requireUppercase">{{ls.l("PasswordComplexity_RequireUppercase_Hint")}}</li>
+                                    <li [hidden]="!userForm.controls['Password'].errors.requireNonAlphanumeric">{{ls.l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
+                                    <li [hidden]="!userForm.controls['Password'].errors.requiredLength">{{ls.l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting?.requiredLength)}}</li>
+                                </ul>
+                            </div>
+                            <div class="form-group" *ngIf="!setRandomPassword">
+                                <div class="right form-group">
+                                    <label>{{ls.l("PasswordRepeat")}}</label>
+                                    <input type="password" name="PasswordRepeat" #PasswordRepeat="ngModel" class="form-control" [(ngModel)]="user.passwordRepeat" [required]="!user.id && !setRandomPassword" maxlength="32"
+                                           [requireDigit]="passwordComplexitySetting?.requireDigit" [requireLowercase]="passwordComplexitySetting?.requireLowercase"
+                                           [requireUppercase]="passwordComplexitySetting?.requireUppercase" [requireNonAlphanumeric]="passwordComplexitySetting?.requireNonAlphanumeric" [requiredLength]="passwordComplexitySetting?.requiredLength"
+                                           validateEqual="Password" reverse="false">
+                                </div>
+                            </div>
+                            <div [hidden]="setRandomPassword || userForm.form.valid || userForm.form.pristine">
+                                <ul class="help-block text-danger" *ngIf="userForm.controls['PasswordRepeat'] && userForm.controls['PasswordRepeat'].errors">
+                                    <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireDigit">{{ls.l("PasswordComplexity_RequireDigit_Hint")}}</li>
+                                    <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireLowercase">{{ls.l("PasswordComplexity_RequireLowercase_Hint")}}</li>
+                                    <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireUppercase">{{ls.l("PasswordComplexity_RequireUppercase_Hint")}}</li>
+                                    <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireNonAlphanumeric">{{ls.l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
+                                    <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requiredLength">{{ls.l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting?.requiredLength)}}</li>
+                                </ul>
+                            </div>
+                            <div class="m-checkbox-list">
+                                <label for="EditUser_ShouldChangePasswordOnNextLogin" class="m-checkbox">
+                                    <input id="EditUser_ShouldChangePasswordOnNextLogin" type="checkbox" name="ShouldChangePasswordOnNextLogin" [(ngModel)]="user.shouldChangePasswordOnNextLogin">
+                                    {{ls.l("ShouldChangePasswordOnNextLogin")}}
+                                    <span></span>
+                                </label>
+
+                                <label for="EditUser_SendActivationEmail" class="m-checkbox">
+                                    <input id="EditUser_SendActivationEmail" type="checkbox" name="SendActivationEmail" [(ngModel)]="sendActivationEmail">
+                                    {{ls.l("SendActivationEmail")}}
+                                    <span></span>
+                                </label>
+
+                                <label for="EditUser_IsActive" class="m-checkbox">
+                                    <input id="EditUser_IsActive" type="checkbox" name="IsActive" [(ngModel)]="user.isActive">
+                                    {{ls.l("Active")}}
+                                    <span></span>
+                                </label>
+
+                                <label *ngIf="isTwoFactorEnabled" for="EditUser_IsTwoFactorEnabled" class="m-checkbox">
+                                    <input id="EditUser_IsTwoFactorEnabled" type="checkbox" name="IsTwoFactorEnabled" [(ngModel)]="user.isTwoFactorEnabled">
+                                    {{ls.l("IsTwoFactorEnabled")}}
+                                    <span></span>
+                                </label>
+
+                                <label *ngIf="isLockoutEnabled" for="EditUser_IsLockoutEnabled" class="m-checkbox">
+                                    <input id="EditUser_IsLockoutEnabled" type="checkbox" name="IsLockoutEnabled" [(ngModel)]="user.isLockoutEnabled">
+                                    {{ls.l("IsLockoutEnabled")}}
+                                    <span></span>
+                                </label>
+                            </div>
+                        </form>
                     </div>
-
-                    <div class="form-group">
-                        <label>{{ls.l("PhoneNumber")}}</label>
-                        <dx-text-box #phoneNumber
-                            type="tel"
-                            name="PhoneNumber"
-                            class="tabular"
-                            [(value)]="user.phoneNumber"
-                            [maskInvalidMessage]="ls.l('PhoneValidationError')"
-                            [mask]="masks.phone"
-                            [isValid]="true"
-                            (onFocusIn)="focusInput($event)"
-                            (onFocusOut)="phoneComponentFocusOut($event)"
-                            (onInitialized)="phoneComponentInitialized($event)">
-                        </dx-text-box>
-                    </div>
-
-                    <div class="user-options-delimiter"></div>
-
-                    <div class="m-checkbox-list">
-                        <label for="EditUser_SetRandomPassword" class="m-checkbox">
-                            <input id="EditUser_SetRandomPassword" type="checkbox" name="SetRandomPassword" [(ngModel)]="setRandomPassword">
-                            {{ls.l("SetRandomPassword")}}
+                </mat-tab>
+                <mat-tab label="{{ls.l('Roles') | uppercase}} {{'(' + getAssignedRoleCount() + ')'}}">
+                    <div class="tab-content">
+                        <label attr.for="EditUser_{{role.roleName}}" class="m-checkbox" *ngFor="let role of roles">
+                            <input id="EditUser_{{role.roleName}}" type="checkbox" name="{{role.roleName}}" [(ngModel)]="role.isAssigned">
+                            {{role.roleDisplayName}}
                             <span></span>
                         </label>
                     </div>
-                    <div class="form-group" *ngIf="!setRandomPassword">
-                        <div class="right form-group">
-                            <label>{{ls.l("Password")}}</label>
-                            <input type="password" name="Password" #Password="ngModel" id="Password" class="form-control" [(ngModel)]="user.password" [required]="!user.id && !setRandomPassword" maxlength="32"
-                                   [requireDigit]="passwordComplexitySetting?.requireDigit" [requireLowercase]="passwordComplexitySetting?.requireLowercase"
-                                   [requireUppercase]="passwordComplexitySetting?.requireUppercase" [requireNonAlphanumeric]="passwordComplexitySetting?.requireNonAlphanumeric" [requiredLength]="passwordComplexitySetting?.requiredLength"
-                                   validateEqual="PasswordRepeat" reverse="true">
-                        </div>
+                </mat-tab>
+                <mat-tab label="{{ls.l('OrganizationUnits') | uppercase}} {{'(' + getAssignedOrgUnitCount() + ')'}}">
+                    <div class="tab-content">
+                        <organization-unit-tree #organizationUnitTree></organization-unit-tree>
                     </div>
-                    <div [hidden]="setRandomPassword || userForm.form.valid || userForm.form.pristine">
-                        <ul class="help-block text-danger" *ngIf="userForm.controls['Password'] && userForm.controls['Password'].errors">
-                            <li [hidden]="!userForm.controls['Password'].errors.requireDigit">{{ls.l("PasswordComplexity_RequireDigit_Hint")}}</li>
-                            <li [hidden]="!userForm.controls['Password'].errors.requireLowercase">{{ls.l("PasswordComplexity_RequireLowercase_Hint")}}</li>
-                            <li [hidden]="!userForm.controls['Password'].errors.requireUppercase">{{ls.l("PasswordComplexity_RequireUppercase_Hint")}}</li>
-                            <li [hidden]="!userForm.controls['Password'].errors.requireNonAlphanumeric">{{ls.l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
-                            <li [hidden]="!userForm.controls['Password'].errors.requiredLength">{{ls.l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting?.requiredLength)}}</li>
-                        </ul>
-                    </div>
-                    <div class="form-group" *ngIf="!setRandomPassword">
-                        <div class="right form-group">
-                            <label>{{ls.l("PasswordRepeat")}}</label>
-                            <input type="password" name="PasswordRepeat" #PasswordRepeat="ngModel" class="form-control" [(ngModel)]="user.passwordRepeat" [required]="!user.id && !setRandomPassword" maxlength="32"
-                                   [requireDigit]="passwordComplexitySetting?.requireDigit" [requireLowercase]="passwordComplexitySetting?.requireLowercase"
-                                   [requireUppercase]="passwordComplexitySetting?.requireUppercase" [requireNonAlphanumeric]="passwordComplexitySetting?.requireNonAlphanumeric" [requiredLength]="passwordComplexitySetting?.requiredLength"
-                                   validateEqual="Password" reverse="false">
-                        </div>
-                    </div>
-                    <div [hidden]="setRandomPassword || userForm.form.valid || userForm.form.pristine">
-                        <ul class="help-block text-danger" *ngIf="userForm.controls['PasswordRepeat'] && userForm.controls['PasswordRepeat'].errors">
-                            <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireDigit">{{ls.l("PasswordComplexity_RequireDigit_Hint")}}</li>
-                            <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireLowercase">{{ls.l("PasswordComplexity_RequireLowercase_Hint")}}</li>
-                            <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireUppercase">{{ls.l("PasswordComplexity_RequireUppercase_Hint")}}</li>
-                            <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requireNonAlphanumeric">{{ls.l("PasswordComplexity_RequireNonAlphanumeric_Hint")}}</li>
-                            <li [hidden]="!userForm.controls['PasswordRepeat'].errors.requiredLength">{{ls.l("PasswordComplexity_RequiredLength_Hint", passwordComplexitySetting?.requiredLength)}}</li>
-                        </ul>
-                    </div>
-                    <div class="m-checkbox-list">
-                        <label for="EditUser_ShouldChangePasswordOnNextLogin" class="m-checkbox">
-                            <input id="EditUser_ShouldChangePasswordOnNextLogin" type="checkbox" name="ShouldChangePasswordOnNextLogin" [(ngModel)]="user.shouldChangePasswordOnNextLogin">
-                            {{ls.l("ShouldChangePasswordOnNextLogin")}}
-                            <span></span>
-                        </label>
-
-                        <label for="EditUser_SendActivationEmail" class="m-checkbox">
-                            <input id="EditUser_SendActivationEmail" type="checkbox" name="SendActivationEmail" [(ngModel)]="sendActivationEmail">
-                            {{ls.l("SendActivationEmail")}}
-                            <span></span>
-                        </label>
-
-                        <label for="EditUser_IsActive" class="m-checkbox">
-                            <input id="EditUser_IsActive" type="checkbox" name="IsActive" [(ngModel)]="user.isActive">
-                            {{ls.l("Active")}}
-                            <span></span>
-                        </label>
-
-                        <label *ngIf="isTwoFactorEnabled" for="EditUser_IsTwoFactorEnabled" class="m-checkbox">
-                            <input id="EditUser_IsTwoFactorEnabled" type="checkbox" name="IsTwoFactorEnabled" [(ngModel)]="user.isTwoFactorEnabled">
-                            {{ls.l("IsTwoFactorEnabled")}}
-                            <span></span>
-                        </label>
-
-                        <label *ngIf="isLockoutEnabled" for="EditUser_IsLockoutEnabled" class="m-checkbox">
-                            <input id="EditUser_IsLockoutEnabled" type="checkbox" name="IsLockoutEnabled" [(ngModel)]="user.isLockoutEnabled">
-                            {{ls.l("IsLockoutEnabled")}}
-                            <span></span>
-                        </label>
-                    </div>
-                  </form>
-              </div>
-            </mat-tab>
-            <mat-tab label="{{ls.l('Roles') | uppercase}} {{'(' + getAssignedRoleCount() + ')'}}">
-                <div class="tab-content">
-                    <label attr.for="EditUser_{{role.roleName}}" class="m-checkbox" *ngFor="let role of roles">
-                        <input id="EditUser_{{role.roleName}}" type="checkbox" name="{{role.roleName}}" [(ngModel)]="role.isAssigned">
-                        {{role.roleDisplayName}}
-                        <span></span>
-                    </label>
-                </div>
-            </mat-tab>
-            <mat-tab label="{{ls.l('OrganizationUnits') | uppercase}} {{'(' + getAssignedOrgUnitCount() + ')'}}">
-                <div class="tab-content">
-                    <organization-unit-tree #organizationUnitTree></organization-unit-tree>
-                </div>
-            </mat-tab>
-          </mat-tab-group>
+                </mat-tab>
+            </mat-tab-group>
         </mat-sidenav>
     </dx-scroll-view>
 </modal-dialog>

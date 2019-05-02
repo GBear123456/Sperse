@@ -1,7 +1,7 @@
 <modal-dialog>
     <div *ngIf="entityChange" class="modal-header">
         <h4 class="modal-title">
-            <span>{{l("Detail")}} - {{l(entityChange.entityTypeFullName)}}</span> <br />
+            <span>{{ls.l("Detail")}} - {{ls.l(entityChange.entityTypeFullName)}}</span> <br />
             <small [innerHTML]="l('CreatedAtByUser', entityChange.changeTime, entityChange.userName)"></small>
         </h4>
     </div>
@@ -9,9 +9,9 @@
         <table id="EntityPropertyChangesTable" class="display table table-striped table-bordered table-hover dt-responsive">
             <thead>
             <tr>
-                <th>{{l("Property")}}</th>
-                <th>{{l("OriginalValue")}}</th>
-                <th>{{l("NewValue")}}</th>
+                <th>{{ls.l("Property")}}</th>
+                <th>{{ls.l("OriginalValue")}}</th>
+                <th>{{ls.l("NewValue")}}</th>
             </tr>
             <tr *ngFor="let propertyChange of entityPropertyChanges">
                 <td><strong>{{propertyChange.propertyName}}</strong></td>
@@ -23,7 +23,7 @@
         </table>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" (click)="close()">{{l("Close")}}</button>
+        <button type="button" class="btn btn-default" (click)="close()">{{ls.l("Close")}}</button>
     </div>
 </modal-dialog>
 

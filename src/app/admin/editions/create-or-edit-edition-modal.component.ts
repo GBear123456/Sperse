@@ -23,7 +23,7 @@ import { FeatureTreeComponent } from '../shared/feature-tree.component';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
-
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'createOrEditEditionModal',
@@ -32,8 +32,8 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnInit {
-
     @ViewChild('editionNameInput') editionNameInput: ElementRef;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     saving = false;
@@ -48,7 +48,13 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
     editData;
     active = false;
     title: string;
-    buttons: IDialogButton[];
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('Save'),
+            class: 'primary',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
         private _editionService: EditionServiceProxy,
@@ -61,32 +67,32 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
         this.title = this.data.editionId ? '' : this.ls.l('CreateNewEdition');
-        this.buttons = [
-            {
-                title: this.ls.l('Save'),
-                class: 'primary',
-                action: this.save.bind(this)
-            }
-        ];
     }
 
     ngOnInit() {
-        this._commonLookupService.getEditionsForCombobox(true).subscribe(editionsResult => {
-            this.expiringEditions = editionsResult.items;
-            this.expiringEditions.unshift(new ComboboxItemDto({ value: null, displayText: this.ls.l('NotAssigned'), isSelected: true }));
-            this._editionService.getEditionForEdit(this.data.editionId).pipe(finalize(() => {
-                this.active = true;
+        this.modalDialog.startLoading();
+        this._commonLookupService.getEditionsForCombobox(true).subscribe(
+            editionsResult => {
+                this.expiringEditions = editionsResult.items;
+                this.expiringEditions.unshift(new ComboboxItemDto({ value: null, displayText: this.ls.l('NotAssigned'), isSelected: true }));
                 this._changeDetectorRef.detectChanges();
-            })).subscribe(editionResult => {
-                this.edition = editionResult.edition;
-                this.data.title = this.data.editionId ? this.ls.l('EditEdition') + ' ' + this.edition.displayName : this.ls.l('CreateNewEdition');
-                this.editData = editionResult;
-                this.expireAction = this.edition.expiringEditionId > 0 ? AppEditionExpireAction.AssignToAnotherEdition : AppEditionExpireAction.DeactiveTenant;
-                this.isFree = !editionResult.edition.monthlyPrice && !editionResult.edition.annualPrice;
-                this.isTrialActive = editionResult.edition.trialDayCount > 0;
-                this.isWaitingDayActive = editionResult.edition.waitingDayAfterExpire > 0;
-            });
-        });
+                this._editionService.getEditionForEdit(this.data.editionId).pipe(finalize(() => {
+                    this.active = true;
+                    this.modalDialog.finishLoading();
+                    this._changeDetectorRef.detectChanges();
+                })).subscribe(editionResult => {
+                    this.edition = editionResult.edition;
+                    this.title = this.data.editionId ? this.ls.l('EditEdition') + ' ' + this.edition.displayName : this.ls.l('CreateNewEdition');
+                    this.editData = editionResult;
+                    this.expireAction = this.edition.expiringEditionId > 0 ? AppEditionExpireAction.AssignToAnotherEdition : AppEditionExpireAction.DeactiveTenant;
+                    this.isFree = !editionResult.edition.monthlyPrice && !editionResult.edition.annualPrice;
+                    this.isTrialActive = editionResult.edition.trialDayCount > 0;
+                    this.isWaitingDayActive = editionResult.edition.waitingDayAfterExpire > 0;
+                    this._changeDetectorRef.detectChanges();
+                });
+            },
+        () => this.modalDialog.finishLoading()
+        );
     }
 
     ngAfterViewChecked(): void {
@@ -108,10 +114,9 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
         const input = new CreateOrUpdateEditionDto();
         input.edition = this.edition;
         input.featureValues = this.featureTree.getGrantedFeatures();
-
-        this.saving = true;
+        this.modalDialog.startLoading();
         this._editionService.createOrUpdateEdition(input)
-            .pipe(finalize(() => this.saving = false))
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.close();

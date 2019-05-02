@@ -27,6 +27,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { SettingService } from '@abp/settings/setting.service';
 import { MessageService } from '@abp/message/message.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
@@ -35,7 +36,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MySettingsModalComponent implements AfterViewChecked, OnInit {
-    @ViewChild('modalDialog') modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('nameInput') nameInput: ElementRef;
     @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
@@ -74,15 +75,18 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     }
 
     ngOnInit() {
-        this._profileService.getCurrentUserProfileForEdit().subscribe((result) => {
-            this.smsEnabled = this._settingService.getBoolean('App.UserManagement.SmsVerificationEnabled');
-            this.user = result;
-            this._initialTimezone = result.timezone;
-            this.canChangeUserName = this.user.name !== AppConsts.userManagement.defaultAdminUserName;
-            this.isGoogleAuthenticatorEnabled = result.isGoogleAuthenticatorEnabled;
-            this.isPhoneNumberConfirmed = result.isPhoneNumberConfirmed;
-            this.isPhoneNumberEmpty = result.phoneNumber === '';
-        });
+        this.modalDialog.startLoading();
+        this._profileService.getCurrentUserProfileForEdit()
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe((result) => {
+                this.smsEnabled = this._settingService.getBoolean('App.UserManagement.SmsVerificationEnabled');
+                this.user = result;
+                this._initialTimezone = result.timezone;
+                this.canChangeUserName = this.user.name !== AppConsts.userManagement.defaultAdminUserName;
+                this.isGoogleAuthenticatorEnabled = result.isGoogleAuthenticatorEnabled;
+                this.isPhoneNumberConfirmed = result.isPhoneNumberConfirmed;
+                this.isPhoneNumberEmpty = result.phoneNumber === '';
+            });
     }
 
     updateQrCodeSetupImageUrl(): void {
@@ -105,7 +109,9 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     }
 
     save(): void {
+        this.modalDialog.startLoading()
         this._profileService.updateCurrentUserProfile(this.user)
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this._appSessionService.user.name = this.user.name;
                 this._appSessionService.user.surname = this.user.surname;

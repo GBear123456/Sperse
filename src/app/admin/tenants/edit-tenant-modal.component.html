@@ -1,4 +1,4 @@
-<modal-dialog [title]="title">
+<modal-dialog [title]="title" [buttons]="buttons">
     <dx-scroll-view showScrollbar="onHover">
         <form #tenantEditForm="ngForm" role="form" novalidate class="form-validation" (submit)="save()" *ngIf="tenant">
             <div class="modal-body">
@@ -32,21 +32,21 @@
                             <label>{{ls.l("DatabaseConnectionString")}}</label>
                         </div>
                         <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                            <label>{{ls("CRM", "CRM")}}</label>
+                            <label>{{ls.l("CRM", "CRM")}}</label>
                         </div>
                         <div class="form-group form-md-line-input form-md-floating-label no-hint">
                             <input type="text" name="CRMConnectionString" class="form-control" [(ngModel)]="tenant.crmConnectionString" [ngClass]="{'edited':tenant.crmConnectionString}" maxlength="1024">
                             <label>{{ls.l("DatabaseConnectionString")}}</label>
                         </div>
                         <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                            <label>{{ls("CFO", "CFO")}}</label>
+                            <label>{{ls.l("CFO", "CFO")}}</label>
                         </div>
                         <div class="form-group form-md-line-input form-md-floating-label no-hint">
                             <input type="text" name="CFODbConnectionString" class="form-control" [(ngModel)]="tenant.cfoConnectionString" [ngClass]="{'edited':tenant.cfoConnectionString}" maxlength="1024">
                             <label>{{ls.l("DatabaseConnectionString")}}</label>
                         </div>
                         <div class="form-group form-md-line-input form-md-floating-label no-hint">
-                            <label>{{ls("PFM", "PFM")}}</label>
+                            <label>{{ls.l("PFM", "PFM")}}</label>
                         </div>
                         <div class="form-group form-md-line-input form-md-floating-label no-hint">
                             <input type="text" name="MemberDbConnectionString" class="form-control" [(ngModel)]="tenant.memberDbConnectionString" [ngClass]="{'edited':tenant.memberDbConnectionString}" maxlength="1024">
@@ -57,10 +57,6 @@
                         </div>
                     </tab>
                 </tabset>
-            </div>
-            <div class="modal-footer">
-                <button type="button" [disabled]="saving" class="btn btn-default" (click)="close()">{{ls.l("Cancel")}}</button>
-                <button type="submit" [buttonBusy]="saving" [busyText]="l('SavingWithThreeDot')" class="btn btn-layout" [disabled]="!tenantEditForm.form.valid || saving"><i class="fa fa-save"></i> <span>{{ls.l("Save")}}</span></button>
             </div>
         </form>
     </dx-scroll-view>

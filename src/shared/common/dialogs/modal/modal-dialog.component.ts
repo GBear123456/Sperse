@@ -12,6 +12,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interface';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Component({
     selector: 'modal-dialog',
@@ -35,7 +36,8 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<ModalDialogComponent>,
         public ls: AppLocalizationService,
-        private elementRef: ElementRef
+        private elementRef: ElementRef,
+        private loadingService: LoadingService
     ) {}
 
     private fork(callback, timeout = 0) {
@@ -75,6 +77,14 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
 
     titleKeyUp(event) {
         this.onTitleKeyUp.emit(event.element.getElementsByTagName('input')[0].value);
+    }
+
+    startLoading() {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+    }
+
+    finishLoading() {
+        this.loadingService.finishLoading(this.elementRef.nativeElement);
     }
 
     close(slide: boolean = false, closeData = null) {

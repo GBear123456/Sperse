@@ -233,11 +233,11 @@ export abstract class AppComponentBase implements OnDestroy {
 
     startLoading(globally = false, element: any = null) {
         this.loading = true;
-        this.loadingService.startLoading(globally, element || this.getElementRef().nativeElement);
+        this.loadingService.startLoading(globally ? null : element || this.getElementRef().nativeElement);
     }
 
     finishLoading(globally = false, element: any = null) {
-        this.loadingService.finishLoading(globally, element || this.getElementRef().nativeElement);
+        this.loadingService.finishLoading(globally ? null : element || this.getElementRef().nativeElement);
         this.loading = false;
     }
 

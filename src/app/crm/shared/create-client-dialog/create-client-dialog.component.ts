@@ -58,14 +58,16 @@ import { Router } from '@angular/router';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
     styleUrls: [ '../../../shared/form.less', 'create-client-dialog.component.less' ],
-    providers: [ ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ],
+    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateClientDialogComponent implements OnInit, OnDestroy {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
@@ -97,7 +99,6 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     urlRegEx = AppConsts.regexPatterns.url;
     companies = [];
     company: string;
-    title: string;
     notes = '';
     emailValidators: any = [];
     phoneValidators: any = [];
@@ -131,6 +132,8 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     similarCustomers: SimilarContactOutput[] = [];
     similarCustomersDialog: any;
     toolbarConfig = [];
+    title: string;
+    isTitleValid = true;
     buttons: IDialogButton[] = [
         {
             id: this.saveButtonId,
@@ -324,6 +327,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     }
 
     private createEntity(): void {
+        this.modalDialog.startLoading();
         let assignedUserId = this.userAssignmentComponent.selectedItemKey;
         let stageId = this.stageId;
         let lists = this.listsComponent.selectedItems;
@@ -362,11 +366,11 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         saveButton.disabled = true;
         if (this.data.isInLeadMode)
             this._leadService.createLead(CreateLeadInput.fromJS(dataObj))
-                .pipe(finalize(() => { saveButton.disabled = false; }))
+                .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.contactId, result.id));
         else
             this._contactService.createContact(CreateContactInput.fromJS(dataObj))
-                .pipe(finalize(() => { saveButton.disabled = false; }))
+                .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.id));
     }
 
@@ -390,12 +394,12 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 .instance.option('visible', true);
 
         if (!this.person.firstName && !this.person.lastName && !this.company) {
-            this.data.isTitleValid = false;
+            this.isTitleValid = false;
             return this._notifyService.error(this.ls.l('NameFieldsValidationError'));
         }
 
-        if (!ValidationHelper.ValidateName(this.data.title)) {
-            this.data.isTitleValid = false;
+        if (!ValidationHelper.ValidateName(this.title)) {
+            this.isTitleValid = false;
             return this._notifyService.error(this.ls.l('FullNameIsNotValid'));
         }
 
@@ -874,7 +878,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
             this.person = new PersonInfoDto();
             this.addressTypesLoad();
-            this.data.isTitleValid = true;
+            this.isTitleValid = true;
             this.company = undefined;
             this.similarCustomers = [];
             this.photoOriginalData = undefined;
@@ -920,7 +924,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     }
 
     leadStagesLoad() {
+        this.modalDialog.startLoading();
         this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.data.customerType)
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(result => {
                 this.stages = result.stages.map((stage) => {
                     if (stage.sortOrder === this.defaultStageSortOrder) {

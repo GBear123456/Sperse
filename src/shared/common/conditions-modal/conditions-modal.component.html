@@ -1,4 +1,4 @@
-<modal-dialog [title]="title"" [buttons]="buttons">
+<modal-dialog [title]="title" [buttons]="buttons">
     <div id="content">
         <div *ngIf="conditionBody$ | async as body; else loading" [innerHtml]="conditionBody$ | async"></div>
         <ng-template #loading>Loading...</ng-template>

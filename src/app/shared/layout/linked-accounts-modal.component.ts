@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { LinkedAccountService } from '@app/shared/layout/linked-account.service';
@@ -16,14 +17,17 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'linkedAccountsModal',
     templateUrl: './linked-accounts-modal.component.html',
     styleUrls: ['./linked-accounts-modal.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ PrimengTableHelper ]
 })
 export class LinkedAccountsModalComponent {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
     @Output() modalClose: EventEmitter<any> = new EventEmitter<any>();
@@ -39,16 +43,16 @@ export class LinkedAccountsModalComponent {
     ) {}
 
     getLinkedUsers(event?: LazyLoadEvent) {
-        this._primengTableHelper.showLoadingIndicator();
+        this.modalDialog.startLoading();
         this._userLinkService.getLinkedUsers(
             this._primengTableHelper.getMaxResultCount(this.paginator, event),
             this._primengTableHelper.getSkipCount(this.paginator, event),
             this._primengTableHelper.getSorting(this.dataTable))
-            .subscribe(result => {
-                this._primengTableHelper.totalRecordsCount = result.totalCount;
-                this._primengTableHelper.records = result.items;
-                this._primengTableHelper.hideLoadingIndicator();
-            });
+                .pipe(finalize(() => this.modalDialog.finishLoading()))
+                .subscribe(result => {
+                    this._primengTableHelper.totalRecordsCount = result.totalCount;
+                    this._primengTableHelper.records = result.items;
+                });
     }
 
     getShownLinkedUserName(linkedUser: LinkedUserDto): string {
@@ -60,13 +64,16 @@ export class LinkedAccountsModalComponent {
             this.ls.l('LinkedUserDeleteWarningMessage', linkedUser.username),
             isConfirmed => {
                 if (isConfirmed) {
+                    this.modalDialog.startLoading();
                     const unlinkUserInput = new UnlinkUserInput();
                     unlinkUserInput.userId = linkedUser.id;
                     unlinkUserInput.tenantId = linkedUser.tenantId;
-                    this._userLinkService.unlinkUser(unlinkUserInput).subscribe(() => {
-                        this.reloadPage();
-                        this._notifyService.success(this.ls.l('SuccessfullyUnlinked'));
-                    });
+                    this._userLinkService.unlinkUser(unlinkUserInput)
+                        .pipe(finalize(() => this.modalDialog.startLoading()))
+                        .subscribe(() => {
+                            this.reloadPage();
+                            this._notifyService.success(this.ls.l('SuccessfullyUnlinked'));
+                        });
                 }
             }
         );

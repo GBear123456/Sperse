@@ -5,12 +5,14 @@ import { Component, ChangeDetectionStrategy, ViewChild, ViewEncapsulation, Chang
 import { MatDialog } from '@angular/material/dialog';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { NotificationServiceProxy, UserNotification } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     templateUrl: './notifications.component.html',
@@ -20,6 +22,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotificationsComponent {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
     notifications: IFormattedUserNotification[] = [];
@@ -39,14 +42,17 @@ export class NotificationsComponent {
     }
 
     loadNotifications(): void {
-        this._notificationService.getUserNotifications(undefined, 3, 0).subscribe(result => {
-            this.unreadNotificationCount = result.unreadCount;
-            this.notifications = [];
-            $.each(result.items, (index, item: UserNotification) => {
-                this.notifications.push(this._userNotificationHelper.format(<any>item, false));
+        this.modalDialog.startLoading();
+        this._notificationService.getUserNotifications(undefined, 3, 0)
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(result => {
+                this.unreadNotificationCount = result.unreadCount;
+                this.notifications = [];
+                $.each(result.items, (index, item: UserNotification) => {
+                    this.notifications.push(this._userNotificationHelper.format(<any>item, false));
+                });
+                this._changeDetectorRef.detectChanges();
             });
-            this._changeDetectorRef.detectChanges();
-        });
     }
 
     registerToEvents() {

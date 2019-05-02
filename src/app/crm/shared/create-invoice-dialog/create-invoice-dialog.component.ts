@@ -19,16 +19,17 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
-import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
     styleUrls: [ '../../../shared/form.less', 'create-invoice-dialog.component.less' ],
-    providers: [ DialogService, InvoiceServiceProxy, CustomerServiceProxy ],
+    providers: [ CacheHelper, CustomerServiceProxy, DialogService, InvoiceServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateInvoiceDialogComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
     @ViewChild('contact') contactComponent: DxSelectBoxComponent;
@@ -60,6 +61,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     toolbarConfig = [];
     disabledForUpdate = false;
     editTitle = !this.disabledForUpdate;
+    title: string;
+    isTitleValid = true;
     buttons: IDialogButton[] = [
         {
             id: this.saveButtonId,
@@ -76,7 +79,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private _notifyService: NotifyService,
         private _messageService: MessageService,
         private _cacheHelper: CacheHelper,
-        private _loadingService: LoadingService,
         private _dialogRef: MatDialogRef<CreateInvoiceDialogComponent>,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -103,8 +105,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     initInvoiceData() {
         let invoice = this.data.invoice;
         if (invoice) {
+            this.modalDialog.startLoading();
             this.invoiceId = invoice.Id;
-            this.data.title = invoice.Number;
+            this.title = invoice.Number;
             this.status = invoice.Status;
             this.date = invoice.Date;
             this.dueDate = invoice.DueDate;
@@ -112,19 +115,21 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.disabledForUpdate = this.status != CreateInvoiceInputStatus.Draft
                 && this.status != CreateInvoiceInputStatus.Final;
 
-            this._invoiceProxy.getInvoiceInfo(invoice.Id).subscribe((res) => {
-                this.description = res.description;
-                this.notes = res.note;
-                this.customer = res.contactName;
-                this.lines = res.lines.map((res) => {
-                    return {
-                        id: res.id,
-                        Quantity: res.quantity,
-                        Rate: res.rate,
-                        Description: res.description
-                    };
+            this._invoiceProxy.getInvoiceInfo(invoice.Id)
+                .pipe(finalize(() => this.modalDialog.finishLoading()))
+                .subscribe((res) => {
+                    this.description = res.description;
+                    this.notes = res.note;
+                    this.customer = res.contactName;
+                    this.lines = res.lines.map((res) => {
+                        return {
+                            id: res.id,
+                            Quantity: res.quantity,
+                            Rate: res.rate,
+                            Description: res.description
+                        };
+                    });
                 });
-            });
         }
     }
 
@@ -220,7 +225,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     private createEntity(): void {
-        let subscription,
+        this.modalDialog.startLoading();
+        let subscription$,
             saveButton: any = document.getElementById(this.saveButtonId);
         if (this.invoiceId) {
             let data = new UpdateInvoiceInput();
@@ -237,7 +243,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     sortOrder: index
                 });
             });
-            subscription = this._invoiceProxy.update(data);
+            subscription$ = this._invoiceProxy.update(data);
         } else {
             let data = new CreateInvoiceInput();
             this.setRequestCommonFields(data);
@@ -253,25 +259,29 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     sortOrder: index
                 });
             });
-            subscription = this._invoiceProxy.create(data);
+            subscription$ = this._invoiceProxy.create(data);
         }
 
         saveButton.disabled = true;
-        subscription.pipe(finalize(() => {
+        subscription$.pipe(finalize(() => {
             saveButton.disabled = false;
-        })).subscribe((res) => {
+            this.modalDialog.finishLoading();
+        })).subscribe(() => {
             this.afterSave();
         });
     }
 
     updateStatus() {
-        if (this.status != this.data.invoice.Status)
+        if (this.status != this.data.invoice.Status) {
+            this.modalDialog.startLoading();
             this._invoiceProxy.updateStatus(new UpdateInvoiceStatusInput({
                 id: this.invoiceId,
                 status: UpdateInvoiceStatusInputStatus[this.status]
-            })).subscribe((res) => {
-                this.afterSave();
-            });
+            })).pipe(finalize(() => this.modalDialog.finishLoading()))
+                .subscribe(() => {
+                    this.afterSave();
+                });
+        }
     }
 
     private afterSave(): void {
@@ -284,14 +294,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.data.refreshParent && this.data.refreshParent();
     }
 
-    save(event?): void {
+    save(event?): any {
         if (event && event.offsetX > 140)
             return this.saveContextComponent
                 .instance.option('visible', true);
 
-        if (!this.data.title) {
-            this.data.isTitleValid = false;
-            return this.data.isTitleValid;
+        if (!this.title) {
+            this.isTitleValid = false;
+            return this.isTitleValid;
         }
 
         if (isNaN(this.contactId))
@@ -336,8 +346,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetFullDialog(forced = true) {
         let resetInternal = () => {
-            this.data.title = undefined;
-            this.data.isTitleValid = true;
+            this.title = undefined;
+            this.isTitleValid = true;
             this.status = CreateInvoiceInputStatus.Draft;
             this.customer = undefined;
             this.date = this.currentDate;
@@ -387,12 +397,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
     deleteInvoice() {
         if (this.invoiceId)
             this._messageService.confirm(
-                this.ls.l('InvoiceDeleteWarningMessage', this.data.title),
+                this.ls.l('InvoiceDeleteWarningMessage', this.title),
                 isConfirmed => {
                     if (isConfirmed) {
-                        this._loadingService.startLoading(true);
+                        this.modalDialog.startLoading();
                         this._invoiceProxy.deleteInvoice(this.invoiceId).pipe(
-                            finalize(() => this._loadingService.finishLoading(true))
+                            finalize(() => this.modalDialog.finishLoading())
                         ).subscribe((response) => {
                             this._notifyService.info(this.ls.l('SuccessfullyDeleted'));
                             this.data.refreshParent && this.data.refreshParent();

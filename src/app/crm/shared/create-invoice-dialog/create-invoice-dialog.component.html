@@ -7,7 +7,9 @@
     target="#{{saveButtonId}}">
 </dx-context-menu>
 
-<modal-dialog [titleClearButton]="true"
+<modal-dialog [title]="title"
+              [titleClearButton]="true"
+              [isTitleValid]="isTitleValid"
               [editTitle]="editTitle"
               [placeholder]="ls.l('Invoice #')">
     <div class="toolbar-wraper">
@@ -17,7 +19,7 @@
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
             <div class="field">
-                <label class="customer-label">{{l('Customer')}}</label>
+                <label class="customer-label">{{ls.l('Customer')}}</label>
                 <dx-select-box #contact
                     name="customer"
                     width="370px"
@@ -25,7 +27,7 @@
                     valueExpr="name"
                     [disabled]="data.invoice"
                     [acceptCustomValue]="true"
-                    [placeholder]="l('Customer.Name')"
+                    [placeholder]="ls.l('Customer.Name')"
                     [(value)]="customer"
                     [dataSource]="customers"
                     [searchEnabled]="true"
@@ -36,17 +38,17 @@
                 </dx-select-box>
             </div>
             <div class="field" *ngIf="order">
-                <label class="order-label">{{l('Order')}}</label>
+                <label class="order-label">{{ls.l('Order')}}</label>
                 <dx-text-box
                     maxLength="10"
-                    placeholder="{{l('Order')}}"
+                    placeholder="{{ls.l('Order')}}"
                     [disabled]="disabledForUpdate"
                     [width]="'370px'"
                     [value]="order.Id">
                 </dx-text-box>
             </div>
             <div class="field">
-                <label class="date-label">{{l('Date')}}</label>
+                <label class="date-label">{{ls.l('Date')}}</label>
                 <dx-date-box
                     [min]="currentDate"
                     [disabled]="disabledForUpdate"
@@ -55,7 +57,7 @@
                 </dx-date-box>
             </div>
             <div class="field">
-                <label class="date-label">{{l('Due Date')}}</label>
+                <label class="date-label">{{ls.l('Due Date')}}</label>
                 <dx-date-box
                     [min]="currentDate"
                     [disabled]="disabledForUpdate"
@@ -64,7 +66,7 @@
                 </dx-date-box>
             </div>
             <div class="field description">
-                <label class="description-label">{{l('Description')}}</label>
+                <label class="description-label">{{ls.l('Description')}}</label>
                 <dx-text-area
                     name="description"
                     [width]="'370px'"
@@ -74,7 +76,7 @@
                 </dx-text-area>
             </div>
             <div class="field notes">
-                <label class="notes-label">{{l('Notes')}}</label>
+                <label class="notes-label">{{ls.l('Notes')}}</label>
                 <dx-text-area
                     name="comment"
                     [disabled]="disabledForUpdate"
@@ -99,10 +101,10 @@
 
                     <dxo-editing mode="cell" [allowAdding]="true" [allowUpdating]="true" [allowDeleting]="true" [texts]="{deleteRow: ''}"></dxo-editing>
 
-                    <dxi-column dataField="Description" caption="{{l('Description')}}" [allowSorting]="false" dataType="string"></dxi-column>
-                    <dxi-column dataField="Quantity" caption="{{l('Quantity')}}" [allowSorting]="false" dataType="number"></dxi-column>
-                    <dxi-column dataField="Rate" caption="{{l('Rate')}}" [allowSorting]="false" format="$ #,##0.##" dataType="number"></dxi-column>
-                    <dxi-column dataField="Amount" caption="{{l('Amount')}}" format="$ #,##0.##" dataType="number" [allowSorting]="false" [allowEditing]="false" [calculateCellValue]="calculateLineAmount"></dxi-column>
+                    <dxi-column dataField="Description" caption="{{ls.l('Description')}}" [allowSorting]="false" dataType="string"></dxi-column>
+                    <dxi-column dataField="Quantity" caption="{{ls.l('Quantity')}}" [allowSorting]="false" dataType="number"></dxi-column>
+                    <dxi-column dataField="Rate" caption="{{ls.l('Rate')}}" [allowSorting]="false" format="$ #,##0.##" dataType="number"></dxi-column>
+                    <dxi-column dataField="Amount" caption="{{ls.l('Amount')}}" format="$ #,##0.##" dataType="number" [allowSorting]="false" [allowEditing]="false" [calculateCellValue]="calculateLineAmount"></dxi-column>
 
                     <dxo-summary [calculateCustomSummary]="calculateSummary">
                         <dxi-total-item

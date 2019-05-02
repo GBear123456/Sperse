@@ -30,6 +30,7 @@ import { TenantsService } from '@admin/tenants/tenants.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'createTenantModal',
@@ -39,15 +40,14 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 })
 export class CreateTenantModalComponent implements OnInit {
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    saving = false;
     setRandomPassword = true;
     tenant: CreateTenantInput;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     editionsGroups$: Observable<SubscribableEditionComboboxItemDto[][]>;
     editionsModels: { [value: string]: TenantEditEditionDto } = {};
-
     emailRegEx = AppConsts.regexPatterns.email;
     title = this.ls.l('CreateNewTenant');
     buttons: IDialogButton[] = [
@@ -70,12 +70,16 @@ export class CreateTenantModalComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        this.modalDialog.startLoading();
         this.init();
         this._profileService.getPasswordComplexitySetting()
-        .pipe(finalize(() => this._changeDetectorRef.detectChanges()))
-        .subscribe(result => {
-            this.passwordComplexitySetting = result.setting;
-        });
+            .pipe(finalize(() => {
+                this.modalDialog.startLoading();
+                this._changeDetectorRef.detectChanges();
+            }))
+            .subscribe(result => {
+                this.passwordComplexitySetting = result.setting;
+            });
     }
 
     init(): void {
@@ -88,14 +92,13 @@ export class CreateTenantModalComponent implements OnInit {
     }
 
     save(): void {
-        this.saving = true;
-
+        this.modalDialog.startLoading();
         if (this.setRandomPassword) {
             this.tenant.adminPassword = null;
         }
-
         this.tenant.editions = this._tenantsService.getTenantEditions();
         this._tenantService.createTenant(this.tenant)
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.close();

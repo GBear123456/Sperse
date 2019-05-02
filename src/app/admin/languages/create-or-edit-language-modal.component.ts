@@ -6,7 +6,8 @@ import {
     Inject,
     OnInit,
     Output,
-    ChangeDetectorRef
+    ChangeDetectorRef,
+    ViewChild
 } from '@angular/core';
 
 /** Third party imports */
@@ -23,6 +24,7 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'createOrEditLanguageModal',
@@ -33,6 +35,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateOrEditLanguageModalComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     selectBoxData: any;
@@ -59,8 +62,9 @@ export class CreateOrEditLanguageModalComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        this.modalDialog.startLoading();
         this._languageService.getLanguageForEdit(this.data.languageId)
-            .pipe(finalize(() => this._changeDetectorRef.detectChanges()))
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(result => {
                 this.selectBoxData = result;
                 this.languageNames = result.languageNames;
@@ -70,17 +74,21 @@ export class CreateOrEditLanguageModalComponent implements OnInit {
                 if (!this.data.languageId) {
                     this.language.isEnabled = true;
                 }
+                this._changeDetectorRef.detectChanges();
             });
     }
 
     save(): void {
+        this.modalDialog.startLoading();
         this.language && this._languageService.createOrUpdateLanguage(CreateOrUpdateLanguageInput.fromJS({
             language: this.language
-        })).subscribe(() => {
-            this._notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.close();
-            this.modalSave.emit(null);
-        });
+        }))
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(() => {
+                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.close();
+                this.modalSave.emit(null);
+            });
     }
 
     close(): void {

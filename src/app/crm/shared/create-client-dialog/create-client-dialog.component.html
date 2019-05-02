@@ -33,7 +33,10 @@
     (onSelectionChanged)="onUserAssignmentChanged($event)">
 </crm-user-assignment-list>
 
-<modal-dialog [editTitle]="true"
+<modal-dialog [title]="title"
+              [buttons]="buttons"
+              [editTitle]="true"
+              [isTitleValid]="isTitleValid"
               [titleClearButton]="true"
               [placeholder]="ls.l('Contact.FullName')"
               (onTitleKeyUp)="onFullNameKeyUp($event)">

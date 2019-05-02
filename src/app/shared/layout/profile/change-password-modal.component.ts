@@ -3,6 +3,7 @@ import { Component, ElementRef, ViewChild, OnInit, ChangeDetectorRef } from '@an
 
 /** Third party imports */
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { ChangePasswordInput, PasswordComplexitySetting, ProfileServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -10,6 +11,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { NotifyService } from '@abp/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'changePasswordModal',
@@ -17,7 +19,7 @@ import { NotifyService } from '@abp/notify/notify.service';
     providers: [ DialogService ]
 })
 export class ChangePasswordModalComponent implements OnInit {
-
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('currentPasswordInput') currentPasswordInput: ElementRef;
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     currentPassword = '';
@@ -40,17 +42,22 @@ export class ChangePasswordModalComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this._profileService.getPasswordComplexitySetting().subscribe(result => {
-            this.passwordComplexitySetting = result.setting;
-            this._changeDetectorRef.detectChanges();
-        });
+        this.modalDialog.startLoading()
+        this._profileService.getPasswordComplexitySetting()
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(result => {
+                this.passwordComplexitySetting = result.setting;
+                this._changeDetectorRef.detectChanges();
+            });
     }
 
     save(): void {
+        this.modalDialog.startLoading();
         let input = new ChangePasswordInput();
         input.currentPassword = this.currentPassword;
         input.newPassword = this.password;
         this._profileService.changePassword(input)
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this._notifyService.info(this.ls.l('YourPasswordHasChangedSuccessfully'));
                 this._dialogRef.close();

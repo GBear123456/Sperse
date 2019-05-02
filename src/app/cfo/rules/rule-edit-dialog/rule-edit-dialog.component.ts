@@ -25,13 +25,13 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     selector: 'rule-dialog',
     templateUrl: 'rule-edit-dialog.component.html',
     styleUrls: ['rule-edit-dialog.component.less'],
-    providers: [CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy],
+    providers: [ CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RuleDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
     @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
-    @ViewChild('modalDialog') modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     showSelectedTransactions = false;
     minAmount: number;
     maxAmount: number;
@@ -71,18 +71,19 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
             action: (event) => {
                 if (this.validate()) {
                     event.target.disabled = true;
-                    if (this.data.id)
-                        this._classificationServiceProxy.editRule(
+                    const request$ = this.data.id
+                        ? this._classificationServiceProxy.editRule(
                             this._cfoService.instanceType as any, this._cfoService.instanceId,
                             EditRuleDto.fromJS(this.getDataObject()))
-                            .pipe(finalize(() => event.target.disabled = false))
-                            .subscribe(this.updateDataHandler.bind(this));
-                    else
-                        this._classificationServiceProxy.createRule(
+                        : this._classificationServiceProxy.createRule(
                             this._cfoService.instanceType as any,
                             this._cfoService.instanceId,
-                            CreateRuleDto.fromJS(this.getDataObject()))
-                            .pipe(finalize(() => event.target.disabled = false))
+                            CreateRuleDto.fromJS(this.getDataObject()));
+                    request$.pipe(finalize(() => {
+                                this.modalDialog.finishLoading();
+                                event.target.disabled = false;
+                                this._changeDetectorRef.detectChanges();
+                            }))
                             .subscribe(this.updateDataHandler.bind(this));
                 }
             }
@@ -209,6 +210,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                             event.target.disabled = true;
 
                             let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
+                                this.modalDialog.startLoading();
                                 this._classificationServiceProxy.updateTransactionsCategory(
                                     this._cfoService.instanceType as any,
                                     this._cfoService.instanceId,
@@ -219,7 +221,11 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                                         descriptorAttributeTypeId: this.transactionAttributeTypes[this.descriptor] ? this.descriptor : undefined,
                                         suppressCashflowMismatch: suppressCashflowTypeMismatch
                                     })
-                                ).pipe(finalize(() => event.target.disabled = false))
+                                ).pipe(finalize(() => {
+                                    this.modalDialog.finishLoading();
+                                    event.target.disabled = false;
+                                    this._changeDetectorRef.detectChanges();
+                                }))
                                     .subscribe(this.updateDataHandler.bind(this));
                             };
 
@@ -373,7 +379,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
 
     validate(ruleCheckOnly: boolean = false) {
         if (!ruleCheckOnly) {
-            if (!this.data.title) {
+            if (!this.title) {
                 this.title = this.descriptor;
                 if (!this.title) {
                     this.isTitleValid = false;
@@ -502,7 +508,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
     onDescriptorChanged($event) {
         let attrType = this.transactionAttributeTypes[$event.value];
         $event.component && $event.component.option('inputAttr', {'attribute-selected': Boolean(attrType)});
-        if (!this.data.title && $event.value)
+        if (!this.title && $event.value)
             this.title = attrType && attrType.name || $event.value;
         this._changeDetectorRef.detectChanges();
     }

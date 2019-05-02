@@ -1,9 +1,10 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Inject, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import map from 'lodash/map';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { GetNotificationSettingsOutput, NotificationServiceProxy, NotificationSubscriptionDto, UpdateNotificationSettingsInput } from '@shared/service-proxies/service-proxies';
@@ -11,6 +12,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'notificationSettingsModal',
@@ -20,6 +22,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotificationSettingsModalComponent implements OnInit  {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     settings: GetNotificationSettingsOutput;
     buttons: IDialogButton[] = [
         {
@@ -50,6 +53,7 @@ export class NotificationSettingsModalComponent implements OnInit  {
     }
 
     save(): void {
+        this.modalDialog.startLoading();
         const input = new UpdateNotificationSettingsInput();
         input.receiveNotifications = this.settings.receiveNotifications;
         input.notifications = map(this.settings.notifications,
@@ -61,6 +65,7 @@ export class NotificationSettingsModalComponent implements OnInit  {
             });
 
         this._notificationService.updateNotificationSettings(input)
+            .pipe(finalize(() => this.modalDialog.startLoading()))
             .subscribe(() => {
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
                 this._dialogRef.close();
@@ -68,10 +73,13 @@ export class NotificationSettingsModalComponent implements OnInit  {
     }
 
     private getSettings(callback: () => void) {
-        this._notificationService.getNotificationSettings().subscribe((result: GetNotificationSettingsOutput) => {
-            this.settings = result;
-            callback();
-            this._changeDetectorRef.detectChanges();
-        });
+        this.modalDialog.startLoading();
+        this._notificationService.getNotificationSettings()
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe((result: GetNotificationSettingsOutput) => {
+                this.settings = result;
+                callback();
+                this._changeDetectorRef.detectChanges();
+            });
     }
 }

@@ -1,4 +1,4 @@
-<modal-dialog>
+<modal-dialog [title]="title" [buttons]="buttons">
     <dx-scroll-view showScrollbar="onHover">
         <form #roleForm="ngForm" novalidate (ngSubmit)="save()" *ngIf="active">
             <div class="modal-body">

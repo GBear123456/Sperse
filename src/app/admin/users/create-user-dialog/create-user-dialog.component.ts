@@ -26,14 +26,16 @@ import { MessageService } from '@abp/message/message.service';
 import { SettingService } from '@abp/settings/setting.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
     styleUrls: ['create-user-dialog.component.less'],
-    providers: [ DialogService ],
+    providers: [ CacheHelper, DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateUserDialogComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild('organizationUnitTree') organizationUnitTree: OrganizationUnitsTreeComponent;
     @ViewChild('phoneNumber') phoneNumber: DxTextBoxComponent;
@@ -105,6 +107,7 @@ export class CreateUserDialogComponent implements OnInit {
     }
 
     userDataInit() {
+        this.modalDialog.startLoading();
         this._userService.getUserForEdit(undefined)
             .pipe(
                 tap(userResult => {
@@ -122,7 +125,10 @@ export class CreateUserDialogComponent implements OnInit {
                     this._changeDetectorRef.detectChanges();
                 }),
                 switchMap(() => this._profileService.getPasswordComplexitySetting()),
-                finalize(() => this._changeDetectorRef.detectChanges())
+                finalize(() => {
+                    this.modalDialog.finishLoading();
+                    this._changeDetectorRef.detectChanges();
+                })
             ).subscribe((passwordComplexityResult: GetPasswordComplexitySettingOutput) => {
                 this.passwordComplexitySetting = passwordComplexityResult.setting;
                 this.setPasswordComplexityInfo();
@@ -223,6 +229,7 @@ export class CreateUserDialogComponent implements OnInit {
         if (!this.validateForm())
             return;
 
+        this.modalDialog.startLoading();
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
 
@@ -244,6 +251,7 @@ export class CreateUserDialogComponent implements OnInit {
         this._userService.createOrUpdateUser(input)
             .pipe(finalize(() => {
                 saveButton.disabled = false;
+                this.modalDialog.finishLoading();
                 this._changeDetectorRef.detectChanges();
             }))
             .subscribe((userId) => this.afterSave(userId || this.user.id));
@@ -277,7 +285,7 @@ export class CreateUserDialogComponent implements OnInit {
 
     resetFullDialog(forced = true) {
         let resetInternal = () => {
-            this.data.title = '';
+            this.title = '';
             this.setRandomPassword = false;
             this.sendActivationEmail = true;
             this.user = new UserEditDto();

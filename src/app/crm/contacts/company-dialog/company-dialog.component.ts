@@ -17,7 +17,7 @@ import { MaskPipe } from 'ngx-mask';
 import { DxSelectBoxComponent, DxDateBoxComponent, DxValidatorComponent } from '@root/node_modules/devextreme-angular';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -32,6 +32,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     selector: 'company-dialog',
@@ -41,7 +42,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     providers: [ContactPhotoServiceProxy, MaskPipe]
 })
 export class CompanyDialogComponent implements OnInit {
-    @ViewChild('modalDialog') modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxDateBoxComponent) calendarComponent: DxDateBoxComponent;
     @ViewChild(DxSelectBoxComponent) companyTypesSelect: DxSelectBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
@@ -84,6 +85,15 @@ export class CompanyDialogComponent implements OnInit {
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
     currentDate = new Date();
+    title: string;
+    buttons: IDialogButton[] = [
+        {
+            id: 'saveCompany',
+            title: this.ls.l('Save'),
+            class: 'primary saveButton',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
         public dialog: MatDialog,
@@ -101,7 +111,7 @@ export class CompanyDialogComponent implements OnInit {
 
     ngOnInit() {
         const company: OrganizationContactInfoDto = this.data.company;
-        this.data.title = this.company.fullName = company.fullName;
+        this.title = this.company.fullName = company.fullName;
         this.company = { ...this.company, ...company.organization };
         this.company.id = company.id;
         if (this.company.sizeId === null) {
@@ -109,15 +119,7 @@ export class CompanyDialogComponent implements OnInit {
             this.company.sizeId = size ? size.id : null;
         }
         this.company.primaryPhoto = company.primaryPhoto;
-        this.data.editTitle = true;
-        this.data.titleClearButton = true;
         this.data.placeholder = this.ls.l('Customer.CompanyName');
-        this.data.buttons = [{
-            id: 'saveCompany',
-            title: this.ls.l('Save'),
-            class: 'primary saveButton',
-            action: this.save.bind(this)
-        }];
         this.loadOrganizationTypes();
         this.loadCountries();
         this.loadStates();
@@ -130,7 +132,8 @@ export class CompanyDialogComponent implements OnInit {
             return false;
         }
 
-        this.company.companyName = this.company.fullName = this.data.title;
+        this.modalDialog.startLoading();
+        this.title = this.company.companyName = this.company.fullName = this.data.title;
         let input = new UpdateOrganizationInfoInput(this.company);
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
         let size = _.find(this.companySizes, item => item.id === this.company.sizeId);
@@ -138,18 +141,23 @@ export class CompanyDialogComponent implements OnInit {
             input.sizeFrom = size.from;
             input.sizeTo = size.to;
         }
-        this._organizationContactServiceProxy.updateOrganizationInfo(input).subscribe(() => {
-            this.notifyService.success(this.ls.l('SavedSuccessfully'));
-            this.modalDialog.close(true, {
-                company: this.company
+        this._organizationContactServiceProxy.updateOrganizationInfo(input)
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(() => {
+                this.notifyService.success(this.ls.l('SavedSuccessfully'));
+                this.modalDialog.close(true, {
+                    company: this.company
+                });
             });
-        });
         if (this.company.notes) {
+            this.modalDialog.startLoading();
             this._notesService.createNote(CreateNoteInput.fromJS({
                 contactId: this.company.id,
                 text: this.company.notes,
                 noteType: CreateNoteInputNoteType.Note,
-            })).subscribe(
+            }))
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(
                 () => this.clientService.invalidate('notes')
             );
         }

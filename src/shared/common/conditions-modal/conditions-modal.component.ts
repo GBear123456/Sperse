@@ -1,11 +1,11 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, Inject, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import printJS from 'print-js';
 
 /** Application imports */
@@ -14,6 +14,7 @@ import { ConditionsType } from '@shared/AppEnums';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'conditions-modal',
@@ -22,6 +23,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConditionsModalComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     conditionBody$: Observable<SafeHtml>;
     private conditionsOptions = {
         [ConditionsType.Terms]: {
@@ -57,10 +59,10 @@ export class ConditionsModalComponent implements OnInit {
         private ls: AppLocalizationService,
         private appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) private data: any
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
+        this.modalDialog.startLoading();
         this.title = this.data.title || this.conditionsOptions[this.data.type].title;
         if (!this.data.downloadDisabled)
             this.buttons.unshift({
@@ -81,6 +83,7 @@ export class ConditionsModalComponent implements OnInit {
                 method: 'GET'
             })
         ).pipe(
+            finalize(() => this.modalDialog.finishLoading()),
             map((html) => {
                 return this.sanitizer.bypassSecurityTrustHtml(html);
             })

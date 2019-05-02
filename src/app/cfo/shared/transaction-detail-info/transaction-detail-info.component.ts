@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+/** Core imports */
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import { MAT_DIALOG_DATA } from '@angular/material';
+import * as _ from 'underscore';
+
+/** Application imports */
 import { CFOService } from '@shared/cfo/cfo.service';
 import {
     CategoryTreeServiceProxy,
@@ -12,10 +19,10 @@ import {
     CreateTransactionCommentThreadInput,
     UpdateCommentInput
 } from '@shared/service-proxies/service-proxies';
-import * as _ from 'underscore';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     selector: 'app-transaction-detail-info',
@@ -25,6 +32,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TransactionDetailInfoComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     transactionId: number;
     newComment = {
         text: '',
@@ -119,42 +127,44 @@ export class TransactionDetailInfoComponent implements OnInit {
     }
 
     getCategoryTree() {
+        this.modalDialog.startLoading();
         this._categoryTreeServiceProxy.get(
             InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, true
-        ).subscribe(data => {
-            let categories = [];
-            this.categorization = data;
-            if (data.accountingTypes) {
-                _.mapObject(data.accountingTypes, (item, key) => {
-                    categories.push({
-                        key: key + item.typeId,
-                        parent: 'root',
-                        coAID: null,
-                        name: item.name,
-                        typeId: item.typeId
-                    });
-                });
-            }
-            if (data.categories)
-                _.mapObject(data.categories, (item, key) => {
-                    let accounting = data.accountingTypes[item.accountingTypeId];
-                    if (accounting && (!item.parentId || data.categories[item.parentId])) {
+        ).pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(data => {
+                let categories = [];
+                this.categorization = data;
+                if (data.accountingTypes) {
+                    _.mapObject(data.accountingTypes, (item, key) => {
                         categories.push({
-                            key: parseInt(key),
-                            parent: item.parentId || item.accountingTypeId + accounting.typeId,
-                            coAID: item.coAID,
+                            key: key + item.typeId,
+                            parent: 'root',
+                            coAID: null,
                             name: item.name,
-                            typeId: accounting.typeId
+                            typeId: item.typeId
                         });
-                    }
-                });
-
-            this.categories = categories;
-            this._changeDetectorRef.detectChanges();
-        });
+                    });
+                }
+                if (data.categories)
+                    _.mapObject(data.categories, (item, key) => {
+                        let accounting = data.accountingTypes[item.accountingTypeId];
+                        if (accounting && (!item.parentId || data.categories[item.parentId])) {
+                            categories.push({
+                                key: parseInt(key),
+                                parent: item.parentId || item.accountingTypeId + accounting.typeId,
+                                coAID: item.coAID,
+                                name: item.name,
+                                typeId: accounting.typeId
+                            });
+                        }
+                    });
+                this.categories = categories;
+                this._changeDetectorRef.detectChanges();
+            });
     }
 
     updateDescriptor() {
+        this.modalDialog.startLoading();
         this._classificationServiceProxy.updateTransactionsCategory(
             InstanceType[this._cfoService.instanceType],
             this._cfoService.instanceId,
@@ -165,12 +175,13 @@ export class TransactionDetailInfoComponent implements OnInit {
                 descriptorAttributeTypeId: null,
                 suppressCashflowMismatch: true
             })
-        ).subscribe(() => {
-            this.refreshParent();
-            this.transactionInfo['inplaceEdit'] = false;
-            this._notifyService.info(this.ls.l('SavedSuccessfully'));
-            this._changeDetectorRef.detectChanges();
-        });
+        ).pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(() => {
+                this.refreshParent();
+                this.transactionInfo['inplaceEdit'] = false;
+                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this._changeDetectorRef.detectChanges();
+            });
     }
 
     inPlaceCreateComment(e) {
@@ -179,6 +190,7 @@ export class TransactionDetailInfoComponent implements OnInit {
     }
 
     addNewComment() {
+        this.modalDialog.startLoading();
         this._commentServiceProxy.createTransactionCommentThread(
             InstanceType[this._cfoService.instanceType],
             this._cfoService.instanceId,
@@ -186,7 +198,8 @@ export class TransactionDetailInfoComponent implements OnInit {
                 transactionId: this.transactionId,
                 comment: this.newComment.text
             })
-        ).subscribe(() => {
+        ).pipe(finalize(() => this.modalDialog.finishLoading()))
+        .subscribe(() => {
             this.refreshParent();
             this.newComment.inplaceEdit = false;
             this.newComment.text = '';
@@ -196,6 +209,7 @@ export class TransactionDetailInfoComponent implements OnInit {
     }
 
     updateComment(field, data) {
+        this.modalDialog.startLoading();
         let request$ = data.text
             ? this._commentServiceProxy.updateComment(
                 InstanceType[this._cfoService.instanceType],
@@ -210,12 +224,14 @@ export class TransactionDetailInfoComponent implements OnInit {
                 this._cfoService.instanceId,
                 data.commentId
             );
-        request$.subscribe(() => {
-            this.refreshParent();
-            data.inplaceEdit = false;
-            this._notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.getTransactionDetails();
-        });
+        request$
+            .pipe(finalize(this.modalDialog.finishLoading))
+            .subscribe(() => {
+                this.refreshParent();
+                data.inplaceEdit = false;
+                this._notifyService.info(this.ls.l('SavedSuccessfully'));
+                this.getTransactionDetails();
+            });
     }
 
     getAccountingTypes() {

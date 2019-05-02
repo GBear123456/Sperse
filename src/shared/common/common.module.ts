@@ -6,6 +6,8 @@ import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
 import { MatDialogModule } from '@angular/material/dialog';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 
 /** Application imports */
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
@@ -25,6 +27,9 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 
 @NgModule({
     declarations: [
@@ -64,7 +69,9 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
         RouterModule,
         FormsModule,
         InternationalPhoneNumberModule,
-        MatDialogModule
+        MatDialogModule,
+        DxTextBoxModule,
+        DxCheckBoxModule
     ],
     entryComponents: [
         ModalDialogComponent,
@@ -73,7 +80,10 @@ import { NoDataModule } from '@shared/common/widgets/no-data/no-data.module';
     ],
     providers: [
         AppUrlService,
-        CellsCopyingService
+        CellsCopyingService,
+        CacheHelper,
+        LoadingService,
+        PrimengTableHelper
     ]
 })
 export class CommonModule {

@@ -1,7 +1,7 @@
-<modal-dialog [title]="l('MySettings')"
+<modal-dialog [title]="ls.l('MySettings')"
               [editTitle]="false"
               [titleClearButton]="false"
-              [placeholder]="l('MySettings')">
+              [placeholder]="ls.l('MySettings')">
     <dx-scroll-view showScrollbar="onHover">
         <div class="tab-content">
             <div class="modal-body" *ngIf="user">
@@ -20,7 +20,7 @@
                         <div class="form-group">
                             <label for="EmailAddress">{{ls.l("EmailAddress")}} *</label>
                             <input id="EmailAddress" #emailAddressInput="ngModel" type="email" disabled name="EmailAddress" class="form-control" [(ngModel)]="user.emailAddress" required email maxlength="256">
-                            <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{email: l('InvalidEmailAddress')}]"></validation-messages>
+                            <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{email: ls.l('InvalidEmailAddress')}]"></validation-messages>
                         </div>
                         <div *ngIf="smsEnabled && !isPhoneNumberEmpty">
                             <div class="form-group">
@@ -31,10 +31,10 @@
                                         <button id="btnSmsVerification" (click)="smsVerify()" class="btn btn-primary" type="button" tooltip="{{ls.l('YourPhoneNumberIsNotVerified')}}"><i class="fa fa-warning"></i>{{ls.l('Verify')}}</button>
                                     </span>
                                     <span *ngIf="!isPhoneNumberConfirmed" id="SpanSmsVerificationVerified" style="display: none;" class="input-group-addon" tooltip="{{ls.l('YourPhoneNumberIsVerified')}}">
-                                        <i class="la la-check m--font-success" [attr.aria-label]="l('Verified')"></i>
+                                        <i class="la la-check m--font-success" [attr.aria-label]="ls.l('Verified')"></i>
                                     </span>
                                     <span *ngIf="isPhoneNumberConfirmed" class="input-group-addon" tooltip="{{ls.l('YourPhoneNumberIsVerified')}}">
-                                        <i class="la la-check m--font-success" [attr.aria-label]="l('Verified')"></i>
+                                        <i class="la la-check m--font-success" [attr.aria-label]="ls.l('Verified')"></i>
                                     </span>
                                 </div>
                             </div>

@@ -10,7 +10,7 @@
                         <!-- get image url -->
                         <img [src]="getProfilePictureUrl(userLoginAttempt.result == 'Success' ? profileThumbnailId : undefined)" class="m--img-rounded m--marginless m--img-centered" width="50" height="50"><br />
                         <span></span>
-                        <small class="label"> {{userLoginAttempt.result == "Success" ? l("Success") : l("Failed")}} </small>
+                        <small class="label"> {{userLoginAttempt.result == "Success" ? ls.l("Success") : ls.l("Failed")}} </small>
                     </div>
                     <div class="m-alert__text">
                         <div class="row" *ngIf="userLoginAttempt.clientIpAddress">
@@ -49,5 +49,5 @@
                 </div>
             </div>
         </div>
-</dx-scroll-view>
+    </dx-scroll-view>
 </modal-dialog>

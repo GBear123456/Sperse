@@ -30,12 +30,14 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
     styleUrls: ['create-activity-dialog.component.less'],
     providers: [
         ActivityServiceProxy,
+        CacheHelper,
         CustomerServiceProxy,
         LeadServiceProxy,
         OrderServiceProxy,
@@ -44,6 +46,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateActivityDialogComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild('leadsList') leadsList: StaticListComponent;
     @ViewChild('clientsList') clientsList: StaticListComponent;
@@ -179,9 +182,14 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     loadResourcesData() {
-        this.lookup('Leads').then(res => this.leads = res);
-        this.lookup('Orders').then(res => this.orders = res);
-        this.lookup('Clients').then(res => this.clients = res);
+        this.modalDialog.startLoading();
+        Promise.all([
+            this.lookup('Leads').then(res => this.leads = res),
+            this.lookup('Orders').then(res => this.orders = res),
+            this.lookup('Clients').then(res => this.clients = res)
+        ]).then(() => {
+            this.modalDialog.finishLoading();
+        });
         this.initToolbarConfig();
     }
 
@@ -319,11 +327,15 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     private createEntity(): void {
+        this.modalDialog.startLoading();
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
 
         (this.data.appointment.Id ? this.updateAppointment() : this.createAppointment())
-            .pipe(finalize(() => { saveButton.disabled = false; }))
+            .pipe(finalize(() => {
+                this.modalDialog.startLoading();
+                saveButton.disabled = false;
+            }))
             .subscribe((res) => {
                 this.data.appointment.Id = res;
                 this.afterSave();

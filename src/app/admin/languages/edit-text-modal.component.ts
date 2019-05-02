@@ -18,6 +18,8 @@ import { LanguageServiceProxy, UpdateLanguageTextInput } from '@shared/service-p
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { NotifyService } from '@abp/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     selector: 'editTextModal',
@@ -26,6 +28,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 })
 export class EditTextModalComponent {
     @ViewChild('targetValueInput') targetValueInput: ElementRef;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     model: UpdateLanguageTextInput = new UpdateLanguageTextInput();
@@ -61,7 +64,9 @@ export class EditTextModalComponent {
     }
 
     save(): void {
+        this.modalDialog.startLoading();
         this._languageService.updateLanguageText(this.model)
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this._notifyServer.info(this.ls.l('SavedSuccessfully'));
                 this.close();

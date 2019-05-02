@@ -166,7 +166,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     ngOnInit() {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
-        let key = this.getCacheKey(abp.session.userId);
+        let key = this.getCacheKey(abp.session.userId.toString());
         if (this._cacheService.exists(key))
             this.rightPanelSetting = this._cacheService.get(key);
         switch (this.getSection()) {
@@ -676,7 +676,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
         if (this._pipelineService.updateEntityStage(AppConsts.PipelinePurposeIds.lead, this.leadInfo, sourceStage, targetStage, () => {
             this.clientStageId = this.leadStages.find(stage => stage.name === targetStage).id;
-            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);            
+            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);
         })) {
             this.leadInfo.stage = targetStage;
             this.notify.success(this.l('StageSuccessfullyUpdated'));
@@ -721,8 +721,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         event.stopPropagation();
 
         this.rightPanelSetting[section] = event.target.checked;
-        this._cacheService.set(this.getCacheKey(
-            abp.session.userId), this.rightPanelSetting);
+        this._cacheService.set(this.getCacheKey(abp.session.userId.toString()), this.rightPanelSetting);
     }
 
     onContactSelected(contact) {

@@ -1,9 +1,16 @@
-import { ChangeDetectorRef, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { UserLoginAttemptDto, UserLoginServiceProxy } from '@shared/service-proxies/service-proxies';
+/** Core imports */
+import { ChangeDetectorRef, ChangeDetectionStrategy, Component, OnInit, ViewChild } from '@angular/core';
+
+/** Third party imports */
 import * as moment from 'moment';
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
+import { UserLoginAttemptDto, UserLoginServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'loginAttemptsModal',
@@ -13,6 +20,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginAttemptsModalComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     userLoginAttempts: UserLoginAttemptDto[];
     profileThumbnailId: string;
 
@@ -24,11 +32,14 @@ export class LoginAttemptsModalComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this._userLoginService.getRecentUserLoginAttempts().subscribe(result => {
-            this.userLoginAttempts = result.items;
-            this.profileThumbnailId = this._appSession.user.profileThumbnailId;
-            this._changeDetectorRef.detectChanges();
-        });
+        this.modalDialog.startLoading();
+        this._userLoginService.getRecentUserLoginAttempts()
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(result => {
+                this.userLoginAttempts = result.items;
+                this.profileThumbnailId = this._appSession.user.profileThumbnailId;
+                this._changeDetectorRef.detectChanges();
+            });
     }
 
     getLoginAttemptTime(userLoginAttempt: UserLoginAttemptDto): string {

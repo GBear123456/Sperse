@@ -3,13 +3,13 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class LoadingService {
     loading = false;
-    startLoading(globally = false, element: any = null) {
+    startLoading(element: any = null) {
         this.loading = true;
-        abp.ui.setBusy(globally ? undefined : element);
+        abp.ui.setBusy(element);
     }
 
-    finishLoading(globally = false, element: any = null) {
-        abp.ui.clearBusy(globally ? undefined : element);
+    finishLoading(element: any = null) {
+        abp.ui.clearBusy(element);
         this.loading = false;
     }
 }
