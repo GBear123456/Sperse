@@ -57755,7 +57755,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
     activationEmailId!: number | undefined;
     passwordResetEmailId!: number | undefined;
     isEnabled!: boolean | undefined;
-    offerAnnouncementCampaignId!: string | undefined;
+    offerAnnouncementEmailId!: string | undefined;
 
     constructor(data?: IIAgeSettingsEditDto) {
         if (data) {
@@ -57772,7 +57772,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
             this.activationEmailId = data["activationEmailId"];
             this.passwordResetEmailId = data["passwordResetEmailId"];
             this.isEnabled = data["isEnabled"];
-            this.offerAnnouncementCampaignId = data["offerAnnouncementCampaignId"];
+            this.offerAnnouncementEmailId = data["offerAnnouncementEmailId"];
         }
     }
 
@@ -57789,7 +57789,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
         data["activationEmailId"] = this.activationEmailId;
         data["passwordResetEmailId"] = this.passwordResetEmailId;
         data["isEnabled"] = this.isEnabled;
-        data["offerAnnouncementCampaignId"] = this.offerAnnouncementCampaignId;
+        data["offerAnnouncementEmailId"] = this.offerAnnouncementEmailId;
         return data; 
     }
 }
@@ -57799,7 +57799,7 @@ export interface IIAgeSettingsEditDto {
     activationEmailId: number | undefined;
     passwordResetEmailId: number | undefined;
     isEnabled: boolean | undefined;
-    offerAnnouncementCampaignId: string | undefined;
+    offerAnnouncementEmailId: string | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
