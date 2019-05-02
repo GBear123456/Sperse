@@ -267,6 +267,7 @@ export class PackageChooserComponent implements OnInit {
                     },
                     'value': null
                 },
+/*
                 {
                     'definition': {
                         'name': 'CFO.ForecastPlanning',
@@ -282,6 +283,7 @@ export class PackageChooserComponent implements OnInit {
                     },
                     'value': null
                 },
+*/
                 {
                     'definition': {
                         'name': 'CFO.ForecastPlanning',
@@ -377,6 +379,7 @@ export class PackageChooserComponent implements OnInit {
                             },
                             'value': null
                         },
+/*
                         {
                             'definition': {
                                 'name': 'CFO.ForecastPlanning',
@@ -392,12 +395,13 @@ export class PackageChooserComponent implements OnInit {
                             },
                             'value': null
                         },
+*/
                         {
                             'definition': {
                                 'name': 'CFO.ForecastPlanning',
                                 'displayName': {
                                     'sourceName': 'CFO',
-                                    'name': 'Up to 100 related business entities'
+                                    'name': 'Up to 25 related business entities'
                                 },
                                 'isVariable': false,
                                 'sortOrder': 0,
