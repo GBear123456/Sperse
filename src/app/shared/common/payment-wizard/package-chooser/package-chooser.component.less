@@ -11,7 +11,7 @@
     flex-direction: column;
     justify-content: space-around;
     margin: auto;
-    
+
     @media all and (max-width: 680px) {
         padding: 25px 20px;
     }
@@ -20,7 +20,7 @@
         text-align: center;
         z-index: 1;
         position: relative;
-        
+
         .title {
             font-size: 36px;
             font-weight: 600;
@@ -34,24 +34,24 @@
             letter-spacing: 0.4px;
             color: #888d92;
         }
-    
+
         @media all and (max-width: 680px) {
             .title {
                 font-size: 24px;
             }
         }
-        
+
         .config-wrap {
             margin: 27px 10px 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            
+
             @media all and (max-width: 1100px) {
                 flex-direction: column;
                 margin-bottom: 15px;
             }
-    
+
             @media all and (max-width: 680px) {
                 button.toggle {
                     position: relative;
@@ -60,7 +60,7 @@
                 }
             }
         }
-        
+
         .billingPeriod {
             width: 30%;
             height: 60px;
@@ -83,7 +83,7 @@
                     position: static;
                 }
             }
-    
+
             & > div {
                 font-size: 14px;
                 font-weight: 500;
@@ -93,15 +93,15 @@
                 z-index: 5;
                 pointer-events: none;
                 line-height: 1.6;
-    
+
                 &.monthly {
                     margin-right: -105px;
                 }
-                
+
                 &.annually {
                     margin-left: -105px;
                 }
-                
+
                 &.active {
                     font-weight: 500;
                     color: #fff;
@@ -112,10 +112,10 @@
                     //}
                 }
             }
-       
-            span.year-discount {
+
+            .year-discount {
                 position: absolute;
-                right: 6px;
+                right: -70px;
                 top: -36px;
                 color: #60d956;
                 font-weight: 700;
@@ -123,7 +123,11 @@
                 //    position: static;
                 //    display: block;
                 //}
-                
+                & > span {
+                    font-size: 8px;
+                    font-weight: 500;
+                }
+
                 &:before {
                     content: '';
                     display: block;
@@ -146,7 +150,7 @@
                 margin: 0 18px;
                 height: 38px;
                 overflow: hidden;
-                
+
                 .mat-slide-toggle-bar {
                     width: 190px;
                     height: 38px;
@@ -225,12 +229,12 @@
                 color: #00aeef;
                 cursor: pointer;
                 font-style: normal;
-                
+
                 &.hidden {
                     visibility: hidden;
                     display: inline-flex !important;
                 }
-                
+
                 @media (max-width: 768px) {
                     display: none!important;
                 }
@@ -254,7 +258,7 @@
             //    min-width: 0 !important;
             //}
         }
-        
+
         button.toggle {
             position: absolute;
             right: 10px;
@@ -376,7 +380,7 @@
                 line-height: 20px;
             }
         }
-        
+
         @media all and (max-width: 768px) {
             position: relative;
             width: 62%;
@@ -384,7 +388,7 @@
             top: 15px;
             margin: 0 auto;
         }
-    
+
         @media all and (max-width: 680px) {
             width: 100%;
             font-size: 12px;
@@ -402,7 +406,7 @@
         align-items: center;
         flex-direction: column;
         width: 100%;
-        
+
         .downgrade {
             font-size: 12px;
             font-weight: 700;
@@ -412,13 +416,13 @@
             display: none;
             margin-top: 15px;
         }
-        
+
         .pricesAreShown {
             font-weight: 500;
             margin-bottom: 0;
             margin-top: 15px;
         }
-    
+
         .downgrade + .pricesAreShown {
             margin-top: 0;
         }
@@ -447,7 +451,7 @@
         &.nextButtonPosition-center {
             display: flex;
             flex-direction: column;
-            
+
             button {
                 margin: auto auto 10px;
                 position: relative;
@@ -462,7 +466,7 @@
 :host(.withBackground) {
     position: relative;
     overflow-y: hidden;
-    
+
     &:before {
         content: '';
         background: linear-gradient(111deg, #c86dd7, #3023ae) no-repeat 100% 360px;
