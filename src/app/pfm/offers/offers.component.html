@@ -42,6 +42,15 @@
                      (onBottomInputApplyValue)="onAttributeValueApply($event)"
                      [list]="attributes">
     </app-static-list>
+    <app-static-list #statusesComponent
+        [width]="'310px'"
+        [title]="l('Statuses')"
+        [showConfirmation]="false"
+        [hideButtons]="true"
+        [filterModel]="filterModelStatuses"
+        [targetSelector]="'[aria-label=Status]'"
+        [list]="statuses">
+    </app-static-list>
 
     <div class="portlet light no-padding margin-bottom-0">
         <div class="main-wrapper">

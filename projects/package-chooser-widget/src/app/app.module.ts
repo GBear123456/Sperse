@@ -13,20 +13,28 @@ import { PackageChooserComponent } from '../../../../src/app/shared/common/payme
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
 import { AbpModule } from '@abp/abp.module';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
-import { API_BASE_URL, LocalizationServiceProxy, PackageServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    API_BASE_URL,
+    LocalizationServiceProxy,
+    PackageServiceProxy,
+    SessionServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { PackageChooserWidgetComponent } from './package-chooser-widget-component';
 import { AppConsts } from '@shared/AppConsts';
 import { WidgetsService } from '../../../widgets.service';
 import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
+import { LocalizationResolver } from '@shared/common/localization-resolver';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 
 export function getRemoteUrl() {
     return AppConsts.remoteServiceBaseUrl;
 }
 
-export function initialize(widgetsService: WidgetsService, httpClient: HttpClient, injector: Injector) {
-    return widgetsService.initialize(injector, httpClient, ['CRM', 'CFO']);
+export function initialize(widgetsService: WidgetsService, injector: Injector) {
+    return widgetsService.initialize(injector);
 }
 
 @NgModule({
@@ -46,7 +54,11 @@ export function initialize(widgetsService: WidgetsService, httpClient: HttpClien
     providers: [
         AppLocalizationService,
         AppHttpConfiguration,
+        AppSessionService,
+        AbpMultiTenancyService,
+        LocalizationResolver,
         PackageServiceProxy,
+        SessionServiceProxy,
         WidgetsService,
         LocalizationServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
@@ -54,7 +66,7 @@ export function initialize(widgetsService: WidgetsService, httpClient: HttpClien
         {
             provide: APP_INITIALIZER,
             useFactory: initialize,
-            deps: [ WidgetsService, HttpClient, Injector ],
+            deps: [ WidgetsService, Injector ],
             multi: true
         },
         {

@@ -33,7 +33,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import swal from 'sweetalert';
 
 /** Application imports */
-import { OfferDetailsForEditDto, OfferManagementServiceProxy } from 'shared/service-proxies/service-proxies';
 import { RootComponent } from 'root.components';
 import {
     CountryStateDto,
@@ -48,7 +47,10 @@ import {
     ExtendOfferDtoTargetAudience,
     OfferDetailsForEditDtoType,
     OfferServiceProxy,
-    OfferCategoryDto
+    OfferCategoryDto,
+    OfferDetailsForEditDto,
+    OfferManagementServiceProxy,
+    OfferAnnouncementServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -67,7 +69,7 @@ import { CurrencyPipe } from '@angular/common';
     selector: 'offer-edit',
     templateUrl: './offer-edit.component.html',
     styleUrls: [ '../../shared/form.less', './offer-edit.component.less' ],
-    providers: [ CurrencyPipe, OfferManagementServiceProxy, OffersService, OfferServiceProxy ],
+    providers: [CurrencyPipe, OfferAnnouncementServiceProxy, OfferManagementServiceProxy, OffersService, OfferServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
@@ -119,6 +121,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
+        private offerAnnouncementService: OfferAnnouncementServiceProxy,
         private offerManagementService: OfferManagementServiceProxy,
         private applicationRef: ApplicationRef,
         private router: Router,
@@ -332,7 +335,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
                 swal(swalParams).then((confirmed) => {
                     if (confirmed) {
                         abp.ui.setBusy();
-                        this.offerManagementService.sendAnnouncement(
+                        this.offerAnnouncementService.sendAnnouncement(
                             offerId,
                             offerPublicLink
                         ).pipe(finalize(() => abp.ui.clearBusy()))

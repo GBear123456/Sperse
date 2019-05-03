@@ -11958,20 +11958,20 @@ export class EmailingServiceProxy {
     /**
      * @return Success
      */
-    payload(recipientUserId: number, emailType: string, emailAddress: string): Observable<string> {
+    payload(recipientUserId: number, recipientHash: string, emailType: string): Observable<string> {
         let url_ = this.baseUrl + "/api/Emailing/Payload?";
         if (recipientUserId === undefined || recipientUserId === null)
             throw new Error("The parameter 'recipientUserId' must be defined and cannot be null.");
         else
             url_ += "recipientUserId=" + encodeURIComponent("" + recipientUserId) + "&"; 
+        if (recipientHash === undefined || recipientHash === null)
+            throw new Error("The parameter 'recipientHash' must be defined and cannot be null.");
+        else
+            url_ += "recipientHash=" + encodeURIComponent("" + recipientHash) + "&"; 
         if (emailType === undefined || emailType === null)
             throw new Error("The parameter 'emailType' must be defined and cannot be null.");
         else
             url_ += "emailType=" + encodeURIComponent("" + emailType) + "&"; 
-        if (emailAddress === undefined || emailAddress === null)
-            throw new Error("The parameter 'emailAddress' must be defined and cannot be null.");
-        else
-            url_ += "emailAddress=" + encodeURIComponent("" + emailAddress) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -11998,66 +11998,6 @@ export class EmailingServiceProxy {
     }
 
     protected processPayload(response: HttpResponseBase): Observable<string> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<string>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    announcementData(userId: number, emailAddress: string): Observable<string> {
-        let url_ = this.baseUrl + "/api/Emailing/AnnouncementData?";
-        if (userId === undefined || userId === null)
-            throw new Error("The parameter 'userId' must be defined and cannot be null.");
-        else
-            url_ += "userId=" + encodeURIComponent("" + userId) + "&"; 
-        if (emailAddress === undefined || emailAddress === null)
-            throw new Error("The parameter 'emailAddress' must be defined and cannot be null.");
-        else
-            url_ += "emailAddress=" + encodeURIComponent("" + emailAddress) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAnnouncementData(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAnnouncementData(<any>response_);
-                } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<string>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processAnnouncementData(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -16605,6 +16545,132 @@ export class OfferServiceProxy {
 }
 
 @Injectable()
+export class OfferAnnouncementServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    payload(recipientUserId: number, recipientHash: string): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferAnnouncement/Payload?";
+        if (recipientUserId === undefined || recipientUserId === null)
+            throw new Error("The parameter 'recipientUserId' must be defined and cannot be null.");
+        else
+            url_ += "recipientUserId=" + encodeURIComponent("" + recipientUserId) + "&"; 
+        if (recipientHash === undefined || recipientHash === null)
+            throw new Error("The parameter 'recipientHash' must be defined and cannot be null.");
+        else
+            url_ += "recipientHash=" + encodeURIComponent("" + recipientHash) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPayload(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPayload(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processPayload(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @campaignId (optional) 
+     * @offerDetailsLink (optional) 
+     * @return Success
+     */
+    sendAnnouncement(campaignId: number | null | undefined, offerDetailsLink: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferAnnouncement/SendAnnouncement?";
+        if (campaignId !== undefined)
+            url_ += "campaignId=" + encodeURIComponent("" + campaignId) + "&"; 
+        if (offerDetailsLink !== undefined)
+            url_ += "offerDetailsLink=" + encodeURIComponent("" + offerDetailsLink) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendAnnouncement(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendAnnouncement(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendAnnouncement(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class OfferManagementServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -16955,60 +17021,6 @@ export class OfferManagementServiceProxy {
             }));
         }
         return _observableOf<ExtendFromCSVOutput>(<any>null);
-    }
-
-    /**
-     * @campaignId (optional) 
-     * @offerDetailsLink (optional) 
-     * @return Success
-     */
-    sendAnnouncement(campaignId: number | null | undefined, offerDetailsLink: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/SendAnnouncement?";
-        if (campaignId !== undefined)
-            url_ += "campaignId=" + encodeURIComponent("" + campaignId) + "&"; 
-        if (offerDetailsLink !== undefined)
-            url_ += "offerDetailsLink=" + encodeURIComponent("" + offerDetailsLink) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSendAnnouncement(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSendAnnouncement(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSendAnnouncement(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 }
 
@@ -30403,6 +30415,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
     testMode!: boolean | undefined;
     newUserPassword!: string | undefined;
     sendWelcomeEmail!: boolean | undefined;
+    returnNewUserInfo!: boolean | undefined;
     trackingInformation!: TrackingInformation | undefined;
     personalInformation!: PersonalInformation | undefined;
     debtInformation!: DebtInformation | undefined;
@@ -30426,6 +30439,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
             this.testMode = data["testMode"];
             this.newUserPassword = data["newUserPassword"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
+            this.returnNewUserInfo = data["returnNewUserInfo"];
             this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
             this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
             this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
@@ -30449,6 +30463,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
         data["testMode"] = this.testMode;
         data["newUserPassword"] = this.newUserPassword;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
+        data["returnNewUserInfo"] = this.returnNewUserInfo;
         data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
         data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
@@ -30465,6 +30480,7 @@ export interface IRegisterApplicantRequest {
     testMode: boolean | undefined;
     newUserPassword: string | undefined;
     sendWelcomeEmail: boolean | undefined;
+    returnNewUserInfo: boolean | undefined;
     trackingInformation: TrackingInformation | undefined;
     personalInformation: PersonalInformation | undefined;
     debtInformation: DebtInformation | undefined;
@@ -43693,6 +43709,9 @@ export class EditionListDto implements IEditionListDto {
     name!: string | undefined;
     displayName!: string | undefined;
     creationTime!: moment.Moment | undefined;
+    module!: EditionListDtoModule | undefined;
+    packageName!: string | undefined;
+    isForPartner!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IEditionListDto) {
@@ -43709,6 +43728,9 @@ export class EditionListDto implements IEditionListDto {
             this.name = data["name"];
             this.displayName = data["displayName"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.module = data["module"];
+            this.packageName = data["packageName"];
+            this.isForPartner = data["isForPartner"];
             this.id = data["id"];
         }
     }
@@ -43725,6 +43747,9 @@ export class EditionListDto implements IEditionListDto {
         data["name"] = this.name;
         data["displayName"] = this.displayName;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["module"] = this.module;
+        data["packageName"] = this.packageName;
+        data["isForPartner"] = this.isForPartner;
         data["id"] = this.id;
         return data; 
     }
@@ -43734,6 +43759,9 @@ export interface IEditionListDto {
     name: string | undefined;
     displayName: string | undefined;
     creationTime: moment.Moment | undefined;
+    module: EditionListDtoModule | undefined;
+    packageName: string | undefined;
+    isForPartner: boolean | undefined;
     id: number | undefined;
 }
 
@@ -55985,6 +56013,7 @@ export interface IGetSetupAccountsLinkOutput {
 
 export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
     syncInProgressAccountsCount!: number | undefined;
+    failedSyncAccountsCount!: number | undefined;
 
     constructor(data?: ISyncAllAccountsOutput) {
         if (data) {
@@ -55998,6 +56027,7 @@ export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
     init(data?: any) {
         if (data) {
             this.syncInProgressAccountsCount = data["syncInProgressAccountsCount"];
+            this.failedSyncAccountsCount = data["failedSyncAccountsCount"];
         }
     }
 
@@ -56011,12 +56041,14 @@ export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
+        data["failedSyncAccountsCount"] = this.failedSyncAccountsCount;
         return data; 
     }
 }
 
 export interface ISyncAllAccountsOutput {
     syncInProgressAccountsCount: number | undefined;
+    failedSyncAccountsCount: number | undefined;
 }
 
 export class SyncProgressOutput implements ISyncProgressOutput {
@@ -57723,6 +57755,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
     activationEmailId!: number | undefined;
     passwordResetEmailId!: number | undefined;
     isEnabled!: boolean | undefined;
+    offerAnnouncementEmailId!: string | undefined;
 
     constructor(data?: IIAgeSettingsEditDto) {
         if (data) {
@@ -57739,6 +57772,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
             this.activationEmailId = data["activationEmailId"];
             this.passwordResetEmailId = data["passwordResetEmailId"];
             this.isEnabled = data["isEnabled"];
+            this.offerAnnouncementEmailId = data["offerAnnouncementEmailId"];
         }
     }
 
@@ -57755,6 +57789,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
         data["activationEmailId"] = this.activationEmailId;
         data["passwordResetEmailId"] = this.passwordResetEmailId;
         data["isEnabled"] = this.isEnabled;
+        data["offerAnnouncementEmailId"] = this.offerAnnouncementEmailId;
         return data; 
     }
 }
@@ -57764,6 +57799,7 @@ export interface IIAgeSettingsEditDto {
     activationEmailId: number | undefined;
     passwordResetEmailId: number | undefined;
     isEnabled: boolean | undefined;
+    offerAnnouncementEmailId: string | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
@@ -62559,6 +62595,13 @@ export enum ContactStarInfoDtoColorType {
     Gradient3 = "Gradient3", 
     Gradient4 = "Gradient4", 
     Gradient5 = "Gradient5", 
+}
+
+export enum EditionListDtoModule {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    HUB = "HUB", 
+    PFM = "PFM", 
 }
 
 export enum ImportInputImportType {

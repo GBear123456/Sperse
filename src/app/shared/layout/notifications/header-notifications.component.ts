@@ -56,15 +56,16 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     getSubscriptionInfo(module = null) {
         this.subscriptionExpiringDayCount = -1;
         module = module || this._appService.getModule().toUpperCase();
+        let subscriptionName = this._appService.getSubscriptionName(module);
         if (this._appService.checkSubscriptionIsFree(module)) {
-            this.subscriptionInfoTitle = this.l('YouAreUsingTheFreePlan', module);
+            this.subscriptionInfoTitle = this.l('YouAreUsingTheFreePlan', subscriptionName);
             this.subscriptionInfoText = this.l('UpgradeToUnlockAllOurFeatures');
         } else if (!this._appService.hasModuleSubscription(module)) {
-            this.subscriptionInfoTitle = this.l('YourTrialHasExpired', module);
+            this.subscriptionInfoTitle = this.l('YourTrialHasExpired', subscriptionName);
             this.subscriptionInfoText = this.l('ChoosePlanToContinueService');
         } else if (this._appService.subscriptionInGracePeriod(module)) {
             let dayCount = this._appService.getGracePeriodDayCount(module);
-            this.subscriptionInfoTitle = this.l('YourTrialHasExpired', module);
+            this.subscriptionInfoTitle = this.l('YourTrialHasExpired', subscriptionName);
             this.subscriptionInfoText = this.l('GracePeriodNotification', (dayCount ?
                 (this.l('PeriodDescription', dayCount,
                         this.l(dayCount === 1 ? 'Tomorrow' : 'Periods_Day_plural'))
@@ -76,7 +77,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
             } else {
                 if (dayCount >= 0 && dayCount <= 15) {
                     this.subscriptionInfoText = this.l('ChoosePlanThatsRightForYou');
-                    this.subscriptionInfoTitle = this.l('YourTrialWillExpire', module) + ' '
+                    this.subscriptionInfoTitle = this.l('YourTrialWillExpire', subscriptionName) + ' '
                         + (!dayCount ? this.l('Today') : (dayCount === 1 ? this.l('Tomorrow') : ('in ' + dayCount.toString() + ' ' + this.l('Periods_Day_plural')))).toLowerCase()
                         + '!';
                 } else {
@@ -167,7 +168,7 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
-                module: this._appService.getModule().toUpperCase(),
+                module: this._appService.getModuleSubscription().module,
                 title: this.subscriptionInfoTitle,
                 subtitle: this.subscriptionInfoText
             }

@@ -17,11 +17,11 @@
                         (change)="billingPeriodChanged($event)">
                     </mat-slide-toggle>
                     <div class="annually" [ngClass]="{ 'active': getActiveStatus('year') }">
-                        <span class="year-discount">{{ yearDiscount + '% ' + 'OFF' }}</span>
+                        <p class="year-discount">{{ 'SAVE ' + yearDiscount + '%'}}<span> {{ l('OrMore') }}</span></p>
                         {{ l('Annually') }}
                     </div>
                 </div>
-                <button [hidden]="module === modules.CFO || configurator == 'slider'"
+                <button [hidden]="module === modules.CFO || module === 'CFO_CRM' || configurator == 'slider'"
                         class="toggle"
                         (click)="configurator = configurator == 'slider' ? 'billingPeriod' : 'slider'">
                     {{ configurator === 'slider' ? 'Change plan' : 'Add more seats' }}
