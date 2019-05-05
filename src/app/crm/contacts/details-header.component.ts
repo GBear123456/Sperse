@@ -28,6 +28,7 @@ import { CreateClientDialogComponent } from '../shared/create-client-dialog/crea
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import {
     ContactInfoDto,
     PersonContactInfoDto,
@@ -169,6 +170,33 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             relationshipType: orgRelationInfo.relationType.id,
             jobTitle: orgRelationInfo.jobTitle
         })).subscribe(() => {});
+    }
+
+    removePersonOrgRelation(event) {
+        let companyName = this.data['organizationContactInfo'].fullName;
+        this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                title: this.l('ContactRelationRemovalConfirmationTitle'),
+                message: this.l('ContactRelationRemovalConfirmationMessage', companyName),
+            }
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.dialog.closeAll();
+                let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
+                this._personOrgRelationService.delete(orgRelationId).subscribe(result => {
+                    if (result) {
+                        let orgRelations = this.data.personContactInfo.orgRelations;
+                        orgRelations.splice(orgRelations.indexOf(_.find(orgRelations, item => item.id === orgRelationId)), 1);
+                        if (result.personPrimaryOrgRelationId) {
+                            let orgRelation = _.find(orgRelations, item => item.id === result.personPrimaryOrgRelationId);
+                            this.data.primaryOrganizationContactId = orgRelation.organization.id;
+                            this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
+                        }
+                    }
+                });
+            }
+        });
+        event.stopPropagation();
     }
 
     showCompanyDialog(e) {
@@ -410,16 +438,16 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             if (result == 'addContact')
                 this.addCompanyDialog(event);
             else if (result)
-                this.displaySelectedCompany(result);
+                this.displaySelectedCompany(result.id, result.relation.id);
         });
         event.stopPropagation();
     }
 
-    displaySelectedCompany(contact) {
+    displaySelectedCompany(orgId, orgRelationId) {
         this.startLoading(true);
-        this.personContactInfo.orgRelationId = contact.relation.id;
+        this.personContactInfo.orgRelationId = orgRelationId;
         this.initializePersonOrgRelationInfo();
-        this._orgContactService.getOrganizationContactInfo(contact.id)
+        this._orgContactService.getOrganizationContactInfo(orgId)
             .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
                 let isPartner = this.data.groupId == ContactGroup.Partner;
                 this.data['organizationContactInfo'] = result;

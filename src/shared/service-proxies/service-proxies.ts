@@ -12656,6 +12656,58 @@ export class HostSettingsServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getInvoiceSettings(): Observable<TenantBillingSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetInvoiceSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoiceSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoiceSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<TenantBillingSettingsEditDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<TenantBillingSettingsEditDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetInvoiceSettings(response: HttpResponseBase): Observable<TenantBillingSettingsEditDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TenantBillingSettingsEditDto.fromJS(resultData200) : new TenantBillingSettingsEditDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<TenantBillingSettingsEditDto>(<any>null);
+    }
+
+    /**
      * @input (optional) 
      * @return Success
      */
@@ -14374,8 +14426,8 @@ export class LeadServiceProxy {
      * @model (optional) 
      * @return Success
      */
-    submitContactUsRequest(model: SubmitContactUsRequestInput | null | undefined): Observable<SubmitContactUsRequestOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitContactUsRequest";
+    submitTenancyRequest(model: SubmitTenancyRequestInput | null | undefined): Observable<SubmitTenancyRequestOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitTenancyRequest";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(model);
@@ -14391,20 +14443,20 @@ export class LeadServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSubmitContactUsRequest(response_);
+            return this.processSubmitTenancyRequest(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSubmitContactUsRequest(<any>response_);
+                    return this.processSubmitTenancyRequest(<any>response_);
                 } catch (e) {
-                    return <Observable<SubmitContactUsRequestOutput>><any>_observableThrow(e);
+                    return <Observable<SubmitTenancyRequestOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SubmitContactUsRequestOutput>><any>_observableThrow(response_);
+                return <Observable<SubmitTenancyRequestOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSubmitContactUsRequest(response: HttpResponseBase): Observable<SubmitContactUsRequestOutput> {
+    protected processSubmitTenancyRequest(response: HttpResponseBase): Observable<SubmitTenancyRequestOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14415,7 +14467,7 @@ export class LeadServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SubmitContactUsRequestOutput.fromJS(resultData200) : new SubmitContactUsRequestOutput();
+            result200 = resultData200 ? SubmitTenancyRequestOutput.fromJS(resultData200) : new SubmitTenancyRequestOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -14423,7 +14475,7 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SubmitContactUsRequestOutput>(<any>null);
+        return _observableOf<SubmitTenancyRequestOutput>(<any>null);
     }
 
     /**
@@ -14536,62 +14588,6 @@ export class LeadServiceProxy {
             }));
         }
         return _observableOf<string>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    submitDemoRequest(input: SubmitDemoRequestInput | null | undefined): Observable<SubmitDemoRequestOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitDemoRequest";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSubmitDemoRequest(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSubmitDemoRequest(<any>response_);
-                } catch (e) {
-                    return <Observable<SubmitDemoRequestOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SubmitDemoRequestOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSubmitDemoRequest(response: HttpResponseBase): Observable<SubmitDemoRequestOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SubmitDemoRequestOutput.fromJS(resultData200) : new SubmitDemoRequestOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SubmitDemoRequestOutput>(<any>null);
     }
 
     /**
@@ -16553,66 +16549,6 @@ export class OfferAnnouncementServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    payload(recipientUserId: number, recipientHash: string): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/PFM/OfferAnnouncement/Payload?";
-        if (recipientUserId === undefined || recipientUserId === null)
-            throw new Error("The parameter 'recipientUserId' must be defined and cannot be null.");
-        else
-            url_ += "recipientUserId=" + encodeURIComponent("" + recipientUserId) + "&"; 
-        if (recipientHash === undefined || recipientHash === null)
-            throw new Error("The parameter 'recipientHash' must be defined and cannot be null.");
-        else
-            url_ += "recipientHash=" + encodeURIComponent("" + recipientHash) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPayload(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPayload(<any>response_);
-                } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<string>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processPayload(response: HttpResponseBase): Observable<string> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<string>(<any>null);
     }
 
     /**
@@ -19465,6 +19401,61 @@ export class PersonOrgRelationServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    delete(id: number | null | undefined): Observable<DeletePersonOrgRelationOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Delete?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<DeletePersonOrgRelationOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<DeletePersonOrgRelationOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<DeletePersonOrgRelationOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? DeletePersonOrgRelationOutput.fromJS(resultData200) : new DeletePersonOrgRelationOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<DeletePersonOrgRelationOutput>(<any>null);
     }
 }
 
@@ -24795,6 +24786,58 @@ export class TenantSettingsServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getInvoiceSettings(): Observable<TenantBillingSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetInvoiceSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoiceSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoiceSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<TenantBillingSettingsEditDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<TenantBillingSettingsEditDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetInvoiceSettings(response: HttpResponseBase): Observable<TenantBillingSettingsEditDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? TenantBillingSettingsEditDto.fromJS(resultData200) : new TenantBillingSettingsEditDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<TenantBillingSettingsEditDto>(<any>null);
     }
 
     /**
@@ -45280,6 +45323,50 @@ export interface ITwoFactorLoginSettingsEditDto {
     isGoogleAuthenticatorEnabled: boolean | undefined;
 }
 
+export class TenantBillingSettingsEditDto implements ITenantBillingSettingsEditDto {
+    legalName!: string | undefined;
+    address!: string | undefined;
+    taxVatNo!: string | undefined;
+
+    constructor(data?: ITenantBillingSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.legalName = data["legalName"];
+            this.address = data["address"];
+            this.taxVatNo = data["taxVatNo"];
+        }
+    }
+
+    static fromJS(data: any): TenantBillingSettingsEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TenantBillingSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        data["taxVatNo"] = this.taxVatNo;
+        return data; 
+    }
+}
+
+export interface ITenantBillingSettingsEditDto {
+    legalName: string | undefined;
+    address: string | undefined;
+    taxVatNo: string | undefined;
+}
+
 export class SendTestEmailInput implements ISendTestEmailInput {
     emailAddress!: string;
 
@@ -47862,9 +47949,14 @@ export interface ILeadCancellationReasonDto {
     sortOrder: number | undefined;
 }
 
-export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput {
+export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
+    leadRequestXref!: string | undefined;
     website!: string | undefined;
     tenancyName!: string | undefined;
+    city!: string | undefined;
+    state!: string | undefined;
+    stage!: string | undefined;
+    tag!: string | undefined;
     firstName!: string;
     lastName!: string;
     email!: string;
@@ -47874,8 +47966,9 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
     sourceCode!: string | undefined;
     channelCode!: string | undefined;
     affiliateCode!: string | undefined;
+    isHelpNeeded!: boolean | undefined;
 
-    constructor(data?: ISubmitContactUsRequestInput) {
+    constructor(data?: ISubmitTenancyRequestInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -47886,8 +47979,13 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
 
     init(data?: any) {
         if (data) {
+            this.leadRequestXref = data["leadRequestXref"];
             this.website = data["website"];
             this.tenancyName = data["tenancyName"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.stage = data["stage"];
+            this.tag = data["tag"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.email = data["email"];
@@ -47897,20 +47995,26 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
             this.sourceCode = data["sourceCode"];
             this.channelCode = data["channelCode"];
             this.affiliateCode = data["affiliateCode"];
+            this.isHelpNeeded = data["isHelpNeeded"];
         }
     }
 
-    static fromJS(data: any): SubmitContactUsRequestInput {
+    static fromJS(data: any): SubmitTenancyRequestInput {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitContactUsRequestInput();
+        let result = new SubmitTenancyRequestInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["leadRequestXref"] = this.leadRequestXref;
         data["website"] = this.website;
         data["tenancyName"] = this.tenancyName;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["stage"] = this.stage;
+        data["tag"] = this.tag;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
@@ -47920,13 +48024,19 @@ export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput
         data["sourceCode"] = this.sourceCode;
         data["channelCode"] = this.channelCode;
         data["affiliateCode"] = this.affiliateCode;
+        data["isHelpNeeded"] = this.isHelpNeeded;
         return data; 
     }
 }
 
-export interface ISubmitContactUsRequestInput {
+export interface ISubmitTenancyRequestInput {
+    leadRequestXref: string | undefined;
     website: string | undefined;
     tenancyName: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    stage: string | undefined;
+    tag: string | undefined;
     firstName: string;
     lastName: string;
     email: string;
@@ -47936,12 +48046,14 @@ export interface ISubmitContactUsRequestInput {
     sourceCode: string | undefined;
     channelCode: string | undefined;
     affiliateCode: string | undefined;
+    isHelpNeeded: boolean | undefined;
 }
 
-export class SubmitContactUsRequestOutput implements ISubmitContactUsRequestOutput {
+export class SubmitTenancyRequestOutput implements ISubmitTenancyRequestOutput {
+    leadRequestXref!: string | undefined;
     contactId!: number | undefined;
 
-    constructor(data?: ISubmitContactUsRequestOutput) {
+    constructor(data?: ISubmitTenancyRequestOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -47952,30 +48064,33 @@ export class SubmitContactUsRequestOutput implements ISubmitContactUsRequestOutp
 
     init(data?: any) {
         if (data) {
+            this.leadRequestXref = data["leadRequestXref"];
             this.contactId = data["contactId"];
         }
     }
 
-    static fromJS(data: any): SubmitContactUsRequestOutput {
+    static fromJS(data: any): SubmitTenancyRequestOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitContactUsRequestOutput();
+        let result = new SubmitTenancyRequestOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["leadRequestXref"] = this.leadRequestXref;
         data["contactId"] = this.contactId;
         return data; 
     }
 }
 
-export interface ISubmitContactUsRequestOutput {
+export interface ISubmitTenancyRequestOutput {
+    leadRequestXref: string | undefined;
     contactId: number | undefined;
 }
 
 export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
-    companyName!: string;
+    companyName!: string | undefined;
     paymentPeriodType!: SubmitTenantCreationRequestInputPaymentPeriodType;
     packages!: PackageInfoDto[];
     leadRequestXref!: string | undefined;
@@ -47988,6 +48103,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     sourceCode!: string | undefined;
     channelCode!: string | undefined;
     affiliateCode!: string | undefined;
+    isHelpNeeded!: boolean | undefined;
 
     constructor(data?: ISubmitTenantCreationRequestInput) {
         if (data) {
@@ -48020,6 +48136,7 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
             this.sourceCode = data["sourceCode"];
             this.channelCode = data["channelCode"];
             this.affiliateCode = data["affiliateCode"];
+            this.isHelpNeeded = data["isHelpNeeded"];
         }
     }
 
@@ -48049,12 +48166,13 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
         data["sourceCode"] = this.sourceCode;
         data["channelCode"] = this.channelCode;
         data["affiliateCode"] = this.affiliateCode;
+        data["isHelpNeeded"] = this.isHelpNeeded;
         return data; 
     }
 }
 
 export interface ISubmitTenantCreationRequestInput {
-    companyName: string;
+    companyName: string | undefined;
     paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
     packages: PackageInfoDto[];
     leadRequestXref: string | undefined;
@@ -48067,6 +48185,7 @@ export interface ISubmitTenantCreationRequestInput {
     sourceCode: string | undefined;
     channelCode: string | undefined;
     affiliateCode: string | undefined;
+    isHelpNeeded: boolean | undefined;
 }
 
 export class PackageInfoDto implements IPackageInfoDto {
@@ -48155,6 +48274,7 @@ export interface ISubmitTenantCreationRequestOutput {
 
 export class SubmitFreeTrialRequestInput implements ISubmitFreeTrialRequestInput {
     email!: string;
+    tag!: string | undefined;
 
     constructor(data?: ISubmitFreeTrialRequestInput) {
         if (data) {
@@ -48168,6 +48288,7 @@ export class SubmitFreeTrialRequestInput implements ISubmitFreeTrialRequestInput
     init(data?: any) {
         if (data) {
             this.email = data["email"];
+            this.tag = data["tag"];
         }
     }
 
@@ -48181,120 +48302,14 @@ export class SubmitFreeTrialRequestInput implements ISubmitFreeTrialRequestInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["email"] = this.email;
+        data["tag"] = this.tag;
         return data; 
     }
 }
 
 export interface ISubmitFreeTrialRequestInput {
     email: string;
-}
-
-export class SubmitDemoRequestInput implements ISubmitDemoRequestInput {
-    leadRequestXref!: string | undefined;
-    firstName!: string;
-    lastName!: string;
-    phone!: string | undefined;
-    phoneExt!: string | undefined;
-    email!: string;
-    city!: string;
-    state!: string;
-    comments!: string | undefined;
-
-    constructor(data?: ISubmitDemoRequestInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.leadRequestXref = data["leadRequestXref"];
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
-            this.phone = data["phone"];
-            this.phoneExt = data["phoneExt"];
-            this.email = data["email"];
-            this.city = data["city"];
-            this.state = data["state"];
-            this.comments = data["comments"];
-        }
-    }
-
-    static fromJS(data: any): SubmitDemoRequestInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubmitDemoRequestInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["leadRequestXref"] = this.leadRequestXref;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["phone"] = this.phone;
-        data["phoneExt"] = this.phoneExt;
-        data["email"] = this.email;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["comments"] = this.comments;
-        return data; 
-    }
-}
-
-export interface ISubmitDemoRequestInput {
-    leadRequestXref: string | undefined;
-    firstName: string;
-    lastName: string;
-    phone: string | undefined;
-    phoneExt: string | undefined;
-    email: string;
-    city: string;
-    state: string;
-    comments: string | undefined;
-}
-
-export class SubmitDemoRequestOutput implements ISubmitDemoRequestOutput {
-    leadRequestXref!: string | undefined;
-    contactId!: number | undefined;
-
-    constructor(data?: ISubmitDemoRequestOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.leadRequestXref = data["leadRequestXref"];
-            this.contactId = data["contactId"];
-        }
-    }
-
-    static fromJS(data: any): SubmitDemoRequestOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubmitDemoRequestOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["leadRequestXref"] = this.leadRequestXref;
-        data["contactId"] = this.contactId;
-        return data; 
-    }
-}
-
-export interface ISubmitDemoRequestOutput {
-    leadRequestXref: string | undefined;
-    contactId: number | undefined;
+    tag: string | undefined;
 }
 
 export class LeadBusinessInfoInput implements ILeadBusinessInfoInput {
@@ -54159,6 +54174,42 @@ export interface IUpdatePersonOrgRelationInput {
     jobTitle: string;
 }
 
+export class DeletePersonOrgRelationOutput implements IDeletePersonOrgRelationOutput {
+    personPrimaryOrgRelationId!: number | undefined;
+
+    constructor(data?: IDeletePersonOrgRelationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.personPrimaryOrgRelationId = data["personPrimaryOrgRelationId"];
+        }
+    }
+
+    static fromJS(data: any): DeletePersonOrgRelationOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new DeletePersonOrgRelationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["personPrimaryOrgRelationId"] = this.personPrimaryOrgRelationId;
+        return data; 
+    }
+}
+
+export interface IDeletePersonOrgRelationOutput {
+    personPrimaryOrgRelationId: number | undefined;
+}
+
 export class PipelineDto implements IPipelineDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -57602,50 +57653,6 @@ export interface ILdapSettingsEditDto {
     password: string | undefined;
 }
 
-export class TenantBillingSettingsEditDto implements ITenantBillingSettingsEditDto {
-    legalName!: string | undefined;
-    address!: string | undefined;
-    taxVatNo!: string | undefined;
-
-    constructor(data?: ITenantBillingSettingsEditDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.legalName = data["legalName"];
-            this.address = data["address"];
-            this.taxVatNo = data["taxVatNo"];
-        }
-    }
-
-    static fromJS(data: any): TenantBillingSettingsEditDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TenantBillingSettingsEditDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["legalName"] = this.legalName;
-        data["address"] = this.address;
-        data["taxVatNo"] = this.taxVatNo;
-        return data; 
-    }
-}
-
-export interface ITenantBillingSettingsEditDto {
-    legalName: string | undefined;
-    address: string | undefined;
-    taxVatNo: string | undefined;
-}
-
 export class EPCVIPMailerSettingsEditDto implements IEPCVIPMailerSettingsEditDto {
     baseUrl!: string | undefined;
     apiKey!: string | undefined;
@@ -57755,7 +57762,7 @@ export class IAgeSettingsEditDto implements IIAgeSettingsEditDto {
     activationEmailId!: number | undefined;
     passwordResetEmailId!: number | undefined;
     isEnabled!: boolean | undefined;
-    offerAnnouncementEmailId!: string | undefined;
+    offerAnnouncementEmailId!: number | undefined;
 
     constructor(data?: IIAgeSettingsEditDto) {
         if (data) {
@@ -57799,7 +57806,7 @@ export interface IIAgeSettingsEditDto {
     activationEmailId: number | undefined;
     passwordResetEmailId: number | undefined;
     isEnabled: boolean | undefined;
-    offerAnnouncementEmailId: string | undefined;
+    offerAnnouncementEmailId: number | undefined;
 }
 
 export class IdcsSettings implements IIdcsSettings {
@@ -58380,7 +58387,10 @@ export interface IModuleSubscriptionInfoDto {
 
 export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {
     requestXref!: string;
+    tenancyName!: string | undefined;
     tenantName!: string | undefined;
+    companyName!: string | undefined;
+    siteUrl!: string | undefined;
     adminPassword!: string;
 
     constructor(data?: ICompleteTenantRegistrationInput) {
@@ -58395,7 +58405,10 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     init(data?: any) {
         if (data) {
             this.requestXref = data["requestXref"];
+            this.tenancyName = data["tenancyName"];
             this.tenantName = data["tenantName"];
+            this.companyName = data["companyName"];
+            this.siteUrl = data["siteUrl"];
             this.adminPassword = data["adminPassword"];
         }
     }
@@ -58410,7 +58423,10 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["requestXref"] = this.requestXref;
+        data["tenancyName"] = this.tenancyName;
         data["tenantName"] = this.tenantName;
+        data["companyName"] = this.companyName;
+        data["siteUrl"] = this.siteUrl;
         data["adminPassword"] = this.adminPassword;
         return data; 
     }
@@ -58418,7 +58434,10 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
 
 export interface ICompleteTenantRegistrationInput {
     requestXref: string;
+    tenancyName: string | undefined;
     tenantName: string | undefined;
+    companyName: string | undefined;
+    siteUrl: string | undefined;
     adminPassword: string;
 }
 
@@ -58429,6 +58448,7 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
     userName!: string | undefined;
     emailAddress!: string | undefined;
     isEmailConfirmationRequired!: boolean | undefined;
+    loginLink!: string | undefined;
 
     constructor(data?: ICompleteTenantRegistrationOutput) {
         if (data) {
@@ -58447,6 +58467,7 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
             this.userName = data["userName"];
             this.emailAddress = data["emailAddress"];
             this.isEmailConfirmationRequired = data["isEmailConfirmationRequired"];
+            this.loginLink = data["loginLink"];
         }
     }
 
@@ -58465,6 +58486,7 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
         data["userName"] = this.userName;
         data["emailAddress"] = this.emailAddress;
         data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
+        data["loginLink"] = this.loginLink;
         return data; 
     }
 }
@@ -58476,6 +58498,7 @@ export interface ICompleteTenantRegistrationOutput {
     userName: string | undefined;
     emailAddress: string | undefined;
     isEmailConfirmationRequired: boolean | undefined;
+    loginLink: string | undefined;
 }
 
 export class BankTransferSettingsDto implements IBankTransferSettingsDto {
@@ -62124,7 +62147,7 @@ export enum OfferFlag {
 export enum Module {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -62146,7 +62169,7 @@ export enum InstanceType76 {
 export enum ModuleType {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -62251,7 +62274,7 @@ export enum TenantHostType {
 export enum Module2 {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -62288,7 +62311,7 @@ export enum Group {
 export enum ModuleType2 {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -62600,7 +62623,7 @@ export enum ContactStarInfoDtoColorType {
 export enum EditionListDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -62688,7 +62711,7 @@ export enum SubmitTenantCreationRequestInputPaymentPeriodType {
 export enum PackageInfoDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -63241,7 +63264,7 @@ export enum ModuleSubscriptionInfoExtendedFrequency {
 export enum PackageConfigDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -63267,7 +63290,7 @@ export enum QuestionDtoType {
 export enum RoleListDtoModuleId {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -63344,7 +63367,7 @@ export enum RequestPaymentDtoRequestType {
 export enum ModuleSubscriptionInfoDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -63356,7 +63379,7 @@ export enum TransactionDetailsDtoTransactionStatus {
 export enum InviteUserInputModuleType {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 

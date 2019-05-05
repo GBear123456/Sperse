@@ -226,18 +226,6 @@
             letter-spacing: 0.3px;
             margin: 0px !important;
             vertical-align: middle;
-            .actions {
-                margin-left: 10px;
-                display: none;
-                i {
-                    color: #00aeef;
-                    padding: 0px 5px;
-                    cursor: pointer;
-                }
-            }
-            &:hover .actions {
-                display: inline-block;
-            }
         }
 
         h2, h3 {
@@ -267,6 +255,23 @@
                 input {
                     font-size: 16px!important;
                 }
+            }
+
+            .actions {
+                margin-left: 10px;
+                display: none;
+                i {
+                    color: #00aeef;
+                    padding: 0px 5px;
+                    cursor: pointer;
+                }
+
+                i.delete {
+                    color: #f44336;
+                  }
+            }
+            &:hover .actions {
+                display: inline-block;
             }
         }
 
