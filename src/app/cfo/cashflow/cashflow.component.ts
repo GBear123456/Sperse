@@ -4297,7 +4297,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (
             this.cellIsNotHistorical(cellObj) &&
             clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
-            clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
             clickedCellPrefix !== CategorizationPrefixes.AccountName
         ) {
             /** If we delete another cell then opened in details we get statsDetails for this cell, else - get already loaded details */
@@ -4368,6 +4367,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     date: item.date,
                                     initialDate: (<any>item).initialDate,
                                     amount: 0,
+                                    accountingTypeId: item.accountingTypeId,
                                     cashflowTypeId: item.cashflowTypeId,
                                     categoryId: item.categoryId,
                                     subCategoryId: item.subCategoryId,
