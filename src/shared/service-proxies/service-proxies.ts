@@ -19407,7 +19407,7 @@ export class PersonOrgRelationServiceProxy {
      * @id (optional) 
      * @return Success
      */
-    delete(id: number | null | undefined): Observable<DeletePersonOrgRelationOutput> {
+    delete(id: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/Delete?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
@@ -19418,7 +19418,6 @@ export class PersonOrgRelationServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
@@ -19429,14 +19428,14 @@ export class PersonOrgRelationServiceProxy {
                 try {
                     return this.processDelete(<any>response_);
                 } catch (e) {
-                    return <Observable<DeletePersonOrgRelationOutput>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<DeletePersonOrgRelationOutput>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processDelete(response: HttpResponseBase): Observable<DeletePersonOrgRelationOutput> {
+    protected processDelete(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -19445,17 +19444,14 @@ export class PersonOrgRelationServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? DeletePersonOrgRelationOutput.fromJS(resultData200) : new DeletePersonOrgRelationOutput();
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<DeletePersonOrgRelationOutput>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -37243,6 +37239,7 @@ export interface IPersonInfoDto {
 export class PersonOrgRelationShortInfo implements IPersonOrgRelationShortInfo {
     id!: number | undefined;
     isActive!: boolean | undefined;
+    isPrimary!: boolean | undefined;
     organization!: OrganizationShortInfo | undefined;
     relationType!: PersonOrgRelationTypeInfo | undefined;
     jobTitle!: string | undefined;
@@ -37260,6 +37257,7 @@ export class PersonOrgRelationShortInfo implements IPersonOrgRelationShortInfo {
         if (data) {
             this.id = data["id"];
             this.isActive = data["isActive"];
+            this.isPrimary = data["isPrimary"];
             this.organization = data["organization"] ? OrganizationShortInfo.fromJS(data["organization"]) : <any>undefined;
             this.relationType = data["relationType"] ? PersonOrgRelationTypeInfo.fromJS(data["relationType"]) : <any>undefined;
             this.jobTitle = data["jobTitle"];
@@ -37277,6 +37275,7 @@ export class PersonOrgRelationShortInfo implements IPersonOrgRelationShortInfo {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["isActive"] = this.isActive;
+        data["isPrimary"] = this.isPrimary;
         data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
         data["relationType"] = this.relationType ? this.relationType.toJSON() : <any>undefined;
         data["jobTitle"] = this.jobTitle;
@@ -37287,6 +37286,7 @@ export class PersonOrgRelationShortInfo implements IPersonOrgRelationShortInfo {
 export interface IPersonOrgRelationShortInfo {
     id: number | undefined;
     isActive: boolean | undefined;
+    isPrimary: boolean | undefined;
     organization: OrganizationShortInfo | undefined;
     relationType: PersonOrgRelationTypeInfo | undefined;
     jobTitle: string | undefined;
@@ -54172,42 +54172,6 @@ export interface IUpdatePersonOrgRelationInput {
     id: number;
     relationshipType: string;
     jobTitle: string;
-}
-
-export class DeletePersonOrgRelationOutput implements IDeletePersonOrgRelationOutput {
-    personPrimaryOrgRelationId!: number | undefined;
-
-    constructor(data?: IDeletePersonOrgRelationOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.personPrimaryOrgRelationId = data["personPrimaryOrgRelationId"];
-        }
-    }
-
-    static fromJS(data: any): DeletePersonOrgRelationOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new DeletePersonOrgRelationOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["personPrimaryOrgRelationId"] = this.personPrimaryOrgRelationId;
-        return data; 
-    }
-}
-
-export interface IDeletePersonOrgRelationOutput {
-    personPrimaryOrgRelationId: number | undefined;
 }
 
 export class PipelineDto implements IPipelineDto {

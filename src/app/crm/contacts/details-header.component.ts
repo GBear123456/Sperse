@@ -183,15 +183,25 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             if (result) {
                 this.dialog.closeAll();
                 let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
-                this._personOrgRelationService.delete(orgRelationId).subscribe(result => {
-                    if (result) {
-                        let orgRelations = this.data.personContactInfo.orgRelations;
-                        orgRelations.splice(orgRelations.indexOf(_.find(orgRelations, item => item.id === orgRelationId)), 1);
-                        if (result.personPrimaryOrgRelationId) {
-                            let orgRelation = _.find(orgRelations, item => item.id === result.personPrimaryOrgRelationId);
+                this._personOrgRelationService.delete(orgRelationId).subscribe(() => {
+                    let orgRelations = this.data.personContactInfo.orgRelations;
+                    let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
+                    orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
+                    if (orgRelationToDelete.isPrimary) {
+                        let orgRelation = orgRelations && _.sortBy(orgRelations, (orgRelation) => {
+                            return orgRelation.id;
+                        }).reverse()[0];
+                        if (orgRelation) {
+                            orgRelation.isPrimary = true;
                             this.data.primaryOrganizationContactId = orgRelation.organization.id;
                             this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
+                        } else {
+                            this.data.primaryOrganizationContactId = null;
+                            this.data.personContactInfo.orgRelations = [];
                         }
+                    } else {
+                        let orgRelation = _.find(orgRelations, item => item.isPrimary);
+                        this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
                     }
                 });
             }
