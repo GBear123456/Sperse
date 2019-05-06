@@ -57,10 +57,10 @@ export class EditTenantModalComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) private data: any,
         private _tenantService: TenantServiceProxy,
         private _tenantsService: TenantsService,
-        public ls: AppLocalizationService,
         private _notifyService: NotifyService,
-        private changeDetectorRef: ChangeDetectorRef,
-        private _dialogRef: MatDialogRef<EditTenantModalComponent>
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _dialogRef: MatDialogRef<EditTenantModalComponent>,
+        public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
@@ -73,7 +73,7 @@ export class EditTenantModalComponent implements OnInit {
             this.editionsGroups = editionsGroups;
             this.tenant = tenantResult;
             this.editionsModels = this._tenantsService.getEditionsModels(editionsGroups, tenantResult);
-            this.changeDetectorRef.detectChanges();
+            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -84,12 +84,9 @@ export class EditTenantModalComponent implements OnInit {
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
-                this.close();
+                this._dialogRef.close(true);
                 this.modalSave.emit(null);
             });
     }
 
-    close(): void {
-        this._dialogRef.close();
-    }
 }

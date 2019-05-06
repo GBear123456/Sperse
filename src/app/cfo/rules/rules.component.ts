@@ -161,8 +161,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
-
         this.refreshList();
         this.filtersService.setup(
             this.filters = [

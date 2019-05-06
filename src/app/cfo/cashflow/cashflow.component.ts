@@ -807,7 +807,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     ngOnInit() {
-        super.ngOnInit();
         this.initLocalization();
         this.displayedStatsDetails$.subscribe((details) => this.displayedStatsDetails = details);
         this.statsDetailResult$.subscribe(details => {

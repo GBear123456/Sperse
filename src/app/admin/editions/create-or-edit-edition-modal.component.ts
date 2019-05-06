@@ -34,6 +34,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnInit {
     @ViewChild('editionNameInput') editionNameInput: ElementRef;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     saving = false;
@@ -44,7 +45,6 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
     isFree = false;
     isTrialActive = false;
     isWaitingDayActive = false;
-    featureTree: FeatureTreeComponent;
     editData;
     active = false;
     title: string;
@@ -119,12 +119,9 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
-                this.close();
+                this._dialogRef.close(true);
                 this.modalSave.emit(null);
             });
     }
 
-    close(): void {
-        this._dialogRef.close();
-    }
 }

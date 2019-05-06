@@ -105,30 +105,29 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         private _changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
-    ) {
+    ) {}
+
+    ngOnInit() {
         this.formats = _.values(ConditionDtoCashFlowAmountFormat).map((value) => {
             return {
                 format: value
             };
         });
-
         this.conditionTypes = _.values(ConditionAttributeDtoConditionTypeId).map((value) => {
             return {
                 condition: value
             };
         });
-
-        this._changeDetectorRef.detectChanges();
         let requests: Observable<any>[] = [
-            _transactionsServiceProxy.getTransactionAttributeTypes(this._cfoService.instanceType as any, this._cfoService.instanceId),
-            _classificationServiceProxy.getKeyAttributeValues(this._cfoService.instanceType as any, this._cfoService.instanceId, new GetKeyAttributeValuesInput({ ruleId: this.data.id, transactionIds: <number[] > this.data.transactionIds })),
-            _cashflowServiceProxy.getCashFlowInitialData(this._cfoService.instanceType as any, this._cfoService.instanceId)
+            this._transactionsServiceProxy.getTransactionAttributeTypes(this._cfoService.instanceType as any, this._cfoService.instanceId),
+            this._classificationServiceProxy.getKeyAttributeValues(this._cfoService.instanceType as any, this._cfoService.instanceId, new GetKeyAttributeValuesInput({ ruleId: this.data.id, transactionIds: <number[] > this.data.transactionIds })),
+            this._cashflowServiceProxy.getCashFlowInitialData(this._cfoService.instanceType as any, this._cfoService.instanceId)
         ];
 
         if (this.data.id)
-            requests.push(_classificationServiceProxy.getRuleForEdit(this._cfoService.instanceType as any, this._cfoService.instanceId, this.data.id));
+            requests.push(this._classificationServiceProxy.getRuleForEdit(this._cfoService.instanceType as any, this._cfoService.instanceId, this.data.id));
         else if (this.data.transactionIds && this.data.transactionIds.length)
-            requests.push(_classificationServiceProxy.getTransactionCommonDetails(this._cfoService.instanceType as any, this._cfoService.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data)));
+            requests.push(this._classificationServiceProxy.getTransactionCommonDetails(this._cfoService.instanceType as any, this._cfoService.instanceId, GetTransactionCommonDetailsInput.fromJS(this.data)));
 
         forkJoin(requests).subscribe(([transactionAttributeTypesResult, keyAttributeValuesResult, cashFlowInitialDataResult, data]) => {
             // getTransactionAttributeTypes
@@ -197,9 +196,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
             }
             this._changeDetectorRef.detectChanges();
         });
-    }
-
-    ngOnInit() {
         if (this.data.transactions && this.data.transactions.length)
             this.buttons.unshift({
                 title: this.ls.l('Don\'t add'),

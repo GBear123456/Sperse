@@ -7,7 +7,7 @@ import { from } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { CashflowServiceProxy, CashFlowGridSettingsDto, CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, CashFlowGridSettingsDto } from '@shared/service-proxies/service-proxies';
 import { GeneralScope } from '../enums/general-scope.enum';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';

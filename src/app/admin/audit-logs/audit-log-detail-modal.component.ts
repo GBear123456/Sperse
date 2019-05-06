@@ -34,7 +34,7 @@ export class AuditLogDetailModalComponent implements OnInit {
     }
 
     getDurationAsMs(): string {
-        return this.ls.l('Xms', this.auditLog.executionDuration.toString());
+        return this.ls.ls('Platform', 'Xms', this.auditLog.executionDuration.toString());
     }
 
     getFormattedParameters(): string {

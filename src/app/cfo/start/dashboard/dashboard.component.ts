@@ -54,7 +54,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
         this.rootComponent.overflowHidden(true);
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],
@@ -85,7 +84,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.zendeskService.showWidget();
     }
 
-    ngOnDestroy(): void {        
+    ngOnDestroy(): void {
         this._dashboardService.unsubscribe();
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');

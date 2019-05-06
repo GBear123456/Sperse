@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, Injector, Output, Input, EventEmitter } from '@angular/core';
+import { Component, Injector, Output, Input, EventEmitter } from '@angular/core';
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
@@ -18,7 +18,7 @@ import { ChooseXeroAccountComponent } from '@shared/cfo/bank-accounts/xero/impor
     styleUrls: ['./import-xero-chart-of-accounts-button.component.less'],
     providers: [ SyncAccountServiceProxy, CategoryTreeServiceProxy ]
 })
-export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase implements OnInit {
+export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
     @Output() onComplete = new EventEmitter();
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     @Input() override: boolean;
@@ -35,10 +35,6 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
             .subscribe((result) => {
                 this.createAccountAvailable = result;
             });
-    }
-
-    ngOnInit(): void {
-        super.ngOnInit();
     }
 
     importChartOfAccount(): void {
@@ -99,7 +95,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase i
         });
         this._categoryTreeServiceProxy.sync(InstanceType[this.instanceType], this.instanceId, syncInput, this.override)
             .pipe(finalize(() => { abp.ui.clearBusy(); }))
-            .subscribe(result => {
+            .subscribe(() => {
                 this.notify.info(this.l('SavedSuccessfully'));
                 this.onComplete.emit();
             });

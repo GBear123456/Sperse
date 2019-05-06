@@ -74,7 +74,7 @@ export class CreateTenantModalComponent implements OnInit {
         this.init();
         this._profileService.getPasswordComplexitySetting()
             .pipe(finalize(() => {
-                this.modalDialog.startLoading();
+                this.modalDialog.finishLoading();
                 this._changeDetectorRef.detectChanges();
             }))
             .subscribe(result => {
@@ -101,13 +101,9 @@ export class CreateTenantModalComponent implements OnInit {
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
-                this.close();
+                this._dialogRef.close(true);
                 this.modalSave.emit(null);
             });
-    }
-
-    close(): void {
-        this._dialogRef.close();
     }
 
 }

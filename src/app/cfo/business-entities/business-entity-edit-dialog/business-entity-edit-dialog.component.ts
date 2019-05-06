@@ -21,6 +21,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
@@ -45,6 +46,20 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     };
     isNew = false;
     businessEntity = new BusinessEntityInfoDto();
+    title: string;
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('BusinessEntity_Cancel'),
+            class: 'default',
+            action: () => {
+                this.modalDialog.close(true);
+            }
+        }, {
+            title: this.ls.l('BusinessEntity_Save'),
+            class: 'primary',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
         private _businessEntityService: BusinessEntityServiceProxy,
@@ -56,9 +71,12 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
         this.isNew = !this.data.id;
+        this.title = this.isNew ? this.ls.l('BusinessEntity_CreateHeader') : this.ls.l('BusinessEntity_EditHeader');
+    }
+
+    ngOnInit() {
         this.countriesStateLoad();
         this.loadTypes();
-
         if (!this.isNew) {
             this.modalDialog.startLoading();
             this._businessEntityService.get(this._cfoService.instanceType as any, this._cfoService.instanceId, this.data.id)
@@ -90,30 +108,6 @@ export class BusinessEntityEditDialogComponent implements OnInit {
                     this._changeDetectorRef.detectChanges();
                 });
         }
-    }
-
-    ngOnInit() {
-        this.initHeader();
-    }
-
-    initHeader(): any {
-        this.data = Object.assign(this.data, {
-            title: this.isNew ? this.ls.l('BusinessEntity_CreateHeader') : this.ls.l('BusinessEntity_EditHeader'),
-            editTitle: false,
-            buttons: [
-                {
-                    title: this.ls.l('BusinessEntity_Cancel'),
-                    class: 'default',
-                    action: () => {
-                        this.modalDialog.close(true);
-                    }
-                }, {
-                    title: this.ls.l('BusinessEntity_Save'),
-                    class: 'primary',
-                    action: this.save.bind(this)
-                }
-            ]
-        });
     }
 
     loadTypes() {

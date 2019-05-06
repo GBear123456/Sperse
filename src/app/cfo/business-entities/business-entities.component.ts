@@ -46,7 +46,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     ngOnInit() {
-        super.ngOnInit();
         this.rootComponent.overflowHidden(true);
 
         this.headlineConfig = {

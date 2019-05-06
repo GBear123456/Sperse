@@ -1,21 +1,21 @@
 <div class="close-dialog" (click)="close(true)"></div>
 <div class="mat-dialog-header">
-    <div class="title">
-        <ng-container *ngIf="!editTitle">
-            <input type="text" [value]="data.title || title" readonly>
-        </ng-container>
-        <ng-container *ngIf="editTitle">
-            <dx-text-box
-                name="title"
-                [showClearButton]="titleClearButton"
-                [placeholder]="placeholder"
-                [(value)]="title"
-                [isValid]="isTitleValid == undefined || isTitleValid"
-                (onInput)="titleChanged($event)"
-                (onKeyUp)="titleKeyUp($event)">
-            </dx-text-box>
-        </ng-container>
-    </div>
+    <ng-container *ngIf="!editTitle">
+        <div class="title">
+            <input type="text" [value]="title || data.title" readonly>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="editTitle">
+        <dx-text-box
+            name="title"
+            [showClearButton]="titleClearButton"
+            [placeholder]="placeholder"
+            [(value)]="title"
+            [isValid]="isTitleValid == undefined || isTitleValid"
+            (onInput)="titleChanged($event)"
+            (onKeyUp)="titleKeyUp($event)">
+        </dx-text-box>
+    </ng-container>
     <mat-dialog-actions>
         <div class="mat-dialog-options" *ngIf="options">
             <ng-template ngFor let-option [ngForOf]="options" let-i="index">

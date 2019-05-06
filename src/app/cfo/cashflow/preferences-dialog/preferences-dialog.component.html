@@ -1,6 +1,7 @@
-<modal-dialog *ngIf="active"
+<modal-dialog [hidden]="!active"
               [title]="ls.l('CashFlowGrid_UserPrefs_Header')"
-              [editTitle]="false">
+              [editTitle]="false"
+              [buttons]="buttons">
     <dx-scroll-view showScrollbar="onHover">
         <div class="modal-body" *ngIf="active">
             <div class="section">

@@ -158,11 +158,10 @@ export class CreateActivityDialogComponent implements OnInit {
                 this.endDate = new Date(dateNow);
             }
         }
-
-        this.loadResourcesData();
     }
 
     ngOnInit() {
+        this.loadResourcesData();
         if (!this.data.appointment.AssignedUserIds)
             this.data.appointment.AssignedUserIds = [this.appSession.userId];
 
@@ -187,17 +186,19 @@ export class CreateActivityDialogComponent implements OnInit {
             this.lookup('Leads').then(res => this.leads = res),
             this.lookup('Orders').then(res => this.orders = res),
             this.lookup('Clients').then(res => this.clients = res)
-        ]).then(() => {
-            this.modalDialog.finishLoading();
-        });
+        ]).then(
+            () => this.modalDialog.finishLoading(),
+            () => this.modalDialog.finishLoading()
+        );
         this.initToolbarConfig();
     }
 
     lookup(uri, search = '') {
-        return new Promise((resolve) => {
-            this[uri + 'Proxy']['getAllByPhrase'](search, this.LOOKUP_RECORDS_COUNT).subscribe((res) => {
-                resolve(res);
-            });
+        return new Promise((resolve, reject) => {
+            this[uri + 'Proxy']['getAllByPhrase'](search, this.LOOKUP_RECORDS_COUNT).subscribe(
+                (res) => resolve(res),
+                (err) => reject(err)
+            );
         });
     }
 

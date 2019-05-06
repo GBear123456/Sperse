@@ -1,12 +1,14 @@
 <modal-dialog [title]="title"
+              [buttons]="buttons"
+              [options]="options"
               [editTitle]="true"
-              [placeholder]="l('Enter the rule name')"
+              [placeholder]="ls.l('Enter the rule name')"
               [isTitleValid]="isTitleValid">
     <dx-scroll-view showScrollbar="onHover">
         <div class="transactions-container" *ngIf="showSelectedTransactions">
             <div class="close-transactions" (click)="showSelectedTransactions=false"></div>
             <dx-data-grid class="grid-layout"
-                          [noDataText]="l('No_Transactions')"
+                          [noDataText]="ls.l('No_Transactions')"
                           [dataSource]="data.transactions"
                           [showColumnHeaders]="true"
                           [showColumnLines]="false"
@@ -42,7 +44,7 @@
                         <h3>{{ls.l('Original transactions Descriptors')}}</h3>
                     </div>
                     <dx-data-grid #attributesComponent
-                         [noDataText]="l('No_Attributes')"
+                         [noDataText]="ls.l('No_Attributes')"
                          [dataSource]="attributesAndKeywords"
                          [showColumnHeaders]="false"
                          [showColumnLines]="false"
@@ -119,7 +121,7 @@
 
                             <div *dxTemplate="let cell of 'valueTemplate'">
                                 <dx-select-box
-                                               [placeholder]="l('Enter_Value')"
+                                               [placeholder]="ls.l('Enter_Value')"
                                                [hoverStateEnabled]="false"
                                                [activeStateEnabled]="false"
                                                [focusStateEnabled]="false"
@@ -147,7 +149,7 @@
                         <div class="field">
                             <!-- label>{{ls.l('Bank')}}</label -->
                            <dx-select-box
-                               [placeholder]="l('Bank')"
+                               [placeholder]="ls.l('Bank')"
                                [dataSource]="banks"
                                valueExpr="id"
                                displayExpr="name"
@@ -159,7 +161,7 @@
                         <div class="field">
                             <!-- label>{{ls.l('Account')}}</label -->
                            <dx-select-box
-                               [placeholder]="l('Account')"
+                               [placeholder]="ls.l('Account')"
                                [dataSource]="accounts"
                                valueExpr="id"
                                displayExpr="name"
@@ -173,7 +175,7 @@
                     <div class="fields-row">
                         <div class="field">
                             <!-- label>{{ls.l('Category')}}</label -->
-                            <dx-select-box [placeholder]="l('Category')"
+                            <dx-select-box [placeholder]="ls.l('Category')"
                                            [dataSource]="transactionCategories"
                                            valueExpr="id"
                                            displayExpr="name"
@@ -184,7 +186,7 @@
                         </div>
                         <div class="field">
                             <!-- label>{{ls.l('Types')}}</label -->
-                            <dx-drop-down-box [placeholder]="l('Types')"
+                            <dx-drop-down-box [placeholder]="ls.l('Types')"
                                               [dataSource]="transactionTypes"
                                               valueExpr="id"
                                               displayExpr="name"
@@ -276,8 +278,6 @@
                         [showTitle]="false"
                         [showHeader]="true"
                         [dragMode]="false"
-                        [instanceType]="instanceType"
-                        [instanceId]="instanceId"
                         [categoryId]="data.categoryId"
                         [isValid]="isCategoryValid"
                         (onSelectionChanged)="onCategoryChanged($event)">

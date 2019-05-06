@@ -310,7 +310,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngOnInit() {
-        super.ngOnInit();
         this.initLocalization();
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';

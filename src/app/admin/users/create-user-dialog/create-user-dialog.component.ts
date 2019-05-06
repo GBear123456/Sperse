@@ -97,12 +97,11 @@ export class CreateUserDialogComponent implements OnInit {
             { text: this.ls.l('SaveAndAddNew'), selected: false },
             { text: this.ls.l('SaveAndClose'), selected: false }
         ];
-
-        this.userDataInit();
-        this.initToolbarConfig();
     }
 
     ngOnInit() {
+        this.userDataInit();
+        this.initToolbarConfig();
         this.saveOptionsInit();
     }
 

@@ -218,7 +218,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
         this.initLocalization();
         this.bankAccountsService.load();
         let forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);

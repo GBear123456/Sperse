@@ -1,7 +1,6 @@
-import { Component, OnInit, Injector, Output, Input, EventEmitter } from '@angular/core';
+import { Component, Injector, Output, Input, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuickBookServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'import-quick-book-button',
@@ -9,7 +8,7 @@ import { finalize } from 'rxjs/operators';
     styleUrls: ['./import-quick-book-button.component.less'],
     providers: [QuickBookServiceProxy]
 })
-export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implements OnInit {
+export class ImportFromQuickBooksButtonComponent extends CFOComponentBase {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     @Input() override: boolean;
 
@@ -18,10 +17,6 @@ export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implem
         private _quickBookService: QuickBookServiceProxy
     ) {
         super(injector);
-    }
-
-    ngOnInit(): void {
-        super.ngOnInit();
     }
 
     buttonClick(): void {
@@ -74,7 +69,7 @@ export class ImportFromQuickBooksButtonComponent extends CFOComponentBase implem
     }
 
     private onDialogClose(e) {
-        abp.ui.clearBusy(); 
+        abp.ui.clearBusy();
         this.onClose.emit(e);
     }
 }

@@ -41,7 +41,6 @@ import { AddMemberModalComponent } from 'app/admin/organization-units/add-member
 import { AdminRoutingModule } from './admin-routing.module';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail-modal.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
-import { EntityChangeDetailModalComponent } from './audit-logs/entity-change-detail-modal.component';
 import { HostDashboardComponent } from './dashboard/host-dashboard.component';
 import { CreateOrEditEditionModalComponent } from './editions/create-or-edit-edition-modal.component';
 import { EditionsComponent } from './editions/editions.component';
@@ -141,7 +140,6 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         CreateOrEditRoleModalComponent,
         AuditLogsComponent,
         AuditLogDetailModalComponent,
-        EntityChangeDetailModalComponent,
         HostSettingsComponent,
         MaintenanceComponent,
         JobsComponent,

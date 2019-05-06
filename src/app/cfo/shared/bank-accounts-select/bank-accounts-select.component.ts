@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
@@ -9,7 +9,7 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
     styleUrls: ['./bank-accounts-select.component.less'],
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy ]
 })
-export class BankAccountsSelectComponent extends CFOComponentBase implements OnInit {
+export class BankAccountsSelectComponent extends CFOComponentBase {
     @Input() targetBankAccountsTooltip = '';
     @Input() highlightedBankAccountIds = [];
     @Input() highlightUsedRows = false;
@@ -33,8 +33,6 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
         );
     }
 
-    ngOnInit(): void { }
-
     bankAccountsSelected() {
         /** @todo bug - situation when selected business entities changed, and then click apply (apply triggers first, then changeSelectedBusinessEntities) */
         this.bankAccountsService.applyFilter();
@@ -57,8 +55,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     onMultiTagPreparing(e) {
         let totalCount = this.businessEntities.length,
             selectedCount = e.selectedItems.length;
-        e.text = totalCount && selectedCount ? 
-            (selectedCount != totalCount ? selectedCount + ' ' + this.l('of') + ' ' : '') 
+        e.text = totalCount && selectedCount ?
+            (selectedCount != totalCount ? selectedCount + ' ' + this.l('of') + ' ' : '')
                 + totalCount + ' ' + this.l('entities') : this.l('All_Entities');
     }
 

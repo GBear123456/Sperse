@@ -11,7 +11,7 @@ import { SyncAccountDto } from 'shared/service-proxies/service-proxies';
 export class ChooseXeroAccountComponent extends CFOComponentBase implements OnInit {
     accounts: SyncAccountDto[] = null;
     selectedAccountId: number = null;
-    createAccountAvailable: boolean = false;
+    createAccountAvailable = false;
 
     constructor(
         injector: Injector,
@@ -22,7 +22,6 @@ export class ChooseXeroAccountComponent extends CFOComponentBase implements OnIn
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
         this.createAccountAvailable = this.data.createAccountAvailable;
         this.accounts = this.data.accounts;
         this.selectedAccountId = this.accounts[0].id;

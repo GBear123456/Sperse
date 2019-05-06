@@ -135,7 +135,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
         this.initLocalization();
         this.initHeadlineConfig();
 

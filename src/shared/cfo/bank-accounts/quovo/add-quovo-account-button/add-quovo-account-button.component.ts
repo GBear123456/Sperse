@@ -20,8 +20,6 @@ export class AddQuovoAccountButtonComponent extends CFOComponentBase implements 
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
-
         this.canShow = this.isInstanceAdmin;
 
         if (this.canShow) {
