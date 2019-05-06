@@ -41,7 +41,6 @@ import { ModalModule } from 'ngx-bootstrap';
 
 /** Application imports */
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
-import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { AppCommonModule } from '../shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
@@ -175,8 +174,7 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
     providers: [
         ContactServiceProxy,
         SyncServiceProxy,
-        CalculatorService,
-        ZendeskService
+        CalculatorService
     ]
 })
 

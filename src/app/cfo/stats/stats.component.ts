@@ -11,7 +11,6 @@ import * as moment from 'moment';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppService } from '@app/app.service';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
@@ -161,7 +160,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
         private _statsService: StatsService,
-        private zendeskService: ZendeskService,
         bankAccountsService: BankAccountsService
     ) {
         super(injector);
@@ -770,7 +768,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     activate() {
-        this.zendeskService.showWidget();
         this.initLocalization();
         this.initToolbarConfig();
         this.setupFilters();
@@ -790,7 +787,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     deactivate() {
-        this.zendeskService.hideWidget();
         this.localizationService.localizationSourceName = undefined;
         this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
