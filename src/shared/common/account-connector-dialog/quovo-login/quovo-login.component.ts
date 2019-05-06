@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Input, Output, Injector, OnDestroy } f
 import { QuovoService } from '@shared/cfo/bank-accounts/quovo/QuovoService';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { first, takeUntil, tap, filter, switchMap } from 'rxjs/operators';
+import { first, takeUntil, filter, switchMap } from 'rxjs/operators';
 
 @Component({
     selector: 'quovo-login',
@@ -31,7 +31,6 @@ export class QuovoLoginComponent extends CFOComponentBase implements OnInit, OnD
                 switchMap(() => this.quovoService.connect().pipe(filter(loaded => loaded))),
                 first(),
                 takeUntil(this.destroy$),
-                tap(x => 'quovo login open event'),
                 switchMap(() => this.quovoService.open(this.accountId))
             ).subscribe(() => {});
 
