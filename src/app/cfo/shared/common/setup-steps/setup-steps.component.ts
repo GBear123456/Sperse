@@ -31,15 +31,13 @@ export class SetupStepComponent extends CFOComponentBase {
         super(injector);
     }
 
-    onClick(index: number, elem) {
-        if (elem.isAlwaysActive || this._cfoService.hasTransactions && elem.component)
+    onClick(elem) {
+        if (this.stepLinkIsEnabled(elem))
             this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + elem.component]);
     }
 
-    getItemClass(index: number) {
-        if (index < this.SelectedStepIndex) return 'passed';
-        else if (index == this.SelectedStepIndex) return 'current';
-        else return '';
+    stepLinkIsEnabled(elem) {
+        return elem.isAlwaysActive || this._cfoService.hasTransactions && elem.component;
     }
 
     showIntro() {
