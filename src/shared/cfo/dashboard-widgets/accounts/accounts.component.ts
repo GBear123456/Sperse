@@ -60,7 +60,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getAccountTotals(): void {
-        this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds)
+        this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, 'USD')
             .subscribe((result) => {
                 this.accountsData = result;
             });
@@ -68,7 +68,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     getDailyStats(): void {
         this.startLoading();
-        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate)
+        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate, 'USD')
             .pipe(finalize(() => this.finishLoading()))
             .subscribe(result => {
                 this.dailyStatsData = result;
