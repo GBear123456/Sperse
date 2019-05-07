@@ -10387,14 +10387,18 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getAccountTotals(instanceType: InstanceType69 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<AccountTotals> {
+    getAccountTotals(instanceType: InstanceType69 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string): Observable<AccountTotals> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetAccountTotals?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (bankAccountIds !== undefined)
-            bankAccountIds && bankAccountIds.forEach(item => { url_ += "bankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+            bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10510,7 +10514,7 @@ export class DashboardServiceProxy {
      * @startDate (optional) 
      * @return Success
      */
-    getDailyBalanceStats(instanceType: InstanceType71 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
+    getDailyBalanceStats(instanceType: InstanceType71 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment, currencyId: string): Observable<GetDailyBalanceStatsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetDailyBalanceStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -10524,6 +10528,10 @@ export class DashboardServiceProxy {
             throw new Error("The parameter 'endDate' must be defined and cannot be null.");
         else
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -12144,20 +12152,20 @@ export class EmailingServiceProxy {
     /**
      * @return Success
      */
-    payload(recipientUserId: number, emailType: string, emailAddress: string): Observable<string> {
+    payload(recipientUserId: number, recipientHash: string, emailType: string): Observable<string> {
         let url_ = this.baseUrl + "/api/Emailing/Payload?";
         if (recipientUserId === undefined || recipientUserId === null)
             throw new Error("The parameter 'recipientUserId' must be defined and cannot be null.");
         else
             url_ += "recipientUserId=" + encodeURIComponent("" + recipientUserId) + "&"; 
+        if (recipientHash === undefined || recipientHash === null)
+            throw new Error("The parameter 'recipientHash' must be defined and cannot be null.");
+        else
+            url_ += "recipientHash=" + encodeURIComponent("" + recipientHash) + "&"; 
         if (emailType === undefined || emailType === null)
             throw new Error("The parameter 'emailType' must be defined and cannot be null.");
         else
             url_ += "emailType=" + encodeURIComponent("" + emailType) + "&"; 
-        if (emailAddress === undefined || emailAddress === null)
-            throw new Error("The parameter 'emailAddress' must be defined and cannot be null.");
-        else
-            url_ += "emailAddress=" + encodeURIComponent("" + emailAddress) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -14354,8 +14362,8 @@ export class LeadServiceProxy {
      * @model (optional) 
      * @return Success
      */
-    submitContactUsRequest(model: SubmitContactUsRequestInput | null | undefined): Observable<SubmitContactUsRequestOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitContactUsRequest";
+    submitTenancyRequest(model: SubmitTenancyRequestInput | null | undefined): Observable<SubmitTenancyRequestOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitTenancyRequest";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(model);
@@ -14371,20 +14379,20 @@ export class LeadServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSubmitContactUsRequest(response_);
+            return this.processSubmitTenancyRequest(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSubmitContactUsRequest(<any>response_);
+                    return this.processSubmitTenancyRequest(<any>response_);
                 } catch (e) {
-                    return <Observable<SubmitContactUsRequestOutput>><any>_observableThrow(e);
+                    return <Observable<SubmitTenancyRequestOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SubmitContactUsRequestOutput>><any>_observableThrow(response_);
+                return <Observable<SubmitTenancyRequestOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSubmitContactUsRequest(response: HttpResponseBase): Observable<SubmitContactUsRequestOutput> {
+    protected processSubmitTenancyRequest(response: HttpResponseBase): Observable<SubmitTenancyRequestOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14395,7 +14403,7 @@ export class LeadServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SubmitContactUsRequestOutput.fromJS(resultData200) : new SubmitContactUsRequestOutput();
+            result200 = resultData200 ? SubmitTenancyRequestOutput.fromJS(resultData200) : new SubmitTenancyRequestOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -14403,15 +14411,15 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SubmitContactUsRequestOutput>(<any>null);
+        return _observableOf<SubmitTenancyRequestOutput>(<any>null);
     }
 
     /**
      * @input (optional) 
      * @return Success
      */
-    submitTenantCreationRequest(input: SubmitTenantCreationRequestInput | null | undefined): Observable<SubmitTenantCreationRequestOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitTenantCreationRequest";
+    submitFreeTrialRequest(input: SubmitFreeTrialRequestInput | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitFreeTrialRequest";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -14427,20 +14435,20 @@ export class LeadServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSubmitTenantCreationRequest(response_);
+            return this.processSubmitFreeTrialRequest(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSubmitTenantCreationRequest(<any>response_);
+                    return this.processSubmitFreeTrialRequest(<any>response_);
                 } catch (e) {
-                    return <Observable<SubmitTenantCreationRequestOutput>><any>_observableThrow(e);
+                    return <Observable<string>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<SubmitTenantCreationRequestOutput>><any>_observableThrow(response_);
+                return <Observable<string>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSubmitTenantCreationRequest(response: HttpResponseBase): Observable<SubmitTenantCreationRequestOutput> {
+    protected processSubmitFreeTrialRequest(response: HttpResponseBase): Observable<string> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -14451,7 +14459,7 @@ export class LeadServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SubmitTenantCreationRequestOutput.fromJS(resultData200) : new SubmitTenantCreationRequestOutput();
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -14459,7 +14467,7 @@ export class LeadServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<SubmitTenantCreationRequestOutput>(<any>null);
+        return _observableOf<string>(<any>null);
     }
 
     /**
@@ -27812,6 +27820,136 @@ export class UserAssignmentServiceProxy {
         }
         return _observableOf<UserInfoDto[]>(<any>null);
     }
+
+    /**
+     * @includePhotos (optional) 
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getAllowedAssignableUsersForVendor(includePhotos: boolean | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetAllowedAssignableUsersForVendor?";
+        if (includePhotos !== undefined)
+            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllowedAssignableUsersForVendor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllowedAssignableUsersForVendor(<any>response_);
+                } catch (e) {
+                    return <Observable<UserInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllowedAssignableUsersForVendor(response: HttpResponseBase): Observable<UserInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(UserInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserInfoDto[]>(<any>null);
+    }
+
+    /**
+     * @includePhotos (optional) 
+     * @searchPhrase (optional) 
+     * @topCount (optional) 
+     * @return Success
+     */
+    getAllowedAssignableUsersForInvestor(includePhotos: boolean | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetAllowedAssignableUsersForInvestor?";
+        if (includePhotos !== undefined)
+            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
+        if (searchPhrase !== undefined)
+            url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (topCount !== undefined)
+            url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllowedAssignableUsersForInvestor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllowedAssignableUsersForInvestor(<any>response_);
+                } catch (e) {
+                    return <Observable<UserInfoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UserInfoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllowedAssignableUsersForInvestor(response: HttpResponseBase): Observable<UserInfoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(UserInfoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<UserInfoDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -29852,6 +29990,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
     testMode!: boolean | undefined;
     newUserPassword!: string | undefined;
     sendWelcomeEmail!: boolean | undefined;
+    returnNewUserInfo!: boolean | undefined;
     trackingInformation!: TrackingInformation | undefined;
     personalInformation!: PersonalInformation | undefined;
     debtInformation!: DebtInformation | undefined;
@@ -29875,6 +30014,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
             this.testMode = data["testMode"];
             this.newUserPassword = data["newUserPassword"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
+            this.returnNewUserInfo = data["returnNewUserInfo"];
             this.trackingInformation = data["trackingInformation"] ? TrackingInformation.fromJS(data["trackingInformation"]) : <any>undefined;
             this.personalInformation = data["personalInformation"] ? PersonalInformation.fromJS(data["personalInformation"]) : <any>undefined;
             this.debtInformation = data["debtInformation"] ? DebtInformation.fromJS(data["debtInformation"]) : <any>undefined;
@@ -29898,6 +30038,7 @@ export class RegisterApplicantRequest implements IRegisterApplicantRequest {
         data["testMode"] = this.testMode;
         data["newUserPassword"] = this.newUserPassword;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
+        data["returnNewUserInfo"] = this.returnNewUserInfo;
         data["trackingInformation"] = this.trackingInformation ? this.trackingInformation.toJSON() : <any>undefined;
         data["personalInformation"] = this.personalInformation ? this.personalInformation.toJSON() : <any>undefined;
         data["debtInformation"] = this.debtInformation ? this.debtInformation.toJSON() : <any>undefined;
@@ -29914,6 +30055,7 @@ export interface IRegisterApplicantRequest {
     testMode: boolean | undefined;
     newUserPassword: string | undefined;
     sendWelcomeEmail: boolean | undefined;
+    returnNewUserInfo: boolean | undefined;
     trackingInformation: TrackingInformation | undefined;
     personalInformation: PersonalInformation | undefined;
     debtInformation: DebtInformation | undefined;
@@ -33136,6 +33278,7 @@ export class ImportForecastInput implements IImportForecastInput {
     descriptor!: string | undefined;
     description!: string | undefined;
     model!: string | undefined;
+    currencyId!: string;
     amount!: number;
     cashFlowTypeId!: string | undefined;
 
@@ -33157,6 +33300,7 @@ export class ImportForecastInput implements IImportForecastInput {
             this.descriptor = data["descriptor"];
             this.description = data["description"];
             this.model = data["model"];
+            this.currencyId = data["currencyId"];
             this.amount = data["amount"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
         }
@@ -33178,6 +33322,7 @@ export class ImportForecastInput implements IImportForecastInput {
         data["descriptor"] = this.descriptor;
         data["description"] = this.description;
         data["model"] = this.model;
+        data["currencyId"] = this.currencyId;
         data["amount"] = this.amount;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
         return data; 
@@ -33192,6 +33337,7 @@ export interface IImportForecastInput {
     descriptor: string | undefined;
     description: string | undefined;
     model: string | undefined;
+    currencyId: string;
     amount: number;
     cashFlowTypeId: string | undefined;
 }
@@ -42086,7 +42232,6 @@ export class AccountTotals implements IAccountTotals {
     bankAccountCount!: number | undefined;
     totalNetWorth!: number | undefined;
     totalPending!: number | undefined;
-    currency!: string | undefined;
 
     constructor(data?: IAccountTotals) {
         if (data) {
@@ -42102,7 +42247,6 @@ export class AccountTotals implements IAccountTotals {
             this.bankAccountCount = data["bankAccountCount"];
             this.totalNetWorth = data["totalNetWorth"];
             this.totalPending = data["totalPending"];
-            this.currency = data["currency"];
         }
     }
 
@@ -42118,7 +42262,6 @@ export class AccountTotals implements IAccountTotals {
         data["bankAccountCount"] = this.bankAccountCount;
         data["totalNetWorth"] = this.totalNetWorth;
         data["totalPending"] = this.totalPending;
-        data["currency"] = this.currency;
         return data; 
     }
 }
@@ -42127,7 +42270,6 @@ export interface IAccountTotals {
     bankAccountCount: number | undefined;
     totalNetWorth: number | undefined;
     totalPending: number | undefined;
-    currency: string | undefined;
 }
 
 export class CategorizationStatus implements ICategorizationStatus {
@@ -42183,7 +42325,6 @@ export class GetDailyBalanceStatsOutput implements IGetDailyBalanceStatsOutput {
     avarageBalance!: number | undefined;
     maxBalance!: number | undefined;
     count!: number | undefined;
-    currency!: string | undefined;
 
     constructor(data?: IGetDailyBalanceStatsOutput) {
         if (data) {
@@ -42200,7 +42341,6 @@ export class GetDailyBalanceStatsOutput implements IGetDailyBalanceStatsOutput {
             this.avarageBalance = data["avarageBalance"];
             this.maxBalance = data["maxBalance"];
             this.count = data["count"];
-            this.currency = data["currency"];
         }
     }
 
@@ -42217,7 +42357,6 @@ export class GetDailyBalanceStatsOutput implements IGetDailyBalanceStatsOutput {
         data["avarageBalance"] = this.avarageBalance;
         data["maxBalance"] = this.maxBalance;
         data["count"] = this.count;
-        data["currency"] = this.currency;
         return data; 
     }
 }
@@ -42227,7 +42366,6 @@ export interface IGetDailyBalanceStatsOutput {
     avarageBalance: number | undefined;
     maxBalance: number | undefined;
     count: number | undefined;
-    currency: string | undefined;
 }
 
 export class GetTotalsOutput implements IGetTotalsOutput {
@@ -46919,123 +47057,16 @@ export interface ILeadCancellationReasonDto {
     sortOrder: number | undefined;
 }
 
-export class SubmitContactUsRequestInput implements ISubmitContactUsRequestInput {
-    website!: string | undefined;
-    tenancyName!: string | undefined;
-    firstName!: string;
-    lastName!: string;
-    email!: string;
-    phone!: string | undefined;
-    phoneExt!: string | undefined;
-    comments!: string | undefined;
-    sourceCode!: string | undefined;
-    channelCode!: string | undefined;
-    affiliateCode!: string | undefined;
-
-    constructor(data?: ISubmitContactUsRequestInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.website = data["website"];
-            this.tenancyName = data["tenancyName"];
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
-            this.email = data["email"];
-            this.phone = data["phone"];
-            this.phoneExt = data["phoneExt"];
-            this.comments = data["comments"];
-            this.sourceCode = data["sourceCode"];
-            this.channelCode = data["channelCode"];
-            this.affiliateCode = data["affiliateCode"];
-        }
-    }
-
-    static fromJS(data: any): SubmitContactUsRequestInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubmitContactUsRequestInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["website"] = this.website;
-        data["tenancyName"] = this.tenancyName;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["email"] = this.email;
-        data["phone"] = this.phone;
-        data["phoneExt"] = this.phoneExt;
-        data["comments"] = this.comments;
-        data["sourceCode"] = this.sourceCode;
-        data["channelCode"] = this.channelCode;
-        data["affiliateCode"] = this.affiliateCode;
-        return data; 
-    }
-}
-
-export interface ISubmitContactUsRequestInput {
-    website: string | undefined;
-    tenancyName: string | undefined;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string | undefined;
-    phoneExt: string | undefined;
-    comments: string | undefined;
-    sourceCode: string | undefined;
-    channelCode: string | undefined;
-    affiliateCode: string | undefined;
-}
-
-export class SubmitContactUsRequestOutput implements ISubmitContactUsRequestOutput {
-    contactId!: number | undefined;
-
-    constructor(data?: ISubmitContactUsRequestOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-        }
-    }
-
-    static fromJS(data: any): SubmitContactUsRequestOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubmitContactUsRequestOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        return data; 
-    }
-}
-
-export interface ISubmitContactUsRequestOutput {
-    contactId: number | undefined;
-}
-
-export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
-    companyName!: string;
-    paymentPeriodType!: SubmitTenantCreationRequestInputPaymentPeriodType;
-    interests!: InterestDto[];
+export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     leadRequestXref!: string | undefined;
+    companyName!: string | undefined;
+    paymentPeriodType!: SubmitTenancyRequestInputPaymentPeriodType | undefined;
+    packages!: PackageInfoDto[] | undefined;
+    website!: string | undefined;
+    city!: string | undefined;
+    state!: string | undefined;
+    stage!: string | undefined;
+    tag!: string | undefined;
     firstName!: string;
     lastName!: string;
     email!: string;
@@ -47045,29 +47076,32 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
     sourceCode!: string | undefined;
     channelCode!: string | undefined;
     affiliateCode!: string | undefined;
+    isHelpNeeded!: boolean | undefined;
 
-    constructor(data?: ISubmitTenantCreationRequestInput) {
+    constructor(data?: ISubmitTenancyRequestInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
-        if (!data) {
-            this.interests = [];
-        }
     }
 
     init(data?: any) {
         if (data) {
+            this.leadRequestXref = data["leadRequestXref"];
             this.companyName = data["companyName"];
             this.paymentPeriodType = data["paymentPeriodType"];
-            if (data["interests"] && data["interests"].constructor === Array) {
-                this.interests = [];
-                for (let item of data["interests"])
-                    this.interests.push(InterestDto.fromJS(item));
+            if (data["packages"] && data["packages"].constructor === Array) {
+                this.packages = [];
+                for (let item of data["packages"])
+                    this.packages.push(PackageInfoDto.fromJS(item));
             }
-            this.leadRequestXref = data["leadRequestXref"];
+            this.website = data["website"];
+            this.city = data["city"];
+            this.state = data["state"];
+            this.stage = data["stage"];
+            this.tag = data["tag"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.email = data["email"];
@@ -47077,26 +47111,32 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
             this.sourceCode = data["sourceCode"];
             this.channelCode = data["channelCode"];
             this.affiliateCode = data["affiliateCode"];
+            this.isHelpNeeded = data["isHelpNeeded"];
         }
     }
 
-    static fromJS(data: any): SubmitTenantCreationRequestInput {
+    static fromJS(data: any): SubmitTenancyRequestInput {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitTenantCreationRequestInput();
+        let result = new SubmitTenancyRequestInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["leadRequestXref"] = this.leadRequestXref;
         data["companyName"] = this.companyName;
         data["paymentPeriodType"] = this.paymentPeriodType;
-        if (this.interests && this.interests.constructor === Array) {
-            data["interests"] = [];
-            for (let item of this.interests)
-                data["interests"].push(item.toJSON());
+        if (this.packages && this.packages.constructor === Array) {
+            data["packages"] = [];
+            for (let item of this.packages)
+                data["packages"].push(item.toJSON());
         }
-        data["leadRequestXref"] = this.leadRequestXref;
+        data["website"] = this.website;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["stage"] = this.stage;
+        data["tag"] = this.tag;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
@@ -47106,15 +47146,21 @@ export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRe
         data["sourceCode"] = this.sourceCode;
         data["channelCode"] = this.channelCode;
         data["affiliateCode"] = this.affiliateCode;
+        data["isHelpNeeded"] = this.isHelpNeeded;
         return data; 
     }
 }
 
-export interface ISubmitTenantCreationRequestInput {
-    companyName: string;
-    paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
-    interests: InterestDto[];
+export interface ISubmitTenancyRequestInput {
     leadRequestXref: string | undefined;
+    companyName: string | undefined;
+    paymentPeriodType: SubmitTenancyRequestInputPaymentPeriodType | undefined;
+    packages: PackageInfoDto[] | undefined;
+    website: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    stage: string | undefined;
+    tag: string | undefined;
     firstName: string;
     lastName: string;
     email: string;
@@ -47124,14 +47170,15 @@ export interface ISubmitTenantCreationRequestInput {
     sourceCode: string | undefined;
     channelCode: string | undefined;
     affiliateCode: string | undefined;
+    isHelpNeeded: boolean | undefined;
 }
 
-export class InterestDto implements IInterestDto {
-    productId!: number;
-    productName!: string;
-    quantity!: number;
+export class PackageInfoDto implements IPackageInfoDto {
+    module!: PackageInfoDtoModule;
+    packageName!: string;
+    seatCount!: number;
 
-    constructor(data?: IInterestDto) {
+    constructor(data?: IPackageInfoDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -47142,39 +47189,39 @@ export class InterestDto implements IInterestDto {
 
     init(data?: any) {
         if (data) {
-            this.productId = data["productId"];
-            this.productName = data["productName"];
-            this.quantity = data["quantity"];
+            this.module = data["module"];
+            this.packageName = data["packageName"];
+            this.seatCount = data["seatCount"];
         }
     }
 
-    static fromJS(data: any): InterestDto {
+    static fromJS(data: any): PackageInfoDto {
         data = typeof data === 'object' ? data : {};
-        let result = new InterestDto();
+        let result = new PackageInfoDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["productId"] = this.productId;
-        data["productName"] = this.productName;
-        data["quantity"] = this.quantity;
+        data["module"] = this.module;
+        data["packageName"] = this.packageName;
+        data["seatCount"] = this.seatCount;
         return data; 
     }
 }
 
-export interface IInterestDto {
-    productId: number;
-    productName: string;
-    quantity: number;
+export interface IPackageInfoDto {
+    module: PackageInfoDtoModule;
+    packageName: string;
+    seatCount: number;
 }
 
-export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationRequestOutput {
+export class SubmitTenancyRequestOutput implements ISubmitTenancyRequestOutput {
     leadRequestXref!: string | undefined;
     contactId!: number | undefined;
 
-    constructor(data?: ISubmitTenantCreationRequestOutput) {
+    constructor(data?: ISubmitTenancyRequestOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -47190,9 +47237,9 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
         }
     }
 
-    static fromJS(data: any): SubmitTenantCreationRequestOutput {
+    static fromJS(data: any): SubmitTenancyRequestOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitTenantCreationRequestOutput();
+        let result = new SubmitTenancyRequestOutput();
         result.init(data);
         return result;
     }
@@ -47205,9 +47252,53 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
     }
 }
 
-export interface ISubmitTenantCreationRequestOutput {
+export interface ISubmitTenancyRequestOutput {
     leadRequestXref: string | undefined;
     contactId: number | undefined;
+}
+
+export class SubmitFreeTrialRequestInput implements ISubmitFreeTrialRequestInput {
+    contactGroupId!: string | undefined;
+    email!: string;
+    tag!: string | undefined;
+
+    constructor(data?: ISubmitFreeTrialRequestInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactGroupId = data["contactGroupId"];
+            this.email = data["email"];
+            this.tag = data["tag"];
+        }
+    }
+
+    static fromJS(data: any): SubmitFreeTrialRequestInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SubmitFreeTrialRequestInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactGroupId"] = this.contactGroupId;
+        data["email"] = this.email;
+        data["tag"] = this.tag;
+        return data; 
+    }
+}
+
+export interface ISubmitFreeTrialRequestInput {
+    contactGroupId: string | undefined;
+    email: string;
+    tag: string | undefined;
 }
 
 export class LeadBusinessInfoInput implements ILeadBusinessInfoInput {
@@ -52021,6 +52112,7 @@ export class PackageConfigDto implements IPackageConfigDto {
     name!: string | undefined;
     bestValue!: boolean | undefined;
     sortOrder!: number | undefined;
+    isForPartner!: boolean | undefined;
     editions!: PackageEditionConfigDto[] | undefined;
 
     constructor(data?: IPackageConfigDto) {
@@ -52040,6 +52132,7 @@ export class PackageConfigDto implements IPackageConfigDto {
             this.name = data["name"];
             this.bestValue = data["bestValue"];
             this.sortOrder = data["sortOrder"];
+            this.isForPartner = data["isForPartner"];
             if (data["editions"] && data["editions"].constructor === Array) {
                 this.editions = [];
                 for (let item of data["editions"])
@@ -52063,6 +52156,7 @@ export class PackageConfigDto implements IPackageConfigDto {
         data["name"] = this.name;
         data["bestValue"] = this.bestValue;
         data["sortOrder"] = this.sortOrder;
+        data["isForPartner"] = this.isForPartner;
         if (this.editions && this.editions.constructor === Array) {
             data["editions"] = [];
             for (let item of this.editions)
@@ -52079,6 +52173,7 @@ export interface IPackageConfigDto {
     name: string | undefined;
     bestValue: boolean | undefined;
     sortOrder: number | undefined;
+    isForPartner: boolean | undefined;
     editions: PackageEditionConfigDto[] | undefined;
 }
 
@@ -54994,6 +55089,7 @@ export interface IGetSetupAccountsLinkOutput {
 
 export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
     syncInProgressAccountsCount!: number | undefined;
+    failedSyncAccountsCount!: number | undefined;
 
     constructor(data?: ISyncAllAccountsOutput) {
         if (data) {
@@ -55007,6 +55103,7 @@ export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
     init(data?: any) {
         if (data) {
             this.syncInProgressAccountsCount = data["syncInProgressAccountsCount"];
+            this.failedSyncAccountsCount = data["failedSyncAccountsCount"];
         }
     }
 
@@ -55020,12 +55117,14 @@ export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
+        data["failedSyncAccountsCount"] = this.failedSyncAccountsCount;
         return data; 
     }
 }
 
 export interface ISyncAllAccountsOutput {
     syncInProgressAccountsCount: number | undefined;
+    failedSyncAccountsCount: number | undefined;
 }
 
 export class SyncProgressOutput implements ISyncProgressOutput {
@@ -57353,7 +57452,10 @@ export interface IModuleSubscriptionInfoDto {
 
 export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {
     requestXref!: string;
+    tenancyName!: string | undefined;
     tenantName!: string | undefined;
+    companyName!: string | undefined;
+    siteUrl!: string | undefined;
     adminPassword!: string;
 
     constructor(data?: ICompleteTenantRegistrationInput) {
@@ -57368,7 +57470,10 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     init(data?: any) {
         if (data) {
             this.requestXref = data["requestXref"];
+            this.tenancyName = data["tenancyName"];
             this.tenantName = data["tenantName"];
+            this.companyName = data["companyName"];
+            this.siteUrl = data["siteUrl"];
             this.adminPassword = data["adminPassword"];
         }
     }
@@ -57383,7 +57488,10 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["requestXref"] = this.requestXref;
+        data["tenancyName"] = this.tenancyName;
         data["tenantName"] = this.tenantName;
+        data["companyName"] = this.companyName;
+        data["siteUrl"] = this.siteUrl;
         data["adminPassword"] = this.adminPassword;
         return data; 
     }
@@ -57391,7 +57499,10 @@ export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrat
 
 export interface ICompleteTenantRegistrationInput {
     requestXref: string;
+    tenancyName: string | undefined;
     tenantName: string | undefined;
+    companyName: string | undefined;
+    siteUrl: string | undefined;
     adminPassword: string;
 }
 
@@ -57402,6 +57513,7 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
     userName!: string | undefined;
     emailAddress!: string | undefined;
     isEmailConfirmationRequired!: boolean | undefined;
+    loginLink!: string | undefined;
 
     constructor(data?: ICompleteTenantRegistrationOutput) {
         if (data) {
@@ -57420,6 +57532,7 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
             this.userName = data["userName"];
             this.emailAddress = data["emailAddress"];
             this.isEmailConfirmationRequired = data["isEmailConfirmationRequired"];
+            this.loginLink = data["loginLink"];
         }
     }
 
@@ -57438,6 +57551,7 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
         data["userName"] = this.userName;
         data["emailAddress"] = this.emailAddress;
         data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
+        data["loginLink"] = this.loginLink;
         return data; 
     }
 }
@@ -57449,6 +57563,7 @@ export interface ICompleteTenantRegistrationOutput {
     userName: string | undefined;
     emailAddress: string | undefined;
     isEmailConfirmationRequired: boolean | undefined;
+    loginLink: string | undefined;
 }
 
 export class BankTransferSettingsDto implements IBankTransferSettingsDto {
@@ -61081,7 +61196,7 @@ export enum OfferFlag {
 export enum Module {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -61103,7 +61218,7 @@ export enum InstanceType76 {
 export enum ModuleType {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -61208,7 +61323,7 @@ export enum TenantHostType {
 export enum Module2 {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -61245,7 +61360,7 @@ export enum Group {
 export enum ModuleType2 {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -61275,6 +61390,22 @@ export enum RegisterApplicantRequestSystemType {
 }
 
 export enum TrackingInformationVertical {
+    Undefined = "Undefined", 
+    PersonalLoans = "PersonalLoans", 
+    Beauty = "Beauty", 
+    Auto = "Auto", 
+    Legal = "Legal", 
+    CreditRepair = "CreditRepair", 
+    CreditScore = "CreditScore", 
+    Travel = "Travel", 
+    Jobs = "Jobs", 
+    BusinessLoans = "BusinessLoans", 
+    DebtConsolidation = "DebtConsolidation", 
+    CreditCards = "CreditCards", 
+    MerchantServices = "MerchantServices", 
+    Dating = "Dating", 
+    Crypto = "Crypto", 
+    CreditMonitoring = "CreditMonitoring", 
     HybridLoans = "HybridLoans", 
 }
 
@@ -61582,9 +61713,16 @@ export enum GetUserInstanceInfoOutputStatus {
     Inactive = "Inactive", 
 }
 
-export enum SubmitTenantCreationRequestInputPaymentPeriodType {
+export enum SubmitTenancyRequestInputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum PackageInfoDtoModule {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    CFO_CRM = "CFO_CRM", 
+    PFM = "PFM", 
 }
 
 export enum MemberInfoDtoGender {
@@ -62118,7 +62256,7 @@ export enum ModuleSubscriptionInfoExtendedFrequency {
 export enum PackageConfigDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -62144,7 +62282,7 @@ export enum QuestionDtoType {
 export enum RoleListDtoModuleId {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -62221,7 +62359,7 @@ export enum RequestPaymentDtoRequestType {
 export enum ModuleSubscriptionInfoDtoModule {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
@@ -62233,7 +62371,7 @@ export enum TransactionDetailsDtoTransactionStatus {
 export enum InviteUserInputModuleType {
     CFO = "CFO", 
     CRM = "CRM", 
-    HUB = "HUB", 
+    CFO_CRM = "CFO_CRM", 
     PFM = "PFM", 
 }
 
