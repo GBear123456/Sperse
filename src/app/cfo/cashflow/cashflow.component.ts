@@ -195,7 +195,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     statsDetailFilter: StatsDetailFilter = new StatsDetailFilter();
     private _statsDetailResult: Subject<CashFlowStatsDetailDto[]> = new Subject<CashFlowStatsDetailDto[]>();
     statsDetailResult$: Observable<CashFlowStatsDetailDto[]> = this._statsDetailResult.asObservable();
-    private statsDetailResult: CashFlowStatsDetailDto[];
+    statsDetailResult: CashFlowStatsDetailDto[];
     private detailsTab: BehaviorSubject<string> = new BehaviorSubject<string>('all');
     detailsTab$: Observable<string> = this.detailsTab.asObservable();
     /** changed displayedStatsDetails every time when detailsTab$ change (it change all times when statsDetailResult change (see this.detailsTab.next()) + when certain tabs chosen (history or forecast or all))*/
@@ -661,7 +661,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private transactionsAverage = 0;
 
     /** Marker that change its value after content is fully rendering on cashflow */
-    private contentReady = false;
+    contentReady = false;
 
     private gridDataExists = false;
 

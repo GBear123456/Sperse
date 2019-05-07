@@ -31,7 +31,7 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
     startDate: moment.Moment = null;
     endDate: moment.Moment;
-    dailyStatsData: GetDailyBalanceStatsOutput;
+    dailyStatsData: any/*GetDailyBalanceStatsOutput*/;
     dailyStatsAmount: number;
     dailyStatsText: string;
     dailyStatsSliderSelected = 1;
