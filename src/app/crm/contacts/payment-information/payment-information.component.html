@@ -16,9 +16,9 @@
                 <img src="./assets/common/icons/automatic-payments.svg">
                 {{ l('AutomaticPayments') }}
             </li>
-            <li>
+            <li *ngIf="lastPaymentAmount">
                 <img src="./assets/common/icons/last-payment.svg">
-                {{ l('LastPayment', lastPaymentDate, amountCurrency, lastPaymentAmount) }}
+                {{ l('LastPayment', lastPaymentDate, lastPaymentAmount, amountCurrency) }}
             </li>
         </ul>
     </div>

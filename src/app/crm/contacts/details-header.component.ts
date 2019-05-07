@@ -187,22 +187,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     let orgRelations = this.data.personContactInfo.orgRelations;
                     let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
                     orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
-                    if (orgRelationToDelete.isPrimary) {
-                        let orgRelation = orgRelations && _.sortBy(orgRelations, (orgRelation) => {
-                            return orgRelation.id;
-                        }).reverse()[0];
-                        if (orgRelation) {
-                            orgRelation.isPrimary = true;
-                            this.data.primaryOrganizationContactId = orgRelation.organization.id;
-                            this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
-                        } else {
-                            this.data.primaryOrganizationContactId = null;
-                            this.data.personContactInfo.orgRelations = [];
-                        }
-                    } else {
-                        let orgRelation = _.find(orgRelations, item => item.isPrimary);
-                        this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
-                    }
+                    this.displayOrgRelation(orgRelationToDelete.organization.id);
                 });
             }
         });
@@ -217,12 +202,19 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.dialog.closeAll();
         this.dialog.open(CompanyDialogComponent, {
             data: {
-                company: companyInfo
+                company: companyInfo,
+                contactInfo: this.data
             },
             panelClass: 'slider',
             maxWidth: '830px'
         }).afterClosed().subscribe(result => {
-            if (result) {
+            if (result && result.action == 'delete') {
+                let orgId = result.orgId;
+                let orgRelations = this.data.personContactInfo.orgRelations;
+                let orgRelationsToDelete = _.filter(orgRelations, orgRelation => orgRelation.organization.id === orgId);
+                orgRelationsToDelete.forEach((orgRelation) => orgRelations.splice(orgRelations.indexOf(orgRelation), 1));
+                this.displayOrgRelation(orgId);
+            } else if (result) {
                  companyInfo.organization = new OrganizationInfoDto(result.company);
                  companyInfo.fullName = result.company.fullName;
                  companyInfo.primaryPhoto = result.company.primaryPhoto;
@@ -230,6 +222,30 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         });
         if (e.stopPropagation) {
             e.stopPropagation();
+        }
+    }
+
+    displayOrgRelation(orgId) {
+        let orgRelations = this.data.personContactInfo.orgRelations;
+        if (this.data.primaryOrganizationContactId == orgId) {
+            let orgRelation = orgRelations && _.sortBy(orgRelations, (orgRelation) => {
+                return orgRelation.id;
+            }).reverse()[0];
+            if (orgRelation) {
+                orgRelation.isPrimary = true;
+                this.data.primaryOrganizationContactId = orgRelation.organization.id;
+                this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
+            } else {
+                this.data.primaryOrganizationContactId = null;
+                this.data.personContactInfo.orgRelations = [];
+                let isPartner = this.data.groupId == ContactGroup.Partner;
+                this._contactsService.updateLocation(
+                    isPartner ? null : this.data.id, this.data['leadId'],
+                    isPartner ? this.data.id : null);
+            }
+        } else {
+            let orgRelation = _.find(orgRelations, item => item.isPrimary);
+            this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
         }
     }
 

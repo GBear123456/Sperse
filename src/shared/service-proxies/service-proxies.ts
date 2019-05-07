@@ -12656,58 +12656,6 @@ export class HostSettingsServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    getInvoiceSettings(): Observable<TenantBillingSettingsEditDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetInvoiceSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetInvoiceSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetInvoiceSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<TenantBillingSettingsEditDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<TenantBillingSettingsEditDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetInvoiceSettings(response: HttpResponseBase): Observable<TenantBillingSettingsEditDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? TenantBillingSettingsEditDto.fromJS(resultData200) : new TenantBillingSettingsEditDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<TenantBillingSettingsEditDto>(<any>null);
-    }
-
-    /**
      * @input (optional) 
      * @return Success
      */
@@ -13725,6 +13673,58 @@ export class InvoiceServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getSettings(): Observable<InvoiceSettingsInfoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<InvoiceSettingsInfoDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<InvoiceSettingsInfoDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSettings(response: HttpResponseBase): Observable<InvoiceSettingsInfoDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? InvoiceSettingsInfoDto.fromJS(resultData200) : new InvoiceSettingsInfoDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<InvoiceSettingsInfoDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -14476,62 +14476,6 @@ export class LeadServiceProxy {
             }));
         }
         return _observableOf<SubmitTenancyRequestOutput>(<any>null);
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    submitTenantCreationRequest(input: SubmitTenantCreationRequestInput | null | undefined): Observable<SubmitTenantCreationRequestOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/SubmitTenantCreationRequest";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSubmitTenantCreationRequest(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processSubmitTenantCreationRequest(<any>response_);
-                } catch (e) {
-                    return <Observable<SubmitTenantCreationRequestOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SubmitTenantCreationRequestOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processSubmitTenantCreationRequest(response: HttpResponseBase): Observable<SubmitTenantCreationRequestOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SubmitTenantCreationRequestOutput.fromJS(resultData200) : new SubmitTenantCreationRequestOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SubmitTenantCreationRequestOutput>(<any>null);
     }
 
     /**
@@ -17699,6 +17643,57 @@ export class OrganizationContactServiceProxy {
     }
 
     protected processUpdateOrganizationInfo(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    delete(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/Delete?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -24782,58 +24777,6 @@ export class TenantSettingsServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getInvoiceSettings(): Observable<TenantBillingSettingsEditDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetInvoiceSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetInvoiceSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetInvoiceSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<TenantBillingSettingsEditDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<TenantBillingSettingsEditDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetInvoiceSettings(response: HttpResponseBase): Observable<TenantBillingSettingsEditDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? TenantBillingSettingsEditDto.fromJS(resultData200) : new TenantBillingSettingsEditDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<TenantBillingSettingsEditDto>(<any>null);
     }
 
     /**
@@ -45323,50 +45266,6 @@ export interface ITwoFactorLoginSettingsEditDto {
     isGoogleAuthenticatorEnabled: boolean | undefined;
 }
 
-export class TenantBillingSettingsEditDto implements ITenantBillingSettingsEditDto {
-    legalName!: string | undefined;
-    address!: string | undefined;
-    taxVatNo!: string | undefined;
-
-    constructor(data?: ITenantBillingSettingsEditDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.legalName = data["legalName"];
-            this.address = data["address"];
-            this.taxVatNo = data["taxVatNo"];
-        }
-    }
-
-    static fromJS(data: any): TenantBillingSettingsEditDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new TenantBillingSettingsEditDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["legalName"] = this.legalName;
-        data["address"] = this.address;
-        data["taxVatNo"] = this.taxVatNo;
-        return data; 
-    }
-}
-
-export interface ITenantBillingSettingsEditDto {
-    legalName: string | undefined;
-    address: string | undefined;
-    taxVatNo: string | undefined;
-}
-
 export class SendTestEmailInput implements ISendTestEmailInput {
     emailAddress!: string;
 
@@ -46554,6 +46453,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     contactId!: number;
     orderId!: number | undefined;
     status!: CreateInvoiceInputStatus;
+    number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment;
     description!: string | undefined;
@@ -46574,6 +46474,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.contactId = data["contactId"];
             this.orderId = data["orderId"];
             this.status = data["status"];
+            this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
@@ -46598,6 +46499,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["contactId"] = this.contactId;
         data["orderId"] = this.orderId;
         data["status"] = this.status;
+        data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
@@ -46615,6 +46517,7 @@ export interface ICreateInvoiceInput {
     contactId: number;
     orderId: number | undefined;
     status: CreateInvoiceInputStatus;
+    number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment;
     description: string | undefined;
@@ -46809,6 +46712,7 @@ export interface IInvoiceLineInfo {
 export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     id!: number;
     status!: UpdateInvoiceInputStatus;
+    number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment;
     description!: string | undefined;
@@ -46828,6 +46732,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         if (data) {
             this.id = data["id"];
             this.status = data["status"];
+            this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
@@ -46851,6 +46756,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["status"] = this.status;
+        data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
@@ -46867,6 +46773,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
 export interface IUpdateInvoiceInput {
     id: number;
     status: UpdateInvoiceInputStatus;
+    number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment;
     description: string | undefined;
@@ -46968,6 +46875,54 @@ export class UpdateInvoiceStatusInput implements IUpdateInvoiceStatusInput {
 export interface IUpdateInvoiceStatusInput {
     id: number;
     status: UpdateInvoiceStatusInputStatus;
+}
+
+export class InvoiceSettingsInfoDto implements IInvoiceSettingsInfoDto {
+    nextInvoiceNumber!: string | undefined;
+    legalName!: string | undefined;
+    address!: string | undefined;
+    taxVatNo!: string | undefined;
+
+    constructor(data?: IInvoiceSettingsInfoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.nextInvoiceNumber = data["nextInvoiceNumber"];
+            this.legalName = data["legalName"];
+            this.address = data["address"];
+            this.taxVatNo = data["taxVatNo"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceSettingsInfoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceSettingsInfoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["nextInvoiceNumber"] = this.nextInvoiceNumber;
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        data["taxVatNo"] = this.taxVatNo;
+        return data; 
+    }
+}
+
+export interface IInvoiceSettingsInfoDto {
+    nextInvoiceNumber: string | undefined;
+    legalName: string | undefined;
+    address: string | undefined;
+    taxVatNo: string | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -47951,8 +47906,10 @@ export interface ILeadCancellationReasonDto {
 
 export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     leadRequestXref!: string | undefined;
+    companyName!: string | undefined;
+    paymentPeriodType!: SubmitTenancyRequestInputPaymentPeriodType | undefined;
+    packages!: PackageInfoDto[] | undefined;
     website!: string | undefined;
-    tenancyName!: string | undefined;
     city!: string | undefined;
     state!: string | undefined;
     stage!: string | undefined;
@@ -47980,8 +47937,14 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     init(data?: any) {
         if (data) {
             this.leadRequestXref = data["leadRequestXref"];
+            this.companyName = data["companyName"];
+            this.paymentPeriodType = data["paymentPeriodType"];
+            if (data["packages"] && data["packages"].constructor === Array) {
+                this.packages = [];
+                for (let item of data["packages"])
+                    this.packages.push(PackageInfoDto.fromJS(item));
+            }
             this.website = data["website"];
-            this.tenancyName = data["tenancyName"];
             this.city = data["city"];
             this.state = data["state"];
             this.stage = data["stage"];
@@ -48009,8 +47972,14 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadRequestXref"] = this.leadRequestXref;
+        data["companyName"] = this.companyName;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        if (this.packages && this.packages.constructor === Array) {
+            data["packages"] = [];
+            for (let item of this.packages)
+                data["packages"].push(item.toJSON());
+        }
         data["website"] = this.website;
-        data["tenancyName"] = this.tenancyName;
         data["city"] = this.city;
         data["state"] = this.state;
         data["stage"] = this.stage;
@@ -48031,151 +48000,14 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
 
 export interface ISubmitTenancyRequestInput {
     leadRequestXref: string | undefined;
+    companyName: string | undefined;
+    paymentPeriodType: SubmitTenancyRequestInputPaymentPeriodType | undefined;
+    packages: PackageInfoDto[] | undefined;
     website: string | undefined;
-    tenancyName: string | undefined;
     city: string | undefined;
     state: string | undefined;
     stage: string | undefined;
     tag: string | undefined;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string | undefined;
-    phoneExt: string | undefined;
-    comments: string | undefined;
-    sourceCode: string | undefined;
-    channelCode: string | undefined;
-    affiliateCode: string | undefined;
-    isHelpNeeded: boolean | undefined;
-}
-
-export class SubmitTenancyRequestOutput implements ISubmitTenancyRequestOutput {
-    leadRequestXref!: string | undefined;
-    contactId!: number | undefined;
-
-    constructor(data?: ISubmitTenancyRequestOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.leadRequestXref = data["leadRequestXref"];
-            this.contactId = data["contactId"];
-        }
-    }
-
-    static fromJS(data: any): SubmitTenancyRequestOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubmitTenancyRequestOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["leadRequestXref"] = this.leadRequestXref;
-        data["contactId"] = this.contactId;
-        return data; 
-    }
-}
-
-export interface ISubmitTenancyRequestOutput {
-    leadRequestXref: string | undefined;
-    contactId: number | undefined;
-}
-
-export class SubmitTenantCreationRequestInput implements ISubmitTenantCreationRequestInput {
-    companyName!: string | undefined;
-    paymentPeriodType!: SubmitTenantCreationRequestInputPaymentPeriodType;
-    packages!: PackageInfoDto[];
-    leadRequestXref!: string | undefined;
-    firstName!: string;
-    lastName!: string;
-    email!: string;
-    phone!: string | undefined;
-    phoneExt!: string | undefined;
-    comments!: string | undefined;
-    sourceCode!: string | undefined;
-    channelCode!: string | undefined;
-    affiliateCode!: string | undefined;
-    isHelpNeeded!: boolean | undefined;
-
-    constructor(data?: ISubmitTenantCreationRequestInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-        if (!data) {
-            this.packages = [];
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.companyName = data["companyName"];
-            this.paymentPeriodType = data["paymentPeriodType"];
-            if (data["packages"] && data["packages"].constructor === Array) {
-                this.packages = [];
-                for (let item of data["packages"])
-                    this.packages.push(PackageInfoDto.fromJS(item));
-            }
-            this.leadRequestXref = data["leadRequestXref"];
-            this.firstName = data["firstName"];
-            this.lastName = data["lastName"];
-            this.email = data["email"];
-            this.phone = data["phone"];
-            this.phoneExt = data["phoneExt"];
-            this.comments = data["comments"];
-            this.sourceCode = data["sourceCode"];
-            this.channelCode = data["channelCode"];
-            this.affiliateCode = data["affiliateCode"];
-            this.isHelpNeeded = data["isHelpNeeded"];
-        }
-    }
-
-    static fromJS(data: any): SubmitTenantCreationRequestInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubmitTenantCreationRequestInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["companyName"] = this.companyName;
-        data["paymentPeriodType"] = this.paymentPeriodType;
-        if (this.packages && this.packages.constructor === Array) {
-            data["packages"] = [];
-            for (let item of this.packages)
-                data["packages"].push(item.toJSON());
-        }
-        data["leadRequestXref"] = this.leadRequestXref;
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["email"] = this.email;
-        data["phone"] = this.phone;
-        data["phoneExt"] = this.phoneExt;
-        data["comments"] = this.comments;
-        data["sourceCode"] = this.sourceCode;
-        data["channelCode"] = this.channelCode;
-        data["affiliateCode"] = this.affiliateCode;
-        data["isHelpNeeded"] = this.isHelpNeeded;
-        return data; 
-    }
-}
-
-export interface ISubmitTenantCreationRequestInput {
-    companyName: string | undefined;
-    paymentPeriodType: SubmitTenantCreationRequestInputPaymentPeriodType;
-    packages: PackageInfoDto[];
-    leadRequestXref: string | undefined;
     firstName: string;
     lastName: string;
     email: string;
@@ -48232,11 +48064,11 @@ export interface IPackageInfoDto {
     seatCount: number;
 }
 
-export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationRequestOutput {
+export class SubmitTenancyRequestOutput implements ISubmitTenancyRequestOutput {
     leadRequestXref!: string | undefined;
     contactId!: number | undefined;
 
-    constructor(data?: ISubmitTenantCreationRequestOutput) {
+    constructor(data?: ISubmitTenancyRequestOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -48252,9 +48084,9 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
         }
     }
 
-    static fromJS(data: any): SubmitTenantCreationRequestOutput {
+    static fromJS(data: any): SubmitTenancyRequestOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new SubmitTenantCreationRequestOutput();
+        let result = new SubmitTenancyRequestOutput();
         result.init(data);
         return result;
     }
@@ -48267,12 +48099,13 @@ export class SubmitTenantCreationRequestOutput implements ISubmitTenantCreationR
     }
 }
 
-export interface ISubmitTenantCreationRequestOutput {
+export interface ISubmitTenancyRequestOutput {
     leadRequestXref: string | undefined;
     contactId: number | undefined;
 }
 
 export class SubmitFreeTrialRequestInput implements ISubmitFreeTrialRequestInput {
+    contactGroupId!: string | undefined;
     email!: string;
     tag!: string | undefined;
 
@@ -48287,6 +48120,7 @@ export class SubmitFreeTrialRequestInput implements ISubmitFreeTrialRequestInput
 
     init(data?: any) {
         if (data) {
+            this.contactGroupId = data["contactGroupId"];
             this.email = data["email"];
             this.tag = data["tag"];
         }
@@ -48301,6 +48135,7 @@ export class SubmitFreeTrialRequestInput implements ISubmitFreeTrialRequestInput
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactGroupId"] = this.contactGroupId;
         data["email"] = this.email;
         data["tag"] = this.tag;
         return data; 
@@ -48308,6 +48143,7 @@ export class SubmitFreeTrialRequestInput implements ISubmitFreeTrialRequestInput
 }
 
 export interface ISubmitFreeTrialRequestInput {
+    contactGroupId: string | undefined;
     email: string;
     tag: string | undefined;
 }
@@ -57617,6 +57453,50 @@ export interface ILdapSettingsEditDto {
     password: string | undefined;
 }
 
+export class TenantBillingSettingsEditDto implements ITenantBillingSettingsEditDto {
+    legalName!: string | undefined;
+    address!: string | undefined;
+    taxVatNo!: string | undefined;
+
+    constructor(data?: ITenantBillingSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.legalName = data["legalName"];
+            this.address = data["address"];
+            this.taxVatNo = data["taxVatNo"];
+        }
+    }
+
+    static fromJS(data: any): TenantBillingSettingsEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new TenantBillingSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        data["taxVatNo"] = this.taxVatNo;
+        return data; 
+    }
+}
+
+export interface ITenantBillingSettingsEditDto {
+    legalName: string | undefined;
+    address: string | undefined;
+    taxVatNo: string | undefined;
+}
+
 export class EPCVIPMailerSettingsEditDto implements IEPCVIPMailerSettingsEditDto {
     baseUrl!: string | undefined;
     apiKey!: string | undefined;
@@ -62667,7 +62547,7 @@ export enum UpdateInvoiceStatusInputStatus {
     Canceled = "Canceled", 
 }
 
-export enum SubmitTenantCreationRequestInputPaymentPeriodType {
+export enum SubmitTenancyRequestInputPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
 }

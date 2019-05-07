@@ -30,6 +30,7 @@ import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationCo
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 
 @Component({
     selector: 'company-dialog',
@@ -115,6 +116,11 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
             title: this.l('Save'),
             class: 'primary saveButton',
             action: this.save.bind(this)
+        }, {
+            id: 'deleteCompany',
+            title: this.l('Delete'),
+            class: 'button-layout button-default delete-button',
+            action: () => this.delete()
         }];
         this.loadOrganizationTypes();
         this.loadCountries();
@@ -151,6 +157,25 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
                 () => this.clientService.invalidate('notes')
             );
         }
+    }
+
+    delete() {
+        this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                title: this.l('CompanyRemovalConfirmationTitle'),
+                message: this.l('CompanyRemovalConfirmationMessage', this.company.fullName),
+            }
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this._organizationContactServiceProxy.delete(this.company.id).subscribe(() => {
+                    this.notify.success(this.l('SuccessfullyRemoved'));
+                    this.close(true, {
+                        action: 'delete',
+                        orgId: this.company.id
+                    });
+                });
+            }
+        });
     }
 
     private getMomentFromDateWithoutTime(date: any): moment.Moment {

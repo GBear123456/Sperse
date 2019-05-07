@@ -4,10 +4,7 @@
             <span class="stageName">{{stage.name}}</span>
             <div>
                 <span>
-                    <ng-container *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">
-                        {{ selectedEntitiesCount }} of
-                    </ng-container>
-                    {{ stage?.total }}
+                    (<ng-container *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">{{selectedEntitiesCount}} of </ng-container>{{stage?.total}})
                 </span>
                 <span *ngIf="stage.total && allStagesEntitiesTotal">
                     {{ getStageRatio(stage.total) }}
