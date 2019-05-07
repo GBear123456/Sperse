@@ -15,13 +15,13 @@ import { AppConsts } from '@shared/AppConsts';
 
 import { InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput,
     UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus, 
-    UpdateInvoiceStatusInputStatus, CreateInvoiceLineInput, HostSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+    UpdateInvoiceStatusInputStatus, CreateInvoiceLineInput } from '@shared/service-proxies/service-proxies';
 import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
     styleUrls: [ '../../../shared/form.less', 'create-invoice-dialog.component.less' ],
-    providers: [ DialogService, InvoiceServiceProxy, CustomerServiceProxy, HostSettingsServiceProxy ]
+    providers: [ DialogService, InvoiceServiceProxy, CustomerServiceProxy ]
 })
 export class CreateInvoiceDialogComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
@@ -29,13 +29,13 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     @ViewChild('contact') contactComponent: DxSelectBoxComponent;
 
     private lookupTimeout;
-    private invoiceNo;
 
     private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
     private validationError: string;
 
+    invoiceNo;
     invoiceId: number;
     statuses: any[] = [];
     status = CreateInvoiceInputStatus.Draft;
@@ -75,8 +75,7 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         public dialog: MatDialog,
         private _invoiceProxy: InvoiceServiceProxy,
         private _customerProxy: CustomerServiceProxy,
-        private _cacheService: CacheService,
-        private _hostSettingsProxy: HostSettingsServiceProxy
+        private _cacheService: CacheService
     ) {
         super(injector);
 
@@ -90,8 +89,9 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             this.customers = res;
         });
 
-        _hostSettingsProxy.getInvoiceSettings().subscribe((settings) => {
+        _invoiceProxy.getSettings().subscribe((settings) => {
             this.billingSettings = settings;
+            this.invoiceNo = settings.nextInvoiceNumber;
         });
 
         this.initInvoiceData();

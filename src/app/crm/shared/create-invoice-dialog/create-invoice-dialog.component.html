@@ -11,10 +11,10 @@
     <ng-container headerContent>    
         <label>#</label>
         <dx-text-box
+            width="160px"
             name="invoiceNo"
             [placeholder]="l('INV-XXXX-XX')"
-            width="160px"
-            [value]="invoiceNo"
+            [(value)]="invoiceNo"
             [showClearButton]="true"
             [readOnly]="false">
         </dx-text-box>
