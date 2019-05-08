@@ -49,8 +49,8 @@
                     <div class="field">
                         <label class="from-label">{{l('From')}}<a><i class="edit fa fa-pencil"></i>{{l('Edit') + ' ' + l('Profile')}}</a></label>
                         <div class="credentials">
-                            <span>{{billingSettings?.legalName}} {{billingSettings?.taxVatNo}}</span>
-                            <span>{{billingSettings?.address}}</span>
+                            <span>{{billingSettings['legalName'] || ''}} {{billingSettings['taxVatNo'] || ''}}</span>
+                            <span>{{billingSettings['address'] || ''}}</span>
                         </div>
                     </div>
                     <div class="field">

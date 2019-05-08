@@ -147,7 +147,7 @@ export class ContactsService {
         this._location.replaceState(
             this._router.createUrlTree(
                 ['app/' + (userId ? 'admin' : 'crm')].concat(
-                    customerId ? ['client', customerId] : [],
+                    customerId ? [leadId ? 'contact' : 'client', customerId] : [],
                     leadId ? ['lead', leadId] : [],
                     partnerId ? ['partner', partnerId] : [],
                     companyId ? ['company', companyId] : [],

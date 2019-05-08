@@ -16,7 +16,7 @@
     (onSelectedBankAccountsChange)="setBankAccountsFilter(true)">
 </cashflow-operations>
 
-<div class="cashflow" *ngIf="cashflowData && cashflowData.length">
+<div class="cashflow" [hidden]="!cashflowData || !cashflowData.length">
     <div class="sort-options" [hidden]="!contentReady">
         <app-toolbar [config]="categoryToolbarConfig" [compact]="true"></app-toolbar>
     </div>
@@ -195,7 +195,7 @@
             'withCashflowFooterToolbar' : cashflowGridSettings?.visualPreferences?.showFooterBar
         }">
         <div class="pivot-grid-wrapper">
-            <dx-pivot-grid *ngIf="cashflowData && cashflowData.length" id="operations"
+            <dx-pivot-grid [hidden]="!cashflowData || !cashflowData.length" id="operations"
                            class="pivot-grid invisible"
                            [allowSortingBySummary]="false"
                            [allowSorting]="false"
@@ -229,7 +229,7 @@
     <div class="sidebar-calculator-widget" [ngClass]="{'calculatorHidden': !calculatorShowed}">
         <div class="calculator-title">
             <h3>{{l( 'Cell Calculator')}}</h3>
-            <span class="close" (click)="closeCalculator($event)"></span>
+            <span class="close" (click)="closeCalculator()"></span>
         </div>
         <calculator-widget></calculator-widget>
     </div>

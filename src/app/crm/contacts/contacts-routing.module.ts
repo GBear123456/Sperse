@@ -86,7 +86,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                 ]
             },
             {
-                path: 'client/:clientId/lead/:leadId',
+                path: 'contact/:contactId/lead/:leadId',
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
@@ -126,7 +126,7 @@ import { RP_USER_INFO_ID } from './contacts.const';
                 ]
             },
             {
-                path: 'client/:clientId/lead/:leadId/company/:companyId',
+                path: 'contact/:contactId/lead/:leadId/company/:companyId',
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
