@@ -23,6 +23,7 @@ import {
     InstanceServiceProxy, ContactServiceProxy, BankAccountsServiceProxy,
     BusinessEntityServiceProxy, TenantSubscriptionServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
@@ -58,7 +59,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         BankAccountsServiceProxy,
         TenantSubscriptionServiceProxy,
         ExportService,
-        ExportGoogleSheetService
+        ExportGoogleSheetService,
+        CfoPreferencesService
     ]
 })
 export class AppModule {}

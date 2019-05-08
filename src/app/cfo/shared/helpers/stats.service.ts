@@ -4,8 +4,6 @@ import * as moment from 'moment-timezone';
 @Injectable()
 export class StatsService {
 
-    constructor() { }
-
     /**
      * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
      * @param {string} value

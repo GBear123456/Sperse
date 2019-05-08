@@ -3,7 +3,6 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
@@ -16,12 +15,16 @@ import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/cat
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
+import { select, Store } from '@node_modules/@ngrx/store';
+import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { filter } from '@node_modules/rxjs/operators';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.less'],
-    animations: [appModuleAnimation()],
+    animations: [appModuleAnimation()]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
@@ -45,7 +48,9 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         injector: Injector,
         private _dashboardService: DashboardService,
         private bankAccountsService: BankAccountsService,
-        public dialog: MatDialog
+        public dialog: MatDialog,
+        private store$: Store<CfoStore.State>,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -63,6 +68,24 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         /** Load sync accounts */
         this.bankAccountsService.load();
 
+        const selectedCurrencyId$ = this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencyId)
+        );
+
+        /** If component is activated and currency has changed - update grid  */
+        selectedCurrencyId$.pipe(
+            filter(() => this.componentIsActivated)
+        ).subscribe(() => {
+            this.refreshWidgets();
+        });
+
+        /** If component is not activated - wait until it will activate and then reload */
+        selectedCurrencyId$.pipe(
+            filter(() => !this.componentIsActivated)
+        ).subscribe(() => {
+            this.updateAfterActivation = true;
+        });
+
         /** After selected accounts change */
         this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
             /** filter all widgets by new data if change is on this component */
@@ -79,7 +102,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
-    ngOnDestroy(): void {        
+    ngOnDestroy(): void {
         this._dashboardService.unsubscribe();
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');

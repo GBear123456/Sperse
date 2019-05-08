@@ -303,11 +303,10 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
             item.options['accessKey'] = item.name;
             item.options['items'].forEach(link => {
                 link.disabled = link.hasOwnProperty('disabled') ? link.disabled : (link.type == 'delimiter');
-                link.html = this.getDropDownItemTemplate(
-                    link, item.options['width']);
+                link.html = this.getDropDownItemTemplate(link, item.options['width']);
                 link.onClick = (event) => {
                     if (item.name == 'select-box')
-                        $('.dx-dropdownmenu-button[select-caption' + (item.text ? '="' + item.text + ':"' : '') + ']')
+                        $('.dx-dropdownmenu-button[title' + (item.options.hint ? '="' + item.options.hint + '"' : '') + ']')
                             .attr('select-value', event.itemData.text);
                     /** if each item has its own click handler - call it */
                     (link.action && link.action.call(this, this.getOptions() || event)) ||

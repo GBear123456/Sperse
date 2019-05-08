@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import { forkJoin } from 'rxjs';
 import { finalize, first } from 'rxjs/operators';
 import * as _ from 'underscore';
+import { Store, select } from '@ngrx/store';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -32,6 +33,9 @@ import {
     InstanceType
 } from '@shared/service-proxies/service-proxies';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { CurrenciesStoreActions, CurrenciesStoreSelectors, CfoStore } from '@app/cfo/store';
+import { filter } from '@node_modules/rxjs/operators';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -64,7 +68,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         type: 'currency',
         precision: 2
     };
-
+    private currencies: { text: string }[];
+    private selectedCurrencyIndex: number;
     private updateAfterActivation: boolean;
 
     constructor(
@@ -74,7 +79,9 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
-        private bankAccountsService: BankAccountsService
+        private _cfoPreferences: CfoPreferencesService,
+        private bankAccountsService: BankAccountsService,
+        private store$: Store<CfoStore.State>
     ) {
         super(injector);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -182,10 +189,36 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     ]
                 },
                 {
+                    location: 'before',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'select-box',
+                            text: '',
+                            widget: 'dxDropDownMenu',
+                            accessKey: 'currencySwitcher',
+                            options: {
+                                hint: this.l('Currency'),
+                                accessKey: 'currencySwitcher',
+                                items: this.currencies,
+                                selectedIndex: this.selectedCurrencyIndex,
+                                height: 39,
+                                width: 80,
+                                onSelectionChanged: (e) => {
+                                    if (e) {
+                                        this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
+                                        this.refreshData();
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
                     location: 'after',
                     locateInMenu: 'auto',
                     items: [
-                        { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
+                        {name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this)},
                         {
                             name: 'download',
                             widget: 'dxDropDownMenu',
@@ -205,11 +238,11 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                                         text: this.l('Export to Google Sheets'),
                                         icon: 'sheet'
                                     },
-                                    { type: 'downloadOptions' }
+                                    {type: 'downloadOptions'}
                                 ]
                             }
                         },
-                        { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                        {name: 'columnChooser', action: this.showColumnChooser.bind(this)}
                     ]
                 }
             ]);
@@ -226,27 +259,41 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.bankAccountCount = amount;
             this.initToolbarConfig();
         });
-        forkJoin(forecastsModels$, syncAccounts$)
-            .subscribe(([forecastsModels, syncAccounts]) => {
-                this.syncAccounts = syncAccounts;
-                this.handleForecastModelResult(forecastsModels);
-                this.createFilters(syncAccounts);
-                this._filtersService.setup(this.filters);
-                this.initFiltering();
-                this.initToolbarConfig();
 
-                /** After selected accounts change */
-                this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
-                    /** filter all widgets by new data if change is on this component */
-                    if (this.componentIsActivated) {
-                        this.setBankAccountsFilter();
-                        /** if change is on another component - mark this for future update */
-                    } else {
-                        this.updateAfterActivation = true;
-                    }
-                });
+        this.store$.pipe(select(CurrenciesStoreSelectors.getCurrenciesTexts)).subscribe((currenciesTexts) => {
+            this.currencies = currenciesTexts;
+        });
+        this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyIndex)).subscribe(selectedCurrencyIndex => {
+            this.selectedCurrencyIndex = selectedCurrencyIndex;
+        });
 
+        /** If component is not activated - wait until it will activate and then reload */
+        this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+            filter(() => !this.componentIsActivated)
+        ).subscribe(() => {
+            this.updateAfterActivation = true;
+        });
+
+        forkJoin(forecastsModels$, syncAccounts$).subscribe(([forecastsModels, syncAccounts]) => {
+            this.syncAccounts = syncAccounts;
+            this.handleForecastModelResult(forecastsModels);
+            this.createFilters(syncAccounts);
+            this._filtersService.setup(this.filters);
+            this.initFiltering();
+            this.initToolbarConfig();
+
+            /** After selected accounts change */
+            this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
+                /** filter all widgets by new data if change is on this component */
+                if (this.componentIsActivated) {
+                    this.setBankAccountsFilter();
+                    /** if change is on another component - mark this for future update */
+                } else {
+                    this.updateAfterActivation = true;
+                }
             });
+        });
 
         this.initHeadlineConfig();
     }
@@ -306,7 +353,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this._bankAccountService.getStats(
             InstanceType[this.instanceType],
             this.instanceId,
-            'USD',
+            this._cfoPreferences.selectedCurrencyId,
             this.forecastModelsObj.items[this.forecastModelsObj.selectedItemIndex].id,
             this.requestFilter.accountIds,
             this.requestFilter.startDate,
@@ -315,7 +362,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         )
             .pipe(finalize(() => abp.ui.clearBusy()))
             .subscribe(result => {
-                if (result) {
+                if (result && result.length) {
                     let currentPeriodTransaction: BankAccountDailyStatDto;
                     let currentPeriodForecast: BankAccountDailyStatDto;
 
@@ -355,7 +402,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
                     this.setSliderReportPeriodFilterData(this.statementsData[0].date.year(), this.statementsData[this.statementsData.length - 1].date.year());
                 } else {
-                    result = [];
+                    this.statementsData = null;
                 }
             });
     }

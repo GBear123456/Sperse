@@ -10,6 +10,7 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, InstanceType, GetDailyBalanceStatsOutput } from 'shared/service-proxies/service-proxies';
 import { DashboardService } from '../dashboard.service';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'app-accounts',
@@ -43,7 +44,8 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
         injector: Injector,
         private _dashboardService: DashboardService,
         private _dashboardProxy: DashboardServiceProxy,
-        bankAccountsService: BankAccountsService
+        bankAccountsService: BankAccountsService,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
 
@@ -56,24 +58,23 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     ngOnInit() {
-       this.getAccountTotals();
+        this.getAccountTotals();
     }
 
     getAccountTotals(): void {
-        this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, 'USD')
-            .subscribe((result) => {
-                this.accountsData = result;
-            });
+        this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.cfoPreferencesService.selectedCurrencyId).subscribe((result) => {
+            this.accountsData = result;
+        });
     }
 
     getDailyStats(): void {
         this.startLoading();
-        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate, 'USD')
-            .pipe(finalize(() => this.finishLoading()))
-            .subscribe(result => {
-                this.dailyStatsData = result;
-                this.setDailyStatsAmount();
-            });
+        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate, this.cfoPreferencesService.selectedCurrencyId).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(result => {
+            this.dailyStatsData = result;
+            this.setDailyStatsAmount();
+        });
     }
 
     navigateTo() {

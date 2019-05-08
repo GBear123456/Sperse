@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, OnInit, Injector, AfterViewInit, OnDestroy, ViewChild, HostListener } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +16,7 @@ import SparkLine from 'devextreme/viz/sparkline';
 import ScrollView from 'devextreme/ui/scroll_view';
 import * as moment from 'moment-timezone';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, BehaviorSubject, Subject, from, forkJoin, of } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, forkJoin, of } from 'rxjs';
 import {
     tap,
     finalize,
@@ -31,6 +32,7 @@ import {
     withLatestFrom
 } from 'rxjs/operators';
 import { difference } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import * as $ from 'jquery';
 import * as underscore from 'underscore';
 import * as _ from 'underscore.string';
@@ -105,6 +107,9 @@ import { UserPreferencesService } from './preferences-dialog/preferences.service
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { CfoStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { select, Store } from '@node_modules/@ngrx/store';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -139,7 +144,7 @@ export class CellOptions {
     selector: 'app-cashflow',
     templateUrl: './cashflow.component.html',
     styleUrls: ['./cashflow.component.less'],
-    providers: [ CashflowServiceProxy, CashFlowForecastServiceProxy, CategoryTreeServiceProxy, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService ]
+    providers: [ CashFlowForecastServiceProxy, CategoryTreeServiceProxy, ClassificationServiceProxy, UserPreferencesService, BankAccountsServiceProxy, CellsCopyingService, CashflowService, CurrencyPipe ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
@@ -491,8 +496,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     private currencyId = 'USD';
 
-    private preferenceCurrencyId = 'USD';
-
     /** @todo create model */
     private userPreferencesHandlers = {
         localizationAndCurrency: {
@@ -796,20 +799,23 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     );
 
     constructor(injector: Injector,
-                private _cashflowServiceProxy: CashflowServiceProxy,
-                private _filtersService: FiltersService,
-                private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
-                private _cacheService: CacheService,
-                private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
-                private _classificationServiceProxy: ClassificationServiceProxy,
-                private _bankAccountsServiceProxy: BankAccountsServiceProxy,
-                public dialog: MatDialog,
-                public userPreferencesService: UserPreferencesService,
-                public appService: AppService,
-                private _calculatorService: CalculatorService,
-                private _cellsCopyingService: CellsCopyingService,
-                private cashflowService: CashflowService,
-                private _bankAccountsService: BankAccountsService
+        private _cashflowServiceProxy: CashflowServiceProxy,
+        private _filtersService: FiltersService,
+        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+        private _cacheService: CacheService,
+        private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
+        private _classificationServiceProxy: ClassificationServiceProxy,
+        private _bankAccountsServiceProxy: BankAccountsServiceProxy,
+        public dialog: MatDialog,
+        public userPreferencesService: UserPreferencesService,
+        public appService: AppService,
+        private _calculatorService: CalculatorService,
+        private _cellsCopyingService: CellsCopyingService,
+        private cashflowService: CashflowService,
+        private _bankAccountsService: BankAccountsService,
+        private store$: Store<CfoStore.State>,
+        private _cfoPreferencesService: CfoPreferencesService,
+        private _currencyPipe: CurrencyPipe
     ) {
         super(injector);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -844,10 +850,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let getCategoryTree$ = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false);
 
         this.userPreferencesService.removeLocalModel();
-        let getCashflowGridSettings = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
+        let cashflowGridSettings$ = this.userPreferencesService.userPreferences$.pipe(first());
         this._bankAccountsService.load();
         const syncAccounts$ = this._bankAccountsService.syncAccounts$.pipe(first());
-        forkJoin(getCashFlowInitialData$, this.getForecastModels(), getCategoryTree$, getCashflowGridSettings, syncAccounts$)
+
+        const selectedCurrencyId$ = this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+            tap((selectedCurrencyId: string) => this.requestFilter.currencyId = selectedCurrencyId)
+        );
+
+        /** If component is activated and currency has changed - update grid  */
+        selectedCurrencyId$.pipe(
+            filter(() => this.componentIsActivated)
+        ).subscribe(() => {
+            this.refreshDataGrid();
+        });
+
+        /** If component is not activated - wait until it will activate and then reload */
+        selectedCurrencyId$.pipe(
+            filter(() => !this.componentIsActivated)
+        ).subscribe(() => {
+            this.updateAfterActivation = true;
+        });
+
+        forkJoin(getCashFlowInitialData$, this.getForecastModels(), getCategoryTree$, cashflowGridSettings$, syncAccounts$)
             .subscribe(([initialData, forecastModels, categoryTree, cashflowSettings, syncAccounts]) => {
                 /** Initial data handling */
                 this.handleCashFlowInitialResult(initialData, syncAccounts);
@@ -1182,7 +1208,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         name: 'total',
-                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this.transactionsTotal.toLocaleString('en-EN', {style: 'currency',  currency: 'USD' })}</span>`
+                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this._currencyPipe.transform(this.transactionsTotal, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow')}</span>`
                     },
                     {
                         name: 'count',
@@ -1190,7 +1216,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'average',
-                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this.transactionsAverage.toLocaleString('en-EN', {style: 'currency',  currency: 'USD' })}</span>`
+                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this._currencyPipe.transform(this.transactionsAverage, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow')}</span>`
                     },
                     {
                         action: this.hideFooterBar.bind(this),
@@ -1296,15 +1322,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /**
      * Handle getCashflow grid settings result
-     * @param cashflowSettingsResult
+     * @param cashflowSettingsResultcashflowGridSettings
      */
     handleGetCashflowGridSettingsResult(cashflowSettingsResult) {
-        this.cashflowGridSettings = cashflowSettingsResult;
+        this.cashflowGridSettings = cloneDeep(cashflowSettingsResult);
 
-        let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: this.cashflowGridSettings.localizationAndCurrency.currency});
-        this.preferenceCurrencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? this.cashflowGridSettings.localizationAndCurrency.currency : 'USD';
-        this.requestFilter.currencyId = this.preferenceCurrencyId;
-        this.currencySymbol = (777).toLocaleString('en-EN', { style: 'currency', currency: this.preferenceCurrencyId}).substr(0, 1);
+        // let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: this.cashflowGridSettings.localizationAndCurrency.currency});
+        // this.preferenceCurrencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? this.cashflowGridSettings.localizationAndCurrency.currency : 'USD';
+        this.currencySymbol = this._currencyPipe.transform(777, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow').substr(0, 1);
 
         this.applySplitMonthIntoSetting(this.cashflowGridSettings.general.splitMonthType);
         this.tabularFontName = this.userPreferencesService.getClassNameFromPreference({
@@ -1574,7 +1599,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let stubTransaction = {
             'adjustmentType': null,
             'accountId': null,
-            'currencyId': this.preferenceCurrencyId,
+            'currencyId': this._cfoPreferencesService.selectedCurrencyId,
             'amount': 0,
             'comment': null,
             'date': null,
@@ -1944,78 +1969,70 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     refreshDataGridWithPreferences(options) {
-        let preferences$, notificationMessage;
+        let notificationMessage;
         const dataSource = this.pivotGrid.instance.getDataSource();
-        /** If just apply - then get from the options */
-        if (options && options.apply && options.model) {
-            let model = new CashFlowGridSettingsDto(options.model);
-            model.init(options.model);
-            preferences$ = from([options.model]);
-            notificationMessage = this.l('AppliedSuccessfully');
-        /** If settings were saved - get them from the api */
-        } else {
-            preferences$ = this._cashflowServiceProxy.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-            notificationMessage = this.l('SavedSuccessfully');
+        let model = new CashFlowGridSettingsDto(options.model);
+        model.init(options.model);
+        const preferences = options.model;
+        notificationMessage = this.l('AppliedSuccessfully');
+        const updateWithNetChange = preferences.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
+        const updateAfterAccountingTypeShowingChange = preferences.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
+        const updateWithDiscrepancyChange = preferences.general.showBalanceDiscrepancy !== this.cashflowGridSettings.general.showBalanceDiscrepancy;
+        const updateMonthSplitting = preferences.general.splitMonthType !== this.cashflowGridSettings.general.splitMonthType;
+        const updateCurrency = preferences.localizationAndCurrency.currency !== this.cashflowGridSettings.localizationAndCurrency.currency;
+        this.handleGetCashflowGridSettingsResult(preferences);
+        this.closeTransactionsDetail();
+        this.startLoading();
+
+        /** @todo refactor - move to the showNetChangeRow and call here all
+         *  appliedTo data methods before reloading the cashflow
+         */
+
+        /** Clear user preferences cache */
+        this.getUserPreferencesForCell.cache = {};
+        if (updateMonthSplitting) {
+            let showWeeks = preferences.general.splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
+            /** Changed showing of week and projected fields */
+            dataSource.field('Projected', { visible: !showWeeks, expanded: !showWeeks });
+            dataSource.field('Week', { visible: showWeeks });
         }
-        preferences$.subscribe((result: CashFlowGridSettingsDto) => {
-            const updateWithNetChange = result.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
-            const updateAfterAccountingTypeShowingChange = result.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
-            const updateWithDiscrepancyChange = result.general.showBalanceDiscrepancy !== this.cashflowGridSettings.general.showBalanceDiscrepancy;
-            const updateMonthSplitting = result.general.splitMonthType !== this.cashflowGridSettings.general.splitMonthType;
-            const updateCurrency = result.localizationAndCurrency.currency !== this.cashflowGridSettings.localizationAndCurrency.currency;
-            this.handleGetCashflowGridSettingsResult(result);
-            this.closeTransactionsDetail();
-            this.startLoading();
 
-            /** @todo refactor - move to the showNetChangeRow and call here all
-             *  appliedTo data methods before reloading the cashflow
-             */
-
-            /** Clear user preferences cache */
-            this.getUserPreferencesForCell.cache = {};
-            if (updateMonthSplitting) {
-                let showWeeks = result.general.splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
-                /** Changed showing of week and projected fields */
-                dataSource.field('Projected', { visible: !showWeeks, expanded: !showWeeks });
-                dataSource.field('Week', { visible: showWeeks });
+        /** @todo refactor (move to the userPreferencesHandlers to avoid if else structure) */
+        if (updateCurrency) {
+            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(this.cashflowGridSettings.localizationAndCurrency.currency));
+        } else {
+            if (updateWithDiscrepancyChange) {
+                dataSource.reload();
             }
-
-            /** @todo refactor (move to the userPreferencesHandlers to avoid if else structure) */
-            if (updateCurrency) {
-                this.loadGridDataSource();
+            if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange && !updateWithDiscrepancyChange && !updateMonthSplitting) {
+                this.pivotGrid.instance.repaint();
             } else {
-                if (updateWithDiscrepancyChange) {
+                if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
                     dataSource.reload();
-                }
-                if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange && !updateWithDiscrepancyChange && !updateMonthSplitting) {
-                    this.pivotGrid.instance.repaint();
                 } else {
-                    if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
-                        dataSource.reload();
-                    } else {
-                        if (updateWithNetChange) {
-                            /** If user choose to show net change - then add stub data to data source */
-                            if (result.general.showNetChangeRow) {
-                                this.cashflowData = this.cashflowData.concat(this.getStubForNetChange(this.cashflowData));
-                                /** else - remove the stubbed net change data from data source */
-                            } else {
-                                this.cashflowData = this.cashflowData.filter(item => item.cashflowTypeId !== NetChange);
-                            }
+                    if (updateWithNetChange) {
+                        /** If user choose to show net change - then add stub data to data source */
+                        if (preferences.general.showNetChangeRow) {
+                            this.cashflowData = this.cashflowData.concat(this.getStubForNetChange(this.cashflowData));
+                            /** else - remove the stubbed net change data from data source */
+                        } else {
+                            this.cashflowData = this.cashflowData.filter(item => item.cashflowTypeId !== NetChange);
                         }
-
-                        if (updateAfterAccountingTypeShowingChange) {
-                            this.cashflowData.forEach(item => {
-                                this.addCategorizationLevels(item);
-                            });
-                        }
-                        this.dataSource = this.getApiDataSource();
                     }
+
+                    if (updateAfterAccountingTypeShowingChange) {
+                        this.cashflowData.forEach(item => {
+                            this.addCategorizationLevels(item);
+                        });
+                    }
+                    this.dataSource = this.getApiDataSource();
                 }
-                this.pivotGrid.instance.updateDimensions();
-                this.handleBottomHorizontalScrollPosition();
             }
-            this.notify.info(notificationMessage);
-        });
+            this.pivotGrid.instance.updateDimensions();
+            this.handleBottomHorizontalScrollPosition();
+        }
+        this.notify.info(notificationMessage);
+
     }
 
     getApiDataSource() {
@@ -3600,7 +3617,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     date: moment(date),
                     startDate: target.date.startDate,
                     endDate: target.date.endDate,
-                    currencyId: this.preferenceCurrencyId,
+                    currencyId: this._cfoPreferencesService.selectedCurrencyId,
                     amount: transaction.debit !== null ? -transaction.debit : transaction.credit
                 };
                 /** To update local data */
@@ -3875,20 +3892,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (!locale)
             locale = this.cashflowGridSettings.localizationAndCurrency.numberFormatting.indexOf('.') == 1 ? 'tr' : 'en-EN';
         value = value > -0.01 && value < 0.01 ? 0 : value;
-        return value.toLocaleString(locale, {
-            style: 'currency',
-            currency: this.preferenceCurrencyId,
-            maximumFractionDigits: fractionDigits,
-            minimumFractionDigits: fractionDigits
-        });
+        return this._currencyPipe.transform(
+            value,
+            this._cfoPreferencesService.selectedCurrencyId,
+            'symbol-narrow',
+            `0.${fractionDigits}-${fractionDigits}`
+        );
     }
 
     hideFooterBar() {
         this.cashflowGridSettings.visualPreferences.showFooterBar = false;
         this.userPreferencesService.removeLocalModel();
         this.handleBottomHorizontalScrollPosition();
-        this._cashflowServiceProxy.saveCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId, this.cashflowGridSettings)
-            .subscribe((result) => {  });
+        this.userPreferencesService.saveRemotely(this.cashflowGridSettings)
+            .subscribe(() => {});
     }
 
     /** @todo refactor */
@@ -4507,7 +4524,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let filterParams = {
             startDate: startDate,
             endDate: endDate,
-            currencyId: this.preferenceCurrencyId,
+            currencyId: this._cfoPreferencesService.selectedCurrencyId,
             accountIds: accountsIds,
             businessEntityIds: this.requestFilter.businessEntityIds || [],
             searchTerm: '',
@@ -4664,7 +4681,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 cashFlowTypeId: cashflowTypeId,
                 categoryId: subCategoryId || categoryId,
                 transactionDescriptor: transactionDescriptor,
-                currencyId: this.preferenceCurrencyId,
+                currencyId: this._cfoPreferencesService.selectedCurrencyId,
                 amount: newValue,
                 description: null
             });
@@ -5358,7 +5375,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let filterParams = {
                 startDate: this.requestFilter.startDate,
                 endDate: this.requestFilter.endDate,
-                currencyId: this.preferenceCurrencyId,
+                currencyId: this._cfoPreferencesService.selectedCurrencyId,
                 accountIds: this.requestFilter.accountIds || [],
                 businessEntityIds: this.requestFilter.businessEntityIds || [],
                 searchTerm: this.searchValue,
@@ -5526,7 +5543,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         let currentDate = this.cashflowService.getUtcCurrentDate();
         data.forecastDate = this.statsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.statsDetailFilter.startDate).utc() : currentDate;
-        data.currencyId = this.preferenceCurrencyId;
+        data.currencyId = this._cfoPreferencesService.selectedCurrencyId;
 
         let activeBankAccountsIds = this.cashflowService.getActiveAccountIds(this.bankAccounts, this.statsDetailFilter.accountIds);
         let accountId = activeBankAccountsIds && activeBankAccountsIds.length ? activeBankAccountsIds[0] : (this.statsDetailFilter.accountIds[0] || this.bankAccounts[0].id);
@@ -5564,7 +5581,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             cashFlowTypeId: data.cashflowTypeId,
             categoryId: data.categoryId,
             transactionDescriptor: data.descriptor,
-            currencyId: this.preferenceCurrencyId,
+            currencyId: this._cfoPreferencesService.selectedCurrencyId,
             amount: data.debit ? -data.debit : data.credit,
             description: data.description
         });

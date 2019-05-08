@@ -57,8 +57,8 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     onMultiTagPreparing(e) {
         let totalCount = this.businessEntities.length,
             selectedCount = e.selectedItems.length;
-        e.text = totalCount && selectedCount ? 
-            (selectedCount != totalCount ? selectedCount + ' ' + this.l('of') + ' ' : '') 
+        e.text = totalCount && selectedCount ?
+            (selectedCount != totalCount ? selectedCount + ' ' + this.l('of') + ' ' : '')
                 + totalCount + ' ' + this.l('entities') : this.l('All_Entities');
     }
 

@@ -5,6 +5,9 @@ import { AppService } from '@app/app.service';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
+import { CfoStore, CurrenciesStoreActions } from '@app/cfo/store';
+import { Store } from '@ngrx/store';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'cashflow-operations',
@@ -47,7 +50,9 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     constructor(injector: Injector,
         private _filtersService: FiltersService,
         private _appService: AppService,
-        private _bankAccountsService: BankAccountsService
+        private _bankAccountsService: BankAccountsService,
+        private cfoPreferencesService: CfoPreferencesService,
+        private store$: Store<CfoStore.State>
     ) {
         super(injector);
     }
@@ -156,6 +161,31 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                             'accountCount': this.bankAccountCount
                         }
                     },
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'select-box',
+                        text: '',
+                        widget: 'dxDropDownMenu',
+                        accessKey: 'currencySwitcher',
+                        options: {
+                            hint: this.l('Currency'),
+                            accessKey: 'currencySwitcher',
+                            items: this.cfoPreferencesService.currencies,
+                            selectedIndex: this.cfoPreferencesService.selectedCurrencyIndex,
+                            height: 39,
+                            width: 80,
+                            onSelectionChanged: (e) => {
+                                if (e) {
+                                    this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
+                                }
+                            }
+                        }
+                    }
                 ]
             },
             {

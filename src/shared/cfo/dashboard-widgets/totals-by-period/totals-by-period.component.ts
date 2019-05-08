@@ -7,7 +7,8 @@ import {
     GroupBy,
     InstanceType
 } from '@shared/service-proxies/service-proxies';
-import { mergeMap, scan } from 'rxjs/operators';
+import { mergeMap, scan, tap } from 'rxjs/operators';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'app-totals-by-period',
@@ -17,7 +18,6 @@ import { mergeMap, scan } from 'rxjs/operators';
 })
 export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
-
     @Input() waitForBankAccounts = false;
     @Input() waitForPeriods = false;
     bankAccountIds: number[] = [];
@@ -35,7 +35,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
-        private _bankAccountService: BankAccountsServiceProxy
+        private _bankAccountService: BankAccountsServiceProxy,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
 
@@ -49,7 +50,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             this._bankAccountService.getStats(
                 InstanceType[this.instanceType],
                 this.instanceId,
-                'USD',
+                this.cfoPreferencesService.selectedCurrencyId,
                 undefined,
                 this.bankAccountIds,
                 this.startDate,
@@ -57,6 +58,11 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 this.selectedPeriod
             )
                 .pipe(
+                    tap(result => {
+                        if (!result || !result.length) {
+                            this.totalData = null;
+                        }
+                    }),
                     mergeMap(x => x),
                     scan((prevStatsItem, currentStatsItem: any) => {
                         let credit = currentStatsItem.credit + prevStatsItem.credit;

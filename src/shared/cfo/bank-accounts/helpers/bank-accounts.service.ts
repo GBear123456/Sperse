@@ -15,6 +15,7 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Injectable()
 export class BankAccountsService {
@@ -72,7 +73,8 @@ export class BankAccountsService {
         private businessEntityService: BusinessEntityServiceProxy,
         private cacheService: CacheService,
         private _filtersService: FiltersService,
-        private localizationService: AppLocalizationService
+        private localizationService: AppLocalizationService,
+        private cfoPreferencesService: CfoPreferencesService
     ) {
         this.cfoService.instanceTypeChanged$.subscribe(instanceType => {
             this.bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${instanceType}`;
@@ -171,7 +173,7 @@ export class BankAccountsService {
         let filteredSyncAccountsAmount$ = combinedFilteredSyncAccounts$.pipe(
             mergeMap(([syncAccounts, state]) => {
                 return of(this.filterDataSource(
-                    syncAccounts, [], state.selectedBankAccountIds, 
+                    syncAccounts, [], state.selectedBankAccountIds,
                     state.visibleBankAccountIds, state.isActive
                 ));
             }),
@@ -360,7 +362,7 @@ export class BankAccountsService {
         this.loadState();
 
         if (!this.syncAccountsRequest$) {
-            this.syncAccountsRequest$ = this.bankAccountsServiceProxy.getBankAccounts(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, 'USD').pipe(
+            this.syncAccountsRequest$ = this.bankAccountsServiceProxy.getBankAccounts(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, this.cfoPreferencesService.selectedCurrencyId).pipe(
                 publishReplay(),
                 refCount()
             );

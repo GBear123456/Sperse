@@ -13,6 +13,7 @@ import { take, toArray } from 'rxjs/operators';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { DashboardService } from '../dashboard.service';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'app-trend-by-period',
@@ -29,7 +30,6 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     startDate: any;
     endDate: any;
     chartWidth = 650;
-    currency = 'USD';
     isForecast = false;
     initCallback;
     renderTimeout;
@@ -116,7 +116,8 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         private _dashboardService: DashboardService,
         private _bankAccountService: BankAccountsServiceProxy,
         private _statsService: StatsService,
-        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy
+        private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
 
@@ -189,7 +190,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
             this._bankAccountService.getStats(
                 InstanceType[this.instanceType],
                 this.instanceId,
-                'USD',
+                this.cfoPreferencesService.selectedCurrencyId,
                 this.selectedForecastModelId,
                 this.bankAccountIds,
                 this.startDate,
