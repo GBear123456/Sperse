@@ -14,6 +14,7 @@ import {
 } from 'rxjs/operators';
 import { CreditCard } from 'angular-cc-library';
 import * as moment from 'moment';
+import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -75,6 +76,7 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
                         : this.paymentServiceProxy.getPayments(contactId).pipe(
                             tap(payments => {
                                 this.paymentServiceProxy['data'][contactId].payments = payments;
+                                this.setLastPaymentInfo(payments);
                             })
                         )).pipe(finalize(() => {abp.ui.clearBusy(this.paymentsContainer.nativeElement); }));
                 }
@@ -108,6 +110,16 @@ export class PaymentInformationComponent extends AppComponentBase implements OnI
                 this._refresh.next(true);
             }
         });
+    }
+
+    setLastPaymentInfo(payments) {
+        let lastPayment = payments && _.sortBy(payments, (payment) => {
+            return payment.startDate;
+        }).reverse()[0];
+        if (lastPayment) {
+            this.lastPaymentAmount = lastPayment.amount;
+            this.lastPaymentDate = lastPayment.startDate.utc().format('MMM D');
+        }
     }
 
     formatDate(date: moment.Moment) {

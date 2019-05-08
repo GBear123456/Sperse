@@ -5,6 +5,80 @@
         }
     }
 
+    /deep/ .mat-dialog-header {
+        label { 
+            color: #8a969b;
+            padding: 20px 0px;
+            font-size: 28px;
+            position: relative;
+        }
+        .title-wrapper {
+            width: 660px;
+            span {
+                height: 30px;
+                background: #dadee1;
+                font-size: 11px;
+                font-weight: normal;
+                font-style: normal;
+                font-stretch: normal;
+                letter-spacing: 0.9px;
+                text-align: center;
+                border-radius: 15px;
+                color: #677380;
+                padding: 7px 15px;
+                align-self: center;
+                margin-left: auto;
+            }
+        }
+        dx-select-box {
+            margin: 23px 0px 23px 40px;
+            &, input {
+                background: transparent;
+                font-size: 15px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.67;
+                letter-spacing: 0.3px;
+                color: #424c56;
+            }
+        }
+        dx-text-box {
+            &, input {
+                background: transparent !important;
+            }    
+            &[name="title"] {
+                width: 140px !important;
+                input {
+                    font-weight: 800 !important;
+                }
+            }
+            input {
+                &, &:read-only {
+                    font-size: 22px;
+                    font-weight: 500;
+                    line-height: 1.09;
+                    letter-spacing: 0.4px;
+                    padding-left: 17px;
+                    background-color: #F3F7FA;
+                    border: none;
+                }
+            }
+            .dx-texteditor-container:after {
+                content: '';
+                top: 62px!important;
+                margin-top: 0px!important;
+                left: 15px;
+                width: 442px;
+                height: 1px;
+                bottom: 18px;
+                position: absolute;
+                display: inline-block;
+                background-color: #dadee1;
+            }
+        }
+    }
+
     .toolbar-wraper {
         width: 100%;
         app-toolbar {
@@ -20,10 +94,32 @@
 
     .form-content {
         display: flex;
-        margin-top: 70px;
         flex-direction: column;
         padding: 30px 0px 30px 50px;
-        height: calc(~"100vh - 150px");
+        height: calc(~"100vh - 82px");
+        width: 900px;
+    
+        .row {
+            width: 820px;
+        }
+
+        .logo-container {
+            width: 260px;
+            height: 150px;
+            border: 1px solid #dedede;
+            text-align: center;
+            padding: 60px 0px;
+            a {
+                font-size: 15px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.6;
+                letter-spacing: 0.3px;
+                text-align: center;
+                color: #00aeef;
+            }
+        }
 
         .drop-down-box-wrapper {
             width: 130px;
@@ -50,6 +146,7 @@
         }
 
         /deep/ .field {
+            display: block;
             margin-bottom: 30px;
             &.addr {
                 margin-bottom: 0px;
@@ -59,12 +156,67 @@
                 span.clear-contact {
                     align-self: flex-start;
                 }
+                a {
+                    font-size: 14px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.79;
+                    letter-spacing: 0.3px;
+                    color: #00aeef;
+                }
+                text-area {
+                    font-size: 15px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.47;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                }
             }
             &.lines {
-                width: 600px;
+                margin-bottom: 0;
+            }
+            .credentials {
+                height: 100px;
+                span {
+                    display: block;
+                    font-size: 15px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.47;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                }
             }
             label {
+                display: flex;
                 min-width: 100px;
+                justify-content: space-between;
+                &.notes-label { 
+                    display: block;
+                    font-size: 14px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    letter-spacing: 0.3px;
+                    color: #677380  
+                }
+                a {
+                    font-size: 14px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    letter-spacing: 0.3px;
+                    text-align: right;
+                    color: #00aeef;
+                    i {
+                        color: #00aeef;
+                        padding-right: 8px;
+                    }
+                }
             }
 
             p {
@@ -82,7 +234,7 @@
             dx-text-box, dx-text-area, dx-select-box, 
             dx-drop-down-box, dx-date-box {
                 display: inline-block;
-                margin-left: 30px;
+
                 &.dx-invalid {
                     input {
                         color: #d9534f!important;
@@ -110,6 +262,47 @@
                 }
             }
         }
+
+        .conclusion {
+            margin-top: 20px;
+            & > div {
+                display: flex;
+                justify-content: space-between;
+                border-bottom: 1px solid rgba(218, 222, 225, 0.7);
+                height: 43px;
+                span {
+                    font-size: 15px;
+                    font-weight: 300;
+                    font-style: normal;
+                    font-stretch: normal;
+                    line-height: 1.47;
+                    letter-spacing: 0.3px;
+                    color: #424c56;
+                    margin: 10px 0px;
+                }
+                &.total {
+                    span {
+                        font-weight: bold;
+                    }
+                    a {
+                        margin: 11px;
+                        font-size: 14px;
+                        font-weight: 300;
+                        font-style: normal;
+                        font-stretch: normal;
+                        letter-spacing: 0.3px;
+                        color: #00aeef;
+                        margin-right: auto;
+                    }
+                }
+                &.balance {
+                    margin-top: 5px;
+                    padding: 0px 10px;
+                    background-color: #f3f7fa;
+                    border-bottom: none;
+                }
+            }
+        }
     }
 
     /deep/ dx-data-grid {
@@ -134,6 +327,26 @@
                     transform: translate(-50%, -50%);
                 }
             }
+        }
+        .dx-datagrid-text-content {
+            font-size: 15px;
+            font-weight: normal;
+            font-style: normal;
+            font-stretch: normal;
+            line-height: 1.33;
+            letter-spacing: 0.3px;
+            color: #202b35;
+        }
+        .dx-datagrid-rowsview {
+            border: none;
+        }
+        .dx-datagrid-headers {
+            &, .dx-datagrid-content, td {
+                border: none!important;
+            }
+        }
+        .dx-datagrid-focus-overlay {
+            border: none!important;        
         }
     }
 }

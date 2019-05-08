@@ -152,7 +152,8 @@ export class AppService extends AppServiceBase {
     }
 
     getSubscriptionName(module?: string) {
-        return this.getModuleSubscription(module).module.replace('_', ' & ');
+        let sub = this.getModuleSubscription(module);
+        return sub && sub.module.replace('_', ' & ') || '';
     }
 
     subscriptionIsLocked(name?: string) {

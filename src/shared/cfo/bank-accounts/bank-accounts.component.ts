@@ -86,14 +86,14 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
             return;
 
         const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{
-                data: {
-                    connector: syncAccount.syncTypeId === 'Q' ? AccountConnectors.Quovo : AccountConnectors.Xero,
-                    config: {
-                        accountId: syncAccount.syncTypeId === 'Q' ? syncAccount.syncRef : syncAccount.syncAccountId,
-                    },
-                    operationType: 'update'
-                }
-            }};
+            data: {
+                connector: syncAccount.syncTypeId === 'Q' ? AccountConnectors.Quovo : AccountConnectors.Xero,
+                config: {
+                    accountId: syncAccount.syncTypeId === 'Q' ? syncAccount.syncRef : syncAccount.syncAccountId,
+                },
+                operationType: 'update'
+            }
+        }};
         this.dialog.open(AccountConnectorDialogComponent, dialogConfig);
     }
 

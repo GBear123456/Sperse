@@ -11,7 +11,7 @@ import { SyncAccountDto } from 'shared/service-proxies/service-proxies';
 export class ChooseXeroAccountComponent extends CFOComponentBase implements OnInit {
     accounts: SyncAccountDto[] = null;
     selectedAccountId: number = null;
-    createAccountAvailable: boolean = false;
+    createAccountAvailable = false;
 
     constructor(
         injector: Injector,

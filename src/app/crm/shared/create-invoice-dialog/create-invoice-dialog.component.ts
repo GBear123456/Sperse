@@ -29,32 +29,45 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     @ViewChild('contact') contactComponent: DxSelectBoxComponent;
 
     private lookupTimeout;
+
     private readonly SAVE_OPTION_DEFAULT = 1;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
     private validationError: string;
 
+    invoiceNo;
     invoiceId: number;
     statuses: any[] = [];
     status = CreateInvoiceInputStatus.Draft;
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
+    billingSettings = {};
+
+    currencies = [
+        {name: 'US Dollar', code: 'USD'},
+        {name: 'GB Pound', code: 'GBP'},
+        {name: 'Euro', code: 'EUR'}
+    ];
+    currency = this.currencies[0].code;
 
     customer: any;
     contactId: number;
     customers = [];
 
+    date;
+    dueDate;
     currentDate = new Date();
-    date = this.currentDate;
-    dueDate = this.date;
 
     order: any;
     description = '';
     notes = '';
-    lines = [];
+    lines = [{}];
 
-    toolbarConfig = [];
+    subTotal = 0;
+    total = 0;
+    balance = 0;
+
     disabledForUpdate = false;
 
     constructor(
@@ -76,8 +89,12 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             this.customers = res;
         });
 
+        _invoiceProxy.getSettings().subscribe((settings) => {
+            this.billingSettings = settings;
+            this.invoiceNo = settings.nextInvoiceNumber;
+        });
+
         this.initInvoiceData();
-        this.initToolbarConfig();
     }
 
     initInvoiceData() {
@@ -105,66 +122,9 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
                     };
                 });
             });
+        } else {
+            this.resetNoteDefault();
         }
-    }
-
-    initToolbarConfig() {
-        this.toolbarConfig = [
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'status',
-                        widget: 'dxSelectBox',
-                        disabled: false,
-                        options: {
-                            hint: 'Status',
-                            value: this.status,
-                            valueExpr: 'text',
-                            displayExpr: 'text',
-                            items: Object.keys(CreateInvoiceInputStatus).map((item) => {
-                                return {
-                                    text: item,
-                                    disabled: (item == CreateInvoiceInputStatus.Paid
-                                        || item == CreateInvoiceInputStatus.Canceled)
-                                        && (!this.data.invoice || this.data.invoice.Status != CreateInvoiceInputStatus.Sent)
-                                }
-                            }),
-                            onValueChanged: (event) => {
-                                this.status = event.value;
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                areItemsDependent: true,
-                items: [
-                    {
-                        name: 'delete',
-                        visible: Boolean(this.data.invoice),
-                        disabled: !this.data.invoice ||
-                            (this.data.invoice.Status == CreateInvoiceInputStatus.Paid),
-                        action: this.deleteInvoice.bind(this)
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                areItemsDependent: true,
-                items: [
-                    {
-                        name: 'discard',
-                        visible: !this.data.invoice,
-                        action: this.resetFullDialog.bind(this, false)
-                    }
-                ]
-            }
-        ];
     }
 
     saveOptionsInit() {
@@ -195,9 +155,9 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
     ngOnInit() {
         super.ngOnInit();
 
-        this.data.titleClearButton = true;
-        this.data.editTitle = !this.disabledForUpdate;
-        this.data.placeholder = this.l('Invoice #');
+        this.data.editTitle = false;
+        this.data.titleClearButton = false;
+        this.data.title = this.l('INVOICE');
         this.data.buttons = [{
             id: this.saveButtonId,
             title: this.l('Save'),
@@ -224,11 +184,11 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             data.status = UpdateInvoiceInputStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new UpdateInvoiceLineInput({
-                    id: row.id,
-                    quantity: row.Quantity,
-                    rate: row.Rate,
+                    id: row['id'],
+                    quantity: row['Quantity'],
+                    rate: row['Rate'],
                     unitId: 'UT',
-                    description: row.Description,
+                    description: row['Description'],
                     sortOrder: index
                 });
             });
@@ -241,10 +201,10 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             data.status = CreateInvoiceInputStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new CreateInvoiceLineInput({
-                    quantity: row.Quantity,
-                    rate: row.Rate,
+                    quantity: row['Quantity'],
+                    rate: row['Rate'],
                     unitId: 'UT',
-                    description: row.Description,
+                    description: row['Description'],
                     sortOrder: index
                 });
             });
@@ -335,13 +295,11 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
             this.data.isTitleValid = true;
             this.status = CreateInvoiceInputStatus.Draft;
             this.customer = undefined;
-            this.date = this.currentDate;
+            this.date = undefined;
             this.dueDate = this.date;
             this.description = '';
             this.notes = '';
             this.lines = [];
-
-            this.initToolbarConfig();
         };
 
         if (forced)
@@ -367,10 +325,6 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
         }
     }
 
-    onToolbarPreparing(event) {
-        event.toolbarOptions.items[0].locateInMenu = 'never';
-    }
-
     selectContact(event) {
         this.contactId = event.selectedItem && event.selectedItem.id;
     }
@@ -392,5 +346,13 @@ export class CreateInvoiceDialogComponent extends AppModalDialogComponent implem
                     }
                 }
             );
+    }
+
+    resetNoteDefault() {
+        this.notes = this.l('Invoice_Default_Note');
+    }
+
+    onValueChanged(event, data) {
+        this.lines[data.rowIndex][data.column.dataField] = event.value;
     }
 }

@@ -61,7 +61,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
             data: { loadingContainerElement: this.setupContainerElement }
         }};
 
-        this.dialog.open(AccountConnectorDialogComponent, dialogConfig).afterClosed().subscribe(e => {
+        this.dialog.open(AccountConnectorDialogComponent, dialogConfig).afterClosed().subscribe(() => {
             this.isDisabled = false;
         });
     }

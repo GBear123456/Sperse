@@ -5,6 +5,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { PersonOrgRelationServiceProxy, PersonOrgRelationShortInfo, ContactInfoDto } from 'shared/service-proxies/service-proxies';
 import { ContactListDialogComponent } from '../contact-list-dialog/contact-list-dialog.component';
 
+import * as _ from 'underscore';
+
 @Component({
     selector: 'relation-companies-dialog',
     templateUrl: './relation-companies-dialog.component.html',
@@ -43,6 +45,11 @@ export class RelationCompaniesDialogComponent extends AppComponentBase implement
 
     setPrimary(event, contact) {
         this._relationsServiceProxy.setPrimaryOrgRelation(contact.relation.id).subscribe(() => {
+            let orgRelations = this.data.personContactInfo.orgRelations;
+            let orgRelation = _.find(orgRelations, orgRelation => orgRelation.isPrimary);
+            orgRelation.isPrimary = false;
+            orgRelation = _.find(orgRelations, orgRelation => orgRelation.id === contact.relation.id);
+            orgRelation.isPrimary = true;
             this.data.primaryOrganizationContactId = contact.id;
             this.notify.info(this.l('SavedSuccessfully'));
             this.dialogRef.close(contact);
