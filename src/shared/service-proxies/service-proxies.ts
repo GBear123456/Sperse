@@ -9947,6 +9947,74 @@ export class CreditSimulatorServiceProxy {
 }
 
 @Injectable()
+export class CurrencyServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getAll(): Observable<CurrencyInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CFO/Currency/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<CurrencyInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CurrencyInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<CurrencyInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(CurrencyInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CurrencyInfo[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class CustomerServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -10201,14 +10269,18 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getAccountTotals(instanceType: InstanceType69 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<AccountTotals> {
+    getAccountTotals(instanceType: InstanceType69 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string): Observable<AccountTotals> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetAccountTotals?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (bankAccountIds !== undefined)
-            bankAccountIds && bankAccountIds.forEach(item => { url_ += "bankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+            bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -10324,7 +10396,7 @@ export class DashboardServiceProxy {
      * @startDate (optional) 
      * @return Success
      */
-    getDailyBalanceStats(instanceType: InstanceType71 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
+    getDailyBalanceStats(instanceType: InstanceType71 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment, currencyId: string): Observable<GetDailyBalanceStatsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetDailyBalanceStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -10338,6 +10410,10 @@ export class DashboardServiceProxy {
             throw new Error("The parameter 'endDate' must be defined and cannot be null.");
         else
             url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -33685,6 +33761,7 @@ export class ImportForecastInput implements IImportForecastInput {
     descriptor!: string | undefined;
     description!: string | undefined;
     model!: string | undefined;
+    currencyId!: string;
     amount!: number;
     cashFlowTypeId!: string | undefined;
 
@@ -33706,6 +33783,7 @@ export class ImportForecastInput implements IImportForecastInput {
             this.descriptor = data["descriptor"];
             this.description = data["description"];
             this.model = data["model"];
+            this.currencyId = data["currencyId"];
             this.amount = data["amount"];
             this.cashFlowTypeId = data["cashFlowTypeId"];
         }
@@ -33727,6 +33805,7 @@ export class ImportForecastInput implements IImportForecastInput {
         data["descriptor"] = this.descriptor;
         data["description"] = this.description;
         data["model"] = this.model;
+        data["currencyId"] = this.currencyId;
         data["amount"] = this.amount;
         data["cashFlowTypeId"] = this.cashFlowTypeId;
         return data; 
@@ -33741,6 +33820,7 @@ export interface IImportForecastInput {
     descriptor: string | undefined;
     description: string | undefined;
     model: string | undefined;
+    currencyId: string;
     amount: number;
     cashFlowTypeId: string | undefined;
 }
@@ -42552,6 +42632,50 @@ export interface IScoreSimulatorDto {
     transferCreditBalances: number | undefined;
 }
 
+export class CurrencyInfo implements ICurrencyInfo {
+    id!: string | undefined;
+    name!: string | undefined;
+    symbol!: string | undefined;
+
+    constructor(data?: ICurrencyInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.symbol = data["symbol"];
+        }
+    }
+
+    static fromJS(data: any): CurrencyInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new CurrencyInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["symbol"] = this.symbol;
+        return data; 
+    }
+}
+
+export interface ICurrencyInfo {
+    id: string | undefined;
+    name: string | undefined;
+    symbol: string | undefined;
+}
+
 export class AssignUserInput implements IAssignUserInput {
     id!: number;
     userId!: number | undefined;
@@ -42695,7 +42819,6 @@ export class AccountTotals implements IAccountTotals {
     bankAccountCount!: number | undefined;
     totalNetWorth!: number | undefined;
     totalPending!: number | undefined;
-    currency!: string | undefined;
 
     constructor(data?: IAccountTotals) {
         if (data) {
@@ -42711,7 +42834,6 @@ export class AccountTotals implements IAccountTotals {
             this.bankAccountCount = data["bankAccountCount"];
             this.totalNetWorth = data["totalNetWorth"];
             this.totalPending = data["totalPending"];
-            this.currency = data["currency"];
         }
     }
 
@@ -42727,7 +42849,6 @@ export class AccountTotals implements IAccountTotals {
         data["bankAccountCount"] = this.bankAccountCount;
         data["totalNetWorth"] = this.totalNetWorth;
         data["totalPending"] = this.totalPending;
-        data["currency"] = this.currency;
         return data; 
     }
 }
@@ -42736,7 +42857,6 @@ export interface IAccountTotals {
     bankAccountCount: number | undefined;
     totalNetWorth: number | undefined;
     totalPending: number | undefined;
-    currency: string | undefined;
 }
 
 export class CategorizationStatus implements ICategorizationStatus {
@@ -42792,7 +42912,6 @@ export class GetDailyBalanceStatsOutput implements IGetDailyBalanceStatsOutput {
     avarageBalance!: number | undefined;
     maxBalance!: number | undefined;
     count!: number | undefined;
-    currency!: string | undefined;
 
     constructor(data?: IGetDailyBalanceStatsOutput) {
         if (data) {
@@ -42809,7 +42928,6 @@ export class GetDailyBalanceStatsOutput implements IGetDailyBalanceStatsOutput {
             this.avarageBalance = data["avarageBalance"];
             this.maxBalance = data["maxBalance"];
             this.count = data["count"];
-            this.currency = data["currency"];
         }
     }
 
@@ -42826,7 +42944,6 @@ export class GetDailyBalanceStatsOutput implements IGetDailyBalanceStatsOutput {
         data["avarageBalance"] = this.avarageBalance;
         data["maxBalance"] = this.maxBalance;
         data["count"] = this.count;
-        data["currency"] = this.currency;
         return data; 
     }
 }
@@ -42836,7 +42953,6 @@ export interface IGetDailyBalanceStatsOutput {
     avarageBalance: number | undefined;
     maxBalance: number | undefined;
     count: number | undefined;
-    currency: string | undefined;
 }
 
 export class GetTotalsOutput implements IGetTotalsOutput {
