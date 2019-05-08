@@ -243,4 +243,8 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
     refreshParent() {
         this.data.refreshParent && this.data.refreshParent();
     }
+
+    trackElement(index: number, element: any) {
+        return element ? element.guid : null;
+    }
 }
