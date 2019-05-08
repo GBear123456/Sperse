@@ -152,7 +152,7 @@ export class AppService extends AppServiceBase {
     }
 
     getSubscriptionName(module?: string) {
-	let sub = this.getModuleSubscription(module);
+        let sub = this.getModuleSubscription(module);
         return sub && sub.module.replace('_', ' & ') || '';
     }
 

@@ -52,7 +52,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         { value: 'AUD', caption: '$ AUD Australian Dollar' },
         { value: 'CAD', caption: '$ CAD Canadian Dollar' },
         { value: 'HKD', caption: '$ HKD Hong Kong Dollar' },
-        { value: 'MXN', caption: '$ MXN Mexico Peso' },
+        { value: 'MXN', caption: '$ MXN Mexican Peso' },
         { value: 'NZD', caption: '$ NZD New Zealand Dollar' },
         { value: 'USD', caption: '$ USD US Dollar' }
     ];

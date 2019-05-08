@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -9,7 +9,6 @@ import { finalize } from 'rxjs/operators';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
@@ -24,7 +23,7 @@ import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.servic
     styleUrls: ['./dashboard.component.less'],
     animations: [appModuleAnimation()],
 })
-export class DashboardComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
     @ViewChild(CategorizationStatusComponent) categorizationStatusComponent: CategorizationStatusComponent;
@@ -46,8 +45,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         injector: Injector,
         private _dashboardService: DashboardService,
         private bankAccountsService: BankAccountsService,
-        public dialog: MatDialog,
-        private zendeskService: ZendeskService
+        public dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -79,10 +77,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
-    }
-
-    ngAfterViewInit(): void {
-        this.zendeskService.showWidget();
     }
 
     ngOnDestroy(): void {        
@@ -141,7 +135,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     deactivate() {
-        this.zendeskService.hideWidget();
         this.rootComponent.overflowHidden();
         this.synchProgressComponent.deactivate();
     }
