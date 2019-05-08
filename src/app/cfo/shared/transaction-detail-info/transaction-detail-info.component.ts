@@ -47,11 +47,13 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         private _commentServiceProxy: CommentServiceProxy
     ) {
         super(injector);
-        this.transactionId = this.data.transactionId;
     }
 
     ngOnInit() {
-        this.getTransactionDetails();
+        this.data.transactionId$.subscribe((id) => {
+            this.transactionId = id;
+            this.getTransactionDetails();
+        });
         this.getTransactionAttributeTypes();
         this.getCategoryTree();
     }
