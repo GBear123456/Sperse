@@ -43,13 +43,16 @@ export class CreateOrEditLanguageModalComponent extends AppModalDialogComponent 
             this.languageNames = result.languageNames;
             this.language = result.language;
             this.flags = result.flags;
+            this.flags.push(
+                new ComboboxItemDto({'value': 'famfamfam-flags england', 'displayText': 'en', 'isSelected': false})
+            );
             this.data.title = this.language.name ? this.l('EditLanguage') + ': ' + this.language.name : this.l('CreateNewLanguage');
 
             if (!this.data.languageId) {
                 this.language.isEnabled = true;
             }
 
-            if (this.language) {
+            if (this.language && this.language.name) {
                 this.language.name = this.language.name.split('-').shift();
             }
         });
