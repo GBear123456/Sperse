@@ -187,7 +187,8 @@ export class OperationsWidgetComponent extends AppComponentBase {
                     locateInMenu: 'auto',
                     items: [
                         {
-                            visible: !this._featureService.isEnabled('PFM')
+                            visible: this.contactInfo.groupId == ContactGroup.Client
+                                     && !this._featureService.isEnabled('PFM')
                                      && (
                                         this.isClientCFOAvailable() || !this.isClientProspective()
                                         && !(this._userService['data'] && this._userService['data'].userId) &&

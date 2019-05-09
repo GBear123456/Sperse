@@ -17,6 +17,7 @@ import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
 import { filter, finalize, takeUntil } from 'rxjs/operators';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -47,7 +48,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
 import { ContactsService } from './contacts.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -90,6 +91,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     private readonly ADD_INVOICE_OPTION = 3;
     private readonly ADD_OPTION_DEFAULT = this.ADD_FILES_OPTION;
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
+
+    groupNames = _.mapObject(_.invert(ContactGroup), (val) => startCase(val));
+    statusNames = _.invert(ContactStatus);
 
     isAdminModule;
     defaultContextMenuItems = [
