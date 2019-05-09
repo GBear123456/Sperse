@@ -48,6 +48,10 @@ export class CreateOrEditLanguageModalComponent extends AppModalDialogComponent 
             if (!this.data.languageId) {
                 this.language.isEnabled = true;
             }
+
+            if (this.language) {
+                this.language.name = this.language.name.split('-').shift();
+            }
         });
     }
 
