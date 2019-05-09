@@ -68,8 +68,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         type: 'currency',
         precision: 2
     };
-    private currencies: { text: string }[];
-    private selectedCurrencyIndex: number;
     private updateAfterActivation: boolean;
 
     constructor(
@@ -200,8 +198,8 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             options: {
                                 hint: this.l('Currency'),
                                 accessKey: 'currencySwitcher',
-                                items: this.currencies,
-                                selectedIndex: this.selectedCurrencyIndex,
+                                items: this._cfoPreferences.currencies,
+                                selectedIndex: this._cfoPreferences.selectedCurrencyIndex,
                                 height: 39,
                                 width: 80,
                                 onSelectionChanged: (e) => {
@@ -258,13 +256,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.bankAccountsService.accountsAmount$.subscribe(amount => {
             this.bankAccountCount = amount;
             this.initToolbarConfig();
-        });
-
-        this.store$.pipe(select(CurrenciesStoreSelectors.getCurrenciesTexts)).subscribe((currenciesTexts) => {
-            this.currencies = currenciesTexts;
-        });
-        this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyIndex)).subscribe(selectedCurrencyIndex => {
-            this.selectedCurrencyIndex = selectedCurrencyIndex;
         });
 
         /** If component is not activated - wait until it will activate and then reload */

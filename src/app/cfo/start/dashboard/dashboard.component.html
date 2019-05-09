@@ -1,11 +1,7 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig">
         <synch-progress class="synch-progress" (onComplete)="refreshWidgets()"></synch-progress>
-        <!--<dx-drop-down-box [items]="cfoPreferencesService.currencies"-->
-                          <!--[value]="cfoPreferencesService.currencies[selectedCurrencyIndex]"-->
-                          <!--valueExpr="name"-->
-                          <!--displayExpr="name">-->
-        <!--</dx-drop-down-box>-->
+        <app-toolbar [config]="toolbarConfig" width="150px"></app-toolbar>
         <app-period (onChange)="periodChanged($event)"></app-period>
     </app-headline>
 

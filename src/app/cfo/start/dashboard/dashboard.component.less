@@ -170,4 +170,20 @@
     /deep/ .dx-scrollable-content {
         background: #FFF;
     }
+
+    /deep/ app-toolbar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        right: 220px;
+        dx-toolbar {
+            background: transparent;
+        }
+        @media (min-width: 992px) {
+            right: 160px;
+        }
+    }
 }
