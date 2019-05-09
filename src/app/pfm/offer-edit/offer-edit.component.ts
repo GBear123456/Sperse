@@ -69,7 +69,7 @@ import { CurrencyPipe } from '@angular/common';
     selector: 'offer-edit',
     templateUrl: './offer-edit.component.html',
     styleUrls: [ '../../shared/form.less', './offer-edit.component.less' ],
-    providers: [CurrencyPipe, OfferAnnouncementServiceProxy, OfferManagementServiceProxy, OffersService, OfferServiceProxy ],
+    providers: [ CurrencyPipe, OfferAnnouncementServiceProxy, OfferManagementServiceProxy, OfferServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
@@ -130,8 +130,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         private notifyService: NotifyService,
         private changeDetector: ChangeDetectorRef,
         private itemDetailsService: ItemDetailsService,
-        private permissionChecker: PermissionCheckerService,
-        private offersService: OffersService
+        private permissionChecker: PermissionCheckerService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
         this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted('Pages.PFM.Applications.SendOfferAnnouncements');
@@ -311,7 +310,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     onNotify() {
         if (this.sentAnnouncementPermissionGranted) {
             this.offerId$.pipe(first()).subscribe((offerId: number) => {
-                const offerCategory = this.offersService.getCategoryRouteNameByCategoryEnum(this.model.categories[0].category as any);
+                const offerCategory = OffersService.getCategoryRouteNameByCategoryEnum(this.model.categories[0].category as any);
                 const offerPublicLink = AppConsts.appBaseUrl + '/personal-finance/offers/' + offerCategory + '/' + offerId;
                 const el = document.createElement('div');
                 el.innerHTML = `<h5>${this.ls.ls('PFM', 'OfferLinkWillBeSentToUsers')}:</h5>

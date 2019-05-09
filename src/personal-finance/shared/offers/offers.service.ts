@@ -33,6 +33,15 @@ import { CurrencyPipe } from '@angular/common';
 
 @Injectable()
 export class OffersService {
+    static readonly routeToCategoryMapping: { [key: string]: OfferFilterCategory } = {
+        'credit-scores': OfferFilterCategory.CreditScore,
+        'id-theft-protection': OfferFilterCategory.CreditMonitoring
+    };
+    static readonly categoryToRouteMapping = {
+        [OfferFilterCategory.CreditScore]: 'credit-scores',
+        [OfferFilterCategory.CreditMonitoring]: 'id-theft-protection'
+    };
+
     state$: ReplaySubject<string> = new ReplaySubject<string>();
     memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
     memberInfoApplyOfferParams: string;
@@ -50,14 +59,6 @@ export class OffersService {
             name: 'Retrieving Response'
         }
     ];
-    readonly routeToCategoryMapping: { [key: string]: OfferFilterCategory } = {
-        'credit-scores': OfferFilterCategory.CreditScore,
-        'id-theft-protection': OfferFilterCategory.CreditMonitoring
-    };
-    readonly categoryToRouteMapping = {
-        [OfferFilterCategory.CreditScore]: 'credit-scores',
-        [OfferFilterCategory.CreditMonitoring]: 'id-theft-protection'
-    };
     readonly categoriesDisplayNames = {
         [OfferFilterCategory.CreditScore]: this.ls.l('CreditScore_CreditScores')
     };
@@ -104,14 +105,14 @@ export class OffersService {
         );
     }
 
-    getCategoryFromRoute(route: ActivatedRoute): Observable<OfferFilterCategory> {
+    static getCategoryFromRoute(route: ActivatedRoute): Observable<OfferFilterCategory> {
         return route.url.pipe(
-            map((urlSegment: UrlSegment) => this.routeToCategoryMapping[urlSegment[0].path] || OfferFilterCategory[upperFirst(camelCase(urlSegment[0].path))])
+            map((urlSegment: UrlSegment) => OffersService.routeToCategoryMapping[urlSegment[0].path] || OfferFilterCategory[upperFirst(camelCase(urlSegment[0].path))])
         );
     }
 
-    getCategoryRouteNameByCategoryEnum(category: OfferFilterCategory): string {
-        return this.categoryToRouteMapping[category] || kebabCase(category);
+    static getCategoryRouteNameByCategoryEnum(category: OfferFilterCategory): string {
+        return OffersService.categoryToRouteMapping[category] || kebabCase(category);
     }
 
     getCategoryDisplayName(category: OfferFilterCategory): string {
