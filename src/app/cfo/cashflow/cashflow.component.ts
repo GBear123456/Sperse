@@ -27,6 +27,7 @@ import {
     map,
     publishReplay,
     refCount,
+    skip,
     switchMap,
     toArray,
     withLatestFrom
@@ -861,6 +862,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         /** If component is activated and currency has changed - update grid  */
         selectedCurrencyId$.pipe(
+            /** Skip first load and then react on currencies changes */
+            skip(1),
             filter(() => this.componentIsActivated)
         ).subscribe(() => {
             this.refreshDataGrid();

@@ -4,7 +4,7 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
-import { filter } from 'rxjs/operators';
+import { filter, skip } from 'rxjs/operators';
 
 /** Application imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
@@ -101,6 +101,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
         /** If component is activated and currency has changed - update grid  */
         selectedCurrencyId$.pipe(
+            /** To avoid initial double widgets loading */
+            skip(1),
             filter(() => this.componentIsActivated)
         ).subscribe(() => {
             this.refreshWidgets();
