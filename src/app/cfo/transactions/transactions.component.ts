@@ -1,14 +1,26 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    AfterViewInit,
+    OnDestroy,
+    Injector,
+    ViewChild,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef
+} from '@angular/core';
 
 /** Third party imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-import { forkJoin } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { forkJoin, Subject } from 'rxjs';
+import {
+    first,
+    finalize
+} from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -46,6 +58,7 @@ import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
     animations: [appModuleAnimation()],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -55,6 +68,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
+    private transactionDetailDialogRef: MatDialogRef<TransactionDetailInfoComponent>;
+
+    private transId$: Subject<number> = new Subject<number>();
 
     noRefreshedAfterSync: boolean;
     items: any;
@@ -121,7 +137,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
         public filtersService: FiltersService,
-        private _bankAccountsService: BankAccountsService
+        private _bankAccountsService: BankAccountsService,
+        private _changeDetectionRef: ChangeDetectorRef
     ) {
         super(injector);
 
@@ -162,6 +179,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             onChanged: () => {
                 this.dataGrid.instance.clearSelection();
                 this.getTotalValues();
+                this._changeDetectionRef.markForCheck();
             }
         });
 
@@ -287,6 +305,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 } else {
                     /** if change is on another component - mark this for future update */
                     this.updateAfterActivation = true;
+                    this._changeDetectionRef.markForCheck();
                 }
             });
         });
@@ -294,6 +313,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this._bankAccountsService.accountsAmount$.subscribe(amount => {
             this.bankAccountCount = amount;
             this.initToolbarConfig();
+            this._changeDetectionRef.markForCheck();
         });
     }
 
@@ -1081,15 +1101,31 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     showTransactionDetailsInfo() {
-        this.dialog.open(TransactionDetailInfoComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                refreshParent: this.invalidate.bind(this),
-                transactionId: this.transactionId
+        if (!this.transactionDetailDialogRef) {
+            this.transactionDetailDialogRef = this.dialog.open(TransactionDetailInfoComponent, {
+                panelClass: 'slider',
+                disableClose: true,
+                hasBackdrop: false,
+                closeOnNavigation: false,
+                data: {
+                    refreshParent: this.invalidate.bind(this),
+                    transactionId$: this.transId$
+                }
+            });
+
+            this.transactionDetailDialogRef.afterOpen().subscribe(
+                () => this.transId$.next(this.transactionId)
+            );
+        } else {
+            this.transId$.next(this.transactionId);
+        }
+
+        this.transactionDetailDialogRef.afterClosed().subscribe(
+            () => {
+                this.transactionDetailDialogRef = undefined;
+                console.log(this.transactionDetailDialogRef);
             }
-        });
+        );
     }
 
     ngOnDestroy() {

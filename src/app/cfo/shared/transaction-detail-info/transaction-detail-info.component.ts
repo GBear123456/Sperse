@@ -47,11 +47,13 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         private _commentServiceProxy: CommentServiceProxy
     ) {
         super(injector);
-        this.transactionId = this.data.transactionId;
     }
 
     ngOnInit() {
-        this.getTransactionDetails();
+        this.data.transactionId$.subscribe((id) => {
+            this.transactionId = id;
+            this.getTransactionDetails();
+        });
         this.getTransactionAttributeTypes();
         this.getCategoryTree();
     }
@@ -240,5 +242,9 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
 
     refreshParent() {
         this.data.refreshParent && this.data.refreshParent();
+    }
+
+    trackElement(index: number, element: any) {
+        return element ? element.guid : null;
     }
 }
