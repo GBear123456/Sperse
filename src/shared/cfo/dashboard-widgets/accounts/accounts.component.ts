@@ -38,13 +38,12 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsSliderSelected = 1;
     isActive = null;
     visibleAccountCount = 0;
-    bankAccountsService: BankAccountsService;
 
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
         private _dashboardProxy: DashboardServiceProxy,
-        bankAccountsService: BankAccountsService,
+        public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
@@ -53,8 +52,6 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
         this._dashboardService.subscribePeriodChange(
             this.onDailyStatsPeriodChanged.bind(this));
-
-        this.bankAccountsService = bankAccountsService;
     }
 
     ngOnInit() {
