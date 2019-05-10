@@ -92,6 +92,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     private readonly ADD_OPTION_DEFAULT = this.ADD_FILES_OPTION;
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
 
+    private showRemovingOrgRelationProgress = false;
+
     groupNames = _.mapObject(_.invert(ContactGroup), (val) => startCase(val));
     statusNames = _.invert(ContactStatus);
 
@@ -181,13 +183,16 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.dialog.open(ConfirmDialogComponent, {
             data: {
                 title: this.l('ContactRelationRemovalConfirmationTitle'),
-                message: this.l('ContactRelationRemovalConfirmationMessage', companyName),
+                message: this.l('ContactRelationRemovalConfirmationMessage', companyName)
             }
         }).afterClosed().subscribe(result => {
             if (result) {
+                this.showRemovingOrgRelationProgress = true;
                 this.dialog.closeAll();
                 let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
-                this._personOrgRelationService.delete(orgRelationId).subscribe(() => {
+                this._personOrgRelationService.delete(orgRelationId)
+                .pipe(finalize(() => this.showRemovingOrgRelationProgress = false))
+                .subscribe(() => {
                     let orgRelations = this.data.personContactInfo.orgRelations;
                     let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
                     orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);

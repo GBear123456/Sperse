@@ -19424,13 +19424,13 @@ export class PersonOrgRelationServiceProxy {
     }
 
     /**
-     * @orgRelationId (optional) 
+     * @id (optional) 
      * @return Success
      */
-    setPrimaryOrgRelation(orgRelationId: number | null | undefined): Observable<void> {
+    setPrimaryOrgRelation(id: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/SetPrimaryOrgRelation?";
-        if (orgRelationId !== undefined)
-            url_ += "orgRelationId=" + encodeURIComponent("" + orgRelationId) + "&"; 
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
