@@ -17,8 +17,8 @@ import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-import { Subject, forkJoin, zip } from 'rxjs';
-import { first, finalize, map, skip } from 'rxjs/operators';
+import { Subject, forkJoin } from 'rxjs';
+import { first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -138,8 +138,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
         public filtersService: FiltersService,
-        private _changeDetectionRef: ChangeDetectorRef,
         private _bankAccountsService: BankAccountsService,
+        private _changeDetectionRef: ChangeDetectorRef,
         private store$: Store<CfoStore.State>,
         public cfoPreferencesService: CfoPreferencesService
     ) {
