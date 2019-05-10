@@ -94,6 +94,7 @@ import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.compon
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 import { StaticListComponent } from './static-list/static-list.component';
 import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
+import { TimeAgoPipe } from 'time-ago-pipe';
 
 @NgModule({
     imports: [
@@ -158,6 +159,7 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
         AngularGooglePlaceModule
     ],
     declarations: [
+        TimeAgoPipe,
         TimeZoneComboComponent,
         JqPluginDirective,
         CommonLookupModalComponent,
@@ -196,6 +198,7 @@ import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.compo
         LoadingSpinnerComponent
     ],
     exports: [
+        TimeAgoPipe,
         TimeZoneComboComponent,
         JqPluginDirective,
         CommonLookupModalComponent,
