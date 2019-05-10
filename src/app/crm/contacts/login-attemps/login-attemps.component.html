@@ -11,7 +11,7 @@
     <dxi-column dataField="browserInfo" caption="{{l('Browser')}}" width="500px"></dxi-column>
 
     <div *dxTemplate="let cell of 'dateTemplate'">
-        {{cell.data.creationTimeFormatted}}
+        {{cell.data.creationTime | timeAgo}} ({{cell.data.creationTime | date: 'yyyy-MM-dd hh:mm:ss' : userTimezone}})
     </div>
 
     <div *dxTemplate="let cell of 'statusTemplate'">

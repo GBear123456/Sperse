@@ -19424,13 +19424,13 @@ export class PersonOrgRelationServiceProxy {
     }
 
     /**
-     * @orgRelationId (optional) 
+     * @id (optional) 
      * @return Success
      */
-    setPrimaryOrgRelation(orgRelationId: number | null | undefined): Observable<void> {
+    setPrimaryOrgRelation(id: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/PersonOrgRelation/SetPrimaryOrgRelation?";
-        if (orgRelationId !== undefined)
-            url_ += "orgRelationId=" + encodeURIComponent("" + orgRelationId) + "&"; 
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -46695,8 +46695,9 @@ export interface ICreateInvoiceLineInput {
 
 export class InvoiceInfo implements IInvoiceInfo {
     contactName!: string | undefined;
-    number!: string | undefined;
+    orderNumber!: string | undefined;
     status!: InvoiceInfoStatus | undefined;
+    number!: string | undefined;
     date!: moment.Moment | undefined;
     dueDate!: moment.Moment | undefined;
     description!: string | undefined;
@@ -46715,8 +46716,9 @@ export class InvoiceInfo implements IInvoiceInfo {
     init(data?: any) {
         if (data) {
             this.contactName = data["contactName"];
-            this.number = data["number"];
+            this.orderNumber = data["orderNumber"];
             this.status = data["status"];
+            this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.dueDate = data["dueDate"] ? moment(data["dueDate"].toString()) : <any>undefined;
             this.description = data["description"];
@@ -46739,8 +46741,9 @@ export class InvoiceInfo implements IInvoiceInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactName"] = this.contactName;
-        data["number"] = this.number;
+        data["orderNumber"] = this.orderNumber;
         data["status"] = this.status;
+        data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
         data["description"] = this.description;
@@ -46756,8 +46759,9 @@ export class InvoiceInfo implements IInvoiceInfo {
 
 export interface IInvoiceInfo {
     contactName: string | undefined;
-    number: string | undefined;
+    orderNumber: string | undefined;
     status: InvoiceInfoStatus | undefined;
+    number: string | undefined;
     date: moment.Moment | undefined;
     dueDate: moment.Moment | undefined;
     description: string | undefined;
