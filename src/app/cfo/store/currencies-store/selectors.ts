@@ -1,5 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { Currency, State } from './state';
+import { State } from './state';
+import { CurrencyInfo } from '@shared/service-proxies/service-proxies';
 
 export const getCurrenciesState = createFeatureSelector<State>('currencies');
 
@@ -10,7 +11,7 @@ export const getCurrencies = createSelector(
 
 export const getCurrenciesTexts = createSelector(
     getCurrencies,
-    currencies => currencies.map(currency => ({ text: currency.value }))
+    (currencies: CurrencyInfo[]) => currencies && currencies.map((currency: CurrencyInfo) => ({ ...currency, text: currency.id }))
 );
 
 export const getSelectedCurrencyId = createSelector(
@@ -21,8 +22,19 @@ export const getSelectedCurrencyId = createSelector(
 export const getSelectedCurrencyIndex = createSelector(
     getCurrencies,
     getSelectedCurrencyId,
-    (currencies: Currency[], selectedCurrencyId: string) => {
-        const index = currencies.findIndex((currency: Currency) => currency.value === selectedCurrencyId);
-        return index > -1 ? index : 0;
+    (currencies: CurrencyInfo[], selectedCurrencyId: string) => {
+        let result = null;
+        if (currencies) {
+            const index = currencies.findIndex((currency: CurrencyInfo) => currency.id === selectedCurrencyId);
+            if (index > -1) {
+                result = index;
+            }
+        }
+        return result;
     }
+);
+
+export const getLoadedTime = createSelector(
+    getCurrenciesState,
+    (state: State) => state.loadedTime
 );

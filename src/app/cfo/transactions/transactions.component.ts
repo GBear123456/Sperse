@@ -341,171 +341,174 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     initToolbarConfig() {
         if (this.componentIsActivated) {
-            this._appService.updateToolbar([
-                {
-                    location: 'before', items: [
+            this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
+                .subscribe(([currencies, selectedCurrencyIndex]) => {
+                    this._appService.updateToolbar([
                         {
-                            name: 'filters',
-                            action: (event) => {
-                                this.filtersService.fixed =
-                                    !this.filtersService.fixed;
-                                if (this.filtersService.fixed)
-                                    this.categoriesShowed = false;
-                                else
-                                    this.categoriesShowed =
-                                        this._categoriesShowedBefore;
-                                this.filtersService.enable();
-                            },
-                            options: {
-                                checkPressed: () => {
-                                    return this.filtersService.fixed;
-                                },
-                                mouseover: (event) => {
-                                    this.filtersService.enable();
-                                },
-                                mouseout: (event) => {
-                                    if (!this.filtersService.fixed)
-                                        this.filtersService.disable();
-                                }
-                            },
-                            attr: {
-                                'filter-selected': this.filtersService.hasFilterSelected
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'search',
-                            widget: 'dxTextBox',
-                            options: {
-                                value: this.searchValue,
-                                width: '279',
-                                mode: 'search',
-                                placeholder: this.l('Search') + ' '
-                                + this.l('Transactions').toLowerCase(),
-                                onValueChanged: (e) => {
-                                    this.searchValueChange(e);
-                                }
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'searchAll',
-                            action: this.searchAllClick.bind(this),
-                            options: {
-                                text: this.l('Search All')
-                            },
-                            attr: {
-                                'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey)) ? true : false,
-                                'custaccesskey': 'search-container'
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'bankAccountSelect',
-                            widget: 'dxButton',
-                            action: this.toggleBankAccountTooltip.bind(this),
-                            options: {
-                                id: 'bankAccountSelect',
-                                text: this.l('Accounts'),
-                                icon: './assets/common/icons/accounts.svg'
-                            },
-                            attr: {
-                                'custaccesskey': 'bankAccountSelect',
-                                'accountCount': this.bankAccountCount
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'select-box',
-                            text: '',
-                            widget: 'dxDropDownMenu',
-                            accessKey: 'currencySwitcher',
-                            options: {
-                                hint: this.l('Currency'),
-                                accessKey: 'currencySwitcher',
-                                items: this.cfoPreferencesService.currencies,
-                                selectedIndex: this.cfoPreferencesService.selectedCurrencyIndex,
-                                height: 39,
-                                width: 80,
-                                onSelectionChanged: (e) => {
-                                    if (e) {
-                                        this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
-                                        this.filtersService.change(this.setCurrenciesFilter(e.itemData.text));
+                            location: 'before', items: [
+                                {
+                                    name: 'filters',
+                                    action: (event) => {
+                                        this.filtersService.fixed =
+                                            !this.filtersService.fixed;
+                                        if (this.filtersService.fixed)
+                                            this.categoriesShowed = false;
+                                        else
+                                            this.categoriesShowed =
+                                                this._categoriesShowedBefore;
+                                        this.filtersService.enable();
+                                    },
+                                    options: {
+                                        checkPressed: () => {
+                                            return this.filtersService.fixed;
+                                        },
+                                        mouseover: (event) => {
+                                            this.filtersService.enable();
+                                        },
+                                        mouseout: (event) => {
+                                            if (!this.filtersService.fixed)
+                                                this.filtersService.disable();
+                                        }
+                                    },
+                                    attr: {
+                                        'filter-selected': this.filtersService.hasFilterSelected
                                     }
                                 }
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'showCompactRowsHeight',
-                            action: this.showCompactRowsHeight.bind(this)
+                            ]
                         },
                         {
-                            name: 'download',
-                            widget: 'dxDropDownMenu',
-                            options: {
-                                hint: this.l('Download'),
-                                items: [{
-                                    action: Function(),
-                                    text: this.l('Save as PDF'),
-                                    icon: 'pdf',
-                                }, {
-                                    action: this.exportToXLS.bind(this),
-                                    text: this.l('Export to Excel'),
-                                    icon: 'xls',
-                                }, {
-                                    action: this.exportToCSV.bind(this),
-                                    text: this.l('Export to CSV'),
-                                    icon: 'sheet'
-                                }, {
-                                    action: this.exportToGoogleSheet.bind(this),
-                                    text: this.l('Export to Google Sheets'),
-                                    icon: 'sheet'
-                                }, {type: 'downloadOptions'}]
-                            }
+                            location: 'before',
+                            items: [
+                                {
+                                    name: 'search',
+                                    widget: 'dxTextBox',
+                                    options: {
+                                        value: this.searchValue,
+                                        width: '279',
+                                        mode: 'search',
+                                        placeholder: this.l('Search') + ' '
+                                        + this.l('Transactions').toLowerCase(),
+                                        onValueChanged: (e) => {
+                                            this.searchValueChange(e);
+                                        }
+                                    }
+                                }
+                            ]
                         },
                         {
-                            name: 'columnChooser',
-                            action: this.showColumnChooser.bind(this)
-                        }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
+                            location: 'before',
+                            items: [
+                                {
+                                    name: 'searchAll',
+                                    action: this.searchAllClick.bind(this),
+                                    options: {
+                                        text: this.l('Search All')
+                                    },
+                                    attr: {
+                                        'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKey)) ? true : false,
+                                        'custaccesskey': 'search-container'
+                                    }
+                                }
+                            ]
+                        },
                         {
-                            name: 'fullscreen',
-                            action: () => {
-                                this.toggleFullscreen(document.documentElement);
-                                setTimeout(() => this.dataGrid.instance.repaint(), 100);
-                            }
+                            location: 'before',
+                            locateInMenu: 'auto',
+                            items: [
+                                {
+                                    name: 'bankAccountSelect',
+                                    widget: 'dxButton',
+                                    action: this.toggleBankAccountTooltip.bind(this),
+                                    options: {
+                                        id: 'bankAccountSelect',
+                                        text: this.l('Accounts'),
+                                        icon: './assets/common/icons/accounts.svg'
+                                    },
+                                    attr: {
+                                        'custaccesskey': 'bankAccountSelect',
+                                        'accountCount': this.bankAccountCount
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            location: 'before',
+                            items: [
+                                {
+                                    name: 'select-box',
+                                    text: '',
+                                    widget: 'dxDropDownMenu',
+                                    accessKey: 'currencySwitcher',
+                                    options: {
+                                        hint: this.l('Currency'),
+                                        accessKey: 'currencySwitcher',
+                                        items: currencies,
+                                        selectedIndex: selectedCurrencyIndex,
+                                        height: 39,
+                                        width: 80,
+                                        onSelectionChanged: (e) => {
+                                            if (e) {
+                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
+                                                this.filtersService.change(this.setCurrenciesFilter(e.itemData.text));
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            location: 'after',
+                            locateInMenu: 'auto',
+                            items: [
+                                {
+                                    name: 'showCompactRowsHeight',
+                                    action: this.showCompactRowsHeight.bind(this)
+                                },
+                                {
+                                    name: 'download',
+                                    widget: 'dxDropDownMenu',
+                                    options: {
+                                        hint: this.l('Download'),
+                                        items: [{
+                                            action: Function(),
+                                            text: this.l('Save as PDF'),
+                                            icon: 'pdf',
+                                        }, {
+                                            action: this.exportToXLS.bind(this),
+                                            text: this.l('Export to Excel'),
+                                            icon: 'xls',
+                                        }, {
+                                            action: this.exportToCSV.bind(this),
+                                            text: this.l('Export to CSV'),
+                                            icon: 'sheet'
+                                        }, {
+                                            action: this.exportToGoogleSheet.bind(this),
+                                            text: this.l('Export to Google Sheets'),
+                                            icon: 'sheet'
+                                        }, {type: 'downloadOptions'}]
+                                    }
+                                },
+                                {
+                                    name: 'columnChooser',
+                                    action: this.showColumnChooser.bind(this)
+                                }
+                            ]
+                        },
+                        {
+                            location: 'after',
+                            locateInMenu: 'auto',
+                            items: [
+                                {
+                                    name: 'fullscreen',
+                                    action: () => {
+                                        this.toggleFullscreen(document.documentElement);
+                                        setTimeout(() => this.dataGrid.instance.repaint(), 100);
+                                    }
+                                }
+                            ]
                         }
-                    ]
-                }
-            ]);
+                    ]);
+                });
         }
     }
 
