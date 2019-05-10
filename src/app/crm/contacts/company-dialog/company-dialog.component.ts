@@ -169,10 +169,7 @@ export class CompanyDialogComponent extends AppModalDialogComponent implements O
             if (result) {
                 this._organizationContactServiceProxy.delete(this.company.id).subscribe(() => {
                     this.notify.success(this.l('SuccessfullyRemoved'));
-                    this.close(true, {
-                        action: 'delete',
-                        orgId: this.company.id
-                    });
+                    this.close(true);
                 });
             }
         });

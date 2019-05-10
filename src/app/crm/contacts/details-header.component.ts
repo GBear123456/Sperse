@@ -217,13 +217,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             panelClass: 'slider',
             maxWidth: '830px'
         }).afterClosed().subscribe(result => {
-            if (result && result.action == 'delete') {
-                let orgId = result.orgId;
-                let orgRelations = this.data.personContactInfo.orgRelations;
-                let orgRelationsToDelete = _.filter(orgRelations, orgRelation => orgRelation.organization.id === orgId);
-                orgRelationsToDelete.forEach((orgRelation) => orgRelations.splice(orgRelations.indexOf(orgRelation), 1));
-                this.displayOrgRelation(orgId);
-            } else if (result) {
+            if (result) {
                  companyInfo.organization = new OrganizationInfoDto(result.company);
                  companyInfo.fullName = result.company.fullName;
                  companyInfo.primaryPhoto = result.company.primaryPhoto;
