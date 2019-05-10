@@ -1329,9 +1329,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     handleGetCashflowGridSettingsResult(cashflowSettingsResult) {
         this.cashflowGridSettings = cloneDeep(cashflowSettingsResult);
-
-        // let getCurrency = (777).toLocaleString('en-EN', {style: 'currency', currency: this.cashflowGridSettings.localizationAndCurrency.currency});
-        // this.preferenceCurrencyId = getCurrency.indexOf('$') < 0 && getCurrency.indexOf('SGD') < 0 ? this.cashflowGridSettings.localizationAndCurrency.currency : 'USD';
         this.currencySymbol = this._currencyPipe.transform(777, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow').substr(0, 1);
 
         this.applySplitMonthIntoSetting(this.cashflowGridSettings.general.splitMonthType);
@@ -1972,12 +1969,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     refreshDataGridWithPreferences(options) {
-        let notificationMessage;
         const dataSource = this.pivotGrid.instance.getDataSource();
-        let model = new CashFlowGridSettingsDto(options.model);
-        model.init(options.model);
         const preferences = options.model;
-        notificationMessage = this.l('AppliedSuccessfully');
         const updateWithNetChange = preferences.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
         const updateAfterAccountingTypeShowingChange = preferences.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
         const updateWithDiscrepancyChange = preferences.general.showBalanceDiscrepancy !== this.cashflowGridSettings.general.showBalanceDiscrepancy;
@@ -2034,8 +2027,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.pivotGrid.instance.updateDimensions();
             this.handleBottomHorizontalScrollPosition();
         }
-        this.notify.info(notificationMessage);
-
+        this.notify.info(this.l('AppliedSuccessfully'));
     }
 
     getApiDataSource() {

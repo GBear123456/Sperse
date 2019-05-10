@@ -769,7 +769,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     getODataUrl(uri: String, filter?: Object) {
-        return super.getODataUrl(uri, filter) + '&currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
+        let url = super.getODataUrl(uri, filter);
+        url += (url.indexOf('?') == -1 ? '?' : '&') + 'currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
+        return url;
     }
 
     filterByClassified(filter: FilterModel) {
