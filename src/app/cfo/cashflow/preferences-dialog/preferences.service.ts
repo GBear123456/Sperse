@@ -21,10 +21,7 @@ export class UserPreferencesService {
         private cashflowService: CashflowServiceProxy
     ) {
         if (this.checkExistsLocally()) {
-            const data = this.getLocalModel();
-            let model = new CashFlowGridSettingsDto();
-            model.init(data);
-            this._userPreferences.next(model);
+            this._userPreferences.next(new CashFlowGridSettingsDto(this.getLocalModel()));
         } else {
             this.load();
         }
