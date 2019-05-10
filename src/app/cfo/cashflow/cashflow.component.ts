@@ -6168,7 +6168,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.initToolbarConfig();
         this.setupFilters(this.filters);
         this.initFiltering();
-        this.pivotGrid.instance.repaint();
+        if (this.pivotGrid && this.pivotGrid.instance) {
+            this.pivotGrid.instance.repaint();
+        }
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this._bankAccountsService.load();
