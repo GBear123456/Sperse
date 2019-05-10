@@ -1116,16 +1116,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.transactionDetailDialogRef.afterOpen().subscribe(
                 () => this.transId$.next(this.transactionId)
             );
+
+            this.transactionDetailDialogRef.afterClosed().subscribe(
+                () => {
+                    this.transactionDetailDialogRef = undefined;
+                }
+            );
         } else {
             this.transId$.next(this.transactionId);
         }
-
-        this.transactionDetailDialogRef.afterClosed().subscribe(
-            () => {
-                this.transactionDetailDialogRef = undefined;
-                console.log(this.transactionDetailDialogRef);
-            }
-        );
     }
 
     ngOnDestroy() {
