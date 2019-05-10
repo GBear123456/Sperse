@@ -138,6 +138,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
         public filtersService: FiltersService,
+        private _bankAccountsService: BankAccountsService,
         private _changeDetectionRef: ChangeDetectorRef,
         private store$: Store<CfoStore.State>,
         public cfoPreferencesService: CfoPreferencesService
