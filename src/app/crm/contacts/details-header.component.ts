@@ -247,10 +247,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             } else {
                 this.data.primaryOrganizationContactId = null;
                 this.data.personContactInfo.orgRelations = [];
-                let isPartner = this.data.groupId == ContactGroup.Partner;
-                this._contactsService.updateLocation(
-                    isPartner ? null : this.data.id, this.data['leadId'],
-                    isPartner ? this.data.id : null);
+                this._contactsService.updateLocation(this.data.id, this.data['leadId']);
             }
         } else {
             let orgRelation = _.find(orgRelations, item => item.isPrimary);
@@ -484,11 +481,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.initializePersonOrgRelationInfo();
         this._orgContactService.getOrganizationContactInfo(orgId)
             .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
-                let isPartner = this.data.groupId == ContactGroup.Partner;
                 this.data['organizationContactInfo'] = result;
-                this._contactsService.updateLocation(
-                    isPartner ? null : this.data.id, this.data['leadId'],
-                    isPartner ? this.data.id : null, result && result.id);
+                this._contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
             });
     }
 

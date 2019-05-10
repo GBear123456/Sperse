@@ -143,13 +143,12 @@ export class ContactsService {
         }).afterClosed();
     }
 
-    updateLocation(customerId?, leadId?, partnerId?, companyId?, userId?) {
+    updateLocation(contactId?, leadId?, companyId?, userId?) {
         this._location.replaceState(
             this._router.createUrlTree(
                 ['app/' + (userId ? 'admin' : 'crm')].concat(
-                    customerId ? [leadId ? 'contact' : 'client', customerId] : [],
+                    contactId ? ['contact', contactId] : [],
                     leadId ? ['lead', leadId] : [],
-                    partnerId ? ['partner', partnerId] : [],
                     companyId ? ['company', companyId] : [],
                     userId ? ['user', userId, 'user-information'] : []
                 )
