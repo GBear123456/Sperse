@@ -1,16 +1,39 @@
-import { Injectable, Injector  } from '@angular/core';
+/** Core imports */
+import { Injectable } from '@angular/core';
+
+/** Third party imports */
 import { CacheService } from 'ng2-cache-service';
-import { CashFlowGridSettingsDto } from '@shared/service-proxies/service-proxies';
+import { Observable, ReplaySubject } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
+
+/** Application imports */
+import { CashFlowGridSettingsDto, CashflowServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 @Injectable()
 export class UserPreferencesService {
     cacheKey = `UserPreferences_${abp.session.userId}`;
-
-    private _cacheService: CacheService;
+    private _userPreferences: ReplaySubject<CashFlowGridSettingsDto> = new ReplaySubject(1);
+    userPreferences$: Observable<CashFlowGridSettingsDto> = this._userPreferences.asObservable();
     constructor(
-        injector: Injector
+        private cacheService: CacheService,
+        private cfoService: CFOService,
+        private cashflowService: CashflowServiceProxy
     ) {
-        this._cacheService = injector.get(CacheService);
+        if (this.checkExistsLocally()) {
+            this._userPreferences.next(new CashFlowGridSettingsDto(this.getLocalModel()));
+        } else {
+            this.load();
+        }
+    }
+
+    load() {
+        this.cfoService.statusActive.pipe(
+            filter(Boolean),
+            switchMap(() => this.cashflowService.getCashFlowGridSettings(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId))
+        ).subscribe((userPreferences: CashFlowGridSettingsDto) => {
+            this._userPreferences.next(userPreferences);
+        });
     }
 
     checkFlag(value, flag): boolean {
@@ -26,19 +49,23 @@ export class UserPreferencesService {
     }
 
     checkExistsLocally(): boolean {
-        return this._cacheService.exists(this.cacheKey);
+        return this.cacheService.exists(this.cacheKey);
     }
 
     getLocalModel(): CashFlowGridSettingsDto {
-        return this._cacheService.get(this.cacheKey);
+        return this.cacheService.get(this.cacheKey);
+    }
+
+    saveRemotely(model: CashFlowGridSettingsDto): Observable<any> {
+        return this.cashflowService.saveCashFlowGridSettings(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, model);
     }
 
     saveLocally(model: CashFlowGridSettingsDto) {
-        this._cacheService.set(this.cacheKey, model);
+        this.cacheService.set(this.cacheKey, model);
     }
 
     removeLocalModel() {
-        this._cacheService.remove(this.cacheKey);
+        this.cacheService.remove(this.cacheKey);
     }
 
     getClassNameFromPreference(preference: {sourceName: string, sourceValue: string}) {

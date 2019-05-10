@@ -6,9 +6,10 @@ import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
 import { forkJoin } from 'rxjs';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, filter, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore';
+import { Store, select } from '@ngrx/store';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -33,8 +34,10 @@ import {
 import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
+import { CfoStore, CurrenciesStoreSelectors, CurrenciesStoreActions } from '@app/cfo/store';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     'selector': 'app-stats',
@@ -54,7 +57,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     selectedForecastModel;
     headlineConfig: any;
     axisDateFormat = 'month';
-    currency = 'USD';
     labelPositiveBackgroundColor = '#626b73';
     labelNegativeBackgroundColor = '#f05b2a';
     historicalEndingBalanceColor = '#00aeef';
@@ -150,7 +152,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private requestFilter: StatsFilter;
     private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     private syncAccounts: any;
-    bankAccountsService: BankAccountsService;
     private updateAfterActivation: boolean;
 
     constructor(
@@ -161,17 +162,74 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
         private _statsService: StatsService,
-        bankAccountsService: BankAccountsService
+        private store$: Store<CfoStore.State>,
+        public bankAccountsService: BankAccountsService,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
-        this.bankAccountsService = bankAccountsService;
-
         this._appService.narrowingPageContentWhenFixedFilter = false;
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
+    ngOnInit() {
+        super.ngOnInit();
+        this.initLocalization();
+        this.requestFilter = new StatsFilter();
+        this.requestFilter.currencyId = this.cfoPreferencesService.selectedCurrencyId;
+        this.requestFilter.startDate = moment().utc().subtract(2, 'year');
+        this.requestFilter.endDate = moment().utc().add(1, 'year');
+
+        /** If component is not activated and selected currency has changed - wait activation and reload data */
+        this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+            filter(() => !this.componentIsActivated)
+        ).subscribe(() => {
+            this.updateAfterActivation = true;
+        });
+
+        const bankAccountAndBusinessEntities$ = this.bankAccountsService.load();
+        this.bankAccountsService.accountsAmount$.subscribe(amount => {
+            this.bankAccountsCount = amount;
+            this.initToolbarConfig();
+        });
+
+        /** Create parallel operations */
+        const forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
+        forkJoin(bankAccountAndBusinessEntities$, forecastsModels$)
+            .subscribe(([[syncAccounts, businessEntities], forecastsModels]) => {
+                this.syncAccounts = syncAccounts;
+
+                /** Initial data handling */
+                this.handleCashFlowInitialResult();
+
+                /** Forecast models handling */
+                this.handleForecastModelResult(forecastsModels);
+
+                this.initFiltering();
+
+                /** After selected accounts change */
+                this.bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
+                    this.setBankAccountsFilter(true);
+                });
+                this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
+                    /** filter all widgets by new data if change is on this component */
+                    if (this.componentIsActivated) {
+                        this.setBankAccountsFilter();
+                        /** if change is on another component - mark this for future update */
+                    } else {
+                        this.updateAfterActivation = true;
+                    }
+                });
+
+            });
+
+        this.initHeadlineConfig();
+        this.calculateChartsSize();
+    }
+
     initToolbarConfig() {
         if (this.componentIsActivated) {
+            /** Get currencies list and selected currency index */
             this._appService.updateToolbar([
                 {
                     location: 'before',
@@ -210,6 +268,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             name: 'select-box',
                             text: '',
                             widget: 'dxDropDownMenu',
+                            accessKey: 'statsForecastSwitcher',
                             options: {
                                 hint: this.l('Scenario'),
                                 accessKey: 'statsForecastSwitcher',
@@ -251,6 +310,32 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             attr: {
                                 'custaccesskey': 'bankAccountSelect',
                                 'accountCount': this.bankAccountsCount
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'select-box',
+                            text: '',
+                            widget: 'dxDropDownMenu',
+                            accessKey: 'currencySwitcher',
+                            options: {
+                                hint: this.l('Currency'),
+                                accessKey: 'currencySwitcher',
+                                items: this.cfoPreferencesService.currencies,
+                                selectedIndex: this.cfoPreferencesService.selectedCurrencyIndex,
+                                height: 39,
+                                width: 80,
+                                onSelectionChanged: (e) => {
+                                    if (e) {
+                                        this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
+                                        this.loadStatsData();
+                                    }
+                                }
                             }
                         }
                     ]
@@ -305,54 +390,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 }
             ]);
         }
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        this.initLocalization();
-        this.requestFilter = new StatsFilter();
-        this.requestFilter.currencyId = 'USD';
-        this.requestFilter.startDate = moment().utc().subtract(2, 'year');
-        this.requestFilter.endDate = moment().utc().add(1, 'year');
-
-        const bankAccountAndBusinessEntities$ = this.bankAccountsService.load();
-        this.bankAccountsService.accountsAmount$.subscribe(amount => {
-            this.bankAccountsCount = amount;
-            this.initToolbarConfig();
-        });
-
-        /** Create parallel operations */
-        const forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        forkJoin(bankAccountAndBusinessEntities$, forecastsModels$)
-            .subscribe(([[syncAccounts, businessEntities], forecastsModels]) => {
-                this.syncAccounts = syncAccounts;
-
-                /** Initial data handling */
-                this.handleCashFlowInitialResult();
-
-                /** Forecast models handling */
-                this.handleForecastModelResult(forecastsModels);
-
-                this.initFiltering();
-
-                /** After selected accounts change */
-                this.bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
-                    this.setBankAccountsFilter(true);
-                });
-                this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
-                    /** filter all widgets by new data if change is on this component */
-                    if (this.componentIsActivated) {
-                        this.setBankAccountsFilter();
-                        /** if change is on another component - mark this for future update */
-                    } else {
-                        this.updateAfterActivation = true;
-                    }
-                });
-
-            });
-
-        this.initHeadlineConfig();
-        this.calculateChartsSize();
     }
 
     initHeadlineConfig() {
@@ -495,19 +532,20 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     loadStatsData() {
         abp.ui.setBusy();
         let { startDate, endDate, accountIds = []} = this.requestFilter;
-        this._bankAccountService.getStats(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            'USD',
-            this.selectedForecastModel.id,
-            accountIds,
-            startDate,
-            endDate,
-            GroupBy.Monthly
-        )
-        .pipe(finalize(() => abp.ui.clearBusy()))
-        .subscribe(result => {
-            if (result) {
+        this.cfoPreferencesService.getCurrencyId().pipe(
+            switchMap((currencyId: string) => this._bankAccountService.getStats(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                currencyId,
+                this.selectedForecastModel.id,
+                accountIds,
+                startDate,
+                endDate,
+                GroupBy.Monthly
+            )),
+            finalize(() => abp.ui.clearBusy())
+         ).subscribe(result => {
+            if (result && result.length) {
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
                 minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));
                 this.statsData = result.map(statsItem => {
@@ -533,7 +571,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
                 this.setSliderReportPeriodFilterData(this.statsData[0].date.year(), this.statsData[this.statsData.length - 1].date.year());
             } else {
-                console.log('No daily stats');
+                this.statsData = null;
             }
 
             this.loadingFinished = true;

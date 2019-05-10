@@ -39,7 +39,7 @@
                         <dxo-label [visible]="false"
                                    [backgroundColor]="labelPositiveBackgroundColor">
                             <dxo-format type="currency largeNumber"
-                                        [currency]="currency">
+                                        [currency]="cfoPreferencesService.selectedCurrencyId">
                             </dxo-format>
                             <dxo-font size="10px" weight="300"></dxo-font>
                         </dxo-label>
@@ -80,7 +80,7 @@
                     <dxi-value-axis>
                         <dxo-label [customizeText]="customizeAxisValues">
                             <dxo-format type="currency largeNumber"
-                                        [currency]="currency">
+                                        [currency]="cfoPreferencesService.selectedCurrencyId">
                             </dxo-format>
                         </dxo-label>
                         <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>
@@ -170,7 +170,7 @@
                     <dxi-value-axis>
                         <dxo-label [customizeText]="customizeAxisValues">
                             <dxo-format type="currency largeNumber"
-                                        [currency]="currency">
+                                        [currency]="cfoPreferencesService.selectedCurrencyId">
                             </dxo-format>
                         </dxo-label>
                         <dxo-grid color="#e5e9ec" [visible]="true"></dxo-grid>

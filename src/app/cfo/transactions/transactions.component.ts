@@ -13,14 +13,12 @@ import {
 /** Third party imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Store, select } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-import { forkJoin, Subject } from 'rxjs';
-import {
-    first,
-    finalize
-} from 'rxjs/operators';
+import { Subject, forkJoin, zip } from 'rxjs';
+import { first, finalize, map, skip } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -53,13 +51,16 @@ import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rul
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { CurrenciesStoreActions, CurrenciesStoreSelectors, CfoStore } from '@app/cfo/store';
+import { filter } from '@node_modules/rxjs/operators';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
     animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy]
+    providers: [ TransactionsServiceProxy, ClassificationServiceProxy, BankAccountsServiceProxy ]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -138,7 +139,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         private _classificationServiceProxy: ClassificationServiceProxy,
         public filtersService: FiltersService,
         private _bankAccountsService: BankAccountsService,
-        private _changeDetectionRef: ChangeDetectorRef
+        private _changeDetectionRef: ChangeDetectorRef,
+        private _bankAccountsService: BankAccountsService,
+        private store$: Store<CfoStore.State>,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
 
@@ -155,6 +159,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         super.ngOnInit();
         this.initLocalization();
         this.initHeadlineConfig();
+
+        /** If component is not activated - wait until it will activate and then reload */
+        this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+            filter(() => !this.componentIsActivated)
+        ).subscribe(() => {
+            this.updateAfterActivation = true;
+        });
 
         this.dataSource = {
             store: {
@@ -259,11 +271,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     component: FilterCheckBoxesComponent,
                     field: 'CurrencyId',
                     caption: 'Currency',
+                    hidden: true,
                     items: {
                         element: new FilterCheckBoxesModel({
                             dataSource: filtersInitialData.currencies,
                             nameField: 'name',
-                            keyExpr: 'id'
+                            keyExpr: 'id',
+                            value: [ this.cfoPreferencesService.selectedCurrencyId ]
                         })
                     }
                 }),
@@ -412,6 +426,31 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             attr: {
                                 'custaccesskey': 'bankAccountSelect',
                                 'accountCount': this.bankAccountCount
+                            }
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'select-box',
+                            text: '',
+                            widget: 'dxDropDownMenu',
+                            accessKey: 'currencySwitcher',
+                            options: {
+                                hint: this.l('Currency'),
+                                accessKey: 'currencySwitcher',
+                                items: this.cfoPreferencesService.currencies,
+                                selectedIndex: this.cfoPreferencesService.selectedCurrencyIndex,
+                                height: 39,
+                                width: 80,
+                                onSelectionChanged: (e) => {
+                                    if (e) {
+                                        this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
+                                        this.filtersService.change(this.setCurrenciesFilter(e.itemData.text));
+                                    }
+                                }
                             }
                         }
                     ]
@@ -712,6 +751,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
     }
 
+    setCurrenciesFilter(currencyId: string) {
+        let currenciesFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption.toLowerCase() === 'currency'; });
+        return this.changeAndGetCurrenciesFilter(currenciesFilter, currencyId);
+    }
+
+    changeAndGetCurrenciesFilter(currenciesFilter: FilterModel, countryId: string) {
+        currenciesFilter.items['element'].setValue([countryId], currenciesFilter);
+        currenciesFilter.updateCaptions();
+        return currenciesFilter;
+    }
+
     processFilterInternal() {
         let filterQuery = this.processODataFilter(
             this.dataGrid.instance,
@@ -724,8 +774,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     /** apply filter in sidebar */
                     filter.items.element.setValue(this._bankAccountsService.state.selectedBankAccountIds, filter);
                 }
-                let filterMethod = this['filterBy' +
-                    this.capitalize(filter.caption)];
+                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
                 if (filterMethod)
                     return filterMethod.call(this, filter);
             }
@@ -737,6 +786,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
             || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
             || _.has(x, 'CashflowSubCategoryId'));
+    }
+
+    getODataUrl(uri: String, filter?: Object) {
+        let url = super.getODataUrl(uri, filter);
+        url += (url.indexOf('?') == -1 ? '?' : '&') + 'currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
+        return url;
     }
 
     filterByClassified(filter: FilterModel) {
@@ -1153,6 +1208,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
+            this.setCurrenciesFilter(this.cfoPreferencesService.selectedCurrencyId);
             this.applyTotalBankAccountFilter(true);
             this.updateAfterActivation = false;
         }

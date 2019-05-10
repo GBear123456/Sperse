@@ -3,13 +3,14 @@ import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core
 
 /** Third party libraries */
 import * as moment from 'moment';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, InstanceType, GetDailyBalanceStatsOutput } from 'shared/service-proxies/service-proxies';
 import { DashboardService } from '../dashboard.service';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'app-accounts',
@@ -37,13 +38,13 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     dailyStatsSliderSelected = 1;
     isActive = null;
     visibleAccountCount = 0;
-    bankAccountsService: BankAccountsService;
 
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
         private _dashboardProxy: DashboardServiceProxy,
-        bankAccountsService: BankAccountsService
+        public bankAccountsService: BankAccountsService,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
 
@@ -51,29 +52,29 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
 
         this._dashboardService.subscribePeriodChange(
             this.onDailyStatsPeriodChanged.bind(this));
-
-        this.bankAccountsService = bankAccountsService;
     }
 
     ngOnInit() {
-       this.getAccountTotals();
+        this.getAccountTotals();
     }
 
     getAccountTotals(): void {
-        this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, 'USD')
-            .subscribe((result) => {
-                this.accountsData = result;
-            });
+        this.cfoPreferencesService.getCurrencyId().pipe(
+            switchMap((currencyId: string) => this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, currencyId))
+        ).subscribe((result) => {
+            this.accountsData = result;
+        });
     }
 
     getDailyStats(): void {
         this.startLoading();
-        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate, 'USD')
-            .pipe(finalize(() => this.finishLoading()))
-            .subscribe(result => {
-                this.dailyStatsData = result;
-                this.setDailyStatsAmount();
-            });
+        this.cfoPreferencesService.getCurrencyId().pipe(
+            switchMap((currencyId: string) => this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate, currencyId)),
+            finalize(() => this.finishLoading())
+        ).subscribe(result => {
+            this.dailyStatsData = result;
+            this.setDailyStatsAmount();
+        });
     }
 
     navigateTo() {
