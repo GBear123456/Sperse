@@ -94,7 +94,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.headlineConfig = {
             names: [this.l('Statements')],
             onRefresh: () => {
-                abp.ui.setBusy();
+                this.refreshData();
                 this.bankAccountsService.load().pipe(
                     finalize(() => abp.ui.clearBusy())
                 ).subscribe();

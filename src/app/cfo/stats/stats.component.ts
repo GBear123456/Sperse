@@ -580,7 +580,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     getUpdatedDataSource() {
-        abp.ui.setBusy();
+        this.loadStatsData();
         this.bankAccountsService.load().pipe(
             finalize(() => abp.ui.clearBusy() )
         )
