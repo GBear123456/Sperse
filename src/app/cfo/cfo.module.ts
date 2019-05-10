@@ -80,7 +80,6 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.component';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
-import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { CfoStoreModule } from '@app/cfo/store';
 
 @NgModule({
@@ -178,8 +177,7 @@ import { CfoStoreModule } from '@app/cfo/store';
         CashflowServiceProxy,
         ContactServiceProxy,
         SyncServiceProxy,
-        CalculatorService,
-        UserPreferencesService
+        CalculatorService
     ]
 })
 

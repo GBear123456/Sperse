@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core
 
 /** Third party libraries */
 import * as moment from 'moment';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
@@ -59,14 +59,17 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     }
 
     getAccountTotals(): void {
-        this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.cfoPreferencesService.selectedCurrencyId).subscribe((result) => {
+        this.cfoPreferencesService.getCurrencyId().pipe(
+            switchMap((currencyId: string) => this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, currencyId))
+        ).subscribe((result) => {
             this.accountsData = result;
         });
     }
 
     getDailyStats(): void {
         this.startLoading();
-        this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate, this.cfoPreferencesService.selectedCurrencyId).pipe(
+        this.cfoPreferencesService.getCurrencyId().pipe(
+            switchMap((currencyId: string) => this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate, currencyId)),
             finalize(() => this.finishLoading())
         ).subscribe(result => {
             this.dailyStatsData = result;

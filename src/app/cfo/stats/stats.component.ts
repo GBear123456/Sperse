@@ -6,7 +6,7 @@ import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
 import { forkJoin } from 'rxjs';
-import { finalize, first, filter } from 'rxjs/operators';
+import { finalize, first, filter, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 import { Store, select } from '@ngrx/store';
@@ -530,17 +530,19 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     loadStatsData() {
         abp.ui.setBusy();
         let { startDate, endDate, accountIds = []} = this.requestFilter;
-        this._bankAccountService.getStats(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            this.cfoPreferencesService.selectedCurrencyId,
-            this.selectedForecastModel.id,
-            accountIds,
-            startDate,
-            endDate,
-            GroupBy.Monthly
-        ).pipe(finalize(() => abp.ui.clearBusy()))
-         .subscribe(result => {
+        this.cfoPreferencesService.getCurrencyId().pipe(
+            switchMap((currencyId: string) => this._bankAccountService.getStats(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                currencyId,
+                this.selectedForecastModel.id,
+                accountIds,
+                startDate,
+                endDate,
+                GroupBy.Monthly
+            )),
+            finalize(() => abp.ui.clearBusy())
+         ).subscribe(result => {
             if (result && result.length) {
                 let minEndingBalanceValue = Math.min.apply(Math, result.map(item => item.endingBalance)),
                 minRange = minEndingBalanceValue - (0.2 * Math.abs(minEndingBalanceValue));

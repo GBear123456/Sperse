@@ -9,7 +9,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { TrendByPeriodModel } from './trend-by-period.model';
 import { merge, from, asapScheduler } from 'rxjs';
-import { take, toArray } from 'rxjs/operators';
+import { take, toArray, switchMap } from 'rxjs/operators';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { DashboardService } from '../dashboard.service';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
@@ -187,15 +187,17 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
     loadStatsData() {
         if (!this.waitForBankAccounts && !this.waitForPeriods) {
             this.startLoading();
-            this._bankAccountService.getStats(
-                InstanceType[this.instanceType],
-                this.instanceId,
-                this.cfoPreferencesService.selectedCurrencyId,
-                this.selectedForecastModelId,
-                this.bankAccountIds,
-                this.startDate,
-                this.endDate,
-                this.selectedPeriod.key
+            this.cfoPreferencesService.getCurrencyId().pipe(
+                switchMap((currencyId: string) => this._bankAccountService.getStats(
+                    InstanceType[this.instanceType],
+                    this.instanceId,
+                    currencyId,
+                    this.selectedForecastModelId,
+                    this.bankAccountIds,
+                    this.startDate,
+                    this.endDate,
+                    this.selectedPeriod.key
+                ))
             ).subscribe(result => {
                 if (result) {
                     let historical = [], forecast = [];
@@ -230,9 +232,9 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
                     console.log('No daily stats');
                     this.finishLoading();
                 }
-            },
+                },
                 error => { console.log('Error: ' + error); this.finishLoading(); }
-                );
+            );
         }
     }
 

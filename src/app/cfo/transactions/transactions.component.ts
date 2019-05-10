@@ -255,11 +255,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     component: FilterCheckBoxesComponent,
                     field: 'CurrencyId',
                     caption: 'Currency',
+                    hidden: true,
                     items: {
                         element: new FilterCheckBoxesModel({
                             dataSource: filtersInitialData.currencies,
                             nameField: 'name',
-                            keyExpr: 'id'
+                            keyExpr: 'id',
+                            value: [ this.cfoPreferencesService.selectedCurrencyId ]
                         })
                     }
                 }),

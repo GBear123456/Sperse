@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable, BehaviorSubject, ReplaySubject, Subject, of, combineLatest, forkJoin } from 'rxjs';
-import { first, finalize, mergeMap, map, distinctUntilChanged, refCount, publishReplay, withLatestFrom, switchMap, reduce } from 'rxjs/operators';
+import { first, finalize, mergeMap, map, distinctUntilChanged, refCount, publishReplay, withLatestFrom, switchMap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 
@@ -362,7 +362,8 @@ export class BankAccountsService {
         this.loadState();
 
         if (!this.syncAccountsRequest$) {
-            this.syncAccountsRequest$ = this.bankAccountsServiceProxy.getBankAccounts(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, this.cfoPreferencesService.selectedCurrencyId).pipe(
+            this.syncAccountsRequest$ = this.cfoPreferencesService.getCurrencyId().pipe(
+                switchMap((currencyId: string) => this.bankAccountsServiceProxy.getBankAccounts(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, currencyId)),
                 publishReplay(),
                 refCount()
             );

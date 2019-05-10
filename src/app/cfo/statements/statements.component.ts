@@ -8,7 +8,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
 import { forkJoin } from 'rxjs';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, switchMap } from 'rxjs/operators';
 import * as _ from 'underscore';
 import { Store, select } from '@ngrx/store';
 
@@ -341,61 +341,62 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     public refreshData(): void {
         abp.ui.setBusy();
-        this._bankAccountService.getStats(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            this._cfoPreferences.selectedCurrencyId,
-            this.forecastModelsObj.items[this.forecastModelsObj.selectedItemIndex].id,
-            this.requestFilter.accountIds,
-            this.requestFilter.startDate,
-            this.requestFilter.endDate,
-            GroupBy.Monthly
-        )
-            .pipe(finalize(() => abp.ui.clearBusy()))
-            .subscribe(result => {
-                if (result && result.length) {
-                    let currentPeriodTransaction: BankAccountDailyStatDto;
-                    let currentPeriodForecast: BankAccountDailyStatDto;
+        this._cfoPreferences.getCurrencyId().pipe(
+            switchMap((currencyId: string) => this._bankAccountService.getStats(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                currencyId,
+                this.forecastModelsObj.items[this.forecastModelsObj.selectedItemIndex].id,
+                this.requestFilter.accountIds,
+                this.requestFilter.startDate,
+                this.requestFilter.endDate,
+                GroupBy.Monthly
+            )),
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe(result => {
+            if (result && result.length) {
+                let currentPeriodTransaction: BankAccountDailyStatDto;
+                let currentPeriodForecast: BankAccountDailyStatDto;
 
-                    for (let i = result.length - 1; i >= 0; i--) {
-                        let statsItem: BankAccountDailyStatDto = result[i];
+                for (let i = result.length - 1; i >= 0; i--) {
+                    let statsItem: BankAccountDailyStatDto = result[i];
 
-                        Object.defineProperties(statsItem, {
-                            'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
-                        });
+                    Object.defineProperties(statsItem, {
+                        'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
+                    });
 
-                        if (!currentPeriodTransaction && !statsItem.isForecast) {
-                            currentPeriodForecast = result[i + 1];
-                            currentPeriodTransaction = statsItem;
+                    if (!currentPeriodTransaction && !statsItem.isForecast) {
+                        currentPeriodForecast = result[i + 1];
+                        currentPeriodTransaction = statsItem;
 
-                            if (currentPeriodForecast) {
-                                let clone = Object.assign({}, currentPeriodTransaction);
-                                clone.credit += currentPeriodForecast.credit;
-                                clone.creditCount += currentPeriodForecast.creditCount;
-                                clone.debit += currentPeriodForecast.debit;
-                                clone.debitCount += currentPeriodForecast.debitCount;
-                                clone['netChange'] = clone.credit + clone.debit;
-                                clone.averageDailyBalance = (clone.averageDailyBalance + currentPeriodForecast.averageDailyBalance) / 2;
-                                clone.endingBalance = currentPeriodForecast.endingBalance;
+                        if (currentPeriodForecast) {
+                            let clone = Object.assign({}, currentPeriodTransaction);
+                            clone.credit += currentPeriodForecast.credit;
+                            clone.creditCount += currentPeriodForecast.creditCount;
+                            clone.debit += currentPeriodForecast.debit;
+                            clone.debitCount += currentPeriodForecast.debitCount;
+                            clone['netChange'] = clone.credit + clone.debit;
+                            clone.averageDailyBalance = (clone.averageDailyBalance + currentPeriodForecast.averageDailyBalance) / 2;
+                            clone.endingBalance = currentPeriodForecast.endingBalance;
 
-                                currentPeriodTransaction['itemType'] = 'MTD';
-                                currentPeriodForecast['itemType'] = 'Forecast';
-                                clone['sourceData'] = [currentPeriodTransaction, currentPeriodForecast];
-                                result.splice(i, 2, clone);
-                            }
+                            currentPeriodTransaction['itemType'] = 'MTD';
+                            currentPeriodForecast['itemType'] = 'Forecast';
+                            clone['sourceData'] = [currentPeriodTransaction, currentPeriodForecast];
+                            result.splice(i, 2, clone);
                         }
                     }
-
-                    this.statementsData = result;
-
-                    /** reinit */
-                    this.initHeadlineConfig();
-
-                    this.setSliderReportPeriodFilterData(this.statementsData[0].date.year(), this.statementsData[this.statementsData.length - 1].date.year());
-                } else {
-                    this.statementsData = null;
                 }
-            });
+
+                this.statementsData = result;
+
+                /** reinit */
+                this.initHeadlineConfig();
+
+                this.setSliderReportPeriodFilterData(this.statementsData[0].date.year(), this.statementsData[this.statementsData.length - 1].date.year());
+            } else {
+                this.statementsData = null;
+            }
+        });
     }
 
     initFiltering() {

@@ -26,5 +26,5 @@ export const initialState: State = {
         { value: 'NZD', caption: '$ NZD New Zealand Dollar' },
         { value: 'USD', caption: '$ USD US Dollar' }
     ],
-    selectedCurrencyId: 'USD'
+    selectedCurrencyId: null
 };
