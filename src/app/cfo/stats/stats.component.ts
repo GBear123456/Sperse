@@ -278,6 +278,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                 onSelectionChanged: (e) => {
                                     if (e) {
                                         this.changeSelectedForecastModel(e);
+                                        this.loadStatsData();
                                     }
                                 }
                             }
