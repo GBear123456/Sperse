@@ -544,7 +544,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
         let moveToId: number;
         let targetName: string;
-        let hasSourceSubcategories = Object['values'](this.categorization.categories).some((item) => {
+        let hasSourceSubcategories = _.values(this.categorization.categories).some((item) => {
             return item.parentId == sourceId;
         });
 
