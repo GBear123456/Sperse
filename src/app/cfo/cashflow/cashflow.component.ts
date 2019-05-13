@@ -1445,7 +1445,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let end = underscore.max(this.cashflowData, function (val) { return val.date; }).date.year();
             this.setSliderReportPeriodFilterData(start, end);
         } else {
-            this.cashflowData = [];
+            this.cashflowData = this.getCashflowDataFromTransactions(transactions);
         }
     }
 
