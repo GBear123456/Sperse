@@ -125,7 +125,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     readonly defaultVisibleOffersCount = 6;
     visibleOffersCount = this.defaultVisibleOffersCount;
     brands$: BehaviorSubject<SelectFilterModel[]> = new BehaviorSubject<SelectFilterModel[]>([]);
-    category$: Observable<OfferFilterCategory> = this.offersService.getCategoryFromRoute(this.route);
+    category$: Observable<OfferFilterCategory> = OffersService.getCategoryFromRoute(this.route);
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: OfferFilterCategory) => this.offersService.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
 

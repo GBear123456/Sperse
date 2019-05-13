@@ -207,7 +207,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.searchClear = false;
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId].concat(orgId ? ['company', orgId] : []),
+        this._router.navigate(['app/crm/contact', clientId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/clients'} });
     }
 

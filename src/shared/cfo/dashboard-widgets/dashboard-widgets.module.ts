@@ -18,7 +18,6 @@ import { DxSliderModule } from 'devextreme-angular/ui/slider';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ChooseResetRulesComponent } from './categorization-status/choose-reset-rules/choose-reset-rules.component';
 
-
 @NgModule({
     imports: [
         CommonModule,

@@ -1,16 +1,14 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { CashflowServiceProxy, CashFlowGridSettingsDto, CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity, InstanceType } from '@shared/service-proxies/service-proxies';
+import { CashFlowGridSettingsDto, CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity } from '@shared/service-proxies/service-proxies';
 import { GeneralScope } from '../enums/general-scope.enum';
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
-import { from } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'preferences-modal',
     templateUrl: 'preferences-dialog.component.html',
-    styleUrls: ['preferences-dialog.component.less'],
-    providers: [ CashflowServiceProxy, UserPreferencesService ]
+    styleUrls: ['preferences-dialog.component.less']
 })
 export class PreferencesDialogComponent extends CFOModalDialogComponent implements OnInit {
     GeneralScope = GeneralScope;
@@ -58,7 +56,6 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
     ];
     constructor(
         injector: Injector,
-        private _cashflowService: CashflowServiceProxy,
         public userPreferencesService: UserPreferencesService
     ) {
         super(injector);
@@ -68,24 +65,11 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
 
     ngOnInit() {
         super.ngOnInit();
-
         this.initHeader();
-
-        let cashflowGridObservable;
-        if (this.userPreferencesService.checkExistsLocally()) {
-            let data = this.userPreferencesService.getLocalModel();
-            let model = new CashFlowGridSettingsDto();
-            model.init(data);
-            cashflowGridObservable = from([model]);
-        } else {
-            cashflowGridObservable = this._cashflowService.getCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId);
-        }
-
-        cashflowGridObservable.subscribe(result => {
+        this.userPreferencesService.userPreferences$.subscribe(result => {
             this.model = result;
             this.active = true;
         });
-
         this.dialogRef.afterClosed().subscribe(closeData => {
             if (closeData && closeData.saveLocally) {
                 this.userPreferencesService.saveLocally(this.model);
@@ -112,9 +96,9 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
                     action: () => {
                         if (this.rememberLastSettings) {
                             this.saving = true;
-                            this._cashflowService.saveCashFlowGridSettings(InstanceType[this.instanceType], this.instanceId, this.model)
+                            this.userPreferencesService.saveRemotely(this.model)
                                 .pipe(finalize(() => { this.saving = false; }))
-                                .subscribe(result => {
+                                .subscribe(() => {
                                     this.closeSuccessful();
                                 });
                         } else {
@@ -151,7 +135,11 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
     }
 
     closeSuccessful() {
-        this.close(true,  {'update': true, 'saveLocally': false});
+        this.close(true,  {
+            'update': true,
+            'saveLocally': false,
+            'model': this.model
+        });
     }
 
     applyChanges() {

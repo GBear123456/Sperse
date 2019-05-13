@@ -19,7 +19,7 @@ import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
     LeadAssignedUsersStoreSelectors,
@@ -93,7 +93,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contactGroups = Object.keys(ContactGroup).map((group) => {
         return {
             text: this.l('ContactGroup_' + group),
-            value: group
+            value: group,
+            disabled: !this.isGranted(ContactGroupPermission[group])
         };
     });
     selectedContactGroup = Object.keys(ContactGroup).shift();
@@ -918,6 +919,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (event.previousValue != event.value) {
             this.contactGroupId = ContactGroup[event.value];
             this._cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
+
+            if (!this.showPipeline)
+                this.refresh(false);
         }
     }
 }

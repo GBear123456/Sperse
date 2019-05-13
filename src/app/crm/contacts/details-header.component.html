@@ -4,6 +4,9 @@
         <div class="photo-area" (click)="showUploadPhotoDialog($event)" [ngStyle]="{'background-image': data?.personContactInfo?.primaryPhoto ? 'url(data:image/png;base64,' + data.personContactInfo.primaryPhoto + ')': ''}"></div>
     </div>
     <div class="personal_info">
+        <div *ngIf="data?.groupId" class="status-group-wrapper">
+            <span>{{statusNames[data?.statusId]}} {{groupNames[data?.groupId]}}</span>
+        </div>
         <div class="full_name">
             <h1 *ngIf="data && data?.personContactInfo">
                 <inplace-edit [data]="getNameInplaceEditData()" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
@@ -15,14 +18,20 @@
         <div class="delimiter"></div>
         <div *ngIf="data?.primaryOrganizationContactId" class="company-details">
             <div class="info-icon" (click)="showCompanyDialog($event)">
-                <img src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
+                <img *ngIf="!showRemovingOrgRelationProgress" src="./assets/common/icons/info-icon-blue.svg" alt="Organization Details">
+                <div *ngIf="showRemovingOrgRelationProgress" class="loadindicator"></div>
             </div>
             <h2 class="shift-top">
-                <inplace-edit #companyName [data]="getNameInplaceEditData('organizationContactInfo')" (valueChanged)="updateCompanyField($event)"></inplace-edit><i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i><div class="actions" [hidden]="companyName.isEditModeEnabled"><i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i><i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i></div>
+                <inplace-edit #companyName [data]="getNameInplaceEditData('organizationContactInfo')" (valueChanged)="updateCompanyField($event)"></inplace-edit>
+                <i class="fa fa-angle-down" *ngIf="!companyName.isEditModeEnabled && (data?.personContactInfo?.orgRelations?.length > 1)" (click)="showCompanyList($event)"></i>
+                <div class="actions" [hidden]="companyName.isEditModeEnabled">
+                    <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>
+                    <i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i>
+                    <i class="delete fa fa-times" (click)="removePersonOrgRelation($event)"></i>
+                </div>
             </h2>
             <h3>
                 <inplace-edit #jobTitle [data]="getJobTitleInplaceEditData()" (valueChanged)="updateJobTitle($event)"></inplace-edit>
-                <div class="actions" [hidden]="jobTitle.isEditModeEnabled"><i class="delete fa fa-times" (click)="removePersonOrgRelation($event)"></i></div>
             </h3>
         </div>
         <div *ngIf="!data?.primaryOrganizationContactId" class="add-new-company">
