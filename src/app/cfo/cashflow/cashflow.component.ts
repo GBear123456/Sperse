@@ -1191,7 +1191,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         name: 'total',
-                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this._currencyPipe.transform(this.transactionsTotal, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow')}</span>`
+                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this._currencyPipe.transform(this.transactionsTotal, this._cfoPreferencesService.selectedCurrencyId, this._cfoPreferencesService.selectedCurrencySymbol)}</span>`
                     },
                     {
                         name: 'count',
@@ -1199,7 +1199,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'average',
-                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this._currencyPipe.transform(this.transactionsAverage, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow')}</span>`
+                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this._currencyPipe.transform(this.transactionsAverage, this._cfoPreferencesService.selectedCurrencyId, this._cfoPreferencesService.selectedCurrencySymbol)}</span>`
                     },
                     {
                         action: this.hideFooterBar.bind(this),
@@ -1309,7 +1309,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     handleGetCashflowGridSettingsResult(cashflowSettingsResult) {
         this.cashflowGridSettings = cloneDeep(cashflowSettingsResult);
-        this.currencySymbol = this._currencyPipe.transform(777, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow').substr(0, 1);
+        this.currencySymbol = this._currencyPipe.transform(777, this._cfoPreferencesService.selectedCurrencyId, this._cfoPreferencesService.selectedCurrencySymbol).substr(0, 1);
 
         this.applySplitMonthIntoSetting(this.cashflowGridSettings.general.splitMonthType);
         this.tabularFontName = this.userPreferencesService.getClassNameFromPreference({
@@ -3861,7 +3861,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return this._currencyPipe.transform(
             value,
             this._cfoPreferencesService.selectedCurrencyId,
-            'symbol-narrow',
+            this._cfoPreferencesService.selectedCurrencySymbol,
             `0.${fractionDigits}-${fractionDigits}`
         );
     }

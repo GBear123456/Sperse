@@ -11,12 +11,33 @@ export const getCurrencies = createSelector(
 
 export const getCurrenciesTexts = createSelector(
     getCurrencies,
-    (currencies: CurrencyInfo[]) => currencies && currencies.map((currency: CurrencyInfo) => ({ ...currency, text: currency.id }))
+    (currencies: CurrencyInfo[]) => currencies && currencies.map((currency: CurrencyInfo) => {
+        return {
+            ...currency,
+            text: currency.id,
+            caption: `${currency.symbol} ${currency.id} ${currency.name}`
+        };
+    })
 );
 
 export const getSelectedCurrencyId = createSelector(
     getCurrenciesState,
     (state: State) => state.selectedCurrencyId
+);
+
+export const getSelectedCurrencySymbol = createSelector(
+    getCurrencies,
+    getSelectedCurrencyId,
+    (currencies: CurrencyInfo[], selectedCurrencyId: string) => {
+        let result = null;
+        if (currencies) {
+            const currency = currencies.find((currency: CurrencyInfo) => currency.id === selectedCurrencyId);
+            if (currency) {
+                result = currency.symbol;
+            }
+        }
+        return result;
+    }
 );
 
 export const getSelectedCurrencyIndex = createSelector(

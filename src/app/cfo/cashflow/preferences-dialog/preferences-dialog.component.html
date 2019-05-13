@@ -148,7 +148,10 @@
                     <div class="dx-field right-field">
                         <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_Currency")}}</div>
                         <div class="dx-field-value">
-                            <dx-select-box [items]="currencies" valueExpr="value" displayExpr="caption" [(value)]="model.localizationAndCurrency.currency">
+                            <dx-select-box [items]="cfoPreferencesService.currencies$ | async"
+                                           valueExpr="id"
+                                           displayExpr="caption"
+                                           [(value)]="model.localizationAndCurrency.currency">
                             </dx-select-box>
                         </div>
                     </div>

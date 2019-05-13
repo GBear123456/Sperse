@@ -12,12 +12,13 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy, SyncAccountBankDto, UpdateBankAccountDto, RenameSyncAccountInput } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'bank-accounts-widget',
     templateUrl: './bank-accounts-widget.component.html',
     styleUrls: ['./bank-accounts-widget.component.less'],
-    providers: [BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy]
+    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
 })
 export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit {
     private initBankAccountHighlightedTimeout: any;
@@ -77,7 +78,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     syncAccount: SyncAccountBankDto;
     popupVisible = false;
     bankAccountInfo: RenameSyncAccountInput = new RenameSyncAccountInput();
-    bankAccountsService: BankAccountsService;
     scrollHeight: number;
 
     constructor(
@@ -86,10 +86,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         private _businessEntityService: BusinessEntityServiceProxy,
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
         private _syncServiceProxy: SyncServiceProxy,
-        bankAccountsService: BankAccountsService
+        public bankAccountsService: BankAccountsService,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
-        this.bankAccountsService = bankAccountsService;
         this.cfoService = injector.get(CFOService, null);
     }
 

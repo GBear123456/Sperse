@@ -1,4 +1,13 @@
+/** Core imports */
 import { Component, OnInit, Injector, Input, HostListener, ViewChild } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+
+/** Third party imports */
+import { DxChartComponent } from 'devextreme-angular/ui/chart';
+import { merge, from, asapScheduler } from 'rxjs';
+import { take, toArray, switchMap } from 'rxjs/operators';
+
+/** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import {
     BankAccountsServiceProxy,
@@ -8,17 +17,14 @@ import {
     GroupBy
 } from '@shared/service-proxies/service-proxies';
 import { TrendByPeriodModel } from './trend-by-period.model';
-import { merge, from, asapScheduler } from 'rxjs';
-import { take, toArray, switchMap } from 'rxjs/operators';
 import { StatsService } from '@app/cfo/shared/helpers/stats.service';
 import { DashboardService } from '../dashboard.service';
-import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'app-trend-by-period',
     templateUrl: './trend-by-period.component.html',
-    providers: [ BankAccountsServiceProxy, StatsService, CashFlowForecastServiceProxy ],
+    providers: [ BankAccountsServiceProxy, StatsService, CurrencyPipe ],
     styleUrls: ['./trend-by-period.component.less']
 })
 export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
