@@ -60,7 +60,7 @@ export class CfoPreferencesService {
             filter(Boolean)
         );
         this.currencies$ = this.store$.pipe(
-            select(CurrenciesStoreSelectors.getCurrenciesTexts),
+            select(CurrenciesStoreSelectors.getCurrencies),
             filter(Boolean)
         );
     }
