@@ -1,5 +1,6 @@
 /** Core imports */
 import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
@@ -41,7 +42,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     'selector': 'app-stats',
-    'providers': [ BankAccountsServiceProxy, CashFlowForecastServiceProxy, StatsService ],
+    'providers': [ BankAccountsServiceProxy, CashFlowForecastServiceProxy, StatsService, CurrencyPipe ],
     'templateUrl': './stats.component.html',
     'styleUrls': ['./stats.component.less']
 })

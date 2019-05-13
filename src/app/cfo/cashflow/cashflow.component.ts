@@ -1191,7 +1191,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         name: 'total',
-                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this._currencyPipe.transform(this.transactionsTotal, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow')}</span>`
+                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this._currencyPipe.transform(this.transactionsTotal, this._cfoPreferencesService.selectedCurrencyId, this._cfoPreferencesService.selectedCurrencySymbol)}</span>`
                     },
                     {
                         name: 'count',
@@ -1199,7 +1199,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'average',
-                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this._currencyPipe.transform(this.transactionsAverage, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow')}</span>`
+                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this._currencyPipe.transform(this.transactionsAverage, this._cfoPreferencesService.selectedCurrencyId, this._cfoPreferencesService.selectedCurrencySymbol)}</span>`
                     },
                     {
                         action: this.hideFooterBar.bind(this),
@@ -1309,7 +1309,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     handleGetCashflowGridSettingsResult(cashflowSettingsResult) {
         this.cashflowGridSettings = cloneDeep(cashflowSettingsResult);
-        this.currencySymbol = this._currencyPipe.transform(777, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow').substr(0, 1);
+        this.currencySymbol = this._currencyPipe.transform(777, this._cfoPreferencesService.selectedCurrencyId, this._cfoPreferencesService.selectedCurrencySymbol).substr(0, 1);
 
         this.applySplitMonthIntoSetting(this.cashflowGridSettings.general.splitMonthType);
         this.tabularFontName = this.userPreferencesService.getClassNameFromPreference({
@@ -1940,7 +1940,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     refreshDataGridWithPreferences(options) {
-        const dataSource = this.pivotGrid.instance.getDataSource();
         const preferences = options.model;
         const updateWithNetChange = preferences.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
         const updateAfterAccountingTypeShowingChange = preferences.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
@@ -1955,13 +1954,30 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
          *  appliedTo data methods before reloading the cashflow
          */
 
+        const dataSource = this.pivotGrid && this.pivotGrid.instance.getDataSource();
         /** Clear user preferences cache */
         this.getUserPreferencesForCell.cache = {};
         if (updateMonthSplitting) {
-            let showWeeks = preferences.general.splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
             /** Changed showing of week and projected fields */
-            dataSource.field('Projected', { visible: !showWeeks, expanded: !showWeeks });
-            dataSource.field('Week', { visible: showWeeks });
+            let showWeeks = preferences.general.splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
+            const projectedUpdatedProps = { visible: !showWeeks, expanded: !showWeeks };
+            const weekUpdatedProps = { visible: showWeeks };
+            if (dataSource) {
+                dataSource.field('Projected', projectedUpdatedProps);
+                dataSource.field('Week', weekUpdatedProps);
+            } else {
+                let projectedConfigIndex, weekConfigIndex;
+                let projectedConfig = this.apiTableFields.find((field, index) => {
+                    projectedConfigIndex = index;
+                    return field.caption === 'Projected';
+                });
+                let weekConfig = this.apiTableFields.find((field, index) => {
+                    weekConfigIndex = index;
+                    return field.caption === 'Week';
+                });
+                this.apiTableFields[projectedConfigIndex] = { ...projectedConfig, ...projectedUpdatedProps };
+                this.apiTableFields[weekConfigIndex] = { ...weekConfig, ...weekUpdatedProps };
+            }
         }
 
         /** @todo refactor (move to the userPreferencesHandlers to avoid if else structure) */
@@ -1969,13 +1985,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(this.cashflowGridSettings.localizationAndCurrency.currency));
         } else {
             if (updateWithDiscrepancyChange) {
-                dataSource.reload();
+                dataSource ? dataSource.reload() : this.refreshDataGrid();
             }
             if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange && !updateWithDiscrepancyChange && !updateMonthSplitting) {
-                this.pivotGrid.instance.repaint();
+                this.pivotGrid ? this.pivotGrid.instance.repaint() : this.refreshDataGrid();
             } else {
                 if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
-                    dataSource.reload();
+                    dataSource ? dataSource.reload() : this.refreshDataGrid();
                 } else {
                     if (updateWithNetChange) {
                         /** If user choose to show net change - then add stub data to data source */
@@ -1995,7 +2011,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.dataSource = this.getApiDataSource();
                 }
             }
-            this.pivotGrid.instance.updateDimensions();
+            this.pivotGrid && this.pivotGrid.instance.updateDimensions();
             this.handleBottomHorizontalScrollPosition();
         }
         this.notify.info(this.l('AppliedSuccessfully'));
@@ -3861,7 +3877,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return this._currencyPipe.transform(
             value,
             this._cfoPreferencesService.selectedCurrencyId,
-            'symbol-narrow',
+            this._cfoPreferencesService.selectedCurrencySymbol,
             `0.${fractionDigits}-${fractionDigits}`
         );
     }

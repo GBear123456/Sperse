@@ -1,9 +1,15 @@
+/** Core imports */
 import { Component, Injector, Input, HostBinding, OnDestroy, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import cloneDeep from 'lodash/cloneDeep';
+import { DxToolbarComponent } from 'devextreme-angular/ui/toolbar';
+import * as _ from 'underscore';
+
+/** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolbarGroupModel, ToolbarGroupModelItem } from './toolbar.model';
-import * as _ from 'underscore';
 import { FiltersService } from '@shared/filters/filters.service';
-import { DxToolbarComponent } from '@root/node_modules/devextreme-angular';
 
 @Component({
     selector: 'app-toolbar',
@@ -301,6 +307,8 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
     initDropDownMenu(item) {
         if (item.widget == 'dxDropDownMenu') {
             item.options['accessKey'] = item.name;
+            /** To avoid modifying of incoming data */
+            item.options['items'] = cloneDeep(item.options['items']);
             item.options['items'].forEach(link => {
                 link.disabled = link.hasOwnProperty('disabled') ? link.disabled : (link.type == 'delimiter');
                 link.html = this.getDropDownItemTemplate(link, item.options['width']);
