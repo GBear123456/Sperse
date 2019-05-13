@@ -219,8 +219,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     detailsSomeHistoricalItemsSelected: boolean;
     detailsSomeForecastsItemsSelected: boolean;
 
-    currencySymbol = '$';
-
     private filterByChangeTimeout: any;
 
     /** Filter by string */
@@ -1309,8 +1307,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     handleGetCashflowGridSettingsResult(cashflowSettingsResult) {
         this.cashflowGridSettings = cloneDeep(cashflowSettingsResult);
-        this.currencySymbol = this._currencyPipe.transform(777, this._cfoPreferencesService.selectedCurrencyId, this._cfoPreferencesService.selectedCurrencySymbol).substr(0, 1);
-
         this.applySplitMonthIntoSetting(this.cashflowGridSettings.general.splitMonthType);
         this.tabularFontName = this.userPreferencesService.getClassNameFromPreference({
             sourceName: 'fontName',
@@ -4084,7 +4080,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 () => {
                     /** Open edit field for double click */
                     this.cashflowService.openEditField(cellObj, {
-                        currencySymbol: this.currencySymbol,
+                        currencySymbol: this._cfoPreferencesService.selectedCurrencySymbol,
                         type: 'text',
                         onValueChanged: this.updateCategory
                     });
@@ -4351,7 +4347,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     switchMap(result => this.removeForecasts(result))
                 ).subscribe(() => {
                     /** If we delete cell that opened in details */
-                    if (this.selectedCell === this.doubleClickedCell) {
+                    if (this.selectedCell && this.doubleClickedCell && this.selectedCell.cellElement === this.doubleClickedCell.cellElement) {
                         /** Clear details result to show No Data instead of deleted rows */
                         this._statsDetailResult.next([]);
                     }
@@ -4552,7 +4548,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: cellObj.cell.value,
             height: element.clientHeight,
-            format: this.currencySymbol + ' #,###.##',
+            format: this._cfoPreferencesService.selectedCurrencySymbol + ' #,###.##',
             onEnterKey: this.saveForecast.bind(this, cellObj)
         });
         this.functionButton = new Button(wrapperButton, {
@@ -5464,7 +5460,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onEditorPreparing(event) {
         if (event.dataField == 'debit' || event.dataField == 'credit') {
             event.editorName = 'dxNumberBox';
-            event.editorOptions['format'] = this.currencySymbol + ' #,###.##';
+            event.editorOptions['format'] = this._cfoPreferencesService.selectedCurrencySymbol + ' #,###.##';
         }
     }
 
@@ -6022,7 +6018,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         };
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: e.data[e.column.dataField],
-            format: this.currencySymbol + ' #,###.##',
+            format: this._cfoPreferencesService.selectedCurrencySymbol + ' #,###.##',
             width: '86%',
             onEnterKey: this.updateForecastCell.bind(this, e),
             onKeyDown: function(e) {
