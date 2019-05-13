@@ -3,27 +3,25 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, zip } from 'rxjs';
 import { first, filter, map } from 'rxjs/operators';
 
 /** Application imports */
 import { CfoStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
-import { CashFlowGridSettingsDto } from '@shared/service-proxies/service-proxies';
-
-export class CurrencyItem {
-    text: string;
-}
+import { CashFlowGridSettingsDto, CurrencyInfo } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class CfoPreferencesService {
-    currencies: CurrencyItem[];
+    currencies$: Observable<Partial<CurrencyInfo>[]>;
     selectedCurrencyId: string;
-    selectedCurrencyIndex: number;
+    selectedCurrencySymbol: string;
+    selectedCurrencyIndex$: Observable<number>;
     constructor(
         private store$: Store<CfoStore.State>,
         private cashflowPreferencesService: UserPreferencesService
     ) {
+        this.store$.dispatch(new CurrenciesStoreActions.LoadRequestAction());
         this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
             first()
@@ -34,10 +32,11 @@ export class CfoPreferencesService {
                 this.cashflowPreferencesService.userPreferences$.pipe(
                     map((preferences: CashFlowGridSettingsDto) => {
                         return preferences.localizationAndCurrency.currency;
-                    })
+                    }),
+                    first()
                 ).subscribe((currencyId: string) => {
                     /** Update selected currency id with the currency id from cashflow preferences */
-                    this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(currencyId));
+                    this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(currencyId || 'USD'));
                 });
             }
         });
@@ -49,13 +48,21 @@ export class CfoPreferencesService {
             this.selectedCurrencyId = selectedCurrencyId;
         });
 
-        this.store$
-            .pipe(select(CurrenciesStoreSelectors.getCurrenciesTexts))
-            .subscribe(currenciesTexts => this.currencies = currenciesTexts);
+        this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencySymbol),
+            filter(Boolean)
+        ).subscribe((selectedCurrencySymbol: string) => {
+            this.selectedCurrencySymbol = selectedCurrencySymbol;
+        });
 
-        this.store$
-            .pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyIndex))
-            .subscribe(selectedCurrencyIndex => this.selectedCurrencyIndex = selectedCurrencyIndex);
+        this.selectedCurrencyIndex$ = this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencyIndex),
+            filter(Boolean)
+        );
+        this.currencies$ = this.store$.pipe(
+            select(CurrenciesStoreSelectors.getCurrencies),
+            filter(Boolean)
+        );
     }
 
     /**
@@ -67,6 +74,13 @@ export class CfoPreferencesService {
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
             filter(Boolean),
             first()
+        );
+    }
+
+    public getCurrenciesAndSelectedIndex(): Observable<[Partial<CurrencyInfo>[], number]> {
+        return zip(
+            this.currencies$.pipe(first()),
+            this.selectedCurrencyIndex$.pipe(first())
         );
     }
 }

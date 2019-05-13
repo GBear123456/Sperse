@@ -1,13 +1,26 @@
 import { Action } from '@ngrx/store';
+import { CurrencyInfo } from '@shared/service-proxies/service-proxies';
 
 export enum ActionTypes {
-    GET_ALL = '[Currencies] Get All',
+    LOAD_REQUEST    = '[Currencies] Load Request',
+    LOAD_FAILURE    = '[Currencies] Load Failure',
+    LOAD_SUCCESS    = '[Currencies] Load Success',
     CHANGE_CURRENCY = '[Currencies] Change Currency'
 }
 
-export class GetAllAction implements Action {
-    readonly type = ActionTypes.GET_ALL;
-    constructor(public payload: boolean) {}
+export class LoadRequestAction implements Action {
+    readonly type = ActionTypes.LOAD_REQUEST;
+    constructor() {}
+}
+
+export class LoadFailureAction implements Action {
+    readonly type = ActionTypes.LOAD_FAILURE;
+    constructor(public payload: string) {}
+}
+
+export class LoadSuccessAction implements Action {
+    readonly type = ActionTypes.LOAD_SUCCESS;
+    constructor(public payload: CurrencyInfo[]) {}
 }
 
 export class ChangeCurrencyAction implements Action {
@@ -15,5 +28,5 @@ export class ChangeCurrencyAction implements Action {
     constructor(public payload: string) {}
 }
 
-export type Actions = GetAllAction | ChangeCurrencyAction;
+export type Actions = LoadRequestAction | LoadFailureAction | LoadSuccessAction | ChangeCurrencyAction;
 

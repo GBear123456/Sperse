@@ -4,6 +4,7 @@ import { GeneralScope } from '../enums/general-scope.enum';
 import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { finalize } from 'rxjs/operators';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'preferences-modal',
@@ -37,26 +38,10 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         '1,000,000.0',
         '1.000.000,0'
     ];
-    currencies = [
-        { value: 'EUR', caption: '€ EUR European Euro' },
-        { value: 'GBP', caption: '£ GBP British Pound' },
-        { value: 'INR', caption: '₹ INR Indian Rupee' },
-        { value: 'JPY', caption: '¥ JPY Japanese Yen' },
-        { value: 'ILS', caption: '₪ ILS Israeli Shekel' },
-        { value: 'UAH', caption: '‎₴ UAH Ukrainian Hryvnia' },
-        { value: 'RUB', caption: '₽ RUB Russian Ruble' },
-        { value: 'CHF', caption: 'C CHF Swiss Franc' },
-        { value: 'SGD', caption: '$ SGD Singapore Dollar' },
-        { value: 'AUD', caption: '$ AUD Australian Dollar' },
-        { value: 'CAD', caption: '$ CAD Canadian Dollar' },
-        { value: 'HKD', caption: '$ HKD Hong Kong Dollar' },
-        { value: 'MXN', caption: '$ MXN Mexican Peso' },
-        { value: 'NZD', caption: '$ NZD New Zealand Dollar' },
-        { value: 'USD', caption: '$ USD US Dollar' }
-    ];
     constructor(
         injector: Injector,
-        public userPreferencesService: UserPreferencesService
+        public userPreferencesService: UserPreferencesService,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
         for (let i = 10; i < 21; i++)

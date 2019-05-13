@@ -1,30 +1,17 @@
-export class Currency {
-    value: string;
-    caption: string;
-}
+import { CurrencyInfo } from '@shared/service-proxies/service-proxies';
 
 export interface State {
-    entities: Currency[];
+    entities: CurrencyInfo[];
     selectedCurrencyId: string;
+    error: string;
+    loading: boolean;
+    loadedTime: number;
 }
 
 export const initialState: State = {
-    entities: [
-        { value: 'EUR', caption: '€ EUR European Euro' },
-        { value: 'GBP', caption: '£ GBP British Pound' },
-        { value: 'INR', caption: '₹ INR Indian Rupee' },
-        { value: 'JPY', caption: '¥ JPY Japanese Yen' },
-        { value: 'ILS', caption: '₪ ILS Israeli Shekel' },
-        { value: 'UAH', caption: '‎₴ UAH Ukrainian Hryvnia' },
-        { value: 'RUB', caption: '₽ RUB Russian Ruble' },
-        { value: 'CHF', caption: 'C CHF Swiss Franc' },
-        { value: 'SGD', caption: '$ SGD Singapore Dollar' },
-        { value: 'AUD', caption: '$ AUD Australian Dollar' },
-        { value: 'CAD', caption: '$ CAD Canadian Dollar' },
-        { value: 'HKD', caption: '$ HKD Hong Kong Dollar' },
-        { value: 'MXN', caption: '$ MXN Mexican Peso' },
-        { value: 'NZD', caption: '$ NZD New Zealand Dollar' },
-        { value: 'USD', caption: '$ USD US Dollar' }
-    ],
-    selectedCurrencyId: null
+    entities: null,
+    selectedCurrencyId: null,
+    error: null,
+    loading: false,
+    loadedTime: null
 };
