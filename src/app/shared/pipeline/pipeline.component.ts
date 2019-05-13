@@ -74,6 +74,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.selectedEntitiesChange.emit(this._selectedEntities);
     }
 
+    @Input() moveDisabled = false;
     @Input() dragulaName = 'stage';
     @Input() totalsURI: string;
     @Input() selectFields: string[];
@@ -202,6 +203,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             copySortSource: false,
             ignoreInputTextSelection: false,
             moves: (el, source) => {
+                if (this.moveDisabled)
+                    return false;
+        
                 let stage = this.getStageByElement(source);
                 if (stage['isFinal'])
                     return false;
