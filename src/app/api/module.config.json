@@ -3,6 +3,7 @@
   "name": "API",
   "search": false,
   "requiredFeature": "API",
+  "requiredPermission": "Pages.API",
   "localizationSource": "Platform",
   "navigation": [
     [ "Introduction", "", "", "/app/api/introduction" ],

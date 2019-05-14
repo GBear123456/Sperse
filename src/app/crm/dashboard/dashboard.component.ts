@@ -10,7 +10,6 @@ import { filter, first, takeUntil } from 'rxjs/operators';
 import { AppService } from '@app/app.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { PeriodComponent } from '@app/shared/common/period/period.component';
-import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { RootStore, StatesStoreActions } from '@root/store';
 import { Module } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -61,7 +60,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         injector: Injector,
         private _appService: AppService,
         private _dashboardWidgetsService: DashboardWidgetsService,
-        private zendeskService: ZendeskService,
         public dialog: MatDialog,
         private store$: Store<RootStore.State>,
         private reuseService: RouteReuseStrategy,
@@ -138,8 +136,9 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
-                module: Module.CRM,
-                title: this.ls('Platform', 'UpgradeYourSubscription', Module.CRM)
+                module: this._appService.getModuleSubscription(Module.CRM).module,
+                title: this.ls('Platform', 'UpgradeYourSubscription',
+                    this._appService.getSubscriptionName(Module.CRM))
             }
         });
     }
@@ -152,7 +151,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
 
         this.subscribeToRefreshParam();
         this._appService.updateToolbar(null);
-        this.zendeskService.showWidget();
 
         this.showHostElement();
         this.renderWidgets();
@@ -186,7 +184,6 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         super.deactivate();
 
         this.finishLoading(false, this.loadingContainer);
-        this.zendeskService.hideWidget();
         this.rootComponent.overflowHidden();
 
         this.hideHostElement();

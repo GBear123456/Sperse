@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 /** Third party imports */
 import * as moment from 'moment-timezone';
 import { Subject, Observable } from 'rxjs';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -25,7 +26,6 @@ import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
-import capitalize from 'underscore.string/capitalize';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 

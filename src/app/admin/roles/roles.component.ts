@@ -79,18 +79,18 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         this.initToolbarConfig();
 
         this.dataSource = new DataSource({
-                key: 'id',
-                load: (loadOptions) => {
-                    return this._roleService.getRoles(
-                            this.selectedPermission || undefined,
-                            undefined
-                        ).toPromise().then(response => {
-                            return {
-                                data: response.items,
-                                totalCount: response.items.length
-                            };
-                        });
-                }
+            key: 'id',
+            load: (loadOptions) => {
+                return this._roleService.getRoles(
+                    this.selectedPermission || undefined,
+                    undefined
+                ).toPromise().then(response => {
+                    return {
+                        data: response.items,
+                        totalCount: response.items.length
+                    };
+                });
+            }
         });
     }
 

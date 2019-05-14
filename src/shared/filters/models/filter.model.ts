@@ -15,6 +15,7 @@ export class FilterModelBase<T extends FilterItemModel> {
     items$?: Observable<{ [item: string]: T; }>;
     displayElements?: any[];
     options?: any;
+    hidden?: boolean;
     isSelected = false;
 
     public constructor(init?: Partial<FilterModelBase<T>>) {

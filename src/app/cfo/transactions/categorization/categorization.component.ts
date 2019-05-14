@@ -540,12 +540,16 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
         let moveToId: number;
         let targetName: string;
+        let hasSourceSubcategories = _.values(this.categorization.categories).some((item) => {
+            return item.parentId == sourceId;
+        });
 
         if (targetCategory) {
             if (sourceCategory.parentId && targetCategory.parentId || //subcategory -> subcategory
                 sourceCategory.parentId && sourceCategory.parentId == targetId || //subcategory -> own parent
-                !sourceCategory.parentId && !targetCategory.parentId || //category -> category
-                !sourceCategory.parentId && targetCategory.parentId) { //category -> subcategory
+                !sourceCategory.parentId && !targetCategory.parentId && hasSourceSubcategories || // not empty category -> category
+                !sourceCategory.parentId && targetCategory.parentId //category -> subcategory
+            ) {
                 isMerge = true;
             }
 

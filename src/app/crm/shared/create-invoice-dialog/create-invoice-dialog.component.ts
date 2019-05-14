@@ -6,15 +6,16 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
+import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { CacheService } from 'ng2-cache-service';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppConsts } from '@shared/AppConsts';
-import { InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput,
-    UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus,
-    UpdateInvoiceStatusInputStatus, CreateInvoiceLineInput } from '@shared/service-proxies/service-proxies';
+import { ContactGroup } from '@shared/AppEnums';
+import { InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput, UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus,
+    UpdateInvoiceStatusInputStatus, CreateInvoiceLineInput, InvoiceSettingsInfoDto } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
@@ -32,33 +33,49 @@ export class CreateInvoiceDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
+    @ViewChild('invoice') invoiceNoComponent: DxTextBoxComponent;
     @ViewChild('contact') contactComponent: DxSelectBoxComponent;
 
     private lookupTimeout;
-    private readonly SAVE_OPTION_DEFAULT = 1;
+
+    private readonly SAVE_OPTION_DEFAULT = 0;
     private readonly SAVE_OPTION_CACHE_KEY = 'save_option_active_index';
 
+    private validationError: string;
+
+    invoiceNo;
+    orderId: number;
     invoiceId: number;
     statuses: any[] = [];
     status = CreateInvoiceInputStatus.Draft;
 
     saveButtonId = 'saveInvoiceOptions';
     saveContextMenuItems = [];
+    billingSettings: InvoiceSettingsInfoDto;
+
+    currencies = [
+        {name: 'US Dollar', code: 'USD'},
+        {name: 'GB Pound', code: 'GBP'},
+        {name: 'Euro', code: 'EUR'}
+    ];
+    currency = this.currencies[0].code;
 
     customer: any;
     contactId: number;
     customers = [];
 
+    date;
+    dueDate;
     currentDate = new Date();
-    date = this.currentDate;
-    dueDate = this.date;
 
-    order: any;
     description = '';
     notes = '';
-    lines = [];
+    lines = [{}];
 
-    toolbarConfig = [];
+    subTotal = 0;
+    total = 0;
+    balance = 0;
+
     disabledForUpdate = false;
     editTitle = !this.disabledForUpdate;
     title: string;
@@ -71,6 +88,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             action: this.save.bind(this)
         }
     ];
+    linesGridHeight = 200;
 
     constructor(
         private _invoiceProxy: InvoiceServiceProxy,
@@ -84,18 +102,25 @@ export class CreateInvoiceDialogComponent implements OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        this.ls.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.saveContextMenuItems = [
-            {text: this.ls.l('SaveAndAddNew'), selected: false},
-            {text: this.ls.l('SaveAndClose'), selected: false}
+            {text: this.ls.l('Save'), selected: false},
+            {text: this.ls.l('Invoice_SaveAsDraft'), selected: false, disabled: this.data.invoice
+                && this.data.invoice.Status != CreateInvoiceInputStatus.Draft},
+            {text: this.ls.l('Invoice_SaveAndSend'), selected: false, disabled: true},
+            {text: this.ls.l('Invoice_SaveAndMarkSent'), selected: false, disabled: true}
         ];
 
         this._customerProxy.getAllByPhrase('', 10).subscribe((res) => {
             this.customers = res;
         });
 
+        _invoiceProxy.getSettings().subscribe((settings) => {
+            this.billingSettings = settings;
+            if (!this.data.invoice)
+                this.invoiceNo = settings.nextInvoiceNumber;
+        });
+
         this.initInvoiceData();
-        this.initToolbarConfig();
     }
 
     ngOnInit() {
@@ -107,7 +132,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (invoice) {
             this.modalDialog.startLoading();
             this.invoiceId = invoice.Id;
-            this.title = invoice.Number;
+            this.invoiceNo = invoice.Number;
+            this.orderId = invoice.OrderId;
             this.status = invoice.Status;
             this.date = invoice.Date;
             this.dueDate = invoice.DueDate;
@@ -130,66 +156,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         };
                     });
                 });
+        } else {
+            this.resetNoteDefault();
         }
-    }
-
-    initToolbarConfig() {
-        this.toolbarConfig = [
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'status',
-                        widget: 'dxSelectBox',
-                        disabled: false,
-                        options: {
-                            hint: 'Status',
-                            value: this.status,
-                            valueExpr: 'text',
-                            displayExpr: 'text',
-                            items: Object.keys(CreateInvoiceInputStatus).map((item) => {
-                                return {
-                                    text: item,
-                                    disabled: (item == CreateInvoiceInputStatus.Paid
-                                        || item == CreateInvoiceInputStatus.Canceled)
-                                        && (!this.data.invoice || this.data.invoice.Status != CreateInvoiceInputStatus.Sent)
-                                };
-                            }),
-                            onValueChanged: (event) => {
-                                this.status = event.value;
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                areItemsDependent: true,
-                items: [
-                    {
-                        name: 'delete',
-                        visible: Boolean(this.data.invoice),
-                        disabled: !this.data.invoice ||
-                            (this.data.invoice.Status == CreateInvoiceInputStatus.Paid),
-                        action: this.deleteInvoice.bind(this)
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                areItemsDependent: true,
-                items: [
-                    {
-                        name: 'discard',
-                        visible: !this.data.invoice,
-                        action: this.resetFullDialog.bind(this, false)
-                    }
-                ]
-            }
-        ];
     }
 
     saveOptionsInit() {
@@ -212,20 +181,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     updateSaveOption(option) {
-        this.data.buttons[0].title = option.text;
+        this.buttons[0].title = option.text;
         this._cacheService.set(this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 
     private setRequestCommonFields(data) {
+        data.number = this.invoiceNo;
         data.date = new Date(this.date);
         data.dueDate = new Date(this.dueDate);
         data.description = this.description;
         data.note = this.notes;
     }
 
-    private createEntity(): void {
-        this.modalDialog.startLoading();
+    private createUpdateEntity(): void {
         let subscription$,
             saveButton: any = document.getElementById(this.saveButtonId);
         if (this.invoiceId) {
@@ -235,11 +204,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             data.status = UpdateInvoiceInputStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new UpdateInvoiceLineInput({
-                    id: row.id,
-                    quantity: row.Quantity,
-                    rate: row.Rate,
+                    id: row['id'],
+                    quantity: row['Quantity'],
+                    rate: row['Rate'],
                     unitId: 'UT',
-                    description: row.Description,
+                    description: row['Description'],
                     sortOrder: index
                 });
             });
@@ -248,14 +217,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let data = new CreateInvoiceInput();
             this.setRequestCommonFields(data);
             data.contactId = this.contactId;
-            data.orderId = this.order && this.order.id;
+            data.orderId = this.orderId;
             data.status = CreateInvoiceInputStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new CreateInvoiceLineInput({
-                    quantity: row.Quantity,
-                    rate: row.Rate,
+                    quantity: row['Quantity'],
+                    rate: row['Rate'],
                     unitId: 'UT',
-                    description: row.Description,
+                    description: row['Description'],
                     sortOrder: index
                 });
             });
@@ -285,24 +254,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     private afterSave(): void {
-        if (this.saveContextMenuItems[0].selected)
-            this.resetFullDialog();
-        else
-            this.close();
-
+        this.close();
         this._notifyService.info(this.ls.l('SavedSuccessfully'));
         this.data.refreshParent && this.data.refreshParent();
     }
 
-    save(event?): any {
-        if (event && event.offsetX > 140)
-            return this.saveContextComponent
-                .instance.option('visible', true);
+    save(event?): void {
+        if (event && event.offsetX > event.target.closest('button').offsetWidth - 32)
+            return this.saveContextComponent.instance.option('visible', true);
 
-        if (!this.title) {
-            this.isTitleValid = false;
-            return this.isTitleValid;
-        }
+        if (!this.invoiceNo)
+            return this.invoiceNoComponent.instance.option('isValid', false);
 
         if (isNaN(this.contactId))
             return this.contactComponent.instance.option('isValid', false);
@@ -310,10 +272,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (!this.lines.length)
             return this._notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
 
+        this.saveContextMenuItems.some((item, index) => {
+            if (item.selected) {
+                this.status = CreateInvoiceInputStatus[index == 1 ? 'Draft' : 'Final'];
+            }
+            return item.selected;
+        })
+
         if (this.disabledForUpdate)
             this.updateStatus();
         else
-            this.createEntity();
+            this.createUpdateEntity();
     }
 
     onFieldFocus(event) {
@@ -346,17 +315,14 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     resetFullDialog(forced = true) {
         let resetInternal = () => {
-            this.title = undefined;
-            this.isTitleValid = true;
+            this.invoiceNo = this.billingSettings.nextInvoiceNumber;
             this.status = CreateInvoiceInputStatus.Draft;
             this.customer = undefined;
-            this.date = this.currentDate;
+            this.date = undefined;
             this.dueDate = this.date;
             this.description = '';
             this.notes = '';
             this.lines = [];
-
-            this.initToolbarConfig();
         };
 
         if (forced)
@@ -368,22 +334,26 @@ export class CreateInvoiceDialogComponent implements OnInit {
             });
     }
 
-    calculateLineAmount(data) {
-        return data.Quantity * data.Rate || '';
+    calculateLineAmount = (data) => {
+        let amount = data.Quantity * data.Rate;
+        if (amount)
+            this.calculateBalance();
+
+        return amount || 0;
     }
 
-    calculateSummary(options) {
-        if (options.name === 'RowsSummary') {
-            if (options.summaryProcess === 'start') {
-                options.totalValue = 0;
-            } else if (options.summaryProcess === 'calculate') {
-                options.totalValue = options.totalValue + (options.value.Quantity * options.value.Rate || 0);
-            }
-        }
-    }
+    calculateBalance() {
+        this.subTotal =
+        this.total =
+        this.balance = 0;
 
-    onToolbarPreparing(event) {
-        event.toolbarOptions.items[0].locateInMenu = 'never';
+        this.lines.forEach((line) => {
+            let amount = line['Quantity'] * line['Rate'];
+            if (amount)
+                this.subTotal =
+                this.total =
+                this.balance = this.total + amount;
+        })
     }
 
     selectContact(event) {
@@ -397,7 +367,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     deleteInvoice() {
         if (this.invoiceId)
             this._messageService.confirm(
-                this.ls.l('InvoiceDeleteWarningMessage', this.title),
+                this.ls.l('InvoiceDeleteWarningMessage', this.invoiceNo),
                 isConfirmed => {
                     if (isConfirmed) {
                         this.modalDialog.startLoading();
@@ -411,5 +381,43 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     }
                 }
             );
+    }
+
+    resetNoteDefault() {
+        this.notes = this.l('Invoice_DefaultNote');
+    }
+
+    onValueChanged(event, data) {
+        this.lines[data.rowIndex][data.column.dataField] = event.value;
+    }
+
+    allowDigitsOnly(event, exceptions = []) {
+        let key = event.event.key;
+        if (exceptions.indexOf(key) < 0 && key.length == 1 && isNaN(key)) {
+            event.event.preventDefault();
+            event.event.stopPropagation();
+        }
+    }
+
+    addNewLine(data) {
+        this.lines.push({});
+        this.linesGridHeight += 100;
+    }
+
+    deleteLine(data) {
+        this.lines.splice(data.rowIndex, 1);
+        this.linesGridHeight -= 100;
+    }
+
+    createClient() {
+        this.dialog.open(CreateClientDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                refreshParent: () => {},
+                customerType: ContactGroup.Client
+            }
+        }).afterClosed().subscribe(() => {});
     }
 }

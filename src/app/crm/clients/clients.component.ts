@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
-import { first } from 'rxjs/operators';
+import { first, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -43,12 +43,14 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { CustomerServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
+import { CustomerServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy, 
+    ContactStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { EditContactDialog } from '../contacts/edit-contact-dialog/edit-contact-dialog.component';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 
 @Component({
@@ -103,6 +105,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _clientService: ClientService,
+        private _contactEmailService: ContactEmailServiceProxy,
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
@@ -204,7 +207,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
         this.searchClear = false;
         event.component.cancelEditData();
-        this._router.navigate(['app/crm/client', clientId].concat(orgId ? ['company', orgId] : []),
+        this._router.navigate(['app/crm/contact', clientId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/clients'} });
     }
 
@@ -620,10 +623,50 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.deactivate();
     }
 
-    requestVerification(contactId: number) {
+    private requestVerificationInternal(contactId: number) {
         this._appService.requestVerification(contactId).subscribe(
             () => this.dataGrid.instance.refresh()
         );
+    }
+
+    requestVerification(data) {
+        if (data.Email)
+            this.requestVerificationInternal(data.Id);
+        else {
+            let dialogData = {
+                field: 'emailAddress',
+                emailAddress: '',
+                name: 'Email',
+                contactId: data.Id,
+                usageTypeId: '',
+                isConfirmed: true,
+                isActive: true,
+                isCompany: false,
+                comment: '',
+                deleteItem: (event) => {}
+            };
+
+            this.dialog.open(EditContactDialog, {
+                data: dialogData,
+                hasBackdrop: true
+            }).afterClosed().subscribe(result => {
+                if (result) {
+                    this.startLoading();
+                    this._contactEmailService.createContactEmail(new CreateContactEmailInput({
+                        contactId: data.Id,
+                        emailAddress: dialogData.emailAddress,
+                        isActive: dialogData.isActive,
+                        isConfirmed: dialogData.isConfirmed,
+                        comment: dialogData.comment,
+                        usageTypeId: dialogData.usageTypeId
+
+                    })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
+                        this.dataGrid.instance.refresh();
+                        this.requestVerificationInternal(data.Id);
+                    });
+                }
+            });
+        } 
     }
 
     activate() {

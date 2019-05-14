@@ -1,23 +1,25 @@
-import {NgModule} from '@angular/core';
+/** Core imports  */
+import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-import {CommonModule} from '@shared/common/common.module';
-import {AccountsComponent} from './accounts/accounts.component';
-import {CategorizationStatusComponent} from './categorization-status/categorization-status.component';
-import {AccountsSynchStatusComponent} from './accounts-synch-status/accounts-synch-status.component';
-import {TotalsByPeriodComponent} from './totals-by-period/totals-by-period.component';
-import {TrendByPeriodComponent} from './trend-by-period/trend-by-period.component';
-import {DashboardService} from './dashboard.service';
-import {RoundProgressModule} from 'angular-svg-round-progressbar';
 
+/** Third party imports */
+import { MatDialogModule } from '@angular/material/dialog';
+import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 import { DxSliderModule } from 'devextreme-angular/ui/slider';
 
-import { MatDialogModule } from '@angular/material/dialog';
+/** Application imports */
+import { CommonModule } from '@shared/common/common.module';
+import { AccountsComponent } from './accounts/accounts.component';
+import { CategorizationStatusComponent } from './categorization-status/categorization-status.component';
+import { AccountsSynchStatusComponent } from './accounts-synch-status/accounts-synch-status.component';
+import { TotalsByPeriodComponent } from './totals-by-period/totals-by-period.component';
+import { TrendByPeriodComponent } from './trend-by-period/trend-by-period.component';
+import { DashboardService } from './dashboard.service';
 import { ChooseResetRulesComponent } from './categorization-status/choose-reset-rules/choose-reset-rules.component';
-
 
 @NgModule({
     imports: [
@@ -50,7 +52,7 @@ import { ChooseResetRulesComponent } from './categorization-status/choose-reset-
         TrendByPeriodComponent,
         ChooseResetRulesComponent
     ],
-    providers: [DashboardService]
+    providers: [ DashboardService ]
 })
 export class DashboardWidgetsModule {
 }

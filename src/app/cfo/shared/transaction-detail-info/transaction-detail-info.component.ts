@@ -23,6 +23,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { finalize } from '@node_modules/rxjs/internal/operators';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'app-transaction-detail-info',
@@ -58,13 +59,17 @@ export class TransactionDetailInfoComponent implements OnInit {
         private _changeDetectorRef: ChangeDetectorRef,
         private _notifyService: NotifyService,
         public ls: AppLocalizationService,
+        public cfoPreferencesService: CfoPreferencesService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
         this.transactionId = this.data.transactionId;
     }
 
     ngOnInit() {
-        this.getTransactionDetails();
+        this.data.transactionId$.subscribe((id) => {
+            this.transactionId = id;
+            this.getTransactionDetails();
+        });
         this.getTransactionAttributeTypes();
         this.getCategoryTree();
     }
@@ -269,5 +274,9 @@ export class TransactionDetailInfoComponent implements OnInit {
 
     refreshParent() {
         this.data.refreshParent && this.data.refreshParent();
+    }
+
+    trackElement(index: number, element: any) {
+        return element ? element.guid : null;
     }
 }

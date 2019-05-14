@@ -1,15 +1,15 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { finalize } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
+import { filter, skip, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
@@ -17,14 +17,16 @@ import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/cat
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
+import { CfoStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'dashboard',
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.less'],
-    animations: [appModuleAnimation()],
+    animations: [appModuleAnimation()]
 })
-export class DashboardComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
     @ViewChild(CategorizationStatusComponent) categorizationStatusComponent: CategorizationStatusComponent;
@@ -41,13 +43,15 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         {name: 'View_Transaction_Details', route: '../transactions'},
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
+    toolbarConfig;
 
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
         private bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
-        private zendeskService: ZendeskService
+        private store$: Store<CfoStore.State>,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -64,6 +68,28 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         /** Load sync accounts */
         this.bankAccountsService.load();
 
+        const selectedCurrencyId$ = this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencyId)
+        );
+
+        this.initToolbarConfig();
+
+        /** If component is activated and currency has changed - update grid  */
+        selectedCurrencyId$.pipe(
+            /** To avoid initial double widgets loading */
+            skip(1),
+            filter(() => this.componentIsActivated)
+        ).subscribe(() => {
+            this.refreshWidgets();
+        });
+
+        /** If component is not activated - wait until it will activate and then reload */
+        selectedCurrencyId$.pipe(
+            filter(() => !this.componentIsActivated)
+        ).subscribe(() => {
+            this.updateAfterActivation = true;
+        });
+
         /** After selected accounts change */
         this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
             /** filter all widgets by new data if change is on this component */
@@ -78,10 +104,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
-    }
-
-    ngAfterViewInit(): void {
-        this.zendeskService.showWidget();
     }
 
     ngOnDestroy(): void {
@@ -116,10 +138,44 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
         this._dashboardService.periodChanged($event);
     }
 
+    private initToolbarConfig() {
+        this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
+            .subscribe(([currencies, selectedCurrencyIndex]) => {
+                this.toolbarConfig = [
+                    {
+                        location: 'before',
+                        locateInMenu: 'auto',
+                        items: [
+                            {
+                                name: 'select-box',
+                                text: '',
+                                widget: 'dxDropDownMenu',
+                                accessKey: 'currencySwitcher',
+                                options: {
+                                    hint: this.l('Currency'),
+                                    accessKey: 'currencySwitcher',
+                                    items: currencies,
+                                    selectedIndex: selectedCurrencyIndex,
+                                    height: 39,
+                                    width: 230,
+                                    onSelectionChanged: (e) => {
+                                        if (e) {
+                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ];
+            });
+    }
+
     activate() {
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
 
+        this.initToolbarConfig();
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
             this.filterByBankAccounts(this.bankAccountsService.state);
@@ -140,7 +196,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, Afte
     }
 
     deactivate() {
-        this.zendeskService.hideWidget();
         this.rootComponent.overflowHidden();
         this.synchProgressComponent.deactivate();
     }

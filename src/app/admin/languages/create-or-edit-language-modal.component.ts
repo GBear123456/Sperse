@@ -70,9 +70,15 @@ export class CreateOrEditLanguageModalComponent implements OnInit {
                 this.languageNames = result.languageNames;
                 this.language = result.language;
                 this.flags = result.flags;
+                this.flags.push(
+                    new ComboboxItemDto({'value': 'famfamfam-flags england', 'displayText': 'en', 'isSelected': false})
+                );
                 this.title = this.language.name ? this.ls.l('EditLanguage') + ': ' + this.language.name : this.ls.l('CreateNewLanguage');
                 if (!this.data.languageId) {
                     this.language.isEnabled = true;
+                }
+                if (this.language && this.language.name) {
+                    this.language.name = this.language.name.split('-').shift();
                 }
                 this._changeDetectorRef.detectChanges();
             });

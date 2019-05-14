@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, OnDestroy, Injector, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -16,7 +16,6 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
 import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';
 import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog/business-entity-edit-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 
 @Component({
     selector: 'business-entities',
@@ -25,7 +24,7 @@ import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
     styleUrls: ['./business-entities.component.less'],
     providers: [BusinessEntityServiceProxy]
 })
-export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
@@ -38,8 +37,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     constructor(injector: Injector,
         public dialog: MatDialog,
         private _businessEntityService: BusinessEntityServiceProxy,
-        private bankAccountsService: BankAccountsService,
-        private zendeskService: ZendeskService
+        private bankAccountsService: BankAccountsService
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -75,10 +73,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         };
         this.bankAccountsService.load();
         this.isAddButtonDisabled = !this.isInstanceAdmin;
-    }
-
-    ngAfterViewInit(): void {
-        this.zendeskService.showWidget();
     }
 
     onNextClick() {
@@ -223,7 +217,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     ngOnDestroy(): void {
-        this.zendeskService.hideWidget();
         this.rootComponent.overflowHidden();
     }
 

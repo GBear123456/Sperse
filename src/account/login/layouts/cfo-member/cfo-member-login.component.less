@@ -17,13 +17,18 @@
 }
 
 :host {
-    & > div {
-        padding-top: 90px;
-    }
-
     .row {
         height: 100%;
         align-items: center;
+    }
+
+    i.name {
+        width: 100%;
+        height: 20px;
+        display: block;
+        background-position: center;
+        background-image: url('/assets/common/images/cfo-member/name.png');
+        background-repeat: no-repeat;
     }
 
     .sign-in {
@@ -39,7 +44,7 @@
     }
 
     .login-form {
-        max-width: 428px;
+        min-width: 428px;
         margin: 0 auto;
 
         input,
@@ -108,7 +113,7 @@
             height: 56px;
             border-radius: 2px;
             border: 0;
-            background-color: #ffcc00;
+            background-color: #ee8615;
             font-family: @font-family;
             font-size: 18px;
             font-weight: bold;
@@ -125,8 +130,8 @@
             }
 
             &:hover {
-                background-color: darken(#ffcc00, 6%);
-                box-shadow: 0 0 3px rgba(#ffcc00, .5);
+                background-color: darken(#ee8615, 6%);
+                box-shadow: 0 0 3px rgba(#ee8615, .5);
             }
 
             &[disabled] {
@@ -168,7 +173,7 @@
                         border-radius: 50%;
                         width: 20px;
                         height: 20px;
-                        border: 1px solid #ffcc00;
+                        border: 1px solid #ee8615;
                         display: block;
                         position: absolute;
                         left: 0;
@@ -176,8 +181,8 @@
                     }
 
                     input:checked ~ span {
-                        border-color: #ffcc00;
-                        background-color: #ffcc00;
+                        border-color: #ee8615;
+                        background-color: #ee8615;
 
                         &::after {
                             border: 2px solid #000;
@@ -232,6 +237,7 @@
     }
 
     .login-options {
+        display: none;
         padding-top: 10px;
         max-width: 428px;
         margin: 0 auto;
@@ -310,10 +316,12 @@
         padding: 20px 0px;
 
         a {
+            color: #ee8615;
             transition: .2s;
             padding: 0 2px;
-            font-weight: 600;
+            font-weight: bold;
             text-decoration: underline;
+            
 
             &:hover {
                 color: darken(#fff, 18%);

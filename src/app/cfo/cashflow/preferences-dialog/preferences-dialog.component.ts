@@ -3,8 +3,8 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, ViewChil
 
 /** Third party imports */
 import { MatDialogRef } from '@angular/material';
-import { from } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 /** Application imports */
 import { CashflowServiceProxy, CashFlowGridSettingsDto } from '@shared/service-proxies/service-proxies';
@@ -47,23 +47,6 @@ export class PreferencesDialogComponent implements OnInit {
     numberFormats = [
         '1,000,000.0',
         '1.000.000,0'
-    ];
-    currencies = [
-        { value: 'EUR', caption: '€ EUR European Euro' },
-        { value: 'GBP', caption: '£ GBP British Pound' },
-        { value: 'INR', caption: '₹ INR Indian Rupee' },
-        { value: 'JPY', caption: '¥ JPY Japanese Yen' },
-        { value: 'ILS', caption: '₪ ILS Israeli Shekel' },
-        { value: 'UAH', caption: '‎₴ UAH Ukrainian Hryvnia' },
-        { value: 'RUB', caption: '₽ RUB Russian Ruble' },
-        { value: 'CHF', caption: 'C CHF Swiss Franc' },
-        { value: 'SGD', caption: '$ SGD Singapore Dollar' },
-        { value: 'AUD', caption: '$ AUD Australian Dollar' },
-        { value: 'CAD', caption: '$ CAD Canadian Dollar' },
-        { value: 'HKD', caption: '$ HKD Hong Kong Dollar' },
-        { value: 'MXN', caption: '$ MXN Mexico Peso' },
-        { value: 'NZD', caption: '$ NZD New Zealand Dollar' },
-        { value: 'USD', caption: '$ USD US Dollar' }
     ];
     buttons: IDialogButton[] = [
         {
@@ -111,6 +94,7 @@ export class PreferencesDialogComponent implements OnInit {
         private _dialogRef: MatDialogRef<PreferencesDialogComponent>,
         private _changeDetectorRef: ChangeDetectorRef,
         public userPreferencesService: UserPreferencesService,
+        public cfoPreferencesService: CfoPreferencesService,
         public ls: AppLocalizationService
     ) {
         for (let i = 10; i < 21; i++)
@@ -118,25 +102,11 @@ export class PreferencesDialogComponent implements OnInit {
     }
 
     ngOnInit() {
-        let cashflowGrid$;
-        if (this.userPreferencesService.checkExistsLocally()) {
-            let data = this.userPreferencesService.getLocalModel();
-            let model = new CashFlowGridSettingsDto();
-            model.init(data);
-            cashflowGrid$ = from([model]);
-        } else {
-            this.modalDialog.startLoading();
-            cashflowGrid$ = this._cashflowService.getCashFlowGridSettings(this._cfoService.instanceType as any, this._cfoService.instanceId);
-        }
-
-        cashflowGrid$
-            .pipe(finalize(() => this.modalDialog.finishLoading()))
-            .subscribe(result => {
-                this.model = result;
-                this.active = true;
-                this._changeDetectorRef.detectChanges();
-            });
-
+        this.userPreferencesService.userPreferences$.subscribe(result => {
+            this.model = result;
+            this.active = true;
+            this._changeDetectorRef.detectChanges();
+        });
         this._dialogRef.afterClosed().subscribe(closeData => {
             if (closeData && closeData.saveLocally) {
                 this.userPreferencesService.saveLocally(this.model);
@@ -158,7 +128,11 @@ export class PreferencesDialogComponent implements OnInit {
     }
 
     closeSuccessful() {
-        this.modalDialog.close(true,  {'update': true, 'saveLocally': false});
+        this.modalDialog.close(true,  {
+            'update': true,
+            'saveLocally': false,
+            'model': this.model
+        });
     }
 
     applyChanges() {

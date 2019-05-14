@@ -1,4 +1,10 @@
+/** Core imports */
 import { Component, Injector, Input, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import { mergeMap, scan, tap, switchMap } from 'rxjs/operators';
+
+/** */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardService } from '../dashboard.service';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
@@ -7,7 +13,7 @@ import {
     GroupBy,
     InstanceType
 } from '@shared/service-proxies/service-proxies';
-import { mergeMap, scan } from 'rxjs/operators';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'app-totals-by-period',
@@ -17,7 +23,6 @@ import { mergeMap, scan } from 'rxjs/operators';
 })
 export class TotalsByPeriodComponent extends CFOComponentBase {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
-
     @Input() waitForBankAccounts = false;
     @Input() waitForPeriods = false;
     bankAccountIds: number[] = [];
@@ -35,7 +40,8 @@ export class TotalsByPeriodComponent extends CFOComponentBase {
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
-        private _bankAccountService: BankAccountsServiceProxy
+        private _bankAccountService: BankAccountsServiceProxy,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
 
@@ -46,60 +52,64 @@ export class TotalsByPeriodComponent extends CFOComponentBase {
     loadStatsData() {
         if (!this.waitForBankAccounts && !this.waitForPeriods) {
             this.startLoading();
-            this._bankAccountService.getStats(
-                InstanceType[this.instanceType],
-                this.instanceId,
-                'USD',
-                undefined,
-                this.bankAccountIds,
-                this.startDate,
-                this.endDate,
-                this.selectedPeriod
-            )
-                .pipe(
-                    mergeMap(x => x),
-                    scan((prevStatsItem, currentStatsItem: any) => {
-                        let credit = currentStatsItem.credit + prevStatsItem.credit;
-                        let debit = currentStatsItem.debit + prevStatsItem.debit;
-                        let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
-                        let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
-                        return {
-                            'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
-                            'endingBalance': currentStatsItem.endingBalance,
-                            'credit': credit,
-                            'debit': debit,
-                            'adjustments': adjustments,
-                            'startingBalanceAdjustments': startingBalanceAdjustments,
-                            'netChange': credit - Math.abs(debit),
-                            'date': currentStatsItem.date
-                        };
-                    }, {
-                        'credit': 0,
-                        'debit': 0,
-                        'netChange': 0,
-                        'adjustments': 0,
-                        'startingBalance': 0,
-                        'endingBalance': 0,
-                        'startingBalanceAdjustments': 0,
-                        'date': 'date'
-                    })
-                )
-                .subscribe(
-                result => {
-                    this.totalData = result;
-                    let maxValue = Math.max(
-                        Math.abs(result.credit),
-                        Math.abs(result.debit),
-                        Math.abs(result.netChange)
-                    );
-                    this.totalData.creditPercent = this.getPercentage(maxValue, result.credit);
-                    this.totalData.debitPercent = this.getPercentage(maxValue, result.debit);
-                    this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
-                    setTimeout(() => { this.render(); }, 300);
-                },
-                e => { this.finishLoading(); },
-                () => this.finishLoading()
+            this.cfoPreferencesService.getCurrencyId().pipe(
+                switchMap((currencyId: string) => this._bankAccountService.getStats(
+                    InstanceType[this.instanceType],
+                    this.instanceId,
+                    currencyId,
+                    undefined,
+                    this.bankAccountIds,
+                    this.startDate,
+                    this.endDate,
+                    this.selectedPeriod
+                )),
+                tap(result => {
+                    if (!result || !result.length) {
+                        this.totalData = null;
+                    }
+                }),
+                mergeMap(x => x),
+                scan((prevStatsItem, currentStatsItem: any) => {
+                    let credit = currentStatsItem.credit + prevStatsItem.credit;
+                    let debit = currentStatsItem.debit + prevStatsItem.debit;
+                    let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
+                    let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
+                    return {
+                        'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
+                        'endingBalance': currentStatsItem.endingBalance,
+                        'credit': credit,
+                        'debit': debit,
+                        'adjustments': adjustments,
+                        'startingBalanceAdjustments': startingBalanceAdjustments,
+                        'netChange': credit - Math.abs(debit),
+                        'date': currentStatsItem.date
+                    };
+                }, {
+                    'credit': 0,
+                    'debit': 0,
+                    'netChange': 0,
+                    'adjustments': 0,
+                    'startingBalance': 0,
+                    'endingBalance': 0,
+                    'startingBalanceAdjustments': 0,
+                    'date': 'date'
+                })
+            ).subscribe(
+            result => {
+                this.totalData = result;
+                let maxValue = Math.max(
+                    Math.abs(result.credit),
+                    Math.abs(result.debit),
+                    Math.abs(result.netChange)
                 );
+                this.totalData.creditPercent = this.getPercentage(maxValue, result.credit);
+                this.totalData.debitPercent = this.getPercentage(maxValue, result.debit);
+                this.totalData.netChangePercent = this.getPercentage(maxValue, result.netChange);
+                setTimeout(() => { this.render(); }, 300);
+            },
+            e => { this.finishLoading(); },
+            () => this.finishLoading()
+            );
         }
     }
 

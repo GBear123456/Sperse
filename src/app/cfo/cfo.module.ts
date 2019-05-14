@@ -41,7 +41,6 @@ import { ModalModule } from 'ngx-bootstrap';
 
 /** Application imports */
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
-import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 import { AppCommonModule } from '../shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { CfoRoutingModule } from './cfo-routing.module';
@@ -72,7 +71,7 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 import { StatementsComponent } from './statements/statements.component';
-import { ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
@@ -80,6 +79,7 @@ import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.co
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.component';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
+import { CfoStoreModule } from '@app/cfo/store';
 
 @NgModule({
     imports: [
@@ -125,7 +125,8 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         DxPopupModule,
         BankAccountsCommonModule,
         SharedIntroStepsModule,
-        AccountConnectorDialogModule
+        AccountConnectorDialogModule,
+        CfoStoreModule
     ],
     declarations: [
         StartComponent,
@@ -171,10 +172,10 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         UsersDialogComponent
     ],
     providers: [
+        CashflowServiceProxy,
         ContactServiceProxy,
         SyncServiceProxy,
-        CalculatorService,
-        ZendeskService
+        CalculatorService
     ]
 })
 

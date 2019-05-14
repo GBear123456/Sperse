@@ -12,112 +12,195 @@
               [isTitleValid]="isTitleValid"
               [editTitle]="editTitle"
               [placeholder]="ls.l('Invoice #')">
-    <div class="toolbar-wraper">
-        <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
-    </div>
+    <ng-container headerContent>
+        <label>#</label>
+        <dx-text-box #invoice
+            width="270px"
+            height="40px"
+            name="invoiceNo"
+            [placeholder]="'INV-XXXXXXXX-XXXX'"
+            [(value)]="invoiceNo"
+            [showClearButton]="false">
+        </dx-text-box>
+        <dx-select-box
+            name="currency"
+            width="125px"
+            height="40px"
+            displayExpr="name"
+            valueExpr="code"
+            [placeholder]="l('Currency')"
+            [(value)]="currency"
+            [dataSource]="currencies"
+            (onValueChanged)="linesComponent.instance.repaint()">
+        </dx-select-box>
+        <span>{{ status | uppercase }}</span>
+    </ng-container>
 
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
-            <div class="field">
-                <label class="customer-label">{{ls.l('Customer')}}</label>
-                <dx-select-box #contact
-                    name="customer"
-                    width="370px"
-                    displayExpr="name"
-                    valueExpr="name"
-                    [disabled]="data.invoice"
-                    [acceptCustomValue]="true"
-                    [placeholder]="ls.l('Customer.Name')"
-                    [(value)]="customer"
-                    [dataSource]="customers"
-                    [searchEnabled]="true"
-                    [searchTimeout]="0"
-                    (onFocusIn)="onFieldFocus($event)"
-                    (onSelectionChanged)="selectContact($event)"
-                    (onInput)="customerLookupItems($event)">
-                </dx-select-box>
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="field description">
+                        <dx-text-area
+                            name="description"
+                            width="500px"
+                            height="85px"
+                            [placeholder]="l('Invoice_AddDescription')"
+                            [disabled]="disabledForUpdate"
+                            [(value)]="description">
+                        </dx-text-area>
+                    </div>
+                    <div class="field">
+                        <label class="from-label">{{l('From')}}<a><i class="edit fa fa-pencil"></i>{{l('Edit') + ' ' + l('Profile')}}</a></label>
+                        <div class="credentials">
+                            <span>{{billingSettings['legalName'] || ''}} {{billingSettings['taxVatNo'] || ''}}</span>
+                            <span>{{billingSettings['address'] || ''}}</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="customer-label">{{l('To')}}<a (click)="createClient()">+ {{l('New') + ' ' + l('Client')}}</a></label>
+                        <dx-select-box #contact
+                            name="customer"
+                            width="500px"
+                            displayExpr="name"
+                            valueExpr="name"
+                            [disabled]="data.invoice"
+                            [acceptCustomValue]="true"
+                            [placeholder]="l('Enter Client Details')"
+                            [(value)]="customer"
+                            [dataSource]="customers"
+                            [searchEnabled]="true"
+                            [searchTimeout]="0"
+                            (onFocusIn)="onFieldFocus($event)"
+                            (onSelectionChanged)="selectContact($event)"
+                            (onInput)="customerLookupItems($event)">
+                        </dx-select-box>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="field">
+                        <div class="logo-container"><a>+ {{l('Company_AddLogo')}}</a></div>
+                    </div>
+                    <div class="field">
+                        <dx-date-box
+                            placeholder="{{l('Date')}}"
+                            [min]="currentDate"
+                            [disabled]="disabledForUpdate"
+                            [width]="'260px'"
+                            (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                            [(value)]="date">
+                        </dx-date-box>
+                    </div>
+                    <div class="field">
+                        <dx-date-box
+                            [min]="currentDate"
+                            placeholder="{{l('Invoice_DueOnReceipt')}}"
+                            [disabled]="disabledForUpdate"
+                            (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                            [width]="'260px'"
+                            [(value)]="dueDate">
+                        </dx-date-box>
+                    </div>
+                    <div class="field">
+                        <dx-text-box
+                            maxLength="10"
+                            [disabled]="data.invoice"
+                            placeholder="{{l('Invoice_PurchaseOrderNumber')}}"
+                            [disabled]="disabledForUpdate"
+                            [width]="'260px'"
+                            [value]="orderId">
+                        </dx-text-box>
+                    </div>
+                </div>
             </div>
-            <div class="field" *ngIf="order">
-                <label class="order-label">{{ls.l('Order')}}</label>
-                <dx-text-box
-                    maxLength="10"
-                    placeholder="{{ls.l('Order')}}"
-                    [disabled]="disabledForUpdate"
-                    [width]="'370px'"
-                    [value]="order.Id">
-                </dx-text-box>
-            </div>
-            <div class="field">
-                <label class="date-label">{{ls.l('Date')}}</label>
-                <dx-date-box
-                    [min]="currentDate"
-                    [disabled]="disabledForUpdate"
-                    [width]="'370px'"
-                    [(value)]="date">
-                </dx-date-box>
-            </div>
-            <div class="field">
-                <label class="date-label">{{ls.l('Due Date')}}</label>
-                <dx-date-box
-                    [min]="currentDate"
-                    [disabled]="disabledForUpdate"
-                    [width]="'370px'"
-                    [(value)]="dueDate">
-                </dx-date-box>
-            </div>
-            <div class="field description">
-                <label class="description-label">{{ls.l('Description')}}</label>
-                <dx-text-area
-                    name="description"
-                    [width]="'370px'"
-                    [disabled]="disabledForUpdate"
-                    [height]="'60px'"
-                    [(value)]="description">
-                </dx-text-area>
-            </div>
-            <div class="field notes">
-                <label class="notes-label">{{ls.l('Notes')}}</label>
-                <dx-text-area
-                    name="comment"
-                    [disabled]="disabledForUpdate"
-                    [width]="'370px'"
-                    [height]="'60px'"
-                    [(value)]="notes">
-                </dx-text-area>
-            </div>
-
             <div class="field lines">
                 <dx-data-grid
-                    width="620px"
-                    height="200px"
+                    width="820px"
+                    [height]="linesGridHeight"
                     [disabled]="disabledForUpdate"
                     [(dataSource)]="lines"
                     [allowColumnReordering]="false"
                     [columnAutoWidth]="true"
                     [focusStateEnabled]="true"
                     [showColumnLines]="false"
-                    [allowColumnResizing]="false"
-                    (onToolbarPreparing)="onToolbarPreparing($event)">
+                    [scrolling]="{showScrollbar: 'never'}"
+                    [allowColumnResizing]="false">
 
-                    <dxo-editing mode="cell" [allowAdding]="true" [allowUpdating]="true" [allowDeleting]="true" [texts]="{deleteRow: ''}"></dxo-editing>
+                    <dxi-column dataField="Description" width="360" caption="{{l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
+                    <dxi-column dataField="Quantity" width="140" caption="{{l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
+                    <dxi-column dataField="Rate" width="140" caption="{{l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
+                    <dxi-column dataField="Amount" width="140" caption="{{l('Amount')}}" [allowSorting]="false" [allowEditing]="false" [calculateCellValue]="calculateLineAmount" cellTemplate="amount"></dxi-column>
 
-                    <dxi-column dataField="Description" caption="{{ls.l('Description')}}" [allowSorting]="false" dataType="string"></dxi-column>
-                    <dxi-column dataField="Quantity" caption="{{ls.l('Quantity')}}" [allowSorting]="false" dataType="number"></dxi-column>
-                    <dxi-column dataField="Rate" caption="{{ls.l('Rate')}}" [allowSorting]="false" format="$ #,##0.##" dataType="number"></dxi-column>
-                    <dxi-column dataField="Amount" caption="{{ls.l('Amount')}}" format="$ #,##0.##" dataType="number" [allowSorting]="false" [allowEditing]="false" [calculateCellValue]="calculateLineAmount"></dxi-column>
-
-                    <dxo-summary [calculateCustomSummary]="calculateSummary">
-                        <dxi-total-item
-                            name="RowsSummary"
-                            summaryType="custom"
-                            valueFormat="$ #,##0.##"
-                            displayFormat="Balance: {0}"
-                            showInColumn="Amount">
-                        </dxi-total-item>
-                    </dxo-summary>
-
+                    <div *dxTemplate="let cellData of 'description'">
+                        <dx-text-box
+                            width="350px"
+                            [placeholder]="l('Invoice_EnterItemDescription')"
+                            [showClearButton]="true"
+                            [value]="cellData.value"
+                            (onValueChanged)="onValueChanged($event, cellData)">
+                        </dx-text-box>
+                        <div class="row-actions">
+                            <span *ngIf="cellData.rowIndex == lines.length - 1" (click)="addNewLine(cellData)"><i class="add-icon"></i>{{l('Add new line')}}</span>
+                            <span *ngIf="cellData.rowIndex != lines.length - 1" (click)="deleteLine(cellData)"><i class="delete-icon"></i>{{l('Delete this line')}}</span>
+                            <div class="icons"><i class="link"></i><i class="tag"></i></div>
+                        </div>
+                    </div>
+                    <div *dxTemplate="let cellData of 'quantity'">
+                        <dx-text-box
+                            width="130px"
+                            [placeholder]="l('EditValuePlaceholder')"
+                            [showClearButton]="true"
+                            [value]="cellData.value"
+                            (onKeyDown)="allowDigitsOnly($event)"
+                            (onValueChanged)="onValueChanged($event, cellData)">
+                        </dx-text-box>
+                    </div>
+                    <div *dxTemplate="let cellData of 'rate'">
+                        <dx-text-box
+                            width="130px"
+                            [placeholder]="l('EditValuePlaceholder')"
+                            [showClearButton]="true"
+                            (onKeyDown)="allowDigitsOnly($event, ['.'])"
+                            value="{{cellData.value | currency: currency}}"
+                            (onValueChanged)="onValueChanged($event, cellData)">
+                        </dx-text-box><br>
+                        <dx-select-box
+                            name="unit"
+                            width="130px"
+                            [placeholder]="l('Unit')"
+                            [dataSource]="[l('Item'), l('Box'), l('Package')]">
+                        </dx-select-box>
+                    </div>
+                    <div *dxTemplate="let cellData of 'amount'">
+                        <dx-text-box
+                            width="130px"
+                            placeholder=""
+                            dataType="number"
+                            [readOnly]="true"
+                            value="{{cellData.value | currency: currency}}">
+                        </dx-text-box>
+                    </div>
                 </dx-data-grid>
             </div>
         </dx-scroll-view>
+        <div class="row bottom-container">
+            <div class="col-sm-6">
+                <div class="field notes">
+                    <label class="notes-label">{{l('Invoice Note')}} <a (click)="resetNoteDefault()">({{l('default')}} {{l('note')}})</a></label>
+                    <dx-text-area
+                        name="comment"
+                        [disabled]="disabledForUpdate"
+                        [width]="'380px'"
+                        [height]="'100px'"
+                        [(value)]="notes">
+                    </dx-text-area>
+                </div>
+            </div>
+            <div class="col-sm-6 conclusion">
+                <div class="sub-total"><span>{{l('Sub Total')}}</span><span>{{subTotal | currency: currency}}</span></div>
+                <div class="total"><span>{{l('Total')}} ({{currency}})</span><a>{{l('Manage Default Taxes')}}</a><span>{{total | currency: currency}}</span></div>
+                <div class="balance"><span>{{l('Balance')}} ({{currency}})</span><span>{{balance | currency: currency}}</span></div>
+            </div>
+        </div>
     </div>
 </modal-dialog>

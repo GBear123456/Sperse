@@ -48,8 +48,7 @@
             position: relative;
             font-weight: 500;
 
-            .link {
-
+            &:not(.disabled) .link {
                 &:hover {
                     cursor: pointer;
                     color: rgba(0, 0, 0, 0.65);
@@ -88,6 +87,10 @@
                 .img-leftKeyMetricsKPI {
                     background-image: url("../../../../../assets/common/icons/stats/summaries&kpis-blue.svg");
                 }
+            }
+
+            &.disabled {
+                opacity: .3;
             }
 
             .img {

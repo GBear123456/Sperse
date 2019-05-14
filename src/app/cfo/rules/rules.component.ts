@@ -14,7 +14,6 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { ZendeskService } from '@app/shared/common/zendesk/zendesk.service';
 
 import DataSource from 'devextreme/data/data_source';
 
@@ -47,7 +46,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         public dialog: MatDialog,
         public filtersService: FiltersService,
         private _appService: AppService,
-        private zendeskService: ZendeskService,
         private _ClassificationService: ClassificationServiceProxy
     ) {
         super(injector);
@@ -208,7 +206,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngAfterViewInit(): void {
-        this.zendeskService.showWidget();
         if (this.isInstanceAdmin) {
             this.treeList.editing.allowAdding = true;
             this.treeList.editing.allowDeleting = true;
@@ -232,7 +229,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         this.filtersService.localizationSourceName
             = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
-        this.zendeskService.hideWidget();
         super.ngOnDestroy();
     }
 }

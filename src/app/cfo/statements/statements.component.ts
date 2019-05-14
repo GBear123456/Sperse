@@ -8,8 +8,9 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
 import { forkJoin } from 'rxjs';
-import { finalize, first } from 'rxjs/operators';
+import { finalize, first, switchMap } from 'rxjs/operators';
 import * as _ from 'underscore';
+import { Store, select } from '@ngrx/store';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -33,6 +34,9 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { CurrenciesStoreActions, CurrenciesStoreSelectors, CfoStore } from '@app/cfo/store';
+import { filter } from '@node_modules/rxjs/operators';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -65,7 +69,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         type: 'currency',
         precision: 2
     };
-
     private updateAfterActivation: boolean;
 
     constructor(
@@ -75,7 +78,9 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private _bankAccountService: BankAccountsServiceProxy,
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
-        private bankAccountsService: BankAccountsService
+        private _cfoPreferences: CfoPreferencesService,
+        private bankAccountsService: BankAccountsService,
+        private store$: Store<CfoStore.State>
     ) {
         super(injector);
         this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
@@ -89,7 +94,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.headlineConfig = {
             names: [this.l('Statements')],
             onRefresh: () => {
-                abp.ui.setBusy();
+                this.refreshData();
                 this.bankAccountsService.load().pipe(
                     finalize(() => abp.ui.clearBusy())
                 ).subscribe();
@@ -100,120 +105,149 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     initToolbarConfig() {
         if (this.componentIsActivated) {
-            this._appService.updateToolbar([
-                {
-                    location: 'before',
-                    items: [
+            this._cfoPreferences.getCurrenciesAndSelectedIndex()
+                .subscribe(([currencies, selectedCurrencyIndex]) => {
+                    this._appService.updateToolbar([
                         {
-                            name: 'filters',
-                            action: (event) => {
-                                setTimeout(() => {
-                                    this.dataGrid.instance.repaint();
-                                }, 1000);
-                                this._filtersService.fixed = !this._filtersService.fixed;
-                            },
-                            options: {
-                                checkPressed: () => {
-                                    return this._filtersService.fixed;
-                                },
-                                mouseover: (event) => {
-                                    this._filtersService.enable();
-                                },
-                                mouseout: (event) => {
-                                    if (!this._filtersService.fixed)
-                                        this._filtersService.disable();
-                                }
-                            },
-                            attr: {
-                                'filter-selected': this._filtersService.hasFilterSelected
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    items: [
-                        {
-                            name: 'select-box',
-                            text: '',
-                            widget: 'dxDropDownMenu',
-                            options: {
-                                hint: this.l('Scenario'),
-                                accessKey: 'statsForecastSwitcher',
-                                items: this.forecastModelsObj.items,
-                                selectedIndex: this.forecastModelsObj.selectedItemIndex,
-                                height: 39,
-                                width: 243,
-                                onSelectionChanged: (e) => {
-                                    if (e) {
-                                        this.forecastModelsObj.selectedItemIndex = e.itemIndex;
-                                        this.refreshData();
+                            location: 'before',
+                            items: [
+                                {
+                                    name: 'filters',
+                                    action: (event) => {
+                                        setTimeout(() => {
+                                            this.dataGrid.instance.repaint();
+                                        }, 1000);
+                                        this._filtersService.fixed = !this._filtersService.fixed;
+                                    },
+                                    options: {
+                                        checkPressed: () => {
+                                            return this._filtersService.fixed;
+                                        },
+                                        mouseover: (event) => {
+                                            this._filtersService.enable();
+                                        },
+                                        mouseout: (event) => {
+                                            if (!this._filtersService.fixed)
+                                                this._filtersService.disable();
+                                        }
+                                    },
+                                    attr: {
+                                        'filter-selected': this._filtersService.hasFilterSelected
                                     }
                                 }
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            name: 'reportPeriod',
-                            action: this.toggleReportPeriodFilter.bind(this),
-                            options: {
-                                id: 'reportPeriod',
-                                icon: './assets/common/icons/report-period.svg'
-                            }
+                            ]
                         },
                         {
-                            name: 'bankAccountSelect',
-                            widget: 'dxButton',
-                            action: this.toggleBankAccountTooltip.bind(this),
-                            options: {
-                                id: 'bankAccountSelect',
-                                text: this.l('Accounts'),
-                                icon: './assets/common/icons/accounts.svg'
-                            },
-                            attr: {
-                                'custaccesskey': 'bankAccountSelect',
-                                'accountCount': this.bankAccountCount
-                            }
-                        }
-                    ]
-                },
-                {
-                    location: 'after',
-                    locateInMenu: 'auto',
-                    items: [
-                        { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
+                            location: 'before',
+                            items: [
+                                {
+                                    name: 'select-box',
+                                    text: '',
+                                    widget: 'dxDropDownMenu',
+                                    options: {
+                                        hint: this.l('Scenario'),
+                                        accessKey: 'statsForecastSwitcher',
+                                        items: this.forecastModelsObj.items,
+                                        selectedIndex: this.forecastModelsObj.selectedItemIndex,
+                                        height: 39,
+                                        width: 243,
+                                        onSelectionChanged: (e) => {
+                                            if (e) {
+                                                this.forecastModelsObj.selectedItemIndex = e.itemIndex;
+                                                this.refreshData();
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
                         {
-                            name: 'download',
-                            widget: 'dxDropDownMenu',
-                            options: {
-                                hint: this.l('Download'),
-                                items: [
-                                    {
-                                        action: Function(),
-                                        text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
-                                        icon: 'pdf',
-                                    }, {
-                                        action: this.exportToXLS.bind(this),
-                                        text: this.l('Export to Excel'),
-                                        icon: 'xls',
-                                    }, {
-                                        action: this.exportToGoogleSheet.bind(this),
-                                        text: this.l('Export to Google Sheets'),
-                                        icon: 'sheet'
+                            location: 'before',
+                            locateInMenu: 'auto',
+                            items: [
+                                {
+                                    name: 'reportPeriod',
+                                    action: this.toggleReportPeriodFilter.bind(this),
+                                    options: {
+                                        id: 'reportPeriod',
+                                        icon: './assets/common/icons/report-period.svg'
+                                    }
+                                },
+                                {
+                                    name: 'bankAccountSelect',
+                                    widget: 'dxButton',
+                                    action: this.toggleBankAccountTooltip.bind(this),
+                                    options: {
+                                        id: 'bankAccountSelect',
+                                        text: this.l('Accounts'),
+                                        icon: './assets/common/icons/accounts.svg'
                                     },
-                                    { type: 'downloadOptions' }
-                                ]
-                            }
+                                    attr: {
+                                        'custaccesskey': 'bankAccountSelect',
+                                        'accountCount': this.bankAccountCount
+                                    }
+                                }
+                            ]
                         },
-                        { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
-                    ]
-                }
-            ]);
+                        {
+                            location: 'before',
+                            locateInMenu: 'auto',
+                            items: [
+                                {
+                                    name: 'select-box',
+                                    text: '',
+                                    widget: 'dxDropDownMenu',
+                                    accessKey: 'currencySwitcher',
+                                    options: {
+                                        hint: this.l('Currency'),
+                                        accessKey: 'currencySwitcher',
+                                        items: currencies,
+                                        selectedIndex: selectedCurrencyIndex,
+                                        height: 39,
+                                        width: 220,
+                                        onSelectionChanged: (e) => {
+                                            if (e) {
+                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
+                                                this.refreshData();
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            location: 'after',
+                            locateInMenu: 'auto',
+                            items: [
+                                { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
+                                {
+                                    name: 'download',
+                                    widget: 'dxDropDownMenu',
+                                    options: {
+                                        hint: this.l('Download'),
+                                        items: [
+                                            {
+                                                action: Function(),
+                                                text: this.ls(AppConsts.localization.defaultLocalizationSourceName, 'SaveAs', 'PDF'),
+                                                icon: 'pdf',
+                                            }, {
+                                                action: this.exportToXLS.bind(this),
+                                                text: this.l('Export to Excel'),
+                                                icon: 'xls',
+                                            }, {
+                                                action: this.exportToGoogleSheet.bind(this),
+                                                text: this.l('Export to Google Sheets'),
+                                                icon: 'sheet'
+                                            },
+                                            { type: 'downloadOptions' }
+                                        ]
+                                    }
+                                },
+                                { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                            ]
+                        }
+                    ]);
+                });
         }
     }
 
@@ -226,27 +260,34 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
             this.bankAccountCount = amount;
             this.initToolbarConfig();
         });
-        forkJoin(forecastsModels$, syncAccounts$)
-            .subscribe(([forecastsModels, syncAccounts]) => {
-                this.syncAccounts = syncAccounts;
-                this.handleForecastModelResult(forecastsModels);
-                this.createFilters(syncAccounts);
-                this._filtersService.setup(this.filters);
-                this.initFiltering();
-                this.initToolbarConfig();
 
-                /** After selected accounts change */
-                this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
-                    /** filter all widgets by new data if change is on this component */
-                    if (this.componentIsActivated) {
-                        this.setBankAccountsFilter();
-                        /** if change is on another component - mark this for future update */
-                    } else {
-                        this.updateAfterActivation = true;
-                    }
-                });
+        /** If component is not activated - wait until it will activate and then reload */
+        this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+            filter(() => !this.componentIsActivated)
+        ).subscribe(() => {
+            this.updateAfterActivation = true;
+        });
 
+        forkJoin(forecastsModels$, syncAccounts$).subscribe(([forecastsModels, syncAccounts]) => {
+            this.syncAccounts = syncAccounts;
+            this.handleForecastModelResult(forecastsModels);
+            this.createFilters(syncAccounts);
+            this._filtersService.setup(this.filters);
+            this.initFiltering();
+            this.initToolbarConfig();
+
+            /** After selected accounts change */
+            this.bankAccountsService.selectedBankAccountsIds$.subscribe(() => {
+                /** filter all widgets by new data if change is on this component */
+                if (this.componentIsActivated) {
+                    this.setBankAccountsFilter();
+                    /** if change is on another component - mark this for future update */
+                } else {
+                    this.updateAfterActivation = true;
+                }
             });
+        });
 
         this.initHeadlineConfig();
     }
@@ -303,61 +344,62 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     public refreshData(): void {
         abp.ui.setBusy();
-        this._bankAccountService.getStats(
-            InstanceType[this.instanceType],
-            this.instanceId,
-            'USD',
-            this.forecastModelsObj.items[this.forecastModelsObj.selectedItemIndex].id,
-            this.requestFilter.accountIds,
-            this.requestFilter.startDate,
-            this.requestFilter.endDate,
-            GroupBy.Monthly
-        )
-            .pipe(finalize(() => abp.ui.clearBusy()))
-            .subscribe(result => {
-                if (result) {
-                    let currentPeriodTransaction: BankAccountDailyStatDto;
-                    let currentPeriodForecast: BankAccountDailyStatDto;
+        this._cfoPreferences.getCurrencyId().pipe(
+            switchMap((currencyId: string) => this._bankAccountService.getStats(
+                InstanceType[this.instanceType],
+                this.instanceId,
+                currencyId,
+                this.forecastModelsObj.items[this.forecastModelsObj.selectedItemIndex].id,
+                this.requestFilter.accountIds,
+                this.requestFilter.startDate,
+                this.requestFilter.endDate,
+                GroupBy.Monthly
+            )),
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe(result => {
+            if (result && result.length) {
+                let currentPeriodTransaction: BankAccountDailyStatDto;
+                let currentPeriodForecast: BankAccountDailyStatDto;
 
-                    for (let i = result.length - 1; i >= 0; i--) {
-                        let statsItem: BankAccountDailyStatDto = result[i];
+                for (let i = result.length - 1; i >= 0; i--) {
+                    let statsItem: BankAccountDailyStatDto = result[i];
 
-                        Object.defineProperties(statsItem, {
-                            'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
-                        });
+                    Object.defineProperties(statsItem, {
+                        'netChange': { value: statsItem.credit + statsItem.debit, enumerable: true },
+                    });
 
-                        if (!currentPeriodTransaction && !statsItem.isForecast) {
-                            currentPeriodForecast = result[i + 1];
-                            currentPeriodTransaction = statsItem;
+                    if (!currentPeriodTransaction && !statsItem.isForecast) {
+                        currentPeriodForecast = result[i + 1];
+                        currentPeriodTransaction = statsItem;
 
-                            if (currentPeriodForecast) {
-                                let clone = Object.assign({}, currentPeriodTransaction);
-                                clone.credit += currentPeriodForecast.credit;
-                                clone.creditCount += currentPeriodForecast.creditCount;
-                                clone.debit += currentPeriodForecast.debit;
-                                clone.debitCount += currentPeriodForecast.debitCount;
-                                clone['netChange'] = clone.credit + clone.debit;
-                                clone.averageDailyBalance = (clone.averageDailyBalance + currentPeriodForecast.averageDailyBalance) / 2;
-                                clone.endingBalance = currentPeriodForecast.endingBalance;
+                        if (currentPeriodForecast) {
+                            let clone = Object.assign({}, currentPeriodTransaction);
+                            clone.credit += currentPeriodForecast.credit;
+                            clone.creditCount += currentPeriodForecast.creditCount;
+                            clone.debit += currentPeriodForecast.debit;
+                            clone.debitCount += currentPeriodForecast.debitCount;
+                            clone['netChange'] = clone.credit + clone.debit;
+                            clone.averageDailyBalance = (clone.averageDailyBalance + currentPeriodForecast.averageDailyBalance) / 2;
+                            clone.endingBalance = currentPeriodForecast.endingBalance;
 
-                                currentPeriodTransaction['itemType'] = 'MTD';
-                                currentPeriodForecast['itemType'] = 'Forecast';
-                                clone['sourceData'] = [currentPeriodTransaction, currentPeriodForecast];
-                                result.splice(i, 2, clone);
-                            }
+                            currentPeriodTransaction['itemType'] = 'MTD';
+                            currentPeriodForecast['itemType'] = 'Forecast';
+                            clone['sourceData'] = [currentPeriodTransaction, currentPeriodForecast];
+                            result.splice(i, 2, clone);
                         }
                     }
-
-                    this.statementsData = result;
-
-                    /** reinit */
-                    this.initHeadlineConfig();
-
-                    this.setSliderReportPeriodFilterData(this.statementsData[0].date.year(), this.statementsData[this.statementsData.length - 1].date.year());
-                } else {
-                    result = [];
                 }
-            });
+
+                this.statementsData = result;
+
+                /** reinit */
+                this.initHeadlineConfig();
+
+                this.setSliderReportPeriodFilterData(this.statementsData[0].date.year(), this.statementsData[this.statementsData.length - 1].date.year());
+            } else {
+                this.statementsData = null;
+            }
+        });
     }
 
     initFiltering() {

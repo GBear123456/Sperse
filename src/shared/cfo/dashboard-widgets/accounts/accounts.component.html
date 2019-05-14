@@ -6,14 +6,14 @@
             hideEvent="dxhoverend">
             <div *dxTemplate="let data = data of 'content'">
                 <div class="tooltip-wrap">
-                    <div>{{l('Accounts_BalanceToolTip_WithoutPendingTransactions')}}: <span>{{accountsData?.totalNetWorth - accountsData?.totalPending | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
-                    <div>{{l('Accounts_BalanceToolTip_PendingTransactions')}}: <span>{{accountsData?.totalPending | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
+                    <div>{{l('Accounts_BalanceToolTip_WithoutPendingTransactions')}}: <span>{{accountsData?.totalNetWorth - accountsData?.totalPending | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
+                    <div>{{l('Accounts_BalanceToolTip_PendingTransactions')}}: <span>{{accountsData?.totalPending | currency: cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
                     <hr/>
-                    <div class="total">{{l('Accounts_BalanceToolTip_WithPendingTransactions')}}: <span>{{accountsData?.totalNetWorth | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</span></div>
+                    <div class="total">{{l('Accounts_BalanceToolTip_WithPendingTransactions')}}: <span>{{accountsData?.totalNetWorth | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
                 </div>
             </div>
         </dx-tooltip>
-        <div class="value" id="valueTotal">{{ bankAccountsService.accountsDataTotalNetWorth$ | async | currency: accountsData?.currency : 'symbol' : '1.2-2'}}</div>
+        <div class="value" id="valueTotal">{{ bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</div>
         <div class="name">{{l('Current_Balance')}}</div>
     </div>
     <div class="account-item dailyStats">
@@ -24,10 +24,13 @@
                      showEvent="dxhoverstart"
                      hideEvent="dxhoverend">
                      <div *dxTemplate="let data = data of 'content'">
-                         {{ dailyStatsAmount | currency: dailyStatsData?.currency : 'symbol' : '1.2-2'}}
+                         {{ dailyStatsAmount | currency: cfoPreferencesService.selectedCurrencyId : 'symbol' : '1.2-2'}}
                      </div>
                  </dx-tooltip>
-                <div class="value" id="valueDaily">{{ dailyStatsAmount | customNumber : '1.0-0' | currency: dailyStatsData?.currency : 'symbol' : '1.0-0'}}<span>.{{ dailyStatsAmount | customNumber : '0.2-2' }}</span></div>
+                <div class="value" id="valueDaily">
+                    {{ dailyStatsAmount | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
+                    <span>.{{ ( dailyStatsAmount ? dailyStatsAmount : 1 ) | customNumber : '0.2-2' }}</span>
+                </div>
                 <div class="name">{{dailyStatsText}}</div>
             </div>
             <div class="col-4">

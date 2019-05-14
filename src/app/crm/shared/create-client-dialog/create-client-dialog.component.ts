@@ -489,8 +489,8 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     redirectToClientDetails(id: number, leadId?: number) {
         setTimeout(() => {
             let path = this.data.customerType == ContactGroup.Partner ?
-                `app/crm/partner/${id}/contact-information` :
-                `app/crm/client/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
+                `app/crm/contact/${id}/contact-information` :
+                `app/crm/contact/${id}/${this.data.isInLeadMode ? `lead/${leadId}/` : ''}contact-information`;
             this._router.navigate([path], {queryParams: {referrer: this._router.url.split('?').shift()}});
         }, 1000);
         this.close();

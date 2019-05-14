@@ -8,6 +8,7 @@ import {
 } from 'shared/service-proxies/service-proxies';
 import { finalize } from 'rxjs/operators';
 import { AppConsts } from 'shared/AppConsts';
+import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 
 @Component({
     selector: 'xero-login',
@@ -29,7 +30,8 @@ export class XeroLoginComponent extends CFOComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _syncAccountServiceProxy: SyncAccountServiceProxy
+        private _syncAccountServiceProxy: SyncAccountServiceProxy,
+        private _syncProgressService: SynchProgressService
     ) {
         super(injector);
         this.getXeroCertificateUrl = AppConsts.remoteServiceBaseUrl + '/api/Xero/GetCertificate';
@@ -61,6 +63,7 @@ export class XeroLoginComponent extends CFOComponentBase implements OnInit {
             .pipe(finalize(this.finalize))
             .subscribe(() => {
                 this.onComplete.emit();
+                this._syncProgressService.startSynchronization(true, true, 'X');
             });
     }
 
@@ -75,6 +78,7 @@ export class XeroLoginComponent extends CFOComponentBase implements OnInit {
             .pipe(finalize(this.finalize))
             .subscribe(() => {
                 this.onComplete.emit();
+                this._syncProgressService.startSynchronization(true, false, 'X');
             });
     }
 

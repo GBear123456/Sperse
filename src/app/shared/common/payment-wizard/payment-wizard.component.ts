@@ -94,6 +94,13 @@ export class PaymentWizardComponent extends AppComponentBase implements OnInit {
                                       });
     }
 
+    setRefreshAfterClose() {
+        this.refreshAfterClose = true;
+        this.dialogRef.afterClosed().subscribe(() => {
+            window.location.reload();
+        });
+    }
+
     close() {
         this.refreshAfterClose
             ? window.location.reload()

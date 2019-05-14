@@ -131,10 +131,11 @@ export class EditContactDialog extends AppComponentBase {
     }
 
     mouseDown(event) {
-        this.movePos = {
-            x: event.clientX,
-            y: event.clientY
-        };
+        if (!this.dialogRef['_containerInstance']['_config'].hasBackdrop) 
+            this.movePos = {
+                x: event.clientX,
+                y: event.clientY
+            };
     }
 
     mouseUp(event) {

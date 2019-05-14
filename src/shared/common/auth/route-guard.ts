@@ -23,7 +23,9 @@ export class RouteGuard implements CanActivate, CanActivateChild {
     ) {}
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-        if (state && (UrlHelper.isInstallUrl(state.url) || UrlHelper.isAccountModuleUrl(state.url) || UrlHelper.isPFMUrl(state.url))) {
+        let stateUrl = state && state.url.split('?').shift(),
+            isStateRoot = stateUrl == '/';
+        if (state && (UrlHelper.isInstallUrl(stateUrl) || UrlHelper.isAccountModuleUrl(stateUrl) || UrlHelper.isPFMUrl(stateUrl))) {
             return true;
         }
 
@@ -32,17 +34,17 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             return false;
         }
 
-        if ((!route.data || (!route.data['permission'] && !route.data['feature'])) && state.url !== '/') {
+        if ((!route.data || (!route.data['permission'] && !route.data['feature'])) && !isStateRoot) {
             return true;
         }
 
         if ((!route.data['permission'] || this._permissionChecker.isGranted(route.data['permission']))
-            && (!route.data['feature'] || this._feature.isEnabled(route.data['feature'])) && state.url !== '/'
+            && (!route.data['feature'] || this._feature.isEnabled(route.data['feature'])) && !isStateRoot
         ) {
             return true;
         }
 
-        if ((route.data && route.data['permission'] && route.data['permission'] === 'Pages.Detect.Route') || state.url === '/')
+        if ((route.data && route.data['permission'] && route.data['permission'] === 'Pages.Detect.Route') || isStateRoot)
             this._router.navigate([this.selectBestRoute()]);
         else
             this._router.navigate(['/app/access-denied']);

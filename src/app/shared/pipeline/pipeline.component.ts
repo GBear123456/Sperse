@@ -74,6 +74,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.selectedEntitiesChange.emit(this._selectedEntities);
     }
 
+    @Input() moveDisabled = false;
     @Input() dragulaName = 'stage';
     @Input() totalsURI: string;
     @Input() selectFields: string[];
@@ -163,34 +164,37 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             })
         );
         this.subscribers.push(
-            this._pipelineService.getPipelineDefinitionObservable(
-                this.pipelinePurposeId, this.contactGroupId).pipe(
-                    map((pipeline) => {
-                        return this._dataSource ?
-                            of(pipeline) :
-                            of(pipeline).pipe(delayWhen(() => {
-                                return this.dataSource$;
-                            }));
-                    }),
-                    mergeMap(pipeline => pipeline)
-            ).subscribe((pipeline: PipelineDto) => {
-                this.pipeline = pipeline;
-                this.createStageInput.pipelineId = this.pipeline.id;
-                this.mergeStagesInput.pipelineId = this.pipeline.id;
+            this._pipelineService.dataLayoutType$.pipe(
+                filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline),
+                switchMap(() => this._pipelineService.getPipelineDefinitionObservable(
+                    this.pipelinePurposeId, this.contactGroupId).pipe(
+                        map((pipeline) => {
+                            return this._dataSource ?
+                                of(pipeline) :
+                                of(pipeline).pipe(delayWhen(() => {
+                                    return this.dataSource$;
+                                }));
+                        }), mergeMap(pipeline => pipeline)
+                    )
+                )).subscribe((pipeline: PipelineDto) => {
+                    this.pipeline = pipeline;
+                    this.createStageInput.pipelineId = this.pipeline.id;
+                    this.mergeStagesInput.pipelineId = this.pipeline.id;
 
-                this.onStagesLoaded.emit(pipeline);
-                this.stages = pipeline.stages.map((stage) => {
-                    extend(stage, {
-                        entities: [],
-                        full: true
+                    this.onStagesLoaded.emit(pipeline);
+                    this.stages = pipeline.stages.map((stage) => {
+                        extend(stage, {
+                            entities: [],
+                            full: true
+                        });
+                        return stage;
                     });
-                    return stage;
-                });
 
-                this.loadData(0, this.stageId && findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
+                    this.loadData(0, this.stageId && findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
 
-                this.refreshTimeout = null;
-            })
+                    this.refreshTimeout = null;
+                }
+            )
         );
         const bag: any = this._dragulaService.find(this.dragulaName);
         if (bag !== undefined ) this._dragulaService.destroy(this.dragulaName);
@@ -199,6 +203,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             copySortSource: false,
             ignoreInputTextSelection: false,
             moves: (el, source) => {
+                if (this.moveDisabled)
+                    return false;
+        
                 let stage = this.getStageByElement(source);
                 if (stage['isFinal'])
                     return false;

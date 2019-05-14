@@ -229,13 +229,13 @@
     <div class="sidebar-calculator-widget" [ngClass]="{'calculatorHidden': !calculatorShowed}">
         <div class="calculator-title">
             <h3>{{l( 'Cell Calculator')}}</h3>
-            <span class="close" (click)="closeCalculator($event)"></span>
+            <span class="close" (click)="closeCalculator()"></span>
         </div>
         <calculator-widget></calculator-widget>
     </div>
 
-    <div id="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">
-        <app-toolbar [(config)]="footerToolbarConfig"></app-toolbar>
+    <div class="cashflowFooterToolbar" *ngIf="cashflowGridSettings?.visualPreferences?.showFooterBar">
+        <app-toolbar [config]="footerToolbarConfig"></app-toolbar>
     </div>
 
 </div>
@@ -247,3 +247,7 @@
     [showLink]="!filteredLoad"
     [linkText]="l('Go_to_sfo_setup')">
 </app-no-data>
+<div class="cashflowFooterToolbar"
+     *ngIf="startDataLoading && (!cashflowData || !cashflowData.length) && cashflowGridSettings?.visualPreferences?.showFooterBar">
+    <app-toolbar [config]="footerToolbarConfig"></app-toolbar>
+</div>

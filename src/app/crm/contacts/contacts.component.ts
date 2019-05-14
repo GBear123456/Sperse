@@ -231,16 +231,16 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private updateLocation(itemFullInfo) {
         switch (this.getSection()) {
             case 'leads':
-                this._contactsService.updateLocation(itemFullInfo.itemData.CustomerId, itemFullInfo.itemData.Id, null, itemFullInfo.itemData.OrganizationId);
+                this._contactsService.updateLocation(itemFullInfo.itemData.CustomerId, itemFullInfo.itemData.Id, itemFullInfo.itemData.OrganizationId);
                 break;
             case 'clients':
-                this._contactsService.updateLocation(itemFullInfo.itemData.Id, null, null, itemFullInfo.itemData.OrganizationId);
+                this._contactsService.updateLocation(itemFullInfo.itemData.Id, null, itemFullInfo.itemData.OrganizationId);
                 break;
             case 'partners':
-                this._contactsService.updateLocation(null, null, itemFullInfo.itemData.Id, itemFullInfo.itemData.OrganizationId);
+                this._contactsService.updateLocation(itemFullInfo.itemData.Id, null, itemFullInfo.itemData.OrganizationId);
                 break;
             case 'users':
-                this._contactsService.updateLocation(null, null, null, null, itemFullInfo.itemData.id);
+                this._contactsService.updateLocation(null, null, null, itemFullInfo.itemData.id);
                 break;
             default:
                 break;
@@ -318,9 +318,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.leadId = this.contactInfo['leadId'] = result.id;
 
         this.loadLeadsStages(() => {
-            if (this.leadInfo.stage)
-                this.clientStageId = this.leadStages.find(
-                    stage => stage.name === this.leadInfo.stage).id;
+            if (this.leadInfo.stage) {
+                let leadStage = this.leadStages.find(
+                    stage => stage.name === this.leadInfo.stage);
+                this.clientStageId = leadStage && leadStage.id;
+            }
         });
 
         this.storeInitialData();
@@ -565,12 +567,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                         let orgContactInfo = contactInfo['organizationContactInfo'] = this.contactInfo['organizationContactInfo'];
                         this.customerId = contactInfo.id;
                         this.fillContactDetails(contactInfo);
-                        let isPartner = this.customerType == ContactGroup.Partner;
                         this.loadLeadData(contactInfo.personContactInfo, () => {
-                            this._contactsService.updateLocation(
-                                (isPartner ? null : this.customerId), this.leadId,
-                                (isPartner ? this.customerId : null),
-                                orgContactInfo && orgContactInfo.id);
+                            this._contactsService.updateLocation(this.customerId, this.leadId, orgContactInfo && orgContactInfo.id);
                         });
                     });
             }
