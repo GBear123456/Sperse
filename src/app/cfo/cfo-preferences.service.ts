@@ -57,7 +57,7 @@ export class CfoPreferencesService {
 
         this.selectedCurrencyIndex$ = this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyIndex),
-            filter(Boolean)
+            filter(selectedCurrencyIndex => selectedCurrencyIndex !== null)
         );
         this.currencies$ = this.store$.pipe(
             select(CurrenciesStoreSelectors.getCurrencies),

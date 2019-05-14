@@ -78,7 +78,7 @@ const routes: Routes = [
     {
         path: '',
         canActivate: [ RouteGuard ],
-        canActivateChild: [RouteGuard, LocalizationResolver ],
+        canActivateChild: [ RouteGuard, LocalizationResolver ],
         children: [
             {
                 path: 'account',
@@ -98,7 +98,7 @@ const routes: Routes = [
     },
     {
         path: '**',
-        canActivateChild: [LocalizationResolver],
+        canActivateChild: [ LocalizationResolver ],
         loadChildren: 'shared/not-found/not-found.module#NotFoundModule',
     }
 ];

@@ -73,36 +73,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
             select(CurrenciesStoreSelectors.getSelectedCurrencyId)
         );
 
-        this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
-            .subscribe(([currencies, selectedCurrencyIndex]) => {
-                this.toolbarConfig = [
-                    {
-                        location: 'before',
-                        locateInMenu: 'auto',
-                        items: [
-                            {
-                                name: 'select-box',
-                                text: '',
-                                widget: 'dxDropDownMenu',
-                                accessKey: 'currencySwitcher',
-                                options: {
-                                    hint: this.l('Currency'),
-                                    accessKey: 'currencySwitcher',
-                                    items: currencies,
-                                    selectedIndex: selectedCurrencyIndex,
-                                    height: 39,
-                                    width: 230,
-                                    onSelectionChanged: (e) => {
-                                        if (e) {
-                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                ];
-        });
+        this.initToolbarConfig();
 
         /** If component is activated and currency has changed - update grid  */
         selectedCurrencyId$.pipe(
@@ -168,10 +139,44 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this._dashboardService.periodChanged($event);
     }
 
+    private initToolbarConfig() {
+        this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
+            .subscribe(([currencies, selectedCurrencyIndex]) => {
+                this.toolbarConfig = [
+                    {
+                        location: 'before',
+                        locateInMenu: 'auto',
+                        items: [
+                            {
+                                name: 'select-box',
+                                text: '',
+                                widget: 'dxDropDownMenu',
+                                accessKey: 'currencySwitcher',
+                                options: {
+                                    hint: this.l('Currency'),
+                                    accessKey: 'currencySwitcher',
+                                    items: currencies,
+                                    selectedIndex: selectedCurrencyIndex,
+                                    height: 39,
+                                    width: 230,
+                                    onSelectionChanged: (e) => {
+                                        if (e) {
+                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ];
+            });
+    }
+
     activate() {
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
 
+        this.initToolbarConfig();
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
             this.filterByBankAccounts(this.bankAccountsService.state);
