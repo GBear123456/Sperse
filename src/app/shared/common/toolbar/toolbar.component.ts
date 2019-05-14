@@ -283,13 +283,12 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
     getElementAttr(item) {
         if (item.name == 'select-box') {
             let items = item.options['items'];
+            const selectedItem = item.options.selectedIndex !== undefined
+                ? item.options['items'][item.options.selectedIndex]
+                : item.options['items'][0];
             return {
                 'select-caption': item.text ? item.text + ':' : '',
-                'select-value': items && items.length ? (
-                    item.options.selectedIndex !== undefined ?
-                        item.options['items'][item.options.selectedIndex].text :
-                        item.options['items'][0].text
-                ) : ''
+                'select-value': items && items.length ? selectedItem.text : ''
             };
         }
         return item.attr || {};

@@ -164,7 +164,7 @@
             </div>
             <div class="row">
                 <div class="col-3 text-right light-gray">{{l("TransactionDetail_Amount")}}</div>
-                <div class="col-4 amount">{{transactionInfo?.amount | currency:cfoPreferencesService.selectedCurrencyId:selectedCurrencySymbol:'1.2-2'}}</div>
+                <div class="col-4 amount">{{transactionInfo?.amount | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</div>
                 <div class="col-3 text-right light-gray">{{l("TransactionDetail_Status")}}</div>
                 <div class="col-2 text-right tabular status"><span ngClass="{{transactionInfo?.transactionStatus | lowercase}}">{{transactionInfo?.transactionStatus}}</span></div>
             </div>
