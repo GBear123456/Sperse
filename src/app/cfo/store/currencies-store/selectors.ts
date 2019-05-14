@@ -6,12 +6,16 @@ export const getCurrenciesState = createFeatureSelector<State>('currencies');
 
 export const getCurrencies = createSelector(
     getCurrenciesState,
-    (state: State) => state.entities
-);
-
-export const getCurrenciesTexts = createSelector(
-    getCurrencies,
-    (currencies: CurrencyInfo[]) => currencies && currencies.map((currency: CurrencyInfo) => ({ ...currency, text: currency.id }))
+    (state: State) => {
+        return state.entities && state.entities.length
+                ? state.entities.map((currency: CurrencyInfo) => {
+                    return {
+                        ...currency,
+                        text: `${currency.symbol} ${currency.id} ${currency.name}`
+                    };
+                })
+                : null;
+    }
 );
 
 export const getSelectedCurrencyId = createSelector(
@@ -19,10 +23,25 @@ export const getSelectedCurrencyId = createSelector(
     (state: State) => state.selectedCurrencyId
 );
 
+export const getSelectedCurrencySymbol = createSelector(
+    getCurrencies,
+    getSelectedCurrencyId,
+    (currencies: Partial<CurrencyInfo>[], selectedCurrencyId: string) => {
+        let result = null;
+        if (currencies) {
+            const currency = currencies.find((currency: CurrencyInfo) => currency.id === selectedCurrencyId);
+            if (currency) {
+                result = currency.symbol;
+            }
+        }
+        return result;
+    }
+);
+
 export const getSelectedCurrencyIndex = createSelector(
     getCurrencies,
     getSelectedCurrencyId,
-    (currencies: CurrencyInfo[], selectedCurrencyId: string) => {
+    (currencies: Partial<CurrencyInfo>[], selectedCurrencyId: string) => {
         let result = null;
         if (currencies) {
             const index = currencies.findIndex((currency: CurrencyInfo) => currency.id === selectedCurrencyId);

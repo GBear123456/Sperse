@@ -14,6 +14,7 @@ import {
     UpdateCommentInput
 } from '@shared/service-proxies/service-proxies';
 import * as _ from 'underscore';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'app-transaction-detail-info',
@@ -44,7 +45,8 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         private _transactionsService: TransactionsServiceProxy,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
-        private _commentServiceProxy: CommentServiceProxy
+        private _commentServiceProxy: CommentServiceProxy,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
     }

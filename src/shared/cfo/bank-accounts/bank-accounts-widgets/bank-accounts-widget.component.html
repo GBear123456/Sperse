@@ -80,13 +80,13 @@
                         <dxi-column [width]="100" dataField="utilized" cellTemplate="utilizedTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text)">
-                                <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
+                                <span class="number-value"> {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}  </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'colorBalanceTemplate'" class="color-div">
                             <ng-container *ngIf="(cell.text)">
                                 <div class="balance-container">
-                                    <span class="number-value"> {{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}  </span>
+                                    <span class="number-value"> {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}  </span>
                                 </div>
                             </ng-container>
                         </div>
@@ -117,7 +117,7 @@
             </div>
             <div *dxTemplate="let cell of 'amountTemplate'">
                 <ng-container *ngIf="(cell.text)">
-                    <div class="number-value bold">{{cell.text | currency: 'USD' : 'symbol' : '1.2-2'}}</div>
+                    <div class="number-value bold">{{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</div>
                 </ng-container>
             </div>
             <div *dxTemplate="let cell of 'statusTemplate'">

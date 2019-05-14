@@ -1,4 +1,10 @@
+/** Core imports */
 import { Component, Injector, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import { Store } from '@ngrx/store';
+
+/** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
@@ -6,7 +12,6 @@ import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CfoStore, CurrenciesStoreActions } from '@app/cfo/store';
-import { Store } from '@ngrx/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
@@ -180,10 +185,10 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                                     items: currencies,
                                     selectedIndex: selectedCurrencyIndex,
                                     height: 39,
-                                    width: 80,
+                                    width: 220,
                                     onSelectionChanged: (e) => {
                                         if (e) {
-                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
+                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
                                         }
                                     }
                                 }

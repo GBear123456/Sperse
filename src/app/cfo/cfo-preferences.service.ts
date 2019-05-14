@@ -15,6 +15,7 @@ import { CashFlowGridSettingsDto, CurrencyInfo } from '@shared/service-proxies/s
 export class CfoPreferencesService {
     currencies$: Observable<Partial<CurrencyInfo>[]>;
     selectedCurrencyId: string;
+    selectedCurrencySymbol: string;
     selectedCurrencyIndex$: Observable<number>;
     constructor(
         private store$: Store<CfoStore.State>,
@@ -31,10 +32,11 @@ export class CfoPreferencesService {
                 this.cashflowPreferencesService.userPreferences$.pipe(
                     map((preferences: CashFlowGridSettingsDto) => {
                         return preferences.localizationAndCurrency.currency;
-                    })
+                    }),
+                    first()
                 ).subscribe((currencyId: string) => {
                     /** Update selected currency id with the currency id from cashflow preferences */
-                    this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(currencyId));
+                    this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(currencyId || 'USD'));
                 });
             }
         });
@@ -46,12 +48,19 @@ export class CfoPreferencesService {
             this.selectedCurrencyId = selectedCurrencyId;
         });
 
+        this.store$.pipe(
+            select(CurrenciesStoreSelectors.getSelectedCurrencySymbol),
+            filter(Boolean)
+        ).subscribe((selectedCurrencySymbol: string) => {
+            this.selectedCurrencySymbol = selectedCurrencySymbol;
+        });
+
         this.selectedCurrencyIndex$ = this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyIndex),
             filter(Boolean)
         );
         this.currencies$ = this.store$.pipe(
-            select(CurrenciesStoreSelectors.getCurrenciesTexts),
+            select(CurrenciesStoreSelectors.getCurrencies),
             filter(Boolean)
         );
     }

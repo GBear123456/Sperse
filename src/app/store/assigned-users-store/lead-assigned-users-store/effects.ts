@@ -9,14 +9,15 @@ import { filter, catchError, exhaustMap, map, withLatestFrom } from 'rxjs/operat
 
 /** Application imports */
 import * as assignedUsersActions from './actions';
-import { UserAssignmentServiceProxy, UserInfoDto } from 'shared/service-proxies/service-proxies';
+import { ContactServiceProxy, UserInfoDto } from 'shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoaded } from './selectors';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Injectable()
 export class LeadAssignedUsersStoreEffects {
-    constructor(private _userAssignmentService: UserAssignmentServiceProxy,
+    constructor(private _contactService: ContactServiceProxy,
                 private actions$: Actions,
                 private store$: Store<State>,
                 private permissionCheckerService: PermissionCheckerService) {}
@@ -33,7 +34,7 @@ export class LeadAssignedUsersStoreEffects {
                 return empty();
             }
 
-            return this._userAssignmentService.getAllowedAssignableUsersForLead(true, undefined, undefined)
+            return this._contactService.getAllowedAssignableUsers(ContactGroup.Client, true, undefined, undefined)
                 .pipe(
                     map((users: UserInfoDto[]) => {
                         return new assignedUsersActions.LoadSuccessAction(users);

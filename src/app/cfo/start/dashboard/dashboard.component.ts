@@ -91,10 +91,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
                                     items: currencies,
                                     selectedIndex: selectedCurrencyIndex,
                                     height: 39,
-                                    width: 80,
+                                    width: 230,
                                     onSelectionChanged: (e) => {
                                         if (e) {
-                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
+                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
                                         }
                                     }
                                 }

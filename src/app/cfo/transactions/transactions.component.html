@@ -93,7 +93,7 @@
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text) && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
-                                <span [ngClass]="cell.value < 0 ? 'negative-values' : 'positive-values'"> {{ cell.text | currency:cfoPreferencesService.selectedCurrencyId:'symbol-narrow':'1.2-2' }} </span>
+                                <span [ngClass]="cell.value < 0 ? 'negative-values' : 'positive-values'"> {{ cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'isPendingTemplate'">
@@ -106,7 +106,7 @@
                         </div>
                         <div *dxTemplate="let cell of 'endBalanceTemplate'">
                             <ng-container *ngIf="cell.text">
-                                <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | currency:cfoPreferencesService.selectedCurrencyId:'symbol-narrow':'1.2-2' }} </span>
+                                <span class="end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'descriptionTemplate'">
@@ -141,7 +141,7 @@
                         <div *dxTemplate="let data of 'startBalanceTotal'">
                             <div class="informer starting-balance">
                                 <h2 class="count">
-                                    {{adjustmentStartingBalanceTotal  | currency:cfoPreferencesService.selectedCurrencyId:'symbol-narrow':'1.0-0'}}
+                                    {{adjustmentStartingBalanceTotal  | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
                                     <span class="cent">.{{adjustmentStartingBalanceTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name">{{l('Starting_Balance')}}</span>
@@ -151,7 +151,7 @@
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
                                 <h2 class="count positive-values">
-                                    {{ creditTransactionTotal | currency:cfoPreferencesService.selectedCurrencyId:'symbol-narrow':'1.0-0' }}
+                                    {{ creditTransactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}
                                     <span class="cent">.{{creditTransactionTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name" (click)="toggleCreditDefault()">
@@ -193,7 +193,7 @@
                         <div *dxTemplate="let data of 'debitTotal'">
                             <div class="informer">
                                 <h2 class="count negative-values">
-                                    {{debitTransactionTotal | currency:cfoPreferencesService.selectedCurrencyId:'symbol-narrow':'1.0-0'}}
+                                    {{ debitTransactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}
                                     <span class="cent">.{{debitTransactionTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name" (click)="toggleDebitDefault()">
@@ -233,7 +233,7 @@
                         <div *dxTemplate="let data of 'transactionTotal'">
                             <div class="informer">
                                 <h2 class="count">
-                                    {{transactionTotal  | currency: cfoPreferencesService.selectedCurrencyId : 'symbol-narrow' : '1.0-0'}}
+                                    {{ transactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}
                                     <span class="cent">.{{transactionTotalCent | number:'2.0-0'}}</span>
                                 </h2>
                                 <span class="name" (click)="toggleTotalDefault()">
@@ -245,7 +245,7 @@
                                             showEvent="dxhoverstart"
                                             hideEvent="dxhoverend">
                                     <div *dxTemplate="let data = data of 'content'">
-                                        <span class="title">{{ls('Platform', 'Unreconciled_Balance')}}:</span> {{adjustmentTotal | currency: cfoPreferencesService.selectedCurrencyId : 'symbol-narrow' : '1.2-2'}}
+                                        <span class="title">{{ls('Platform', 'Unreconciled_Balance')}}:</span> {{adjustmentTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}
                                     </div>
                                 </dx-tooltip>
                                 <dx-tooltip target="#totalDetails"

@@ -13,7 +13,7 @@ import { environment } from '../environments/environment';
 
 /** For storing some entities in local storage */
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
-    const tenantSpecificFeatures = ['pipelines', 'stars', 'partnerTypes'];
+    const tenantSpecificFeatures = [ 'pipelines', 'stars', 'partnerTypes', 'currencies' ];
     return localStorageSync({
         /** entities keys for storing */
         keys: [

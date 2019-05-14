@@ -318,9 +318,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         this.leadId = this.contactInfo['leadId'] = result.id;
 
         this.loadLeadsStages(() => {
-            if (this.leadInfo.stage)
-                this.clientStageId = this.leadStages.find(
-                    stage => stage.name === this.leadInfo.stage).id;
+            if (this.leadInfo.stage) {
+                let leadStage = this.leadStages.find(
+                    stage => stage.name === this.leadInfo.stage);
+                this.clientStageId = leadStage && leadStage.id;
+            }
         });
 
         this.storeInitialData();
