@@ -1984,6 +1984,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** @todo refactor (move to the userPreferencesHandlers to avoid if else structure) */
         if (updateCurrency) {
             this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(this.cashflowGridSettings.localizationAndCurrency.currency));
+            /** Hide spinner if nothing change to prevent infinite loading */
+            if (this.cashflowGridSettings.localizationAndCurrency.currency === this._cfoPreferencesService.selectedCurrencyId) {
+                this.finishLoading();
+            }
         } else {
             if (updateWithDiscrepancyChange) {
                 dataSource ? dataSource.reload() : this.refreshDataGrid();
