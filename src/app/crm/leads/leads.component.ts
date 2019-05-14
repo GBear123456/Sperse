@@ -106,6 +106,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     showPipeline = true;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedClientKeys = [];
+    manageDisabled = true;
 
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
@@ -409,6 +410,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
+        this.manageDisabled = !this.isGranted(
+            ContactGroupPermission[this.selectedContactGroup] + '.Manage');
         this.isActivated() && this._appService.updateToolbar([
             {
                 location: 'before', items: [
@@ -463,12 +466,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
                     },
                     {
                         name: 'stage',
+                        disabled: this.manageDisabled,
                         action: this.toggleStages.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
@@ -476,6 +481,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'lists',
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageListsAndTags'),
                         action: this.toggleLists.bind(this),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
@@ -483,6 +489,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageListsAndTags'),
                         action: this.toggleTags.bind(this),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
@@ -490,6 +497,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageRatingAndStars'),
                         action: this.toggleRating.bind(this),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
@@ -497,6 +505,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'star',
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageRatingAndStars'),
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
@@ -919,7 +928,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (event.previousValue != event.value) {
             this.contactGroupId = ContactGroup[event.value];
             this._cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
-
+            
+            this.initToolbarConfig();
             if (!this.showPipeline)
                 this.refresh(false);
         }

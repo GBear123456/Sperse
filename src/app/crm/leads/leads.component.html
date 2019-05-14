@@ -122,6 +122,7 @@
                         [filterModelStages]="filterModelStages"
                         [(selectedEntities)]="selectedLeads"
                         [contactGroupId]="contactGroupId"
+                        [moveDisabled]="manageDisabled"
                         (onEntityStageChanged)="onLeadStageChanged($event)"
                         (onStagesLoaded)="onStagesLoaded($event)"                        
                         (onCardClick)="onCardClick($event)">
