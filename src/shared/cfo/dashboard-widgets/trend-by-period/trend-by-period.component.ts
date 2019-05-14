@@ -160,7 +160,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
 
     /** Replace minus for the brackets */
     customizeAxisValues = (arg: any) => {
-        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
+        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText, this.cfoPreferencesService.selectedCurrencySymbol) : arg.valueText.replace('$', this.cfoPreferencesService.selectedCurrencySymbol);
     }
 
     customizeBottomAxis = (elem) => {

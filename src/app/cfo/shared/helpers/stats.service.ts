@@ -12,12 +12,13 @@ export class StatsService {
     ) {}
 
     /**
-     * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
+     * Replace string negative value like '-$1000' for the string '($1000)' (with brackets)
      * @param {string} value
+     * @param {string} currencySymbol
      * @return {string}
      */
-    replaceMinusWithBrackets(value: string) {
-        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)');
+    replaceMinusWithBrackets(value: string, currencySymbol: string) {
+        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)').replace('$', currencySymbol);
     }
 
     getTooltipInfoHtml(data, fields, pointInfo) {
