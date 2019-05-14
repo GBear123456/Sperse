@@ -15,6 +15,7 @@
             (onInput)="titleChanged($event)"
             (onKeyUp)="titleKeyUp($event)">
         </dx-text-box>
+        <ng-content select="[headerContent]"></ng-content>
     </ng-container>
     <mat-dialog-actions>
         <div class="mat-dialog-options" *ngIf="options">
