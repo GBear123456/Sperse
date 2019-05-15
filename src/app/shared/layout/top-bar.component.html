@@ -3,7 +3,7 @@
 	<input [(ngModel)]="search" name="search" autoFocus class="form-control" placeholder="{{l('SearchAllData')}}" type="text">
 </div>
 
-<platform-select></platform-select>
+<platform-select [hidden]="_cfoService.instanceType == 'User'"></platform-select>
 
 <div class="top-bar-nav" *ngIf="navbarItems.length">
   <dx-nav-bar
