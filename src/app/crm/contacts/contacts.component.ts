@@ -724,7 +724,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getAssignedUsersSelector = () => {
-        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: this.customerType });
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: this.contactGroup });
     }
 
     getAssignmentsPermissinKey = () => {
