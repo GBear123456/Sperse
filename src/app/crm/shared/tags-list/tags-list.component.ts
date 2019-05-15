@@ -5,7 +5,6 @@ import { Component, Injector, Input, EventEmitter, Output, OnInit } from '@angul
 import { MatDialog } from '@angular/material/dialog';
 import { ActionsSubject, Store, select } from '@ngrx/store';
 import { ofType } from '@ngrx/effects';
-import { Subject } from 'rxjs';
 import { finalize, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -86,7 +85,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 else
                     this.process(isRemove);
             }
-            this.listComponent.clearFilter(); 
+            this.listComponent.clearFilter();
         }
         this.tooltipVisible = false;
     }

@@ -1,7 +1,7 @@
 import { State, initialState } from './state';
-import { ActionTypes } from '@app/cfo/store/currencies-store/actions';
+import { ActionTypes } from '@app/cfo/store/forecast-models-store/actions';
 
-export function currenciesReducer(state: State = initialState, action) {
+export function forecastModelsReducer(state: State = initialState, action) {
     switch (action.type) {
         case ActionTypes.LOAD_REQUEST: {
             const reload = action.payload;
@@ -28,10 +28,25 @@ export function currenciesReducer(state: State = initialState, action) {
                 error: action.payload
             };
         }
-        case ActionTypes.CHANGE_CURRENCY: {
+        case ActionTypes.CHANGE_FORECAST_MODEL: {
             return {
                 ...state,
-                selectedCurrencyId: action.payload
+                selectedForecastModelId: action.payload
+            };
+        }
+        case ActionTypes.ADD_FORECAST_MODEL_SUCCESS: {
+            return {
+                ...state,
+                entities: [ ...state.entities, action.payload ]
+            };
+        }
+        case ActionTypes.RENAME_FORECAST_MODEL_SUCCESS: {
+            const entities = state.entities;
+            const entityForRenameIndex = entities.findIndex(entity => entity.id === action.payload.id);
+            entities[entityForRenameIndex].name = action.payload.newName;
+            return {
+                ...state,
+                entities: entities
             };
         }
         default: {
