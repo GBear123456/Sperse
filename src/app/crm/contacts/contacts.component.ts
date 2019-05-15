@@ -417,11 +417,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             })).subscribe(result => {
                 this.loadLeadData(result['personContactInfo']);
                 this.fillContactDetails(result);
-
-                if (leadId)
-                    this.loadLeadsStages();
-
                 if (this.contactGroup == ContactGroup.Partner) {
+                    setTimeout(() => {
+                        this.startLoading(true);
+                    }, 300);
                     this._partnerService.get(contactId)
                     .pipe(finalize(() => {
                         this.finishLoading(true);
@@ -433,6 +432,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     });
                 }
             });
+        }
+        if (leadId) {
+            this.loadLeadsStages();
         }
         return contactInfo$;
     }
