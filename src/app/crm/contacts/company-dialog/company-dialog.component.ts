@@ -96,7 +96,7 @@ export class CompanyDialogComponent implements OnInit {
         },
         {
             id: 'deleteCompany',
-            title: this.l('Delete'),
+            title: this.ls.l('Delete'),
             class: 'button-layout button-default delete-button',
             action: () => this.delete()
         }
@@ -173,14 +173,14 @@ export class CompanyDialogComponent implements OnInit {
     delete() {
         this.dialog.open(ConfirmDialogComponent, {
             data: {
-                title: this.l('CompanyRemovalConfirmationTitle'),
-                message: this.l('CompanyRemovalConfirmationMessage', this.company.fullName),
+                title: this.ls.l('CompanyRemovalConfirmationTitle'),
+                message: this.ls.l('CompanyRemovalConfirmationMessage', this.company.fullName),
             }
         }).afterClosed().subscribe(result => {
             if (result) {
                 this._organizationContactServiceProxy.delete(this.company.id).subscribe(() => {
-                    this.notify.success(this.l('SuccessfullyRemoved'));
-                    this.close(true);
+                    this.notifyService.success(this.ls.l('SuccessfullyRemoved'));
+                    this.modalDialog.close(true);
                 });
             }
         });

@@ -12,7 +12,6 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { InvoiceServiceProxy, CreateInvoiceInput, UpdateInvoiceLineInput, UpdateInvoiceStatusInput, UpdateInvoiceInput, CustomerServiceProxy, CreateInvoiceInputStatus, UpdateInvoiceInputStatus,
     UpdateInvoiceStatusInputStatus, CreateInvoiceLineInput, InvoiceSettingsInfoDto } from '@shared/service-proxies/service-proxies';
@@ -22,6 +21,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { CreateClientDialogComponent } from '../create-client-dialog/create-client-dialog.component';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -277,7 +277,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.status = CreateInvoiceInputStatus[index == 1 ? 'Draft' : 'Final'];
             }
             return item.selected;
-        })
+        });
 
         if (this.disabledForUpdate)
             this.updateStatus();
@@ -353,7 +353,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.subTotal =
                 this.total =
                 this.balance = this.total + amount;
-        })
+        });
     }
 
     selectContact(event) {
@@ -373,7 +373,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                         this.modalDialog.startLoading();
                         this._invoiceProxy.deleteInvoice(this.invoiceId).pipe(
                             finalize(() => this.modalDialog.finishLoading())
-                        ).subscribe((response) => {
+                        ).subscribe(() => {
                             this._notifyService.info(this.ls.l('SuccessfullyDeleted'));
                             this.data.refreshParent && this.data.refreshParent();
                             this.close();
@@ -384,7 +384,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     resetNoteDefault() {
-        this.notes = this.l('Invoice_DefaultNote');
+        this.notes = this.ls.l('Invoice_DefaultNote');
     }
 
     onValueChanged(event, data) {

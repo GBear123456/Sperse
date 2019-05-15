@@ -1,8 +1,13 @@
+/** Core imports */
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild } from '@angular/router';
+
+/** Third party imports */
+import { Observable, of } from 'rxjs';
+import { filter, take, tap, mergeMap } from 'rxjs/operators';
+
+/** Application imports */
 import { LocalizationServiceProxy } from '@shared/service-proxies/service-proxies';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild } from '../../../node_modules/@angular/router';
-import { Observable, of } from '../../../node_modules/rxjs';
-import { Injectable } from '../../../node_modules/@angular/core';
-import { take, tap, mergeMap } from '../../../node_modules/rxjs/operators';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
@@ -37,6 +42,9 @@ export class LocalizationResolver implements CanActivateChild {
                             return of(true);
                         })
                     )
-                ).pipe(tap(() => this.ls.localizationSourceName = sourceName));
+                ).pipe(
+                    filter(Boolean),
+                    tap(() => this.ls.localizationSourceName = sourceName)
+                );
     }
 }
