@@ -332,10 +332,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                         items: currencies,
                                         selectedIndex: selectedCurrencyIndex,
                                         height: 39,
-                                        width: 80,
+                                        width: 220,
                                         onSelectionChanged: (e) => {
                                             if (e) {
-                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
+                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
                                                 this.loadStatsData();
                                             }
                                         }
@@ -678,7 +678,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 backgroundColor: this.labelNegativeBackgroundColor,
                 visible: this.maxLabelCount >= this.statsData.length,
                 customizeText: (e: any) => {
-                    return this._statsService.replaceMinusWithBrackets(e.valueText);
+                    return this._statsService.replaceMinusWithBrackets(e.valueText, this.cfoPreferencesService.selectedCurrencySymbol);
                 }
             };
         }
@@ -686,7 +686,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Replace minus for the brackets */
     customizeAxisValues = (arg: any) => {
-        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
+        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText, this.cfoPreferencesService.selectedCurrencySymbol) : arg.valueText.replace('$', this.cfoPreferencesService.selectedCurrencySymbol);
     }
 
     customizePoint = (arg: any) => {

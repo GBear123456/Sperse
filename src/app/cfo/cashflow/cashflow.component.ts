@@ -303,6 +303,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             allowExpandAll: false,
             allowExpand: false,
             sortOrder: 'asc',
+            areaIndex: 0,
             dataField: 'levels.level0',
             rowHeaderLayout: 'tree',
             showTotals: true,
@@ -316,6 +317,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             width: 120,
             area: 'row',
             dataField: 'levels.level1',
+            areaIndex: 1,
             sortBy: 'displayText',
             sortOrder: 'asc',
             expanded: false,
@@ -331,6 +333,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
+            areaIndex: 2,
             dataField: 'levels.level2',
             customizeText: this.customizeFieldText.bind(this)
         },
@@ -341,6 +344,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
+            areaIndex: 3,
             dataField: 'levels.level3',
             customizeText: this.customizeFieldText.bind(this)
         },
@@ -351,6 +355,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
+            areaIndex: 4,
             dataField: 'levels.level4',
             customizeText: this.customizeFieldText.bind(this)
         },
@@ -1979,6 +1984,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** @todo refactor (move to the userPreferencesHandlers to avoid if else structure) */
         if (updateCurrency) {
             this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(this.cashflowGridSettings.localizationAndCurrency.currency));
+            /** Hide spinner if nothing change to prevent infinite loading */
+            if (this.cashflowGridSettings.localizationAndCurrency.currency === this._cfoPreferencesService.selectedCurrencyId) {
+                this.finishLoading();
+            }
         } else {
             if (updateWithDiscrepancyChange) {
                 dataSource ? dataSource.reload() : this.refreshDataGrid();

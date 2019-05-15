@@ -445,11 +445,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                         items: currencies,
                                         selectedIndex: selectedCurrencyIndex,
                                         height: 39,
-                                        width: 80,
+                                        width: 220,
                                         onSelectionChanged: (e) => {
                                             if (e) {
-                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
-                                                this.filtersService.change(this.setCurrenciesFilter(e.itemData.text));
+                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
+                                                this.filtersService.change(this.setCurrenciesFilter(e.itemData.id));
                                             }
                                         }
                                     }

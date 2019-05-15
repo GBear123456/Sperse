@@ -204,10 +204,10 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                                         items: currencies,
                                         selectedIndex: selectedCurrencyIndex,
                                         height: 39,
-                                        width: 80,
+                                        width: 220,
                                         onSelectionChanged: (e) => {
                                             if (e) {
-                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.text));
+                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
                                                 this.refreshData();
                                             }
                                         }

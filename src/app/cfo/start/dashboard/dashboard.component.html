@@ -1,7 +1,7 @@
 <div [@routerTransition]>
     <app-headline [config]="headlineConfig">
         <synch-progress class="synch-progress" (onComplete)="refreshWidgets()"></synch-progress>
-        <app-toolbar [config]="toolbarConfig" width="150px"></app-toolbar>
+        <app-toolbar [config]="toolbarConfig" width="320px"></app-toolbar>
         <app-period (onChange)="periodChanged($event)"></app-period>
     </app-headline>
 
