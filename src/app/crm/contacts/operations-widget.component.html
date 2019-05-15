@@ -48,7 +48,7 @@
         <crm-user-assignment-list 
             [selectedKeys]="[contactInfo.id]" 
             [selectedItemKey]="contactInfo?.assignedUserId" 
-            [getAssignedUsersSelector]="getAssignedUsersSelector().getAssignedUsers" 
+            [assignedUsersSelector]="getAssignedUsersSelector()" 
             [permissionKey]="getAssignmentsPermissionKey()"
             [proxyService]="getProxyService()">
         </crm-user-assignment-list>

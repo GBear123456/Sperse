@@ -1,20 +1,14 @@
 import { createEntityAdapter, EntityAdapter } from '@ngrx/entity';
 import { UserInfoDto } from 'shared/service-proxies/service-proxies';
 
-export const leadAssignedUsersAdapter: EntityAdapter<
-    UserInfoDto
-> = createEntityAdapter<UserInfoDto>({});
-
 export interface State {
-    assignedUsers: UserInfoDto[];
+    entities: { [contactGroup: string]: UserInfoDto[] };
     isLoading: boolean;
     error: string;
-    loaded: boolean;
 }
 
 export const initialState: State = {
-    assignedUsers: null,
+    entities: {},
     isLoading: false,
     error: null,
-    loaded: false
 };

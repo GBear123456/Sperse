@@ -22,7 +22,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
-    LeadAssignedUsersStoreSelectors,
+    ContactAssignedUsersStoreSelectors,
     AppStore,
     TagsStoreSelectors,
     ListsStoreSelectors,
@@ -341,7 +341,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(LeadAssignedUsersStoreSelectors.getAssignedUsers)),
+                                dataSource$: this.store$.pipe(this.getAssignedUsersSelector()),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
@@ -920,8 +920,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
     }
 
-    getAssignedUsersStoreSelectors() {
-        return LeadAssignedUsersStoreSelectors.getAssignedUsers;
+    getAssignedUsersSelector() {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     }
 
     onContactGroupChanged(event) {

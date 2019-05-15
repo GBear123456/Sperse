@@ -21,7 +21,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppStore, PartnerTypesStoreSelectors, PartnerAssignedUsersStoreSelectors, LeadAssignedUsersStoreSelectors, CustomerAssignedUsersStoreSelectors } from '@app/store';
+import { AppStore, PartnerTypesStoreSelectors, ContactAssignedUsersStoreSelectors } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -729,17 +729,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             this._userService['data'].userId = contact.userId);
     }
 
-    getAssignedUsersStoreSelectors = () => {
-        if (this.customerType == ContactGroup.Partner)
-            return PartnerAssignedUsersStoreSelectors;
-
-        if (this.customerType == ContactGroup.Client)
-            return CustomerAssignedUsersStoreSelectors;
-
-        if (this.leadId || this.leadInfo)
-            return LeadAssignedUsersStoreSelectors;
-
-        return CustomerAssignedUsersStoreSelectors;
+    getAssignedUsersSelector = () => {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: this.customerType });
     }
 
     getAssignmentsPermissinKey = () => {
