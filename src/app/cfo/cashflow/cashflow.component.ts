@@ -6221,7 +6221,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                transactionId: this.transactionId
+                transactionId$: of(this.transactionId)
             }
         });
     }
