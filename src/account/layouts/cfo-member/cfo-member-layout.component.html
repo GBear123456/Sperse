@@ -2,10 +2,7 @@
     <div class="header">
         <div class="logo">
             <a [href]="originUrl">
-                <img *ngIf="appSession.tenant && appSession.tenant.logoId"
-                     [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
-                     alt="logo"
-                     width="auto" height="60"/>
+                <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" width="auto" height="60"/>
             </a>
         </div>
     </div>
@@ -15,7 +12,7 @@
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
 
-                <router-outlet></router-outlet>                    
+                <router-outlet></router-outlet>
 
                 </div>
             </div>
