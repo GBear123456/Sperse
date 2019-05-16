@@ -36,18 +36,6 @@
             </button>
         </div>
     </form>
-    <div class="login-options" *ngIf="(loginService.externalLoginProviders$ | async) as externalLoginProviders">
-        <div class="login-with">
-            <span class="login-with-or">{{l("or")}}</span>
-        </div>
-        <ul class="social-icons">
-            <li *ngFor="let provider of externalLoginProviders">
-                <a class="social-login-icon social-icon-color {{provider.icon}}"
-                   (click)="externalLogin(provider)"
-                   title="{{provider.name}}"></a>
-            </li>
-        </ul>
-    </div>
     <div class="login-terms-and-condition">
         <span>{{l('ByContinuingYouAgree')}} <br><a (click)="openConditionsDialog(conditions.Terms)">{{l('TermsOfUse')}}</a> {{l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{l('PrivacyPolicy')}}</a></span>
     </div>
