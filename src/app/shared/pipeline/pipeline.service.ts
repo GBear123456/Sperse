@@ -146,9 +146,11 @@ export class PipelineService {
         if (entity) {
             if (data)
                 entity.data = data;
-            if (!this.updateEntityStage(pipelineId, entity, entity.Stage || entity.stage, targetStage, (data) => {
-                this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
-                delete entity.data;
+            if (!this.updateEntityStage(pipelineId, entity, 
+                this.getStageByName(pipelineId, entity.Stage || entity.stage), 
+                this.getStageByName(pipelineId, targetStage), (data) => {
+                    this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
+                    delete entity.data;
             })) declinedList.push(entity);
         } else
             complete && complete(declinedList);

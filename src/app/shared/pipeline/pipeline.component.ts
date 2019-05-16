@@ -129,8 +129,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (value[0] == this.dragulaName) {
                 let entityId = this.getAccessKey(value[1]),
                     newStage = this.getStageByElement(value[2]),
+                    reloadStageList = [newStage['stageIndex']],
                     newSortOrder = this._pipelineService.getEntityNewSortOrder(
-                        this.getEntityById(this.getAccessKey(value[4]), newStage), newStage);
+                        this.getEntityById(this.getAccessKey(value[4]), newStage), newStage);                    
 
                 if (value[1].classList.contains('selected')) {
                     this.getSelectedEntities().forEach((entity, index, selectedList) => {
@@ -145,10 +146,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             entity.SortOrder = newSortOrder;
                             this.updateEntityStage(entity, newStage, oldStage, () => {
                                 this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);
-                                if (entity.Id != entityId) 
-                                    oldStage['entities'].splice(oldStage['entities'].indexOf(entity), 1);
+                                if (entity.Id != entityId) {
+                                    let entities = oldStage['entities'];
+                                    entities.splice(entities.indexOf(entity), 1);
+                                    if (!entities.length)
+                                        reloadStageList.push(oldStage['stageIndex']);
+                                }
                                 if (index >= selectedList.length - 1)
-                                    this.reloadStagesInternal([newStage['stageIndex']]);
+                                    this.reloadStagesInternal(reloadStageList);
                             });
                         }
                     });
@@ -157,6 +162,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     let stage = this.getStageByElement(value[3]),
                         targetEntity = this.getEntityById(entityId, stage);
                     targetEntity.SortOrder = newSortOrder;
+                    if (!stage['entities'].length)
+                        reloadStageList.push(stage['stageIndex']);
+
                     this.updateEntityStage(targetEntity,
                         newStage, stage, () => {
                             this.reloadStagesInternal([newStage['stageIndex']]);
@@ -288,7 +296,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.selectedEntities = [];
         this.stageId = stageId;
         if (!this.refreshTimeout) {
-            quiet && this.startLoading();
+            !quiet && this.startLoading();
             this.refreshTimeout = setTimeout(() => {
                 if (this.pipeline) {
                     this.loadData(0, stageId &&
@@ -342,13 +350,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false, skipTotalRequest = false): Observable<any> {
         let response = of(null),
             index = stageIndex || 0,
-            stages = this.stages, stage = stages[index],
-            dataSource = this._dataSources[stage.name],
-            filter = {StageId: stage.id};
+            stages = this.stages || [], 
+            stage = stages[index];
+
+        if (!stage)
+            return response;
 
         if (this.checkFilterExcludeCondition(stage.id))
             stage['entities'] = [];
         else {
+            let filter = {StageId: stage.id},
+                dataSource = this._dataSources[stage.name];
+            
             if (!dataSource)
                 dataSource = this._dataSources[stage.name] =
                     this.getDataSourceForStage(stage);            
@@ -482,7 +495,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private reloadStagesInternal(stageIndexList) {
-        this.startLoading();
+        this.disabled = true;
         forkJoin.apply(this, stageIndexList.filter(
             (val, index) => stageIndexList.indexOf(val) == index
         ).map((stageIndex) => {
