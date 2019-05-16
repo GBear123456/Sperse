@@ -4,7 +4,7 @@
             <span class="stageName">{{stage.name}}</span>
             <div>
                 <span>
-                    (<ng-container *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">{{selectedEntitiesCount}} of </ng-container>{{stage?.total}})
+                    (<ng-container *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">{{ selectedEntitiesCount | number }} of </ng-container>{{ stage?.total | number }})
                 </span>
                 <span *ngIf="stage.total && allStagesEntitiesTotal">
                     {{ getStageRatio(stage.total) }}
@@ -20,7 +20,7 @@
                 <div *dxTemplate="let data = data of 'content'">
                     <ul class="stage-actions list-group">
                         <li class="list-group-item" [hidden]="stage['isFinal']">
-                            <a (click)="$event.preventDefault()"> 
+                            <a (click)="$event.preventDefault()">
                                 <dx-check-box
                                     [ngClass]="{ 'toggleAll': true, 'visible': allEntitiesAreSelected(stage) }"
                                     *ngIf="stage?.entities.length"
@@ -54,10 +54,14 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="full-name">
-                                    <span *ngIf="entity?.Name || entity?.Title || entity?.Email">{{ entity?.Name || entity?.Title || entity?.Email }}</span>
-                                    <span *ngIf="!entity?.Name && !entity?.Title && !entity?.Email" class="no-name">{{ l('ClientNoName') }}</span>
-                                <div class="company-name">
-                                    <span>{{ entity?.CompanyName || entity?.Description }}</span>
+                                <ng-container *ngIf="(entity?.Name || entity?.Title || entity?.Email) as name">
+                                    <span [title]="name">{{ name }}</span>
+                                </ng-container>
+                                <span *ngIf="!entity?.Name && !entity?.Title && !entity?.Email" class="no-name">
+                                    {{ l('ClientNoName') }}
+                                </span>
+                                <div class="company-name" *ngIf="(entity?.CompanyName || entity?.Description) as companyName">
+                                    <span [title]="companyName">{{ companyName }}</span>
                                 </div>
                             </div>
                         </div>

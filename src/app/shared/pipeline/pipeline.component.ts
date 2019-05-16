@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, EventEmitter, 
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, EventEmitter,
     HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
@@ -43,7 +43,7 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
     providers: [ StageServiceProxy ],
     host: {
         '(window:keyup)': 'onKeyUp($event)'
-    },    
+    },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
@@ -216,7 +216,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             moves: (el, source) => {
                 if (this.moveDisabled)
                     return false;
-        
+
                 let stage = this.getStageByElement(source);
                 if (el.classList.contains('selected')) {
                     let cards = this.getSelectedCards();
@@ -257,6 +257,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._pipelineService.compactView$.pipe(takeUntil(this.destroy$)).subscribe((compactView: boolean) => {
             this.compactView = compactView;
             this.stagePageCount = compactView ? this.COMPACT_VIEW_PAGE_COUNT : this.DEFAULT_PAGE_COUNT;
+            this._changeDetector.detectChanges();
         });
         this._pipelineService.compactView$.pipe(
             takeUntil(this.destroy$),
@@ -275,7 +276,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             /** Map to stages ids */
             map((stage: StageDto) => stage['stageIndex']),
             /** Reload entities for each filtered stage*/
-            mergeMap((stageIndex: number) => this.loadStagesEntities(0, stageIndex, true))
+            mergeMap((stageIndex: number) => this.loadStagesEntities(0, stageIndex, true, true))
         ).subscribe();
     }
 
@@ -338,7 +339,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return entities$;
     }
 
-    loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
+    loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false, skipTotalRequest = false): Observable<any> {
         let response = of(null),
             index = stageIndex || 0,
             stages = this.stages, stage = stages[index],
@@ -371,7 +372,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             this._changeDetector.detectChanges();
                             this.finishLoading();
                         });
-                    if (oneStageOnly && stage['full'])
+                    if (!skipTotalRequest && oneStageOnly && stage['full'])
                         this.processTotalsRequest(this.queryWithSearch);
                 }),
                 map((entities: any) => {
@@ -383,7 +384,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         });
                         if (!this.totalsURI)
                             stage['total'] = dataSource.totalCount();
-                        stage['full'] = (stage['entities'].length >= (stage['total'] || 0));
+                        stage['full'] = stage['entities'].length >= (stage['total'] || 0);
                     } else  {
                         if (!page || !stage['entities'])
                             stage['entities'] = [];
