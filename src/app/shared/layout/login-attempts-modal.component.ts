@@ -9,7 +9,11 @@ import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-mo
 @Component({
     selector: 'loginAttemptsModal',
     templateUrl: './login-attempts-modal.component.html',
-    styleUrls: ['./login-attempts-modal.component.less'],
+    styleUrls: [
+        '../../../shared/metronic/m-alert.less',
+        '../../../shared/metronic/m-helpers.less',
+        './login-attempts-modal.component.less'
+    ],
     providers: [DialogService]
 })
 export class LoginAttemptsModalComponent extends AppModalDialogComponent implements OnInit {

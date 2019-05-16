@@ -127,9 +127,9 @@ body.lend-space {
             border-color: @lend-space-main-color;
             color: #000;
             &.alert-success.m-alert--icon-solid .m-alert__icon {
-                background: @lend-space-main-color;
+                background: @lend-space-main-color !important;
                 span {
-                    border-left-color: @lend-space-main-color;
+                    border-left-color: @lend-space-main-color !important;
                 }
             }
         }
@@ -384,6 +384,16 @@ body.lend-space {
         .m-nav__separator {
             visibility: hidden;
             margin: 10px;
+        }
+    }
+
+    .primeng-datatable-container {
+        table thead tr th {
+            background-color: #fc0 !important;
+        }
+
+        .primeng-no-data {
+            background: #fff;
         }
     }
 }
