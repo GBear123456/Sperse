@@ -4,7 +4,7 @@
             <span class="stageName">{{stage.name}}</span>
             <div>
                 <span>
-                    (<ng-container *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">{{selectedEntitiesCount}} of </ng-container>{{stage?.total}})
+                    (<ng-container *ngIf="getStageSelectedEntitiesCount(stage) as selectedEntitiesCount">{{ selectedEntitiesCount | number }} of </ng-container>{{ stage?.total | number }})
                 </span>
                 <span *ngIf="stage.total && allStagesEntitiesTotal">
                     {{ getStageRatio(stage.total) }}
@@ -20,7 +20,7 @@
                 <div *dxTemplate="let data = data of 'content'">
                     <ul class="stage-actions list-group">
                         <li class="list-group-item" [hidden]="stage['isFinal']">
-                            <a (click)="$event.preventDefault()"> 
+                            <a (click)="$event.preventDefault()">
                                 <dx-check-box
                                     [ngClass]="{ 'toggleAll': true, 'visible': allEntitiesAreSelected(stage) }"
                                     *ngIf="stage?.entities.length"
