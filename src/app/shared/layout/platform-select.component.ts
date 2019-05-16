@@ -14,6 +14,7 @@ export class PlatformSelectComponent extends AppComponentBase {
     module = '';
     uri = '';
     modules = [];
+    activeModuleCount = 0;
 
     private _dropDown: any;
 
@@ -25,6 +26,7 @@ export class PlatformSelectComponent extends AppComponentBase {
         super(injector);
 
         _appService.getModules().forEach((module) => {
+            if (_appService.isModuleActive(module.name)) this.activeModuleCount++;
             let config = _appService.getModuleConfig(module.name);
             let moduleConfig = {
                 code: config ? config.code : module.name,

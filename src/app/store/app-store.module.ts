@@ -3,9 +3,7 @@ import { NgModule } from '@angular/core';
 
 /** Application imports */
 import { AddressUsageTypesStoreModule } from '@app/store/address-usage-types-store';
-import { CustomerAssignedUsersStoreModule } from '@app/store/assigned-users-store/customer-assigned-users-store';
-import { LeadAssignedUsersStoreModule } from '@app/store/assigned-users-store/lead-assigned-users-store';
-import { PartnerAssignedUsersStoreModule } from '@app/store/assigned-users-store/partner-assigned-users-store';
+import { ContactAssignedUsersStoreModule } from '@app/store/assigned-users-store/contact-assigned-users-store';
 import { ActivityAssignedUsersStoreModule } from '@app/store/assigned-users-store/activity-assigned-users-store';
 import { ContactLinkTypesStoreModule } from '@app/store/contact-link-types-store';
 import { EmailUsageTypesStoreModule } from '@app/store/email-usage-types-store';
@@ -22,9 +20,7 @@ import { OrganizationTypeStoreModule } from '@app/store/organization-types-store
 @NgModule({
     imports: [
         AddressUsageTypesStoreModule,
-        CustomerAssignedUsersStoreModule,
-        LeadAssignedUsersStoreModule,
-        PartnerAssignedUsersStoreModule,
+        ContactAssignedUsersStoreModule,
         ActivityAssignedUsersStoreModule,
         ContactLinkTypesStoreModule,
         EmailUsageTypesStoreModule,

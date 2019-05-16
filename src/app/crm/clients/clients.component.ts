@@ -13,7 +13,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
-import { CustomerAssignedUsersStoreSelectors,
+import { ContactAssignedUsersStoreSelectors,
     AppStore,
     TagsStoreSelectors,
     ListsStoreSelectors,
@@ -83,6 +83,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelStatus: FilterModel;
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
+
+    assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
 
     selectedClientKeys: any = [];
     public headlineConfig = {
@@ -297,7 +299,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(select(CustomerAssignedUsersStoreSelectors.getAssignedUsers)),
+                                    dataSource$: this.store$.pipe(this.assignedUsersSelector),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -705,9 +707,5 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
-    }
-
-    getAssignedUsersStoreSelectors() {
-        return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
     }
 }

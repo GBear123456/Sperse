@@ -26,6 +26,7 @@ import { StaticListComponent } from '@app/shared/common/static-list/static-list.
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { ActivityAssignedUsersStoreSelectors } from '@app/store';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
+import { select } from '@ngrx/store';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
@@ -562,8 +563,8 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
         this.dateValidator = $event.component;
     }
 
-    getAssignedUsersStoreSelectors() {
-        return ActivityAssignedUsersStoreSelectors.getAssignedUsers;
+    getAssignedUsersSelector() {
+        return select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
     }
 
     onUserAssignmentChanged(event) {

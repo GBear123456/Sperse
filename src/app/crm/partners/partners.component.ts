@@ -17,7 +17,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import {
-    PartnerAssignedUsersStoreSelectors,
+    ContactAssignedUsersStoreSelectors,
     AppStore,
     ListsStoreSelectors,
     PartnerTypesStoreSelectors,
@@ -307,7 +307,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(select(PartnerAssignedUsersStoreSelectors.getAssignedUsers)),
+                                    dataSource$: this.store$.pipe(this.getAssignedUsersSelector()),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -700,7 +700,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         e.component.hide();
     }
 
-    getAssignedUsersStoreSelectors() {
-        return PartnerAssignedUsersStoreSelectors.getAssignedUsers;
+    getAssignedUsersSelector() {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Partner });
     }
 }
