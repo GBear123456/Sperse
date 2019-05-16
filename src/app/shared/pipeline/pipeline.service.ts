@@ -162,7 +162,7 @@ export class PipelineService {
         this._activityService.transition(TransitionActivityDto.fromJS({
             id: this.getEntityId(entity),
             stageId: toStage.id,
-            sortOrder: this.getEntityNewSortOrder(entity, toStage)
+            sortOrder: entity.SortOrder
         })).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
@@ -177,7 +177,7 @@ export class PipelineService {
             UpdateLeadStageInfo.fromJS({
                 leadId: this.getEntityId(entity),
                 stageId: toStage.id,
-                sortOrder: this.getEntityNewSortOrder(entity, toStage)
+                sortOrder: entity.SortOrder
             })
         ).pipe(finalize(() => {
             entity.locked = false;
@@ -264,7 +264,7 @@ export class PipelineService {
             UpdateOrderStageInfo.fromJS({
                 orderId: this.getEntityId(entity),
                 stageId: toStage.id,
-                sortOrder: this.getEntityNewSortOrder(entity, toStage)
+                sortOrder: entity.SortOrder
             })
         ).pipe(finalize(() => {
             entity.locked = false;
@@ -277,7 +277,7 @@ export class PipelineService {
     processOrder(fromStage, toStage, entity, complete) {
         let model: ProcessOrderInfo = new ProcessOrderInfo();
         model.id = this.getEntityId(entity);
-        model.sortOrder = this.getEntityNewSortOrder(entity, toStage);
+        model.sortOrder = entity.SortOrder;
         this._orderService.process(
             model
         ).pipe(finalize(() => {
@@ -336,26 +336,28 @@ export class PipelineService {
         this.stageChange.next(entity);
     }
 
-    getPrevEntity(entity, stage) {
-        let entities = stage['entities'];
-        for (let i = 0; i < entities.length; i++) {
+    getPrevEntity(entity, entities) {
+        for (let i = 0; i < entities.length ; i++) {
             if (entities[i].Id == entity.Id)
-                return undefined;
-            if (entities[i + 1].Id == entity.Id)
-                return entities[i];
+                return entities[i - 1];
         }
     }
 
     getEntityNewSortOrder(entity, stage) {
-        let prevEntity = this.getPrevEntity(entity, stage);
-        return prevEntity ? prevEntity.SortOrder + 1 : 0;
+        let entities = stage['entities'];
+        if (entity) {
+            let prevEntity = this.getPrevEntity(entity, entities);
+            return entities.length > 1 ? prevEntity && prevEntity.SortOrder
+                || entities[0].SortOrder + 1: 0;
+        } else 
+            return entities.length && entities.slice(-1).pop().SortOrder || 0;
     }
 
-    updateEntitySortOrder(pipelineId, entity, sortOrder, complete) {
+    updateEntitySortOrder(pipelineId, entity, complete) {
         if (!entity.locked) {
             entity.locked = true;
             this._pipelineServiceProxy.updateEntitySortOrder(
-                pipelineId, entity.Id, sortOrder
+                pipelineId, entity.Id, entity.SortOrder
             ).pipe(finalize(() => {
                 entity.locked = false;
             })).subscribe(complete, complete);
