@@ -1,13 +1,9 @@
 <div class="close-dialog" (click)="close(true)"></div>
 <div class="mat-dialog-header">
-    <ng-container *ngIf="!editTitle">
-        <div class="title">
-            <input type="text" [value]="title || data.title" readonly>
-        </div>
-    </ng-container>
-    <ng-container *ngIf="editTitle">
+    <div class="title-wrapper">
         <dx-text-box
             name="title"
+            [readOnly]="!editTitle"
             [showClearButton]="titleClearButton"
             [placeholder]="placeholder"
             [(value)]="title"
@@ -16,7 +12,7 @@
             (onKeyUp)="titleKeyUp($event)">
         </dx-text-box>
         <ng-content select="[headerContent]"></ng-content>
-    </ng-container>
+    </div>
     <mat-dialog-actions>
         <div class="mat-dialog-options" *ngIf="options">
             <ng-template ngFor let-option [ngForOf]="options" let-i="index">

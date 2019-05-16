@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { CreditReportDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -17,12 +16,11 @@ export class PublicInfoComponent extends AppComponentBase implements OnInit {
       injector: Injector
     ) {
       super(injector);
-      this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
     }
 
     ngOnInit() {
     }
-    
+
     getItemValue(item, node) {
         if (this.dateFields.indexOf(node) < 0)
             return item[node];

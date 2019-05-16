@@ -34,7 +34,7 @@ export class StaticListComponent extends AppComponentBase {
     @Input() pageLoadMode = 'nextButton';
     @Input() searchExprType = 'name';
     @Input() bulkUpdatePermissionKey = '';
-    @Input('list') 
+    @Input('list')
     set list(value: any[]) {
         this._list = value.map((item) => {
             return _.extend(item, {
@@ -63,7 +63,7 @@ export class StaticListComponent extends AppComponentBase {
         injector: Injector,
         private _filtersService: FiltersService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     toggle() {

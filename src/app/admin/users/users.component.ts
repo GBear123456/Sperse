@@ -492,10 +492,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     deactivate() {
         super.deactivate();
-
-        this._filtersService.localizationSourceName =
-            AppConsts.localization.defaultLocalizationSourceName;
-
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();

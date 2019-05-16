@@ -43,7 +43,7 @@ export class EditAddressDialog extends AppComponentBase {
                 private _angularGooglePlaceService: AngularGooglePlaceService,
                 private store$: Store<RootStore.State>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
         if (this.validateAddress(data)) {
             this.action = 'Edit';

@@ -16,6 +16,6 @@ export class PersonDialogComponent extends AppComponentBase {
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<PersonDialogComponent>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 }

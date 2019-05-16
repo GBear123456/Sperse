@@ -67,7 +67,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         private dialog: MatDialog,
         public featureCheckerService: FeatureCheckerService
     ) {
-        super(injector, AppConsts.localization.PFMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {

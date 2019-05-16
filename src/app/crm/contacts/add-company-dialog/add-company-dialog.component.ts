@@ -28,7 +28,7 @@ export class AddCompanyDialogComponent extends AppComponentBase {
                 private orgServiceProxy: OrganizationContactServiceProxy,
                 public dialogRef: MatDialogRef<AddCompanyDialogComponent>,
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     lookupCompanies(search?: string) {

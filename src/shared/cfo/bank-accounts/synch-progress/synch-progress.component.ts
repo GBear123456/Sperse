@@ -30,7 +30,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         private syncProgressService: SynchProgressService
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit(): void {

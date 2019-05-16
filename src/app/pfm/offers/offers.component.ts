@@ -65,8 +65,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         private _offersProxy: OfferManagementServiceProxy,
         private itemDetailsService: ItemDetailsService
     ) {
-        super(injector, AppConsts.localization.PFMLocalizationSourceName);
-        this._filtersService.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
+        super(injector);
 
         this.searchColumns = ['Name'];
         this.searchValue = '';

@@ -19,10 +19,10 @@ export class ContactPersonsDialogComponent extends AppComponentBase {
         @Inject(MAT_DIALOG_DATA) public data: any,
         public dialogRef: MatDialogRef<ContactPersonsDialogComponent>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
-    ngOnInit() {      
+    ngOnInit() {
         this.contactList.filter = (search?) => {
             return this.data['organizationContactInfo'].contactPersons.filter((person) => {
                 return (person.id != this.data.personContactInfo.id)

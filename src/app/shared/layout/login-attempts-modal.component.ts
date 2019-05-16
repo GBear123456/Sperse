@@ -11,6 +11,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 @Component({
     selector: 'loginAttemptsModal',
@@ -28,7 +29,8 @@ export class LoginAttemptsModalComponent implements OnInit {
         private _userLoginService: UserLoginServiceProxy,
         private _changeDetectorRef: ChangeDetectorRef,
         private _appSession: AppSessionService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public profileService: ProfileService
     ) {}
 
     ngOnInit() {

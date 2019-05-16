@@ -802,7 +802,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         private _currencyPipe: CurrencyPipe
     ) {
         super(injector);
-        this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
 
         this._calculatorService.subscribePeriodChange((value) => {
             this.onCalculatorValueChange(value);
@@ -817,7 +816,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     ngOnInit() {
-        this.initLocalization();
         this.displayedStatsDetails$.subscribe((details) => this.displayedStatsDetails = details);
         this.statsDetailResult$.subscribe(details => {
             this.detailsContainsHistorical = this.isInstanceAdmin && details.some(item => !!item.date);
@@ -1365,8 +1363,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     ngOnDestroy() {
-        this._filtersService.localizationSourceName
-            = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
@@ -5301,11 +5297,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     showPreferencesDialog() {
         this.dialog.open(PreferencesDialogComponent, {
             panelClass: 'slider',
-            data: {
-                instanceId: this.instanceId,
-                instanceType: this.instanceType,
-                localization: this.localizationSourceName
-            }
         }).afterClosed().subscribe(options => {
             if (options && options.update) {
                 this.refreshDataGridWithPreferences(options);
@@ -6149,13 +6140,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    private initLocalization() {
-        this.localizationService.localizationSourceName = this.localizationSourceName;
-        this._filtersService.localizationSourceName = this.localizationSourceName;
-    }
-
     activate() {
-        this.initLocalization();
         this.initToolbarConfig();
         this.setupFilters(this.filters);
         this.initFiltering();
@@ -6178,8 +6163,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     deactivate() {
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this.appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();

@@ -181,7 +181,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             {text: this.ls.l('SaveAndExtend'), selected: false},
             {text: this.ls.l('SaveAndClose'), selected: false}
         ];
+    }
 
+    ngOnInit() {
         this.countriesStateLoad();
         this.addressTypesLoad();
         this.phoneTypesLoad();
@@ -191,9 +193,6 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.leadStagesLoad();
 
         this.initToolbarConfig();
-    }
-
-    ngOnInit() {
         this.saveOptionsInit();
     }
 
@@ -926,20 +925,23 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     leadStagesLoad() {
         this.modalDialog.startLoading();
         this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.data.customerType)
-            .pipe(finalize(() => this.modalDialog.finishLoading()))
-            .subscribe(result => {
-                this.stages = result.stages.map((stage) => {
-                    if (stage.sortOrder === this.defaultStageSortOrder) {
-                        this.stageId = stage.id;
-                    }
-                    return {
-                        id: stage.id,
-                        name: stage.name,
-                        index: stage.sortOrder
-                    };
-                });
-                this._changeDetectorRef.detectChanges();
-            });
+            .subscribe(
+                result => {
+                    this.stages = result.stages.map((stage) => {
+                        if (stage.sortOrder === this.defaultStageSortOrder) {
+                            this.stageId = stage.id;
+                        }
+                        return {
+                            id: stage.id,
+                            name: stage.name,
+                            index: stage.sortOrder
+                        };
+                    });
+                    this._changeDetectorRef.detectChanges();
+                    this.modalDialog.finishLoading();
+                },
+                () => this.modalDialog.finishLoading()
+            );
     }
 
     onStagesChanged(event) {

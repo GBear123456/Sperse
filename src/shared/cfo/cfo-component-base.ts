@@ -18,7 +18,6 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
 
     constructor(injector: Injector) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this._cfoService = injector.get(CFOService);
         if (this.constructor == this._activatedRoute.component)
             this._activatedRoute.params.pipe(

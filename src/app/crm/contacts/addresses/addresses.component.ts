@@ -58,7 +58,7 @@ export class AddressesComponent extends AppComponentBase implements OnInit {
                 private dialogService: DialogService,
                 private store$: Store<RootStore.State>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {

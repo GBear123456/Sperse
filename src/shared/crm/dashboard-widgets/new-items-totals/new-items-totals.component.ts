@@ -18,7 +18,7 @@ export class NewItemsTotalsComponent extends AppComponentBase {
         injector: Injector,
         _dashboardService: DashboardWidgetsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.fields = _dashboardService.totalsDataFields;
         _dashboardService.subscribeTotalsData(result => {

@@ -17,7 +17,6 @@ export class ContactInformationComponent extends AppComponentBase implements OnI
         private _contactService: ContactServiceProxy
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
     }
 
     ngOnInit() {

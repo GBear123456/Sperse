@@ -107,7 +107,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         private csvParser: Papa
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),

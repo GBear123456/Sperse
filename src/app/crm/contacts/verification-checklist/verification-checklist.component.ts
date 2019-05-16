@@ -13,7 +13,7 @@ export class VerificationChecklistComponent extends AppComponentBase implements 
     collapsed: boolean = false;
 
     constructor(injector: Injector) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {
@@ -24,8 +24,8 @@ export class VerificationChecklistComponent extends AppComponentBase implements 
     }
 
     getItemCounts(item: VerificationChecklistItem): string {
-        return (item.confirmedCount != null 
-            ? `(${item.confirmedCount}/${item.totalCount})` 
+        return (item.confirmedCount != null
+            ? `(${item.confirmedCount}/${item.totalCount})`
             : (item.totalCount == null ? '' : `(${item.totalCount })`)
         );
     }

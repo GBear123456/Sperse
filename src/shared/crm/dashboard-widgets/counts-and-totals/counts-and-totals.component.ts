@@ -21,7 +21,7 @@ export class CountsAndTotalsComponent extends AppComponentBase {
         injector: Injector,
         private _dashboardService: DashboardWidgetsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.fields = _dashboardService.totalsDataFields;
 

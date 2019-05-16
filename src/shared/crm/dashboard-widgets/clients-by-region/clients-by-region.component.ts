@@ -19,7 +19,7 @@ export class ClientsByReginComponent extends AppComponentBase implements AfterVi
 
     usaMap: any = mapsData.usa;
     gdpData: any = {};
-    
+
     toolTipData: Object;
     pipe: any = new DecimalPipe('en-US');
 
@@ -28,7 +28,7 @@ export class ClientsByReginComponent extends AppComponentBase implements AfterVi
         private _dashboardWidgetsService: DashboardWidgetsService,
         private _dashboardServiceProxy: DashboardServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         _dashboardWidgetsService.subscribePeriodChange((period) => {
             this.startLoading();

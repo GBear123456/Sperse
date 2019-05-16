@@ -91,10 +91,10 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private personServiceProxy: PersonContactServiceProxy,
         private orgContactService: OrganizationContactServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.initTypes();
-        
+
         this._contactInfo = this.data.contactInfo;
         let personContactInfo = this._contactInfo.personContactInfo;
         const relatedOrganizations: any[] = personContactInfo && personContactInfo.orgRelations ?
@@ -256,7 +256,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         this.contactId = contact.id;
 
         this.companyContact = contact instanceof OrganizationShortInfo;
-        
+
         this.initTypes(false);
         this.applyOrdersFilter();
     }

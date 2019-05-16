@@ -27,7 +27,7 @@ export class HistoryListDialogComponent extends AppComponentBase implements OnIn
         public dialogRef: MatDialogRef<HistoryListDialogComponent>,
         private orderServiceProxy: OrderServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {

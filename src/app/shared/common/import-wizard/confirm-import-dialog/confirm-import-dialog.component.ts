@@ -18,7 +18,5 @@ export class ConfirmImportDialog extends AppComponentBase {
 
         this.data = injector.get(MAT_DIALOG_DATA);
         this.dialogRef = <any>injector.get(MatDialogRef);
-
-        this.localizationSourceName = this.data.localization;
     }
 }

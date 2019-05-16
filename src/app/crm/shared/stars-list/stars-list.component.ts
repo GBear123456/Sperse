@@ -45,7 +45,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
         private _starsService: ContactStarsServiceProxy,
         private store$: Store<AppStore.State>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     toggle() {

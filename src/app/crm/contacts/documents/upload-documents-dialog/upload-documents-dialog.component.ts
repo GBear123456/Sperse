@@ -32,7 +32,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
         private elementRef: ElementRef,
         public dialogRef: MatDialogRef<UploadDocumentsDialogComponent>,
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({

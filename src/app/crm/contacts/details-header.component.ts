@@ -141,7 +141,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         private _cacheService: CacheService,
         private lifeCycleService: LifecycleSubjectsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.isAdminModule = (appService.getModule() == appService.getDefaultModule());
     }

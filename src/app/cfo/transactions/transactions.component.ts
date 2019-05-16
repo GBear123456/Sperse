@@ -145,8 +145,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     ) {
         super(injector);
 
-        this.filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-
         if (filtersService.fixed)
             this._categoriesShowed = false;
 
@@ -155,7 +153,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     ngOnInit(): void {
-        this.initLocalization();
         this.initHeadlineConfig();
 
         /** If component is not activated - wait until it will activate and then reload */
@@ -1181,21 +1178,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     ngOnDestroy() {
         this._appService.updateToolbar(null);
-        this.filtersService.localizationSourceName
-            = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
         super.ngOnDestroy();
     }
 
-    private initLocalization() {
-        this.localizationService.localizationSourceName = this.localizationSourceName;
-        this.filtersService.localizationSourceName = this.localizationSourceName;
-    }
-
     activate() {
-        this.initLocalization();
         this.initFiltering();
         this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, true);
         this.initToolbarConfig();
@@ -1215,8 +1204,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     deactivate() {
-        this.localizationService.localizationSourceName = undefined;
-        this.filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();

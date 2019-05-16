@@ -42,7 +42,6 @@ export class NotesComponent extends AppComponentBase implements OnInit {
     ) {
         super(injector);
 
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         _clientService.invalidateSubscribe((area) => {
             if (area == 'notes') {
                 this.data = this._contactService['data'];
@@ -66,7 +65,7 @@ export class NotesComponent extends AppComponentBase implements OnInit {
         dataSource$.subscribe((notes: NoteInfoDto[]) => {
             if (this.componentIsActivated) {
                 this.dataSource = notes;
-                if (!notes || !notes.length) 
+                if (!notes || !notes.length)
                     setTimeout(() => this.openNoteAddDialog());
             }
         });

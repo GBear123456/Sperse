@@ -57,7 +57,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         private _clientService: ContactsService,
         private _invoiceService: InvoiceServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
         this._clientService.invalidateSubscribe((area) => {
             if (area == 'invoices') {

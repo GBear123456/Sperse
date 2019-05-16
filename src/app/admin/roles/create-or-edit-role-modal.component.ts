@@ -17,10 +17,10 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import {
-CreateOrUpdateRoleInput,
-GetRoleForEditOutput,
-RoleEditDto,
-RoleServiceProxy
+    CreateOrUpdateRoleInput,
+    GetRoleForEditOutput,
+    RoleEditDto,
+    RoleServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';

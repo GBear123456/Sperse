@@ -51,7 +51,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
         private _filtersService: FiltersService,
         private store$: Store<AppStore.State>,
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     private moveSelectedItemsToTop() {
@@ -148,7 +148,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                     this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
                         if (res && res.length) {
                             res.forEach((user) => {
-                                this.isRelatedUser = this.isRelatedUser || 
+                                this.isRelatedUser = this.isRelatedUser ||
                                     (user.id == abp.session.userId);
                                 if (!_.findWhere(this.list, { id: user.id }))
                                     this.list.unshift(user);

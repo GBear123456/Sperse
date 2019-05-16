@@ -38,20 +38,20 @@ export class LinkedAccountsModalComponent {
         private _linkedAccountService: LinkedAccountService,
         private _messageService: MessageService,
         private _notifyService: NotifyService,
-        private _primengTableHelper: PrimengTableHelper,
+        public primengTableHelper: PrimengTableHelper,
         public ls: AppLocalizationService
     ) {}
 
     getLinkedUsers(event?: LazyLoadEvent) {
         this.modalDialog.startLoading();
         this._userLinkService.getLinkedUsers(
-            this._primengTableHelper.getMaxResultCount(this.paginator, event),
-            this._primengTableHelper.getSkipCount(this.paginator, event),
-            this._primengTableHelper.getSorting(this.dataTable))
+            this.primengTableHelper.getMaxResultCount(this.paginator, event),
+            this.primengTableHelper.getSkipCount(this.paginator, event),
+            this.primengTableHelper.getSorting(this.dataTable))
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe(result => {
-                    this._primengTableHelper.totalRecordsCount = result.totalCount;
-                    this._primengTableHelper.records = result.items;
+                    this.primengTableHelper.totalRecordsCount = result.totalCount;
+                    this.primengTableHelper.records = result.items;
                 });
     }
 

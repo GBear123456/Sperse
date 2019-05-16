@@ -92,7 +92,6 @@ export class CreateUserDialogComponent implements OnInit {
         public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        this.ls.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.saveContextMenuItems = [
             { text: this.ls.l('SaveAndAddNew'), selected: false },
             { text: this.ls.l('SaveAndClose'), selected: false }

@@ -255,8 +255,6 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden();
-        this._filtersService.localizationSourceName =
-            AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
     }

@@ -9,7 +9,6 @@ import { ContactListsServiceProxy, AddContactsToListsInput, ContactListInput,
 import * as _ from 'underscore';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-advanced-list',
@@ -52,7 +51,7 @@ export class AdvancedListComponent extends AppComponentBase implements OnInit {
         public dialog: MatDialog,
         private _filterService: FiltersService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     toggle() {
@@ -193,8 +192,7 @@ export class AdvancedListComponent extends AppComponentBase implements OnInit {
                     return (obj.id != itemId);
                 }),
                 entityPrefix: this.capitalize(this.name),
-                reassignToItemId: undefined,
-                localization: this.localizationSourceName
+                reassignToItemId: undefined
             };
         this.tooltipVisible = false;
         this.dialog.open(DeleteAndReassignDialogComponent, {

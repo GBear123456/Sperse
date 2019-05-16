@@ -109,7 +109,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {

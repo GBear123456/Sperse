@@ -20,7 +20,7 @@ export class RecentClientsComponent extends AppComponentBase implements OnInit {
     constructor(injector: Injector,
         private _dashboardServiceProxy: DashboardServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.dataSource = {};
     }

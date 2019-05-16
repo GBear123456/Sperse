@@ -64,7 +64,7 @@ export class PersonalFinanceHeaderComponent extends AppComponentBase {
         private _pfmLayoutService: PersonalFinanceLayoutService,
         private abpSessionService: AbpSessionService
     ) {
-        super(injector, AppConsts.localization.PFMLocalizationSourceName);
+        super(injector);
         _pfmLayoutService.headerContentSubscribe((component) => {
             setTimeout(() => {
                 this.adHeaderHost.viewContainerRef.clear();

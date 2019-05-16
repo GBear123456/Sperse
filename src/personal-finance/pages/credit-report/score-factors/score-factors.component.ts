@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 
 @Component({
   selector: 'app-score-factors',
@@ -14,7 +13,6 @@ export class ScoreFactorsComponent extends AppComponentBase implements OnInit {
     injector: Injector
   ) {
     super(injector);
-    this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
   }
 
   ngOnInit() {

@@ -123,7 +123,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 private _customerService: CustomerServiceProxy,
                 private _itemDetailsService: ItemDetailsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this._appStoreService.loadUserDictionaries();
         _contactService['data'] = {
             contactInfo: null,

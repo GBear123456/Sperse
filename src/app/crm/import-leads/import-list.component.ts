@@ -39,8 +39,6 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
         private _appService: AppService
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
-
         this.dataSource = {
             store: {
                 type: 'odata',

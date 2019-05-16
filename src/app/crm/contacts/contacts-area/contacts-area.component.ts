@@ -37,7 +37,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     private _clickCounter = 0;
     private _isInPlaceEditAllowed = true;
     private _itemInEditMode: any;
-    
+
     emailRegEx = AppConsts.regexPatterns.email;
 
     constructor(injector: Injector,
@@ -49,7 +49,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
                 private _organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 

@@ -1,7 +1,7 @@
-<modal-dialog [title]="ls('LinkedAccounts')"
+<modal-dialog [title]="ls.l('LinkedAccounts')"
               [editTitle]="false"
               [titleClearButton]="false"
-              [placeholder]="ls('LinkedAccounts')">
+              [placeholder]="ls.l('LinkedAccounts')">
     <dx-scroll-view showScrollbar="onHover">
         <div class="content">
             <form #linkAccountForm="ngForm" novalidate (ngSubmit)="save()">

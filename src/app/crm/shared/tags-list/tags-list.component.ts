@@ -57,7 +57,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
         private store$: Store<AppStore.State>,
         private actions$: ActionsSubject
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     toggle() {
@@ -86,7 +86,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 else
                     this.process(isRemove);
             }
-            this.listComponent.clearFilter(); 
+            this.listComponent.clearFilter();
         }
         this.tooltipVisible = false;
     }
@@ -220,8 +220,7 @@ export class TagsListComponent extends AppComponentBase implements OnInit {
                 return (obj.id != itemId);
             }),
             entityPrefix: 'Tag',
-            reassignToItemId: undefined,
-            localization: this.localizationSourceName
+            reassignToItemId: undefined
         };
         this.tooltipVisible = false;
         this.dialog.open(DeleteAndReassignDialogComponent, {

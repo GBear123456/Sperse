@@ -117,7 +117,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         private store$: Store<AppStore.State>,
         private itemDetailsService: ItemDetailsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -667,8 +667,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     activate() {
         super.activate();
-        this.localizationService.localizationSourceName = this.localizationSourceName;
-        this._filtersService.localizationSourceName = this.localizationSourceName;
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -684,9 +682,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     deactivate() {
         super.deactivate();
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
-
         this.subRouteParams.unsubscribe();
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();

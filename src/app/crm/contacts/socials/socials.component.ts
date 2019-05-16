@@ -48,7 +48,7 @@ export class SocialsComponent extends AppComponentBase {
                 private _organizationContactService: OrganizationContactServiceProxy,
                 private dialogService: DialogService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
         this.linkTypesLoad();

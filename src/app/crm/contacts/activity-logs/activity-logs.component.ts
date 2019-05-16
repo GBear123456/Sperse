@@ -18,7 +18,6 @@ export class ActivityLogsComponent extends AppComponentBase implements OnInit {
         private _userService: UserServiceProxy
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
         this.dataSource = {
             store: {
                 type: 'odata',

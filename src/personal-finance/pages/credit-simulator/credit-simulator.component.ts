@@ -1,7 +1,6 @@
 import {Component, OnInit, Injector} from '@angular/core';
 import {appModuleAnimation} from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { finalize } from 'rxjs/operators';
 
 import { CreditSimulatorServiceProxy, ScoreSimulatorDto, ScoreSimulatorInfoDto, ScoreSimulatorInfoDtoAccessStatus } from '@shared/service-proxies/service-proxies';
@@ -26,7 +25,6 @@ export class CreditSimulatorComponent extends AppComponentBase implements OnInit
         private _simulateScoreService: CreditSimulatorServiceProxy
     ) {
         super(injector);
-        this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
     }
 
     ngOnInit() {

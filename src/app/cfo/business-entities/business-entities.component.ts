@@ -129,7 +129,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                localization: this.localizationSourceName,
                 id: id
             }
         }).afterClosed().subscribe(options => {

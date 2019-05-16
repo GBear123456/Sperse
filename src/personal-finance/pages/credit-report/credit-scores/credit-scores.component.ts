@@ -16,7 +16,6 @@ export class CreditScoresComponent extends AppComponentBase implements OnInit {
     injector: Injector,
   ) {
     super(injector);
-    this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
   }
 
   ngOnInit() {

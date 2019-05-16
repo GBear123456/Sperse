@@ -78,7 +78,7 @@ export class LeadInformationComponent extends AppComponentBase implements OnInit
         private _leadService: LeadServiceProxy,
         private _contactsService: ContactsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 

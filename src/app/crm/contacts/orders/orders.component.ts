@@ -44,7 +44,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
         private orderServiceProxy: OrderServiceProxy,
         private currencyPipe: CurrencyPipe
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.dataSource = this.getDataSource(+this._contactService['data'].contactInfo.id);
         this._clientService.invalidateSubscribe((area) => {
             if (area == 'orders') {

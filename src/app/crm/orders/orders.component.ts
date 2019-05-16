@@ -90,8 +90,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private _pipelineService: PipelineService,
         private store$: Store<CrmStore.State>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
-        this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
+        super(injector);
 
         this.dataSource = {
             uri: this.dataSourceURI,
@@ -549,8 +548,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     activate() {
         super.activate();
-        this.localizationService.localizationSourceName = this.localizationSourceName;
-        this._filtersService.localizationSourceName = this.localizationSourceName;
 
         this.initFilterConfig();
         this.initToolbarConfig();
@@ -608,10 +605,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     deactivate() {
         super.deactivate();
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName =
-            AppConsts.localization.defaultLocalizationSourceName;
-
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
