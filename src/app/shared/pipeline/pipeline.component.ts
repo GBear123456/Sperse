@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, EventEmitter, 
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, EventEmitter,
     HostBinding, Output, Input, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
@@ -43,7 +43,7 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
     providers: [ StageServiceProxy ],
     host: {
         '(window:keyup)': 'onKeyUp($event)'
-    },    
+    },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
@@ -148,7 +148,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     this.selectedEntities = [];
                 } else {
                     let stage = this.getStageByElement(value[3]);
-                    this.updateEntityStage(this.getEntityById(entityId, stage), 
+                    this.updateEntityStage(this.getEntityById(entityId, stage),
                         newStage, stage, () => {
                             this.onEntityStageChanged && this.onEntityStageChanged
                                 .emit(this.getEntityById(entityId, newStage));
@@ -205,7 +205,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             moves: (el, source) => {
                 if (this.moveDisabled)
                     return false;
-        
+
                 let stage = this.getStageByElement(source);
                 if (stage['isFinal'])
                     return false;
@@ -360,8 +360,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 finalize(() => {
                     if (oneStageOnly || this.isAllStagesLoaded())
                         setTimeout(() => {
-                            this._changeDetector.detectChanges();  
-                            this.finishLoading()
+                            this._changeDetector.detectChanges();
+                            this.finishLoading();
                         });
                     if (oneStageOnly && stage['full'])
                         this.processTotalsRequest(this.queryWithSearch);
@@ -404,7 +404,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             requireTotalCount: false,
             store: {
                 type: 'odata',
-                url: this.getODataUrl(this.totalsURI, filter),
+                url: this.getODataUrl(
+                    this.totalsURI,
+                    filter.concat({and: [
+                        this._dataSource.customFilter
+                    ]})
+                ),
                 version: AppConsts.ODataVersion,
                 beforeSend: this.getBeforeSendEvent(),
                 paginate: false
@@ -470,7 +475,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         if (entity && entity.Id) {
             this.disabled = true;
             setTimeout(() => {
-                if (newStage.name != oldStage.name) {                
+                if (newStage.name != oldStage.name) {
                     this._pipelineService.updateEntityStage(
                         this.pipelinePurposeId, entity, oldStage, newStage, () => {
                             this.disabled = false;
@@ -478,16 +483,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             if (oldStage['total'] && !oldStage['entities'].length) {
                                 this.startLoading();
                                 this.loadData(0, oldStage['stageIndex'], true);
-                            }                   
+                            }
                         }
                     );
-                } else                
+                } else
                     this._pipelineService.updateEntitySortOrder(
                         this.pipeline.id, entity, this._pipelineService.getEntityNewSortOrder(entity, newStage), () => {
                             this.loadData(0, newStage['stageIndex'], true).subscribe(() => {
                                 this.disabled = false;
                                 complete && complete();
-                            })
+                            });
                         }
                     );
             });

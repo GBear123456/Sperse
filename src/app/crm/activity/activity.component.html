@@ -45,6 +45,7 @@
             <div>
                 <div class="funnel-wrapper">
                     <app-pipeline
+                        [totalsURI]="'ActivityCount'"
                         [dataSource]="pipelineDataSource"
                         [dragulaName]="'activityStages'"
                         [selectFields]="['Id', 'Title', 'Description', 'StartDate', 'EndDate', 'StageId']"
