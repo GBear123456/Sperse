@@ -786,6 +786,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     else
                         gridInstance.clearSelection();
                 }
+                this.notify.success(this.l('StageSuccessfullyUpdated'));
             });
         }
     }
