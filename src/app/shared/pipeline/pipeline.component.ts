@@ -249,6 +249,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._pipelineService.compactView$.pipe(takeUntil(this.destroy$)).subscribe((compactView: boolean) => {
             this.compactView = compactView;
             this.stagePageCount = compactView ? this.COMPACT_VIEW_PAGE_COUNT : this.DEFAULT_PAGE_COUNT;
+            this._changeDetector.detectChanges();
         });
         this._pipelineService.compactView$.pipe(
             takeUntil(this.destroy$),
@@ -375,7 +376,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         });
                         if (!this.totalsURI)
                             stage['total'] = dataSource.totalCount();
-                        stage['full'] = (stage['entities'].length >= (stage['total'] || 0));
+                        stage['full'] = stage['entities'].length >= (stage['total'] || 0);
                     } else  {
                         if (!page || !stage['entities'])
                             stage['entities'] = [];
