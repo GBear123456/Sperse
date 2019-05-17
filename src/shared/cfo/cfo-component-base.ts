@@ -69,4 +69,15 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
             instanceId: this.instanceId
         });
     }
+
+    checkMemberAccessPermission(permission) {
+        if (this._cfoService.hasStaticInstance &&   
+            this.instanceType == InstanceType.User && 
+            !this.instanceId
+        ) {        
+            return this.isGranted('Pages.CFO.MemberAccess.' + permission);
+        }
+    
+        return true;
+    }
 }

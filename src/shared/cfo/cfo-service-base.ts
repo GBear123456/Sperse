@@ -10,6 +10,5 @@ export abstract class CFOServiceBase {
     instanceTypeChanged: Subject<string> = new Subject();
     instanceTypeChanged$: Observable<string> = this.instanceTypeChanged.asObservable();
 
-    constructor() {
-    }
+    constructor() { }
 }
