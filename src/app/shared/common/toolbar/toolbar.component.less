@@ -254,16 +254,24 @@
             .dx-button-content {
                 order: 3;
                 min-width: 8px !important;
-                padding: 0px !important;
+                padding: 0 !important;
 
                 &:after {
                     background: url('../../../../assets/common/icons/dark-down-arrow-icon.svg') !important;
-                    right: 0px !important;
+                    right: 0 !important;
                 }
 
                 i {
                     display: none;
                 }
+            }
+        }
+    
+        [title="Currency"] {
+            padding: 0 10px;
+        
+            &::before {
+                color: #212c36;
             }
         }
 
