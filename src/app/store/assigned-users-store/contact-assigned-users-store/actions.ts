@@ -2,14 +2,14 @@ import { Action } from '@ngrx/store';
 import { UserInfoDto } from 'shared/service-proxies/service-proxies';
 
 export enum ActionTypes {
-    LOAD_REQUEST       = '[Partner Assigned Users] Load Request',
-    LOAD_FAILURE       = '[Partner Assigned Users] Load Failure',
-    LOAD_SUCCESS       = '[Partner Assigned Users] Load Success'
+    LOAD_REQUEST       = '[Contact Assigned Users] Load Request',
+    LOAD_FAILURE       = '[Contact Assigned Users] Load Failure',
+    LOAD_SUCCESS       = '[Contact Assigned Users] Load Success'
 }
 
 export class LoadRequestAction implements Action {
     readonly type = ActionTypes.LOAD_REQUEST;
-    constructor(public payload: boolean) {}
+    constructor(public payload: string) {}
 }
 
 export class LoadFailureAction implements Action {
@@ -19,7 +19,10 @@ export class LoadFailureAction implements Action {
 
 export class LoadSuccessAction implements Action {
     readonly type = ActionTypes.LOAD_SUCCESS;
-    constructor(public payload: UserInfoDto[]) {}
+    constructor(public payload: {
+        contactGroup: string,
+        users: UserInfoDto[]
+    }) {}
 }
 
 export type Actions = LoadRequestAction | LoadFailureAction | LoadSuccessAction;

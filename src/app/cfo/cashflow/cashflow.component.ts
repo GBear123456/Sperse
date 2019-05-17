@@ -1386,6 +1386,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         )
             .subscribe(transactions => {
                 this.startDataLoading = true;
+                this.startLoading();
                 this.handleCashflowData(transactions, period);
                 /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
                 this.overrideCashflowDataPushMethod();
@@ -1397,12 +1398,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.appService.updateToolbar(null);
                 } else {
                     this.gridDataExists = true;
-                    this.initToolbarConfig();
                     this.dataSource = this.getApiDataSource();
-
-                    /** Init footer toolbar with the gathered data from the previous requests */
-                    this.initFooterToolbar();
                 }
+
+                this.initToolbarConfig();
+                this.initFooterToolbar();
+
                 if (completeCallback) {
                     completeCallback.call(this);
                 }
@@ -2090,7 +2091,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         this.contentReady = true;
-        if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
+        if (this.pivotGrid && this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
         }
 
@@ -6206,7 +6207,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                transactionId: this.transactionId
+                transactionId$: of(this.transactionId)
             }
         });
     }

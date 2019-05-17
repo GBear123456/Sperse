@@ -12,7 +12,10 @@ import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-mo
 @Component({
     selector: 'linkedAccountsModal',
     templateUrl: './linked-accounts-modal.component.html',
-    styleUrls: ['./linked-accounts-modal.component.less']
+    styleUrls: [
+        '../../../assets/primeng/datatable/css/primeng.datatable.less',
+        './linked-accounts-modal.component.less'
+    ]
 })
 export class LinkedAccountsModalComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild('dataTable') dataTable: Table;

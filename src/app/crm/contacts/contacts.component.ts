@@ -21,7 +21,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
-import { AppStore, PartnerTypesStoreSelectors, PartnerAssignedUsersStoreSelectors, LeadAssignedUsersStoreSelectors, CustomerAssignedUsersStoreSelectors } from '@app/store';
+import { AppStore, PartnerTypesStoreSelectors, ContactAssignedUsersStoreSelectors } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -61,14 +61,14 @@ import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
     },
     providers: [ AppStoreService, DialogService ]
 })
-export class ContactsComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class ContactsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
 
     readonly RP_DEFAULT_ID = RP_DEFAULT_ID;
     readonly RP_USER_INFO_ID = RP_USER_INFO_ID;
 
     customerId: number;
-    customerType: string;
+    contactGroup: string;
     contactInfo: ContactInfoDto;
     personContactInfo: PersonContactInfoDto;
     primaryContact: any;
@@ -132,7 +132,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         };
         this.rootComponent = this.getRootComponent();
         this.paramsSubscribe.push(this._activatedRoute.params
-            .subscribe(params => this.loadData(params)));
+            .subscribe(params => this.loadData(params).subscribe(() => this.initNavButtons())));
 
         this.paramsSubscribe.push(this._activatedRoute.queryParams
             .subscribe(params => {
@@ -163,7 +163,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         _contactsService.loadLeadInfoSubscribe(() => this.loadLeadData());
     }
 
-    ngOnInit() {
+    initNavButtons() {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
         let key = this.getCacheKey(abp.session.userId);
@@ -176,11 +176,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 break;
             case 'clients':
                 this.dataSourceURI = 'Customer';
-                this.currentItemId = this.params.clientId;
+                this.currentItemId = this.params.contactId;
                 break;
             case 'partners':
                 this.dataSourceURI = 'Partner';
-                this.currentItemId = this.params.partnerId;
+                this.currentItemId = this.params.contactId;
                 break;
             case 'users':
                 this.dataSourceURI = 'User';
@@ -211,8 +211,8 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                     userId: this.dataSourceURI === 'User'
                             ? itemFullInfo.itemData[itemIdProperty]
                             : (this.dataSourceURI != 'Lead' ? itemFullInfo.itemData.UserId : undefined),
-                    clientId: this.dataSourceURI == 'Customer' ? itemFullInfo.itemData[itemIdProperty] : this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
-                    partnerId: this.dataSourceURI == 'Partner' ? itemFullInfo.itemData[itemIdProperty] : undefined,
+                    contactId: this.dataSourceURI == 'Customer' || this.dataSourceURI == 'Partner' ?
+                        itemFullInfo.itemData[itemIdProperty] : this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
                     customerId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData.CustomerId : undefined,
                     leadId: this.dataSourceURI == 'Lead' ? itemFullInfo.itemData[itemIdProperty] : undefined,
                     companyId: itemFullInfo.itemData.OrganizationId
@@ -225,7 +225,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     private getSection() {
         return this.referrerParams && this.referrerParams.referrer && this.referrerParams.referrer.split('/').pop()
-            || (this._router.url.indexOf('partner') >= 0 ? 'partners' : 'clients');
+            || (this.contactGroup == ContactGroup.Partner ? 'partners' : 'clients');
     }
 
     private updateLocation(itemFullInfo) {
@@ -262,11 +262,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             },
             {label: 'Documents', route: 'documents'},
             {label: 'Notes', route: 'notes'},
-            {label: 'Orders', route: 'orders', hidden: this.customerType !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective},
-            {label: 'Invoices', route: 'invoices', hidden: this.customerType !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective},
+            {label: 'Orders', route: 'orders', hidden: this.contactGroup !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective},
+            {label: 'Invoices', route: 'invoices', hidden: this.contactGroup !== ContactGroup.Client || this.contactInfo.statusId === ContactStatus.Prospective},
             {label: 'Subscriptions', route: 'subscriptions', hidden: !this.isClientDetailPage()},
             {label: 'Payment Information', route: 'payment-information', hidden: !this.isClientDetailPage()},
-            {label: 'Lead Information', route: 'lead-information', hidden: this.customerType == ContactGroup.Partner || (this.leadInfo && !this.leadInfo.id)},
+            {label: 'Lead Information', route: 'lead-information', hidden: this.contactGroup == ContactGroup.Partner || (this.leadInfo && !this.leadInfo.id)},
             {
                 label: 'Activity Logs',
                 route: 'activity-logs',
@@ -279,7 +279,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     isClientDetailPage() {
-        return this.customerType != ContactGroup.Partner && this.contactInfo.statusId != ContactStatus.Prospective;
+        return this.contactGroup != ContactGroup.Partner && this.contactInfo.statusId != ContactStatus.Prospective;
     }
 
     private storeInitialData() {
@@ -289,6 +289,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
     private fillContactDetails(result, contactId = null) {
         this._contactService['data'].contactInfo = result;
         this._contactsService.contactInfoUpdate(result);
+        this.contactGroup = result.groupId;
 
         contactId = contactId || result.personContactInfo.id;
 
@@ -340,9 +341,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
     loadData(params) {
         let userId = params['userId'],
-            clientId = params['clientId'] || params['contactId'],
-            partnerId = params['partnerId'],
-            customerId = clientId || partnerId,
+            contactId = params['contactId'],
             leadId = params['leadId'],
             companyId = params['companyId'];
         this.params = params;
@@ -350,7 +349,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             userId: userId, user: null, roles: null
         };
         this._contactService['data'].contactInfo = {
-            id: this.customerId = customerId
+            id: this.customerId = contactId
         };
         this._contactService['data'].leadInfo = {
             id: this.leadId = leadId
@@ -358,11 +357,11 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
 
         return userId
                ? this.loadDataForUser(userId, companyId)
-               : this.loadDataForClient(customerId, leadId, partnerId, companyId);
+               : this.loadDataForClient(contactId, leadId, companyId);
     }
 
     get isUserProfile() {
-        return this.customerType === ContactGroup.UserProfile;
+        return this.contactGroup === ContactGroup.UserProfile;
     }
 
     getContactInfoWithCompany(companyId, contactInfo$) {
@@ -400,7 +399,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         return res$;
     }
 
-    loadDataForClient(contactId: number, leadId: number, partnerId: number, companyId: number): Observable<any> {
+    loadDataForClient(contactId: number, leadId: number, companyId: number): Observable<any> {
         let contactInfo$ = of(null);
         if (contactId) {
             if (!this.loading) this.startLoading(true);
@@ -411,34 +410,31 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
                 publishReplay(),
                 refCount()
             );
-
-            if (leadId)
-                this.loadLeadsStages();
-
-            this.customerType = partnerId ? ContactGroup.Partner : ContactGroup.Client;
-            if (this.customerType == ContactGroup.Partner) {
-                let partnerInfo$ = this._partnerService.get(partnerId);
-                forkJoin(contactInfo$, partnerInfo$).pipe(finalize(() => {
-                    this.finishLoading(true);
-                    if (!this.partnerInfo)
-                        this.close(true);
-                })).subscribe(result => {
-                    let contactInfo = result[0];
-                    this.loadLeadData(contactInfo['personContactInfo']);
-                    this.fillContactDetails(contactInfo);
-                    this.fillPartnerDetails(result[1]);
-                    this.loadPartnerTypes();
-                });
-            } else {
-                contactInfo$.pipe(finalize(() => {
-                    this.finishLoading(true);
-                    if (!this.contactInfo)
-                        this.close(true);
-                })).subscribe(result => {
-                    this.loadLeadData(result['personContactInfo']);
-                    this.fillContactDetails(result);
-                });
-            }
+            contactInfo$.pipe(finalize(() => {
+                this.finishLoading(true);
+                if (!this.contactInfo)
+                    this.close(true);
+            })).subscribe(result => {
+                this.loadLeadData(result['personContactInfo']);
+                this.fillContactDetails(result);
+                if (this.contactGroup == ContactGroup.Partner) {
+                    setTimeout(() => {
+                        this.startLoading(true);
+                    }, 300);
+                    this._partnerService.get(contactId)
+                    .pipe(finalize(() => {
+                        this.finishLoading(true);
+                        if (!this.partnerInfo)
+                            this.close(true);
+                    })).subscribe(result => {
+                        this.fillPartnerDetails(result);
+                        this.loadPartnerTypes();
+                    });
+                }
+            });
+        }
+        if (leadId) {
+            this.loadLeadsStages();
         }
         return contactInfo$;
     }
@@ -669,12 +665,12 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
         if (!this.leadId || !this.leadInfo)
             return;
 
-        let sourceStage = this.leadInfo.stage;
-        let targetStage = $event.itemData.text;
-
-        if (this._pipelineService.updateEntityStage(AppConsts.PipelinePurposeIds.lead, this.leadInfo, sourceStage, targetStage, () => {
-            this.clientStageId = this.leadStages.find(stage => stage.name === targetStage).id;
-            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId]);            
+        const pipelineId = AppConsts.PipelinePurposeIds.lead;
+        let sourceStage = this._pipelineService.getStageByName(pipelineId, this.leadInfo.stage);
+        let targetStage = this._pipelineService.getStageByName(pipelineId, $event.itemData.name);
+                                  
+        if (this._pipelineService.updateEntityStage(pipelineId, this.leadInfo, sourceStage, targetStage, () => {
+            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId = targetStage.id]);            
         })) {
             this.leadInfo.stage = targetStage;
             this.notify.success(this.l('StageSuccessfullyUpdated'));
@@ -729,31 +725,22 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             this._userService['data'].userId = contact.userId);
     }
 
-    getAssignedUsersStoreSelectors = () => {
-        if (this.customerType == ContactGroup.Partner)
-            return PartnerAssignedUsersStoreSelectors;
-
-        if (this.customerType == ContactGroup.Client)
-            return CustomerAssignedUsersStoreSelectors;
-
-        if (this.leadId || this.leadInfo)
-            return LeadAssignedUsersStoreSelectors;
-
-        return CustomerAssignedUsersStoreSelectors;
+    getAssignedUsersSelector = () => {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: this.contactGroup });
     }
 
     getAssignmentsPermissinKey = () => {
-        if (this.customerType == ContactGroup.Partner)
+        if (this.contactGroup == ContactGroup.Partner)
             return 'Pages.CRM.Partners.ManageAssignments';
 
         return 'Pages.CRM.Customers.ManageAssignments';
     }
 
     getProxyService = () => {
-        if (this.customerType == ContactGroup.Partner)
+        if (this.contactGroup == ContactGroup.Partner)
             return this._partnerService;
 
-        if (this.customerType == ContactGroup.Client)
+        if (this.contactGroup == ContactGroup.Client)
             return this._customerService;
 
         if (this.leadId || this.leadInfo)
@@ -776,7 +763,7 @@ export class ContactsComponent extends AppComponentBase implements OnInit, OnDes
             data: {
                 isInLeadMode: this.contactInfo.statusId == ContactStatus.Prospective,
                 company: companyInfo && companyInfo.fullName,
-                customerType: this.customerType || ContactGroup.Client,
+                customerType: this.contactGroup || ContactGroup.Client,
                 refreshParent: () => {}
             }
         }).afterClosed().subscribe(() => {

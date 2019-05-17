@@ -190,7 +190,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             onChanged: () => {
                 this.dataGrid.instance.clearSelection();
                 this.getTotalValues();
-                this._changeDetectionRef.markForCheck();
+                this._changeDetectionRef.detectChanges();
             }
         });
 
@@ -318,7 +318,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 } else {
                     /** if change is on another component - mark this for future update */
                     this.updateAfterActivation = true;
-                    this._changeDetectionRef.markForCheck();
+                    this._changeDetectionRef.detectChanges();
                 }
             });
         });
@@ -326,7 +326,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this._bankAccountsService.accountsAmount$.subscribe(amount => {
             this.bankAccountCount = amount;
             this.initToolbarConfig();
-            this._changeDetectionRef.markForCheck();
+            this._changeDetectionRef.detectChanges();
         });
     }
 
@@ -337,6 +337,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             iconSrc: './assets/common/icons/credit-card-icon.svg',
             class: this.noRefreshedAfterSync ? 'need-refresh' : 'no-need-refresh'
         };
+        this._changeDetectionRef.detectChanges();
     }
 
     initToolbarConfig() {
@@ -562,7 +563,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         debitClassifiedCount++;
                 }
             });
-            setTimeout(() => { this.bankAccounts = _.uniq(bankAccounts); });
+            setTimeout(() => {
+                this.bankAccounts = _.uniq(bankAccounts);
+                this._changeDetectionRef.detectChanges();
+            });
 
             this.creditTransactionTotal = creditTotal;
             this.creditTransactionCount = creditCount;
@@ -588,6 +592,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     } else {
                         this.bankAccounts = [];
                     }
+                    this._changeDetectionRef.detectChanges();
                 });
 
                 this.adjustmentStartingBalanceTotal = totals[0].adjustmentStartingBalanceTotal;
@@ -619,6 +624,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.debitTransactionTotal = Math.trunc(this.debitTransactionTotal);
         this.transactionTotalCent = this.getFloatPart(this.transactionTotal);
         this.transactionTotal = Math.trunc(this.transactionTotal);
+        this._changeDetectionRef.detectChanges();
     }
 
     getFloatPart(value) {
@@ -664,16 +670,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     toggleCreditDefault() {
         this.defaultCreditTooltipVisible = !this.defaultCreditTooltipVisible;
+        this._changeDetectionRef.detectChanges();
     }
     toggleDebitDefault() {
         this.defaultDebitTooltipVisible = !this.defaultDebitTooltipVisible;
+        this._changeDetectionRef.detectChanges();
     }
     toggleTotalDefault() {
         this.defaultTotalTooltipVisible = !this.defaultTotalTooltipVisible;
+        this._changeDetectionRef.detectChanges();
     }
-    toggleSubaccountsDetails() {
-        this.defaultSubaccountTooltipVisible = !this.defaultSubaccountTooltipVisible;
-    }
+
     applyTotalFilters(classified: boolean, credit: boolean, debit: boolean) {
         let classifiedFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'classified'; });
         let amountFilter: FilterModel = _.find(this.filters, function (f: FilterModel) { return f.caption === 'Amount'; });
@@ -788,6 +795,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
             || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
             || _.has(x, 'CashflowSubCategoryId'));
+        this._changeDetectionRef.detectChanges();
     }
 
     getODataUrl(uri: String, filter?: Object) {
@@ -930,6 +938,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             e.originalEvent.dataTransfer.effectAllowed = 'all';
             e.originalEvent.dataTransfer.dropEffect = 'move';
             document.addEventListener('dxpointermove', this.stopPropagation, true);
+            this._changeDetectionRef.detectChanges();
         }).on('dragend', (e) => {
             e.originalEvent.preventDefault();
             e.originalEvent.stopPropagation();
@@ -937,9 +946,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.draggedTransactionRow = null;
             this.dragInProgress = false;
             document.removeEventListener('dxpointermove', this.stopPropagation);
+            this._changeDetectionRef.detectChanges();
         }).on('click', (e) => {
             this.draggedTransactionRow = null;
             this.dragInProgress = false;
+            this._changeDetectionRef.detectChanges();
         });
 
         this.getTotalValues();

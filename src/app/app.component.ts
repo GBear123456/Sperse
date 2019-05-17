@@ -12,7 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less',
         '../../node_modules/ng2-image-viewer/imageviewer.scss',
-        '../shared/metronic/m-toas.less'
+        '../shared/metronic/m-toast.less'
     ],
     encapsulation: ViewEncapsulation.None
 })
