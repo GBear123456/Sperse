@@ -1183,6 +1183,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         },
                         {
                             name: 'forecastModelAdd',
+                            visible: this.isInstanceAdmin,
                             action: (event) => {
                                 if (!event.element.getElementsByClassName('addModel').length)
                                     this.showForecastAddingInput(event);

@@ -35,7 +35,7 @@
                             </div>
                         </div>
                     </ng-container>
-                    <span class="filter-apply" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
+                    <span class="filter-apply" *ngIf="isInstanceAdmin || isMemberAccessManage" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
                 </div>
                 <br />
                 <ng-container *ngIf="showIsActiveFilter">

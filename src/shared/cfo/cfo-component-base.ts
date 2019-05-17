@@ -11,8 +11,11 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     instanceId: number;
     instanceType: string;
     get isInstanceAdmin() {
-        return (this.instanceType == InstanceType.User) || !isNaN(parseInt(this.instanceType)) ||
-            (this.instanceType == InstanceType.Main && this.permission.isGranted('Pages.CFO.MainInstanceAdmin'));
+        return this.checkMemberAccessPermission('Manage.Administrate', !isNaN(parseInt(this.instanceType)) ||
+            (this.instanceType == InstanceType.Main && this.permission.isGranted('Pages.CFO.MainInstanceAdmin')));
+    }
+    get isMemberAccessManage() {
+        return this.checkMemberAccessPermission('Manage', false);
     }
     _cfoService: CFOService;
 
@@ -70,14 +73,10 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         });
     }
 
-    checkMemberAccessPermission(permission) {
-        if (this._cfoService.hasStaticInstance &&   
-            this.instanceType == InstanceType.User && 
-            !this.instanceId
-        ) {        
+    checkMemberAccessPermission(permission, defaultResult = true) {
+        if (this.instanceType == InstanceType.User && !this.instanceId)
             return this.isGranted('Pages.CFO.MemberAccess.' + permission);
-        }
     
-        return true;
+        return defaultResult;
     }
 }

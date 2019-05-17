@@ -94,7 +94,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     ngOnInit(): void {
-        if (!this.isInstanceAdmin) {
+        if (!this.isInstanceAdmin && !this.isMemberAccessManage) {
             this.contextMenuItems = [
                 { text: this.l('Sync_Now') }
             ];
