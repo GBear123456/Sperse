@@ -176,7 +176,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                         items: [
                             {
                                 name: 'select-box',
-                                text: '(' + this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId + ')',
+                                text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
                                 widget: 'dxDropDownMenu',
                                 accessKey: 'currencySwitcher',
                                 options: {

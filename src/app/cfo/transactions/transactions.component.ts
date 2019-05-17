@@ -437,7 +437,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             items: [
                                 {
                                     name: 'select-box',
-                                    text: '(' + this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId + ')',
+                                    text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
                                     widget: 'dxDropDownMenu',
                                     accessKey: 'currencySwitcher',
                                     options: {
