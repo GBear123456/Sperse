@@ -45,7 +45,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     @Input() showClearSelection: boolean;
     @Input() showFilterIcon: boolean;
     @Input() showAddEntity: boolean;
-    @Input() includeNonCashflowNodes = false;
+    @Input() includeNonCashflowNodes = true;
     @Input() categoryId: number;
     @Input('dragMode')
     set dragMode(value: boolean) {

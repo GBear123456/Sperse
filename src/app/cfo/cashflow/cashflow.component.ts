@@ -852,7 +852,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.requestFilter.groupByPeriod = StatsFilterGroupByPeriod.Monthly;
         /** Create parallel operations */
         let getCashFlowInitialData$ = this._cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
-        let getCategoryTree$ = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, false);
+        let getCategoryTree$ = this._categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, true);
 
         this.userPreferencesService.removeLocalModel();
         let cashflowGridSettings$ = this.userPreferencesService.userPreferences$.pipe(first());
@@ -1543,17 +1543,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             const categoryPath: string[] = this.cashflowService.getCategoryFullPath(+categoryId, category, this.categoryTree);
             if (!this.cashflowService.categoryHasTransactions(this.treePathes, categoryPath)) {
                 const parentExists: boolean = !!this.categoryTree.categories[category.parentId];
-                /** Create stub for category */
-                const stubTransaction = this.createStubTransaction({
-                    'cashflowTypeId': this.categoryTree.accountingTypes[category.accountingTypeId].typeId,
-                    'accountingTypeId': category.accountingTypeId,
-                    'categoryId': category.parentId && parentExists ? category.parentId : categoryId,
-                    'subCategoryId': category.parentId && parentExists ? categoryId : undefined,
-                    'amount': 0,
-                    'date': date,
-                    'initialDate': initialDate
-                });
-                stubs.push(stubTransaction);
+                const cashflowTypeId = this.categoryTree.accountingTypes[category.accountingTypeId].typeId;
+                if (cashflowTypeId) {
+                    /** Create stub for category */
+                    const stubTransaction = this.createStubTransaction({
+                        'cashflowTypeId': cashflowTypeId,
+                        'accountingTypeId': category.accountingTypeId,
+                        'categoryId': category.parentId && parentExists ? category.parentId : categoryId,
+                        'subCategoryId': category.parentId && parentExists ? categoryId : undefined,
+                        'amount': 0,
+                        'date': date,
+                        'initialDate': initialDate
+                    });
+                    stubs.push(stubTransaction);
+                }
             }
         }
         return stubs;
