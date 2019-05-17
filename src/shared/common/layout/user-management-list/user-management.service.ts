@@ -134,7 +134,7 @@ export class UserManagementService {
 
     checkCFOMembersLayout() {
         let tenant = this.appSession.tenant;
-        return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.CFOMembers);
+        return tenant && (tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.AdvicePeriod);
     }
 
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {

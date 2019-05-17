@@ -47,7 +47,7 @@ export class AccountComponent extends AppComponentBase implements OnInit {
         switch (tenant && tenant.customLayoutType) {
             case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
                 return LendSpaceLayoutComponent;
-            case TenantLoginInfoDtoCustomLayoutType.CFOMembers: 
+            case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod: 
                 return CFOMemberLayoutComponent;
             default: 
                 return HostLayoutComponent;

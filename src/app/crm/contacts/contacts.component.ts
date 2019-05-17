@@ -737,16 +737,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getProxyService = () => {
-        if (this.contactGroup == ContactGroup.Partner)
-            return this._partnerService;
-
-        if (this.contactGroup == ContactGroup.Client)
-            return this._customerService;
-
-        if (this.leadId || this.leadInfo)
-            return this._leadService;
-
-        return this._customerService;
+        return this._contactService;
     }
 
     addNewContact(event) {
