@@ -219,7 +219,7 @@ export abstract class AppComponentBase implements OnDestroy {
         let tenant = this.appSession.tenant;
         if (!id)
             return tenant && [TenantLoginInfoDtoCustomLayoutType.LendSpace,
-                TenantLoginInfoDtoCustomLayoutType.CFOMembers].indexOf(tenant.customLayoutType) >= 0
+                TenantLoginInfoDtoCustomLayoutType.AdvicePeriod].indexOf(tenant.customLayoutType) >= 0
                     ? AppConsts.imageUrls.profileLendSpace : defaultUrl;
 
         let tenantId = this.appSession.tenantId;

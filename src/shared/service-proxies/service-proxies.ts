@@ -16643,14 +16643,17 @@ export class OfferAnnouncementServiceProxy {
     /**
      * @campaignId (optional) 
      * @offerDetailsLink (optional) 
+     * @emailAddresses (optional) 
      * @return Success
      */
-    sendAnnouncement(campaignId: number | null | undefined, offerDetailsLink: string | null | undefined): Observable<void> {
+    sendAnnouncement(campaignId: number | null | undefined, offerDetailsLink: string | null | undefined, emailAddresses: string | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/PFM/OfferAnnouncement/SendAnnouncement?";
         if (campaignId !== undefined)
             url_ += "campaignId=" + encodeURIComponent("" + campaignId) + "&"; 
         if (offerDetailsLink !== undefined)
             url_ += "offerDetailsLink=" + encodeURIComponent("" + offerDetailsLink) + "&"; 
+        if (emailAddresses !== undefined)
+            url_ += "emailAddresses=" + encodeURIComponent("" + emailAddresses) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -61966,13 +61969,13 @@ export enum InstanceType91 {
 export enum LayoutType {
     Default = "Default", 
     LendSpace = "LendSpace", 
-    CFOMembers = "CFOMembers", 
+    AdvicePeriod = "AdvicePeriod", 
 }
 
 export enum LayoutType2 {
     Default = "Default", 
     LendSpace = "LendSpace", 
-    CFOMembers = "CFOMembers", 
+    AdvicePeriod = "AdvicePeriod", 
 }
 
 export enum TenantHostType {
@@ -63005,7 +63008,7 @@ export enum RoleListDtoModuleId {
 export enum TenantLoginInfoDtoCustomLayoutType {
     Default = "Default", 
     LendSpace = "LendSpace", 
-    CFOMembers = "CFOMembers", 
+    AdvicePeriod = "AdvicePeriod", 
 }
 
 export enum TenantLoginInfoDtoPaymentPeriodType {

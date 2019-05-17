@@ -62,7 +62,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
         switch (tenant && tenant.customLayoutType) {
             case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
                 return LendSpaceResetPasswordComponent;
-            case TenantLoginInfoDtoCustomLayoutType.CFOMembers: 
+            case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod: 
                 return CFOMemberResetPasswordComponent;
             default: 
                 return HostResetPasswordComponent;
