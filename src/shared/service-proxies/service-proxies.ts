@@ -15646,6 +15646,293 @@ export class MemberServiceProxy {
 }
 
 @Injectable()
+export class MyFinancesServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @syncTypeId (optional) 
+     * @return Success
+     */
+    createUserInstanceProviderUIToken(syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/CreateUserInstanceProviderUIToken?";
+        if (syncTypeId !== undefined)
+            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateUserInstanceProviderUIToken(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateUserInstanceProviderUIToken(<any>response_);
+                } catch (e) {
+                    return <Observable<GetProviderUITokenOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetProviderUITokenOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateUserInstanceProviderUIToken(response: HttpResponseBase): Observable<GetProviderUITokenOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetProviderUITokenOutput>(<any>null);
+    }
+
+    /**
+     * @accountingTreeType (optional) 
+     * @return Success
+     */
+    setupUserInstance(accountingTreeType: AccountingTreeType2 | null | undefined): Observable<SetupOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/SetupUserInstance?";
+        if (accountingTreeType !== undefined)
+            url_ += "accountingTreeType=" + encodeURIComponent("" + accountingTreeType) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetupUserInstance(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetupUserInstance(<any>response_);
+                } catch (e) {
+                    return <Observable<SetupOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SetupOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetupUserInstance(response: HttpResponseBase): Observable<SetupOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SetupOutput.fromJS(resultData200) : new SetupOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SetupOutput>(<any>null);
+    }
+
+    /**
+     * @forcedSync (optional) 
+     * @newOnly (optional) 
+     * @return Success
+     */
+    syncAllQuovoAccounts(forcedSync: boolean | null | undefined, newOnly: boolean | null | undefined): Observable<SyncAllAccountsOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/SyncAllQuovoAccounts?";
+        if (forcedSync !== undefined)
+            url_ += "forcedSync=" + encodeURIComponent("" + forcedSync) + "&"; 
+        if (newOnly !== undefined)
+            url_ += "newOnly=" + encodeURIComponent("" + newOnly) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSyncAllQuovoAccounts(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSyncAllQuovoAccounts(<any>response_);
+                } catch (e) {
+                    return <Observable<SyncAllAccountsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SyncAllAccountsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSyncAllQuovoAccounts(response: HttpResponseBase): Observable<SyncAllAccountsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SyncAllAccountsOutput.fromJS(resultData200) : new SyncAllAccountsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SyncAllAccountsOutput>(<any>null);
+    }
+
+    /**
+     * @invalidateCache (optional) 
+     * @return Success
+     */
+    getUserInstanceStatus(invalidateCache: boolean | null | undefined): Observable<GetStatusOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetUserInstanceStatus?";
+        if (invalidateCache !== undefined)
+            url_ += "invalidateCache=" + encodeURIComponent("" + invalidateCache) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserInstanceStatus(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserInstanceStatus(<any>response_);
+                } catch (e) {
+                    return <Observable<GetStatusOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetStatusOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserInstanceStatus(response: HttpResponseBase): Observable<GetStatusOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetStatusOutput.fromJS(resultData200) : new GetStatusOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetStatusOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getSyncProgress(): Observable<SyncProgressOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetSyncProgress";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSyncProgress(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSyncProgress(<any>response_);
+                } catch (e) {
+                    return <Observable<SyncProgressOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SyncProgressOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSyncProgress(response: HttpResponseBase): Observable<SyncProgressOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SyncProgressOutput.fromJS(resultData200) : new SyncProgressOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SyncProgressOutput>(<any>null);
+    }
+}
+
+@Injectable()
 export class NotesServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -49175,6 +49462,190 @@ export interface IRegisterMemberRequest {
     utmParameter: UTMParameterInfo | undefined;
 }
 
+export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
+    token!: string | undefined;
+
+    constructor(data?: IGetProviderUITokenOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.token = data["token"];
+        }
+    }
+
+    static fromJS(data: any): GetProviderUITokenOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetProviderUITokenOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["token"] = this.token;
+        return data; 
+    }
+}
+
+export interface IGetProviderUITokenOutput {
+    token: string | undefined;
+}
+
+export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
+    syncInProgressAccountsCount!: number | undefined;
+    failedSyncAccountsCount!: number | undefined;
+
+    constructor(data?: ISyncAllAccountsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.syncInProgressAccountsCount = data["syncInProgressAccountsCount"];
+            this.failedSyncAccountsCount = data["failedSyncAccountsCount"];
+        }
+    }
+
+    static fromJS(data: any): SyncAllAccountsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncAllAccountsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
+        data["failedSyncAccountsCount"] = this.failedSyncAccountsCount;
+        return data; 
+    }
+}
+
+export interface ISyncAllAccountsOutput {
+    syncInProgressAccountsCount: number | undefined;
+    failedSyncAccountsCount: number | undefined;
+}
+
+export class SyncProgressOutput implements ISyncProgressOutput {
+    lastSyncDate!: moment.Moment | undefined;
+    totalProgress!: SyncProgressDto | undefined;
+    accountProgresses!: SyncProgressDto[] | undefined;
+
+    constructor(data?: ISyncProgressOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
+            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
+                this.accountProgresses = [];
+                for (let item of data["accountProgresses"])
+                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SyncProgressOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncProgressOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
+        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
+            data["accountProgresses"] = [];
+            for (let item of this.accountProgresses)
+                data["accountProgresses"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISyncProgressOutput {
+    lastSyncDate: moment.Moment | undefined;
+    totalProgress: SyncProgressDto | undefined;
+    accountProgresses: SyncProgressDto[] | undefined;
+}
+
+export class SyncProgressDto implements ISyncProgressDto {
+    accountId!: number | undefined;
+    accountName!: string | undefined;
+    syncStatusMessage!: string | undefined;
+    progressPercent!: number | undefined;
+    syncStatus!: SyncProgressDtoSyncStatus | undefined;
+    lastSyncDate!: moment.Moment | undefined;
+
+    constructor(data?: ISyncProgressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountId = data["accountId"];
+            this.accountName = data["accountName"];
+            this.syncStatusMessage = data["syncStatusMessage"];
+            this.progressPercent = data["progressPercent"];
+            this.syncStatus = data["syncStatus"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SyncProgressDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncProgressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountId"] = this.accountId;
+        data["accountName"] = this.accountName;
+        data["syncStatusMessage"] = this.syncStatusMessage;
+        data["progressPercent"] = this.progressPercent;
+        data["syncStatus"] = this.syncStatus;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISyncProgressDto {
+    accountId: number | undefined;
+    accountName: string | undefined;
+    syncStatusMessage: string | undefined;
+    progressPercent: number | undefined;
+    syncStatus: SyncProgressDtoSyncStatus | undefined;
+    lastSyncDate: moment.Moment | undefined;
+}
+
 export class NoteInfoDto implements INoteInfoDto {
     contactId!: number | undefined;
     id!: number | undefined;
@@ -55329,42 +55800,6 @@ export interface IUpdateSortOrderInput {
     sortOrder: number;
 }
 
-export class GetProviderUITokenOutput implements IGetProviderUITokenOutput {
-    token!: string | undefined;
-
-    constructor(data?: IGetProviderUITokenOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.token = data["token"];
-        }
-    }
-
-    static fromJS(data: any): GetProviderUITokenOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetProviderUITokenOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["token"] = this.token;
-        return data; 
-    }
-}
-
-export interface IGetProviderUITokenOutput {
-    token: string | undefined;
-}
-
 export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
     setupAccountsLink!: string | undefined;
 
@@ -55399,154 +55834,6 @@ export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
 
 export interface IGetSetupAccountsLinkOutput {
     setupAccountsLink: string | undefined;
-}
-
-export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
-    syncInProgressAccountsCount!: number | undefined;
-    failedSyncAccountsCount!: number | undefined;
-
-    constructor(data?: ISyncAllAccountsOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.syncInProgressAccountsCount = data["syncInProgressAccountsCount"];
-            this.failedSyncAccountsCount = data["failedSyncAccountsCount"];
-        }
-    }
-
-    static fromJS(data: any): SyncAllAccountsOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SyncAllAccountsOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["syncInProgressAccountsCount"] = this.syncInProgressAccountsCount;
-        data["failedSyncAccountsCount"] = this.failedSyncAccountsCount;
-        return data; 
-    }
-}
-
-export interface ISyncAllAccountsOutput {
-    syncInProgressAccountsCount: number | undefined;
-    failedSyncAccountsCount: number | undefined;
-}
-
-export class SyncProgressOutput implements ISyncProgressOutput {
-    lastSyncDate!: moment.Moment | undefined;
-    totalProgress!: SyncProgressDto | undefined;
-    accountProgresses!: SyncProgressDto[] | undefined;
-
-    constructor(data?: ISyncProgressOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
-            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
-            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
-                this.accountProgresses = [];
-                for (let item of data["accountProgresses"])
-                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): SyncProgressOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SyncProgressOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
-        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
-        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
-            data["accountProgresses"] = [];
-            for (let item of this.accountProgresses)
-                data["accountProgresses"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ISyncProgressOutput {
-    lastSyncDate: moment.Moment | undefined;
-    totalProgress: SyncProgressDto | undefined;
-    accountProgresses: SyncProgressDto[] | undefined;
-}
-
-export class SyncProgressDto implements ISyncProgressDto {
-    accountId!: number | undefined;
-    accountName!: string | undefined;
-    syncStatusMessage!: string | undefined;
-    progressPercent!: number | undefined;
-    syncStatus!: SyncProgressDtoSyncStatus | undefined;
-    lastSyncDate!: moment.Moment | undefined;
-
-    constructor(data?: ISyncProgressDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.accountId = data["accountId"];
-            this.accountName = data["accountName"];
-            this.syncStatusMessage = data["syncStatusMessage"];
-            this.progressPercent = data["progressPercent"];
-            this.syncStatus = data["syncStatus"];
-            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): SyncProgressDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SyncProgressDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accountId"] = this.accountId;
-        data["accountName"] = this.accountName;
-        data["syncStatusMessage"] = this.syncStatusMessage;
-        data["progressPercent"] = this.progressPercent;
-        data["syncStatus"] = this.syncStatus;
-        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISyncProgressDto {
-    accountId: number | undefined;
-    accountName: string | undefined;
-    syncStatusMessage: string | undefined;
-    progressPercent: number | undefined;
-    syncStatus: SyncProgressDtoSyncStatus | undefined;
-    lastSyncDate: moment.Moment | undefined;
 }
 
 export class SyncAccountDto implements ISyncAccountDto {
@@ -61469,6 +61756,11 @@ export enum AccountingTreeType {
     Standard = "Standard", 
 }
 
+export enum AccountingTreeType2 {
+    Simple = "Simple", 
+    Standard = "Standard", 
+}
+
 export enum State {
     _0 = 0, 
     _1 = 1, 
@@ -62114,6 +62406,14 @@ export enum RegisterMemberRequestGender {
     _1 = 1, 
 }
 
+export enum SyncProgressDtoSyncStatus {
+    InProgress = "InProgress", 
+    ActionRequired = "ActionRequired", 
+    SyncPending = "SyncPending", 
+    Unavailable = "Unavailable", 
+    Completed = "Completed", 
+}
+
 export enum NoteInfoDtoNoteType {
     Note = "Note", 
     IncomingCall = "IncomingCall", 
@@ -62686,14 +62986,6 @@ export enum TenantLoginInfoDtoCustomLayoutType {
 export enum TenantLoginInfoDtoPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
-}
-
-export enum SyncProgressDtoSyncStatus {
-    InProgress = "InProgress", 
-    ActionRequired = "ActionRequired", 
-    SyncPending = "SyncPending", 
-    Unavailable = "Unavailable", 
-    Completed = "Completed", 
 }
 
 export enum CheckHostNameDnsMappingInputTenantHostType {

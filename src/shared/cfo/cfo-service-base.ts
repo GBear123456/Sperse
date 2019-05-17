@@ -9,6 +9,7 @@ export abstract class CFOServiceBase {
     statusActive: BehaviorSubject<boolean>;
     instanceTypeChanged: Subject<string> = new Subject();
     instanceTypeChanged$: Observable<string> = this.instanceTypeChanged.asObservable();
+    isForUser: boolean;
 
     constructor() { }
 }

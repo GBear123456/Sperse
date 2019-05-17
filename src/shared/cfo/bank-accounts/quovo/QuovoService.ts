@@ -6,7 +6,7 @@ import { BehaviorSubject, Subject, Observable, forkJoin, of, throwError, iif } f
 import { switchMap, delay, first, filter, map, retryWhen, concatMap } from 'rxjs/operators';
 
 /** Application imports */
-import { GetProviderUITokenOutput, InstanceType, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { GetProviderUITokenOutput, InstanceType, SyncServiceProxy, MyFinancesServiceProxy } from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppConsts } from '@shared/AppConsts';
 import { CFOService } from '@shared/cfo/cfo.service';
@@ -38,12 +38,16 @@ export class QuovoService {
     constructor(
         injector: Injector,
         private syncService: SyncServiceProxy,
+        private myFinanceService: MyFinancesServiceProxy,
         private syncProgressService: SynchProgressService,
         private notify: NotifyService,
         private localizationService: AppLocalizationService
     ) {
         this.cfoService = injector.get(CFOService);
-        this.tokenLoading$ = this.syncService.createProviderUIToken(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, 'Q');
+        
+        this.tokenLoading$ = this.cfoService.isForUser
+            ? this.myFinanceService.createUserInstanceProviderUIToken('Q')
+            : this.syncService.createProviderUIToken(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, 'Q');
         this.permissionChecker = injector.get(PermissionCheckerService);
     }
 
