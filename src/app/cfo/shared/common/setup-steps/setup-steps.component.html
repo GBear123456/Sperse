@@ -15,7 +15,7 @@
                 </span>
             </li>
         </ng-template>
-        <li class="steps-progress-item" *ngIf="instanceType != 'User'">
+        <li class="steps-progress-item" *ngIf="instanceType == 'Main'">
             <div class="img icon-info"></div>
             <span class="btn-link intro-link" (click)="showIntro()">{{l('Introduction Tour')}}</span>
         </li>
