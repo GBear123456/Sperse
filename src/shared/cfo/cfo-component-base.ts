@@ -23,7 +23,9 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
 
         this._cfoService = injector.get(CFOService);
 
-        if (this.constructor == this._activatedRoute.component)
+        if (!this._cfoService.hasStaticInstance && 
+            this.constructor == this._activatedRoute.component
+        ) {
             this._activatedRoute.params.pipe(
                 takeUntil(this.destroy$)
             ).subscribe(params => {
@@ -41,7 +43,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
                     this._cfoService.instanceChangeProcess();
                 }
             });
-        else {
+        } else {
             this.instanceType = this._cfoService.instanceType;
             this.instanceId = this._cfoService.instanceId;
         }

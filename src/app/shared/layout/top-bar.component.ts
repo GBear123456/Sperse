@@ -11,7 +11,6 @@ import { PanelMenuItem } from './panel-menu-item';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppService } from '@app/app.service';
-import { CFOService } from '@shared/cfo/cfo.service.ts';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -37,7 +36,6 @@ export class TopBarComponent extends AppComponentBase {
         injector: Injector,
         private _appSessionService: AppSessionService,
         private _appService: AppService,
-        private _cfoService: CFOService,
         public router: Router
     ) {
         super(injector);

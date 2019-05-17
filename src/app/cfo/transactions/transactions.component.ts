@@ -437,7 +437,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             items: [
                                 {
                                     name: 'select-box',
-                                    text: '',
+                                    text: '(' + this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId + ')',
                                     widget: 'dxDropDownMenu',
                                     accessKey: 'currencySwitcher',
                                     options: {
@@ -446,7 +446,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                         items: currencies,
                                         selectedIndex: selectedCurrencyIndex,
                                         height: 39,
-                                        width: 220,
                                         onSelectionChanged: (e) => {
                                             if (e) {
                                                 this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
@@ -531,7 +530,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     getTotalValues() {
-        let totals = this.totalDataSource.items();
+        let totals = this.totalDataSource && this.totalDataSource.items();
         let selectedRows = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowsData() : [];
 
         if (selectedRows.length) {

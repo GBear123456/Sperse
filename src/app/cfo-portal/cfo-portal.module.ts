@@ -40,47 +40,50 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { ModalModule } from 'ngx-bootstrap';
 
 /** Application imports */
+import { LayoutService } from '@app/shared/layout/layout.service';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
-import { AppCommonModule } from '../shared/common/app-common.module';
+import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
-import { CfoRoutingModule } from './cfo-routing.module';
-import { StartComponent } from './start/start.component';
-import { SetupComponent } from './start/setup/setup.component';
-import { CfoIntroComponent } from './shared/cfo-intro/cfo-intro.component';
-import { DashboardComponent } from './start/dashboard/dashboard.component';
-import { BankAccountsGeneralComponent } from './bank-accounts-general/bank-accounts-general.component';
+import { CfoRoutingModule } from '@app/cfo/cfo-routing.module';
+import { StartComponent } from '@app/cfo/start/start.component';
+import { SetupComponent } from '@app/cfo/start/setup/setup.component';
+import { CfoIntroComponent } from '@app/cfo/shared/cfo-intro/cfo-intro.component';
+import { DashboardComponent } from '@app/cfo/start/dashboard/dashboard.component';
+import { BankAccountsGeneralComponent } from '@app/cfo/bank-accounts-general/bank-accounts-general.component';
 import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-accounts-common.module';
-import { TransactionsComponent } from './transactions/transactions.component';
-import { CategorizationComponent } from './transactions/categorization/categorization.component';
-import { SetupStepComponent } from './shared/common/setup-steps/setup-steps.component';
-import { RulesComponent } from './rules/rules.component';
-import { PermissionsComponent } from './permissions/permissions.component';
-import { RuleDialogComponent } from './rules/rule-edit-dialog/rule-edit-dialog.component';
-import { RuleDeleteDialogComponent } from './rules/rule-delete-dialog/rule-delete-dialog.component';
-import { CategoryDeleteDialogComponent } from './transactions/categorization/category-delete-dialog/category-delete-dialog.component';
-import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
-import { BusinessEntityEditDialogComponent } from './business-entities/business-entity-edit-dialog/business-entity-edit-dialog.component';
-import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
-import { CalculatorComponent } from 'app/cfo/shared/calculator-widget/calculator-widget.component';
-import { TransactionDetailInfoComponent } from 'app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
-import { CashflowComponent } from './cashflow/cashflow.component';
-import { PreferencesDialogComponent } from './cashflow/preferences-dialog/preferences-dialog.component';
-import { CFOModalDialogComponent } from './shared/common/dialogs/modal/cfo-modal-dialog.component';
-import { ChooseResetRulesComponent } from './transactions/choose-reset-rules/choose-reset-rules.component';
-import { StatsComponent } from './stats/stats.component';
-import { SourceDataComponent } from './stats/source-data/source-data.component';
-import { OperationsComponent } from './cashflow/operations/operations.component';
-import { StatementsComponent } from './statements/statements.component';
-import { CashflowServiceProxy, ContactServiceProxy, SyncServiceProxy, MyFinancesServiceProxy } from '@shared/service-proxies/service-proxies';
+import { TransactionsComponent } from '@app/cfo/transactions/transactions.component';
+import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
+import { SetupStepComponent } from '@app/cfo/shared/common/setup-steps/setup-steps.component';
+import { RulesComponent } from '@app/cfo/rules/rules.component';
+import { PermissionsComponent } from '@app/cfo/permissions/permissions.component';
+import { RuleDialogComponent } from '@app/cfo/rules/rule-edit-dialog/rule-edit-dialog.component';
+import { RuleDeleteDialogComponent } from '@app/cfo/rules/rule-delete-dialog/rule-delete-dialog.component';
+import { CategoryDeleteDialogComponent } from '@app/cfo/transactions/categorization/category-delete-dialog/category-delete-dialog.component';
+import { BusinessEntitiesComponent } from '@app/cfo/business-entities/business-entities.component';
+import { BusinessEntityEditDialogComponent } from '@app/cfo/business-entities/business-entity-edit-dialog/business-entity-edit-dialog.component';
+import { ChartOfAccountsComponent } from '@app/cfo/chart-of-accounts/chart-of-accounts.component';
+import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { CalculatorComponent } from '@app/cfo/shared/calculator-widget/calculator-widget.component';
+import { TransactionDetailInfoComponent } from '@app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
+import { CashflowComponent } from '@app/cfo/cashflow/cashflow.component';
+import { PreferencesDialogComponent } from '@app/cfo/cashflow/preferences-dialog/preferences-dialog.component';
+import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
+import { ChooseResetRulesComponent } from '@app/cfo/transactions/choose-reset-rules/choose-reset-rules.component';
+import { StatsComponent } from '@app/cfo/stats/stats.component';
+import { SourceDataComponent } from '@app/cfo/stats/source-data/source-data.component';
+import { OperationsComponent } from '@app/cfo/cashflow/operations/operations.component';
+import { StatementsComponent } from '@app/cfo/statements/statements.component';
+import { CashflowServiceProxy, ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
-import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
-import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
-import { UsersDialogComponent } from './permissions/users-dialog/users-dialog.component';
+import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
+import { ImportFromQuickBooksButtonComponent } from '@app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
+import { UsersDialogComponent } from '@app/cfo/permissions/users-dialog/users-dialog.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
-import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.component';
+import { KeyPhrasesComponent } from '@app/cfo/transactions/key-phrases/key-phrases.component';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 import { CfoStoreModule } from '@app/cfo/store';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { UserOnlyCFOService } from '@shared/cfo/user-only.cfo.service';
 
 @NgModule({
     imports: [
@@ -124,7 +127,7 @@ import { CfoStoreModule } from '@app/cfo/store';
         DxSwitchModule,
         AngularGooglePlaceModule,
         DxPopupModule,
-        BankAccountsCommonModule,
+        BankAccountsCommonModule.forRoot(),
         SharedIntroStepsModule,
         AccountConnectorDialogModule,
         CfoStoreModule
@@ -177,9 +180,18 @@ import { CfoStoreModule } from '@app/cfo/store';
         CashflowServiceProxy,
         ContactServiceProxy,
         SyncServiceProxy,
-        MyFinancesServiceProxy,
-        CalculatorService
+        CalculatorService,
+        {
+            provide: CFOService,
+            useClass: UserOnlyCFOService
+        }
     ]
 })
 
-export class CfoModule { }
+export class CfoPortalModule { 
+    constructor(
+        private _layoutService: LayoutService
+    ) {
+        _layoutService.showPlatformSelectMenu = false;
+    }
+}

@@ -30,6 +30,6 @@ export class ContactInfoPanelComponent extends AppComponentBase {
 
     checkCFOMember() {
         let tenant = this._appSession.tenant;
-        return tenant && tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.CFOMembers;
+        return tenant && tenant.customLayoutType == TenantLoginInfoDtoCustomLayoutType.AdvicePeriod;
     }
 }

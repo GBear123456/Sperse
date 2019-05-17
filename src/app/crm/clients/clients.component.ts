@@ -43,7 +43,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { CustomerServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy, 
+import { ContactServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy,
     ContactStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
@@ -57,7 +57,7 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, LifecycleSubjectsService ]
+    providers: [ ClientService, LifecycleSubjectsService, ContactServiceProxy ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -102,7 +102,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        public customerService: CustomerServiceProxy,
+        public contactService: ContactServiceProxy,
         private _appService: AppService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
