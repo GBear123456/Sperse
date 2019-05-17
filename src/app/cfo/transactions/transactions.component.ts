@@ -531,7 +531,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     getTotalValues() {
-        let totals = this.totalDataSource.items();
+        let totals = this.totalDataSource && this.totalDataSource.items();
         let selectedRows = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowsData() : [];
 
         if (selectedRows.length) {
