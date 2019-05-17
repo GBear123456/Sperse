@@ -195,7 +195,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                             items: [
                                 {
                                     name: 'select-box',
-                                    text: '(' + this._cfoPreferences.selectedCurrencySymbol + ' ' + this._cfoPreferences.selectedCurrencyId + ')',
+                                    text: this._cfoPreferences.selectedCurrencySymbol + ' ' + this._cfoPreferences.selectedCurrencyId,
                                     widget: 'dxDropDownMenu',
                                     accessKey: 'currencySwitcher',
                                     options: {
