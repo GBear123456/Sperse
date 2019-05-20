@@ -23,10 +23,10 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit {
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
-    @ViewChild('filterActions', { read: ElementRef }) filterActions: ElementRef;
+    @ViewChild('header', { read: ElementRef }) header: ElementRef;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
-    @Input() nameColumnWidth = 170;
+    @Input() nameColumnWidth = 200;
     @Input() height;
     @Input() showColumnHeaders = false;
     @Input() allowUpdateAccount = false;
@@ -94,7 +94,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     ngOnInit(): void {
-        if (!this.isInstanceAdmin) {
+        if (!this.isInstanceAdmin && !this.isMemberAccessManage) {
             this.contextMenuItems = [
                 { text: this.l('Sync_Now') }
             ];
@@ -117,14 +117,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 e.rowElement.classList.add('used-row');
             }
         }
-    }
-
-    addEmptyRow(rowElement) {
-        /** Add row with padding */
-        let emptyRow = document.createElement('tr');
-        emptyRow.innerHTML = '<td></td>';
-        emptyRow.className = 'emptyRow';
-        rowElement.parentElement.insertBefore(emptyRow, rowElement.nextElementSibling);
     }
 
     setHighlighted() {
@@ -186,29 +178,20 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this.selectionChanged.emit(selectedSyncAccounts);
     }
 
-    bankAccountTypeChanged(e) {
-        this.bankAccountsService.changeBankAccountType(e.itemData);
+    bankAccountTypesChanged(e) {
+        this.bankAccountsService.changeBankAccountTypes(e);
     }
 
-    /**
-     * Added empty rows to add space between rows (hack to avoid spacing between row and details)
-     */
-    addEmptyRows() {
-        if (this.mainDataGrid.instance) {
-            $('.emptyRow').remove();
-            let visibleRows = this.mainDataGrid.instance.getVisibleRows();
-            for (let i = 0; i < visibleRows.length; i++) {
-                /** if next row is not detail row - add empty row */
-                if (visibleRows[i + 1] && visibleRows[i + 1].rowType !== 'detail') {
-                    this.addEmptyRow(this.mainDataGrid.instance.getRowElement(i)[0]);
-                }
-            }
-        }
+    entitiesItemsChanged(selectedEntitiesIds: number[]) {
+        this.bankAccountsService.changeState({
+            selectedBusinessEntitiesIds: selectedEntitiesIds,
+            selectedBankAccountIds: null
+        });
+        this.bankAccountsService.applyFilter();
     }
 
     contentReady() {
         this.calculateHeight();
-        this.addEmptyRows();
     }
 
     dataRowClick(e) {
@@ -222,6 +205,16 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             this.masterSelectionChanged(cell);
             cell.event.stopImmediatePropagation();
         }
+    }
+
+    selectAll(e) {
+        this.mainDataGrid.instance.getVisibleRows().forEach(row => {
+            row.isSelected = e.value;
+            row.data.bankAccounts.forEach(account => {
+                account.selected = e.value;
+            });
+        });
+        this.selectedAccountsChanged();
     }
 
     detailCellClick(cell) {
@@ -304,7 +297,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this._bankAccountsServiceProxy
             .updateBankAccount(this.instanceType, this.instanceId, bankAccount)
             .subscribe(
-                res => {
+                () => {
                     deferred.resolve(false);
                     /** If business entity id changed - emit that binding of accounts to entities change to parents components */
                     /** @todo add advanced check to avoid unnecessary reload */
@@ -315,7 +308,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                         this.reloadDataSource.emit();
                     }
                 },
-                error => deferred.resolve(true)
+                () => deferred.resolve(true)
             );
     }
 
@@ -336,7 +329,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     calculateHeight() {
         /** Get bottom position of previous element */
-        let filtersBottomPosition = this.filterActions.nativeElement.getBoundingClientRect().bottom;
+        let filtersBottomPosition = this.header.nativeElement.getBoundingClientRect().bottom;
         this.scrollHeight = window.innerHeight - filtersBottomPosition - 20;
     }
 
@@ -344,7 +337,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this.dataSource = this.dataSource.filter(item => item.syncAccountId != syncAccountId);
         this._syncAccountServiceProxy
             .delete(this.instanceType, this.instanceId, syncAccountId)
-            .subscribe(res => {
+            .subscribe(() => {
                 this.onDataChange.emit();
             });
     }
@@ -365,7 +358,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     renameBankAccount() {
         this._syncAccountServiceProxy
             .rename(this.instanceType, this.instanceId, this.bankAccountInfo)
-            .subscribe(res => {
+            .subscribe(() => {
                 this.reloadDataSource.emit();
                 this.onDataChange.emit();
             });

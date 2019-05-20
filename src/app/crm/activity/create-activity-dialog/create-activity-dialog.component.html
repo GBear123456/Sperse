@@ -34,7 +34,7 @@
                                   [selectedKeys]="[data.appointment.AssignedUserIds]"
                                   [permissionKey]="'Pages.CRM.Events.ManageAssignments'"
                                   (onSelectionChanged)="onUserAssignmentChanged($event)"
-                                  [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
+                                  [assignedUsersSelector]="getAssignedUsersSelector()">
         </crm-user-assignment-list>
 
         <app-static-list #leadsList

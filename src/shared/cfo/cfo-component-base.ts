@@ -5,21 +5,26 @@ import { takeUntil } from 'rxjs/operators';
 
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from './cfo.service';
-import { AppConsts } from '@shared/AppConsts';
 
 export abstract class CFOComponentBase extends AppComponentBase implements OnDestroy {
     instanceId: number;
     instanceType: string;
     get isInstanceAdmin() {
-        return (this.instanceType == InstanceType.User) || !isNaN(parseInt(this.instanceType)) ||
-            (this.instanceType == InstanceType.Main && this.permission.isGranted('Pages.CFO.MainInstanceAdmin'));
+        return this.checkMemberAccessPermission('Manage.Administrate', !isNaN(parseInt(this.instanceType)) ||
+            (this.instanceType == InstanceType.Main && this.permission.isGranted('Pages.CFO.MainInstanceAdmin')));
+    }
+    get isMemberAccessManage() {
+        return this.checkMemberAccessPermission('Manage', false);
     }
     _cfoService: CFOService;
 
     constructor(injector: Injector) {
         super(injector);
         this._cfoService = injector.get(CFOService);
-        if (this.constructor == this._activatedRoute.component)
+
+        if (!this._cfoService.hasStaticInstance &&
+            this.constructor == this._activatedRoute.component
+        ) {
             this._activatedRoute.params.pipe(
                 takeUntil(this.destroy$)
             ).subscribe(params => {
@@ -37,7 +42,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
                     this._cfoService.instanceChangeProcess();
                 }
             });
-        else {
+        } else {
             this.instanceType = this._cfoService.instanceType;
             this.instanceId = this._cfoService.instanceId;
         }
@@ -55,6 +60,13 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
             instanceType: this.instanceType,
             instanceId: this.instanceId
         });
+    }
+
+    checkMemberAccessPermission(permission, defaultResult = true) {
+        if (this.instanceType == InstanceType.User && !this.instanceId)
+            return this.isGranted('Pages.CFO.MemberAccess.' + permission);
+
+        return defaultResult;
     }
 
     ngOnDestroy() {

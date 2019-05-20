@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import * as _ from 'underscore';
 
 /** Application imports */
-import { AppStore, CustomerAssignedUsersStoreSelectors } from '@app/store';
+import { AppStore } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -34,8 +34,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     set selectedItemKey(value) {
         this.selectedItemKeys = this.multiSelection ? value : [value];
     }
-    @Input() getAssignedUsersSelector = CustomerAssignedUsersStoreSelectors.getAssignedUsers;
     @Input() proxyService: any;
+    @Input() assignedUsersSelector;
     @Output() selectedItemKeyChange = new EventEmitter();
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     private selectedItemKeys = [];
@@ -142,8 +142,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     refreshList() {
-        if (this.getAssignedUsersSelector)
-            this.store$.pipe(select(this.getAssignedUsersSelector)).subscribe((result) => {
+        if (this.assignedUsersSelector)
+            this.store$.pipe(this.assignedUsersSelector).subscribe((result) => {
                 if (this.selectedKeys && this.selectedKeys.length && result && this.proxyService)
                     this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe((res) => {
                         if (res && res.length) {
@@ -157,7 +157,8 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
                                 this.list = res;
                         }
                     });
-                this.list = result && result.slice(0);
+                if (result && result instanceof Array)
+                    this.list = result.slice(0);
             });
     }
 

@@ -31,8 +31,12 @@ import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
-    styleUrls: ['./my-settings-modal.component.less'],
-    providers: [DialogService],
+    styleUrls: [
+        '../../../../shared/metronic/navbar.less',
+        '../../../../shared/metronic/m-nav.less',
+        './my-settings-modal.component.less'
+    ],
+    providers: [ DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MySettingsModalComponent implements AfterViewChecked, OnInit {

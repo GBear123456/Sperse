@@ -13,8 +13,9 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
-import { CustomerAssignedUsersStoreSelectors,
+import {
     AppStore,
+    ContactAssignedUsersStoreSelectors,
     TagsStoreSelectors,
     ListsStoreSelectors,
     StarsStoreSelectors,
@@ -43,8 +44,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { CustomerServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy,
-    ContactStatusDto } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -57,7 +57,7 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, LifecycleSubjectsService ]
+    providers: [ ClientService, LifecycleSubjectsService, ContactServiceProxy ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -84,6 +84,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelRating: FilterModel;
     filterModelStar: FilterModel;
 
+    assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
+
     selectedClientKeys: any = [];
     public headlineConfig = {
         names: [this.l('Customers')],
@@ -100,7 +102,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        public customerService: CustomerServiceProxy,
+        public contactService: ContactServiceProxy,
         private _appService: AppService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
@@ -297,7 +299,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         items: {
                             element: new FilterCheckBoxesModel(
                                 {
-                                    dataSource$: this.store$.pipe(select(CustomerAssignedUsersStoreSelectors.getAssignedUsers)),
+                                    dataSource$: this.store$.pipe(this.assignedUsersSelector),
                                     nameField: 'name',
                                     keyExpr: 'id'
                                 })
@@ -700,9 +702,5 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
-    }
-
-    getAssignedUsersStoreSelectors() {
-        return CustomerAssignedUsersStoreSelectors.getAssignedUsers;
     }
 }

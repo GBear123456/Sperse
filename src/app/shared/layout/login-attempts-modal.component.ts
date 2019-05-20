@@ -16,7 +16,11 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 @Component({
     selector: 'loginAttemptsModal',
     templateUrl: './login-attempts-modal.component.html',
-    styleUrls: ['./login-attempts-modal.component.less'],
+    styleUrls: [
+        '../../../shared/metronic/m-alert.less',
+        '../../../shared/metronic/m-helpers.less',
+        './login-attempts-modal.component.less'
+    ],
     providers: [ DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

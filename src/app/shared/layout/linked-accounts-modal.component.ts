@@ -22,7 +22,10 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 @Component({
     selector: 'linkedAccountsModal',
     templateUrl: './linked-accounts-modal.component.html',
-    styleUrls: ['./linked-accounts-modal.component.less'],
+    styleUrls: [
+        '../../../assets/primeng/datatable/css/primeng.datatable.less',
+        './linked-accounts-modal.component.less'
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ PrimengTableHelper ]
 })

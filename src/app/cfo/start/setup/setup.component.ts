@@ -41,8 +41,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         this.rootComponent.overflowHidden(true);
         this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
-
-        if (this._appService.hasModuleSubscription())
+        if (this._appService.hasModuleSubscription() && this.instanceType == 'Main')
             setTimeout(() => this.openDialog(), 300);
     }
 

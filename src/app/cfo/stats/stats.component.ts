@@ -6,7 +6,7 @@ import { CurrencyPipe } from '@angular/common';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, merge, zip } from 'rxjs';
 import { finalize, first, filter, switchMap } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore';
@@ -35,7 +35,7 @@ import {
 import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
-import { CfoStore, CurrenciesStoreSelectors, CurrenciesStoreActions } from '@app/cfo/store';
+import { CfoStore, CurrenciesStoreSelectors, CurrenciesStoreActions, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
@@ -55,7 +55,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     statsData: Array<BankAccountDailyStatDto>;
     historicalSourceData: Array<BankAccountDailyStatDto> = [];
     forecastSourceData: Array<BankAccountDailyStatDto> = [];
-    selectedForecastModel;
     headlineConfig: any;
     axisDateFormat = 'month';
     labelPositiveBackgroundColor = '#626b73';
@@ -176,32 +175,31 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.requestFilter.currencyId = this.cfoPreferencesService.selectedCurrencyId;
         this.requestFilter.startDate = moment().utc().subtract(2, 'year');
         this.requestFilter.endDate = moment().utc().add(1, 'year');
+        this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
 
         /** If component is not activated and selected currency has changed - wait activation and reload data */
-        this.store$.pipe(
-            select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+        merge(
+            this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId)),
+            this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId))
+        ).pipe(
             filter(() => !this.componentIsActivated)
         ).subscribe(() => {
             this.updateAfterActivation = true;
         });
 
-        const bankAccountAndBusinessEntities$ = this.bankAccountsService.load();
         this.bankAccountsService.accountsAmount$.subscribe(amount => {
             this.bankAccountsCount = amount;
             this.initToolbarConfig();
         });
 
-        /** Create parallel operations */
-        const forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
-        forkJoin(bankAccountAndBusinessEntities$, forecastsModels$)
-            .subscribe(([[syncAccounts, businessEntities], forecastsModels]) => {
+        this.bankAccountsService.load()
+            .subscribe(([syncAccounts, ]) => {
                 this.syncAccounts = syncAccounts;
 
                 /** Initial data handling */
                 this.handleCashFlowInitialResult();
 
-                /** Forecast models handling */
-                this.handleForecastModelResult(forecastsModels);
+                this.initToolbarConfig();
 
                 this.initFiltering();
 
@@ -227,8 +225,12 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     initToolbarConfig() {
         if (this.componentIsActivated) {
-            this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
-                .subscribe(([currencies, selectedCurrencyIndex]) => {
+            zip(
+                this.cfoPreferencesService.getCurrenciesAndSelectedIndex(),
+                this.store$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean)),
+                this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(i => i !== null)))
+            ).pipe(first())
+                .subscribe(([[currencies, selectedCurrencyIndex], forecastModels, selectedForecastModel]) => {
                     /** Get currencies list and selected currency index */
                     this._appService.updateToolbar([
                         {
@@ -272,13 +274,13 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                     options: {
                                         hint: this.l('Scenario'),
                                         accessKey: 'statsForecastSwitcher',
-                                        items: this.forecastModelsObj.items,
-                                        selectedIndex: this.forecastModelsObj.selectedItemIndex,
+                                        items: forecastModels,
+                                        selectedIndex: selectedForecastModel,
                                         height: 39,
                                         width: 243,
                                         onSelectionChanged: (e) => {
                                             if (e) {
-                                                this.changeSelectedForecastModel(e);
+                                                this.store$.dispatch(new ForecastModelsStoreActions.ChangeForecastModelAction(e.itemData.id));
                                                 this.loadStatsData();
                                             }
                                         }
@@ -320,7 +322,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                             items: [
                                 {
                                     name: 'select-box',
-                                    text: '',
+                                    text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
                                     widget: 'dxDropDownMenu',
                                     accessKey: 'currencySwitcher',
                                     options: {
@@ -329,7 +331,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                         items: currencies,
                                         selectedIndex: selectedCurrencyIndex,
                                         height: 39,
-                                        width: 220,
                                         onSelectionChanged: (e) => {
                                             if (e) {
                                                 this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
@@ -490,55 +491,20 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         }
     }
 
-    handleForecastModelResult(result) {
-        let items = result.map(forecastModelItem => {
-            return {
-                id: forecastModelItem.id,
-                text: forecastModelItem.name
-            };
-        });
-        /** If we have the forecast model in cache - get it there, else - get the first model */
-        let cachedForecastModel = this.getForecastModel();
-        /** If we have cached forecast model and cached forecast exists in items list - then use it **/
-        this.selectedForecastModel = cachedForecastModel && items.findIndex(item => item.id === cachedForecastModel.id) !== -1 ?
-            cachedForecastModel :
-            items[0];
-        let selectedForecastModelIndex = items.findIndex(item => item.id === this.selectedForecastModel.id);
-        this.forecastModelsObj = {
-            items: items,
-            selectedItemIndex: selectedForecastModelIndex
-        };
-        this.initToolbarConfig();
-    }
-
-    /**
-     * Get forecast model from the cache
-     */
-    getForecastModel() {
-        return this._cacheService.exists(`stats_forecastModel_${abp.session.userId}`) ?
-               this._cacheService.get(`stats_forecastModel_${abp.session.userId}`) :
-               null;
-    }
-
-    /**
-     * Change the forecast model to reuse later
-     * @param modelObj - new forecast model
-     */
-    changeSelectedForecastModel(modelObj) {
-        this.selectedForecastModel = modelObj.itemData;
-        this._cacheService.set(`stats_forecastModel_${abp.session.userId}`, this.selectedForecastModel);
-    }
-
     /** load stats data from api */
     loadStatsData() {
         abp.ui.setBusy();
         let { startDate, endDate, accountIds = []} = this.requestFilter;
-        this.cfoPreferencesService.getCurrencyId().pipe(
-            switchMap((currencyId: string) => this._bankAccountService.getStats(
+        zip(
+            this.cfoPreferencesService.getCurrencyId(),
+            this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId, filter(Boolean)))
+        ).pipe(
+            first(),
+            switchMap(([currencyId, forecastModelId]: [string, number]) => this._bankAccountService.getStats(
                 InstanceType[this.instanceType],
                 this.instanceId,
                 currencyId,
-                this.selectedForecastModel.id,
+                forecastModelId,
                 accountIds,
                 startDate,
                 endDate,
@@ -576,8 +542,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             }
 
             this.loadingFinished = true;
-        },
-        error => console.log('Error: ' + error));
+        });
     }
 
     getUpdatedDataSource() {
@@ -674,7 +639,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                 backgroundColor: this.labelNegativeBackgroundColor,
                 visible: this.maxLabelCount >= this.statsData.length,
                 customizeText: (e: any) => {
-                    return this._statsService.replaceMinusWithBrackets(e.valueText);
+                    return this._statsService.replaceMinusWithBrackets(e.valueText, this.cfoPreferencesService.selectedCurrencySymbol);
                 }
             };
         }
@@ -682,7 +647,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     /** Replace minus for the brackets */
     customizeAxisValues = (arg: any) => {
-        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText) : arg.valueText;
+        return arg.value < 0 ? this._statsService.replaceMinusWithBrackets(arg.valueText, this.cfoPreferencesService.selectedCurrencySymbol) : arg.valueText.replace('$', this.cfoPreferencesService.selectedCurrencySymbol);
     }
 
     customizePoint = (arg: any) => {

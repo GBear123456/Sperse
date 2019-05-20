@@ -71,7 +71,7 @@ import { StatsComponent } from './stats/stats.component';
 import { SourceDataComponent } from './stats/source-data/source-data.component';
 import { OperationsComponent } from './cashflow/operations/operations.component';
 import { StatementsComponent } from './statements/statements.component';
-import { CashflowServiceProxy, ContactServiceProxy, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { CashflowServiceProxy, ContactServiceProxy, SyncServiceProxy, MyFinancesServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DashboardWidgetsModule } from '@shared/cfo/dashboard-widgets/dashboard-widgets.module';
 import { CalculatorService } from 'app/cfo/shared/calculator-widget/calculator-widget.service';
 import { ImportFromQuickBooksButtonComponent } from 'app/cfo/shared/common/quickbook/import-quick-book-button/import-quick-book-button.component';
@@ -80,6 +80,40 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
 import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.component';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 import { CfoStoreModule } from '@app/cfo/store';
+
+let COMPONENTS = [
+    StartComponent,
+    SetupComponent,
+    CfoIntroComponent,
+    DashboardComponent,
+    BankAccountsGeneralComponent,
+    TransactionsComponent,
+    CategorizationComponent,
+    SetupStepComponent,
+    CashflowComponent,
+    OperationsComponent,
+    PreferencesDialogComponent,
+    StatsComponent,
+    SourceDataComponent,
+    StatementsComponent,
+    RuleDialogComponent,
+    RuleDeleteDialogComponent,
+    CategoryDeleteDialogComponent,
+    RulesComponent,
+    PermissionsComponent,
+    CFOModalDialogComponent,
+    BusinessEntitiesComponent,
+    BusinessEntityEditDialogComponent,
+    ChartOfAccountsComponent,
+    BankAccountsSelectComponent,
+    ChooseResetRulesComponent,
+    CalculatorComponent,
+    TransactionDetailInfoComponent,
+    ReportPeriodComponent,
+    ImportFromQuickBooksButtonComponent,
+    UsersDialogComponent,
+    KeyPhrasesComponent
+];
 
 @NgModule({
     imports: [
@@ -128,38 +162,8 @@ import { CfoStoreModule } from '@app/cfo/store';
         AccountConnectorDialogModule,
         CfoStoreModule
     ],
-    declarations: [
-        StartComponent,
-        SetupComponent,
-        CfoIntroComponent,
-        DashboardComponent,
-        BankAccountsGeneralComponent,
-        TransactionsComponent,
-        CategorizationComponent,
-        SetupStepComponent,
-        CashflowComponent,
-        OperationsComponent,
-        PreferencesDialogComponent,
-        StatsComponent,
-        SourceDataComponent,
-        StatementsComponent,
-        RuleDialogComponent,
-        RuleDeleteDialogComponent,
-        CategoryDeleteDialogComponent,
-        RulesComponent,
-        PermissionsComponent,
-        BusinessEntitiesComponent,
-        BusinessEntityEditDialogComponent,
-        ChartOfAccountsComponent,
-        BankAccountsSelectComponent,
-        ChooseResetRulesComponent,
-        CalculatorComponent,
-        TransactionDetailInfoComponent,
-        ReportPeriodComponent,
-        ImportFromQuickBooksButtonComponent,
-        UsersDialogComponent,
-        KeyPhrasesComponent
-    ],
+    declarations: COMPONENTS,
+    exports: COMPONENTS,
     entryComponents: [
         RuleDialogComponent,
         RuleDeleteDialogComponent,
@@ -175,6 +179,7 @@ import { CfoStoreModule } from '@app/cfo/store';
         CashflowServiceProxy,
         ContactServiceProxy,
         SyncServiceProxy,
+        MyFinancesServiceProxy,
         CalculatorService
     ]
 })

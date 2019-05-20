@@ -176,7 +176,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                         items: [
                             {
                                 name: 'select-box',
-                                text: '',
+                                text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
                                 widget: 'dxDropDownMenu',
                                 accessKey: 'currencySwitcher',
                                 options: {
@@ -185,7 +185,6 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                                     items: currencies,
                                     selectedIndex: selectedCurrencyIndex,
                                     height: 39,
-                                    width: 220,
                                     onSelectionChanged: (e) => {
                                         if (e) {
                                             this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));

@@ -31,7 +31,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
-import { AppStore, CustomerAssignedUsersStoreSelectors, PartnerAssignedUsersStoreSelectors } from '@app/store';
+import { AppStore, ContactAssignedUsersStoreSelectors } from '@app/store';
 import { ContactGroup } from '@shared/AppEnums';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 
@@ -123,12 +123,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             });
         });
 
-        let assignedUsersSelector = this._contactInfo.groupId == ContactGroup.Client ?
-            CustomerAssignedUsersStoreSelectors.getAssignedUsers :
-            PartnerAssignedUsersStoreSelectors.getAssignedUsers;
-
-        this.store$.pipe(select(assignedUsersSelector)).subscribe((result) => {
-            this.users = result;
+        this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, 
+            { contactGroup: this._contactInfo.groupId })).subscribe((result) => {
+                this.users = result;
         });
 
         this.ordersDataSource = new DataSource({

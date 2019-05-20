@@ -21,17 +21,17 @@ import { CompleteTenantRegistrationComponent } from './register/complete-tenant-
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { HostLoginComponent } from './login/layouts/host/host-login.component';
 import { LendSpaceLoginComponent } from './login/layouts/lend-space/lend-space-login.component';
-import { CFOMemberLoginComponent } from './login/layouts/cfo-member/cfo-member-login.component';
+import { AdvicePeriodLoginComponent } from './login/layouts/advice-period/advice-period-login.component';
 import { HostLayoutComponent } from './layouts/host/host-layout.component';
 import { LendSpaceLayoutComponent } from './layouts/lend-space/lend-space-layout.component';
-import { CFOMemberLayoutComponent } from './layouts/cfo-member/cfo-member-layout.component';
+import { AdvicePeriodLayoutComponent } from './layouts/advice-period/advice-period-layout.component';
 import { PersonalFinanceLayoutModule } from '@shared/personal-finance-layout/personal-finance-layout.module';
 import { HostForgotPasswordComponent } from './password/layouts/host/host-forgot-password.component';
 import { LendSpaceForgotPasswordComponent } from './password/layouts/lend-space/lend-space-forgot-password.component';
-import { CFOMemberForgotPasswordComponent } from './password/layouts/cfo-member/cfo-member-forgot-password.component';
+import { AdvicePeriodForgotPasswordComponent } from './password/layouts/advice-period/advice-period-forgot-password.component';
 import { HostResetPasswordComponent } from './password/layouts/host/host-reset-password.component';
 import { LendSpaceResetPasswordComponent } from './password/layouts/lend-space/lend-space-reset-password.component';
-import { CFOMemberResetPasswordComponent } from './password/layouts/cfo-member/cfo-member-reset-password.component';
+import { AdvicePeriodResetPasswordComponent } from './password/layouts/advice-period/advice-period-reset-password.component';
 import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
@@ -51,11 +51,11 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
         AdLayoutHostDirective,
         HostLayoutComponent,
         LendSpaceLayoutComponent,
-        CFOMemberLayoutComponent,
+        AdvicePeriodLayoutComponent,
         TenantChangeComponent,
         TenantChangeModalComponent,
         LoginComponent,
-        CFOMemberLoginComponent,
+        AdvicePeriodLoginComponent,
         HostLoginComponent,
         LendSpaceLoginComponent,
         AdLoginHostDirective,
@@ -74,22 +74,22 @@ import { ApplicationServiceProxy } from '@shared/service-proxies/service-proxies
         LendSpaceForgotPasswordComponent,
         HostResetPasswordComponent,
         LendSpaceResetPasswordComponent,
-        CFOMemberResetPasswordComponent,
-        CFOMemberForgotPasswordComponent 
+        AdvicePeriodResetPasswordComponent,
+        AdvicePeriodForgotPasswordComponent 
     ],
     entryComponents: [
         HostLayoutComponent,
         HostLoginComponent,
         LendSpaceLoginComponent,
         LendSpaceLayoutComponent,
-        CFOMemberLoginComponent,
-        CFOMemberLayoutComponent,
+        AdvicePeriodLoginComponent,
+        AdvicePeriodLayoutComponent,
         HostForgotPasswordComponent,
         LendSpaceForgotPasswordComponent,
         HostResetPasswordComponent,
         LendSpaceResetPasswordComponent,
-        CFOMemberResetPasswordComponent,
-        CFOMemberForgotPasswordComponent 
+        AdvicePeriodResetPasswordComponent,
+        AdvicePeriodForgotPasswordComponent 
     ],
     providers: [
         LoginService,

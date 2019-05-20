@@ -71,20 +71,12 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
             .subscribe();
     }
 
-    entitiesItemsChanged(selectedEntitiesIds: number[]) {
-        this.bankAccountsService.changeState({
-            selectedBusinessEntitiesIds: selectedEntitiesIds,
-            selectedBankAccountIds: null
-        });
-        this.bankAccountsService.applyFilter();
-    }
-
     selectedAccountsChange() {
         this.bankAccountsService.applyFilter();
     }
 
     onUpdateAccount(syncAccount: SyncAccountBankDto) {
-        if (!this.isInstanceAdmin)
+        if (!this.isInstanceAdmin && !this.isMemberAccessManage)
             return;
 
         const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{

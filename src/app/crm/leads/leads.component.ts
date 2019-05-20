@@ -22,7 +22,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
-    LeadAssignedUsersStoreSelectors,
+    ContactAssignedUsersStoreSelectors,
     AppStore,
     TagsStoreSelectors,
     ListsStoreSelectors,
@@ -43,7 +43,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import { LeadServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
@@ -62,7 +62,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [ LeadServiceProxy, LifecycleSubjectsService, PipelineService ],
+    providers: [ LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, PipelineService ],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -142,7 +142,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        public leadService: LeadServiceProxy,
+        public contactService: ContactServiceProxy,
+        private _leadService: LeadServiceProxy,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _appService: AppService,
@@ -341,7 +342,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(LeadAssignedUsersStoreSelectors.getAssignedUsers)),
+                                dataSource$: this.store$.pipe(this.getAssignedUsersSelector()),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
@@ -786,6 +787,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     else
                         gridInstance.clearSelection();
                 }
+                this.notify.success(this.l('StageSuccessfullyUpdated'));
             });
         }
     }
@@ -846,7 +848,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private deleteLeadsInternal(selectedIds: number[]) {
-        this.leadService.deleteLeads(selectedIds).subscribe(() => {
+        this._leadService.deleteLeads(selectedIds).subscribe(() => {
             this.refresh();
             this.dataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
@@ -914,8 +916,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
     }
 
-    getAssignedUsersStoreSelectors() {
-        return LeadAssignedUsersStoreSelectors.getAssignedUsers;
+    getAssignedUsersSelector() {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     }
 
     onContactGroupChanged(event) {

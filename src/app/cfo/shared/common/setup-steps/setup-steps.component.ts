@@ -17,7 +17,7 @@ export class SetupStepComponent extends CFOComponentBase {
         { caption: 'BusinessEntity', component: '/business-entities', isAlwaysActive: true },
         { caption: 'Chart', component: '/chart-of-accounts', isAlwaysActive: true },
         { caption: 'Rules', component: '/rules', isAlwaysActive: false },
-        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin, isAlwaysActive: false }
+        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin && this.instanceType == 'Main', isAlwaysActive: false }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';

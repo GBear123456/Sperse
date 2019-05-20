@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDe
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { select } from '@ngrx/store';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { CacheService } from 'ng2-cache-service';
@@ -571,8 +572,8 @@ export class CreateActivityDialogComponent implements OnInit {
         this.dateValidator = $event.component;
     }
 
-    getAssignedUsersStoreSelectors() {
-        return ActivityAssignedUsersStoreSelectors.getAssignedUsers;
+    getAssignedUsersSelector() {
+        return select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
     }
 
     onUserAssignmentChanged(event) {

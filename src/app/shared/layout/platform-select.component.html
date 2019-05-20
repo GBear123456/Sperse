@@ -1,5 +1,5 @@
 <dx-drop-down-box
-    *ngIf="_layoutService.showPlatformSelectMenu"
+    *ngIf="_layoutService.showPlatformSelectMenu && activeModuleCount > 1"
     width="700px"
     [value]="module"
     [dataSource]="modules"

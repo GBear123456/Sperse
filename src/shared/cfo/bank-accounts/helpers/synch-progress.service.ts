@@ -10,7 +10,8 @@ import {
     InstanceType,
     SyncProgressDtoSyncStatus,
     SyncProgressOutput,
-    SyncServiceProxy
+    SyncServiceProxy,
+    MyFinancesServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -50,6 +51,7 @@ export class SynchProgressService {
         private cfoService: CFOService,
         private http: HttpClient,
         private syncServiceProxy: SyncServiceProxy,
+        private myFinanceService: MyFinancesServiceProxy,
         private appHttpConfiguration: AppHttpConfiguration
     ) {
         this.subscribeToProgress();
@@ -80,13 +82,17 @@ export class SynchProgressService {
     }
 
     private runSyncAll(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q') {
-        return this.syncServiceProxy.syncAllAccounts(
-            InstanceType[this.cfoService.instanceType],
-            this.cfoService.instanceId,
-            forcedSync,
-            newOnly,
-            syncType === 'all' ? undefined : syncType
-        ).pipe(finalize(() => {
+        const method = this.cfoService.isForUser && syncType == 'Q'
+            ? this.myFinanceService.syncAllQuovoAccounts(forcedSync, newOnly)
+            : this.syncServiceProxy.syncAllAccounts(
+                    InstanceType[this.cfoService.instanceType],
+                    this.cfoService.instanceId,
+                    forcedSync,
+                    newOnly,
+                    syncType === 'all' ? undefined : syncType
+                );
+
+        return method.pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;
             this.runGetStatus();
         }));
@@ -100,10 +106,14 @@ export class SynchProgressService {
 
     private runSynchProgress() {
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.getSyncProgressSubscription = this.syncServiceProxy.getSyncProgress(
-            InstanceType[this.cfoService.instanceType],
-            this.cfoService.instanceId
-        ).pipe(finalize(() => {
+        const method = this.cfoService.isForUser
+            ? this.myFinanceService.getSyncProgress()
+            : this.syncServiceProxy.getSyncProgress(
+                InstanceType[this.cfoService.instanceType],
+                this.cfoService.instanceId
+                );
+        
+        this.getSyncProgressSubscription = method.pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;
             this.runGetStatus();
         }))

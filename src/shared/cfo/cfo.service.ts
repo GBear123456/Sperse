@@ -26,12 +26,14 @@ export class CFOService extends CFOServiceBase {
         _appService.subscribeModuleChange(config => {
             if (config['name'] == 'CFO') {
                 if (this.initialized === undefined) {
-                    this._appService.topMenu.items
-                        .forEach((item, i) => {
-                            if (i != 0) {
-                                item.disabled = true;
-                            }
-                        });
+                    if (this._appService.topMenu) {
+                        this._appService.topMenu.items
+                            .forEach((item, i) => {
+                                if (i != 0) {
+                                    item.disabled = true;
+                                }
+                            });
+                    }
                     if (this.instanceType !== undefined) {
                         this.instanceChangeProcess();
                     }

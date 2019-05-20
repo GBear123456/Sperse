@@ -34,7 +34,8 @@ export function currenciesReducer(state: State = initialState, action) {
                 selectedCurrencyId: action.payload
             };
         }
+        default: {
+            return state;
+        }
     }
-
-    return state;
 }

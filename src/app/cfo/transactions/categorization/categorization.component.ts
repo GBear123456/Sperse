@@ -42,7 +42,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     @Input() showClearSelection: boolean;
     @Input() showFilterIcon: boolean;
     @Input() showAddEntity: boolean;
-    @Input() includeNonCashflowNodes = false;
+    @Input() includeNonCashflowNodes = true;
     @Input() categoryId: number;
     @Input('dragMode')
     set dragMode(value: boolean) {
@@ -410,6 +410,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     initDragAndDropEvents($event) {
+        if (!this.checkMemberAccessPermission('ClassifyTransaction'))
+            return true;
+
         let img = new Image();
         img.src = './assets/common/icons/drag-icon.svg';
 

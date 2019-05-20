@@ -1,8 +1,6 @@
 import {
     AddressUsageTypesStoreState,
-    CustomerAssignedUsersStoreState,
-    LeadAssignedUsersStoreState,
-    PartnerAssignedUsersStoreState,
+    ContactAssignedUsersStoreState,
     ActivityAssignedUsersStoreState,
     ContactLinkTypesStoreState,
     EmailUsageTypesStoreState,
@@ -19,9 +17,7 @@ import {
 
 export interface State {
     addressUsageTypes: AddressUsageTypesStoreState.State;
-    customerAssignedUsers: CustomerAssignedUsersStoreState.State;
-    leadAssignedUsers: LeadAssignedUsersStoreState.State;
-    partnerAssignedUsers: PartnerAssignedUsersStoreState.State;
+    contactAssignedUsers: ContactAssignedUsersStoreState.State;
     activityAssignedUsers: ActivityAssignedUsersStoreState.State;
     contactLinkTypes: ContactLinkTypesStoreState.State;
     emailUsageTypes: EmailUsageTypesStoreState.State;

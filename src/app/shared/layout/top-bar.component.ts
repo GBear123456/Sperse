@@ -1,11 +1,16 @@
-import {Component, Injector } from '@angular/core';
-import {Router, NavigationEnd} from '@angular/router';
-import {PanelMenu} from './panel-menu';
-import {PanelMenuItem} from './panel-menu-item';
-import {AppComponentBase} from '@shared/common/app-component-base';
-import {AppSessionService} from '@shared/common/session/app-session.service';
-import { AppService } from '@app/app.service';
+/** Core imports */
+import { Component, Injector } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+
+/** Third party imports */
 import * as _ from 'underscore';
+
+/** Application imports */
+import { PanelMenu } from './panel-menu';
+import { PanelMenuItem } from './panel-menu-item';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -27,10 +32,11 @@ export class TopBarComponent extends AppComponentBase {
         items: []
     };
 
-    constructor(injector: Injector,
-         private _appSessionService: AppSessionService,
-         private _appService: AppService,
-         public router: Router
+    constructor(
+        injector: Injector,
+        private _appSessionService: AppSessionService,
+        private _appService: AppService,
+        public router: Router
     ) {
         super(injector);
 

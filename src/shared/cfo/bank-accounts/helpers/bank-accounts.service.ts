@@ -46,13 +46,13 @@ export class BankAccountsService {
     _syncAccountsState: BehaviorSubject<BankAccountsState> = new BehaviorSubject(this.state);
     syncAccountsState$: Observable<BankAccountsState> = this._syncAccountsState.asObservable();
     accountsDataTotalNetWorth$: Observable<number>;
+    allSyncAccountAreSelected$: Observable<boolean>;
     syncAccountsAmount$: Observable<string>;
     accountsAmount$: Observable<string>;
     existingBankAccountsTypes$: Observable<string[]>;
     baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
-    allAccountTypesFilter = this.localizationService.l('AllAccounts');
-    private _selectedBankAccountType: BehaviorSubject<string> = new BehaviorSubject(this.allAccountTypesFilter);
-    selectedBankAccountType$: Observable<string> = this._selectedBankAccountType.asObservable();
+    private _selectedBankAccountTypes: BehaviorSubject<string[]> = new BehaviorSubject([]);
+    selectedBankAccountTypes$: Observable<string[]> = this._selectedBankAccountTypes.asObservable();
 
     private _applyFilter = new BehaviorSubject(null);
     applyFilter$ = this._applyFilter.asObservable();
@@ -126,7 +126,6 @@ export class BankAccountsService {
                     existBankAccountTypes = _.union(existBankAccountTypes, types);
                 });
                 let bankAccountTypesForSelect = [];
-                bankAccountTypesForSelect.push(this.allAccountTypesFilter);
                 this.baseBankAccountTypes.forEach(type => {
                     bankAccountTypesForSelect.push(type);
                 });
@@ -143,11 +142,11 @@ export class BankAccountsService {
         this.filteredSyncAccountsWithType$ =
             combineLatest(
                 this.syncAccounts$,
-                this.selectedBankAccountType$,
+                this.selectedBankAccountTypes$,
                 this.existingBankAccountsTypes$
             ).pipe(
-                mergeMap(([syncAccounts, selectedType, allTypes]) => {
-                    return of(this.filterByBankAccountType(syncAccounts, selectedType, allTypes));
+                mergeMap(([syncAccounts, selectedTypes, allTypes]) => {
+                    return of(this.filterByBankAccountTypes(syncAccounts, selectedTypes, allTypes));
                 }),
                 distinctUntilChanged(this.arrayDistinct)
             );
@@ -310,17 +309,23 @@ export class BankAccountsService {
                 distinctUntilChanged()
             );
 
-        this.syncAccountsAmount$ = this.filteredSyncAccountsSource$
-            .pipe(
-                map((syncAccounts: any[]) => {
-                    /** Selected can be true, false or undefined. Undefined if bank accounts of the sync account are partially selected */
-                    const selectedSyncAccounts = syncAccounts.filter(syncAccount => syncAccount.selected !== false);
-                    return selectedSyncAccounts.length === syncAccounts.length
-                        ? selectedSyncAccounts.length.toString()
-                        : `${selectedSyncAccounts.length} of ${syncAccounts.length}`;
-                }),
-                distinctUntilChanged()
-            );
+        this.allSyncAccountAreSelected$ = this.filteredSyncAccountsSource$.pipe(
+            map((syncAccounts: any[]) => {
+                const selectedSyncAccounts = syncAccounts.filter(syncAccount => syncAccount.selected !== false);
+                return selectedSyncAccounts.length === syncAccounts.length;
+            })
+        );
+
+        this.syncAccountsAmount$ = this.filteredSyncAccountsSource$.pipe(
+            map((syncAccounts: any[]) => {
+                /** Selected can be true, false or undefined. Undefined if bank accounts of the sync account are partially selected */
+                const selectedSyncAccounts = syncAccounts.filter(syncAccount => syncAccount.selected !== false);
+                return selectedSyncAccounts.length === syncAccounts.length
+                    ? selectedSyncAccounts.length.toString()
+                    : `${selectedSyncAccounts.length} of ${syncAccounts.length}`;
+            }),
+            distinctUntilChanged()
+        );
 
         this.accountsAmount$ = combineLatest(this.filteredBankAccounts$, filteredBankAccountsAmount$)
             .pipe(
@@ -408,30 +413,24 @@ export class BankAccountsService {
 
     arrayDistinct = (oldData, newData) => !ArrayHelper.dataChanged(oldData, newData);
 
-    filterByBankAccountType(syncAccounts, type, allTypes) {
+    filterByBankAccountTypes(syncAccounts, types: string[], allTypes) {
         let filteredSyncAccounts = [];
 
         syncAccounts.forEach(syncAccount => {
             let syncAccountCopy: any = { ...{}, ...syncAccount };
             syncAccountCopy['bankAccounts'] = [];
-            if (type === this.allAccountTypesFilter) {
+            if (!types.length || types.length === allTypes.length) {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount });
                 });
                 filteredSyncAccounts.push(syncAccountCopy);
-            } else if (type === this.localizationService.l('Other')) {
-                syncAccount.bankAccounts.forEach(bankAccount => {
-                    let isBankAccountVisible = !_.contains(allTypes, bankAccount.typeName);
-                    if (isBankAccountVisible) {
-                        syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount});
-                    }
-                });
-                if (syncAccountCopy.bankAccounts.length) {
-                    filteredSyncAccounts.push(syncAccountCopy);
-                }
             } else {
                 syncAccount.bankAccounts.forEach(bankAccount => {
-                    let isBankAccountVisible = type === bankAccount.typeName;
+                    let isBankAccountVisible = types.indexOf(bankAccount.typeName) > -1
+                        || (
+                            types.indexOf(this.localizationService.l('Other')) !== -1
+                            && !_.contains(allTypes, bankAccount.typeName)
+                        );
                     if (isBankAccountVisible) {
                         syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount});
                     }
@@ -473,8 +472,8 @@ export class BankAccountsService {
         }
     }
 
-    changeBankAccountType(type: string) {
-        this._selectedBankAccountType.next(type);
+    changeBankAccountTypes(types: string[]) {
+        this._selectedBankAccountTypes.next(types);
     }
 
     // getPosibleSelectedBankAccountsIds(bankAccounts: BankAccountDto[], activeStatus: boolean, selectedBusinessEntities: number[], selectedType: string): number[] {
