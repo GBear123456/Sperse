@@ -26,7 +26,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
 
         this._cfoService = injector.get(CFOService);
 
-        if (!this._cfoService.hasStaticInstance && 
+        if (!this._cfoService.hasStaticInstance &&
             this.constructor == this._activatedRoute.component
         ) {
             this._activatedRoute.params.pipe(
@@ -76,7 +76,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
     checkMemberAccessPermission(permission, defaultResult = true) {
         if (this.instanceType == InstanceType.User && !this.instanceId)
             return this.isGranted('Pages.CFO.MemberAccess.' + permission);
-    
+
         return defaultResult;
     }
 }
