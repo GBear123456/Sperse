@@ -1,5 +1,5 @@
 import { Component, Injector, ViewChild, OnDestroy } from '@angular/core';
-import { OrganizationUnitDto, UserServiceProxy, OrganizationUnitServiceProxy, 
+import { OrganizationUnitDto, OrganizationUnitServiceProxy,
     UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactsService } from '../contacts.service';
@@ -32,7 +32,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
     ) {
         super(injector);
 
-        _contactsService.orgUnitsSubscribe((userData) => {            
+        _contactsService.orgUnitsSubscribe((userData) => {
             this.userId = userData.user.id;
             this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
         }, this.constructor.name);
@@ -42,7 +42,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
 
     setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], memberedOrganizationUnits: string[]) {
         this.organizationUnitsData = orgUnits;
-        
+
         this.organizationUnitsData.forEach((item) => {
             item['selected'] = includes(memberedOrganizationUnits, item.code);
             item['expanded'] = true;
@@ -74,7 +74,7 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
                 this.organizationUnitsTree.instance.expandItem(item.key);
             else
                 this.organizationUnitsTree.instance.collapseItem(item.key);
-            
+
             if (item.children && item.children.length) {
                 this.foreachNodes(item.children, expandLevel, currentLevel + 1);
             }
@@ -87,14 +87,14 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             sub = this._userOrgUnitsService.addUsersToOrganizationUnit(UsersToOrganizationUnitInput.fromJS({
                 userIds: [this.userId],
                 organizationUnitId: event.itemData.id
-            }))
+            }));
         else
             sub = this._userOrgUnitsService.removeUserFromOrganizationUnit(this.userId, event.itemData.id);
 
         sub.pipe(finalize(() => this.finishLoading(true))).subscribe(() => {
             this._contactsService.orgUnitsSave(this.getSelectedOrganizationUnits());
             this.notify.info(this.l('SavedSuccessfully'));
-        });        
+        });
     }
 
     toolbarConfig = [

@@ -2536,7 +2536,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Change historical field for different date intervals */
         this.closeTransactionsDetail();
         this.expandAll(itemIndex);
-        this.pivotGrid.instance.repaint();
+        this.pivotGrid ? this.pivotGrid.instance.repaint() : this.finishLoading();
     }
 
     getMonthsPaths(columns) {

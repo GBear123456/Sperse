@@ -213,6 +213,7 @@ export class CreateActivityDialogComponent implements OnInit {
                         widget: 'dxDropDownMenu',
                         options: {
                             width: 80,
+                            hint: this.ls.l('Type'),
                             selectedIndex: this.activityTypeIndex,
                             items: [
                                 {

@@ -606,6 +606,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         options: {
                             width: 130,
                             selectedIndex: this.importTypeIndex,
+                            hint: this.l('Import Type'),
                             items: Object.keys(ImportInputImportType).map((type) => {
                                 let isClient = type == ImportInputImportType.Client;
                                 return {

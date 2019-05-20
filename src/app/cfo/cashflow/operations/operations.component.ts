@@ -133,6 +133,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                                 text: this.ls('CFO', 'CashflowToolbar_Group_By'),
                                 widget: 'dxDropDownMenu',
                                 options: {
+                                    hint: this.l('CashflowToolbar_Group_By'),
                                     width: 175,
                                     items: [
                                         {

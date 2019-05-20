@@ -19,7 +19,7 @@
                 <dx-check-box class="mat-dialog-option pull-right" (onValueChanged)="option.onValueChanged && option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
             </ng-template>
         </div>
-        <div class="mat-dialog-buttons" *ngIf="(data.buttons || buttons) as buttons">
+        <div class="mat-dialog-buttons" *ngIf="(buttons || data?.buttons) as buttons">
             <ng-template ngFor let-button [ngForOf]="buttons" let-i="index">
                 <button mat-button (click)="button.action($event)" [id]="button.id" [title]="button.hint ? button.hint : ''" class="button-layout button-{{button.class}}">
                     <span *ngIf="!!button.title">{{ ls.l(button.title )}}</span>

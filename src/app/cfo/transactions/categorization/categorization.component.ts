@@ -215,6 +215,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                         visible: !!(this.showAddEntity && this.settings.showAT),
                         options: {
                             text: this.l('AddAccountingType'),
+                            hint: this.l('AddAccountingType'),
                             items: addEntityItems
                         }
                     },
