@@ -102,7 +102,7 @@ export class CfoActivateService implements CanActivate {
                     },
                     {
                         path: 'cfo-portal',
-                        loadChildren: 'app/cfo-portal/cfo-portal.module#CfoPortalModule', //Lazy load cfo-member *module
+                        loadChildren: 'app/cfo-portal/cfo-portal.module#CfoPortalModule', //Lazy load cfo-portal *module
                         data: { feature: 'CFO.Partner', permission: 'Pages.CFO.MemberAccess', localizationSource: 'CFO' },
                         resolve: { cfo: ModulePathResolverService }
                     }
