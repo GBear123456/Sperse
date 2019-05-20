@@ -37,8 +37,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     public timezone = 'Etc/UTC';
     public showPipeline = false;
     public pipelineDataSource: any;
-    public pipelinePurposeId =
-        AppConsts.PipelinePurposeIds.activity;
+    public pipelinePurposeId = AppConsts.PipelinePurposeIds.activity;
 
     public activityTypes = CreateActivityDtoType;
     public selectedEntities: any = [];
