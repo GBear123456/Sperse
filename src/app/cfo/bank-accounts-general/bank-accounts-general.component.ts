@@ -55,7 +55,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
             onRefresh: this.onRefreshClick.bind(this),
             buttons: [
                 {
-                    enabled: this.isInstanceAdmin || this.isMemberAccessManage,
+                    enabled: (this.isInstanceAdmin || this.isMemberAccessManage) && this.createAccountAvailable,
                     class: 'btn-layout',
                     lable: this.l('Add_account'),
                     action: this.openAddAccountDialog.bind(this)
