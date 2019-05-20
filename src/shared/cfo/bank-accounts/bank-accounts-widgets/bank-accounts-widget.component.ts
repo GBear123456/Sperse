@@ -404,6 +404,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         }
     }
 
+    calculateSyncAccountSortValue(itemData) {
+        return itemData.bankAccounts.length ? 1 : 0;
+    }
+
     getRatioColor(ratio: number) {
         if (ratio > 50) return '#df533b';
         else if (ratio > 30) return '#ed9d1a';

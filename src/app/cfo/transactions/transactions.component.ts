@@ -912,7 +912,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.initToolbarConfig();
     }
 
-    onSelectionChanged($event, initial = false) {           
+    onSelectionChanged($event, initial = false) {
         this.getTotalValues();
 
         if (!this.checkMemberAccessPermission('ClassifyTransaction'))
@@ -951,7 +951,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.draggedTransactionRow = null;
             this.dragInProgress = false;
             this._changeDetectionRef.detectChanges();
-        });        
+        });
     }
 
     stopPropagation(e) {

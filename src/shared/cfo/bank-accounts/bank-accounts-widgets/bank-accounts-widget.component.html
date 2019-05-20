@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="center-header col-sm-8">
-        <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Institutions')"></info-component>
+        <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Connections')"></info-component>
         <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component>
     </div>
     <div class="right-header col-sm-4">
@@ -53,16 +53,15 @@
             <dxo-scrolling showScrollbar="never"></dxo-scrolling>
             <dxo-paging [enabled]="false"></dxo-paging>
             <dxo-filter-row [visible]="false"></dxo-filter-row>
-            <dxi-column dataField="highlighted" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
+            <dxi-column dataField="id" [visible]="false" sortOrder="desc" [sortIndex]="1"></dxi-column>
             <dxi-column dataField="selected" caption="" [width]="30" alignment="center" dataType="boolean"></dxi-column>
-            <dxi-column dataField="name" caption="{{l('Account')}}" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
-            <dxi-column dataField="syncAccountStatus" caption="{{l('BankAccountsWidget_Sync_status')}}" [width]="200" alignment="center" sortOrder="asc" sortIndex="0" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
-            <dxi-column dataField="lastSyncDate" alignment="left" caption="{{l('BankAccountsWidget_Last_sync')}}" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
-            <dxi-column dataField="bankAccounts.length" [width]="20" alignment="left" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
+            <dxi-column dataField="name" [caption]="l('Account')" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
+            <dxi-column dataField="syncAccountStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="1" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
+            <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
+            <dxi-column dataField="bankAccounts.length" [width]="20" alignment="left" [sortIndex]="0" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue"  [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
             <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
-            <dxi-column dataField="balance" caption="{{l('BankAccountsWidget_Value')}}" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+            <dxi-column dataField="balance" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
             <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false" [(visible)]="allowUpdateAccount" cellTemplate="actionsTemplate"></dxi-column>
-
             <div *dxTemplate="let syncAccount of 'detail'">
                 <div class="bank-accounts-grid-container">
                     <dx-data-grid [dataSource]="syncAccount.data.bankAccounts"
@@ -90,7 +89,7 @@
                         </dxo-editing>
                         <dxo-selection [deferred]="true"></dxo-selection>
                         <dxo-filter-row [visible]="false"></dxo-filter-row>
-                        <dxi-column dataField="highlighted" [allowEditing]="false" [visible]="false" sortOrder="desc" sortIndex="0"></dxi-column>
+                        <dxi-column dataField="id" [allowEditing]="false" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
                         <dxi-column dataField="selected" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
                         <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="true"></dxi-column>
 
@@ -99,8 +98,7 @@
                                     cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
                         <dxi-column dataField="businessEntityId" [allowEditing]="true" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
                         <dxi-column dataField="isActive" [allowEditing]="true" [visible]="false"></dxi-column>
-                        <dxi-column dataField="balance" [allowEditing]="false" cssClass="tabular" alignment="right" [allowEditing]="true" cellTemplate="amountTemplate"
-                                    [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
+                        <dxi-column dataField="balance" [allowEditing]="false" cssClass="tabular" alignment="right" [allowEditing]="true" cellTemplate="amountTemplate" [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
                         <dxi-column [width]="200" dataField="availableBalance" cssClass="available-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <dxi-column [width]="200" dataField="totalCreditLine" cssClass="totalCreditLine-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <dxi-column [width]="100" dataField="utilized" cellTemplate="utilizedTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
