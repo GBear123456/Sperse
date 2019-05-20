@@ -41,8 +41,6 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     }
 
     ngOnInit() {
-        super.ngOnInit();
-
         this.getRootComponent().overflowHidden(true);
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('SetupStep_Chart')],

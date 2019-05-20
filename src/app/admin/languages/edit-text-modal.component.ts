@@ -1,73 +1,81 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Inject,
+    Output,
+    ViewChild
+} from '@angular/core';
+
 /** Third party imports */
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import find from 'lodash/find';
-import { finalize } from 'rxjs/operators';
-import { MAT_DIALOG_DATA } from '@angular/material';
+
 /** Application imports */
 import { LanguageServiceProxy, UpdateLanguageTextInput } from '@shared/service-proxies/service-proxies';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { NotifyService } from '@abp/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     selector: 'editTextModal',
     templateUrl: './edit-text-modal.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditTextModalComponent extends AppModalDialogComponent implements OnInit {
+export class EditTextModalComponent {
     @ViewChild('targetValueInput') targetValueInput: ElementRef;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     model: UpdateLanguageTextInput = new UpdateLanguageTextInput();
-
     baseText: string;
     baseLanguage: abp.localization.ILanguageInfo;
     targetLanguage: abp.localization.ILanguageInfo;
 
     active = false;
-    saving = false;
+    title = this.ls.l('EditText');
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('Save'),
+            class: 'primary',
+            action: this.save.bind(this)
+        }
+    ];
 
     constructor(
-        injector: Injector,
-        private _languageService: LanguageServiceProxy
+        private _languageService: LanguageServiceProxy,
+        private _dialogRef: MatDialogRef<EditTextModalComponent>,
+        private _notifyServer: NotifyService,
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) private data: any
     ) {
-        super(injector);
-        this.data = injector.get(MAT_DIALOG_DATA);
-        if (this.data) {
-            this.data.title = this.l('EditText');
-            this.model.sourceName = this.data.sourceName;
-            this.model.key = this.data.key;
-            this.model.languageName = this.data.targetLanguageName;
-            this.model.value = this.data.targetValue;
+        this.model.sourceName = this.data.sourceName;
+        this.model.key = this.data.key;
+        this.model.languageName = this.data.targetLanguageName;
+        this.model.value = this.data.targetValue;
 
-            this.baseText = this.data.baseValue;
-            this.baseLanguage = find(abp.localization.languages, l => l.name === this.data.baseLanguageName);
-            this.targetLanguage = find(abp.localization.languages, l => l.name === this.data.targetLanguageName);
-        }
-    }
-
-    ngOnInit() {
-        this.data.buttons = [
-            {
-                title: this.l('Save'),
-                class: 'primary',
-                action: this.save.bind(this)
-            }
-        ];
+        this.baseText = this.data.baseValue;
+        this.baseLanguage = find(abp.localization.languages, l => l.name === this.data.baseLanguageName);
+        this.targetLanguage = find(abp.localization.languages, l => l.name === this.data.targetLanguageName);
     }
 
     save(): void {
-        this.saving = true;
+        this.modalDialog.startLoading();
         this._languageService.updateLanguageText(this.model)
-            .pipe(finalize(() => this.saving = false))
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
-                this.notify.info(this.l('SavedSuccessfully'));
+                this._notifyServer.info(this.ls.l('SavedSuccessfully'));
                 this.close();
                 this.modalSave.emit(null);
             });
     }
 
     close(): void {
-        this.dialogRef.close();
+        this._dialogRef.close();
     }
 
     private findLanguage(name: string): abp.localization.ILanguageInfo {

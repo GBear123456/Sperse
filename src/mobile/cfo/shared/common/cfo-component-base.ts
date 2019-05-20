@@ -16,9 +16,6 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
 
     constructor(injector: Injector) {
         super(injector);
-
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
-
         this._route = injector.get(ActivatedRoute);
         this._cfoService = injector.get(CFOService);
 

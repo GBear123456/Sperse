@@ -45,6 +45,10 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
         this.startLoading();
     }
 
+    ngOnInit() {
+        this.refreshkeyPhrasesCountDataSource();
+    }
+
     refreshkeyPhrasesCountDataSource() {
         if (this.keyPhrasesDataSource) {
             this.keyPhrasesDataSource.store()['_url'] = this.getODataUrl('TransactionGroup', this._keyPhrasesFilterQuery);
@@ -53,10 +57,6 @@ export class KeyPhrasesComponent extends CFOComponentBase implements OnInit {
                 this.keyPhrasesData = result;
             });
         }
-    }
-
-    ngOnInit() {
-        this.refreshkeyPhrasesCountDataSource();
     }
 
     onCellClick(event) {

@@ -18,7 +18,6 @@
             [selectedItems]="bankAccountsService.selectedBankAccountTypes$ | async"
             (selectionChanged)="bankAccountTypesChanged($event)">
         </selection-filter>
-
         <div class="is-active-filter">
             <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
             <div>{{ bankAccountsService.state.isActive !== false ? l('Active') : l('Disabled') }}</div>

@@ -1,44 +1,47 @@
-<app-modal-dialog>
+<modal-dialog [title]="ls.l('MySettings')"
+              [editTitle]="false"
+              [titleClearButton]="false"
+              [placeholder]="ls.l('MySettings')">
     <dx-scroll-view showScrollbar="onHover">
         <div class="tab-content">
             <div class="modal-body" *ngIf="user">
                 <tabset class="tab-container tabbable-line">
-                    <tab heading="{{l('Profile')}}" customClass="m-tabs__item">
+                    <tab heading="{{ls.l('Profile')}}" customClass="m-tabs__item">
                         <div class="form-group inline">
-                            <label for="Name">{{l("Name")}} *</label>
+                            <label for="Name">{{ls.l("Name")}} *</label>
                             <input id="Name" #nameInput="ngModel" class="form-control" type="text" name="Name" [(ngModel)]="user.name" required maxlength="32">
                             <validation-messages [formCtrl]="nameInput"></validation-messages>
                         </div>
                         <div class="form-group inline">
-                            <label for="Surname">{{l("Surname")}} *</label>
+                            <label for="Surname">{{ls.l("Surname")}} *</label>
                             <input id="Surname" #surnameInput="ngModel" type="text" name="Surname" class="form-control" [(ngModel)]="user.surname" required maxlength="32">
                             <validation-messages [formCtrl]="surnameInput"></validation-messages>
                         </div>
                         <div class="form-group">
-                            <label for="EmailAddress">{{l("EmailAddress")}} *</label>
+                            <label for="EmailAddress">{{ls.l("EmailAddress")}} *</label>
                             <input id="EmailAddress" #emailAddressInput="ngModel" type="email" disabled name="EmailAddress" class="form-control" [(ngModel)]="user.emailAddress" required email maxlength="256">
-                            <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{email: l('InvalidEmailAddress')}]"></validation-messages>
+                            <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{email: ls.l('InvalidEmailAddress')}]"></validation-messages>
                         </div>
                         <div *ngIf="smsEnabled && !isPhoneNumberEmpty">
                             <div class="form-group">
-                                <label>{{l("PhoneNumber")}}</label>
+                                <label>{{ls.l("PhoneNumber")}}</label>
                                 <div class="input-group">
                                     <input type="text" name="PhoneNumber" class="form-control" [(ngModel)]="user.phoneNumber" maxlength="24">
                                     <span *ngIf="!isPhoneNumberConfirmed" id="SpanSmsVerificationUnverified" class="input-group-btn">
-                                        <button id="btnSmsVerification" (click)="smsVerify()" class="btn btn-primary" type="button" tooltip="{{l('YourPhoneNumberIsNotVerified')}}"><i class="fa fa-warning"></i>{{l('Verify')}}</button>
+                                        <button id="btnSmsVerification" (click)="smsVerify()" class="btn btn-primary" type="button" tooltip="{{ls.l('YourPhoneNumberIsNotVerified')}}"><i class="fa fa-warning"></i>{{ls.l('Verify')}}</button>
                                     </span>
-                                    <span *ngIf="!isPhoneNumberConfirmed" id="SpanSmsVerificationVerified" style="display: none;" class="input-group-addon" tooltip="{{l('YourPhoneNumberIsVerified')}}">
-                                        <i class="la la-check m--font-success" [attr.aria-label]="l('Verified')"></i>
+                                    <span *ngIf="!isPhoneNumberConfirmed" id="SpanSmsVerificationVerified" style="display: none;" class="input-group-addon" tooltip="{{ls.l('YourPhoneNumberIsVerified')}}">
+                                        <i class="la la-check m--font-success" [attr.aria-label]="ls.l('Verified')"></i>
                                     </span>
-                                    <span *ngIf="isPhoneNumberConfirmed" class="input-group-addon" tooltip="{{l('YourPhoneNumberIsVerified')}}">
-                                        <i class="la la-check m--font-success" [attr.aria-label]="l('Verified')"></i>
+                                    <span *ngIf="isPhoneNumberConfirmed" class="input-group-addon" tooltip="{{ls.l('YourPhoneNumberIsVerified')}}">
+                                        <i class="la la-check m--font-success" [attr.aria-label]="ls.l('Verified')"></i>
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div *ngIf="!smsEnabled || isPhoneNumberEmpty">
                             <div class="form-group">
-                                <label>{{l("PhoneNumber")}}</label>
+                                <label>{{ls.l("PhoneNumber")}}</label>
                                 <country-phone-number class="phoneNumber"
                                                       [(phoneNumber)]="user.phoneNumber"
                                                       [required]="false">
@@ -46,28 +49,28 @@
                             </div>
                         </div>
                         <div class="form-group" *ngIf="showTimezoneSelection">
-                            <label for="Timezone">{{l("Timezone")}}</label>
+                            <label for="Timezone">{{ls.l("Timezone")}}</label>
                             <timezone-combo id="Timezone" [(selectedTimeZone)]="user.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
                         </div>
                     </tab>
-                    <tab heading="{{l('TwoFactorLogin')}}" customClass="m-tabs__item">
+                    <tab heading="{{ls.l('TwoFactorLogin')}}" customClass="m-tabs__item">
                         <div>
                             <h4>
                                 Google Authenticator
                             </h4>
                             <div [hidden]="!isGoogleAuthenticatorEnabled">
                                 <span>
-                                    {{l("ScanQrCodeWithYourMobileApp")}}
+                                    {{ls.l("ScanQrCodeWithYourMobileApp")}}
                                 </span>
                                 <div class="text-center">
                                     <img [src]="user.qrCodeSetupImageUrl" />
                                 </div>
                                 <small>
-                                    {{l("GoogleAuthenticatorReferrerLink")}}: <a href="https://support.google.com/accounts/answer/1066447" target="_blank" rel="noopener noreferrer">Google Authenticator</a>
+                                    {{ls.l("GoogleAuthenticatorReferrerLink")}}: <a href="https://support.google.com/accounts/answer/1066447" target="_blank" rel="noopener noreferrer">Google Authenticator</a>
                                 </small>
                             </div>
                             <div [hidden]="isGoogleAuthenticatorEnabled">
-                                <button type="button" class="button-layout button-primary" (click)="updateQrCodeSetupImageUrl()">{{l("Enable")}}</button>
+                                <button type="button" class="button-layout button-primary" (click)="updateQrCodeSetupImageUrl()">{{ls.l("Enable")}}</button>
                             </div>
                         </div>
                     </tab>
@@ -76,4 +79,4 @@
         </div>
     </dx-scroll-view>
     <smsVerificationModal #smsVerificationModal (modalSave)="changePhoneNumberToVerified()"></smsVerificationModal>
-</app-modal-dialog>
+</modal-dialog>

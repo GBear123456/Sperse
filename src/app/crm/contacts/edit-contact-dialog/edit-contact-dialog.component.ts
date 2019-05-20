@@ -55,7 +55,7 @@ export class EditContactDialog extends AppComponentBase {
                 private _contactPhoneService: ContactPhoneServiceProxy,
                 private _contactLinkService: ContactLinkServiceProxy,
                 private store$: Store<AppStore.State>) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
 
@@ -131,7 +131,7 @@ export class EditContactDialog extends AppComponentBase {
     }
 
     mouseDown(event) {
-        if (!this.dialogRef['_containerInstance']['_config'].hasBackdrop) 
+        if (!this.dialogRef['_containerInstance']['_config'].hasBackdrop)
             this.movePos = {
                 x: event.clientX,
                 y: event.clientY

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, Injector, Input, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { mergeMap, scan, tap, switchMap } from 'rxjs/operators';
@@ -21,7 +21,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
     styleUrls: ['./totals-by-period.component.less'],
     providers: [BankAccountsServiceProxy]
 })
-export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit {
+export class TotalsByPeriodComponent extends CFOComponentBase {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
     @Input() waitForBankAccounts = false;
     @Input() waitForPeriods = false;

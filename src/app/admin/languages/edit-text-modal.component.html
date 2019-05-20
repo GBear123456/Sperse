@@ -1,9 +1,9 @@
-<app-modal-dialog #modal>
+<modal-dialog [title]="title" [buttons]="buttons">
     <dx-scroll-view showScrollbar="onHover">
         <form #editForm="ngForm" novalidate (ngSubmit)="save()">
             <div class="modal-body">
                 <div class="form-group">
-                    <label>{{l("Key")}}</label>
+                    <label>{{ls.l('Key')}}</label>
                     <div><strong>{{model.key}}</strong></div>
                 </div>
                 <div class="form-group form-md-line-input form-md-floating-label no-hint">
@@ -17,4 +17,4 @@
             </div>
         </form>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

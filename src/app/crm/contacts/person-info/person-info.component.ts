@@ -16,7 +16,7 @@ export class PersonInfoComponent extends AppComponentBase {
         injector: Injector,
         private _personContactService: PersonContactServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 

@@ -1,20 +1,24 @@
-<app-modal-dialog>
+<modal-dialog [title]="ls.l('NotificationSettings')"
+              [buttons]="buttons"
+              [editTitle]="false"
+              [titleClearButton]="false"
+              [placeholder]="ls.l('NotificationSettings')">
     <dx-scroll-view showScrollbar="onHover">
         <div class="modal-body" *ngIf="settings">
-            <h4>{{l("ReceiveNotifications")}}</h4>
+            <h4>{{ls.l("ReceiveNotifications")}}</h4>
             <div>
                 <input type="checkbox"
                        id="ReceiveNotifications"
                        jq-plugin="bootstrapSwitch"
                        name="ReceiveNotifications"
                        attr.switch-size="small"
-                       [attr.switch-on-text]="l('On')"
-                       [attr.switch-off-text]="l('Off')" />
-                <div class="help-block">{{l("ReceiveNotifications_Definition")}}</div>
+                       [attr.switch-on-text]="ls.l('On')"
+                       [attr.switch-off-text]="ls.l('Off')" />
+                <div class="help-block">{{ls.l("ReceiveNotifications_Definition")}}</div>
             </div>
-            <h4 *ngIf="settings.notifications.length" class="m--margin-top-20">{{l("NotificationTypes")}}</h4>
+            <h4 *ngIf="settings.notifications.length" class="m--margin-top-20">{{ls.l("NotificationTypes")}}</h4>
             <p *ngIf="settings.notifications.length && !settings.receiveNotifications" class="text-danger">
-                <small>{{l("ReceiveNotifications_DisableInfo")}}</small>
+                <small>{{ls.l("ReceiveNotifications_DisableInfo")}}</small>
             </p>
             <div class="m-checkbox-list">
                 <div *ngFor="let notification of settings.notifications">
@@ -28,4 +32,4 @@
             </div>
         </div>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

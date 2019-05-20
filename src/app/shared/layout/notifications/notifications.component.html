@@ -1,4 +1,7 @@
-<app-modal-dialog>
+<modal-dialog [title]="ls.l('Notifications')"
+              [editTitle]="false"
+              [titleClearButton]="false"
+              [placeholder]="ls.l('Notifications')">
     <div class="tab-content">
         <div class="m-content">
             <div class="m-portlet m-portlet--mobile">
@@ -12,17 +15,17 @@
                                             [(ngModel)]="readStateFilter"
                                             name="readStateFilter"
                                             jq-plugin="selectpicker">
-                                        <option value="ALL">{{l("All")}}</option>
-                                        <option value="UNREAD">{{l("Unread")}}</option>
+                                        <option value="ALL">{{ls.l("All")}}</option>
+                                        <option value="UNREAD">{{ls.l("Unread")}}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-xl-6 text-right links">
                                 <div class="text-right col-md-7">
-                                    <a href="javascript:;" class="text-right" (click)="setAllNotificationsAsRead(); $event.preventDefault(); $event.stopPropagation();" *ngIf="unreadNotificationCount">{{l("SetAllAsRead")}}</a>
+                                    <a href="javascript:;" class="text-right" (click)="setAllNotificationsAsRead(); $event.preventDefault(); $event.stopPropagation();" *ngIf="unreadNotificationCount">{{ls.l("SetAllAsRead")}}</a>
                                 </div>
                                 <div class="text-right">
-                                    <a (click)="openNotificationSettingsModal($event)" href="javascript:;">{{l("Preferences")}}</a>
+                                    <a (click)="openNotificationSettingsModal($event)" href="javascript:;">{{ls.l("Preferences")}}</a>
                                 </div>
                             </div>
                         </div>
@@ -39,12 +42,12 @@
                                     <span class="m-list-timeline__time" jq-plugin="timeago">
                                         {{notification.time}}
                                         <span *ngIf="notification.isUnread">
-                                            <a href="javascript:;" *ngIf="notification.state=='UNREAD'" class="m-link set-notification-as-read" (click)="setNotificationAsRead(notification); $event.preventDefault(); $event.stopPropagation();">{{l("SetAsRead")}}</a>
+                                            <a href="javascript:;" *ngIf="notification.state=='UNREAD'" class="m-link set-notification-as-read" (click)="setNotificationAsRead(notification); $event.preventDefault(); $event.stopPropagation();">{{ls.l("SetAsRead")}}</a>
                                         </span>
                                     </span>
                                 </div>
                                 <span *ngIf="!notifications.length" class="notification-empty-text">
-                                    {{l("ThereIsNoNotification")}}
+                                    {{ls.l("ThereIsNoNotification")}}
                                 </span>
                             </div>
                             <div *ngIf="notifications.length" class="m-nav__separator m-nav__separator--fit"></div>
@@ -54,4 +57,4 @@
             </div>
         </div>
     </div>
-</app-modal-dialog>
+</modal-dialog>

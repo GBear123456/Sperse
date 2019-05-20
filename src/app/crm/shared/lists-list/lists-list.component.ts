@@ -56,7 +56,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         private store$: Store<AppStore.State>,
         private actions$: ActionsSubject
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     toggle() {
@@ -218,8 +218,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 return (obj.id != itemId);
             }),
             entityPrefix: 'List',
-            reassignToItemId: undefined,
-            localization: this.localizationSourceName
+            reassignToItemId: undefined
         };
         this.tooltipVisible = false;
         this.dialog.open(DeleteAndReassignDialogComponent, {

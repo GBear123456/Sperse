@@ -1,24 +1,27 @@
-import { ChangeDetectionStrategy, Component, Injector, OnInit } from '@angular/core';
-import { AuditLogListDto } from '@shared/service-proxies/service-proxies';
+/** Core imports */
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+
+/** Third party imports */
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as moment from 'moment';
-import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+/** Application imports */
+import { AuditLogListDto } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'auditLogDetailModal',
     templateUrl: './audit-log-detail-modal.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AuditLogDetailModalComponent extends AppModalDialogComponent implements OnInit {
+export class AuditLogDetailModalComponent implements OnInit {
     auditLog: AuditLogListDto;
 
     constructor(
-        injector: Injector
-    ) {
-        super(injector);
-        this.data = injector.get(MAT_DIALOG_DATA);
-        this.data.title = this.l('AuditLogDetail');
-    }
+        public ls: AppLocalizationService,
+        private dialogRef: MatDialogRef<AuditLogDetailModalComponent>,
+        @Inject(MAT_DIALOG_DATA) private data: any
+    ) {}
 
     ngOnInit() {
         const self = this;
@@ -31,17 +34,15 @@ export class AuditLogDetailModalComponent extends AppModalDialogComponent implem
     }
 
     getDurationAsMs(): string {
-        const self = this;
-        return self.l('Xms', self.auditLog.executionDuration);
+        return this.ls.ls('Platform', 'Xms', this.auditLog.executionDuration.toString());
     }
 
     getFormattedParameters(): string {
-        const self = this;
         try {
-            const json = JSON.parse(self.auditLog.parameters);
+            const json = JSON.parse(this.auditLog.parameters);
             return JSON.stringify(json, null, 4);
         } catch (e) {
-            return self.auditLog.parameters;
+            return this.auditLog.parameters;
         }
     }
 

@@ -36,7 +36,7 @@ export class TotalsBySourceComponent extends AppComponentBase implements AfterVi
         private _dashboardWidgetsService: DashboardWidgetsService,
         private _dashboardServiceProxy: DashboardServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         _dashboardWidgetsService.subscribePeriodChange((period) => {
             this.startLoading();

@@ -17,7 +17,6 @@ import {
     UserServiceProxy,
     ActivateUserForContactInput,
     SetupInput,
-    TenantHostType,
     GetUserInstanceInfoOutputStatus,
     TenantSubscriptionServiceProxy,
     ModuleSubscriptionInfoDtoModule,

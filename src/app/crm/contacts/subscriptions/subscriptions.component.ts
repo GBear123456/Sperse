@@ -45,7 +45,7 @@ export class SubscriptionsComponent extends AppComponentBase implements OnInit {
         private _impersonationService: ImpersonationService,
         private _dialog: MatDialog
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         _contactsService.invalidateSubscribe((area) => {
             if (area == 'subscriptions') {
                 this.refreshData(true);

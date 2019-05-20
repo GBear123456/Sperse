@@ -1,11 +1,28 @@
 <div class="close-dialog" (click)="close(true)"></div>
 <div class="mat-dialog-header">
-    <input type="text" value="{{data.title}}" readonly>
+    <div class="title-wrapper">
+        <dx-text-box
+            name="title"
+            [readOnly]="!editTitle"
+            [showClearButton]="titleClearButton"
+            [placeholder]="placeholder"
+            [(value)]="title"
+            [isValid]="isTitleValid == undefined || isTitleValid"
+            (onInput)="titleChanged($event)"
+            (onKeyUp)="titleKeyUp($event)">
+        </dx-text-box>
+        <ng-content select="[headerContent]"></ng-content>
+    </div>
     <mat-dialog-actions>
-        <div class="mat-dialog-buttons">
-            <ng-template ngFor let-button [ngForOf]="data.buttons" let-i="index">
-                <button mat-button (click)="button.action($event)" id="{{button.id}}" class="button-layout button-{{button.class}}">
-                    <span *ngIf="!!button.title">{{ l(button.title )}}</span>
+        <div class="mat-dialog-options" *ngIf="options">
+            <ng-template ngFor let-option [ngForOf]="options" let-i="index">
+                <dx-check-box class="mat-dialog-option pull-right" (onValueChanged)="option.onValueChanged && option.onValueChanged($event)" [(value)]="option.value" [text]="option.text"></dx-check-box>
+            </ng-template>
+        </div>
+        <div class="mat-dialog-buttons" *ngIf="(data.buttons || buttons) as buttons">
+            <ng-template ngFor let-button [ngForOf]="buttons" let-i="index">
+                <button mat-button (click)="button.action($event)" [id]="button.id" [title]="button.hint ? button.hint : ''" class="button-layout button-{{button.class}}">
+                    <span *ngIf="!!button.title">{{ ls.l(button.title )}}</span>
                     <img *ngIf="!!button.iconName" [src]="'./assets/common/icons/' + button.iconName" />
                 </button>
             </ng-template>

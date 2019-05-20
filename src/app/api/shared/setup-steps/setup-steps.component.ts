@@ -20,8 +20,6 @@ export class SetupStepComponent extends AppComponentBase implements OnInit {
 
     constructor(injector: Injector) {
         super(injector);
-
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit(): void {

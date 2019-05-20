@@ -123,7 +123,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 private _customerService: CustomerServiceProxy,
                 private _itemDetailsService: ItemDetailsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this._appStoreService.loadUserDictionaries();
         _contactService['data'] = {
             contactInfo: null,
@@ -166,7 +166,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     initNavButtons() {
         this.rootComponent.overflowHidden(true);
         this.rootComponent.pageHeaderFixed();
-        let key = this.getCacheKey(abp.session.userId);
+        let key = this.getCacheKey(abp.session.userId.toString());
         if (this._cacheService.exists(key))
             this.rightPanelSetting = this._cacheService.get(key);
         switch (this.getSection()) {
@@ -668,9 +668,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         const pipelineId = AppConsts.PipelinePurposeIds.lead;
         let sourceStage = this._pipelineService.getStageByName(pipelineId, this.leadInfo.stage);
         let targetStage = this._pipelineService.getStageByName(pipelineId, $event.itemData.name);
-                                  
+
         if (this._pipelineService.updateEntityStage(pipelineId, this.leadInfo, sourceStage, targetStage, () => {
-            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId = targetStage.id]);            
+            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId = targetStage.id]);
         })) {
             this.leadInfo.stage = targetStage;
             this.notify.success(this.l('StageSuccessfullyUpdated'));
@@ -715,8 +715,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         event.stopPropagation();
 
         this.rightPanelSetting[section] = event.target.checked;
-        this._cacheService.set(this.getCacheKey(
-            abp.session.userId), this.rightPanelSetting);
+        this._cacheService.set(this.getCacheKey(abp.session.userId.toString()), this.rightPanelSetting);
     }
 
     onContactSelected(contact) {

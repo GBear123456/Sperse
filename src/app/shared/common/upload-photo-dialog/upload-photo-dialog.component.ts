@@ -46,7 +46,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         private changeDetectorRef: ChangeDetectorRef,
         private profileServiceProxy: ProfileServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.cropperSettings = this.getCropperSetting();
     }
 
@@ -214,7 +214,7 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
                             };
                         }, (e) => this.finishLoading()
                     );
-                } else 
+                } else
                     this.finishLoading();
             };
         }

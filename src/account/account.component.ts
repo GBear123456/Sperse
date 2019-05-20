@@ -45,11 +45,11 @@ export class AccountComponent extends AppComponentBase implements OnInit {
 
     private getLayoutComponent(tenant) {
         switch (tenant && tenant.customLayoutType) {
-            case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
+            case TenantLoginInfoDtoCustomLayoutType.LendSpace:
                 return LendSpaceLayoutComponent;
-            case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod: 
+            case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod:
                 return AdvicePeriodLayoutComponent;
-            default: 
+            default:
                 return HostLayoutComponent;
         }
     }

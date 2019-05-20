@@ -1,17 +1,20 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, Injector, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { MAT_DIALOG_DATA } from '@angular/material';
+import { Observable, from } from 'rxjs';
+import { finalize, map } from 'rxjs/operators';
 import printJS from 'print-js';
-import { from } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ConditionsType } from '@shared/AppEnums';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
     selector: 'conditions-modal',
@@ -19,12 +22,12 @@ import { ConditionsType } from '@shared/AppEnums';
     styleUrls: [ './conditions-modal.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConditionsModalComponent extends ModalDialogComponent implements OnInit {
+export class ConditionsModalComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     conditionBody$: Observable<SafeHtml>;
-
     private conditionsOptions = {
         [ConditionsType.Terms]: {
-            title: this.l('TermsOfService'),
+            title: this.ls.l('TermsOfService'),
             bodyLink: 'terms.html',
             apiBodyLink: 'GetTermsOfServiceDocument',
             downloadLink: 'DownloadTermsOfServicePdf',
@@ -32,7 +35,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
             defaultLink: 'SperseTermsOfService.pdf'
         },
         [ConditionsType.Policies]: {
-            title: this.l('PrivacyPolicy'),
+            title: this.ls.l('PrivacyPolicy'),
             bodyLink: 'privacy.html',
             apiBodyLink: 'GetPrivacyPolicyDocument',
             downloadLink: 'DownloadPrivacyPolicyPdf',
@@ -40,43 +43,47 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
             defaultLink: 'SpersePrivacyPolicy.pdf'
         }
     };
+    title: string;
+    buttons: IDialogButton[] = [
+        {
+            id: 'print',
+            iconName: 'print-icon.svg',
+            class: 'icon',
+            action: this.printContent.bind(this)
+        }
+    ];
 
     constructor(
-        injector: Injector,
         private element: ElementRef,
-        private sanitizer: DomSanitizer
-    ) {
-        super(injector);
-    }
+        private sanitizer: DomSanitizer,
+        private ls: AppLocalizationService,
+        private appSession: AppSessionService,
+        @Inject(MAT_DIALOG_DATA) private data: any
+    ) {}
 
     ngOnInit() {
-        if (!this.data.title)
-            this.data.title = this.conditionsOptions[this.data.type].title;
-        this.data.buttons = [
-            {
-                id: 'print',
-                iconName: 'print-icon.svg',
-                class: 'icon',
-                action: this.printContent.bind(this)
-            }
-        ];
+        this.modalDialog.startLoading();
+        this.title = this.data.title || this.conditionsOptions[this.data.type].title;
         if (!this.data.downloadDisabled)
-            this.data.buttons.unshift({
+            this.buttons.unshift({
                 id: 'download',
                 iconName: 'download-icon.svg',
                 class: 'icon',
                 action: this.download.bind(this)
             });
-        if (!this.data.bodyUrl)
-            this.data.bodyUrl = this.isTenantDocumentAvailable() ?
-                this.getApiLink('apiBodyLink') : this.getDefaultLink('bodyLink');
+        const bodyUrl = this.data.bodyUrl || (
+                this.isTenantDocumentAvailable()
+                    ? this.getApiLink('apiBodyLink')
+                    : this.getDefaultLink('bodyLink')
+                );
 
         this.conditionBody$ = from(
             $.ajax({
-                url: this.data.bodyUrl,
+                url: bodyUrl,
                 method: 'GET'
             })
         ).pipe(
+            finalize(() => this.modalDialog.finishLoading()),
             map((html) => {
                 return this.sanitizer.bypassSecurityTrustHtml(html);
             })
@@ -105,7 +112,7 @@ export class ConditionsModalComponent extends ModalDialogComponent implements On
         printJS({
             type: 'html',
             printable: 'content',
-            documentTitle: this.data.title,
+            documentTitle: this.title,
             style: '.visible-on-print { visibility: visible; text-align: center; }',
             onLoadingStart: () => {
                 /** Height property works incorrectly with the following p if set in styles */

@@ -13,8 +13,9 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
-import { ContactAssignedUsersStoreSelectors,
+import {
     AppStore,
+    ContactAssignedUsersStoreSelectors,
     TagsStoreSelectors,
     ListsStoreSelectors,
     StarsStoreSelectors,
@@ -43,8 +44,7 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { ContactServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy,
-    ContactStatusDto } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -114,7 +114,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         public featureService: FeatureCheckerService,
         private itemDetailsService: ItemDetailsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.dataSource = {
             store: {
                 key: 'Id',
@@ -668,15 +668,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     });
                 }
             });
-        } 
+        }
     }
 
     activate() {
         super.activate();
-        this.localizationService.localizationSourceName = this.localizationSourceName;
         this.lifeCycleSubjectsService.activate.next();
-        this._filtersService.localizationSourceName =
-            this.localizationSourceName;
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -693,8 +690,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     deactivate() {
         super.deactivate();
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
 
         this.subRouteParams.unsubscribe();
         this._appService.updateToolbar(null);

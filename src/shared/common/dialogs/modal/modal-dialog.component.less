@@ -14,6 +14,8 @@
 }
 :host {
     position: relative;
+    display: block;
+    height: 100%;
     .close-dialog {
         position: absolute;
         width: 42px;
@@ -48,6 +50,7 @@
 
     .mat-dialog-header {
         display: flex;
+        align-items: center;
         height: 82px;
         padding: 0px 10px;
         justify-content: space-between;
@@ -65,44 +68,125 @@
            background: transparent;
         }
 
-        .mat-dialog-actions {
-            margin: 0px;
-            .mat-dialog-buttons {
-                height: 46px;
-                align-self: center;
-                display: flex;
-                button {
-                    cursor: pointer;              
-                    outline: none;
-                    &:disabled {
-                        opacity: 0.5;
-                        cursor: not-allowed;
-                    }
-                    &.button-icon {
-                        position: relative;
-                        border-radius: 18px;
-                        margin: 5px;
-                        padding: 0 15px;
-                        height: 36px;
-                        transition: .2s;
-                        border-radius: initial;
-                        margin: auto;
-                        border: 1px solid #eaeef0;
-                        background: #fff;
-                        &:hover {
-                            background: #fff;
-                        }
-                    }
+        /deep/ dx-text-box[name="title"] {
+            width: 440px;
+            height: 100%;
+            &.dx-state-readonly {
+                .dx-texteditor-container:after {
+                    display: none;
+                }
+            }
+            &.dx-invalid {
+                .dx-texteditor-container:after {
+                    background-color: #d9534f!important;
+                }
+                .dx-placeholder {
+                    color: #d9534f!important;
+                }
+            }
+            .dx-texteditor-container:after {
+                content: '';
+                top: 48px!important;
+                margin-top: 0px!important;
+                left: 15px;
+                width: 442px;
+                height: 1px;
+                bottom: 18px;
+                position: absolute;
+                display: inline-block;
+                background-color: #dadee1;
+            }
+            input {
+                &, &:read-only {
+                    font-size: 22px;
+                    font-weight: 500;
+                    line-height: 1.09;
+                    letter-spacing: 0.4px;
+                    color: #202b35;
+                    padding-left: 17px;
+                    background-color: #F3F7FA;
+                    border: none;
                 }
             }
         }
     }
 
-    mat-dialog-content {
+    .title-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    /deep/ mat-dialog-content {
         height: 100%;
         overflow: hidden;
         max-height: calc(~"100% - 82px");
         margin: 0px;
-        padding: 0px;         
+        padding: 0px;
+    }
+
+    /deep/ mat-dialog-actions {
+        height: 100%;
+        margin: 0px;
+        .mat-dialog-buttons {
+            height: 46px;
+            align-self: center;
+            display: flex;
+            button {
+                cursor: pointer;
+                outline: none;
+                &:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+                &.button-icon {
+                    position: relative;
+                    padding: 0 15px;
+                    height: 36px;
+                    transition: .2s;
+                    border-radius: initial;
+                    margin: auto;
+                    border: 1px solid #eaeef0;
+                    background: #fff;
+                    &:hover {
+                        background: #fff;
+                    }
+                }
+            }
+        }
+        .mat-dialog-options {
+            padding: 0 15px 0 30px;
+            align-self: center;
+            .mat-dialog-option {
+                font-size: 13px;
+            }
+        }
+    }
+
+    /deep/.tab-content {
+        padding: 15px;
+    }
+
+    /deep/ .dx-checkbox {
+        .dx-checkbox-icon {
+            width: 14px;
+            height: 14px;
+            background-color: #FFF;
+            border: 1px solid #DADEE1 !important;
+            border-radius: 3px;
+        }
+
+        &.dx-checkbox-checked {
+            .dx-checkbox-icon {
+                color: #FFF;
+                font-size: 8px;
+                font-weight: bold;
+                background-color: #00AEEF;
+                border-color: #00AEEF !important;
+            }
+        }
+
+        .dx-checkbox-text {
+            white-space: nowrap;
+        }
     }
 }

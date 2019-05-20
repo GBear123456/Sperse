@@ -14,7 +14,6 @@ export class FiltersService {
 
     public enabled = false;
     public fixed = false;
-    public localizationSourceName: string;
     public hasFilterSelected = false;
 
     constructor() {
@@ -28,7 +27,7 @@ export class FiltersService {
 
         if (initialValues && initialValues.filters) {
             let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
-            filters.forEach((filter, i, arr) => {
+            filters.forEach((filter) => {
                 filter.clearFilterItems();
                 if (initFilters[filter.caption]) {
                     let props = Object.keys(initFilters[filter.caption]);

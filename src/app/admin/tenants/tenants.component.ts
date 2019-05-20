@@ -4,6 +4,7 @@ import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -320,7 +321,9 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         this.dialog.open(CreateTenantModalComponent, {
             panelClass: ['slider', 'tenant-modal'],
             data: {}
-        });
+        }).afterClosed().pipe(filter(Boolean)).subscribe(
+            () => this.refreshDataGrid()
+        );
     }
 
     onContentReady() {
@@ -356,7 +359,9 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         this.dialog.open(EditTenantModalComponent, {
             panelClass: ['slider', 'tenant-modal'],
             data: { tenantId: tenantId }
-        });
+        }).afterClosed().pipe(filter(Boolean)).subscribe(
+            () => this.refreshDataGrid()
+        );
     }
 
     deleteTenant(tenant: TenantListDto): void {

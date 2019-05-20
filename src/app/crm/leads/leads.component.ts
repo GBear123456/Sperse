@@ -153,7 +153,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private itemDetailsService: ItemDetailsService,
         private _cacheService: CacheService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.contactGroupOptionInit();
         this.dataSource = {
@@ -870,10 +870,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     activate() {
         super.activate();
-        this.localizationService.localizationSourceName = this.localizationSourceName;
         this.lifeCycleSubjectsService.activate.next();
-        this._filtersService.localizationSourceName =
-            this.localizationSourceName;
 
         this.paramsSubscribe();
         this.initFilterConfig();
@@ -887,9 +884,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     deactivate() {
         super.deactivate();
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName =
-            AppConsts.localization.defaultLocalizationSourceName;
 
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
@@ -930,7 +924,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (event.previousValue != event.value) {
             this.contactGroupId = ContactGroup[event.value];
             this._cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
-            
+
             this.initToolbarConfig();
             if (!this.showPipeline)
                 this.refresh(false);

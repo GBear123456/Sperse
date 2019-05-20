@@ -121,7 +121,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         private decimalPipe: DecimalPipe,
         @Inject(DOCUMENT) private document: Document
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {

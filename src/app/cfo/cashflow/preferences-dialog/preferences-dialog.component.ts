@@ -1,23 +1,33 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { CashFlowGridSettingsDto, CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity } from '@shared/service-proxies/service-proxies';
-import { GeneralScope } from '../enums/general-scope.enum';
-import { CFOModalDialogComponent } from '@app/cfo/shared/common/dialogs/modal/cfo-modal-dialog.component';
-import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
+/** Core imports */
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import { MatDialogRef } from '@angular/material';
 import { finalize } from 'rxjs/operators';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+
+/** Application imports */
+import { CashflowServiceProxy, CashFlowGridSettingsDto } from '@shared/service-proxies/service-proxies';
+import { GeneralScope } from '../enums/general-scope.enum';
+import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { CFOService } from '@shared/cfo/cfo.service';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { IDialogOption } from '@shared/common/dialogs/modal/dialog-option.interface';
 
 @Component({
     selector: 'preferences-modal',
     templateUrl: 'preferences-dialog.component.html',
-    styleUrls: ['preferences-dialog.component.less']
+    styleUrls: ['preferences-dialog.component.less'],
+    providers: [ CashflowServiceProxy, UserPreferencesService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PreferencesDialogComponent extends CFOModalDialogComponent implements OnInit {
+export class PreferencesDialogComponent implements OnInit {
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     GeneralScope = GeneralScope;
-    PeriodScope = CashflowGridGeneralSettingsDtoShowColumnsWithZeroActivity;
-
     model: CashFlowGridSettingsDto;
     active = false;
-    saving = false;
     rememberLastSettings = true;
     fonts = [
         'Lato',
@@ -38,71 +48,69 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
         '1,000,000.0',
         '1.000.000,0'
     ];
+    buttons: IDialogButton[] = [
+        {
+            title: this.ls.l('CashFlowGrid_UserPrefs_Cancel'),
+            class: 'default',
+            action: () => {
+                this.modalDialog.close(true, {
+                    'saveLocally': false
+                });
+            }
+        },
+        {
+            title: this.rememberLastSettings ?
+                this.ls.l('CashFlowGrid_UserPrefs_Save') :
+                this.ls.l('CashFlowGrid_UserPrefs_Apply'),
+            class: 'primary',
+            action: () => {
+                if (this.rememberLastSettings) {
+                    this.modalDialog.startLoading();
+                    this._cashflowService.saveCashFlowGridSettings(this._cfoService.instanceType as any, this._cfoService.instanceId, this.model)
+                        .pipe(finalize(() => this.modalDialog.finishLoading()))
+                        .subscribe(() => {
+                            this.closeSuccessful();
+                        });
+                } else {
+                    /** Save the model in cache */
+                    this.applyChanges();
+                }
+            }
+        }
+    ];
+    options: IDialogOption[] = [
+        {
+            text: this.ls.l('CashFlowGrid_UserPrefs_RememberLastSettings'),
+            value: this.rememberLastSettings,
+            onValueChanged: () => {
+                this.rememberLastSettings = !this.rememberLastSettings;
+                this._changeDetectorRef.detectChanges();
+            }
+        }
+    ];
     constructor(
-        injector: Injector,
+        private _cashflowService: CashflowServiceProxy,
+        private _cfoService: CFOService,
+        private _dialogRef: MatDialogRef<PreferencesDialogComponent>,
+        private _changeDetectorRef: ChangeDetectorRef,
         public userPreferencesService: UserPreferencesService,
-        public cfoPreferencesService: CfoPreferencesService
+        public cfoPreferencesService: CfoPreferencesService,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
         for (let i = 10; i < 21; i++)
             this.fontSizes.push(i + 'px');
     }
 
     ngOnInit() {
-        super.ngOnInit();
-        this.initHeader();
         this.userPreferencesService.userPreferences$.subscribe(result => {
             this.model = result;
             this.active = true;
+            this._changeDetectorRef.detectChanges();
         });
-        this.dialogRef.afterClosed().subscribe(closeData => {
+        this._dialogRef.afterClosed().subscribe(closeData => {
             if (closeData && closeData.saveLocally) {
                 this.userPreferencesService.saveLocally(this.model);
             }
-        });
-    }
-
-    initHeader() {
-        this.data = Object.assign(this.data, {
-            title: this.l('CashFlowGrid_UserPrefs_Header'),
-            editTitle: false,
-            buttons: [
-                {
-                    title: this.l('CashFlowGrid_UserPrefs_Cancel'),
-                    class: 'default',
-                    action: () => {
-                        this.close(true, {'saveLocally': false});
-                    }
-                }, {
-                    title: this.rememberLastSettings ?
-                        this.l('CashFlowGrid_UserPrefs_Save') :
-                        this.l('CashFlowGrid_UserPrefs_Apply'),
-                    class: 'primary',
-                    action: () => {
-                        if (this.rememberLastSettings) {
-                            this.saving = true;
-                            this.userPreferencesService.saveRemotely(this.model)
-                                .pipe(finalize(() => { this.saving = false; }))
-                                .subscribe(() => {
-                                    this.closeSuccessful();
-                                });
-                        } else {
-                            /** Save the model in cache */
-                            this.applyChanges();
-                        }
-                    }
-                }
-            ],
-            options: [
-                {
-                    text: this.l('CashFlowGrid_UserPrefs_RememberLastSettings'),
-                    value: this.rememberLastSettings,
-                    onValueChanged: () => {
-                        this.rememberLastSettings = !this.rememberLastSettings;
-                        this.initHeader();
-                    }
-                }
-            ]
         });
     }
 
@@ -120,7 +128,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
     }
 
     closeSuccessful() {
-        this.close(true,  {
+        this.modalDialog.close(true,  {
             'update': true,
             'saveLocally': false,
             'model': this.model
@@ -128,7 +136,7 @@ export class PreferencesDialogComponent extends CFOModalDialogComponent implemen
     }
 
     applyChanges() {
-        this.close(true,  {
+        this.modalDialog.close(true,  {
             'update': true,
             'saveLocally': true,
             'apply': true,

@@ -36,7 +36,7 @@ export class ResetPasswordDialog extends AppComponentBase {
         private _profileService: ProfileServiceProxy,
         public dialogRef: MatDialogRef<ResetPasswordDialog>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this._profileService.getPasswordComplexitySetting().subscribe(passwordComplexityResult => {
             this.passwordValidator.requireDigit = passwordComplexityResult.setting.requireDigit;

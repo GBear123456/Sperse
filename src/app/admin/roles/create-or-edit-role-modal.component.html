@@ -1,11 +1,11 @@
-<app-modal-dialog #modal>
+<modal-dialog [buttons]="buttons" [title]="title">
     <dx-scroll-view showScrollbar="onHover">
         <form #roleForm="ngForm" novalidate (ngSubmit)="save()" autocomplete="off">
             <div class="modal-body">
                 <tabset class="tab-container tabbable-line">
-                    <tab heading="{{l('RoleName')}}" customClass="m-tabs__item">
+                    <tab heading="{{ls.l('RoleName')}}" customClass="m-tabs__item">
                         <div class="form-group">
-                            <label>{{l("RoleName")}} *</label>
+                            <label>{{ls.l("RoleName")}} *</label>
                             <input #roleNameInput="ngModel" class="form-control" type="text" name="DisplayName" [(ngModel)]="role.displayName" required maxlength="64">
                             <validation-messages [formCtrl]="roleNameInput"></validation-messages>
                         </div>
@@ -13,20 +13,20 @@
                         <div class="m-checkbox-list">
                             <label class="m-checkbox">
                                 <input id="EditRole_IsDefault" type="checkbox" name="IsDefault" [(ngModel)]="role.isDefault">
-                                {{l("Default")}}
+                                {{ls.l("Default")}}
                                 <span></span>
                             </label>
-                            <span class="help-blockpermission-tree">{{l("DefaultRole_Description")}}</span>
+                            <span class="help-blockpermission-tree">{{ls.l("DefaultRole_Description")}}</span>
                         </div>
                     </tab>
-                    <tab heading="{{l('Permissions')}}" customClass="m-tabs__item">
+                    <tab heading="{{ls.l('Permissions')}}" customClass="m-tabs__item">
                         <permission-tree [editData]="editData" #permissionTree></permission-tree>
                     </tab>
                 </tabset>
                 <div class="alert alert-warning" style="margin-top: 30px;">
-                    <em>{{l('Note_RefreshPageForPermissionChanges')}}</em>
+                    <em>{{ls.l('Note_RefreshPageForPermissionChanges')}}</em>
                 </div>
             </div>
         </form>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

@@ -41,7 +41,6 @@ import { AddMemberModalComponent } from 'app/admin/organization-units/add-member
 import { AdminRoutingModule } from './admin-routing.module';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail-modal.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
-import { EntityChangeDetailModalComponent } from './audit-logs/entity-change-detail-modal.component';
 import { HostDashboardComponent } from './dashboard/host-dashboard.component';
 import { CreateOrEditEditionModalComponent } from './editions/create-or-edit-edition-modal.component';
 import { EditionsComponent } from './editions/editions.component';
@@ -69,8 +68,6 @@ import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component'
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
-import { CreateOrEditUserModalComponent } from './users/create-or-edit-user-modal.component';
-import { EditUserPermissionsModalComponent } from './users/edit-user-permissions-modal.component';
 import { ImpersonationService } from './users/impersonation.service';
 import { UsersComponent } from './users/users.component';
 import { JobsComponent } from './jobs/jobs.component';
@@ -137,15 +134,12 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         UsersComponent,
         PermissionComboComponent,
         RoleComboComponent,
-        CreateOrEditUserModalComponent,
-        EditUserPermissionsModalComponent,
         PermissionTreeComponent,
         OrganizationUnitsTreeComponent,
         RolesComponent,
         CreateOrEditRoleModalComponent,
         AuditLogsComponent,
         AuditLogDetailModalComponent,
-        EntityChangeDetailModalComponent,
         HostSettingsComponent,
         MaintenanceComponent,
         JobsComponent,

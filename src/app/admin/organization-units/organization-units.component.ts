@@ -14,11 +14,11 @@ export class OrganizationUnitsComponent extends AppComponentBase {
     @ViewChild('ouMembers') ouMembers: OrganizationUnitMembersComponent;
     @ViewChild('ouTree') ouTree: OrganizationTreeComponent;
 
-    public headlineConfig = { 
-      names: [this.l('OrganizationUnits')], 
-      text: this.l('OrganizationUnitsHeaderInfo'),
-      icon: 'rocket', 
-      buttons: []
+    public headlineConfig = {
+        names: [this.l('OrganizationUnits')],
+        text: this.l('OrganizationUnitsHeaderInfo'),
+        icon: 'rocket',
+        buttons: []
     };
 
     constructor(

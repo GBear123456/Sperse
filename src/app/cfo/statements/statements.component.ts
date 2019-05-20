@@ -83,7 +83,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private store$: Store<CfoStore.State>
     ) {
         super(injector);
-        this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = 'USD';
         this.requestFilter.startDate = moment().utc().subtract(2, 'year');
@@ -251,8 +250,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
-        this.initLocalization();
         this.bankAccountsService.load();
         let forecastsModels$ = this._cashFlowForecastServiceProxy.getModels(InstanceType[this.instanceType], this.instanceId);
         let syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
@@ -512,13 +509,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         super.ngOnDestroy();
     }
 
-    private initLocalization() {
-        this.localizationService.localizationSourceName = this.localizationSourceName;
-        this._filtersService.localizationSourceName = this.localizationSourceName;
-    }
-
     activate() {
-        this.initLocalization();
         this.initToolbarConfig();
         this._filtersService.setup(this.filters);
         this.initFiltering();
@@ -537,8 +528,6 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
     }
 
     deactivate() {
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();

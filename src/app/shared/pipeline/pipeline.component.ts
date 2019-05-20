@@ -119,7 +119,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         private store$: Store<CrmStore.State>,
         public dialog: MatDialog
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     initPipeline() {
@@ -131,7 +131,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     newStage = this.getStageByElement(value[2]),
                     reloadStageList = [newStage['stageIndex']],
                     newSortOrder = this._pipelineService.getEntityNewSortOrder(
-                        this.getEntityById(this.getAccessKey(value[4]), newStage), newStage);                    
+                        this.getEntityById(this.getAccessKey(value[4]), newStage), newStage);
 
                 if (value[1].classList.contains('selected')) {
                     this.getSelectedEntities().forEach((entity, index, selectedList) => {
@@ -352,7 +352,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     loadStagesEntities(page = 0, stageIndex?: number, oneStageOnly = false, skipTotalRequest = false): Observable<any> {
         let response = of(null),
             index = stageIndex || 0,
-            stages = this.stages || [], 
+            stages = this.stages || [],
             stage = stages[index];
 
         if (!stage)
@@ -363,10 +363,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         else {
             let filter = {StageId: stage.id},
                 dataSource = this._dataSources[stage.name];
-            
+
             if (!dataSource)
                 dataSource = this._dataSources[stage.name] =
-                    this.getDataSourceForStage(stage);            
+                    this.getDataSourceForStage(stage);
 
             if (!isNaN(stage['lastSortOrder']) && page)
                 filter['SortOrder'] = {lt: stage['lastSortOrder']};
@@ -503,22 +503,22 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         ).map((stageIndex) => {
             return this.loadData(0, stageIndex, true);
         })).pipe(
-            finalize(() => { 
+            finalize(() => {
                 this.disabled = false;
                 this._changeDetector.detectChanges();
             })
         ).subscribe();
-    }    
+    }
 
     updateEntityStage(entity, newStage, oldStage, complete = null) {
-        if (entity && entity.Id) {            
+        if (entity && entity.Id) {
             this.disabled = true;
             setTimeout(() => {
                 this.startLoading();
-                if (newStage.name != oldStage.name) {                
+                if (newStage.name != oldStage.name) {
                     this._pipelineService.updateEntityStage(
                         this.pipelinePurposeId, entity, oldStage, newStage, complete);
-                } else                
+                } else
                     this._pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);
             });
         }

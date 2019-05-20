@@ -41,7 +41,7 @@ export class LendspaceWelcome2Component extends AppComponentBase implements OnIn
     ];
 
     constructor(injector: Injector, @Inject(DOCUMENT) private document: any) {
-        super(injector, AppConsts.localization.PFMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {

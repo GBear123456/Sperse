@@ -13,7 +13,7 @@ import * as _ from 'underscore';
     styleUrls: ['./relation-companies-dialog.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RelationCompaniesDialogComponent extends AppComponentBase implements OnInit { 
+export class RelationCompaniesDialogComponent extends AppComponentBase implements OnInit {
     @ViewChild(ContactListDialogComponent) contactList: ContactListDialogComponent;
 
     constructor(
@@ -22,7 +22,7 @@ export class RelationCompaniesDialogComponent extends AppComponentBase implement
         public dialogRef: MatDialogRef<ContactListDialogComponent>,
         private _relationsServiceProxy: PersonOrgRelationServiceProxy
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {
@@ -30,7 +30,7 @@ export class RelationCompaniesDialogComponent extends AppComponentBase implement
         this.contactList.addNewTitle = this.l('Add Contact');
         this.contactList.photoType = 'Organization';
         this.contactList.data = this.data;
-      
+
         this.contactList.filter = (search?) => {
             return this.data.personContactInfo.orgRelations.map((item) => {
                 let contact = item.organization;

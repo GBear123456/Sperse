@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ElementRef, Injector, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -15,7 +15,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-
 
 @Component({
     templateUrl: './languages.component.html',

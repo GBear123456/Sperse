@@ -35,9 +35,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     @Output() onTransactionDrop: EventEmitter<any> = new EventEmitter();
     @Output() onCategoriesChanged: EventEmitter<any> = new EventEmitter();
 
-    @Input() instanceId: number;
-    @Input() instanceType: string;
-
     @Input() width: string;
     @Input() height: string;
     @Input() showTitle: boolean;
@@ -109,10 +106,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         public dialog: MatDialog,
         private _filtersService: FiltersService,
         private _cacheService: CacheService,
-        private _categoryTreeServiceProxy: CategoryTreeServiceProxy) {
+        private _categoryTreeServiceProxy: CategoryTreeServiceProxy
+    ) {
         super(injector);
-
-        this.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {
@@ -380,8 +376,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         if (!expandFirstLevel && !expandSecondLevel) {
             this.categoryList.expandedRowKeys = [];
             this._cacheService.set(this._expandedCacheKey, this.categoryList.expandedRowKeys);
-        }
-        else {
+        } else {
             if (this.settings.showAT) {
                 _.mapObject(this.categorization.accountingTypes, (item, key) => {
                     this.categoryList.instance[(expandFirstLevel ? 'expand' : 'collapse') + 'Row'](key + item.typeId);
@@ -575,8 +570,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             abp.message.confirm(this.l('CategoryMergeConfirmation', targetName), this.l('CategoryMergeConfirmationTitle'), (result) => {
                 if (result) {
                     this._categoryTreeServiceProxy.deleteCategory(
-                        InstanceType[this.instanceType],
-                        this.instanceId,
+                        InstanceType[this._cfoService.instanceType],
+                        this._cfoService.instanceId,
                         moveToId, false, sourceId)
                         .subscribe((id) => {
                             this.refreshCategories();
@@ -590,8 +585,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             abp.message.confirm(this.l('CategoryMoveConfirmation', sourceCategory.name, targetName), this.l('CategoryMoveConfirmationTitle'), (result) => {
                 if (result) {
                     this._categoryTreeServiceProxy.updateCategory(
-                        InstanceType[this.instanceType],
-                        this.instanceId,
+                        InstanceType[this._cfoService.instanceType],
+                        this._cfoService.instanceId,
                         new UpdateCategoryInput({
                             id: sourceId,
                             parentId: targetCategory ? targetId : targetAccountingType ? null : sourceCategory.parentId,
@@ -611,7 +606,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     refreshCategories(expandInitial: boolean = false, refreshTransactionsCount = true) {
         this.startLoading();
         this._categoryTreeServiceProxy.get(
-            InstanceType[this.instanceType], this.instanceId, this.includeNonCashflowNodes).subscribe((data) => {
+            InstanceType[this._cfoService.instanceType], this._cfoService.instanceId, this.includeNonCashflowNodes).subscribe((data) => {
                 let categories = [];
                 this.categorization = data;
                 if (this.settings.showAT && data.accountingTypes) {
@@ -777,7 +772,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         let id = parseInt($event.key),
             accounting = this.categorization.accountingTypes[id];
         this._categoryTreeServiceProxy.updateAccountingType(
-            InstanceType[this.instanceType], this.instanceId,
+            InstanceType[this._cfoService.instanceType], this._cfoService.instanceId,
             UpdateAccountingTypeInput.fromJS({
                 id: id,
                 name: $event.data.hasOwnProperty('name') ? $event.data.name || undefined : accounting.name,
@@ -797,7 +792,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             let category = this.categorization.categories[$event.key];
             $event.element.querySelector('.dx-treelist-focus-overlay').style.display = '';
             this._categoryTreeServiceProxy.updateCategory(
-                InstanceType[this.instanceType], this.instanceId,
+                InstanceType[this._cfoService.instanceType], this._cfoService.instanceId,
                 UpdateCategoryInput.fromJS({
                     id: $event.key,
                     coAID: $event.data.hasOwnProperty('coAID') ? $event.data.coAID || undefined : category.coAID,
@@ -823,7 +818,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         }
 
         this._categoryTreeServiceProxy.createCategory(
-            InstanceType[this.instanceType], this.instanceId,
+            InstanceType[this._cfoService.instanceType], this._cfoService.instanceId,
             CreateCategoryInput.fromJS({
                 accountingTypeId: hasParentCategory ? this.categorization
                     .categories[parentId].accountingTypeId : parseInt(parentId),
@@ -856,8 +851,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             if (result)
                 this._categoryTreeServiceProxy[isAccountingType ? 'deleteAccountingType' : 'deleteCategory'].call(
                     this._categoryTreeServiceProxy,
-                    InstanceType[this.instanceType],
-                    this.instanceId,
+                    InstanceType[this._cfoService.instanceType],
+                    this._cfoService.instanceId,
                     dialogData.categoryId, dialogData.deleteAllReferences, parseInt(itemId))
                     .subscribe((id) => {
                         this.refreshCategories();
@@ -991,7 +986,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     insertAccountingType(typeId, name) {
         this._categoryTreeServiceProxy.createAccountingType(
-            InstanceType[this.instanceType], this.instanceId,
+            InstanceType[this._cfoService.instanceType], this._cfoService.instanceId,
             CreateAccountingTypeInput.fromJS({
                 cashflowTypeId: typeId,
                 name: name

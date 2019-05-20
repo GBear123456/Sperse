@@ -60,11 +60,11 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
 
     private getLayoutComponent(tenant) {
         switch (tenant && tenant.customLayoutType) {
-            case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
+            case TenantLoginInfoDtoCustomLayoutType.LendSpace:
                 return LendSpaceResetPasswordComponent;
-            case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod: 
+            case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod:
                 return AdvicePeriodResetPasswordComponent;
-            default: 
+            default:
                 return HostResetPasswordComponent;
         }
     }

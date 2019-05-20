@@ -51,7 +51,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         super(injector);
 
         this.initToolbarConfig();
-        this.filtersService.localizationSourceName = this.localizationSourceName;
     }
 
     initToolbarConfig() {
@@ -153,16 +152,12 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     showEditDialog(data = {}) {
         this.dialog.open(RuleDialogComponent, {
             panelClass: 'slider', data: _.extend(data, {
-                instanceId: this.instanceId,
-                instanceType: this.instanceType,
                 refershParent: this.refreshList.bind(this)
             })
         }).afterClosed().subscribe(result => { });
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
-
         this.refreshList();
         this.filtersService.setup(
             this.filters = [
@@ -230,8 +225,6 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     ngOnDestroy() {
         this._appService.updateToolbar(null);
         this.rootComponent.overflowHidden();
-        this.filtersService.localizationSourceName
-            = AppConsts.localization.defaultLocalizationSourceName;
         this.filtersService.unsubscribe();
         super.ngOnDestroy();
     }

@@ -12,7 +12,6 @@ import {
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from './models/filter-component';
 import { FilterModel } from './models/filter.model';
-import { FiltersService } from '@shared/filters/filters.service';
 
 @Directive({
     selector: '[ad-host]'
@@ -37,9 +36,10 @@ export class FilterManagerComponent extends AppComponentBase {
 
     @Output() onApply = new EventEmitter();
 
-    constructor(injector: Injector,
-                private _componentFactoryResolver: ComponentFactoryResolver,
-                private _filtersService: FiltersService) {
+    constructor(
+        injector: Injector,
+        private _componentFactoryResolver: ComponentFactoryResolver
+    ) {
         super(injector);
     }
 
@@ -50,7 +50,6 @@ export class FilterManagerComponent extends AppComponentBase {
             this._componentFactoryResolver.resolveComponentFactory(filter.component)
         ).instance;
 
-        componentRef.localizationSourceName = this._filtersService.localizationSourceName;
         componentRef.options = filter.options || {};
         componentRef.items = filter.items || {};
         componentRef.apply = (event) => {

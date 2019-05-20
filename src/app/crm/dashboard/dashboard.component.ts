@@ -65,7 +65,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         private reuseService: RouteReuseStrategy,
         private lifeCycleSubject: LifecycleSubjectsService
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
     }
 

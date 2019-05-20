@@ -1,5 +1,4 @@
 import { Component, Injector, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import * as moment from 'moment-timezone';
 import { BankAccountDailyStatDto } from '@shared/service-proxies/service-proxies';
@@ -16,7 +15,7 @@ export class SourceDataComponent extends AppComponentBase implements OnInit {
 
     amountOfItemsOnPage: number;
     constructor(injector: Injector) {
-        super(injector, AppConsts.localization.CFOLocalizationSourceName);
+        super(injector);
     }
 
     ngOnInit() {

@@ -6,7 +6,6 @@
         [lookupFields]="mappingFields"
         [columnsConfig]="fieldsConfig"
         [checkSimilarFields]="compareFields"
-        [localizationSource]="localizationSourceName"
         [preProcessFieldBeforeReview]="preProcessFieldBeforeReview"
         [validateFieldsMapping]="validateFieldsMapping"
         [toolbarConfig]="toolbarConfig"
@@ -40,10 +39,10 @@
     </import-wizard>
 </div>
 
-<crm-user-assignment-list 
-    [selectedKeys]="selectedClientKeys" 
+<crm-user-assignment-list
+    [selectedKeys]="selectedClientKeys"
     [selectedItemKey]="userId" [bulkUpdateMode]="true"
-    [hideButtons]="true" 
+    [hideButtons]="true"
     (onSelectionChanged)="onUserAssignmentChanged($event)"
     [permissionKey]="'Pages.CRM.Customers.ManageAssignments'"
     [assignedUsersSelector]="getAssignedUsersSelector()">

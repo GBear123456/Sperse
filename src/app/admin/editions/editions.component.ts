@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, Component, Injector, OnDestroy, ViewChild } fr
 import { MatDialog } from '@angular/material/dialog';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { filter } from 'rxjs/operators';
 
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -160,7 +161,9 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
             data: {
                 editionId: editionId
             }
-        });
+        }).afterClosed().pipe(filter(Boolean)).subscribe(
+            () => this.refreshDataGrid()
+        );
     }
 
     createEdition(): void {

@@ -1,17 +1,21 @@
-<app-modal-dialog *ngIf="active">
+<modal-dialog [hidden]="!active"
+              [title]="ls.l('CashFlowGrid_UserPrefs_Header')"
+              [editTitle]="false"
+              [buttons]="buttons"
+              *ngIf="active">
     <dx-scroll-view showScrollbar="onHover">
         <div class="modal-body" *ngIf="active">
             <div class="section">
                 <div class="header header-general">
-                    {{l("CashFlowGrid_UserPrefs_General")}}
+                    {{ls.l("CashFlowGrid_UserPrefs_General")}}
                 </div>
                 <div class="section-body container-fluid">
                     <div class="row row-header">
                         <div class="col-xs-4"></div>
-                        <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">{{l('CashFlowGrid_UserPrefs_General_' + colHeader)}}</div>
+                        <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">{{ls.l('CashFlowGrid_UserPrefs_General_' + colHeader)}}</div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowAmountsWithDecimals")}}</div>
+                        <div class="col-xs-4">{{ls.l("CashFlowGrid_UserPrefs_ShowAmountsWithDecimals")}}</div>
                         <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">
                             <dx-check-box [value]="checkFlag(model.general.showAmountsWithDecimals, GeneralScope[colHeader])"
                                           (onValueChanged)="checkBoxValueChanged($event, model.general, 'showAmountsWithDecimals', GeneralScope[colHeader])">
@@ -19,7 +23,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_HideZeroValuesInCells")}}</div>
+                        <div class="col-xs-4">{{ls.l("CashFlowGrid_UserPrefs_HideZeroValuesInCells")}}</div>
                         <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">
                             <dx-check-box [value]="checkFlag(model.general.hideZeroValuesInCells, GeneralScope[colHeader])"
                                           (onValueChanged)="checkBoxValueChanged($event, model.general, 'hideZeroValuesInCells', GeneralScope[colHeader])">
@@ -27,44 +31,30 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowNegativeValuesInRed")}}</div>
+                        <div class="col-xs-4">{{ls.l("CashFlowGrid_UserPrefs_ShowNegativeValuesInRed")}}</div>
                         <div *ngFor="let colHeader of getEnumKeys(GeneralScope)" class="col-xs-1">
                             <dx-check-box [value]="checkFlag(model.general.showNegativeValuesInRed, GeneralScope[colHeader])"
                                           (onValueChanged)="checkBoxValueChanged($event, model.general, 'showNegativeValuesInRed', GeneralScope[colHeader])">
                             </dx-check-box>
                         </div>
                     </div>
-
-                    <!--div class="row row-header">
-                        <div class="col-xs-4"></div>
-                        <div *ngFor="let colHeader of getEnumKeys(PeriodScope, false)" class="col-xs-1 small-col">{{colHeader}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowColumnsWithZeroActivity")}}</div>
-                        <dx-radio-group [items]="getEnumKeys(PeriodScope, false)"
-                                        layout="horizontal"
-                                        itemTemplate=""
-                                        [disabled]="true">
-                        </dx-radio-group>
-                    </div>-->
-
                     <div class="row row-header row-header-narrow">
                         <div class="col-xs-4"></div>
                         <div class="col-xs-1">
-                            {{l("CashFlowGrid_UserPrefs_ShowNetChangeRow")}}
+                            {{ls.l("CashFlowGrid_UserPrefs_ShowNetChangeRow")}}
                         </div>
                         <div class="col-xs-1">
-                            {{l("CashFlowGrid_UserPrefs_BalanceDiscrepancy")}}
+                            {{ls.l("CashFlowGrid_UserPrefs_BalanceDiscrepancy")}}
                         </div>
                         <div class="col-xs-1">
-                            {{l("CashFlowGrid_UserPrefs_ShowFooterBar")}}
+                            {{ls.l("CashFlowGrid_UserPrefs_ShowFooterBar")}}
                         </div>
                         <div class="col-xs-1">
-                            {{l("CashFlowGrid_UserPrefs_ShowAccountingTypeRow")}}
+                            {{ls.l("CashFlowGrid_UserPrefs_ShowAccountingTypeRow")}}
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-4">{{l("CashFlowGrid_UserPrefs_ShowRowsAndSections")}}</div>
+                        <div class="col-xs-4">{{ls.l("CashFlowGrid_UserPrefs_ShowRowsAndSections")}}</div>
                         <div class="col-xs-1">
                             <dx-check-box [value]="model.general.showNetChangeRow"
                                           (onValueChanged)="model.general.showNetChangeRow = !model.general.showNetChangeRow">
@@ -87,7 +77,7 @@
                         </div>
                     </div>
                     <div class="dx-field row ">
-                        <div class="dx-field-label" style="font-weight: 500; color: rgba(0,0,0,.87)">{{l("CashFlowGrid_UserPrefs_SplitMonthInto")}}</div>
+                        <div class="dx-field-label" style="font-weight: 500; color: rgba(0,0,0,.87)">{{ls.l("CashFlowGrid_UserPrefs_SplitMonthInto")}}</div>
                         <div class="dx-field-value">
                             <div class="left-select">
                                 <dx-select-box [items]="splitIntoItems"
@@ -100,11 +90,11 @@
             </div>
             <div class="section">
                 <div class="header header-visuals">
-                    {{l("CashFlowGrid_UserPrefs_Visuals")}}
+                    {{ls.l("CashFlowGrid_UserPrefs_Visuals")}}
                 </div>
                 <div class="section-body container-fluid">
                     <div class="dx-field row">
-                        <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_Font")}}</div>
+                        <div class="dx-field-label">{{ls.l("CashFlowGrid_UserPrefs_Font")}}</div>
                         <div class="dx-field-value">
                             <div class="left-select">
                                 <dx-select-box [items]="fonts"
@@ -120,7 +110,7 @@
                         </div>
                     </div>
                     <div class="dx-field row">
-                        <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_CFOTheme")}}</div>
+                        <div class="dx-field-label">{{ls.l("CashFlowGrid_UserPrefs_CFOTheme")}}</div>
                         <div class="dx-field-value">
                             <div class="left-select">
                                 <dx-select-box [items]="themes"
@@ -133,11 +123,11 @@
             </div>
             <div class="section">
                 <div class="header header-currency">
-                    {{l("CashFlowGrid_UserPrefs_L11nAndCurrency")}}
+                    {{ls.l("CashFlowGrid_UserPrefs_L11nAndCurrency")}}
                 </div>
                 <div class="section-body">
                     <div class="dx-field left-field">
-                        <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_NumbersFormatting")}}</div>
+                        <div class="dx-field-label">{{ls.l("CashFlowGrid_UserPrefs_NumbersFormatting")}}</div>
                         <div class="dx-field-value">
                             <dx-select-box [items]="numberFormats"
                                             [(value)]="model.localizationAndCurrency.numberFormatting">
@@ -146,7 +136,7 @@
                     </div>
 
                     <div class="dx-field right-field">
-                        <div class="dx-field-label">{{l("CashFlowGrid_UserPrefs_Currency")}}</div>
+                        <div class="dx-field-label">{{ls.l("CashFlowGrid_UserPrefs_Currency")}}</div>
                         <div class="dx-field-value">
                             <dx-select-box [items]="cfoPreferencesService.currencies$ | async"
                                            valueExpr="id"
@@ -159,5 +149,5 @@
             </div>
         </div>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>
 

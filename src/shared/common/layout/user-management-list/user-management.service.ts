@@ -159,7 +159,7 @@ export class UserManagementService {
     }
 
     getLogoutUrl() {
-        let domain = environment.LENDSPACE_DOMAIN;  
+        let domain = environment.LENDSPACE_DOMAIN;
         if (this.checkLendSpaceLayout() && this.checkSecondDomainLevel(domain))
             return domain;
     }

@@ -11,9 +11,7 @@ export class ImpersonationService {
         private _accountService: AccountServiceProxy,
         private _appUrlService: AppUrlService,
         private _authService: AppAuthService
-    ) {
-
-    }
+    ) {}
 
     impersonate(userId: number, tenantId?: number): void {
 

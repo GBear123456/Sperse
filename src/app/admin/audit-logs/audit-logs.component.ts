@@ -36,7 +36,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
     public minExecutionDuration: number;
     public maxExecutionDuration: number;
     public entityTypeFullName: string;
-    public objectTypes: NameValueDto[];
     private rootComponent: any;
     public headlineConfig = {
         names: [this.l('AuditLogs')],
@@ -45,7 +44,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
         buttons: []
     };
     operationLogsDataSource: DataSource;
-    changeLogsDataSource: DataSource;
 
     constructor(
         injector: Injector,
@@ -57,7 +55,6 @@ export class AuditLogsComponent extends AppComponentBase implements OnDestroy {
         super(injector);
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
 
         this.operationLogsDataSource = new DataSource({
             key: 'id',

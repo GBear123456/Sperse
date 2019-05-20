@@ -3,14 +3,15 @@ import {
     Component,
     ChangeDetectionStrategy,
     EventEmitter,
-    Injector,
+    Inject,
     OnInit,
     Output,
     ViewChild,
-    ChangeDetectorRef, OnDestroy
+    ChangeDetectorRef
 } from '@angular/core';
 
 /** Third party imports */
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
@@ -25,6 +26,8 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/components/paginator/paginator';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 export interface ICommonLookupModalOptions {
@@ -44,15 +47,17 @@ export interface ICommonLookupModalOptions {
     selector: 'commonLookupModal',
     styleUrls: ['./common-lookup-modal.component.less'],
     templateUrl: './common-lookup-modal.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ PrimengTableHelper ]
 })
-export class CommonLookupModalComponent extends ModalDialogComponent implements OnInit, OnDestroy {
+export class CommonLookupModalComponent implements OnInit {
     @Output() itemSelected: EventEmitter<NameValueDto> = new EventEmitter<NameValueDto>();
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
 
     defaultOptions: ICommonLookupModalOptions = {
-        title: this.l('SelectAUser'),
+        title: this.ls.l('SelectAUser'),
         dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => {
             const input = new FindUsersInput();
             input.filter = filter;
@@ -68,19 +73,21 @@ export class CommonLookupModalComponent extends ModalDialogComponent implements 
     };
     options: ICommonLookupModalOptions;
     filterText: string;
+    title: string;
 
     constructor(
-        injector: Injector,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _changeDetectorRef: ChangeDetectorRef
-    ) {
-        super(injector);
-    }
+        private _changeDetectorRef: ChangeDetectorRef,
+        @Inject(MAT_DIALOG_DATA) private data: any,
+        private dialogRef: MatDialogRef<CommonLookupModalComponent>,
+        private primengTableHelper: PrimengTableHelper,
+        public ls: AppLocalizationService,
+    ) {}
 
     ngOnInit() {
         this.configure(this.data);
         if (!this.data.title) {
-            this.data.title = this.options.title;
+            this.title = this.options.title;
         }
         this.filterText = this.options.filterText;
     }
@@ -120,13 +127,13 @@ export class CommonLookupModalComponent extends ModalDialogComponent implements 
             this.paginator.changePage(0);
             return;
         }
-
+        this.modalDialog.startLoading();
         this.options
             .dataSource(skipCount, maxResultCount, this.filterText, this.options.tenantId)
             .pipe(
-                tap(() => this.startLoading()),
+                tap(() => this.modalDialog.startLoading()),
                 finalize(() => {
-                    this.finishLoading();
+                    this.modalDialog.finishLoading();
                     this._changeDetectorRef.detectChanges();
                 })
             )

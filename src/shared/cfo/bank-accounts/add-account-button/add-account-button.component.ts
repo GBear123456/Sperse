@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, Output, EventEmitter } from '@angular/core';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { QuovoService } from '../quovo/QuovoService';
 import { SyncAccountServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
@@ -12,7 +12,7 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
     styleUrls: ['./add-account-button.component.less'],
     providers: [ SyncAccountServiceProxy ]
 })
-export class AddAccountButtonComponent extends CFOComponentBase implements OnInit {
+export class AddAccountButtonComponent extends CFOComponentBase {
     @Output() onClose: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
     tooltipVisible = false;
@@ -29,10 +29,6 @@ export class AddAccountButtonComponent extends CFOComponentBase implements OnIni
             .subscribe((result) => {
                 this.createAccountAvailable = result;
             });
-    }
-
-    ngOnInit(): void {
-        super.ngOnInit();
     }
 
     openAddAccountDialog() {

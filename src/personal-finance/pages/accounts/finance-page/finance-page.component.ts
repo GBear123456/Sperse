@@ -1,14 +1,12 @@
-import { Component, Injector, OnInit, Input, Output, EventEmitter } from '@angular/core';
-
+import { Component, Injector, Input, Output, EventEmitter } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'pfm-finance-page',
     templateUrl: './finance-page.component.html',
     styleUrls: ['./finance-page.component.less']
 })
-export class FinancePageComponent extends AppComponentBase implements OnInit {
+export class FinancePageComponent extends AppComponentBase {
     @Input() isStartDisabled: boolean;
     @Output('onButtonClicked') emitButtonClick: EventEmitter<any> = new EventEmitter();
     advantages = [
@@ -19,13 +17,7 @@ export class FinancePageComponent extends AppComponentBase implements OnInit {
     constructor(
         injector: Injector
     ) {
-        super(
-            injector,
-            AppConsts.localization.PFMLocalizationSourceName
-        );
-    }
-
-    ngOnInit() {
+        super(injector);
     }
 
     onClick() {

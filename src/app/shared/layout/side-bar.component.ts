@@ -33,9 +33,6 @@ export class SideBarComponent extends AppComponentBase {
         super(injector);
 
         _filtersService.update(filters => {
-            this.localizationSourceName = _filtersService.localizationSourceName
-                ? _filtersService.localizationSourceName
-                : AppConsts.localization.defaultLocalizationSourceName;
             this.filters = filters;
         });
         _filtersService.apply(() => {

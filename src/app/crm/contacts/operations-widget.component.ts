@@ -106,7 +106,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
         private _featureService: FeatureCheckerService,
         public localizationService: AppLocalizationService,
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         _clientService.toolbarSubscribe((config) => {
             this.initToolbarConfig(config);
@@ -187,7 +187,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                     locateInMenu: 'auto',
                     items: [
                         {
-                            visible: this.contactInfo 
+                            visible: this.contactInfo
                                      && this.contactInfo.groupId == ContactGroup.Client
                                      && !this._featureService.isEnabled('PFM')
                                      && (

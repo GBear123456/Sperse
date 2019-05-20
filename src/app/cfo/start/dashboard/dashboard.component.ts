@@ -58,7 +58,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     }
 
     ngOnInit(): void {
-        super.ngOnInit();
         this.rootComponent.overflowHidden(true);
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],

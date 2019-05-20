@@ -1,10 +1,12 @@
-<app-modal-dialog>
+<modal-dialog [title]="title"
+              [editTitle]="true"
+              [titleClearButton]="true">
     <div class="form-content container">
         <dx-scroll-view showScrollbar="onHover">
             <div class="row">
                 <div class="left col-md-7">
                     <div class="field">
-                        <label for="shortName">{{l('Company_ShortName')}}</label>
+                        <label for="shortName">{{ls.l('Company_ShortName')}}</label>
                         <dx-text-box name="shortName"
                                      [inputAttr]="{ id: 'shortName' }"
                                      [valueChangeEvent]="'focusout'"
@@ -13,35 +15,35 @@
                         <span [class]="company.shortName && 'clear-contact' || 'hidden'" (click)="company.shortName = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field companyType">
-                        <label for="companyType">{{l('Company_CompanyType')}}</label>
+                        <label for="companyType">{{ls.l('Company_CompanyType')}}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
                                 [inputAttr]="{ id: 'companyType' }"
                                 name="companyType"
                                 displayExpr="name"
                                 valueExpr="id"
-                                placeholder="{{l('Select')}}"
+                                placeholder="{{ls.l('Select')}}"
                                 [dataSource]="companyTypes$ | async"
                                 [(value)]="company.typeId">
                             </dx-select-box>
                         </div>
                     </div>
                     <div class="field companySize">
-                        <label for="companySize">{{ l('Company_CompanySize') }}</label>
+                        <label for="companySize">{{ ls.l('Company_CompanySize') }}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
                                 [inputAttr]="{ id: 'companySize' }"
                                 name="companySize"
                                 displayExpr="name"
                                 valueExpr="id"
-                                placeholder="{{l('Select')}}"
+                                placeholder="{{ls.l('Select')}}"
                                 [dataSource]="companySizes"
                                 [(value)]="company.sizeId">
                             </dx-select-box>
                         </div>
                     </div>
                     <div class="field annualRevenue">
-                        <label for="annualRevenue">{{l('Company_AnnualRevenue')}}</label>
+                        <label for="annualRevenue">{{ls.l('Company_AnnualRevenue')}}</label>
                         <dx-number-box name="annualRevenue"
                                      format="currency"
                                      [inputAttr]="{ id: 'annualRevenue' }"
@@ -52,7 +54,7 @@
                     </div>
 
                     <div class="field country">
-                        <label for="country">{{ l('Country') }}</label>
+                        <label for="country">{{ ls.l('Country') }}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
                                 [inputAttr]="{ id: 'country' }"
@@ -66,21 +68,21 @@
                         </div>
                     </div>
                     <div class="field state">
-                        <label for="state">{{ l('State') }}</label>
+                        <label for="state">{{ ls.l('State') }}</label>
                         <div class="drop-down-box-wrapper">
                             <dx-select-box
                                 [inputAttr]="{ id: 'state' }"
                                 name="state"
                                 displayExpr="name"
                                 valueExpr="code"
-                                placeholder="{{l('Select')}}"
+                                placeholder="{{ls.l('Select')}}"
                                 [dataSource]="states$ | async"
                                 [(value)]="company.formedStateId">
                             </dx-select-box>
                         </div>
                     </div>
                     <div class="field industry">
-                        <label for="industry">{{l('Company_Industry')}}</label>
+                        <label for="industry">{{ls.l('Company_Industry')}}</label>
                         <dx-text-box name="industry"
                                      [inputAttr]="{ id: 'industry' }"
                                      [valueChangeEvent]="'focusout'"
@@ -89,7 +91,7 @@
                         <span [class]="company.industry && 'clear-contact' || 'hidden'" (click)="company.industry = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field sicCode">
-                        <label for="sicCode">{{l('Company_sicCode')}}</label>
+                        <label for="sicCode">{{ls.l('Company_sicCode')}}</label>
                         <dx-number-box name="sicCode"
                                      (onInput)="onInput($event, 4)"
                                      [inputAttr]="{ id: 'sicCode' }"
@@ -99,7 +101,7 @@
                         <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field productsAndServices">
-                        <label for="productsAndServices">{{l('Company_ProductsAndServices')}}</label>
+                        <label for="productsAndServices">{{ls.l('Company_ProductsAndServices')}}</label>
                         <dx-text-area
                             name="productsAndServices"
                             [inputAttr]="{ id: 'productsAndServices' }"
@@ -114,7 +116,7 @@
                         <img src="{{ company.primaryPhoto ? 'data:image/png;base64,' + company.primaryPhoto : './assets/common/images/no-photo-Organization.png' }}" alt="Organization Logo">
                     </div>
                     <div class="field foundedIn">
-                        <label for="foundedIn">{{l('Company_FoundedIn')}}</label>
+                        <label for="foundedIn">{{ls.l('Company_FoundedIn')}}</label>
                         <dx-date-box
                             name="foundedIn"
                             [max]="currentDate"
@@ -125,33 +127,33 @@
                         <span [class]="company.formedDate && 'clear-contact' || 'hidden'" (click)="company.formedDate = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field ein">
-                        <label for="ein">{{l('Company_EIN')}}</label>
-                        <dx-text-box name="ein"                                    
+                        <label for="ein">{{ls.l('Company_EIN')}}</label>
+                        <dx-text-box name="ein"
                                      [inputAttr]="{ id: 'ein' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.ein"
                                      (onInput)="onInput($event, 10, '00-0000000')">
                             <dx-validator>
-                                <dxi-validation-rule type="pattern" [pattern]="einRegex" message="{{l('EinIsNotValid')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="pattern" [pattern]="einRegex" message="{{ls.l('EinIsNotValid')}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
                         <span [class]="company.ein && 'clear-contact' || 'hidden'" (click)="company.ein = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field duns">
-                        <label for="dusn">{{l('Company_DUNS')}}</label>
+                        <label for="dusn">{{ls.l('Company_DUNS')}}</label>
                         <dx-text-box name="duns"
                                      [inputAttr]="{ id: 'dusn' }"
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.duns"
                                      (onInput)="onInput($event, 11, '00-000-0000')">
                             <dx-validator>
-                                <dxi-validation-rule type="pattern" [pattern]="dunsRegex" message="{{l('DunsIsNotValid')}}."></dxi-validation-rule>
+                                <dxi-validation-rule type="pattern" [pattern]="dunsRegex" message="{{ls.l('DunsIsNotValid')}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-text-box>
                         <span [class]="company.duns && 'clear-contact' || 'hidden'" (click)="company.duns = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field stockSymbol">
-                        <label for="stockSymbol">{{l('Company_StockSymbol')}}</label>
+                        <label for="stockSymbol">{{ls.l('Company_StockSymbol')}}</label>
                         <dx-text-box name="stockSymbol"
                                      [inputAttr]="{ id: 'stockSymbol' }"
                                      [valueChangeEvent]="'focusout'"
@@ -161,7 +163,7 @@
                         <span [class]="company.ticker && 'clear-contact' || 'hidden'" (click)="company.ticker = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field notes">
-                        <label for="notes">{{l('Company_Notes')}}</label>
+                        <label for="notes">{{ls.l('Company_Notes')}}</label>
                         <dx-text-area
                             name="notes"
                             [inputAttr]="{ id: 'notes' }"
@@ -175,4 +177,4 @@
         </dx-scroll-view>
     </div>
 
-</app-modal-dialog>
+</modal-dialog>

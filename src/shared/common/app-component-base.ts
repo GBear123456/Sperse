@@ -3,7 +3,6 @@ import { Injector, ApplicationRef, ElementRef, HostBinding, HostListener, OnDest
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
-import * as _ from 'underscore';
 import * as moment from 'moment-timezone';
 import { Subject, Observable } from 'rxjs';
 import capitalize from 'underscore.string/capitalize';
@@ -26,7 +25,9 @@ import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customizatio
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
-import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode = false;
@@ -50,6 +51,7 @@ export abstract class AppComponentBase implements OnDestroy {
     httpInterceptor: AppHttpInterceptor;
     primengTableHelper: PrimengTableHelper;
     ui: AppUiCustomizationService;
+    profileService: ProfileService;
     loading: boolean;
     appUrlService: AppUrlService;
     localizationService: AppLocalizationService;
@@ -76,6 +78,8 @@ export abstract class AppComponentBase implements OnDestroy {
 
     public capitalize = capitalize;
     public userTimezone = '0000';
+    public cacheHelper: CacheHelper;
+    public loadingService: LoadingService;
     public defaultGridPagerConfig = {
         showPageSizeSelector: true,
         allowedPageSizes: [20, 100, 500, 1000],
@@ -83,8 +87,8 @@ export abstract class AppComponentBase implements OnDestroy {
         visible: true
     };
 
-    constructor(private _injector: Injector,
-        public localizationSourceName = AppConsts.localization.defaultLocalizationSourceName
+    constructor(
+        private _injector: Injector
     ) {
         this.localization = _injector.get(LocalizationService);
         this.permission = _injector.get(PermissionCheckerService);
@@ -103,6 +107,9 @@ export abstract class AppComponentBase implements OnDestroy {
         this.oDataService = this._injector.get(ODataService);
         this._activatedRoute = _injector.get(ActivatedRoute);
         this._router = _injector.get(Router);
+        this.cacheHelper = _injector.get(CacheHelper);
+        this.loadingService = _injector.get(LoadingService);
+        this.profileService = _injector.get(ProfileService);
         this.userTimezone = this.getUserTimezone();
     }
 
@@ -128,12 +135,12 @@ export abstract class AppComponentBase implements OnDestroy {
         return moment().tz(abp.timing.timeZoneInfo.iana.timeZoneId).format('ZZ');
     }
 
-    getCacheKey(key) {
-        return this.constructor.name + '_' + this.appSession.tenantId + '_' + this.appSession.userId + '_' + key;
+    getCacheKey(key: string): string {
+        return this.cacheHelper.getCacheKey(key, this.constructor.name);
     }
 
     l(key: string, ...args: any[]): string {
-        return this.localizationService.l(key, this.localizationSourceName, ...args);
+        return this.localizationService.l(key, AppConsts.localization.defaultLocalizationSourceName, ...args);
     }
 
     ls(sourcename: string, key: string, ...args: any[]): string {
@@ -216,23 +223,16 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
-        let tenant = this.appSession.tenant;
-        if (!id)
-            return tenant && [TenantLoginInfoDtoCustomLayoutType.LendSpace,
-                TenantLoginInfoDtoCustomLayoutType.AdvicePeriod].indexOf(tenant.customLayoutType) >= 0
-                    ? AppConsts.imageUrls.profileLendSpace : defaultUrl;
-
-        let tenantId = this.appSession.tenantId;
-        return AppConsts.remoteServiceBaseUrl + '/api/Profile/Picture/' + (tenantId || 0) + '/' + id;
+        this.profileService.getProfilePictureUrl(id, defaultUrl);
     }
 
     startLoading(globally = false, element: any = null) {
         this.loading = true;
-        abp.ui.setBusy(globally ? undefined : (element || this.getElementRef().nativeElement));
+        this.loadingService.startLoading(globally ? null : element || this.getElementRef().nativeElement);
     }
 
     finishLoading(globally = false, element: any = null) {
-        abp.ui.clearBusy(globally ? undefined : (element || this.getElementRef().nativeElement));
+        this.loadingService.finishLoading(globally ? null : element || this.getElementRef().nativeElement);
         this.loading = false;
     }
 

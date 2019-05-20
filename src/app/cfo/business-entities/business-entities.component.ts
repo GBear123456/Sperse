@@ -44,7 +44,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     ngOnInit() {
-        super.ngOnInit();
         this.rootComponent.overflowHidden(true);
 
         this.headlineConfig = {
@@ -130,9 +129,6 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                instanceId: this.instanceId,
-                instanceType: this.instanceType,
-                localization: this.localizationSourceName,
                 id: id
             }
         }).afterClosed().subscribe(options => {

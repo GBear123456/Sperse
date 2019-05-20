@@ -1,8 +1,11 @@
-<app-modal-dialog>
+<modal-dialog [title]="ls.l('LinkedAccounts')"
+              [editTitle]="false"
+              [titleClearButton]="false"
+              [placeholder]="ls.l('LinkedAccounts')">
     <dx-scroll-view showScrollbar="onHover">
         <div class="content">
             <div class="modal-header">
-                <button class="btn btn-primary pull-right" (click)="manageLinkedAccounts($event)"><i class="fa fa-plus"></i>{{l("LinkNewAccount")}}</button>
+                <button class="btn btn-primary pull-right" (click)="manageLinkedAccounts($event)"><i class="fa fa-plus"></i>{{ls.l("LinkNewAccount")}}</button>
             </div>
             <div class="modal-body">
                 <!--<Primeng-TurboTable-Start>-->
@@ -18,14 +21,14 @@
                         <ng-template pTemplate="header">
                             <tr>
                                 <th style="width:20%">
-                                    {{l('Actions')}}
+                                    {{ls.l('Actions')}}
                                 </th>
                                 <th style="width:65%" pSortableColumn="userName">
-                                    {{l('UserName')}}
+                                    {{ls.l('UserName')}}
                                     <p-sortIcon field="userName"></p-sortIcon>
                                 </th>
                                 <th style="width:15%">
-                                    {{l('Delete')}}
+                                    {{ls.l('Delete')}}
                                 </th>
                             </tr>
                         </ng-template>
@@ -33,23 +36,23 @@
                             <tr>
                                 <td style="width:20%">
                                     <button class="btn btn-sm btn-primary" (click)="switchToUser(record)">
-                                        <i class="fa fa-sign-in"></i>{{l('LogIn')}}
+                                        <i class="fa fa-sign-in"></i>{{ls.l('LogIn')}}
                                     </button>
                                 </td>
                                 <td style="width: 65%">
-                                    <span class="ui-column-title"> {{l('UserName')}}</span>
+                                    <span class="ui-column-title"> {{ls.l('UserName')}}</span>
                                     {{getShownLinkedUserName(record)}}
                                 </td>
                                 <td style="width:15%">
                                     <button class="btn btn-sm btn-danger red" (click)="deleteLinkedUser(record)">
-                                        <i class="fa fa-trash" [attr.aria-label]="l('Delete')"></i>
+                                        <i class="fa fa-trash" [attr.aria-label]="ls.l('Delete')"></i>
                                     </button>
                                 </td>
                             </tr>
                         </ng-template>
                     </p-table>
                     <div class="primeng-no-data" *ngIf="primengTableHelper.totalRecordsCount == 0">
-                        {{l('NoData')}}
+                        {{ls.l('NoData')}}
                     </div>
                     <div class="primeng-paging-container">
                         <p-paginator rows="{{primengTableHelper.defaultRecordsCountPerPage}}"
@@ -59,7 +62,7 @@
                                      [rowsPerPageOptions]="primengTableHelper.predefinedRecordsCountPerPage">
                         </p-paginator>
                         <span class="total-records-count">
-                            {{l('TotalRecordsCount', primengTableHelper.totalRecordsCount)}}
+                            {{ls.l('TotalRecordsCount', 'Platform', primengTableHelper.totalRecordsCount)}}
                         </span>
                     </div>
                 </div>
@@ -67,4 +70,4 @@
             </div>
         </div>
     </dx-scroll-view>
-</app-modal-dialog>
+</modal-dialog>

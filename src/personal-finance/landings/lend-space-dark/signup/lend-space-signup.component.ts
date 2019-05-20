@@ -48,7 +48,7 @@ export class LendSpaceSignupComponent extends AppComponentBase {
         public loginService: LoginService,
         private dialog: MatDialog
     ) {
-        super(injector, AppConsts.localization.PFMLocalizationSourceName);
+        super(injector);
         this.registerData.isUSCitizen = true;
         this._router.events.subscribe((event) => {
             if (event instanceof ActivationEnd && !this.isRoutProcessed) {

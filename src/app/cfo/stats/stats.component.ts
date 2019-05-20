@@ -168,12 +168,9 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     ) {
         super(injector);
         this._appService.narrowingPageContentWhenFixedFilter = false;
-        this._filtersService.localizationSourceName = AppConsts.localization.CFOLocalizationSourceName;
     }
 
     ngOnInit() {
-        super.ngOnInit();
-        this.initLocalization();
         this.requestFilter = new StatsFilter();
         this.requestFilter.currencyId = this.cfoPreferencesService.selectedCurrencyId;
         this.requestFilter.startDate = moment().utc().subtract(2, 'year');
@@ -563,7 +560,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
 
     ngOnDestroy() {
         this._appService.updateToolbar(null);
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
 
@@ -770,13 +766,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         };
     }
 
-    private initLocalization() {
-        this.localizationService.localizationSourceName = this.localizationSourceName;
-        this._filtersService.localizationSourceName = this.localizationSourceName;
-    }
-
     activate() {
-        this.initLocalization();
         this.initToolbarConfig();
         this.setupFilters();
         this.initFiltering();
@@ -795,8 +785,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     deactivate() {
-        this.localizationService.localizationSourceName = undefined;
-        this._filtersService.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
         this._appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();

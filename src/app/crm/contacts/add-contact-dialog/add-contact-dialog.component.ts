@@ -26,7 +26,7 @@ export class AddContactDialogComponent extends AppComponentBase implements OnIni
                 private fullNameParser: NameParserService,
                 public dialogRef: MatDialogRef<AddContactDialogComponent>,
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
 
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({

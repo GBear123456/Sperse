@@ -219,7 +219,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         public importWizardService: ImportWizardService,
         private store$: Store<AppStore.State>
     ) {
-        super(injector, AppConsts.localization.CRMLocalizationSourceName);
+        super(injector);
         this.setMappingFields(ImportItemInput.fromJS({}));
         this.initFieldsConfig();
         this.userId = abp.session.userId;
@@ -506,7 +506,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     activate() {
-        this.localizationService.localizationSourceName = this.localizationSourceName;
         this.rootComponent.overflowHidden(true);
 
         this.getStages();
@@ -515,7 +514,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     deactivate() {
-        this.localizationService.localizationSourceName = undefined;
         this.rootComponent.overflowHidden();
         this._importLeadsService.setupImportCheck();
     }

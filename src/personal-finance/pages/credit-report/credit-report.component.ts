@@ -2,7 +2,6 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { PackageIdService } from '../../shared/common/packages/package-id.service';
-import { AppConsts } from '@shared/AppConsts';
 import { KBAServiceProxy, CreditReportServiceProxy, CreditReportOutput } from '@shared/service-proxies/service-proxies';
 import { PageScrollConfig } from 'ngx-page-scroll';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -52,7 +51,6 @@ export class CreditReportComponent extends AppComponentBase implements OnInit {
     ) {
         super(injector);
         PageScrollConfig.defaultDuration = 500;
-        this.localizationSourceName = AppConsts.localization.PFMLocalizationSourceName;
     }
 
     ngOnInit(): void {

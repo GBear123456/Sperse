@@ -31,6 +31,7 @@ import { RootComponent, AppRootComponent } from './root.components';
 import { RootRoutingModule, CustomReuseStrategy, AppPreloadingStrategy } from './root-routing.module';
 import { RootStoreModule } from '@root/store';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 
 export function appInitializerFactory(
     injector: Injector,
@@ -165,6 +166,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         AppAuthService,
         RouteGuard,
         AppSessionService,
+        ProfileService,
         AppHttpConfiguration,
         AppHttpInterceptor,
         {
