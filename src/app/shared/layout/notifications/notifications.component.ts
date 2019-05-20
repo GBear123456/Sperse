@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewChild, ViewEncapsulation, OnInit, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -21,7 +21,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NotificationsComponent {
+export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('dataTable') dataTable: Table;
     @ViewChild('paginator') paginator: Paginator;
@@ -36,7 +36,9 @@ export class NotificationsComponent {
         private _userNotificationHelper: UserNotificationHelper,
         private _changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
-    ) {
+    ) {}
+
+    ngOnInit() {
         this.loadNotifications();
         this.registerToEvents();
     }
