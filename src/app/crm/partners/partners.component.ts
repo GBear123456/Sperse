@@ -193,10 +193,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         }).afterClosed().subscribe(() => this.invalidate());
     }
 
-    isPartnerCFOAvailable(userId) {
-        return this._appService.isCFOAvailable(userId);
-    }
-
     showPartnerDetails(event) {
         let partnerId = event.data && event.data.Id;
         if (!partnerId)
@@ -207,10 +203,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         let orgId = event.data.OrganizationId;
         this._router.navigate(['app/crm/contact', partnerId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/partners'} });
-    }
-
-    redirectToCFO(event, userId) {
-        this._appService.redirectToCFO(userId);
     }
 
     toggleDataLayout(dataLayoutType) {
@@ -660,10 +652,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnDestroy() {
         this.deactivate();
-    }
-
-    requestVerification(contactId: number) {
-        this._appService.requestVerification(contactId).subscribe();
     }
 
     activate() {
