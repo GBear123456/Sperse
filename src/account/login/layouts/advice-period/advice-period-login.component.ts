@@ -9,13 +9,13 @@ import { ConditionsType } from '@shared/AppEnums';
 import { environment } from 'environments/environment';
 
 @Component({
-    templateUrl: './cfo-member-login.component.html',
+    templateUrl: './advice-period-login.component.html',
     styleUrls: [
-        './cfo-member-login.component.less'
+        './advice-period-login.component.less'
     ],
     animations: [accountModuleAnimation()]
 })
-export class CFOMemberLoginComponent extends HostLoginComponent {
+export class AdvicePeriodLoginComponent extends HostLoginComponent {
     openConditionsDialog(type: ConditionsType) {
         this.dialog.open(ConditionsModalComponent, {
             panelClass: ['slider', 'footer-slider'],

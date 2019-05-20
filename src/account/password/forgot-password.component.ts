@@ -14,7 +14,7 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { LoginService } from 'account/login/login.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LendSpaceForgotPasswordComponent } from './layouts/lend-space/lend-space-forgot-password.component';
-import { CFOMemberForgotPasswordComponent } from './layouts/cfo-member/cfo-member-forgot-password.component';
+import { AdvicePeriodForgotPasswordComponent } from './layouts/advice-period/advice-period-forgot-password.component';
 import { HostForgotPasswordComponent } from '@root/account/password/layouts/host/host-forgot-password.component';
 
 @Directive({
@@ -53,7 +53,7 @@ export class ForgotPasswordComponent extends AppComponentBase implements OnInit 
             case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
                 return LendSpaceForgotPasswordComponent;
             case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod: 
-                return CFOMemberForgotPasswordComponent;
+                return AdvicePeriodForgotPasswordComponent;
             default: 
                 return HostForgotPasswordComponent;
         }

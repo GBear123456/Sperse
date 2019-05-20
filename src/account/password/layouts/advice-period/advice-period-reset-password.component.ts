@@ -6,10 +6,10 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { HostResetPasswordComponent } from '../host/host-reset-password.component';
 
 @Component({
-    templateUrl: './cfo-member-reset-password.component.html',
+    templateUrl: './advice-period-reset-password.component.html',
     styleUrls: [
-        './cfo-member-password.component.less'
+        './advice-period-password.component.less'
     ],
     animations: [accountModuleAnimation()]
 })
-export class CFOMemberResetPasswordComponent extends HostResetPasswordComponent { }
+export class AdvicePeriodResetPasswordComponent extends HostResetPasswordComponent { }

@@ -6,11 +6,11 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { HostForgotPasswordComponent } from '../host/host-forgot-password.component';
 
 @Component({
-    templateUrl: './cfo-member-forgot-password.component.html',
+    templateUrl: './advice-period-forgot-password.component.html',
     styleUrls: [
-        './cfo-member-password.component.less'
+        './advice-period-password.component.less'
     ],
     animations: [accountModuleAnimation()]
 })
-export class CFOMemberForgotPasswordComponent extends HostForgotPasswordComponent {
+export class AdvicePeriodForgotPasswordComponent extends HostForgotPasswordComponent {
 }

@@ -21,7 +21,7 @@ import {
 import { LoginService } from '../login/login.service';
 import { ResetPasswordModel } from './reset-password.model';
 import { LendSpaceResetPasswordComponent } from './layouts/lend-space/lend-space-reset-password.component';
-import { CFOMemberResetPasswordComponent } from './layouts/cfo-member/cfo-member-reset-password.component';
+import { AdvicePeriodResetPasswordComponent } from './layouts/advice-period/advice-period-reset-password.component';
 import { HostResetPasswordComponent } from './layouts/host/host-reset-password.component';
 
 @Directive({
@@ -63,7 +63,7 @@ export class ResetPasswordComponent extends AppComponentBase implements OnInit {
             case TenantLoginInfoDtoCustomLayoutType.LendSpace: 
                 return LendSpaceResetPasswordComponent;
             case TenantLoginInfoDtoCustomLayoutType.AdvicePeriod: 
-                return CFOMemberResetPasswordComponent;
+                return AdvicePeriodResetPasswordComponent;
             default: 
                 return HostResetPasswordComponent;
         }
