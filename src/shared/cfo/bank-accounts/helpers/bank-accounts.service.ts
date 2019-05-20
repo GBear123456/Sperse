@@ -488,7 +488,8 @@ export class BankAccountsService {
         let result: SyncAccountBankDto[] = [];
         visibleBankAccountsIds = !visibleBankAccountsIds || !selectedAccountsIds || selectedAccountsIds.length === 0 ? [] : visibleBankAccountsIds;
         syncAccounts.forEach(syncAccount => {
-            if (!syncAccount.bankAccounts || !syncAccount.bankAccounts.length) {
+            /** If business entities hasn't been chosen and search is among all business entities */
+            if ((!businessEntitiesIds || !businessEntitiesIds.length) && (!syncAccount.bankAccounts || !syncAccount.bankAccounts.length)) {
                 let syncAccountClone = _.clone(syncAccount);
                 syncAccountClone['selected'] = false;
                 result.push(syncAccountClone);
