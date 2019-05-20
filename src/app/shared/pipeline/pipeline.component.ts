@@ -183,7 +183,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         );
         this.subscribers.push(
             this._pipelineService.dataLayoutType$.pipe(
-                filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline),
+                filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline 
+                    && (!this.pipeline || this.pipeline.contactGroupId != this.contactGroupId)),
                 switchMap(() => this._pipelineService.getPipelineDefinitionObservable(
                     this.pipelinePurposeId, this.contactGroupId).pipe(
                         map((pipeline) => {
@@ -209,9 +210,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                     });
 
                     this._totalDataSource = undefined;
-                    this.loadData(0, this.stageId && findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
-
-                    this.refreshTimeout = null;
+                    if (!this.refreshTimeout) {
+                        this.loadData(0, this.stageId && findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
+                        this.refreshTimeout = null;
+                    }
                 }
             )
         );
@@ -577,7 +579,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     deselectAllCards() {
-        this.stages.forEach(stage => stage['entities'].forEach(entity => entity.selected = false));
+        if (this.stages)
+            this.stages.forEach(stage => stage['entities'].forEach(entity => entity.selected = false));
     }
 
     onKeyUp(event) {
