@@ -71,14 +71,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
             .subscribe();
     }
 
-    entitiesItemsChanged(selectedEntitiesIds: number[]) {
-        this.bankAccountsService.changeState({
-            selectedBusinessEntitiesIds: selectedEntitiesIds,
-            selectedBankAccountIds: null
-        });
-        this.bankAccountsService.applyFilter();
-    }
-
     selectedAccountsChange() {
         this.bankAccountsService.applyFilter();
     }

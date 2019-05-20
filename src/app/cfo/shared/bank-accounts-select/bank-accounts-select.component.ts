@@ -14,7 +14,6 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
     @Input() highlightedBankAccountIds = [];
     @Input() highlightUsedRows = false;
     @Input() showBusinessEntitiesFilter = true;
-    @Input() showIsActiveFilter = true;
     @Output() onApplySelected: EventEmitter<any> = new EventEmitter();
 
     tooltipVisible: boolean;
@@ -44,26 +43,5 @@ export class BankAccountsSelectComponent extends CFOComponentBase implements OnI
 
     toggleBankAccountTooltip() {
         this.tooltipVisible = !this.tooltipVisible;
-    }
-
-    changeSelectedBusinessEntities(e) {
-        const selectedBusinessEntities = e.component.option('selectedItems');
-        if (this.selectedBusinessEntitiesIds) {
-            const selectedBusinessEntitiesIds = selectedBusinessEntities.map(entity => entity.id);
-            this.bankAccountsService.changeSelectedBusinessEntities(selectedBusinessEntitiesIds);
-        }
-    }
-
-    onMultiTagPreparing(e) {
-        let totalCount = this.businessEntities.length,
-            selectedCount = e.selectedItems.length;
-        e.text = totalCount && selectedCount ?
-            (selectedCount != totalCount ? selectedCount + ' ' + this.l('of') + ' ' : '')
-                + totalCount + ' ' + this.l('entities') : this.l('All_Entities');
-    }
-
-    selectAllValueChanged($event) {
-        $event.component._$list.find('.dx-list-select-all-label').text(
-            ($event.value ? this.l('Clear') : this.l('Select')) + ' ' + this.l('All'));
     }
 }

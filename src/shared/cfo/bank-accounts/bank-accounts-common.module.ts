@@ -2,6 +2,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
 import { CommonModule } from '@shared/common/common.module';
 
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxTabsModule } from 'devextreme-angular/ui/tabs';
@@ -17,6 +18,8 @@ import { DxProgressBarModule } from 'devextreme-angular/ui/progress-bar';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
+import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxListModule } from 'devextreme-angular/ui/list';
 
 //import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { SyncServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -46,6 +49,7 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         ngCommon.CommonModule,
 //        AppCommonModule,
         RoundProgressModule,
+        DxDropDownBoxModule,
         DxTabsModule,
         DxScrollViewModule,
         DxDataGridModule,
@@ -53,10 +57,12 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         DxContextMenuModule,
         DxPopupModule,
         DxTooltipModule,
+        DxCheckBoxModule,
         DxTextBoxModule,
         DxButtonModule,
         DxSwitchModule,
         DxTagBoxModule,
+        DxListModule,
         DxProgressBarModule,
         DxValidatorModule,
         AccountConnectorDialogModule,

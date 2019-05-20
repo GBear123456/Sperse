@@ -1,4 +1,4 @@
-import { Component, Input, Output, Injector, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -10,24 +10,21 @@ export class SelectionFilterComponent {
     @Input() title;
     @Input() allItemsText;
     @Input() selectionList = [];
-    @Input() selectedItems: number[] = [];
+    @Input() selectedItems: any[] = [];
+    @Input() itemsText = this.localization.l('entities');
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
 
     constructor(
         private localization: AppLocalizationService
-    ) { }
+    ) {}
 
     public selectedItemsChange() {
         this.selectionChanged.emit(this.selectedItems);
     }
 
     getSelectedTitle() {
-        let totalCount = this.selectionList.length,
-            selectedCount = this.selectedItems.length;
-        return totalCount && selectedCount ? 
-            (selectedCount != totalCount ? selectedCount + ' ' + this.localization.l('of') + ' ' : '') 
-                + totalCount + ' ' + this.localization.l('entities')
-            : this.allItemsText;
+        let selectedCount = this.selectedItems.length;
+        return selectedCount ? selectedCount + ' ' + this.itemsText : this.allItemsText;
     }
 
     onMultiTagPreparing(e) {
