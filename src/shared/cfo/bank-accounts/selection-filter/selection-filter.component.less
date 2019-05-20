@@ -17,9 +17,7 @@
         .tag-value,
         .dx-placeholder {
             font-size: 17px;
-            line-height: 1.21;
             letter-spacing: 0.3px;
-            color: #00AEEF;
             padding: 0 5px;
             height: auto !important;
             font-weight: 500;
@@ -29,13 +27,38 @@
         .tag-value {
             display: block;
             padding-left: 14px;
-            height: 34px!important;
         }
 
         .dx-texteditor-container {
             padding-top: 0;
             .dx-tag {
                 max-width: initial;
+                position: relative;
+            }
+        }
+
+        .dx-placeholder,
+        .dx-tag {
+            &:after {
+                content: '';
+                background: url('../../../../assets/common/icons/down-arrow-icon.svg') no-repeat;
+                width: 8px;
+                height: 4px;
+                position: absolute;
+                right: -10px;
+                top: 0;
+                bottom: 0;
+                margin: auto;
+            }
+        }
+
+        .dx-placeholder {
+            line-height: 1.8em;
+        }
+
+        .dx-dropdowneditor-active {
+            .dx-tag:after {
+                transform: rotate(180deg);
             }
         }
     }

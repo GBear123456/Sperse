@@ -7,16 +7,16 @@
     </ng-container>
     <ng-container *ngIf="selectionList && selectionList.length">
         <dx-tag-box [dataSource]="selectionList"
-                    displayExpr="name"
-                    valueExpr="id"
+                    [displayExpr]="selectionList && selectionList[0].id ? 'name' : null"
+                    [valueExpr]="selectionList && selectionList[0].id ? 'id' : null"
                     [placeholder]="allItemsText"
-                    showSelectionControls="true"
+                    [showSelectionControls]="true"
                     tagTemplate="customTagTemplate"
-                    [maxDisplayedTags]="4"
+                    [maxDisplayedTags]="1"
+                    [(value)]="selectedItems"
                     (onValueChanged)="selectedItemsChange()"
                     (onSelectAllValueChanged)="selectAllValueChanged($event)"
-                    (onMultiTagPreparing)="onMultiTagPreparing($event)"
-                    [(value)]="selectedItems">
+                    (onMultiTagPreparing)="onMultiTagPreparing($event)">
             <div *dxTemplate="let tag of 'customTagTemplate'">
                 <span class="tag-value">{{tag.name || tag}}</span>
             </div>

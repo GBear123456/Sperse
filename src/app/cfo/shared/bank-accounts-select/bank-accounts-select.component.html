@@ -4,48 +4,8 @@
         <div *dxTemplate="let data = data of 'content'">
             <div class="bank-accounts-tooltip-container">
                 <div class="actions">
-                    <ng-container *ngIf="showBusinessEntitiesFilter">
-                        <div class="business-entity-select">
-                            <div class="dx-field">
-                                <div class="dx-field-label"><span class="business-entity-test">{{l('Financial_Accounts_For')}}</span></div>
-                                <div class="dx-field-value">
-                                    <ng-container *ngIf="!(bankAccountsService.businessEntities$ | async)?.length">
-                                        <div class="label-container">
-                                            <span class="tag-value"> {{l('All_Entities')}} </span>
-                                        </div>
-                                    </ng-container>
-                                    <ng-container *ngIf="businessEntities.length">
-                                        <dx-tag-box [dataSource]="businessEntities"
-                                                    displayExpr="name"
-                                                    valueExpr="id"
-                                                    [placeholder]="l('All_Entities')"
-                                                    [maxDisplayedTags]="2"
-                                                    [showSelectionControls]="true"
-                                                    tagTemplate="customTagTemplate"
-                                                    (onSelectAllValueChanged)="selectAllValueChanged($event)"
-                                                    (onValueChanged)="changeSelectedBusinessEntities($event)"
-                                                    (onMultiTagPreparing)="onMultiTagPreparing($event)"
-                                                    [value]="bankAccountsService.selectedBusinessEntitiesIds$ | async">
-                                            <div *dxTemplate="let tag of 'customTagTemplate'">
-                                                <span class="tag-value"> {{ tag.name || tag }}  </span>
-                                            </div>
-                                        </dx-tag-box>
-                                    </ng-container>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-container>
                     <span class="filter-apply" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
                 </div>
-                <br />
-                <ng-container *ngIf="showIsActiveFilter">
-                    <div class="filter-actions-is-active">
-                        <div class="is-active-filter">
-                            <span>{{bankAccountsService.state.isActive ? l('Active') : l('Disabled')}}</span>
-                            <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
-                        </div>
-                    </div>
-                </ng-container>
                 <bank-accounts-widget [showAdvancedColumns]="true"
                                       [highlightedBankAccountIds]="highlightedBankAccountIds"
                                       [highlightUsedRows]="highlightUsedRows">
