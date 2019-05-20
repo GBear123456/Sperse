@@ -101,7 +101,6 @@ let COMPONENTS = [
     CategoryDeleteDialogComponent,
     RulesComponent,
     PermissionsComponent,
-    CFOModalDialogComponent,
     BusinessEntitiesComponent,
     BusinessEntityEditDialogComponent,
     ChartOfAccountsComponent,
