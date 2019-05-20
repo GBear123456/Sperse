@@ -133,15 +133,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private updateAfterActivation: boolean;
 
     constructor(injector: Injector,
-        public dialog: MatDialog,
         private _appService: AppService,
         private _TransactionsServiceProxy: TransactionsServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
-        public filtersService: FiltersService,
         private _bankAccountsService: BankAccountsService,
         private _changeDetectionRef: ChangeDetectorRef,
         private store$: Store<CfoStore.State>,
-        public cfoPreferencesService: CfoPreferencesService
+        public cfoPreferencesService: CfoPreferencesService,
+        public filtersService: FiltersService,
+        public dialog: MatDialog
     ) {
         super(injector);
 
@@ -437,7 +437,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                             items: [
                                 {
                                     name: 'select-box',
-                                    text: '(' + this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId + ')',
+                                    text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
                                     widget: 'dxDropDownMenu',
                                     accessKey: 'currencySwitcher',
                                     options: {
@@ -916,7 +916,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.initToolbarConfig();
     }
 
-    onSelectionChanged($event, initial = false) {
+    onSelectionChanged($event, initial = false) {           
+        this.getTotalValues();
+
+        if (!this.checkMemberAccessPermission('ClassifyTransaction'))
+            return ;
+
         let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
         if (!initial && (Boolean(this.selectedCashflowCategoryKey) || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
@@ -950,9 +955,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.draggedTransactionRow = null;
             this.dragInProgress = false;
             this._changeDetectionRef.detectChanges();
-        });
-
-        this.getTotalValues();
+        });        
     }
 
     stopPropagation(e) {

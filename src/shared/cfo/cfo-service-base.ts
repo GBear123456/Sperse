@@ -11,6 +11,5 @@ export abstract class CFOServiceBase {
     instanceTypeChanged$: Observable<string> = this.instanceTypeChanged.asObservable();
     isForUser: boolean;
 
-    constructor() {
-    }
+    constructor() { }
 }

@@ -149,7 +149,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
                         items: [
                             {
                                 name: 'select-box',
-                                text: '(' + this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId + ')',
+                                text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
                                 widget: 'dxDropDownMenu',
                                 accessKey: 'currencySwitcher',
                                 options: {

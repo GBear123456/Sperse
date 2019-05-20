@@ -316,7 +316,7 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                         if (item.accessKey == 'currencySwitcher') {
                             $('.dx-dropdownmenu-button[title' + (item.options.hint ? '="' + item.options.hint + '"' : '') + ']')
                                 .attr('select-value', '')
-                                .attr('select-caption', '(' + event.itemData.symbol + ' ' + event.itemData.id + ')');
+                                .attr('select-caption', event.itemData.symbol + ' ' + event.itemData.id);
                         } else {
                             $('.dx-dropdownmenu-button[title' + (item.options.hint ? '="' + item.options.hint + '"' : '') + ']')
                                 .attr('select-value', event.itemData.text);

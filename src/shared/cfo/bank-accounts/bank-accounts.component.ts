@@ -76,7 +76,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
     }
 
     onUpdateAccount(syncAccount: SyncAccountBankDto) {
-        if (!this.isInstanceAdmin)
+        if (!this.isInstanceAdmin && !this.isMemberAccessManage)
             return;
 
         const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{

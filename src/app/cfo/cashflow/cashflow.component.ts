@@ -1183,6 +1183,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         },
                         {
                             name: 'forecastModelAdd',
+                            visible: this.isInstanceAdmin,
                             action: (event) => {
                                 if (!event.element.getElementsByClassName('addModel').length)
                                     this.showForecastAddingInput(event);
@@ -3104,7 +3105,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** @todo check for memory leak */
                     let accountNumberElement = document.createElement('span');
                     accountNumberElement.className = 'accountNumber';
-                    accountNumberElement.innerText = account.accountNumber;
+                    accountNumberElement.innerText = '***' + account.accountNumber.slice(-4);
                     options.elementsToAppend.push(accountNumberElement);
                 }
                 options.general['isAccountHeaderCell'] = true;

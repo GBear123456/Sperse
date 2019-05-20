@@ -4,7 +4,7 @@
         <div *dxTemplate="let data = data of 'content'">
             <div class="bank-accounts-tooltip-container">
                 <div class="actions">
-                    <span class="filter-apply" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
+                    <span class="filter-apply" *ngIf="isInstanceAdmin || isMemberAccessManage" (click)="bankAccountsSelected()">{{l('Apply')}}</span>
                 </div>
                 <bank-accounts-widget [showAdvancedColumns]="true"
                                       [highlightedBankAccountIds]="highlightedBankAccountIds"
