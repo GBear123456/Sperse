@@ -12,26 +12,30 @@
                             [dataField]="period === 'historical' ? 'credit' : 'forecastCredit'"
                             format="currency"
                             [allowSorting]="false"
-                            [allowFiltering]="false">
+                            [allowFiltering]="false"
+                            [customizeText]="updateCurrencySymbol">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Outflows_Field').toUpperCase()}}"
                             [dataField]="period === 'historical' ? 'debit' : 'forecastDebit'"
                             format="currency"
                             [allowSorting]="false"
-                            [allowFiltering]="false">
+                            [allowFiltering]="false"
+                            [customizeText]="updateCurrencySymbol">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_NetChange_Field').toUpperCase()}}"
                             [dataField]="period === 'historical' ? 'netChange' : 'forecastNetChange'"
                             format="currency"
                             [allowSorting]="false"
-                            [allowFiltering]="false">
+                            [allowFiltering]="false"
+                            [customizeText]="updateCurrencySymbol">
                 </dxi-column>
                 <dxi-column caption="{{l('Stats_SourceData_Balance_Field').toUpperCase()}}"
                             [dataField]="period === 'historical' ? 'endingBalance' : 'forecastEndingBalance'"
                             format="currency"
                             [allowSorting]="false"
                             [allowFiltering]="false"
-                            [alignment]="'right'">
+                            [alignment]="'right'"
+                            [customizeText]="updateCurrencySymbol">
                 </dxi-column>
                 <dxo-load-panel [enabled]="true"></dxo-load-panel>
                 <dxo-paging [pageSize]="amountOfItemsOnPage"></dxo-paging>

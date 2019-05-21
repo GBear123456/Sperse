@@ -288,6 +288,10 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
         this.initHeadlineConfig();
     }
+    
+    updateCurrencySymbol = (data) => {
+        return data.valueText.replace('$', this._cfoPreferences.selectedCurrencySymbol);
+    }
 
     createFilters(syncAccounts) {
         this.filters = [

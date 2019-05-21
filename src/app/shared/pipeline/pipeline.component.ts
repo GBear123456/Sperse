@@ -423,32 +423,48 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return response;
     }
 
+    private getTotalsRequestUrl(filter) {
+        return this.getODataUrl(
+            this.totalsURI,
+            filter.concat({and: [
+                this._dataSource.customFilter
+            ]})
+        );
+    }
+
     processTotalsRequest(filter?: any) {
-        if (!this._totalDataSource)
+        if (!this._totalDataSource) {
             this._totalDataSource = new DataSource({
                 requireTotalCount: false,
                 store: {
                     type: 'odata',
-                    url: this.getODataUrl(this.totalsURI, filter),
+                    url: this.getTotalsRequestUrl(filter),
                     version: AppConsts.ODataVersion,
                     beforeSend: this.getBeforeSendEvent(),
                     paginate: false
                 }
             });
+        } else {
+            /** Update total source url in a case custom filter has changed */
+            this._totalDataSource._store._url = this.getTotalsRequestUrl(filter);
+        }
 
-        if (!this._totalDataSource.isLoading())
+        if (!this._totalDataSource.isLoading()) {
             this._odataService.loadDataSource(
-                this._totalDataSource, this.totalsURI).done((res) => {
-                    let stages = res.pop();
-                    this.allStagesEntitiesTotal = 0;
-                    stages && this.stages.forEach((stage) => {
-                        stage['total'] = stages[stage.id] || 0;
-                        stage['full'] = stage['total']
-                            <= stage['entities'].length;
-                        this.allStagesEntitiesTotal += stage['total'];
-                    });
-                }
-            );
+                this._totalDataSource,
+                this.totalsURI
+            ).done((res) => {
+                let stages = res.pop();
+                this.allStagesEntitiesTotal = 0;
+                stages && this.stages.forEach((stage) => {
+                    stage['total'] = stages[stage.id] || 0;
+                    stage['full'] = stage['total']
+                        <= stage['entities'].length;
+                    this.allStagesEntitiesTotal += stage['total'];
+                });
+                this._changeDetector.detectChanges();
+            });
+        }
     }
 
     private getBeforeSendEvent(context?) {
