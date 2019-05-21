@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { Observable, zip } from 'rxjs';
+import { Observable } from 'rxjs';
 import { first, filter, map } from 'rxjs/operators';
 
 /** Application imports */
@@ -77,10 +77,4 @@ export class CfoPreferencesService {
         );
     }
 
-    public getCurrenciesAndSelectedIndex(): Observable<[Partial<CurrencyInfo>[], number]> {
-        return zip(
-            this.currencies$.pipe(first()),
-            this.selectedCurrencyIndex$.pipe(first())
-        );
-    }
 }

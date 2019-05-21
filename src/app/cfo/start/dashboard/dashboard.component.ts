@@ -4,7 +4,7 @@ import { Component, OnInit, OnDestroy, Injector, ViewChild } from '@angular/core
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
-import { filter, skip, withLatestFrom } from 'rxjs/operators';
+import { filter, skip } from 'rxjs/operators';
 
 /** Application imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
@@ -17,7 +17,7 @@ import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/cat
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
-import { CfoStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
@@ -43,7 +43,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         {name: 'View_Transaction_Details', route: '../transactions'},
         {name: 'View_Financial_Statistics', route: '../stats'},
     ];
-    toolbarConfig;
 
     constructor(
         injector: Injector,
@@ -71,8 +70,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         const selectedCurrencyId$ = this.store$.pipe(
             select(CurrenciesStoreSelectors.getSelectedCurrencyId)
         );
-
-        this.initToolbarConfig();
 
         /** If component is activated and currency has changed - update grid  */
         selectedCurrencyId$.pipe(
@@ -138,43 +135,10 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this._dashboardService.periodChanged($event);
     }
 
-    private initToolbarConfig() {
-        this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
-            .subscribe(([currencies, selectedCurrencyIndex]) => {
-                this.toolbarConfig = [
-                    {
-                        location: 'before',
-                        locateInMenu: 'auto',
-                        items: [
-                            {
-                                name: 'select-box',
-                                text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
-                                widget: 'dxDropDownMenu',
-                                accessKey: 'currencySwitcher',
-                                options: {
-                                    hint: this.l('Currency'),
-                                    accessKey: 'currencySwitcher',
-                                    items: currencies,
-                                    selectedIndex: selectedCurrencyIndex,
-                                    height: 39,
-                                    onSelectionChanged: (e) => {
-                                        if (e) {
-                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                ];
-            });
-    }
-
     activate() {
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
 
-        this.initToolbarConfig();
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
             this.filterByBankAccounts(this.bankAccountsService.state);

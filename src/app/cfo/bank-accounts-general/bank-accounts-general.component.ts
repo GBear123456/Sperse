@@ -3,7 +3,6 @@ import { Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit } from
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
-import { Store } from '@ngrx/store';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -12,7 +11,6 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { SyncAccountServiceProxy, InstanceType91 } from '@shared/service-proxies/service-proxies';
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
-import { CfoStore, CurrenciesStoreActions } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
@@ -27,7 +25,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     headlineConfig: any;
     private rootComponent: any;
     createAccountAvailable = false;
-    toolbarConfig;
 
     constructor(
         injector: Injector,
@@ -35,7 +32,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
         private _bankAccountsGeneralService: BankAccountsGeneralService,
         private _dialog: MatDialog,
-        private store$: Store<CfoStore.State>,
         public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
@@ -51,7 +47,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     ngOnInit() {
         this.initHeadlineConfig();
-        this.initToolbarConfig();
     }
 
     private initHeadlineConfig() {
@@ -74,38 +69,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
                 }
             ]
         };
-    }
-
-    private initToolbarConfig() {
-        this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
-            .subscribe(([currencies, selectedCurrencyIndex]) => {
-                this.toolbarConfig = [
-                    {
-                        location: 'before',
-                        locateInMenu: 'auto',
-                        items: [
-                            {
-                                name: 'select-box',
-                                text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
-                                widget: 'dxDropDownMenu',
-                                accessKey: 'currencySwitcher',
-                                options: {
-                                    hint: this.l('Currency'),
-                                    accessKey: 'currencySwitcher',
-                                    items: currencies,
-                                    selectedIndex: selectedCurrencyIndex,
-                                    height: 39,
-                                    onSelectionChanged: (e) => {
-                                        if (e) {
-                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                ];
-            });
     }
 
     private openAddAccountDialog() {
