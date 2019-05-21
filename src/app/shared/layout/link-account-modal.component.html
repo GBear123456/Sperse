@@ -1,4 +1,5 @@
 <modal-dialog [title]="ls.l('LinkedAccounts')"
+              [buttons]="buttons"
               [editTitle]="false"
               [titleClearButton]="false"
               [placeholder]="ls.l('LinkedAccounts')">
@@ -9,9 +10,6 @@
                     <h5 class="modal-title">
                         <span>{{ls.l("LinkNewAccount")}}</span>
                     </h5>
-                    <button type="button" class="close" (click)="close()" [attr.aria-label]="ls.l('Close')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
@@ -28,10 +26,6 @@
                         <input id="Password" #passwordInput="ngModel" type="password" [ngClass]="{'edited': linkUser.password}" name="Password" class="form-control" [(ngModel)]="linkUser.password" required maxlength="128">
                         <validation-messages [formCtrl]="passwordInput"></validation-messages>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button [disabled]="saving" type="button" class="btn btn-secondary" (click)="close()">{{ls.l("Cancel")}}</button>
-                    <button type="submit" class="btn btn-primary" [disabled]="!linkAccountForm.form.valid" [buttonBusy]="saving" [busyText]="ls.l('SavingWithThreeDot')"><i class="fa fa-save"></i> <span>{{ls.l("Save")}}</span></button>
                 </div>
             </form>
         </div>

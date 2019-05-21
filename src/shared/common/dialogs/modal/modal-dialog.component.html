@@ -21,7 +21,7 @@
         </div>
         <div class="mat-dialog-buttons" *ngIf="(buttons || data?.buttons) as buttons">
             <ng-template ngFor let-button [ngForOf]="buttons" let-i="index">
-                <button mat-button (click)="button.action($event)" [id]="button.id" [title]="button.hint ? button.hint : ''" class="button-layout button-{{button.class}}">
+                <button mat-button (click)="button.action($event)" [id]="button.id" [disabled]="button?.disabled" [title]="button.hint ? button.hint : ''" class="button-layout button-{{button.class}}">
                     <span *ngIf="!!button.title">{{ ls.l(button.title )}}</span>
                     <img *ngIf="!!button.iconName" [src]="'./assets/common/icons/' + button.iconName" />
                 </button>

@@ -11,6 +11,7 @@ import { LinkToUserInput, UserLinkServiceProxy } from '@shared/service-proxies/s
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 
 @Component({
     selector: 'linkAccountModal',
@@ -19,8 +20,15 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class LinkAccountModalComponent {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild('linkAccountForm') linkAccountForm;
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
     linkUser: LinkToUserInput = new LinkToUserInput();
+    buttons: IDialogButton[] = [{
+        title: this.ls.l('Save'),
+        disabled: !this.linkAccountForm.form.valid,
+        class: 'primary',
+        action: this.save.bind(this)
+    }];
 
     constructor(
         private _userLinkService: UserLinkServiceProxy,

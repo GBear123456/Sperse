@@ -1,7 +1,7 @@
 <modal-dialog [title]="title">
     <form novalidate (ngSubmit)="refreshTable()" autocomplete="off">
         <div *ngIf="options.isFilterEnabled" class="input-group margin-bottom-10">
-            <input autoFocus [(ngModel)]="filterText" name="filterText" class="form-control" placeholder="{{ls.l('SearchWithThreeDot')}}" type="text">
+            <input autoFocus [(ngModel)]="filterText" name="filterText" class="form-control" [placeholder]="ls.l('SearchWithThreeDot')" type="text">
             <span class="input-group-btn">
                 <button class="btn btn btn-primary" type="submit"><i class="flaticon-search-1" [attr.aria-label]="ls.l('Search')"></i></button>
             </span>

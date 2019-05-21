@@ -6,7 +6,6 @@ import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { BankAccountDailyStatDto } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 

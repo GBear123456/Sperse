@@ -303,7 +303,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     showUserImpersonateLookUpModal(record: any): void {
         this.impersonateTenantId = record.id;
         const impersonateDialog = this.dialog.open(CommonLookupModalComponent, {
-            panelClass: [ 'slider', 'common-lookup' ],
+            panelClass: [ 'slider' ],
             data: { tenantId: this.impersonateTenantId }
         });
         impersonateDialog.componentInstance.itemSelected.subscribe((item: NameValueDto) => {
@@ -319,7 +319,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
 
     createTenant(): void {
         this.dialog.open(CreateTenantModalComponent, {
-            panelClass: ['slider', 'tenant-modal'],
+            panelClass: [ 'slider' ],
             data: {}
         }).afterClosed().pipe(filter(Boolean)).subscribe(
             () => this.refreshDataGrid()

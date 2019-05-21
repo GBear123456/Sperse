@@ -50,7 +50,7 @@ export class BankAccountsService {
     syncAccountsAmount$: Observable<string>;
     accountsAmount$: Observable<string>;
     existingBankAccountsTypes$: Observable<string[]>;
-    baseBankAccountTypes = ['Checking', 'Savings', 'Credit Card'];
+    baseBankAccountTypes = [ 'Checking', 'Savings', 'Credit Card' ];
     private _selectedBankAccountTypes: BehaviorSubject<string[]> = new BehaviorSubject([]);
     selectedBankAccountTypes$: Observable<string[]> = this._selectedBankAccountTypes.asObservable();
 
