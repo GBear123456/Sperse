@@ -6,8 +6,8 @@ import { CurrencyPipe } from '@angular/common';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
-import { forkJoin, merge, zip } from 'rxjs';
-import { finalize, first, filter, switchMap } from 'rxjs/operators';
+import { merge, zip } from 'rxjs';
+import { finalize, first, filter, switchMap, takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 import { Store, select } from '@ngrx/store';
@@ -35,10 +35,11 @@ import {
 import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
-import { CfoStore, CurrenciesStoreSelectors, CurrenciesStoreActions, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
+import { CfoStore, CurrenciesStoreSelectors, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { skip } from '@node_modules/rxjs/operators';
 
 @Component({
     'selector': 'app-stats',
@@ -150,7 +151,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     private rootComponent: any;
     private filters: FilterModel[] = new Array<FilterModel>();
     private requestFilter: StatsFilter;
-    private forecastModelsObj: { items: Array<any>, selectedItemIndex: number } = { items: [], selectedItemIndex: null };
     private syncAccounts: any;
     private updateAfterActivation: boolean;
 
@@ -177,14 +177,23 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.requestFilter.endDate = moment().utc().add(1, 'year');
         this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
 
+        const currencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId));
         /** If component is not activated and selected currency has changed - wait activation and reload data */
         merge(
-            this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId)),
+            currencyId$,
             this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelId))
         ).pipe(
+            takeUntil(this.destroy$),
             filter(() => !this.componentIsActivated)
         ).subscribe(() => {
             this.updateAfterActivation = true;
+        });
+
+        currencyId$.pipe(
+            skip(1),
+            filter(() => this.componentIsActivated)
+        ).subscribe(() => {
+            this.loadStatsData();
         });
 
         this.bankAccountsService.accountsAmount$.subscribe(amount => {
@@ -226,11 +235,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     initToolbarConfig() {
         if (this.componentIsActivated) {
             zip(
-                this.cfoPreferencesService.getCurrenciesAndSelectedIndex(),
                 this.store$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean)),
                 this.store$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(i => i !== null)))
             ).pipe(first())
-                .subscribe(([[currencies, selectedCurrencyIndex], forecastModels, selectedForecastModel]) => {
+                .subscribe(([forecastModels, selectedForecastModel]) => {
                     /** Get currencies list and selected currency index */
                     this._appService.updateToolbar([
                         {
@@ -312,31 +320,6 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                     attr: {
                                         'custaccesskey': 'bankAccountSelect',
                                         'accountCount': this.bankAccountsCount
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            location: 'before',
-                            locateInMenu: 'auto',
-                            items: [
-                                {
-                                    name: 'select-box',
-                                    text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
-                                    widget: 'dxDropDownMenu',
-                                    accessKey: 'currencySwitcher',
-                                    options: {
-                                        hint: this.l('Currency'),
-                                        accessKey: 'currencySwitcher',
-                                        items: currencies,
-                                        selectedIndex: selectedCurrencyIndex,
-                                        height: 39,
-                                        onSelectionChanged: (e) => {
-                                            if (e) {
-                                                this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
-                                                this.loadStatsData();
-                                            }
-                                        }
                                     }
                                 }
                             ]

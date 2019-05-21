@@ -21,6 +21,7 @@ import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxToolbarModule } from 'devextreme-angular/ui/toolbar';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
 import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
@@ -80,6 +81,7 @@ import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-
 import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.component';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 import { CfoStoreModule } from '@app/cfo/store';
+import { CurrenciesDropdownComponent } from '@app/cfo/shared/common/currencies-dropdown/currencies-dropdown.component';
 
 let COMPONENTS = [
     StartComponent,
@@ -90,6 +92,7 @@ let COMPONENTS = [
     TransactionsComponent,
     CategorizationComponent,
     SetupStepComponent,
+    CurrenciesDropdownComponent,
     CashflowComponent,
     OperationsComponent,
     PreferencesDialogComponent,
@@ -144,6 +147,7 @@ let COMPONENTS = [
         DxTabsModule,
         DxTagBoxModule,
         DxResizableModule,
+        DxListModule,
         ModalModule.forRoot(),
         DxChartModule,
         MatTabsModule,
