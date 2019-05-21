@@ -26,7 +26,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @ViewChild('header', { read: ElementRef }) header: ElementRef;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
-    @Input() nameColumnWidth = 200;
+    @Input() nameColumnWidth = 350;
     @Input() height;
     @Input() showColumnHeaders = false;
     @Input() allowUpdateAccount = false;
@@ -406,6 +406,15 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     calculateSyncAccountSortValue(itemData) {
         return itemData.bankAccounts.length ? 1 : 0;
+    }
+
+    calculateSyncAccountDisplayValue(itemData): string {
+        let displayValue = '0';
+        if (itemData.bankAccounts.length) {
+            const selectedBankAccountsAmount: number = itemData.bankAccounts.reduce((sum, bankAccount) => sum += bankAccount.selected ? 1 : 0, 0);
+            displayValue = selectedBankAccountsAmount + ' of ' + itemData.bankAccounts.length;
+        }
+        return displayValue;
     }
 
     getRatioColor(ratio: number) {

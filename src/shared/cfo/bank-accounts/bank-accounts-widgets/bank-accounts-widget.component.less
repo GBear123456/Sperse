@@ -7,34 +7,37 @@
         padding: 0 !important;
     }
 
-    .header > div {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        &:first-child {
-            justify-content: space-between;
-        }
-
-        &.center-header {
+    .header {
+        border-bottom: 1px solid #e5e9ec;
+        .row > div {
+            display: flex;
             justify-content: space-around;
-        }
-
-        @media (min-width: 1500px) {
-            &.left-header {
-                flex: 0 0 50%;
-                max-width: 50%;
+            align-items: center;
+            &:first-child {
+                justify-content: space-between;
             }
 
             &.center-header {
-                flex: 0 0 25%;
-                max-width: 25%;
-                border-right: 1px solid @border-color;
-                border-left: 1px solid @border-color;
+                justify-content: space-around;
             }
 
-            &.right-header {
-                flex: 0 0 25%;
-                max-width: 25%;
+            @media (min-width: 1500px) {
+                &.left-header {
+                    flex: 0 0 50%;
+                    max-width: 50%;
+                }
+
+                &.center-header {
+                    flex: 0 0 25%;
+                    max-width: 25%;
+                    border-right: 1px solid @border-color;
+                    border-left: 1px solid @border-color;
+                }
+
+                &.right-header {
+                    flex: 0 0 25%;
+                    max-width: 25%;
+                }
             }
         }
     }
@@ -247,6 +250,9 @@
                     &.dx-editor-cell {
                         text-overflow: clip;
                     }
+                }
+                &:first-child {
+                    border-top: none;
                 }
             }
 
