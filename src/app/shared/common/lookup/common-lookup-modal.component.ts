@@ -80,8 +80,8 @@ export class CommonLookupModalComponent implements OnInit {
         private _changeDetectorRef: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) private data: any,
         private dialogRef: MatDialogRef<CommonLookupModalComponent>,
-        private primengTableHelper: PrimengTableHelper,
-        public ls: AppLocalizationService,
+        public primengTableHelper: PrimengTableHelper,
+        public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {

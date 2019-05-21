@@ -104,7 +104,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         private _elementRef: ElementRef,
         private _changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) private data: any
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
 
     ngOnInit() {

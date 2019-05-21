@@ -1,6 +1,6 @@
 <div class="header row" #header>
     <div class="left-header col-sm-12">
-        <dx-check-box [value]="allSyncAccountAreSelected$ | async"
+        <dx-check-box [value]="bankAccountsService.allSyncAccountAreSelected$ | async"
                       (onValueChanged)="selectAll($event)">
         </dx-check-box>
         <selection-filter

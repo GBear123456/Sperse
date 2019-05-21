@@ -100,7 +100,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private _changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) private data: any
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.saveContextMenuItems = [
             {text: this.ls.l('Save'), selected: false},
