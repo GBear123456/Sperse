@@ -6,6 +6,7 @@ import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { filter } from 'rxjs/operators';
 import * as _ from 'underscore';
+import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { FiltersService } from '@shared/filters/filters.service';
@@ -18,13 +19,16 @@ import {
     NameValueDto,
     PermissionServiceProxy,
     TenantListDto,
-    TenantServiceProxy
+    TenantServiceProxy,
+    EditionServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { CreateTenantModalComponent } from './create-tenant-modal.component';
 import { EditTenantModalComponent } from './edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenant-features-modal.component';
 import { AppService } from '@app/app.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
+import { FilterRadioGroupModel } from '@shared/filters/radio-group/filter-radio-group.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
@@ -39,9 +43,14 @@ import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-loo
 export class TenantsComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
+    private editions: any = [];
     private filters: FilterModel[];
     public actionMenuItems: any;
-    creationDate: any;
+
+    name: string;
+    productId = '-1';
+    creationDateStart: moment;
+    creationDateEnd: moment;
     public actionRecord: any;
     public headlineConfig = {
         names: [this.l('Tenants')],
@@ -62,6 +71,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         private _tenantService: TenantServiceProxy,
+        private _editionService: EditionServiceProxy,
         private _appService: AppService,
         private _filtersService: FiltersService,
         private _permissionService: PermissionServiceProxy,
@@ -73,24 +83,30 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
-        this.initFilterConfig();
+       
+        this._editionService.getEditionComboboxItems(0, true, false).subscribe(editions => {
+            this.editions = editions;
+            this.initFilterConfig();
+        });
 
         this.dataSource = new DataSource({
             key: 'id',
-            load: () => {
+            load: (loadOptions) => {
                 return this._tenantService.getTenants(
-                    this.searchValue || undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    1000,
-                    undefined
+                    this.searchValue || this.name || undefined,
+                    this.creationDateStart || undefined,
+                    this.creationDateEnd || undefined,
+                    this.productId,
+                    !this.productId || parseInt(this.productId) >= 0,
+                    (loadOptions.sort || []).map((item) => {
+                        return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
+                    }).join(','),
+                    loadOptions.take,
+                    loadOptions.skip
                 ).toPromise().then(response => {
                     return {
                         data: response.items,
-                        totalCount: response.items.length
+                        totalCount: response.totalCount
                     };
                 });
             }
@@ -262,40 +278,37 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                         to: new FilterItemModel()
                     },
                     options: {method: 'getFilterByDate'}
+                }),
+                new FilterModel({
+                    component: FilterRadioGroupComponent,
+                    caption: 'product',
+                    field: 'productId',
+                    items: {
+                        element: new FilterRadioGroupModel({
+                            value: this.productId,
+                            list: this.editions.map((item) => {
+                                return {
+                                    id: item.value,
+                                    name: item.displayText
+                                };
+                            })
+                        })
+                    }
                 })
             ]
         );
 
-        this._filtersService.apply(() => {
+        this._filtersService.apply((filter) => {
             this.initToolbarConfig();
-            let dataSourceFilters = [];
 
-            for (let filter of this.filters) {
-                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
-                if (filterMethod) {
-                    let customFilters: any[] = filterMethod(filter);
-                    if (customFilters && customFilters.length)
-                        customFilters.forEach((v) => dataSourceFilters.push(v));
-                } else {
-                    if (filter.options && filter.options.method) {
-                        let oDataFilter = filter[filter.options.method]();
-                        for (let filterItem of Object.keys(oDataFilter)) {
-                            for (let operator of Object.keys(oDataFilter[filterItem])) {
-                                dataSourceFilters.push([filterItem, operator, oDataFilter[filterItem][operator]]);
-                            }
-                        }
-                    } else {
-                        _.pairs(filter.items).forEach((pair) => {
-                            let val = pair.pop().value, key = pair.pop();
-                            if (val)
-                                dataSourceFilters.push([key, filter.operator, val]);
-                        });
-                    }
-                }
-            }
+            if (filter.field == 'name')
+                this.name = filter.items.name.value;
+            else if (filter.field == 'creationTime') {
+                this.creationDateStart = filter.items.from.value;
+                this.creationDateEnd = filter.items.to.value;
+            } else if (filter.field == 'productId')
+                this.productId = filter.items.element.value;
 
-            dataSourceFilters = dataSourceFilters.length ? dataSourceFilters : null;
-            this.dataSource.filter(dataSourceFilters);
             this.dataSource.load();
         });
     }

@@ -18,6 +18,7 @@
             <div>
                 <div id="tenantsGrid">
                     <dx-data-grid id="gridContainer"
+                                  [remoteOperations]="true"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
                                   [allowColumnResizing]="true"
@@ -30,7 +31,6 @@
                         <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
                         <dxi-column caption="{{l('CreationTime')}}" dataField="creationTime" dataType="date" sortOrder="desc" sortIndex="0"></dxi-column>
                         <dxi-column caption="{{l('Active')}}" cellTemplate="isActiveTemplate"></dxi-column>
-                        <dxi-column caption="{{l('SubscriptionEndDateUtc')}}" dataField="endTime"></dxi-column>
                         <dxi-column caption="{{l('Name')}}" dataField="name"></dxi-column>
                         <dxi-column caption="{{l('TenancyCodeName')}}" dataField="tenancyName"></dxi-column>
                         <ng-container *dxTemplate="let cell of 'isActiveTemplate'">
