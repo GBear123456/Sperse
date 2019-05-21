@@ -1,8 +1,13 @@
+/** Core imports */
 import { Component, Injector, Input, ChangeDetectionStrategy } from '@angular/core';
-import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
+
+/** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+
+/** Application imports */
+import { InstanceType } from '@shared/service-proxies/service-proxies';
+import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CfoIntroComponent } from '../../cfo-intro/cfo-intro.component';
-import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './setup-steps.component.html',
@@ -17,16 +22,16 @@ export class SetupStepComponent extends CFOComponentBase {
         { caption: 'BusinessEntity', component: '/business-entities', isAlwaysActive: true },
         { caption: 'Chart', component: '/chart-of-accounts', isAlwaysActive: true },
         { caption: 'Rules', component: '/rules', isAlwaysActive: false },
-        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin && this.instanceType == 'Main', isAlwaysActive: false }
+        { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin && this.instanceType == InstanceType.Main, isAlwaysActive: false }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
     @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
 
     private dialogConfig = new MatDialogConfig();
 
-    constructor(injector: Injector,
-        public dialog: MatDialog,
-        public appService: AppService
+    constructor(
+        injector: Injector,
+        public dialog: MatDialog
     ) {
         super(injector);
     }

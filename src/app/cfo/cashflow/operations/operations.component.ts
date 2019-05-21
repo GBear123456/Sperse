@@ -1,9 +1,6 @@
 /** Core imports */
 import { Component, Injector, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
-/** Third party imports */
-import { Store } from '@ngrx/store';
-
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -11,8 +8,6 @@ import { AppService } from '@app/app.service';
 import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { CfoStore, CurrenciesStoreActions } from '@app/cfo/store';
-import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'cashflow-operations',
@@ -55,9 +50,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     constructor(injector: Injector,
         private _filtersService: FiltersService,
         private _appService: AppService,
-        private _bankAccountsService: BankAccountsService,
-        private cfoPreferencesService: CfoPreferencesService,
-        private store$: Store<CfoStore.State>
+        private _bankAccountsService: BankAccountsService
     ) {
         super(injector);
     }
@@ -69,15 +62,13 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     }
 
     initToolbarConfig() {
-        this.cfoPreferencesService.getCurrenciesAndSelectedIndex()
-            .subscribe(([currencies, selectedCurrencyIndex]) => {
-                this._appService.updateToolbar([
+        this._appService.updateToolbar([
                     {
                         location: 'before',
                         items: [
                             {
                                 name: 'filters',
-                                action: (event) => {
+                                action: () => {
                                     setTimeout(this.repaint.bind(this), 1000);
                                     this._filtersService.fixed = !this._filtersService.fixed;
                                 },
@@ -176,30 +167,6 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                         locateInMenu: 'auto',
                         items: [
                             {
-                                name: 'select-box',
-                                text: this.cfoPreferencesService.selectedCurrencySymbol + ' ' + this.cfoPreferencesService.selectedCurrencyId,
-                                widget: 'dxDropDownMenu',
-                                accessKey: 'currencySwitcher',
-                                options: {
-                                    hint: this.l('Currency'),
-                                    accessKey: 'currencySwitcher',
-                                    items: currencies,
-                                    selectedIndex: selectedCurrencyIndex,
-                                    height: 39,
-                                    onSelectionChanged: (e) => {
-                                        if (e) {
-                                            this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(e.itemData.id));
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        location: 'before',
-                        locateInMenu: 'auto',
-                        items: [
-                            {
                                 name: 'rules',
                                 action: this.preferencesDialog.bind(this)
                             }
@@ -254,7 +221,6 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                         ]
                     },
                 ]);
-            });
     }
 
     exportTo(event) {

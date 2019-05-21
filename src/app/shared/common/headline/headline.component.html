@@ -7,7 +7,10 @@
                 <span class="right-arrow"></span>
             </ng-template>
         </div>
-        &nbsp;<small>{{data.text}}</small><div class="transclude"><ng-content></ng-content></div>
+        &nbsp;<small>{{data.text}}</small><div class="transclude"></div>
+    </div>
+    <div class="headline-content">
+        <ng-content></ng-content>
     </div>
     <div class="headline-buttons" [ngClass]="data?.class">
         <ng-template ngFor let-item [ngForOf]="data.buttons">

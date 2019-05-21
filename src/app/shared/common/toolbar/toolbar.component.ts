@@ -287,8 +287,8 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                 ? item.options['items'][item.options.selectedIndex]
                 : item.options['items'][0];
             return {
-                'select-caption': item.text ? item.accessKey == 'currencySwitcher' ? item.text : item.text + ':' : '',
-                'select-value': items && items.length && item.accessKey != 'currencySwitcher' ? selectedItem.text : ''
+                'select-caption': item.text ? item.text + ':' : '',
+                'select-value': items && items.length && selectedItem ? selectedItem.text : ''
             };
         }
         return item.attr || {};
@@ -313,14 +313,8 @@ export class ToolBarComponent extends AppComponentBase implements OnDestroy {
                 link.html = this.getDropDownItemTemplate(link, item.options['width']);
                 link.onClick = (event) => {
                     if (item.name == 'select-box') {
-                        if (item.accessKey == 'currencySwitcher') {
-                            $('.dx-dropdownmenu-button[title' + (item.options.hint ? '="' + item.options.hint + '"' : '') + ']')
-                                .attr('select-value', '')
-                                .attr('select-caption', event.itemData.symbol + ' ' + event.itemData.id);
-                        } else {
-                            $('.dx-dropdownmenu-button[title' + (item.options.hint ? '="' + item.options.hint + '"' : '') + ']')
-                                .attr('select-value', event.itemData.text);
-                        }
+                        $('.dx-dropdownmenu-button[title' + (item.options.hint ? '="' + item.options.hint + '"' : '') + ']')
+                            .attr('select-value', event.itemData.text);
                     }
                     /** if each item has its own click handler - call it */
                     (link.action && link.action.call(this, this.getOptions() || event)) ||

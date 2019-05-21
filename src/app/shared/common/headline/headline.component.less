@@ -22,6 +22,17 @@
         left: 0px;
     }
 
+    .headline-content {
+        display: flex;
+        flex-basis: 100%;
+        /deep/ synch-progress {
+            margin: auto;
+        }
+        & > * + * {
+            margin-left: 10px;
+        }
+    }
+
     .headline-title {
         font-size: 24px;
         line-height: 1;
@@ -79,7 +90,7 @@
     .headline-buttons {
         display: flex;
         align-items: center;
-        margin-left: auto;
+        margin-left: 5px;
         .vertical-delimiter {
             width: 30px;
             height: 0px;

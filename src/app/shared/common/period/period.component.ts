@@ -6,7 +6,7 @@ import * as moment from 'moment';
 @Component({
     selector: 'app-period',
     templateUrl: './period.component.html',
-    styleUrls: ['./period.component.less']
+    styleUrls: [ '../../../shared/common/styles/select-box.less']
 })
 export class PeriodComponent extends AppComponentBase implements AfterViewInit {
     @Output() onChange = new EventEmitter();
