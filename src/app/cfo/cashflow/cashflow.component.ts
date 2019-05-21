@@ -688,6 +688,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     /** Key to cache the transaction details height */
     private cashflowDetailsGridSessionIdentifier = `cashflow_forecastModel_${abp.session.tenantId}_${abp.session.userId}`;
 
+    detailsSettingsIdentifier = `cashflow_details_settings_${abp.session.tenantId}_${abp.session.userId}`;
+
     /** If cashflow has some disperancy data */
     private hasDiscrepancyInData = false;
 

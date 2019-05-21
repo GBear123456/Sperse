@@ -164,6 +164,8 @@
     /deep/ .dx-toolbar {
         padding: 12px 0 13px 0;
         margin: 0;
+        z-index: 1;
+        position: relative;
 
         .dx-item {
             .dx-datebox input {
@@ -266,10 +268,10 @@
                 }
             }
         }
-    
+
         [title="Currency"] {
             padding: 0 10px;
-        
+
             &::before {
                 color: #212c36;
             }
