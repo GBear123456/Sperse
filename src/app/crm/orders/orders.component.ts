@@ -524,7 +524,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onCardClick(order) {
-        if (order && order.ContactId)
+        if (order && order.ContactId) {
+            this.searchClear = false;
             this._router.navigate(
                 ['app/crm/contact', order.ContactId, 'orders'], {
                     queryParams: {
@@ -533,6 +534,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     }
                 }
             );
+        }
     }
 
     createInvoice() {
