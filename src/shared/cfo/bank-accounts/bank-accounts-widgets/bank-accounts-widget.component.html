@@ -1,34 +1,36 @@
-<div class="header row" #header>
-    <div class="left-header col-sm-12">
-        <dx-check-box [value]="bankAccountsService.allSyncAccountAreSelected$ | async"
-                      (onValueChanged)="selectAll($event)">
-        </dx-check-box>
-        <selection-filter
-            [allItemsText]="l('All_Entities')"
-            [title]=""
-            [selectionList]="bankAccountsService.businessEntities$ | async"
-            [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
-            (selectionChanged)="entitiesItemsChanged($event)">
-        </selection-filter>
-        <selection-filter
-            [allItemsText]="l('All_Types')"
-            [title]=""
-            [itemsText]="l('Types')"
-            [selectionList]="bankAccountsService.existingBankAccountsTypes$ | async"
-            [selectedItems]="bankAccountsService.selectedBankAccountTypes$ | async"
-            (selectionChanged)="bankAccountTypesChanged($event)">
-        </selection-filter>
-        <div class="is-active-filter">
-            <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
-            <div>{{ bankAccountsService.state.isActive !== false ? l('Active') : l('Disabled') }}</div>
+<div class="header" #header>
+    <div class="row">
+        <div class="left-header col-sm-12">
+            <dx-check-box [value]="bankAccountsService.allSyncAccountAreSelected$ | async"
+                          (onValueChanged)="selectAll($event)">
+            </dx-check-box>
+            <selection-filter
+                [allItemsText]="l('All_Entities')"
+                [title]=""
+                [selectionList]="bankAccountsService.businessEntities$ | async"
+                [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
+                (selectionChanged)="entitiesItemsChanged($event)">
+            </selection-filter>
+            <selection-filter
+                [allItemsText]="l('All_Types')"
+                [title]=""
+                [itemsText]="l('Types')"
+                [selectionList]="bankAccountsService.existingBankAccountsTypes$ | async"
+                [selectedItems]="bankAccountsService.selectedBankAccountTypes$ | async"
+                (selectionChanged)="bankAccountTypesChanged($event)">
+            </selection-filter>
+            <div class="is-active-filter">
+                <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
+                <div>{{ bankAccountsService.state.isActive !== false ? l('Active') : l('Disabled') }}</div>
+            </div>
         </div>
-    </div>
-    <div class="center-header col-sm-8">
-        <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Connections')"></info-component>
-        <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component>
-    </div>
-    <div class="right-header col-sm-4">
-        <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'" [description]="l('Current_Balance')"></info-component>
+        <div class="center-header col-sm-8">
+            <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Connections')"></info-component>
+            <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component>
+        </div>
+        <div class="right-header col-sm-4">
+            <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'" [description]="l('Current_Balance')"></info-component>
+        </div>
     </div>
 </div>
 <dx-scroll-view showScrollbar="onHover" [height]="scrollHeight" [width]="'100%'">
@@ -57,14 +59,15 @@
             <dxi-column dataField="selected" caption="" [width]="30" alignment="center" dataType="boolean"></dxi-column>
             <dxi-column dataField="name" [caption]="l('Account')" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
             <dxi-column dataField="syncAccountStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="1" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
-            <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="170" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
-            <dxi-column dataField="bankAccounts.length" [width]="20" alignment="left" [sortIndex]="0" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue"  [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
+            <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
+            <dxi-column dataField="bankAccounts.length" [width]="10" alignment="left" [sortIndex]="0" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
             <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
             <dxi-column dataField="balance" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
             <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false" [(visible)]="allowUpdateAccount" cellTemplate="actionsTemplate"></dxi-column>
             <div *dxTemplate="let syncAccount of 'detail'">
                 <div class="bank-accounts-grid-container">
-                    <dx-data-grid [dataSource]="syncAccount.data.bankAccounts"
+                    <dx-data-grid accessKey="detailGrid"
+                                  [dataSource]="syncAccount.data.bankAccounts"
                                   [showBorders]="false"
                                   [width]="'100%'"
                                   [showColumnLines]="false"
