@@ -30,7 +30,10 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
-    styleUrls: ['create-user-dialog.component.less'],
+    styleUrls: [
+        'create-user-dialog.component.less',
+        '../../../../shared/metronic/m-checkbox.less'
+    ],
     providers: [ CacheHelper, DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
