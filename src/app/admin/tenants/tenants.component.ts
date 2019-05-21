@@ -96,7 +96,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
                     this.searchValue || this.name || undefined,
                     this.creationDateStart || undefined,
                     this.creationDateEnd || undefined,
-                    this.productId ? parseInt(this.productId) : null,
+                    this.productId ? parseInt(this.productId) : undefined,
                     !this.productId || parseInt(this.productId) >= 0,
                     (loadOptions.sort || []).map((item) => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
