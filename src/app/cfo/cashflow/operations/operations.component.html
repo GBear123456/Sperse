@@ -2,9 +2,4 @@
     <app-report-period [sliderReportPeriod]="sliderReportPeriod"
                        (onPeriodSelected)="reportPeriodChange($event)">
     </app-report-period>
-
-    <bank-accounts-select targetBankAccountsTooltip="[custaccesskey='bankAccountSelect']"
-                          useGlobalCache="true"
-                          (onApplySelected)="filterByBankAccounts($event)">
-    </bank-accounts-select>
 </div>

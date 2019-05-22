@@ -62,7 +62,7 @@ import { CategoryDeleteDialogComponent } from './transactions/categorization/cat
 import { BusinessEntitiesComponent } from './business-entities/business-entities.component';
 import { BusinessEntityEditDialogComponent } from './business-entities/business-entity-edit-dialog/business-entity-edit-dialog.component';
 import { ChartOfAccountsComponent } from 'app/cfo/chart-of-accounts/chart-of-accounts.component';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { CalculatorComponent } from 'app/cfo/shared/calculator-widget/calculator-widget.component';
 import { TransactionDetailInfoComponent } from 'app/cfo/shared/transaction-detail-info/transaction-detail-info.component';
 import { CashflowComponent } from './cashflow/cashflow.component';
@@ -107,7 +107,7 @@ let COMPONENTS = [
     BusinessEntitiesComponent,
     BusinessEntityEditDialogComponent,
     ChartOfAccountsComponent,
-    BankAccountsSelectComponent,
+    BankAccountsSelectDialogComponent,
     ChooseResetRulesComponent,
     CalculatorComponent,
     TransactionDetailInfoComponent,
@@ -176,7 +176,8 @@ let COMPONENTS = [
         BusinessEntityEditDialogComponent,
         TransactionDetailInfoComponent,
         CfoIntroComponent,
-        UsersDialogComponent
+        UsersDialogComponent,
+        BankAccountsSelectDialogComponent
     ],
     providers: [
         CashflowServiceProxy,

@@ -9,7 +9,7 @@ import { filter, skip } from 'rxjs/operators';
 /** Application imports */
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
@@ -27,7 +27,6 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
     animations: [appModuleAnimation()]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
     @ViewChild(CategorizationStatusComponent) categorizationStatusComponent: CategorizationStatusComponent;
     @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
@@ -156,6 +155,13 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
             this.totalsByPeriodComponent.render();
             this.trendByPeriodComponent.render();
         }, 300);
+    }
+
+    openBankAccountsSelectDialog() {
+        this.dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+            data: { userGlobalCache: true }
+        });
     }
 
     deactivate() {

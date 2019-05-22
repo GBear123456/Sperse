@@ -8,6 +8,7 @@ import { finalize } from 'rxjs/operators';
 import { BehaviorSubject } from '@node_modules/rxjs';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Injectable()
 export class CFOService extends CFOServiceBase {
@@ -19,7 +20,8 @@ export class CFOService extends CFOServiceBase {
         private _appLocalizationService: AppLocalizationService,
         private _layoutService: LayoutService,
         private _instanceServiceProxy: InstanceServiceProxy,
-        private _contactService: ContactServiceProxy
+        private _contactService: ContactServiceProxy,
+        private _permission: PermissionCheckerService
     ) {
         super();
         this.statusActive = new BehaviorSubject<boolean>(false);
@@ -42,6 +44,22 @@ export class CFOService extends CFOServiceBase {
                 }
             }
         });
+    }
+
+    get isInstanceAdmin() {
+        return this.checkMemberAccessPermission('Manage.Administrate', !isNaN(parseInt(this.instanceType)) ||
+            (this.instanceType == InstanceType.Main && this._permission.isGranted('Pages.CFO.MainInstanceAdmin')))
+    }
+
+    get isMemberAccessManage() {
+        return this.checkMemberAccessPermission('Manage', false);
+    }
+
+    checkMemberAccessPermission(permission, defaultResult = true) {
+        if (this.instanceType == InstanceType.User && !this.instanceId)
+            return this._permission.isGranted('Pages.CFO.MemberAccess.' + permission);
+
+        return defaultResult;
     }
 
     initContactInfo(userId) {

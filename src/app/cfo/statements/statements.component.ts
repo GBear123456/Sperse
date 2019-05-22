@@ -4,6 +4,7 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { AppConsts } from '@shared/AppConsts';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
@@ -16,7 +17,6 @@ import { Store, select } from '@ngrx/store';
 import { AppService } from '@app/app.service';
 import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress/synch-progress.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
@@ -37,6 +37,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { CurrenciesStoreSelectors, CfoStore } from '@app/cfo/store';
 import { filter, skip } from '@node_modules/rxjs/operators';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 
 @Component({
     templateUrl: './statements.component.html',
@@ -45,7 +46,6 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 })
 export class StatementsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
-    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
 
@@ -79,6 +79,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
         private _cfoPreferences: CfoPreferencesService,
+        private _dialog: MatDialog,
         private bankAccountsService: BankAccountsService,
         private store$: Store<CfoStore.State>
     ) {
@@ -173,7 +174,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                         {
                             name: 'bankAccountSelect',
                             widget: 'dxButton',
-                            action: this.toggleBankAccountTooltip.bind(this),
+                            action: this.openBankAccountsSelectDialog.bind(this),
                             options: {
                                 id: 'bankAccountSelect',
                                 text: this.l('Accounts'),
@@ -415,8 +416,14 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         });
     }
 
-    toggleBankAccountTooltip() {
-        this.bankAccountSelector.toggleBankAccountTooltip();
+    openBankAccountsSelectDialog() {
+        const bankAccountsSelectDialog = this._dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+            data: { useGlobalCache: true }
+        });
+        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe(() => {
+            this.setBankAccountsFilter(true);
+        });
     }
 
     toggleReportPeriodFilter() {

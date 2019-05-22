@@ -32,6 +32,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() allowUpdateAccount = false;
     @Input() showSyncAccountWithoutBankAccounts = true;
     @Input() showCreditInfo = false;
+    @Input() showBusinessEntitiesFilter = true;
     dataSource: any;
     @Input('highlightedBankAccountIds')
     set highlightedBankAccountIds(highlightedBankAccountIds) {

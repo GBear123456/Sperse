@@ -1,11 +1,14 @@
 /** Core imports */
 import { Component, Injector, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild } from '@angular/core';
 
+/** Third party imports */
+import { MatDialog } from '@angular/material';
+
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 
@@ -16,7 +19,6 @@ import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-acco
 })
 
 export class OperationsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
     private initReportPeriodTimeout: any;
     @Input('reportPeriod')
@@ -50,7 +52,8 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     constructor(injector: Injector,
         private _filtersService: FiltersService,
         private _appService: AppService,
-        private _bankAccountsService: BankAccountsService
+        private _bankAccountsService: BankAccountsService,
+        private _dialog: MatDialog
     ) {
         super(injector);
     }
@@ -149,7 +152,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                             {
                                 name: 'bankAccountSelect',
                                 widget: 'dxButton',
-                                action: this.toggleBankAccountTooltip.bind(this),
+                                action: this.openBankAccountsSelectDialog.bind(this),
                                 options: {
                                     id: 'bankAccountSelect',
                                     text: this.l('Accounts'),
@@ -269,8 +272,14 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
         this.onSelectedBankAccountsChange.emit(data);
     }
 
-    toggleBankAccountTooltip() {
-        this.bankAccountSelector.toggleBankAccountTooltip();
+    openBankAccountsSelectDialog() {
+        const bankAccountsSelectDialog = this._dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+            data: { useGlobalCache: true }
+        });
+        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe((data) => {
+            this.filterByBankAccounts(data);
+        });
     }
 
     ngOnDestroy() {

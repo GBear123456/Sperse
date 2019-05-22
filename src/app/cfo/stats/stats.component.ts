@@ -3,11 +3,12 @@ import { Component, Injector, OnInit, AfterViewInit, OnDestroy, ViewChild } from
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
 import { getMarkup, exportFromMarkup } from 'devextreme/viz/export';
 import { CacheService } from 'ng2-cache-service';
 import { merge, zip } from 'rxjs';
-import { finalize, first, filter, switchMap, takeUntil } from 'rxjs/operators';
+import { finalize, first, filter, switchMap, takeUntil, skip } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 import { Store, select } from '@ngrx/store';
@@ -32,14 +33,13 @@ import {
     CashFlowForecastServiceProxy,
     InstanceType
 } from '@shared/service-proxies/service-proxies';
-import { BankAccountsSelectComponent } from '@app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsSelectDialogComponent } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { BankAccountFilterComponent } from '@shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from '@shared/filters/bank-account-filter/bank-account-filter.model';
 import { CfoStore, CurrenciesStoreSelectors, ForecastModelsStoreActions, ForecastModelsStoreSelectors } from '@app/cfo/store';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
-import { skip } from '@node_modules/rxjs/operators';
 
 @Component({
     'selector': 'app-stats',
@@ -48,7 +48,6 @@ import { skip } from '@node_modules/rxjs/operators';
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(ReportPeriodComponent) reportPeriodSelector: ReportPeriodComponent;
     @ViewChild('linearChart') private linearChart: DxChartComponent;
     @ViewChild('barChart') private barChart: DxChartComponent;
@@ -162,6 +161,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         private _cashFlowForecastServiceProxy: CashFlowForecastServiceProxy,
         private _cacheService: CacheService,
         private _statsService: StatsService,
+        private _dialog: MatDialog,
         private store$: Store<CfoStore.State>,
         public bankAccountsService: BankAccountsService,
         public cfoPreferencesService: CfoPreferencesService
@@ -311,7 +311,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
                                 {
                                     name: 'bankAccountSelect',
                                     widget: 'dxButton',
-                                    action: this.toggleBankAccountTooltip.bind(this),
+                                    action: this.openBankAccountsSelectDialog.bind(this),
                                     options: {
                                         id: 'bankAccountSelect',
                                         text: this.l('Accounts'),
@@ -611,8 +611,14 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
     }
 
-    toggleBankAccountTooltip() {
-        this.bankAccountSelector.toggleBankAccountTooltip();
+    openBankAccountsSelectDialog() {
+        const bankAccountsSelectDialog = this._dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+            data: { useGlobalCache: true }
+        });
+        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe(() => {
+            this.setBankAccountsFilter(true);
+        });
     }
 
     /** Different styles for labels for positive and negative values */
