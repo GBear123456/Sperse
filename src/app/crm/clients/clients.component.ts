@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { Store, select } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { first, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -68,7 +69,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
     @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
 
-    private readonly dataSourceURI = 'Customer';
+    private readonly dataSourceURI: string = 'Customer';
     private filters: FilterModel[];
     private rootComponent: any;
     private formatting = AppConsts.formatting;
@@ -76,7 +77,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private canSendVerificationRequest = false;
     private dependencyChanged = false;
 
-    statuses: ContactStatusDto[];
+    statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelAssignment: FilterModel;
@@ -115,11 +116,28 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private itemDetailsService: ItemDetailsService
     ) {
         super(injector);
+    }
+
+    ngOnInit() {
+        this.filterModelStatus = new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'status',
+            field: 'StatusId',
+            isSelected: true,
+            items: {
+                element: new FilterCheckBoxesModel({
+                    dataSource$: this.statuses$,
+                    nameField: 'name',
+                    keyExpr: 'id',
+                    value: 'A'
+                })
+            }
+        });
         this.dataSource = {
             store: {
                 key: 'Id',
                 type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI),
+                url: this.getODataUrl(this.dataSourceURI, this.filterByStatus(this.filterModelStatus)),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
@@ -134,6 +152,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
 
         this.canSendVerificationRequest = this._appService.canSendVerificationRequest();
+        this.activate();
     }
 
     private paramsSubscribe() {
@@ -248,19 +267,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         items: {from: new FilterItemModel(), to: new FilterItemModel()},
                         options: {method: 'getFilterByDate', params: { useUserTimezone: true }}
                     }),
-                    this.filterModelStatus = new FilterModel({
-                        component: FilterCheckBoxesComponent,
-                        caption: 'status',
-                        field: 'StatusId',
-                        items: {
-                            element: new FilterCheckBoxesModel(
-                                {
-                                    dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getStatuses)),
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
-                        }
-                    }),
+                    this.filterModelStatus,
                     new FilterModel({
                         component: FilterInputsComponent,
                         operator: 'contains',
@@ -323,12 +330,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         caption: 'Tag',
                         field: 'TagId',
                         items: {
-                            element: new FilterCheckBoxesModel(
-                                {
-                                    dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
-                                    nameField: 'name',
-                                    keyExpr: 'id'
-                                })
+                            element: new FilterCheckBoxesModel({
+                                dataSource$: this.store$.pipe(select(TagsStoreSelectors.getStoredTags)),
+                                nameField: 'name',
+                                keyExpr: 'id'
+                            })
                         }
                     }),
                     this.filterModelRating = new FilterModel({
@@ -369,7 +375,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initToolbarConfig() {
-
         this._appService.updateToolbar([
             {
                 location: 'before', items: [
@@ -612,13 +617,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (col && (col.command || col.name == 'LinkToCFO'))
             return;
         this.showClientDetails($event);
-    }
-
-    ngOnInit() {
-        this.store$.pipe(select(StatusesStoreSelectors.getStatuses)).subscribe(
-            statuses => this.statuses = statuses
-        );
-        this.activate();
     }
 
     ngOnDestroy() {

@@ -1,9 +1,6 @@
 import { Component, Injector, Input, EventEmitter, Output, HostBinding } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-
-import { AppConsts } from '@shared/AppConsts';
-
 import * as _ from 'underscore';
 import startCase from 'lodash/startCase';
 
