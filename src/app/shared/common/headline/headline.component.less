@@ -22,14 +22,14 @@
         left: 0px;
     }
 
-    .headline-content {
+    /deep/ .headline-content {
         display: flex;
         flex-basis: 100%;
+        & > * {
+            margin-left: 10px;
+        }
         /deep/ synch-progress {
             margin: auto;
-        }
-        & > * + * {
-            margin-left: 10px;
         }
     }
 

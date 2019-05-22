@@ -6,4 +6,5 @@ export interface AccountConnectorDialogData {
     connector?: AccountConnectors;
     config: XeroComponentConfig | QuovoComponentConfig;
     disabledConnectors?: AccountConnectors[];
+    showBackButton?: boolean;
 }

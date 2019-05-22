@@ -33,6 +33,7 @@ export class AccountConnectorDialogComponent implements OnInit {
     @Output() onComplete: EventEmitter<null> = new EventEmitter<null>();
     selectedConnector: AccountConnectors;
     accountConnectors = AccountConnectors;
+    showBackButton = true;
 
     constructor(
         private dialogRef: MatDialogRef<AccountConnectorDialogComponent>,
@@ -41,8 +42,13 @@ export class AccountConnectorDialogComponent implements OnInit {
 
     ngOnInit() {
         /** Move to the connector and skip choosing if certain connector comes from outside */
-        if (this.data && this.data.connector) {
-            this.openConnector(this.data.connector);
+        if (this.data) {
+            if (this.data.connector) {
+                this.openConnector(this.data.connector);
+            }
+            if (this.data.showBackButton !== undefined) {
+                this.showBackButton = this.data.showBackButton;
+            }
         }
         /** To avoid bug of scrolling of document out of the window */
         this.dialogRef.afterClosed().subscribe(() => {

@@ -58,7 +58,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
                         if (chooseAccountResult) {
                             abp.ui.setBusy();
                             if (chooseAccountResult === -1) {
-                                this.newConnect();
+                                this.newConnect(false);
                             } else {
                                 this.syncCategoryTree(chooseAccountResult);
                             }
@@ -68,7 +68,7 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
             });
     }
 
-    newConnect() {
+    newConnect(showBackButton = true) {
         abp.ui.clearBusy();
         if (!this.createAccountAvailable)
             return;
@@ -77,9 +77,9 @@ export class ImportXeroChartOfAccountsButtonComponent extends CFOComponentBase {
             ...{
                 data: {
                     connector: AccountConnectors.Xero,
-                    config: {
-                        isSyncBankAccountsEnabled: false
-                    }
+                    config: { isSyncBankAccountsEnabled: false },
+                    importCategoryTree: this.override,
+                    showBackButton: showBackButton
                 }
             }
         };

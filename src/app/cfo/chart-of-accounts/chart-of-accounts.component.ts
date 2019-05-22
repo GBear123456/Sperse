@@ -31,8 +31,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     headlineConfig: any;
-
-    override: boolean = false;
+    override = false;
 
     constructor(injector: Injector,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy
@@ -83,7 +82,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
             /* grab first sheet */
             const wsname: string = wb.SheetNames[0];
             const ws: XLSX.WorkSheet = wb.Sheets[wsname];
-            ws['!ref'] = "A1:H1000";
+            ws['!ref'] = 'A1:H1000';
 
             /* save data */
             let data = XLSX.utils.sheet_to_json<UploadCategoryModel>(ws);

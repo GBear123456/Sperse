@@ -1,6 +1,6 @@
 <mat-dialog-content>
     <button (click)="closeDialog($event)" class="close"></button>
-    <button *ngIf="selectedConnector" (click)="selectedConnector = undefined" class="back"></button>
+    <button *ngIf="selectedConnector && showBackButton" (click)="selectedConnector = undefined" class="back"></button>
 
     <account-connector-chooser [hidden]="selectedConnector" [disabledConnectors]="data?.disabledConnectors" (onConnectorChosen)="openConnector($event)"></account-connector-chooser>
 
@@ -9,7 +9,8 @@
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.Xero">
         <xero-login
-            [operationType]="data?.operationType"
+            [operationType]="data?.operationType ? data.operationType : 'add'"
+            [importCategoryTree]="data?.importCategoryTree"
             [accountId]="data?.config?.accountId"
             [isSyncBankAccountsEnabled]="(data?.config?.isSyncBankAccountsEnabled !== null) ? data?.config?.isSyncBankAccountsEnabled : xeroLogin.isSyncBankAccountsEnabled"
             (onClose)="closeDialog($event)"
