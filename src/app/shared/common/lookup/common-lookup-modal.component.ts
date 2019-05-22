@@ -4,17 +4,18 @@ import {
     ChangeDetectionStrategy,
     EventEmitter,
     Inject,
-    OnInit,
     Output,
     ViewChild,
     ChangeDetectorRef
 } from '@angular/core';
 
 /** Third party imports */
+import DataSource from 'devextreme/data/data_source';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
+import extend from 'lodash/extend';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -27,124 +28,73 @@ import {
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/components/paginator/paginator';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 export interface ICommonLookupModalOptions {
     title?: string;
     isFilterEnabled?: boolean;
-    dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => Observable<PagedResultDtoOfNameValueDto>;
+    load: (options) => Promise<any>;
     canSelect?: (item: NameValueDto) => boolean | Observable<boolean>;
-    loadOnStartup?: boolean;
-    pageSize?: number;
     tenantId?: number;
     filterText?: string;
 }
-
-//For more modal options http://valor-software.com/ngx-bootstrap/#/modals#modal-directive
 
 @Component({
     selector: 'commonLookupModal',
     styleUrls: ['./common-lookup-modal.component.less'],
     templateUrl: './common-lookup-modal.component.html',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [ PrimengTableHelper ]
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CommonLookupModalComponent implements OnInit {
+export class CommonLookupModalComponent {
     @Output() itemSelected: EventEmitter<NameValueDto> = new EventEmitter<NameValueDto>();
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
-    @ViewChild('dataTable') dataTable: Table;
-    @ViewChild('paginator') paginator: Paginator;
+
+    dataSource: DataSource;
 
     defaultOptions: ICommonLookupModalOptions = {
+        filterText: '',
         title: this.ls.l('SelectAUser'),
-        dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => {
-            const input = new FindUsersInput();
-            input.filter = filter;
-            input.maxResultCount = maxResultCount;
-            input.skipCount = skipCount;
-            input.tenantId = tenantId;
-            return this._commonLookupService.findUsers(input);
+        load: (loadOptions) => {
+            return this._commonLookupService.findUsers(new FindUsersInput({
+                filter: this.data.filterText || undefined,
+                maxResultCount: loadOptions.take,
+                skipCount: loadOptions.skip,
+                tenantId: this.data.tenantId
+            })).toPromise().then(response => {
+                return {
+                    data: response.items,
+                    totalCount: response.totalCount
+                };
+            });
         },
         canSelect: () => true,
-        loadOnStartup: true,
-        isFilterEnabled: true,
-        pageSize: AppConsts.grid.defaultPageSize
+        isFilterEnabled: true
     };
-    options: ICommonLookupModalOptions;
-    filterText: string;
-    title: string;
 
     constructor(
         private _commonLookupService: CommonLookupServiceProxy,
         private _changeDetectorRef: ChangeDetectorRef,
-        @Inject(MAT_DIALOG_DATA) private data: any,
+        @Inject(MAT_DIALOG_DATA) private data: ICommonLookupModalOptions,
         private dialogRef: MatDialogRef<CommonLookupModalComponent>,
-        public primengTableHelper: PrimengTableHelper,
         public ls: AppLocalizationService
-    ) {}
-
-    ngOnInit() {
-        this.configure(this.data);
-        if (!this.data.title) {
-            this.title = this.options.title;
-        }
-        this.filterText = this.options.filterText;
-    }
-
-    private configure(options: ICommonLookupModalOptions): void {
-        this.options = $.extend(
-            true,
-            this.defaultOptions,
-            options
-        );
+    ) {
+        this.data = extend(this.defaultOptions, this.data);
+        this.dataSource = new DataSource({
+            key: 'value',
+            load: this.data.load
+        });
     }
 
     refreshTable(): void {
-        this.paginator.changePage(this.paginator.getPage());
+        this.dataSource.reload();
     }
 
     close(): void {
         this.dialogRef.close();
     }
 
-    shown(): void {
-        this.getRecordsIfNeeds(null);
-    }
-
-    getRecordsIfNeeds(event?: LazyLoadEvent): void {
-        if (!this.options.loadOnStartup) {
-            return;
-        }
-
-        this.getRecords(event);
-    }
-
-    getRecords(event?: LazyLoadEvent): void {
-        const maxResultCount = this.primengTableHelper.getMaxResultCount(this.paginator, event);
-        const skipCount = this.primengTableHelper.getSkipCount(this.paginator, event);
-        if (this.primengTableHelper.shouldResetPaging(event)) {
-            this.paginator.changePage(0);
-            return;
-        }
-        this.modalDialog.startLoading();
-        this.options
-            .dataSource(skipCount, maxResultCount, this.filterText, this.options.tenantId)
-            .pipe(
-                tap(() => this.modalDialog.startLoading()),
-                finalize(() => {
-                    this.modalDialog.finishLoading();
-                    this._changeDetectorRef.detectChanges();
-                })
-            )
-            .subscribe(result => {
-                this.primengTableHelper.totalRecordsCount = result.totalCount;
-                this.primengTableHelper.records = result.items;
-            });
-    }
-
     selectItem(item: NameValueDto) {
-        const boolOrPromise = this.options.canSelect(item);
+        const boolOrPromise = this.data.canSelect(item);
         if (!boolOrPromise) {
             return;
         }
@@ -164,5 +114,4 @@ export class CommonLookupModalComponent implements OnInit {
                 }
             });
     }
-
 }

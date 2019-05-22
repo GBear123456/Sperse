@@ -50766,6 +50766,19 @@ export class SubmitRequestInput implements ISubmitRequestInput {
     systemType!: SubmitRequestInputSystemType;
     campaignId!: number;
     redirectUrl!: string | undefined;
+    clickId!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    emailAddress!: string | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    stateCode!: string | undefined;
+    countryCode!: string | undefined;
+    zipCode!: string | undefined;
+    doB!: moment.Moment | undefined;
+    creditScore!: SubmitRequestInputCreditScore | undefined;
 
     constructor(data?: ISubmitRequestInput) {
         if (data) {
@@ -50781,6 +50794,19 @@ export class SubmitRequestInput implements ISubmitRequestInput {
             this.systemType = data["systemType"];
             this.campaignId = data["campaignId"];
             this.redirectUrl = data["redirectUrl"];
+            this.clickId = data["clickId"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateCode = data["stateCode"];
+            this.countryCode = data["countryCode"];
+            this.zipCode = data["zipCode"];
+            this.doB = data["doB"] ? moment(data["doB"].toString()) : <any>undefined;
+            this.creditScore = data["creditScore"];
         }
     }
 
@@ -50796,6 +50822,19 @@ export class SubmitRequestInput implements ISubmitRequestInput {
         data["systemType"] = this.systemType;
         data["campaignId"] = this.campaignId;
         data["redirectUrl"] = this.redirectUrl;
+        data["clickId"] = this.clickId;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateCode"] = this.stateCode;
+        data["countryCode"] = this.countryCode;
+        data["zipCode"] = this.zipCode;
+        data["doB"] = this.doB ? this.doB.toISOString() : <any>undefined;
+        data["creditScore"] = this.creditScore;
         return data; 
     }
 }
@@ -50804,6 +50843,19 @@ export interface ISubmitRequestInput {
     systemType: SubmitRequestInputSystemType;
     campaignId: number;
     redirectUrl: string | undefined;
+    clickId: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    emailAddress: string | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    streetAddress: string | undefined;
+    city: string | undefined;
+    stateCode: string | undefined;
+    countryCode: string | undefined;
+    zipCode: string | undefined;
+    doB: moment.Moment | undefined;
+    creditScore: SubmitRequestInputCreditScore | undefined;
 }
 
 export class SubmitRequestOutput implements ISubmitRequestOutput {
@@ -62594,6 +62646,14 @@ export enum OfferDetailsDtoCampaignProviderType {
 
 export enum SubmitRequestInputSystemType {
     EPCVIP = "EPCVIP", 
+}
+
+export enum SubmitRequestInputCreditScore {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
 }
 
 export enum GetMemberInfoResponseCreditScore {
