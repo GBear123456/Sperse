@@ -10,6 +10,7 @@ import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, Paginat
 import { TableModule } from 'primeng/table';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 
 /** Application imports */
 import { SmsVerificationModalComponent } from '@app/shared/layout/profile/sms-verification-modal.component';
@@ -64,7 +65,8 @@ let COMPONENTS = [
         ProgressBarModule,
         TableModule,
         PaginatorModule,
-        DxScrollViewModule
+        DxScrollViewModule,
+        DxSelectBoxModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,
