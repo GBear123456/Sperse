@@ -61,23 +61,31 @@ export class AppService extends AppServiceBase {
             [
                 {
                     name: 'Admin',
-                    showDescription: true
+                    showDescription: true,
+                    showInDropdown: true,
+                    footerItem: true
                 },
                 {
                     name: 'API',
-                    showDescription: true
+                    showDescription: true,
+                    showInDropdown: true
                 },
                 {
                     name: 'CFO',
-                    showDescription: true
+                    showDescription: true,
+                    showInDropdown: true,
+                    focusItem: true
                 },
                 {
                     name: 'CRM',
-                    showDescription: true
+                    showDescription: true,
+                    showInDropdown: true,
+                    focusItem: true
                 },
                 {
                     name: 'PFM',
-                    showDescription: true
+                    showDescription: true,
+                    showInDropdown: true
                 },
                 {
                     name: 'Cloud',
@@ -93,11 +101,14 @@ export class AppService extends AppServiceBase {
                 },
                 {
                     name: 'HUB',
-                    showDescription: false
+                    showDescription: false,
+                    showInDropdown: true
                 },
                 {
                     name: 'Slice',
-                    showDescription: false
+                    showDescription: false,
+                    showInDropdown: true,
+                    focusItem: true
                 },
                 {
                     name: 'Store',
