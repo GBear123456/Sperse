@@ -18,6 +18,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppEditionExpireAction } from '@shared/AppEnums';
+import { DxNumberBoxComponent } from 'devextreme-angular/ui/number-box';
 import { ComboboxItemDto, CommonLookupServiceProxy, CreateOrUpdateEditionDto, EditionEditDto, EditionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FeatureTreeComponent } from '../shared/feature-tree.component';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -33,6 +34,8 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnInit {
     @ViewChild('editionNameInput') editionNameInput: ElementRef;
+    @ViewChild('monthlyPriceInput') monthlyPriceInput: DxNumberBoxComponent;
+    @ViewChild('annualPriceInput') annualPriceInput: DxNumberBoxComponent;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
@@ -110,7 +113,17 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
         this.edition.expiringEditionId = null;
     }
 
+    checkSetFieldValid(input) {
+        input.instance.option('isValid', Boolean(input.instance.option('value')));
+    }
+
     save(): void {
+        if (!this.isFree && (!this.edition.monthlyPrice || !this.edition.annualPrice)) {
+            this.checkSetFieldValid(this.monthlyPriceInput);
+            this.checkSetFieldValid(this.annualPriceInput);
+            return ;
+        }
+
         const input = new CreateOrUpdateEditionDto();
         input.edition = this.edition;
         input.featureValues = this.featureTree.getGrantedFeatures();

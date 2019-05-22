@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { AutoFocusDirective } from './auto-focus.directive';
 import { BusyIfDirective } from './busy-if.directive';
 import { ButtonBusyDirective } from './button-busy.directive';
-import { CurrencyInputDirective } from './currency-input.directive';
 import { FileDownloadService } from './file-download.service';
 import { FriendProfilePictureComponent } from './friend-profile-picture.component';
 import { LocalStorageService } from './local-storage.service';
@@ -31,7 +30,6 @@ import { PasswordComplexityValidator } from './validation/password-complexity-va
         BusyIfDirective,
         FriendProfilePictureComponent,
         MomentFormatPipe,
-        CurrencyInputDirective,
         NormalizeDropdownPositionDirective,
         ValidationMessagesComponent
     ],
@@ -44,7 +42,6 @@ import { PasswordComplexityValidator } from './validation/password-complexity-va
         BusyIfDirective,
         FriendProfilePictureComponent,
         MomentFormatPipe,
-        CurrencyInputDirective,
         NormalizeDropdownPositionDirective,
         ValidationMessagesComponent
     ]
