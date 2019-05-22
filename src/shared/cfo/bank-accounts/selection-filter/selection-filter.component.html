@@ -12,6 +12,7 @@
                     [placeholder]="allItemsText"
                     [showSelectionControls]="true"
                     tagTemplate="customTagTemplate"
+                    itemTemplate="itemTemplate"
                     [maxDisplayedTags]="1"
                     [(value)]="selectedItems"
                     (onValueChanged)="selectedItemsChange()"
@@ -19,6 +20,9 @@
                     (onMultiTagPreparing)="onMultiTagPreparing($event)">
             <div *dxTemplate="let tag of 'customTagTemplate'">
                 <span class="tag-value">{{tag.name || tag}}</span>
+            </div>
+            <div *dxTemplate="let tag of 'itemTemplate'">
+                <span [title]="tag.name || tag">{{tag.name || tag}}</span>
             </div>
         </dx-tag-box>
     </ng-container>

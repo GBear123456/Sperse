@@ -50,7 +50,7 @@ import { CategorizationComponent } from 'app/cfo/transactions/categorization/cat
 import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
-import { BankAccountsSelectComponent } from 'app/cfo/shared/bank-accounts-select/bank-accounts-select.component';
+import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { CurrenciesStoreSelectors, CfoStore } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
@@ -64,7 +64,6 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(CategorizationComponent) categorizationComponent: CategorizationComponent;
-    @ViewChild(BankAccountsSelectComponent) bankAccountSelector: BankAccountsSelectComponent;
     @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();
@@ -419,7 +418,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         {
                             name: 'bankAccountSelect',
                             widget: 'dxButton',
-                            action: this.toggleBankAccountTooltip.bind(this),
+                            action: this.openBankAccountsSelectDialog.bind(this),
                             options: {
                                 id: 'bankAccountSelect',
                                 text: this.l('Accounts'),
@@ -1130,8 +1129,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             });
     }
 
-    toggleBankAccountTooltip() {
-        this.bankAccountSelector.toggleBankAccountTooltip();
+    openBankAccountsSelectDialog() {
+        const bankAccountsSelectDialog = this.dialog.open(BankAccountsSelectDialogComponent, {
+            panelClass: 'slider',
+            data: {
+                useGlobalCache: true,
+                highlightedBankAccountIds: this.bankAccounts
+            }
+        });
+        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe(() => {
+            this.applyTotalBankAccountFilter(true);
+        });
     }
 
     ngAfterViewInit(): void {

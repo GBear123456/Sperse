@@ -1,20 +1,16 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { OnDestroy, Injector } from '@angular/core';
-
 import { takeUntil } from 'rxjs/operators';
-
-import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from './cfo.service';
 
 export abstract class CFOComponentBase extends AppComponentBase implements OnDestroy {
     instanceId: number;
     instanceType: string;
     get isInstanceAdmin() {
-        return this.checkMemberAccessPermission('Manage.Administrate', !isNaN(parseInt(this.instanceType)) ||
-            (this.instanceType == InstanceType.Main && this.permission.isGranted('Pages.CFO.MainInstanceAdmin')));
+        return this._cfoService.isInstanceAdmin;
     }
     get isMemberAccessManage() {
-        return this.checkMemberAccessPermission('Manage', false);
+        return this._cfoService.isMemberAccessManage;
     }
     _cfoService: CFOService;
 
@@ -48,6 +44,10 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
         }
     }
 
+    checkMemberAccessPermission(permission, defaultResult = true) {
+        this._cfoService.checkMemberAccessPermission(permission, defaultResult);
+    }
+
     getODataUrl(uri: string, filter?: Object) {
         return super.getODataUrl(uri, filter, {
             instanceType: this.instanceType,
@@ -60,13 +60,6 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
             instanceType: this.instanceType,
             instanceId: this.instanceId
         });
-    }
-
-    checkMemberAccessPermission(permission, defaultResult = true) {
-        if (this.instanceType == InstanceType.User && !this.instanceId)
-            return this.isGranted('Pages.CFO.MemberAccess.' + permission);
-
-        return defaultResult;
     }
 
     ngOnDestroy() {

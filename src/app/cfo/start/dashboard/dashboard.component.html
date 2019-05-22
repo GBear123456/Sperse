@@ -17,7 +17,7 @@
                             </h2>
                             <add-account-button></add-account-button>
                         </header>
-                        <app-accounts (onTotalAccountsMouseenter)="bankAccountSelector.toggleBankAccountTooltip()"></app-accounts>
+                        <app-accounts (onTotalAccountsMouseenter)="openBankAccountsSelectDialog()"></app-accounts>
                     </section>
                     <section class="analytics">
                         <div class="analytics-wrap">
@@ -44,9 +44,6 @@
                         </div>
                     </section>
                 </div>
-                <bank-accounts-select targetBankAccountsTooltip="#totalaccounts"
-                                      useGlobalCache="true">
-                </bank-accounts-select>
             </dx-scroll-view>
         </div>
     </div>

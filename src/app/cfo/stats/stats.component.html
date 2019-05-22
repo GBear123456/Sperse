@@ -205,11 +205,6 @@
 <app-report-period [sliderReportPeriod]="sliderReportPeriod"
                    (onPeriodSelected)="setReportPeriodFilter($event)">
 </app-report-period>
-<bank-accounts-select targetBankAccountsTooltip="[custaccesskey='bankAccountSelect']"
-                      useGlobalCache="true"
-                      (onApplySelected)="setBankAccountsFilter(true)">
-<!--(onBankAccountsSelected)="setBankAccountsFilter($event)"-->
-</bank-accounts-select>
 
 <app-no-data
     *ngIf="loadingFinished && (!statsData || !statsData.length)"

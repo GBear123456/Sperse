@@ -1,0 +1,10 @@
+<modal-dialog [title]="ls.l('SelectedAccounts')"
+              [buttons]="buttons">
+    <div class="bank-accounts-tooltip-container">
+        <bank-accounts-widget [showAdvancedColumns]="true"
+                              [showBusinessEntitiesFilter]="data?.showBusinessEntitiesFilter"
+                              [highlightedBankAccountIds]="data?.highlightedBankAccountIds"
+                              [highlightUsedRows]="data?.highlightedBankAccountIds">
+        </bank-accounts-widget>
+    </div>
+</modal-dialog>

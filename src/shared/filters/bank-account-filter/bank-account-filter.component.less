@@ -9,6 +9,21 @@
         }
 
         /deep/ bank-accounts-widget {
+
+            .header .row {
+                flex-direction: column-reverse;
+
+                .left-header,
+                .center-header {
+                    flex-basis: 100% !important;
+                    max-width: 100% !important;
+                }
+
+                .right-header {
+                    display: none;
+                }
+            }
+
             .filter-actions .filter-by-types /deep/ .dx-tab .dx-tab-text {
                 font-size: 13px;
             }
