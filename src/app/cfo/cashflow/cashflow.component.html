@@ -73,6 +73,7 @@
                            [showCheckBoxesMode]="'always'"
                            mode="multiple">
             </dxo-selection>
+            <dxo-state-storing [enabled]="true" type="localStorage" [storageKey]="detailsSettingsIdentifier"></dxo-state-storing>
             <dxi-column dataField="forecastDate"
                         dataType="date"
                         [cssClass]="'forecastDate ' + tabularFontName"
