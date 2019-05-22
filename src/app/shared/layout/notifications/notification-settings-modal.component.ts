@@ -17,7 +17,6 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 @Component({
     selector: 'notificationSettingsModal',
     templateUrl: './notification-settings-modal.component.html',
-    styleUrls: [ '../../../../shared/metronic/m-checkbox.less' ],
     providers: [ DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

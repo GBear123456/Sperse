@@ -29,6 +29,10 @@ export class NotificationsComponent implements OnInit {
     unreadNotificationCount = 0;
     readStateFilter = 'ALL';
     loading = false;
+    selectBoxList = [
+        {value: 'ALL', text: this.ls.l('All')},
+        {value: 'UNREAD', text: this.ls.l('Unread')}
+    ];
 
     constructor(
         private dialog: MatDialog,
@@ -92,4 +96,9 @@ export class NotificationsComponent implements OnInit {
         this._userNotificationHelper.setAsRead(userNotification.userNotificationId);
     }
 
+    gotoUrl(url): void {
+        if (url) {
+            location.href = url;
+        }
+    }
 }

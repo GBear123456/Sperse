@@ -10,23 +10,25 @@
                         <div class="row m--margin-bottom-10">
                             <div class="col-xl-6">
                                 <div class="form-group">
-                                    <select #TargetValueFilterSelectionCombobox
-                                            class="form-control"
-                                            [(ngModel)]="readStateFilter"
-                                            name="readStateFilter"
-                                            jq-plugin="selectpicker">
-                                        <option value="ALL">{{ls.l("All")}}</option>
-                                        <option value="UNREAD">{{ls.l("Unread")}}</option>
-                                    </select>
+                                    <dx-select-box
+                                        [items]="selectBoxList"
+                                        [(value)]="readStateFilter"
+                                        displayExpr="text"
+                                        valueExpr="value"
+                                    ></dx-select-box>
                                 </div>
                             </div>
                             <div class="col-xl-6 text-right links">
-                                <div class="text-right col-md-7">
-                                    <a href="javascript:;" class="text-right" (click)="setAllNotificationsAsRead(); $event.preventDefault(); $event.stopPropagation();" *ngIf="unreadNotificationCount">{{ls.l("SetAllAsRead")}}</a>
-                                </div>
-                                <div class="text-right">
-                                    <a (click)="openNotificationSettingsModal($event)" href="javascript:;">{{ls.l("Preferences")}}</a>
-                                </div>
+                                <a href="javascript:;"
+                                   class="text-right"
+                                   (click)="setAllNotificationsAsRead(); $event.preventDefault(); $event.stopPropagation();"
+                                   *ngIf="unreadNotificationCount">
+                                    {{ls.l("SetAllAsRead")}}
+                                </a>
+                                <a (click)="openNotificationSettingsModal($event)"
+                                   href="javascript:;">
+                                    {{ls.l("Preferences")}}
+                                </a>
                             </div>
                         </div>
                     </div>

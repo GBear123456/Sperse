@@ -28,10 +28,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 
 @Component({
     selector: 'createOrEditLanguageModal',
-    styleUrls: [
-        './create-or-edit-language-modal.component.less',
-        '../../../shared/metronic/m-checkbox.less'
-    ],
+    styleUrls: [ './create-or-edit-language-modal.component.less'],
     templateUrl: './create-or-edit-language-modal.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })

@@ -12,10 +12,10 @@ import { InstanceType } from '@shared/service-proxies/service-proxies';
 export class ODataService {
     private _dxRequestPool = {};
 
-    constructor() {        
+    constructor() {
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
-            let key = options.url.match(/odata\/(\w+)(\?|$)/)[1] + 
+            let key = options.url.match(/odata\/(\w+)(\?|$)/)[1] +
                 (options.headers.context || '');
 
             return (this._dxRequestPool[key] = dxAjax.sendRequest(options));
@@ -31,9 +31,7 @@ export class ODataService {
         if (url)
             dataSource['_store']['_url'] = url;
         let promise = dataSource.load();
-        dataSource['operationId'] = 
-            promise.operationId;
-
+        dataSource['operationId'] = promise.operationId;
         return promise;
     }
 

@@ -11,8 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSidenavModule } from '@angular/material/sidenav';
-
 import { DxChartModule } from 'devextreme-angular/ui/chart';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
 import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
@@ -100,6 +100,7 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         DxValidationSummaryModule,
         DxFileUploaderModule,
         DxDataGridModule,
+        DxCheckBoxModule,
         DxValidatorModule,
         DxSelectBoxModule,
         DxTextBoxModule,

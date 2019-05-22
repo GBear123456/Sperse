@@ -23,7 +23,7 @@
                                   [allowColumnResizing]="true"
                                   [hoverStateEnabled]="true"
                                   [pager]="defaultGridPagerConfig"
-                                  (onContentReady)="onContentReady($event)"
+                                  (onContentReady)="onContentReady()"
                                   (onCellClick)="editRole($event)"
                                   (onEditingStart)="showActionsMenu($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
