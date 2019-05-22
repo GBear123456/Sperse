@@ -24,15 +24,7 @@
                                 <input id="AdminEmailAddress" #adminEmailAddressInput="ngModel" type="email" name="AdminEmailAddress" class="form-control" [(ngModel)]="tenant.adminEmailAddress" [ngClass]="{'edited':tenant.adminEmailAddress}" required [pattern]="emailRegEx" maxlength="256">
                         <validation-messages [formCtrl]="adminEmailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
                     </div>
-
-                    <div class="m-checkbox-list">
-                        <label class="m-checkbox">
-                            <input id="CreateTenant_SetRandomPassword" type="checkbox" name="SetRandomPassword" [(ngModel)]="setRandomPassword">
-                            {{ls.l("SetRandomPassword")}}
-                            <span></span>
-                        </label>
-                    </div>
-
+                    <dx-check-box [text]="ls.l('SetRandomPassword')" [(value)]="setRandomPassword"></dx-check-box>
                     <div class="form-group" *ngIf="!setRandomPassword">
                         <label for="AdminPassword">{{ls.l("AdminPassword")}}</label>
                         <input id="AdminPassword" type="password" name="adminPassword" class="form-control" id="adminPassword"
@@ -73,24 +65,9 @@
                     </div>
 
                     <modules-editions-select *ngIf="(editionsGroups$ | async) as editionsGroups" [editionsGroups]="editionsGroups" [(editionsModels)]="editionsModels"></modules-editions-select>
-
-                    <div class="m-checkbox-list">
-                        <label for="CreateTenant_ShouldChangePasswordOnNextLogin" class="m-checkbox">
-                            <input id="CreateTenant_ShouldChangePasswordOnNextLogin" type="checkbox" name="ShouldChangePasswordOnNextLogin" [(ngModel)]="tenant.shouldChangePasswordOnNextLogin">
-                            {{ls.l("ShouldChangePasswordOnNextLogin")}}
-                            <span></span>
-                        </label>
-                        <label for="CreateTenant_SendActivationEmail" class="m-checkbox">
-                            <input id="CreateTenant_SendActivationEmail" type="checkbox" name="SendActivationEmail" [(ngModel)]="tenant.sendActivationEmail">
-                            {{ls.l("SendActivationEmail")}}
-                            <span></span>
-                        </label>
-                        <label for="CreateTenant_IsActive" class="m-checkbox">
-                            <input id="CreateTenant_IsActive" type="checkbox" name="IsActive" [(ngModel)]="tenant.isActive">
-                            {{ls.l("Active")}}
-                            <span></span>
-                        </label>
-                    </div>
+                    <dx-check-box [text]="ls.l('ShouldChangePasswordOnNextLogin')" [(value)]="tenant.shouldChangePasswordOnNextLogin"></dx-check-box>
+                    <dx-check-box [text]="ls.l('SendActivationEmail')" [(value)]="tenant.sendActivationEmail"></dx-check-box>
+                    <dx-check-box [text]="ls.l('Active')" [(value)]="tenant.isActive"></dx-check-box>
                 </tab>
                 <tab heading="{{ls.l('TenantDatabases')}}">
                     <div class="form-group form-md-line-input form-md-floating-label no-hint">

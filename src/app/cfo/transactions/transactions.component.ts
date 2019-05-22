@@ -772,7 +772,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this._changeDetectionRef.detectChanges();
     }
 
-    getODataUrl(uri: String, filter?: Object) {
+    getODataUrl(uri: string, filter?: Object) {
         let url = super.getODataUrl(uri, filter);
         url += (url.indexOf('?') == -1 ? '?' : '&') + 'currencyId=' + this.cfoPreferencesService.selectedCurrencyId;
         return url;

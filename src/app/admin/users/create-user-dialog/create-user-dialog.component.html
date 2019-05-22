@@ -43,14 +43,7 @@
                             </div>
 
                             <div class="user-options-delimiter"></div>
-
-                            <div class="m-checkbox-list">
-                                <label for="EditUser_SetRandomPassword" class="m-checkbox">
-                                    <input id="EditUser_SetRandomPassword" type="checkbox" name="SetRandomPassword" [(ngModel)]="setRandomPassword">
-                                    {{ls.l("SetRandomPassword")}}
-                                    <span></span>
-                                </label>
-                            </div>
+                            <dx-check-box [(value)]="setRandomPassword" [text]="ls.l('SetRandomPassword')"></dx-check-box>
                             <div class="form-group" *ngIf="!setRandomPassword">
                                 <div class="right form-group">
                                     <label>{{ls.l("Password")}}</label>
@@ -88,35 +81,11 @@
                                 </ul>
                             </div>
                             <div class="m-checkbox-list">
-                                <label for="EditUser_ShouldChangePasswordOnNextLogin" class="m-checkbox">
-                                    <input id="EditUser_ShouldChangePasswordOnNextLogin" type="checkbox" name="ShouldChangePasswordOnNextLogin" [(ngModel)]="user.shouldChangePasswordOnNextLogin">
-                                    {{ls.l("ShouldChangePasswordOnNextLogin")}}
-                                    <span></span>
-                                </label>
-
-                                <label for="EditUser_SendActivationEmail" class="m-checkbox">
-                                    <input id="EditUser_SendActivationEmail" type="checkbox" name="SendActivationEmail" [(ngModel)]="sendActivationEmail">
-                                    {{ls.l("SendActivationEmail")}}
-                                    <span></span>
-                                </label>
-
-                                <label for="EditUser_IsActive" class="m-checkbox">
-                                    <input id="EditUser_IsActive" type="checkbox" name="IsActive" [(ngModel)]="user.isActive">
-                                    {{ls.l("Active")}}
-                                    <span></span>
-                                </label>
-
-                                <label *ngIf="isTwoFactorEnabled" for="EditUser_IsTwoFactorEnabled" class="m-checkbox">
-                                    <input id="EditUser_IsTwoFactorEnabled" type="checkbox" name="IsTwoFactorEnabled" [(ngModel)]="user.isTwoFactorEnabled">
-                                    {{ls.l("IsTwoFactorEnabled")}}
-                                    <span></span>
-                                </label>
-
-                                <label *ngIf="isLockoutEnabled" for="EditUser_IsLockoutEnabled" class="m-checkbox">
-                                    <input id="EditUser_IsLockoutEnabled" type="checkbox" name="IsLockoutEnabled" [(ngModel)]="user.isLockoutEnabled">
-                                    {{ls.l("IsLockoutEnabled")}}
-                                    <span></span>
-                                </label>
+                                <dx-check-box [(value)]="user.shouldChangePasswordOnNextLogin" [text]="ls.l('ShouldChangePasswordOnNextLogin')"></dx-check-box>
+                                <dx-check-box [(value)]="sendActivationEmail" [text]="ls.l('SendActivationEmail')"></dx-check-box>
+                                <dx-check-box [(value)]="user.isActive" [text]="ls.l('Active')"></dx-check-box>
+                                <dx-check-box *ngIf="isTwoFactorEnabled" [(value)]="user.isTwoFactorEnabled" [text]="ls.l('IsTwoFactorEnabled')"></dx-check-box>
+                                <dx-check-box *ngIf="isLockoutEnabled" [(value)]="user.isLockoutEnabled" [text]="ls.l('IsLockoutEnabled')"></dx-check-box>
                             </div>
                         </form>
                     </div>

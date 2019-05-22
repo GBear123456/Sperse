@@ -43,7 +43,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnIni
         this._sub.unsubscribe();
     }
 
-    getODataUrl(uri: String, filter?: Object) {
+    getODataUrl(uri: string, filter?: Object) {
         let url = super.getODataUrl(uri, filter);
         url += (url.indexOf('?') == -1 ? '?' : '&');
 

@@ -35,7 +35,6 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 @Component({
     selector: 'createTenantModal',
     templateUrl: './create-tenant-modal.component.html',
-    styleUrls: [ '../../../shared/metronic/m-checkbox.less' ],
     providers: [ TenantsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

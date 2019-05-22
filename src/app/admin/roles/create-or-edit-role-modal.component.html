@@ -9,15 +9,7 @@
                             <input #roleNameInput="ngModel" class="form-control" type="text" name="DisplayName" [(ngModel)]="role.displayName" required maxlength="64">
                             <validation-messages [formCtrl]="roleNameInput"></validation-messages>
                         </div>
-
-                        <div class="m-checkbox-list">
-                            <label class="m-checkbox">
-                                <input id="EditRole_IsDefault" type="checkbox" name="IsDefault" [(ngModel)]="role.isDefault">
-                                {{ls.l("Default")}}
-                                <span></span>
-                            </label>
-                            <span class="help-blockpermission-tree">{{ls.l("DefaultRole_Description")}}</span>
-                        </div>
+                        <dx-check-box [(value)]="role.isDefault" [text]="ls.l('DefaultRole_Description')"></dx-check-box>
                     </tab>
                     <tab heading="{{ls.l('Permissions')}}" customClass="m-tabs__item">
                         <permission-tree [editData]="editData" #permissionTree></permission-tree>

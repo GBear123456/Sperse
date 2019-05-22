@@ -30,8 +30,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 
 @Component({
     selector: 'createOrEditRoleModal',
-    templateUrl: './create-or-edit-role-modal.component.html',
-    styleUrls: [ '../../../shared/metronic/m-checkbox.less' ]
+    templateUrl: './create-or-edit-role-modal.component.html'
 })
 export class CreateOrEditRoleModalComponent implements AfterViewChecked, OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;

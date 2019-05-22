@@ -48,7 +48,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
         }
     }
 
-    getODataUrl(uri: String, filter?: Object) {
+    getODataUrl(uri: string, filter?: Object) {
         return super.getODataUrl(uri, filter, {
             instanceType: this.instanceType,
             instanceId: this.instanceId

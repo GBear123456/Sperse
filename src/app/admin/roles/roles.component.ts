@@ -5,9 +5,15 @@ import { Component,  Injector, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
+import values from 'lodash/values';
 
 /** Application imports **/
-import { PermissionServiceProxy, RoleServiceProxy, RoleListDto } from '@shared/service-proxies/service-proxies';
+import {
+    PermissionServiceProxy,
+    RoleServiceProxy,
+    RoleListDto,
+    ModuleType
+} from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -27,7 +33,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private filters: FilterModel[];
-    selectedPermission = '';
+    private selectedPermission: string;
+    private selectedModule: ModuleType;
     private rootComponent: any;
     private formatting = AppConsts.formatting;
     public actionMenuItems: any;
@@ -45,7 +52,8 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         ]
     };
     dataSource: any;
-
+    permissionFilterModel: FilterModel;
+    moduleFilterModel: FilterModel;
     constructor(
         injector: Injector,
         private _roleService: RoleServiceProxy,
@@ -80,10 +88,10 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
 
         this.dataSource = new DataSource({
             key: 'id',
-            load: (loadOptions) => {
+            load: () => {
                 return this._roleService.getRoles(
-                    this.selectedPermission || undefined,
-                    undefined
+                    this.selectedPermission,
+                    this.selectedModule
                 ).toPromise().then(response => {
                     return {
                         data: response.items,
@@ -100,7 +108,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        action: event => {
+                        action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
                             }, 1000);
@@ -110,10 +118,10 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                             checkPressed: () => {
                                 return this._filtersService.fixed;
                             },
-                            mouseover: event => {
+                            mouseover: () => {
                                 this._filtersService.enable();
                             },
-                            mouseout: event => {
+                            mouseout: () => {
                                 if (!this._filtersService.fixed)
                                     this._filtersService.disable();
                             }
@@ -201,13 +209,13 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         this._permissionService.getAllPermissions().subscribe((res) => {
             this._filtersService.setup(
                 this.filters = [
-                    new FilterModel({
+                    this.permissionFilterModel = new FilterModel({
                         component: FilterRadioGroupComponent,
                         caption: 'permission',
                         items: {
                             element: new FilterRadioGroupModel({
                                 value: this.selectedPermission,
-                                list: res.items.map((item) => {
+                                list: res.items.map(item => {
                                     return {
                                         id: item.name,
                                         name: String.fromCharCode(160/*Space to avoid trim*/)
@@ -217,15 +225,28 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
                                 })
                             })
                         }
+                    }),
+                    this.moduleFilterModel = new FilterModel({
+                        component: FilterRadioGroupComponent,
+                        caption: 'module',
+                        items: {
+                            element: new FilterRadioGroupModel({
+                                value: this.selectedModule,
+                                list: values(ModuleType).map(module => ({
+                                    id: module,
+                                    name: module,
+                                    displayName: module
+                                }))
+                            })
+                        }
                     })
                 ]
             );
         });
 
-        this._filtersService.apply((filter) => {
-            this.selectedPermission = filter &&
-                filter.items.element.value;
-
+        this._filtersService.apply(() => {
+            this.selectedPermission = this.permissionFilterModel && this.permissionFilterModel.items.element.value;
+            this.selectedModule = this.moduleFilterModel && this.moduleFilterModel.items.element.value;
             this.initToolbarConfig();
             this.refreshDataGrid();
         });
@@ -259,7 +280,7 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         this._filtersService.unsubscribe();
     }
 
-    onContentReady(event) {
+    onContentReady() {
         this.setGridDataLoaded();
     }
 

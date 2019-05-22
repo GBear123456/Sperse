@@ -4,8 +4,8 @@
         min-width: 40vw;
         .mat-dialog-container {
             overflow: visible;
-            padding: 0px;
-            margin: 0px;
+            padding: 0;
+            margin: 0;
         }
     }
 }
@@ -23,10 +23,10 @@
         top: 25px;
         left: -42px;
         cursor: pointer;
-        border-radius: 5px 0px 0px 5px;
+        border-radius: 5px 0 0 5px;
         border-right: none;
         background-color: #FFF;
-        box-shadow: -2px 0px 6px 0 rgba(0, 0, 0, 0.1);
+        box-shadow: -2px 0 6px 0 rgba(0, 0, 0, 0.1);
 
         &:before, &:after {
             position: absolute;
@@ -52,7 +52,7 @@
         display: flex;
         align-items: center;
         height: 82px;
-        padding: 0px 10px;
+        padding: 0 10px;
         justify-content: space-between;
         background-color: #F3F7FA;
         border-bottom: 1px solid #dadee1;
@@ -87,7 +87,7 @@
             .dx-texteditor-container:after {
                 content: '';
                 top: 48px!important;
-                margin-top: 0px!important;
+                margin-top: 0!important;
                 left: 15px;
                 width: 442px;
                 height: 1px;
@@ -120,13 +120,13 @@
         height: 100%;
         overflow: hidden;
         max-height: calc(~"100% - 82px");
-        margin: 0px;
-        padding: 0px;
+        margin: 0;
+        padding: 0;
     }
 
     /deep/ mat-dialog-actions {
         height: 100%;
-        margin: 0px;
+        margin: 0;
         .mat-dialog-buttons {
             height: 46px;
             align-self: center;
@@ -167,9 +167,8 @@
     }
 
     /deep/ .dx-checkbox {
+        margin: 5px 0;
         .dx-checkbox-icon {
-            width: 14px;
-            height: 14px;
             background-color: #FFF;
             border: 1px solid #DADEE1 !important;
             border-radius: 3px;

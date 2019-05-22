@@ -38,14 +38,7 @@
                         </div>
                     </dx-select-box>
                 </div>
-                <div class="m-checkbox-list">
-                    <label for="EditLanguage_IsEnabled" class="m-checkbox">
-                        <input id="EditLanguage_IsEnabled" type="checkbox" name="languageIsEnabled"
-                               [(ngModel)]="language.isEnabled">
-                        {{ls.l("IsEnabled")}}
-                        <span></span>
-                    </label>
-                </div>
+                <dx-check-box [text]="ls.l('IsEnabled')" [(value)]="language.isEnabled"></dx-check-box>
             </div>
         </form>
     </dx-scroll-view>
