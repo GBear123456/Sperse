@@ -12,21 +12,16 @@ import {
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { Table } from 'primeng/table';
 import { Observable } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
 import extend from 'lodash/extend';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import {
     CommonLookupServiceProxy,
     FindUsersInput,
     NameValueDto,
     PagedResultDtoOfNameValueDto
 } from '@shared/service-proxies/service-proxies';
-import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
-import { Paginator } from 'primeng/components/paginator/paginator';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
