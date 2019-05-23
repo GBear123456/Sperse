@@ -10,6 +10,15 @@
                     </inplace-edit>
                 </ng-container>
             </ng-container>
+            <div class="filters">
+                <dx-select-box
+                    name="years"
+                    width="100"
+                    [dataSource]="years"
+                    [(value)]="selectedYear"
+                    [visible]="checkSection('stats') | async">
+                </dx-select-box>
+            </div>
             <div class="buttons">
                 <button class="button-layout button-primary" *ngIf="sentAnnouncementPermissionGranted" (click)="onNotify()">{{ ls.l('Notify') }}</button>
                 <button class="button-layout button-primary" [disabled]="offerIsUpdating" type="submit" (click)="onSubmit()">{{ ls.l('Save') }}</button>
@@ -302,6 +311,10 @@
                             </checkbox-field>
                         </div>
                     </div>
+                </div>
+
+                <div *ngSwitchCase="'stats'">
+                    <pfm-click-stats [campaignId]="model.campaignId" [year]="selectedYear" [refresh$]="refresh$"></pfm-click-stats>
                 </div>
 
             </ng-container>

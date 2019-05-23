@@ -90,11 +90,18 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         {
             label: 'Credit Card Flags',
             route: '../flags'
+        },
+        {
+            label: 'Click Stats',
+            route: '../stats'
         }
     ];
+    selectedYear = new Date().getFullYear();
+    years = new Array(10).fill(0).map(
+        (item, index) => this.selectedYear - index);
     offerId$: Observable<number>;
     private _refresh: Subject<null> = new Subject<null>();
-    refresh: Observable<null> = this._refresh.asObservable();
+    refresh$: Observable<null> = this._refresh.asObservable();
     offerDetails$: Observable<OfferDetailsForEditDto>;
     states$: Observable<CountryStateDto[]>;
     categoriesNames$: Observable<string[]>;
@@ -142,7 +149,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             distinctUntilChanged()
         );
         this.offerDetails$ = merge(
-            this.refresh,
+            this.refresh$,
             this.offerId$
         ).pipe(
             withLatestFrom(this.offerId$),
@@ -344,5 +351,9 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
                 });
             });
         }
+    }
+
+    checkSection(uri) {
+        return this.section$.pipe(filter(section => section == uri));
     }
 }
