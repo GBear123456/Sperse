@@ -9,6 +9,9 @@ import camelCase from 'lodash/camelCase';
 class Module {
     name: string;
     showDescription: boolean;
+    showInDropdown?: boolean;
+    focusItem?: boolean;
+    footerItem?: boolean;
 }
 
 export abstract class AppServiceBase {

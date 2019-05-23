@@ -30,7 +30,7 @@ export class TenantFeaturesModalComponent implements OnInit {
     buttons: IDialogButton[] = [
         {
             title: this.ls.l('ResetSpecialFeatures'),
-            class: 'primary',
+            class: 'default',
             hint: this.ls.l('ResetFeaturesTooltip'),
             action: this.resetFeatures.bind(this)
         },

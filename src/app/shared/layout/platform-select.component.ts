@@ -13,7 +13,11 @@ export class PlatformSelectComponent extends AppComponentBase {
     hoverModule = '';
     module = '';
     uri = '';
-    modules = [];
+    modules = {
+        topItems: [],
+        footerItems: [],
+        items: [],
+    };
     activeModuleCount = 0;
 
     private _dropDown: any;
@@ -28,16 +32,28 @@ export class PlatformSelectComponent extends AppComponentBase {
         _appService.getModules().forEach((module) => {
             if (_appService.isModuleActive(module.name)) this.activeModuleCount++;
             let config = _appService.getModuleConfig(module.name);
-            let moduleConfig = {
-                code: config ? config.code : module.name,
-                name: module.name,
-                showDescription: module.showDescription
-            };
-            if (module.name === 'CFO') {
-                let cfoPersonalEnable = (!abp.session.tenantId || this.feature.isEnabled('CFO.Partner')) && !this.permission.isGranted('Pages.CFO.MainInstanceAccess');
-                moduleConfig['uri'] = cfoPersonalEnable ? 'user' : 'main';
+            if (module.showInDropdown) {
+                let moduleConfig = {
+                    code: config ? config.code : module.name,
+                    name: module.name,
+                    showDescription: module.showDescription,
+                    showInDropdown: module.showInDropdown,
+                    focusItem: module.focusItem,
+                    footerItem: module.footerItem,
+                };
+                if (module.name === 'CFO') {
+                    let cfoPersonalEnable = (!abp.session.tenantId || this.feature.isEnabled('CFO.Partner')) && !this.permission.isGranted('Pages.CFO.MainInstanceAccess');
+                    moduleConfig['uri'] = cfoPersonalEnable ? 'user' : 'main';
+                }
+
+                if (module.focusItem) {
+                    this.modules.topItems.push(moduleConfig);
+                } else if (module.footerItem) {
+                    this.modules.footerItems.push(moduleConfig);
+                } else if (module.showInDropdown) {
+                    this.modules.items.push(moduleConfig);
+                }
             }
-            this.modules.push(moduleConfig);
         });
         _appService.subscribeModuleChange((config) => {
             this.module = config['name'];
@@ -48,23 +64,22 @@ export class PlatformSelectComponent extends AppComponentBase {
         });
     }
 
-    changeModule(event) {
-        let switchModule = this.modules[event.itemIndex];
-        if ((this.module !== switchModule.name || this.uri !== switchModule.uri) &&
-            this._appService.isModuleActive(switchModule.name) &&
-            !this.checkModuleCustomHandler(switchModule)
+    onItemClick(module) {
+        if ((this.module !== module.name || this.uri !== module.uri) &&
+            this._appService.isModuleActive(module.name) &&
+            !this.checkModuleCustomHandler(module)
         ) {
             let navigate = null;
-            let moduleConfig = this._appService.getModuleConfig(switchModule.name);
+            let moduleConfig = this._appService.getModuleConfig(module.name);
             if (moduleConfig.defaultPath)
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
             else
-                navigate = this._router.navigate(['app/' + switchModule.name.toLowerCase() + (switchModule.uri ? '/' + switchModule.uri.toLowerCase() : '')]);
+                navigate = this._router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);
             this._dropDown.option('disabled', true);
             navigate.then((result) => {
                 if (result) {
-                    this.module = switchModule.name;
-                    this.uri = switchModule.uri;
+                    this.module = module.name;
+                    this.uri = module.uri;
                     this._appService.switchModule(this.module, { instance: this.uri });
                 }
                 this._dropDown.option('disabled', false);

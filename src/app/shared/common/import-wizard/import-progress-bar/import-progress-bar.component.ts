@@ -1,14 +1,12 @@
 /** Core imports */
-import { Component, Injector, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
+import { Component, Injector, Input, ViewChild, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { DxProgressBarComponent } from 'devextreme-angular/ui/progress-bar';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { ImportStatus } from '@shared/AppEnums';
-
 import { ImportWizardService } from '../import-wizard.service';
 
 @Component({
@@ -18,21 +16,15 @@ import { ImportWizardService } from '../import-wizard.service';
 })
 export class ImportProgressBarComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxProgressBarComponent) progressComponent: DxProgressBarComponent;
-             
-    @Input() summaryTooltip: boolean = true;
-
+    @Input() summaryTooltip = true;
     importStatuses = ImportStatus;
-
-    progress: number = 100;
+    progress = 100;
     tooltipVisible: boolean;
-    tooltipTimeout: any; 
-
-    totalCount: number = 0;
-    importedCount: number = 0;
-    failedCount: number = 0;
-    
+    tooltipTimeout: any;
+    totalCount = 0;
+    importedCount = 0;
+    failedCount = 0;
     list: any = [];
-  
     private subscription: any;
 
     constructor(
@@ -46,7 +38,7 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
                 this.progress = 0;
                 this.list = data;
                 data.forEach((entity) => {
-                    entity.progress = Math.round((entity.importedCount 
+                    entity.progress = Math.round((entity.importedCount
                         + entity.failedCount) / entity.totalCount * 100);
                     this.progress += entity.progress;
                 });
@@ -64,15 +56,15 @@ export class ImportProgressBarComponent extends AppComponentBase implements OnDe
         return this.progress + '% ' + this.l('ImportProgress');
     }
 
-    cancelImport(importId = undefined) {
+    cancelImport(importId?: number) {
         this.tooltipVisible = false;
         this.message.confirm(
             this.l('ImportCancelConfirmation'),
-            this.l(importId ? 'CancelImport': 'CancelAllImports'),
+            this.l(importId ? 'CancelImport' : 'CancelAllImports'),
             isConfirmed => {
                 if (isConfirmed)
-                    this._importService.cancelImport(importId ? 
-                        [importId]: this.list.map((item) => item.id));
+                    this._importService.cancelImport(importId ?
+                        [importId] : this.list.map((item) => item.id));
             }
         );
     }

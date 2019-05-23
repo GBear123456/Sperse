@@ -3,7 +3,22 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable, BehaviorSubject, ReplaySubject, Subject, of, combineLatest, forkJoin } from 'rxjs';
-import { first, finalize, mergeMap, map, distinctUntilChanged, refCount, publishReplay, withLatestFrom, switchMap } from 'rxjs/operators';
+import {
+    distinct,
+    distinctUntilChanged,
+    first,
+    finalize,
+    mergeAll,
+    mergeMap,
+    map,
+    refCount,
+    pluck,
+    publishReplay,
+    tap,
+    toArray,
+    withLatestFrom,
+    switchMap
+} from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 
@@ -50,7 +65,6 @@ export class BankAccountsService {
     syncAccountsAmount$: Observable<string>;
     accountsAmount$: Observable<string>;
     existingBankAccountsTypes$: Observable<string[]>;
-    baseBankAccountTypes = [ 'Checking', 'Savings', 'Credit Card' ];
     private _selectedBankAccountTypes: BehaviorSubject<string[]> = new BehaviorSubject([]);
     selectedBankAccountTypes$: Observable<string[]> = this._selectedBankAccountTypes.asObservable();
 
@@ -118,24 +132,21 @@ export class BankAccountsService {
             distinctUntilChanged((oldIds, newIds) => !ArrayHelper.dataChanged(oldIds, newIds))
         );
 
+        /**
+         * Get array of unique accounts types
+         * @type {Observable<string[]>}
+         */
         this.existingBankAccountsTypes$ = this.syncAccounts$.pipe(
-            map( syncAccounts => {
-                let existBankAccountTypes = [];
-                syncAccounts.forEach(syncAccount => {
-                    let types = _.uniq(_.map(syncAccount.bankAccounts, bankAccount => bankAccount.typeName));
-                    existBankAccountTypes = _.union(existBankAccountTypes, types);
-                });
-                let bankAccountTypesForSelect = [];
-                this.baseBankAccountTypes.forEach(type => {
-                    bankAccountTypesForSelect.push(type);
-                });
-
-                let otherExist = _.some(existBankAccountTypes, x => !_.contains(this.baseBankAccountTypes, x));
-                if (otherExist)
-                    bankAccountTypesForSelect.push(this.localizationService.l('Other'));
-
-                return bankAccountTypesForSelect;
-            }),
+            first(),
+            mergeAll(),
+            pluck('bankAccounts'),
+            mergeAll(),
+            pluck('typeName'),
+            map((typeName: string) => typeName || this.localizationService.l('NoType')),
+            distinct(),
+            toArray(),
+            tap(console.log),
+            map((types: string[]) => types.sort(this.sortBankAccountsTypes)),
             distinctUntilChanged(this.arrayDistinct)
         );
 
@@ -145,8 +156,8 @@ export class BankAccountsService {
                 this.selectedBankAccountTypes$,
                 this.existingBankAccountsTypes$
             ).pipe(
-                mergeMap(([syncAccounts, selectedTypes, allTypes]) => {
-                    return of(this.filterByBankAccountTypes(syncAccounts, selectedTypes, allTypes));
+                map(([syncAccounts, selectedTypes, allTypes]) => {
+                   return this.filterByBankAccountTypes(syncAccounts, selectedTypes, allTypes);
                 }),
                 distinctUntilChanged(this.arrayDistinct)
             );
@@ -406,6 +417,22 @@ export class BankAccountsService {
         return combinedRequest;
     }
 
+    /**
+     * Sort by alphabet but 'No Type' at the end
+     * @param type1
+     * @param type2
+     * @return {number}
+     */
+    private sortBankAccountsTypes = (type1, type2) => {
+        let result = 0;
+        if (type2 === this.localizationService.l('NoType') || type1 < type2) {
+            result = -1;
+        } else if (type1 === this.localizationService.l('NoType') || type2 > type1) {
+            result = 1;
+        }
+        return result;
+    }
+
     /** Check if sync accounts and bank accounts changed */
     accountsChanged = (oldSyncAccounts: any[], newSyncAccounts: any[]) => {
         return !ArrayHelper.dataChanged(oldSyncAccounts, newSyncAccounts);
@@ -413,23 +440,23 @@ export class BankAccountsService {
 
     arrayDistinct = (oldData, newData) => !ArrayHelper.dataChanged(oldData, newData);
 
-    filterByBankAccountTypes(syncAccounts, types: string[], allTypes) {
+    filterByBankAccountTypes(syncAccounts, selectedTypes: string[], allTypes) {
         let filteredSyncAccounts = [];
 
         syncAccounts.forEach(syncAccount => {
             let syncAccountCopy: any = { ...{}, ...syncAccount };
             syncAccountCopy['bankAccounts'] = [];
-            if (!types.length || types.length === allTypes.length) {
+            if (!selectedTypes.length || selectedTypes.length === allTypes.length) {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount });
                 });
                 filteredSyncAccounts.push(syncAccountCopy);
             } else {
                 syncAccount.bankAccounts.forEach(bankAccount => {
-                    let isBankAccountVisible = types.indexOf(bankAccount.typeName) > -1
+                    let isBankAccountVisible = selectedTypes.indexOf(bankAccount.typeName) > -1
                         || (
-                            types.indexOf(this.localizationService.l('Other')) !== -1
-                            && !_.contains(allTypes, bankAccount.typeName)
+                            !bankAccount.typeName
+                            && selectedTypes.indexOf(this.localizationService.l('NoType')) !== -1
                         );
                     if (isBankAccountVisible) {
                         syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount});

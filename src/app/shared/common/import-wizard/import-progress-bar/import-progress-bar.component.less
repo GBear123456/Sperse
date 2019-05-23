@@ -4,19 +4,18 @@
         .import-row {
             display: flex;
             padding: 5px 20px 5px 0px;
-            justify-content: space-between;    
-
-            .file-name {  
+            justify-content: space-between;
+            .file-name {
                 width: 150px;
                 font-weight: 600;
                 overflow: hidden;
                 text-align: left;
                 text-overflow: ellipsis;
-                white-space: nowrap; 
+                white-space: nowrap;
             }
             .cancel-import {
                 border-radius: 5px;
-                background: #FFF;  
+                background: #FFF;
                 border: solid 1px #ddd;
                 cursor: pointer;
             }
@@ -30,11 +29,6 @@
 :host {
     display: inline-block;
     background: transparent;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
 
     .loadindicator {
         height: 16px;

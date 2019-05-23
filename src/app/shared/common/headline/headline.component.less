@@ -22,14 +22,15 @@
         left: 0px;
     }
 
-    .headline-content {
+    /deep/ .headline-content {
         display: flex;
-        flex-basis: 100%;
+        flex: 1;
+        justify-content: flex-end;
+        & > * {
+            margin-left: 10px;
+        }
         /deep/ synch-progress {
             margin: auto;
-        }
-        & > * + * {
-            margin-left: 10px;
         }
     }
 

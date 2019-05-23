@@ -1,13 +1,16 @@
+/** Core imports */
 import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
+/** Third party imports */
 import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { first, map, takeUntil, switchMap, finalize } from 'rxjs/operators';
 
+/** Core imports */
 import { environment } from 'environments/environment';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { SubmitRequestInput, SubmitRequestOutput, OfferDtoSystemType, OfferServiceProxy } from '@shared/service-proxies/service-proxies';
+import { OfferDtoSystemType, OfferServiceProxy, GetMemberInfoResponse } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'articles',
@@ -16,7 +19,7 @@ import { SubmitRequestInput, SubmitRequestOutput, OfferDtoSystemType, OfferServi
 })
 export class ArticlesComponent extends AppComponentBase implements OnInit, OnDestroy {
     articles$: Observable<SafeHtml>;
-
+    memberInfo$: Observable<GetMemberInfoResponse> = this.offersService.memberInfo$.pipe( first(), takeUntil(this.destroy$));
     constructor(injector: Injector,
         private sanitizer: DomSanitizer,
         private offerServiceProxy: OfferServiceProxy,
@@ -27,31 +30,23 @@ export class ArticlesComponent extends AppComponentBase implements OnInit, OnDes
 
     ngOnInit() {
         window['openOffer'] = (campaignId, redirectUrl) => {
-            let submitRequestInput = SubmitRequestInput.fromJS({
+            const offerInfo: any = {
                 campaignId: campaignId,
                 redirectUrl: redirectUrl,
                 systemType: OfferDtoSystemType.EPCVIP
-            });
-            window.open(redirectUrl, '_blank');
-            this.offerServiceProxy.submitRequest(submitRequestInput)
-                .subscribe((output: SubmitRequestOutput) => {});
+            };
+            this.offersService.applyOffer(offerInfo);
         };
-
         this.startLoading(true);
-        this.offersService.memberInfo$.subscribe(
-            () => {
-                this.articles$ = from(
-                    $.ajax({
-                        url: environment.LENDSPACE_DOMAIN + '/documents/articles.html',
-                        method: 'GET'
-                    })
-                ).pipe(
-                    map((html) => {
-                        this.finishLoading(true);
-                        return this.sanitizer.bypassSecurityTrustHtml(html);
-                    })
-                );
-            }
+        this.articles$ = this.memberInfo$.pipe(
+            switchMap(() => from(
+                $.ajax({
+                    url: environment.LENDSPACE_DOMAIN + '/documents/articles.html',
+                    method: 'GET'
+                })
+            )),
+            map(html => this.sanitizer.bypassSecurityTrustHtml(html)),
+            finalize(() => this.finishLoading(true))
         );
     }
 

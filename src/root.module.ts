@@ -1,5 +1,5 @@
 /** Core imports */
-import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule, ErrorHandler } from '@angular/core';
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF, PlatformLocation, registerLocaleData } from '@angular/common';
@@ -13,6 +13,8 @@ import { CacheService } from 'ng2-cache-service';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
 import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
 import filter from 'lodash/filter';
+import bugsnag from '@bugsnag/js';
+import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -32,6 +34,11 @@ import { RootRoutingModule, CustomReuseStrategy, AppPreloadingStrategy } from '.
 import { RootStoreModule } from '@root/store';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+
+const bugsnagClient = bugsnag('891a02ce4c67b5a7f91f4ff0c33384f5');
+export function errorHandlerFactory() {
+    return new BugsnagErrorHandler(bugsnagClient);
+}
 
 export function appInitializerFactory(
     injector: Injector,
@@ -195,6 +202,10 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: HAMMER_GESTURE_CONFIG,
             useClass: GestureConfig
+        },
+        {
+            provide: ErrorHandler,
+            useFactory: errorHandlerFactory
         }
     ],
     bootstrap: [ RootComponent ]

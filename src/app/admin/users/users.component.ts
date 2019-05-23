@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import { forkJoin } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -437,7 +437,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             disableClose: true,
             closeOnNavigation: false,
             data: { refreshParent: this.invalidate.bind(this) }
-        }).afterClosed().subscribe(() => this.invalidate());
+        }).afterClosed().pipe(filter(Boolean)).subscribe(() => this.invalidate());
     }
 
     deleteUser(user: UserListDto): void {

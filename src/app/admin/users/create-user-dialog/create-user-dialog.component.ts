@@ -184,7 +184,7 @@ export class CreateUserDialogComponent implements OnInit {
     }
 
     updateSaveOption(option) {
-        this.data.buttons[0].title = option.text;
+        this.buttons[0].title = option.text;
         this._cacheService.set(this._cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, this.constructor.name),
             this.saveContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
@@ -196,12 +196,12 @@ export class CreateUserDialogComponent implements OnInit {
             this.data.refreshParent(true);
         } else {
             this.data.refreshParent();
-            this.close();
+            this.close(true);
         }
     }
 
-    private close() {
-        this._dialogRef.close();
+    private close(refresh = false) {
+        this._dialogRef.close(refresh);
     }
 
     validateForm() {

@@ -25,7 +25,7 @@ export class CurrenciesDropdownComponent implements OnInit {
     }
 
     displayExpr(item) {
-        return item.symbol + ' ' + item.id;
+        return item ? item.symbol + ' ' + item.id : '';
     }
 
     changeOptionsPopupWidth(e) {
