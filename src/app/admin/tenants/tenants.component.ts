@@ -5,7 +5,6 @@ import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { filter } from 'rxjs/operators';
-import * as _ from 'underscore';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
@@ -83,7 +82,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
-       
+
         this._editionService.getEditionComboboxItems(0, true, false).subscribe(editions => {
             this.editions = editions;
             this.initFilterConfig();

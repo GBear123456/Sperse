@@ -223,7 +223,7 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     getProfilePictureUrl(id, defaultUrl = AppConsts.imageUrls.profileDefault) {
-        this.profileService.getProfilePictureUrl(id, defaultUrl);
+        return this.profileService.getProfilePictureUrl(id, defaultUrl);
     }
 
     startLoading(globally = false, element: any = null) {

@@ -1,37 +1,43 @@
-import { Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { DefaultTimezoneScope, NameValueDto, TimingServiceProxy } from '@shared/service-proxies/service-proxies';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
+import { Observable } from 'rxjs';
+import { pluck } from 'rxjs/operators';
+import {
+    DefaultTimezoneScope,
+    ListResultDtoOfNameValueDto,
+    TimingServiceProxy
+} from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'timezone-combo',
-    template:
-    `<select #TimeZoneCombobox
-        class='form-control'
-        [(ngModel)]='selectedTimeZone'
-        (ngModelChange)='selectedTimeZoneChange.emit($event)'>
-            <option *ngFor='let timeZone of timeZones' [value]='timeZone.value'>{{timeZone.name}}</option>
-    </select>`
+    template: `<select #TimeZoneCombobox
+                    class='form-control'
+                    [(ngModel)]='selectedTimeZone'
+                    (ngModelChange)='selectedTimeZoneChange.emit($event)'>
+                        <option *ngFor='let timeZone of timeZones$ | async' [value]='timeZone.value'>{{timeZone.name}}</option>
+                </select>`,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TimeZoneComboComponent extends AppComponentBase implements OnInit {
-
+export class TimeZoneComboComponent implements OnInit {
     @ViewChild('TimeZoneCombobox') timeZoneComboboxElement: ElementRef;
-    @Output() selectedTimeZoneChange: EventEmitter<string> = new EventEmitter<string>();
-
-    timeZones: NameValueDto[] = [];
-
     @Input() selectedTimeZone: string = undefined;
     @Input() defaultTimezoneScope: DefaultTimezoneScope;
+    @Output() selectedTimeZoneChange: EventEmitter<string> = new EventEmitter<string>();
+    timeZones$: Observable<ListResultDtoOfNameValueDto[]>;
 
-    constructor(
-        private _timingService: TimingServiceProxy,
-        injector: Injector) {
-        super(injector);
-    }
+    constructor(private _timingService: TimingServiceProxy) {}
 
-    ngOnInit(): void {
-        let self = this;
-        self._timingService.getTimezones(self.defaultTimezoneScope).subscribe(result => {
-            self.timeZones = result.items;
-        });
+    ngOnInit() {
+        this.timeZones$ = this._timingService.getTimezones(this.defaultTimezoneScope).pipe(
+            pluck('items')
+        );
     }
 }
