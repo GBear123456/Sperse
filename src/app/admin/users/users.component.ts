@@ -187,6 +187,22 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 ]
             },
             {
+                location: 'before',
+                items: [
+                    {
+                        name: 'searchAll',
+                        action: this.searchAllClick.bind(this),
+                        options: {
+                            text: this.l('Search All')
+                        },
+                        attr: {
+                            'filter-selected': ((this.searchValue && this.searchValue.length > 0) && (this._filtersService.hasFilterSelected || this.group)) ? true : false,
+                            'custaccesskey': 'search-container'
+                        }
+                    }
+                ]
+            },
+            {
                 location: 'after',
                 areItemsDependent: true,
                 items: [
@@ -297,6 +313,12 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 ]
             }
         ]);
+    }
+
+    searchAllClick() {
+        this._filtersService.clearAllFilters();
+        this.group = undefined;
+        this.initToolbarConfig();
     }
 
     openUserDetails(userId) {
