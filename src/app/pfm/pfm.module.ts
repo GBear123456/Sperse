@@ -37,6 +37,7 @@ import { FromToFieldComponent } from './offer-edit/from-to-field/from-to-field.c
 import { GroupFieldComponent } from './offer-edit/group-field/group-field.component';
 import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 import { ClickStatsComponent } from './shared/click-stats/click-stats.component';
+import { VisitorsComponent } from './offer-edit/visitors/visitors.component';
 
 @NgModule({
     imports: [
@@ -73,7 +74,8 @@ import { ClickStatsComponent } from './shared/click-stats/click-stats.component'
         RatingFieldComponent,
         FromToFieldComponent,
         GroupFieldComponent,
-        ClickStatsComponent
+        ClickStatsComponent,
+        VisitorsComponent
     ],
     entryComponents: [],
     providers: [

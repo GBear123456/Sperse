@@ -317,6 +317,10 @@
                     <pfm-click-stats [campaignId]="model.campaignId" [year]="selectedYear" [refresh$]="refresh$"></pfm-click-stats>
                 </div>
 
+                <div *ngSwitchCase="'visitors'">
+                    <pfm-offer-visitors></pfm-offer-visitors>
+                </div>
+
             </ng-container>
         </form>
     </ng-container>

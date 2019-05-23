@@ -94,6 +94,10 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         {
             label: 'Click Stats',
             route: '../stats'
+        },
+        {
+            label: 'Visitors',
+            route: '../visitors'
         }
     ];
     selectedYear = new Date().getFullYear();
