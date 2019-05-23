@@ -7,6 +7,9 @@
             padding: 0;
             margin: 0;
         }
+        @media(min-width: 1200px) {
+            width: 40vw;
+        }
     }
 }
 /deep/ .hide {
@@ -86,7 +89,7 @@
             }
             .dx-texteditor-container:after {
                 content: '';
-                top: 48px!important;
+                top: 55px!important;
                 margin-top: 0!important;
                 left: 15px;
                 width: 442px;
@@ -114,6 +117,7 @@
     .title-wrapper {
         display: flex;
         align-items: center;
+        height: 100%;
     }
 
     /deep/ mat-dialog-content {
