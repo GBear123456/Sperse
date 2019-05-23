@@ -24,19 +24,17 @@ import { AccountConnectors } from '@shared/AppEnums';
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     syncCompletedSubscription: Subscription;
     refreshSubscription: Subscription;
-    bankAccountsService: BankAccountsService;
     syncAccounts;
 
     constructor(
         injector: Injector,
-        bankAccountsService: BankAccountsService,
         private _quovoService: QuovoService,
         private _synchProgress: SynchProgressService,
         private _bankAccountsGeneralService: BankAccountsGeneralService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        public bankAccountsService: BankAccountsService,
     ) {
         super(injector);
-        this.bankAccountsService = bankAccountsService;
         this.subscribeToObservables();
     }
 
