@@ -183,7 +183,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         );
         this.subscribers.push(
             this._pipelineService.dataLayoutType$.pipe(
-                filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline),
+                filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline
+                    && (!this.pipeline || this.pipeline.contactGroupId != this.contactGroupId)),
                 switchMap(() => this._pipelineService.getPipelineDefinitionObservable(
                     this.pipelinePurposeId, this.contactGroupId).pipe(
                         map((pipeline) => {
