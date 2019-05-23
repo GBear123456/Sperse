@@ -90,6 +90,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
                 this.isGoogleAuthenticatorEnabled = result.isGoogleAuthenticatorEnabled;
                 this.isPhoneNumberConfirmed = result.isPhoneNumberConfirmed;
                 this.isPhoneNumberEmpty = result.phoneNumber === '';
+                this._changeDetectorRef.detectChanges();
             });
     }
 
@@ -97,6 +98,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
         this._profileService.updateGoogleAuthenticatorKey().subscribe((result: UpdateGoogleAuthenticatorKeyOutput) => {
             this.user.qrCodeSetupImageUrl = result.qrCodeSetupImageUrl;
             this.isGoogleAuthenticatorEnabled = true;
+            this._changeDetectorRef.detectChanges();
         });
     }
 

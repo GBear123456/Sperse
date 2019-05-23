@@ -50,7 +50,7 @@
                         </div>
                         <div class="form-group" *ngIf="showTimezoneSelection">
                             <label for="Timezone">{{ls.l("Timezone")}}</label>
-                            <timezone-combo id="Timezone" [(selectedTimeZone)]="user.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
+                            <timezone-combo id="Timezone" [(selectedTimeZone)]="user.timezone" [defaultTimezoneScope]="defaultTimezoneScope"></timezone-combo>
                         </div>
                     </tab>
                     <tab heading="{{ls.l('TwoFactorLogin')}}" customClass="m-tabs__item">
