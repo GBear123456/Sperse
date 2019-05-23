@@ -145,8 +145,7 @@ export class AppPreBootstrap {
         let generalInfo = window['generalInfo'];
         if (generalInfo && generalInfo.userConfig) {
             this.handleGetAll(generalInfo.userConfig, callback, loadThemeResources);
-        }
-        else {
+        } else {
             const cookieLangValue = abp.utils.getCookieValue('Abp.Localization.CultureName');
             const token = abp.auth.getToken();
 

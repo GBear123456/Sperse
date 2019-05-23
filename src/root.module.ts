@@ -35,7 +35,12 @@ import { RootStoreModule } from '@root/store';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 
-const bugsnagClient = bugsnag('891a02ce4c67b5a7f91f4ff0c33384f5');
+const { version } = require('../package.json');
+const bugsnagClient = bugsnag({
+    apiKey: '891a02ce4c67b5a7f91f4ff0c33384f5',
+    appType: 'WebUI',
+    appVersion: version
+});
 export function errorHandlerFactory() {
     return new BugsnagErrorHandler(bugsnagClient);
 }
@@ -49,7 +54,6 @@ export function appInitializerFactory(
         let appAuthService = injector.get(AppAuthService);
         appAuthService.setCheckDomainToken();
         handleLogoutRequest(appAuthService);
-
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);
             AppPreBootstrap.run(AppConsts.appBaseHref, () => {
@@ -59,7 +63,7 @@ export function appInitializerFactory(
                     (result) => {
                         //set og meta tags
                         updateMetadata(appSessionService.tenant, ui);
-
+                        updateBugsnagWithUserInfo(appSessionService);
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
                         if (customizations && customizations.favicons && customizations.favicons.length)
                             faviconService.updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
@@ -83,6 +87,26 @@ export function appInitializerFactory(
                 );
             }, Function(), reject);
         });
+    };
+}
+
+function updateBugsnagWithUserInfo(appSessionService: AppSessionService) {
+    const user = appSessionService.user;
+    const tenantName = appSessionService.tenantName || 'Host';
+    const tenant = appSessionService.tenant;
+    if (user.name) {
+        bugsnagClient.user = {
+            id: tenant ? tenant.id + ':' + appSessionService.userId : appSessionService.userId,
+            name: `${tenantName}\\${user.name}`,
+            email: user.emailAddress ? user.emailAddress : (user.name.indexOf('@') > -1 ? user.name : '')
+        };
+    }
+    bugsnagClient.metaData = {
+        tenant: {
+            tenantId: tenant ? tenant.id : '',
+            tenantName: tenantName,
+            tenancyName: appSessionService.tenancyName
+        }
     };
 }
 
