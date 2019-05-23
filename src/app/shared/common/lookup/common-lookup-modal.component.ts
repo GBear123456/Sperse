@@ -43,9 +43,7 @@ export interface ICommonLookupModalOptions {
 export class CommonLookupModalComponent {
     @Output() itemSelected: EventEmitter<NameValueDto> = new EventEmitter<NameValueDto>();
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
-
     dataSource: DataSource;
-
     defaultOptions: ICommonLookupModalOptions = {
         filterText: '',
         title: this.ls.l('SelectAUser'),
@@ -69,9 +67,9 @@ export class CommonLookupModalComponent {
     constructor(
         private _commonLookupService: CommonLookupServiceProxy,
         private _changeDetectorRef: ChangeDetectorRef,
-        @Inject(MAT_DIALOG_DATA) private data: ICommonLookupModalOptions,
         private dialogRef: MatDialogRef<CommonLookupModalComponent>,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        @Inject(MAT_DIALOG_DATA) public data: ICommonLookupModalOptions
     ) {
         this.data = extend(this.defaultOptions, this.data);
         this.dataSource = new DataSource({
