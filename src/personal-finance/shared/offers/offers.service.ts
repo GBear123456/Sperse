@@ -12,7 +12,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import lowerCase from 'lodash/lowerCase';
 import upperFirst from 'lodash/upperFirst';
 import { ReplaySubject, Observable } from 'rxjs';
-import { map, first, pluck, publishReplay, refCount } from 'rxjs/operators';
+import { map, first, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -44,6 +44,7 @@ export class OffersService {
 
     state$: ReplaySubject<string> = new ReplaySubject<string>();
     memberInfo$: Observable<GetMemberInfoResponse> = this.offerServiceProxy.getMemberInfo().pipe(publishReplay(), refCount());
+    memberInfo: GetMemberInfoResponse;
     memberInfoApplyOfferParams: string;
     processingSteps = [
         {
@@ -95,13 +96,12 @@ export class OffersService {
         private currencyPipe: CurrencyPipe,
         private dialog: MatDialog
     ) {
-
-        this.memberInfo$.pipe(pluck('stateCode')).subscribe((stateCode: string) => {
-            this.state$.next(stateCode || 'all');
-        });
-
         this.memberInfo$.pipe(first()).subscribe(
-            (memberInfo: GetMemberInfoResponse) => this.memberInfoApplyOfferParams = this.getApplyOffersParams(memberInfo)
+            (memberInfo: GetMemberInfoResponse) => {
+                this.memberInfo = memberInfo;
+                this.state$.next(memberInfo.stateCode || 'all');
+                this.memberInfoApplyOfferParams = this.getApplyOffersParams(memberInfo);
+            }
         );
     }
 
@@ -154,7 +154,8 @@ export class OffersService {
         const linkIsDirect = !!offer.redirectUrl;
         let submitRequestInput = SubmitRequestInput.fromJS({
             campaignId: offer.campaignId,
-            systemType: offer.systemType
+            systemType: offer.systemType,
+            ...this.memberInfo
         });
         let redirectUrl = !linkIsDirect ? offer.redirectUrl : offer.redirectUrl + '&' + this.memberInfoApplyOfferParams;
         const modalData = {
