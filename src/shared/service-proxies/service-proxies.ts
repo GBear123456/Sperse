@@ -44584,6 +44584,7 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
     tenantManagement!: TenantManagementSettingsEditDto;
     security!: SecuritySettingsEditDto;
     billing!: HostBillingSettingsEditDto | undefined;
+    bugsnag!: BugsnagSettingsDto | undefined;
 
     constructor(data?: IHostSettingsEditDto) {
         if (data) {
@@ -44609,6 +44610,7 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
             this.tenantManagement = data["tenantManagement"] ? TenantManagementSettingsEditDto.fromJS(data["tenantManagement"]) : new TenantManagementSettingsEditDto();
             this.security = data["security"] ? SecuritySettingsEditDto.fromJS(data["security"]) : new SecuritySettingsEditDto();
             this.billing = data["billing"] ? HostBillingSettingsEditDto.fromJS(data["billing"]) : <any>undefined;
+            this.bugsnag = data["bugsnag"] ? BugsnagSettingsDto.fromJS(data["bugsnag"]) : <any>undefined;
         }
     }
 
@@ -44627,6 +44629,7 @@ export class HostSettingsEditDto implements IHostSettingsEditDto {
         data["tenantManagement"] = this.tenantManagement ? this.tenantManagement.toJSON() : <any>undefined;
         data["security"] = this.security ? this.security.toJSON() : <any>undefined;
         data["billing"] = this.billing ? this.billing.toJSON() : <any>undefined;
+        data["bugsnag"] = this.bugsnag ? this.bugsnag.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -44638,6 +44641,7 @@ export interface IHostSettingsEditDto {
     tenantManagement: TenantManagementSettingsEditDto;
     security: SecuritySettingsEditDto;
     billing: HostBillingSettingsEditDto | undefined;
+    bugsnag: BugsnagSettingsDto | undefined;
 }
 
 export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
@@ -44934,6 +44938,46 @@ export class HostBillingSettingsEditDto implements IHostBillingSettingsEditDto {
 export interface IHostBillingSettingsEditDto {
     legalName: string | undefined;
     address: string | undefined;
+}
+
+export class BugsnagSettingsDto implements IBugsnagSettingsDto {
+    appApiKey!: string | undefined;
+    uiApiKey!: string | undefined;
+
+    constructor(data?: IBugsnagSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.appApiKey = data["appApiKey"];
+            this.uiApiKey = data["uiApiKey"];
+        }
+    }
+
+    static fromJS(data: any): BugsnagSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BugsnagSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["appApiKey"] = this.appApiKey;
+        data["uiApiKey"] = this.uiApiKey;
+        return data; 
+    }
+}
+
+export interface IBugsnagSettingsDto {
+    appApiKey: string | undefined;
+    uiApiKey: string | undefined;
 }
 
 export class PasswordComplexitySetting implements IPasswordComplexitySetting {
@@ -58055,6 +58099,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     isLocked!: boolean | undefined;
     trackingCode!: string | undefined;
     hasRecurringBilling!: boolean | undefined;
+    isUpgradable!: boolean | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
@@ -58074,6 +58119,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.isLocked = data["isLocked"];
             this.trackingCode = data["trackingCode"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
+            this.isUpgradable = data["isUpgradable"];
         }
     }
 
@@ -58093,6 +58139,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["isLocked"] = this.isLocked;
         data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["isUpgradable"] = this.isUpgradable;
         return data; 
     }
 }
@@ -58105,6 +58152,7 @@ export interface IModuleSubscriptionInfoDto {
     isLocked: boolean | undefined;
     trackingCode: string | undefined;
     hasRecurringBilling: boolean | undefined;
+    isUpgradable: boolean | undefined;
 }
 
 export class CompleteTenantRegistrationInput implements ICompleteTenantRegistrationInput {

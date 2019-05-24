@@ -252,6 +252,20 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
+            <mat-tab label="{{l('Bugsnag')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="BugsnagAppAPIKey">{{l("App Api Key")}}</label>
+                            <input id="BugsnagAppAPIKey" type="text" name="BugsnagAppAPIKey" class="form-control" [(ngModel)]="hostSettings.bugsnag.appApiKey" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="BugsnagUIAPIKey">{{l("UI Api Key")}}</label>
+                            <input id="BugsnagUIAPIKey" type="text" name="BugsnagUIAPIKey" class="form-control" [(ngModel)]="hostSettings.bugsnag.uiApiKey" maxlength="128">
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
             <mat-tab label="{{l('Base Commerce Link')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>

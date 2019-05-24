@@ -183,39 +183,36 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         );
         this.subscribers.push(
             this._pipelineService.dataLayoutType$.pipe(
-                filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline 
+                filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline
                     && (!this.pipeline || this.pipeline.contactGroupId != this.contactGroupId)),
-                switchMap(() => this._pipelineService.getPipelineDefinitionObservable(
-                    this.pipelinePurposeId, this.contactGroupId).pipe(
-                        map((pipeline) => {
-                            return this._dataSource ?
-                                of(pipeline) :
-                                of(pipeline).pipe(delayWhen(() => {
-                                    return this.dataSource$;
-                                }));
-                        }), mergeMap(pipeline => pipeline)
-                    )
-                )).subscribe((pipeline: PipelineDto) => {
-                    this.pipeline = pipeline;
-                    this.createStageInput.pipelineId = this.pipeline.id;
-                    this.mergeStagesInput.pipelineId = this.pipeline.id;
+                switchMap(() => this._pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)),
+                map((pipeline) => {
+                    return this._dataSource ?
+                        of(pipeline) :
+                        of(pipeline).pipe(delayWhen(() => {
+                            return this.dataSource$;
+                        }));
+                }), mergeMap(pipeline => pipeline)
+            ).subscribe((pipeline: PipelineDto) => {
+                this.pipeline = pipeline;
+                this.createStageInput.pipelineId = this.pipeline.id;
+                this.mergeStagesInput.pipelineId = this.pipeline.id;
 
-                    this.onStagesLoaded.emit(pipeline);
-                    this.stages = pipeline.stages.map((stage) => {
-                        extend(stage, {
-                            entities: [],
-                            full: true
-                        });
-                        return stage;
+                this.onStagesLoaded.emit(pipeline);
+                this.stages = pipeline.stages.map((stage) => {
+                    extend(stage, {
+                        entities: [],
+                        full: true
                     });
+                    return stage;
+                });
 
-                    this._totalDataSource = undefined;
-                    if (!this.refreshTimeout) {
-                        this.loadData(0, this.stageId && findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
-                        this.refreshTimeout = null;
-                    }
+                this._totalDataSource = undefined;
+                if (!this.refreshTimeout) {
+                    this.loadData(0, this.stageId && findIndex(this.stages,  obj => obj.id == this.stageId), Boolean(this.stageId));
+                    this.refreshTimeout = null;
                 }
-            )
+            })
         );
         const bag: any = this._dragulaService.find(this.dragulaName);
         if (bag !== undefined ) this._dragulaService.destroy(this.dragulaName);
