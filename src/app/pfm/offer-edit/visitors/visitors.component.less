@@ -4,13 +4,16 @@
     .wrapper {
         width: 100%;
         height: 100%;
-        display: flex;
         overflow: hidden;
 
+        .toolbar-view {
+            width: 100%;
+            border-bottom: 1px solid #dedede;
+        }
         .grid-view {
             width: auto;
             max-width: 100%;
-            height: calc(100vh - 180px);
+            height: calc(100vh - 240px);
             /deep/ dx-data-grid {
                 .dx-datagrid-header-panel .dx-toolbar .dx-toolbar-after {
                     margin-right: 0px!important;

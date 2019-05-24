@@ -31,6 +31,7 @@ import {
 import { Store, select } from '@ngrx/store';
 import cloneDeep from 'lodash/cloneDeep';
 import swal from 'sweetalert';
+import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { RootComponent } from 'root.components';
@@ -100,7 +101,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             route: '../visitors'
         }
     ];
-    selectedYear = new Date().getFullYear();
+    selectedYear = moment().year();
     years = new Array(10).fill(0).map(
         (item, index) => this.selectedYear - index);
     offerId$: Observable<number>;
