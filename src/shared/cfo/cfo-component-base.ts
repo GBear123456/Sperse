@@ -44,10 +44,6 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
         }
     }
 
-    checkMemberAccessPermission(permission, defaultResult = true) {
-        this._cfoService.checkMemberAccessPermission(permission, defaultResult);
-    }
-
     getODataUrl(uri: string, filter?: Object) {
         return super.getODataUrl(uri, filter, {
             instanceType: this.instanceType,

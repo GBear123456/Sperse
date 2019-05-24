@@ -268,8 +268,8 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
         this.onReportPeriodChange.emit(period);
     }
 
-    filterByBankAccounts(data) {
-        this.onSelectedBankAccountsChange.emit(data);
+    filterByBankAccounts() {
+        this.onSelectedBankAccountsChange.emit();
     }
 
     openBankAccountsSelectDialog() {
@@ -277,8 +277,8 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
             panelClass: 'slider',
             data: { useGlobalCache: true }
         });
-        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe((data) => {
-            this.filterByBankAccounts(data);
+        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe(() => {
+            this.filterByBankAccounts();
         });
     }
 

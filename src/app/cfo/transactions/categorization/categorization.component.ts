@@ -411,7 +411,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     initDragAndDropEvents($event) {
-        if (!this.checkMemberAccessPermission('ClassifyTransaction'))
+        if (!this._cfoService.checkMemberAccessPermission('ClassifyTransaction'))
             return true;
 
         let img = new Image();
