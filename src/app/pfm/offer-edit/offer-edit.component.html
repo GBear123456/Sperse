@@ -33,7 +33,7 @@
         </header>
     </ng-container>
     <ng-container mainContent>
-        <form class="offerEditForm">
+        <form class="offerEditForm" (submit)="$event.preventDefault()">
 
             <ng-container [ngSwitch]="section$ | async" *ngIf="model">
 
@@ -318,7 +318,7 @@
                 </div>
 
                 <div *ngSwitchCase="'visitors'">
-                    <pfm-offer-visitors></pfm-offer-visitors>
+                    <pfm-offer-visitors [campaignId]="model.campaignId"></pfm-offer-visitors>
                 </div>
 
             </ng-container>

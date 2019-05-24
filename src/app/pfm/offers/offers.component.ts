@@ -249,21 +249,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
     ngOnInit(): void {
         this.rootComponent = this.getRootComponent();
-        this.dataSource = new DataSource({
-            store: {
-                type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI),
-                deserializeDates: false,
-                version: AppConsts.ODataVersion,
-                beforeSend: function (request) {
-                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                }
-            },
-            sort: [
-                { selector: 'Created', desc: true }
-            ]
-        });
-
         this.categories = Object.keys(OfferFilterCategory)
             .map(key => ({ id: OfferFilterCategory[key], name: this.l(key) }));
 
@@ -327,12 +312,25 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                 }
             })
         ];
+
+        this.dataSource = new DataSource({
+            store: {
+                type: 'odata',
+                url: this.getODataUrl(this.dataSourceURI, 
+                    this.filterByStatus(this.filterModelStatuses)),
+                deserializeDates: false,
+                version: AppConsts.ODataVersion,
+                beforeSend: function (request) {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                }
+            },
+            sort: [
+                { selector: 'Created', desc: true }
+            ]
+        });
+
         this.activate();
         this.initHeadlineConfig();
-
-        setTimeout(() => {
-            this._filtersService.change(this.filterModelStatuses);
-        });
     }
 
     filterByCategory(filter) {

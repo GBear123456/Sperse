@@ -1,11 +1,12 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
+import { ChangeDetectionStrategy, OnInit,
     Component, Input, Inject, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { Observable } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import zipObject from 'lodash/zipObject';
 
@@ -31,9 +32,9 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
     @Input() 
     set year(val: number) {
         this._year = val;
-        this.refresh();
+        this.invalidate();
     }
-    private _year = new Date().getFullYear();
+    private _year = moment().year();
 
     data: any;
     months = moment.monthsShort();
@@ -50,7 +51,6 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
-        private _changeDetector: ChangeDetectorRef,
         private _offerService: OfferServiceProxy
     ) {
         super(injector);
@@ -75,12 +75,8 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this.refresh$.subscribe(() => this.refresh());
-    }
-
-    refresh() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.refresh();
+        this.refresh$.pipe(takeUntil(this.destroy$))
+            .subscribe(() => this.invalidate());
     }
 
     initTotalColumn() {        
