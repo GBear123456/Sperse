@@ -8,7 +8,7 @@
             <ul class="top__items">
                 <li class="top__item {{item.code | lowercase }}" *ngFor="let item of modules.topItems">
                     <a (click)="onItemClick(item)"
-                       [class]="isDisabled(item.name) ? 'top__link disabled' : 'top__link'">
+                       [class]="isDisabled(item.name) || item.isComingSoon ? 'top__link disabled' : 'top__link'">
                         <h2 class="top__item_title">
                             <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.svg"
                                  class="top__item_title-image"
@@ -21,7 +21,7 @@
                         <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
                              class="top__item_image"
                              [alt]="item.name">
-                        <div class="coming-soon" *ngIf="isDisabled(item.name)">
+                        <div class="coming-soon" *ngIf="item.isComingSoon">
                             Coming soon...
                         </div>
                     </a>
@@ -33,10 +33,13 @@
             <ul class="menu__items">
                 <li class="menu__item {{item.code | lowercase }}" *ngFor="let item of modules.items">
                     <a (click)="onItemClick(item)"
-                       [class]="isDisabled(item.name) ? 'menu__link disabled' : 'menu__link'">
+                       [class]="isDisabled(item.name) || item.isComingSoon ? 'menu__link disabled' : 'menu__link'">
                         <h2 class="menu__item_title">{{item.name}}</h2>
                         <div class="menu__item_descr">
                             {{l(item.code + 'ModuleDescription')}}
+                        </div>
+                        <div class="coming-soon" *ngIf="item.isComingSoon">
+                            Coming soon...
                         </div>
                     </a>
                 </li>
