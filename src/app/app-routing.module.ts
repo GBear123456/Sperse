@@ -45,7 +45,7 @@ export class CfoActivateService implements CanActivate {
     ) {}
 
     canActivate() {
-        if (this.permissionChecker.isGranted('Pages.CFO.MainInstanceAccess') || 
+        if (this.permissionChecker.isGranted('Pages.CFO.MainInstanceAccess') ||
           (this.featureService.isEnabled('CFO.Partner') && this.permissionChecker.isGranted('Pages.CFO.MemberAccess.Manage.Administrate'))
         ) {
             this.router.navigate([this.permissionChecker.isGranted('Pages.CFO.MainInstanceAccess') ? '/app/cfo/main' : '/app/cfo/user' ]);

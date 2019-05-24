@@ -63,56 +63,83 @@ export class AppService extends AppServiceBase {
                     name: 'Admin',
                     showDescription: true,
                     showInDropdown: true,
-                    footerItem: true
+                    footerItem: true,
+                    isComingSoon: false
                 },
                 {
                     name: 'API',
                     showDescription: true,
-                    showInDropdown: true
+                    showInDropdown: true,
+                    isComingSoon: false
                 },
                 {
                     name: 'CFO',
                     showDescription: true,
                     showInDropdown: true,
-                    focusItem: true
+                    focusItem: true,
+                    uri: 'main',
+                    isComingSoon: false
+                },
+                {
+                    name: 'CFO',
+                    showDescription: true,
+                    showInDropdown: true,
+                    footerItem: true,
+                    uri: 'user',
+                    isComingSoon: false
                 },
                 {
                     name: 'CRM',
                     showDescription: true,
                     showInDropdown: true,
-                    focusItem: true
+                    focusItem: true,
+                    isComingSoon: false
                 },
                 {
                     name: 'PFM',
                     showDescription: true,
-                    showInDropdown: true
+                    showInDropdown: true,
+                    isComingSoon: false
+                },
+                {
+                    name: 'PFM',
+                    showDescription: true,
+                    showInDropdown: true,
+                    footerItem: true,
+                    isComingSoon: false
                 },
                 {
                     name: 'Cloud',
-                    showDescription: true
+                    showDescription: true,
+                    isComingSoon: true
                 },
                 {
                     name: 'Forms',
-                    showDescription: false
+                    showDescription: false,
+                    isComingSoon: true
                 },
                 {
                     name: 'HR',
-                    showDescription: false
+                    showDescription: false,
+                    isComingSoon: true
                 },
                 {
                     name: 'HUB',
                     showDescription: false,
-                    showInDropdown: true
+                    showInDropdown: true,
+                    isComingSoon: true
                 },
                 {
                     name: 'Slice',
                     showDescription: false,
                     showInDropdown: true,
-                    focusItem: true
+                    focusItem: true,
+                    isComingSoon: true
                 },
                 {
                     name: 'Store',
-                    showDescription: false
+                    showDescription: false,
+                    isComingSoon: true
                 }
             ],
             {

@@ -40,16 +40,31 @@ export class PlatformSelectComponent extends AppComponentBase {
                     showInDropdown: module.showInDropdown,
                     focusItem: module.focusItem,
                     footerItem: module.footerItem,
+                    isComingSoon: module.isComingSoon,
+                    uri: module.uri
                 };
-                if (module.name === 'CFO') {
-                    let cfoPersonalEnable = (!abp.session.tenantId || this.feature.isEnabled('CFO.Partner')) && !this.permission.isGranted('Pages.CFO.MainInstanceAccess');
-                    moduleConfig['uri'] = cfoPersonalEnable ? 'user' : 'main';
-                }
 
                 if (module.focusItem) {
                     this.modules.topItems.push(moduleConfig);
                 } else if (module.footerItem) {
-                    this.modules.footerItems.push(moduleConfig);
+                    if (module.name !== 'CFO' && module.name !== 'PFM') {
+                        this.modules.footerItems.push(moduleConfig);
+                    } else if (module.name === 'CFO'
+                        && this._appService.isModuleActive(module.name)
+                        && abp.session.tenantId
+                        && this.feature.isEnabled('CFO.Partner')
+                        && this.permission.isGranted('Pages.CFO.MemberAccess')
+                    ) {
+                        this.modules.footerItems.push(moduleConfig);
+                    } else if (
+                        module.name === 'PFM'
+                        && this._appService.isModuleActive(module.name)
+                        && this.feature.isEnabled('PFM.Applications')
+                    ) {
+                        this.modules.footerItems = this.modules.footerItems.filter((item) => item.name !== 'CFO');
+                        // if (this.modules.footerItems.length > 1) this.modules.footerItems.pop();
+                        this.modules.footerItems.push(moduleConfig);
+                    }
                 } else if (module.showInDropdown) {
                     this.modules.items.push(moduleConfig);
                 }
@@ -66,15 +81,18 @@ export class PlatformSelectComponent extends AppComponentBase {
 
     onItemClick(module) {
         if ((this.module !== module.name || this.uri !== module.uri) &&
-            this._appService.isModuleActive(module.name) &&
-            !this.checkModuleCustomHandler(module)
+            this._appService.isModuleActive(module.name)
         ) {
             let navigate = null;
             let moduleConfig = this._appService.getModuleConfig(module.name);
-            if (moduleConfig.defaultPath)
+            console.log(moduleConfig);
+            if (module.name === 'PFM' && module.footerItem) {
+                return window.open(location.origin + '/personal-finance', '_blank');
+            } else if (moduleConfig.defaultPath) {
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
-            else
+            } else {
                 navigate = this._router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);
+            }
             this._dropDown.option('disabled', true);
             navigate.then((result) => {
                 if (result) {
@@ -88,19 +106,8 @@ export class PlatformSelectComponent extends AppComponentBase {
         }
     }
 
-    checkModuleCustomHandler(module) {
-        if (module.name == 'PFM') {
-            if (!this.permission.isGranted('Pages.PFM.Applications.ManageOffers'))
-                return window.open(location.origin + '/personal-finance', '_blank');
-        }
-    }
-
     isDisabled(item) {
         return !this._appService.isModuleActive(item);
-    }
-
-    onHover(module) {
-        this.hoverModule = module;
     }
 
     onDropDownInit(event) {

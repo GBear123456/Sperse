@@ -612,11 +612,10 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     openBankAccountsSelectDialog() {
-        const bankAccountsSelectDialog = this._dialog.open(BankAccountsSelectDialogComponent, {
+        this._dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
             data: { useGlobalCache: true }
-        });
-        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe(() => {
+        }).componentInstance.onApply.subscribe(() => {
             this.setBankAccountsFilter(true);
         });
     }

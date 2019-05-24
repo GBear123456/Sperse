@@ -268,17 +268,16 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
         this.onReportPeriodChange.emit(period);
     }
 
-    filterByBankAccounts(data) {
-        this.onSelectedBankAccountsChange.emit(data);
+    filterByBankAccounts() {
+        this.onSelectedBankAccountsChange.emit();
     }
 
     openBankAccountsSelectDialog() {
-        const bankAccountsSelectDialog = this._dialog.open(BankAccountsSelectDialogComponent, {
+        this._dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
             data: { useGlobalCache: true }
-        });
-        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe((data) => {
-            this.filterByBankAccounts(data);
+        }).componentInstance.onApply.subscribe(() => {
+            this.filterByBankAccounts();
         });
     }
 

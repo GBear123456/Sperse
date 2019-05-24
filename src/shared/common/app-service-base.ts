@@ -12,6 +12,8 @@ class Module {
     showInDropdown?: boolean;
     focusItem?: boolean;
     footerItem?: boolean;
+    uri?: string;
+    isComingSoon?: boolean;
 }
 
 export abstract class AppServiceBase {
