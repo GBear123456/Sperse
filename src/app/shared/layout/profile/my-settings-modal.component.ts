@@ -11,7 +11,11 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
-    styleUrls: ['./my-settings-modal.component.less'],
+    styleUrls: [
+        '../../../../shared/metronic/navbar.less',
+        '../../../../shared/metronic/m-nav.less',
+        './my-settings-modal.component.less'
+    ],
     providers: [DialogService]
 })
 export class MySettingsModalComponent extends AppModalDialogComponent implements AfterViewChecked, OnInit {

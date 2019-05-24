@@ -2,14 +2,14 @@
  * @class mUtil  Metronic base utilize class that privides helper functions
  */
 
-var mUtil = function() {
+window.mUtil = function() {
     var resizeHandlers = [];
 
     /** @type {object} breakpoints The device width breakpoints **/
-    var breakpoints = {        
-        sm: 544, // Small screen / phone           
-        md: 768, // Medium screen / tablet            
-        lg: 992, // Large screen / desktop        
+    var breakpoints = {
+        sm: 544, // Small screen / phone
+        md: 768, // Medium screen / tablet
+        lg: 992, // Large screen / desktop
         xl: 1200 // Extra large screen / wide desktop
     };
 
@@ -27,8 +27,8 @@ var mUtil = function() {
     };
 
     /**
-    * Handle window resize event with some 
-    * delay to attach event handlers upon resize complete 
+    * Handle window resize event with some
+    * delay to attach event handlers upon resize complete
     */
     var _windowResizeHandler = function() {
         var _runResizeHandlers = function() {
@@ -82,12 +82,12 @@ var mUtil = function() {
         */
         runResizeHandlers: function() {
             _runResizeHandlers();
-        },        
+        },
 
         /**
         * Get GET parameter value from URL.
         * @param {string} paramName Parameter name.
-        * @returns {string}  
+        * @returns {string}
         */
         getURLParam: function(paramName) {
             var searchString = window.location.search.substring(1),
@@ -105,7 +105,7 @@ var mUtil = function() {
 
         /**
         * Checks whether current device is mobile touch.
-        * @returns {boolean}  
+        * @returns {boolean}
         */
         isMobileDevice: function() {
             return (this.getViewPort().width < this.getBreakpoint('lg') ? true : false);
@@ -113,7 +113,7 @@ var mUtil = function() {
 
         /**
         * Checks whether current device is desktop.
-        * @returns {boolean}  
+        * @returns {boolean}
         */
         isDesktopDevice: function() {
             return mUtil.isMobileDevice() ? false : true;
@@ -121,7 +121,7 @@ var mUtil = function() {
 
         /**
         * Gets browser window viewport size. Ref: http://andylangton.co.uk/articles/javascript/get-viewport-size-javascript/
-        * @returns {object}  
+        * @returns {object}
         */
         getViewPort: function() {
             var e = window,
@@ -140,7 +140,7 @@ var mUtil = function() {
         /**
         * Checks whether given device mode is currently activated.
         * @param {string} mode Responsive mode name(e.g: desktop, desktop-and-tablet, tablet, tablet-and-mobile, mobile)
-        * @returns {boolean}  
+        * @returns {boolean}
         */
         isInResponsiveRange: function(mode) {
             var breakpoint = this.getViewPort().width;
@@ -167,7 +167,7 @@ var mUtil = function() {
         /**
         * Generates unique ID for give prefix.
         * @param {string} prefix Prefix for generated ID
-        * @returns {boolean}  
+        * @returns {boolean}
         */
         getUniqueID: function(prefix) {
             return prefix + Math.floor(Math.random() * (new Date()).getTime());
@@ -176,7 +176,7 @@ var mUtil = function() {
         /**
         * Gets window width for give breakpoint mode.
         * @param {string} mode Responsive mode name(e.g: xl, lg, md, sm)
-        * @returns {number}  
+        * @returns {number}
         */
         getBreakpoint: function(mode) {
             if ($.inArray(mode, breakpoints)) {
@@ -188,7 +188,7 @@ var mUtil = function() {
         * Checks whether object has property matchs given key path.
         * @param {object} obj Object contains values paired with given key path
         * @param {string} keys Keys path seperated with dots
-        * @returns {object}  
+        * @returns {object}
         */
         isset: function(obj, keys) {
             var stone;
@@ -222,7 +222,7 @@ var mUtil = function() {
         /**
         * Gets highest z-index of the given element parents
         * @param {object} el jQuery element object
-        * @returns {number}  
+        * @returns {number}
         */
         getHighestZindex: function(el) {
             var elem = $(el),
@@ -252,7 +252,7 @@ var mUtil = function() {
         * Checks whether the element has given classes
         * @param {object} el jQuery element object
         * @param {string} Classes string
-        * @returns {boolean}  
+        * @returns {boolean}
         */
         hasClasses: function(el, classes) {
             var classesArr = classes.split(" ");
@@ -261,7 +261,7 @@ var mUtil = function() {
                 if ( el.hasClass( classesArr[i] ) == false ) {
                     return false;
                 }
-            }                
+            }
 
             return true;
         },
@@ -269,7 +269,7 @@ var mUtil = function() {
         /**
         * Gets element actual/real width
         * @param {object} el jQuery element object
-        * @returns {number}  
+        * @returns {number}
         */
         realWidth: function(el){
             var clone = $(el).clone();
@@ -286,11 +286,11 @@ var mUtil = function() {
         /**
         * Checks whether the element has any parent with fixed position
         * @param {object} el jQuery element object
-        * @returns {boolean}  
+        * @returns {boolean}
         */
         hasFixedPositionedParent: function(el) {
             var result = false;
-            
+
             el.parents().each(function () {
                 if ($(this).css('position') == 'fixed') {
                     result = true;
@@ -317,7 +317,7 @@ var mUtil = function() {
         * Gets randomly generated integer value within given min and max range
         * @param {number} min Range start value
         * @param {number} min Range end value
-        * @returns {number}  
+        * @returns {number}
         */
         getRandomInt: function(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -326,7 +326,7 @@ var mUtil = function() {
         /**
         * Gets state color's hex code by color name
         * @param {string} name Color name
-        * @returns {string}  
+        * @returns {string}
         */
         getColor: function(name) {
             return colors[name];
@@ -334,7 +334,7 @@ var mUtil = function() {
 
         /**
         * Checks whether Angular library is included
-        * @returns {boolean}  
+        * @returns {boolean}
         */
         isAngularVersion: function() {
             return window.Zone !== undefined  ? true : false;

@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { GetNotificationSettingsOutput, NotificationServiceProxy, NotificationSubscriptionDto, UpdateNotificationSettingsInput } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
+import map from 'lodash/map';
 import { finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -10,6 +10,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Component({
     selector: 'notificationSettingsModal',
     templateUrl: './notification-settings-modal.component.html',
+    styleUrls: [ '../../../../shared/metronic/m-checkbox.less' ],
     providers: [ DialogService ]
 })
 export class NotificationSettingsModalComponent extends AppModalDialogComponent implements OnInit  {
@@ -53,7 +54,7 @@ export class NotificationSettingsModalComponent extends AppModalDialogComponent 
     save(): void {
         const input = new UpdateNotificationSettingsInput();
         input.receiveNotifications = this.settings.receiveNotifications;
-        input.notifications = _.map(this.settings.notifications,
+        input.notifications = map(this.settings.notifications,
             (n) => {
                 let subscription = new NotificationSubscriptionDto();
                 subscription.name = n.name;

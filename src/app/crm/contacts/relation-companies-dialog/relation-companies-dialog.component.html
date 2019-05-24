@@ -1,11 +1,14 @@
 <contact-list-dialog>
-    <ng-template #contactLayoutTemplate let-contact="contact">
-        <div class="full-name">
-            <h1>{{ contact?.name }}</h1>
+    <ng-template #contactLayoutTemplate let-contact="contact" let-info="info">
+        <div [ngClass]="{primary: info.primaryOrganizationContactId == contact.id}">
+            <div class="full-name">
+                <h1>{{ contact?.name }}</h1>
+            </div>
+            <div class="job-title">
+                <h6>{{ contact?.relation?.relationType?.name }}{{ contact?.relation?.jobTitle ? ', ' + contact?.relation?.jobTitle: ''}}</h6>
+            </div>
+            <a *ngIf="info.primaryOrganizationContactId != contact.id; else primary" (click)="setPrimary($event, contact)" class="set-primary">{{l('Set Primary')}}</a>
+            <ng-template #primary><i>{{l('Primary Company')}}</i></ng-template>
         </div>
-        <div class="job-title">
-            <h6>{{ contact?.relation?.relationType?.name }}{{ contact?.relation?.jobTitle ? ', ' + contact?.relation?.jobTitle: ''}}</h6>
-        </div>
-        <a (click)="setPrimary(contact)" class="set-primary">{{l('Set Primary')}}</a>
     </ng-template>
 </contact-list-dialog>

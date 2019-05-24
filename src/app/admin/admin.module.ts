@@ -12,6 +12,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
+import { DxChartModule } from 'devextreme-angular/ui/chart';
+import { DxPieChartModule } from 'devextreme-angular/ui/pie-chart';
 import { DxFileUploaderModule } from 'devextreme-angular/ui/file-uploader';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
@@ -62,8 +64,6 @@ import { OrganizationUnitsTreeComponent } from './shared/organization-unit-tree.
 import { PermissionComboComponent } from './shared/permission-combo.component';
 import { PermissionTreeComponent } from './shared/permission-tree.component';
 import { RoleComboComponent } from './shared/role-combo.component';
-import { InvoiceComponent } from './subscription-management/invoice/invoice.component';
-import { SubscriptionManagementComponent } from './subscription-management/subscription-management.component';
 import { CreateTenantModalComponent } from './tenants/create-tenant-modal.component';
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenants/tenant-features-modal.component';
@@ -82,7 +82,6 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
 import { ContactsModule } from '../crm/contacts/contacts.module';
 import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-select.component.ts/modules-editions-select.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
-import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 
 @NgModule({
     imports: [
@@ -112,6 +111,8 @@ import { DataSourceService } from '@app/shared/common/data-source/data-source.se
         DxTextAreaModule,
         DxNumberBoxModule,
         DxContextMenuModule,
+        DxPieChartModule,
+        DxChartModule,
         DxListModule,
 
         MatTabsModule,
@@ -151,7 +152,6 @@ import { DataSourceService } from '@app/shared/common/data-source/data-source.se
         LanguagesComponent,
         LanguageTextsComponent,
         CreateOrEditLanguageModalComponent,
-        CreateOrEditLanguageModalComponent,
         EditTextModalComponent,
         OrganizationUnitsComponent,
         OrganizationTreeComponent,
@@ -162,8 +162,6 @@ import { DataSourceService } from '@app/shared/common/data-source/data-source.se
         UploadSSLCertificateModalComponent,
         AddOrEditSSLBindingModal,
         HostDashboardComponent,
-        InvoiceComponent,
-        SubscriptionManagementComponent,
         AddMemberModalComponent,
         UiCustomizationComponent,
         EditionsComponent,
@@ -178,14 +176,21 @@ import { DataSourceService } from '@app/shared/common/data-source/data-source.se
         CreateUserDialogComponent
     ],
     entryComponents: [
-        CreateUserDialogComponent
+        CreateUserDialogComponent,
+        CreateTenantModalComponent,
+        EditTenantModalComponent,
+        TenantFeaturesModalComponent,
+        CreateOrEditEditionModalComponent,
+        CreateOrEditLanguageModalComponent,
+        CreateOrEditRoleModalComponent,
+        EditTextModalComponent,
+        AuditLogDetailModalComponent
     ],
     exports: [
         AddMemberModalComponent
     ],
     providers: [
-        ImpersonationService,
-        DataSourceService
+        ImpersonationService
     ]
 })
 

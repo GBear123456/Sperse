@@ -2,8 +2,6 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import * as ngCommon from '@angular/common';
-import { CommonModule } from '@shared/common/common.module';
-import { AppCommonModule } from '@app/shared/common/app-common.module';
 
 /** Thirds party imports */
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -43,6 +41,8 @@ import { VgBufferingModule } from 'videogular2/buffering';
 import { NgxMaskModule } from '@node_modules/ngx-mask';
 
 /** Application imports */
+import { CommonModule } from '@shared/common/common.module';
+import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { ContactsService } from './contacts.service';
 import { ContactsComponent } from './contacts.component';
 import { DetailsHeaderComponent } from './details-header.component';
@@ -100,6 +100,7 @@ import { CreateClientDialogComponent } from '@app/crm/shared/create-client-dialo
 import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
+import { InvoicesComponent } from '@app/crm/contacts/invoices/invoices.component';
 
 @NgModule({
     declarations: [
@@ -148,7 +149,8 @@ import { OrdersComponent } from '@app/crm/contacts/orders/orders.component';
         ContactListDialogComponent,
         NotSupportedTypeDialogComponent,
         HistoryListDialogComponent,
-        OrdersComponent
+        OrdersComponent,
+        InvoicesComponent
     ],
     imports: [
         FormsModule,

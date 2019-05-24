@@ -9,7 +9,10 @@ import { NotificationsComponent } from '@app/shared/layout/notifications/notific
 
 @Component({
     templateUrl: './header-notifications.component.html',
-    styleUrls: ['./header-notifications.component.less'],
+    styleUrls: [
+        '../../../../shared/metronic/m-card-user.less',
+        './header-notifications.component.less'
+    ],
     selector: '[headerNotifications]',
     encapsulation: ViewEncapsulation.None,
     providers: [ InstanceServiceProxy, TenantSubscriptionServiceProxy ]
@@ -98,12 +101,6 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
         this.shownLoginInfo = this.appSession.getShownLoginInfo();
     }
 
-    hideDropDown() {
-        let element: any = $('#header_notification_bar');
-        let dropDown = element.mDropdown();
-        dropDown && dropDown.hide();
-    }
-
     loadNotifications(): void {
         this._notificationService.getUserNotifications(undefined, 3, 0).subscribe(result => {
             this.unreadNotificationCount = result.unreadCount;
@@ -155,6 +152,12 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
 
     subscriptionStatusBarVisible(): boolean {
         return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement');
+    }
+
+    hideDropDown() {
+        let element: any = $('#header_notification_bar');
+        let dropDown = element.mDropdown();
+        dropDown && dropDown.hide();
     }
 
     openPaymentWizardDialog(e) {

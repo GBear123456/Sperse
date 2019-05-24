@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Injector, Output, V
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { HtmlHelper } from '@shared/helpers/HtmlHelper';
 import { ListResultDtoOfOrganizationUnitDto, MoveOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
+import map from 'lodash/map';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { IBasicOrganizationUnitInfo } from './basic-organization-unit-info';
@@ -157,7 +157,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements After
 
     private getTreeDataFromServer(callback: (ous: IOrganizationUnitOnTree[]) => void): void {
         this._organizationUnitService.getOrganizationUnits().subscribe((result: ListResultDtoOfOrganizationUnitDto) => {
-            const treeData = _.map(result.items, item => (<IOrganizationUnitOnTree>{
+            const treeData = map(result.items, item => (<IOrganizationUnitOnTree>{
                 id: item.id,
                 parent: item.parentId ? item.parentId : '#',
                 code: item.code,

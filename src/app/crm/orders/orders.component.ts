@@ -10,6 +10,7 @@ import {
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
+import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import each from 'lodash/each';
 
@@ -18,7 +19,6 @@ import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import { AppService } from '@app/app.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -33,11 +33,12 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
+import { CreateInvoiceDialogComponent } from '../shared/create-invoice-dialog/create-invoice-dialog.component';
 
 @Component({
     templateUrl: './orders.component.html',
     styleUrls: ['./orders.component.less'],
-    animations: [appModuleAnimation()]
+    providers: [ PipelineService ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -69,18 +70,25 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private filterChanged = false;
     masks = AppConsts.masks;
     private formatting = AppConsts.formatting;
-
     public headlineConfig = {
         names: [this.l('Orders')],
         onRefresh: this.processFilterInternal.bind(this),
-        icon: 'briefcase'
+        icon: 'briefcase',
+        buttons: [
+            {
+                enabled: true,
+                action: this.createInvoice.bind(this),
+                lable: this.l('CreateInvoice')
+            }
+        ]
     };
 
     constructor(injector: Injector,
-                private _filtersService: FiltersService,
-                private _appService: AppService,
-                private _pipelineService: PipelineService,
-                private store$: Store<CrmStore.State>
+        public dialog: MatDialog,
+        private _filtersService: FiltersService,
+        private _appService: AppService,
+        private _pipelineService: PipelineService,
+        private store$: Store<CrmStore.State>
     ) {
         super(injector, AppConsts.localization.CRMLocalizationSourceName);
         this._filtersService.localizationSourceName = AppConsts.localization.CRMLocalizationSourceName;
@@ -102,6 +110,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         };
 
         this.initToolbarConfig();
+    }
+
+    ngOnInit() {
+        this.activate();
+    }
+
+    ngAfterViewInit(): void {
+        this.initDataSource();
     }
 
     initDataSource() {
@@ -139,8 +155,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.dataGrid.instance.showColumnChooser();
     }
 
-    toggleDataLayout(dataLayoutType) {
-        this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
+    toggleDataLayout(dataLayoutType: DataLayoutType) {
+        this._pipelineService.toggleDataLayoutType(dataLayoutType);
+        this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
         this.initDataSource();
         if (this.showPipeline)
@@ -392,6 +409,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             {
                 location: 'after',
                 locateInMenu: 'auto',
+                items: [
+                    { name: 'showCompactRowsHeight', action: () => this.toggleContactView() }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
                 areItemsDependent: true,
                 items: [
                     // {
@@ -428,6 +452,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     toggleStages() {
         this.stagesComponent.toggle();
+    }
+
+    private toggleContactView() {
+        this._pipelineService.toggleContactView();
+        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
+        this.dataGrid.instance.updateDimensions();
     }
 
     filterByOrderStages(filter: FilterModel) {
@@ -506,6 +536,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             );
     }
 
+    createInvoice() {
+        this.dialog.open(CreateInvoiceDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                refreshParent: this.invalidate.bind(this)
+            }
+        });
+    }
+
     activate() {
         super.activate();
         this.localizationService.localizationSourceName = this.localizationSourceName;
@@ -576,14 +617,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.rootComponent.overflowHidden();
 
         this.hideHostElement();
-    }
-
-    ngOnInit() {
-        this.activate();
-    }
-
-    ngAfterViewInit(): void {
-        this.initDataSource();
     }
 
     ngOnDestroy() {

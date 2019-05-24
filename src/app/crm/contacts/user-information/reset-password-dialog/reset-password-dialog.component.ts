@@ -4,7 +4,6 @@ import { Component, Inject, Injector, ElementRef } from '@angular/core';
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
-import * as _ from 'lodash';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -84,7 +83,7 @@ export class ResetPasswordDialog extends AppComponentBase {
 
     showPassword(password: string): string {
         if (password)
-            return _.repeat('*', password.length);
+            return '*'.repeat(password.length);
         return null;
     }
 

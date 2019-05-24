@@ -1,13 +1,11 @@
 /** Core imports */
-import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Injector, Output, OnInit, ViewChild, Inject } from '@angular/core';
 
 /** Third party imports */
-import { ModalDirective } from 'ngx-bootstrap';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import {
     CommonLookupServiceProxy,
@@ -20,20 +18,17 @@ import {
     SubscribableEditionComboboxItemDto
 } from '@shared/service-proxies/service-proxies';
 import { TenantsService } from '@admin/tenants/tenants.service';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 @Component({
     selector: 'createTenantModal',
     templateUrl: './create-tenant-modal.component.html',
     providers: [ TenantsService ]
 })
-export class CreateTenantModalComponent extends AppComponentBase {
-
+export class CreateTenantModalComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
-    @ViewChild('createModal') modal: ModalDirective;
-
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
-    active = false;
     saving = false;
     setRandomPassword = true;
     tenant: CreateTenantInput;
@@ -53,18 +48,19 @@ export class CreateTenantModalComponent extends AppComponentBase {
         super(injector);
     }
 
-    show() {
-        this.active = true;
+    ngOnInit() {
+        this.data.title = this.l('CreateNewTenant');
+        this.data.buttons = [
+            {
+                title: this.l('Save'),
+                class: 'primary',
+                action: this.save.bind(this)
+            }
+        ];
         this.init();
-
         this._profileService.getPasswordComplexitySetting().subscribe(result => {
             this.passwordComplexitySetting = result.setting;
-            this.modal.show();
         });
-    }
-
-    onShown(): void {
-        $('#TenancyName').focus();
     }
 
     init(): void {
@@ -94,8 +90,7 @@ export class CreateTenantModalComponent extends AppComponentBase {
     }
 
     close(): void {
-        this.active = false;
-        this.modal.hide();
+        this.dialogRef.close();
     }
 
 }

@@ -1,5 +1,31 @@
-.hidden-field {
-    position: absolute !important;
-    left: -10000px !important;
-    top: -10000px !important;
+:host {
+    display: block;
+    position: relative;
+    top: 74px;
+    height: 100%;
+
+    .wrapper {
+        padding: 10px;
+        height: calc(~"100vh - 150px")
+    }
+
+    ::ng-deep .mat-tab-group {
+        height: 100%;
+    }
+
+    ::ng-deep .mat-tab-body {
+        padding: 20px;
+    }
+
+    .hidden-field {
+        position: absolute !important;
+        left: -10000px !important;
+        top: -10000px !important;
+    }
+
+    .m-checkbox-list {
+        label {
+            display: block;
+        }
+    }
 }

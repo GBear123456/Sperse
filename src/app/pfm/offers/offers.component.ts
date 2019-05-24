@@ -7,7 +7,8 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import DataSource from 'devextreme/data/data_source';
 import 'devextreme/data/odata/store';
-import { difference, startCase } from 'lodash';
+import difference from 'lodash/difference';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -18,7 +19,8 @@ import {
     OfferManagementServiceProxy,
     OfferFlag,
     OfferFilter,
-    OfferAttribute
+    OfferAttribute,
+    OfferFilterStatus,
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
@@ -26,6 +28,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './offers.component.html',
@@ -38,6 +41,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     @ViewChild('categoriesComponent') categoriesComponent: StaticListComponent;
     @ViewChild('flagsComponent') flagsComponent: StaticListComponent;
     @ViewChild('attributesComponent') attributesComponent: StaticListComponent;
+    @ViewChild('statusesComponent') statusesComponent: StaticListComponent;
 
     private readonly dataSourceURI = 'Offer';
     private rootComponent: any;
@@ -46,11 +50,13 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     filterModelCategories: FilterModel;
     filterModelFlags: FilterModel;
     filterModelAttributes: FilterModel;
+    filterModelStatuses: FilterModel;
     pullContextMenuItems = [];
     selectedOfferKeys = [];
     categories = [];
     flags = [];
     attributes = [];
+    statuses = [];
 
     constructor(
         private injector: Injector,
@@ -173,6 +179,19 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                     ]
                 },
                 {
+                    location: 'before',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'status',
+                            action: this.toggleStatuses.bind(this),
+                            attr: {
+                                'filter-selected': this.filterModelStatuses && this.filterModelStatuses.isSelected
+                            }
+                        }
+                    ]
+                },
+                {
                     location: 'after',
                     locateInMenu: 'auto',
                     items: [
@@ -219,6 +238,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this.attributesComponent.toggle();
     }
 
+    toggleStatuses() {
+        this.statusesComponent.toggle();
+    }
+
     searchValueChange(e: object) {
         this.searchValue = e['value'];
         this.processFilterInternal();
@@ -250,6 +273,9 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
         this.attributes = Object.keys(OfferAttribute)
             .map(key => ({ id: OfferAttribute[key], name: startCase(key) }));
+
+        this.statuses = Object.keys(OfferFilterStatus)
+            .map(key => ({ id: OfferFilterStatus[key], name: startCase(key) }));
 
         this.filters = [
             this.filterModelCategories = new FilterModel({
@@ -286,10 +312,28 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                         keyExpr: 'id'
                     })
                 }
+            }),
+            this.filterModelStatuses = new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'Status',
+                field: 'Status',
+                isSelected: true,
+                items: {
+                    element: new FilterCheckBoxesModel({
+                        dataSource: this.statuses,
+                        nameField: 'name',
+                        keyExpr: 'id',
+                        value: [OfferFilterStatus.Active]
+                    })
+                }
             })
         ];
         this.activate();
         this.initHeadlineConfig();
+
+        setTimeout(() => {
+            this._filtersService.change(this.filterModelStatuses);
+        });
     }
 
     filterByCategory(filter) {
@@ -305,6 +349,10 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         }
 
         return data;
+    }
+
+    filterByStatus(filter) {
+        return FilterHelpers.filterBySetOfValues(filter);
     }
 
     refreshDataGrid() {

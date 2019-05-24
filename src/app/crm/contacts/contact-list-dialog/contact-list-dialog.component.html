@@ -14,7 +14,7 @@
                 <img src="{{ getPhoto( contact?.thumbnail, photoType ) }}" alt="{{l('AltContactPhoto')}}">
             </div>
             <div class="contact-info">
-                <ng-container *ngTemplateOutlet="contactLayoutTemplate; context: { contact: contact }"></ng-container>
+                <ng-container *ngTemplateOutlet="contactLayoutTemplate; context: { contact: contact, info: data}"></ng-container>
             </div>
             <div class="contact-info-actions">
                 <a class="action-link action-link-edit"></a>

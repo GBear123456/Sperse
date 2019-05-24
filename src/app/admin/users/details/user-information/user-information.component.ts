@@ -6,8 +6,6 @@ import { PasswordComplexityValidator } from '@shared/utils/validation/password-c
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 
-import * as _ from 'lodash';
-
 @Component({
     selector: 'user-information',
     templateUrl: './user-information.component.html',
@@ -115,7 +113,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
 
     showPassword(password: string): string {
         if (password)
-            return _.repeat('•', password.length);
+            return '•'.repeat(password.length);
         return null;
     }
 

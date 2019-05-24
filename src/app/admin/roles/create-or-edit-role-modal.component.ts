@@ -1,25 +1,29 @@
-import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { CreateOrUpdateRoleInput, RoleEditDto, RoleServiceProxy } from '@shared/service-proxies/service-proxies';
+import { AfterViewChecked, Component, ElementRef, EventEmitter, Injector, Output, OnInit, ViewChild } from '@angular/core';
+import {
+    CreateOrUpdateRoleInput,
+    GetRoleForEditOutput,
+    RoleEditDto,
+    RoleServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap';
 import { PermissionTreeComponent } from '../shared/permission-tree.component';
 import { finalize } from 'rxjs/operators';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 @Component({
     selector: 'createOrEditRoleModal',
     templateUrl: './create-or-edit-role-modal.component.html'
 })
-export class CreateOrEditRoleModalComponent extends AppComponentBase implements AfterViewChecked {
+export class CreateOrEditRoleModalComponent extends AppModalDialogComponent implements AfterViewChecked, OnInit {
 
     @ViewChild('roleNameInput') roleNameInput: ElementRef;
     @ViewChild('createOrEditModal') modal: ModalDirective;
     @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
-
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     active = false;
     saving = false;
-
+    editData: GetRoleForEditOutput;
     role: RoleEditDto = new RoleEditDto();
     constructor(
         injector: Injector,
@@ -28,35 +32,31 @@ export class CreateOrEditRoleModalComponent extends AppComponentBase implements 
         super(injector);
     }
 
+    ngOnInit() {
+        this.data.buttons = [
+            {
+                title: this.l('Save'),
+                class: 'primary',
+                action: this.save.bind(this)
+            }
+        ];
+        this._roleService.getRoleForEdit(this.data.roleId).subscribe(result => {
+            this.role = result.role;
+            this.data.title = this.role.id ? this.l('EditRole') + ': ' + this.role.displayName : this.l('CreateNewRole');
+            this.editData = result;
+        });
+    }
+
     ngAfterViewChecked(): void {
         //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
         $('tabset ul.nav').addClass('m-tabs-line');
         $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
     }
 
-    show(roleId?: number): void {
-        const self = this;
-        self.active = true;
-
-        self._roleService.getRoleForEdit(roleId).subscribe(result => {
-            self.role = result.role;
-            this.permissionTree.editData = result;
-
-            self.modal.show();
-        });
-    }
-
-    onShown(): void {
-        $(this.roleNameInput.nativeElement).focus();
-    }
-
     save(): void {
-        const self = this;
-
         const input = new CreateOrUpdateRoleInput();
-        input.role = self.role;
-        input.grantedPermissionNames = self.permissionTree.getGrantedPermissionNames();
-
+        input.role = this.role;
+        input.grantedPermissionNames = this.permissionTree.getGrantedPermissionNames();
         this.saving = true;
         this._roleService.createOrUpdateRole(input)
             .pipe(finalize(() => this.saving = false))
@@ -68,7 +68,6 @@ export class CreateOrEditRoleModalComponent extends AppComponentBase implements 
     }
 
     close(): void {
-        this.active = false;
-        this.modal.hide();
+        this.dialogRef.close();
     }
 }

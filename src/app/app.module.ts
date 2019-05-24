@@ -21,7 +21,7 @@ import { FiltersModule } from '@shared/filters/filters.module';
 import { CFOService } from '@shared/cfo/cfo.service';
 import {
     InstanceServiceProxy, ContactServiceProxy, BankAccountsServiceProxy,
-    BusinessEntityServiceProxy, TenantSubscriptionServiceProxy, CashflowServiceProxy
+    BusinessEntityServiceProxy, TenantSubscriptionServiceProxy, CashflowServiceProxy, CashFlowForecastServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
@@ -63,7 +63,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         ExportGoogleSheetService,
         CashflowServiceProxy,
         UserPreferencesService,
-        CfoPreferencesService
+        CfoPreferencesService,
+        CashFlowForecastServiceProxy
     ]
 })
 export class AppModule {}

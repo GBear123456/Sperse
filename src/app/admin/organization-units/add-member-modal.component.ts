@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FindOrganizationUnitUsersInput, NameValueDto, OrganizationUnitServiceProxy, UsersToOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
+import map from 'lodash/map';
 import { ModalDirective } from 'ngx-bootstrap';
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/components/paginator/paginator';
@@ -88,7 +88,7 @@ export class AddMemberModalComponent extends AppComponentBase {
     addUsersToOrganizationUnit(): void {
         const input = new UsersToOrganizationUnitInput();
         input.organizationUnitId = this.organizationUnitId;
-        input.userIds = _.map(this.selectedMembers, selectedMember => Number(selectedMember.value));
+        input.userIds = map(this.selectedMembers, selectedMember => Number(selectedMember.value));
         this.saving = true;
         this._organizationUnitService
             .addUsersToOrganizationUnit(input)

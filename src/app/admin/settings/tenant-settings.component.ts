@@ -1,6 +1,14 @@
+/** Core imports */
+import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+
+/** Third party imports */
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
+import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
+import { Observable, forkJoin, of } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
 import { TokenService } from '@abp/auth/token.service';
-import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -23,27 +31,25 @@ import {
     TenantOfferProviderSettingsServiceProxy,
     TenantCustomizationInfoDto,
     EPCVIPMailerSettingsEditDto,
-    TenantLoginInfoDtoCustomLayoutType,
-    EPCVIPMailerSettingsEditDtoServer,
+    EPCVIPMailerSettingsEditDtoServer,
+
     OngageSettingsEditDto,
     IAgeSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
-import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
-import { Observable, forkJoin, of } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()],
     styleUrls: ['./tenant-settings.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         TenantSettingsCreditReportServiceProxy,
         TenantPaymentSettingsServiceProxy,
         TenantOfferProviderSettingsServiceProxy
     ]
 })
-export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewChecked {
+export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
 
     usingDefaultTimeZone = false;
     initialTimeZone: string = null;
@@ -81,6 +87,18 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     defaultTimezoneScope: DefaultTimezoneScope = AppTimezoneScope.Tenant;
 
     private rootComponent;
+    public headlineConfig = {
+        names: [this.l('Settings')],
+        icon: '',
+        buttons: [
+            {
+                enabled: this.isGranted('Pages.Administration.Languages.Create'),
+                action: this.saveAll.bind(this),
+                icon: 'la la la-floppy-o',
+                lable: this.l('SaveAll')
+            }
+        ]
+    };
 
     constructor(
         injector: Injector,
@@ -91,11 +109,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private _appSessionService: AppSessionService,
         private _tokenService: TokenService,
         private _tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
-        private _faviconsService: FaviconService
+        private _faviconsService: FaviconService,
+        private _changeDetection: ChangeDetectorRef
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
-        this.rootComponent.pageHeaderFixed();
+        this.rootComponent.overflowHidden(true);
     }
 
     ngOnInit(): void {
@@ -104,14 +123,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.initUploaders();
     }
 
-    ngAfterViewChecked(): void {
-        //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
-        $('tabset ul.nav').addClass('m-tabs-line');
-        $('tabset ul.nav li a.nav-link').addClass('m-tabs__link');
-    }
-
     ngOnDestroy() {
-        this.rootComponent.pageHeaderFixed(true);
+        this.rootComponent.overflowHidden(false);
     }
 
     getSettings(): void {
@@ -135,8 +148,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         }
 
         forkJoin(requests)
-            .pipe(finalize(() => { this.loading = false; }))
-            .subscribe((results) => {
+            .pipe(
+                finalize(() => {
+                    this.loading = false;
+                    this._changeDetection.detectChanges();
+                })
+            ).subscribe((results) => {
                 [
                     this.settings,
                     this.baseCommercePaymentSettings,

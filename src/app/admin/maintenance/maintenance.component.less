@@ -1,6 +1,6 @@
 ﻿.web-log-view {
-    overflow-x: scroll;
-    overflow-y: scroll;
+    overflow-x: auto;
+    overflow-y: auto;
     height: 100%;
     white-space: nowrap;
 
@@ -13,4 +13,36 @@
             display: inline-block;
         }
     }
+}
+
+:host {
+    display: block;
+    position: relative;
+    top: 74px;
+    height: 100%;
+    
+    .wrapper {
+        //padding: 10px;
+        height: calc(~"100vh - 150px")
+    }
+    
+    ::ng-deep .mat-tab-group {
+        height: 100%;
+    }
+    
+    ::ng-deep .mat-tab-body {
+        padding: 20px 20px 0;
+    }
+    
+    ::ng-deep .mat-tab-body-content {
+        overflow: hidden;
+    }
+}
+
+/deep/ #gridContainer {
+    height: calc(~"100vh - 280px") !important;
+}
+
+/deep/ #gridContainer[accesskey="cachesGrid"] {
+    height: calc(~"100vh - 280px") !important;
 }

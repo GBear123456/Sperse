@@ -1,0 +1,29 @@
+:host {
+    display: block;
+    position: relative;
+    top: 74px;
+    height: 100%;
+
+    .wrapper {
+        padding: 10px;
+        height: calc(~"100vh - 150px")
+    }
+
+    ::ng-deep .mat-tab-group {
+        height: 100%;
+    }
+
+    ::ng-deep .mat-tab-body {
+        padding: 20px;
+    }
+
+    ::ng-deep #gridContainer {
+        height: auto !important;
+    }
+
+    .m-checkbox-list {
+        label {
+            display: block;
+        }
+    }
+}

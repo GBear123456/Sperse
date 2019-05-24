@@ -1,347 +1,358 @@
 <div [@routerTransition]>
-    <div class="m-subheader">
-        <div class="d-flex align-items-center">
-            <div class="mr-auto col-sm-12 col-md-6">
-                <h3 class="m-subheader__title m-subheader__title--separator">
-                    <span>{{l("Settings")}}</span>
-                </h3>
-                <span class="m-section__sub">
-                    {{l("SettingsHeaderInfo")}}
-                </span>
-            </div>
-            <div class="col-sm-12 col-md-6 text-right">
-                <button class="btn btn-primary" (click)="saveAll()"><i class="la la-floppy-o"></i> {{l("SaveAll")}}</button>
-            </div>
-        </div>
-    </div>
-    <div class="m-content">
-        <div class="m-portlet m-portlet--mobile">
-            <div class="m-portlet__body">
-                <tabset class="tab-container tabbable-line" *ngIf="hostSettings">
-                    <tab heading="{{l('General')}}" *ngIf="showTimezoneSelection" customClass="m-tabs__item">
+    <app-headline [config]="headlineConfig"></app-headline>
+
+    <div class="wrapper">
+        <mat-tab-group *ngIf="hostSettings">
+            <mat-tab label="{{l('General')}}" *ngIf="showTimezoneSelection">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="form-group">
+                        <label for="Timezone">{{l("Timezone")}}</label>
+                        <timezone-combo id="Timezone" [(selectedTimeZone)]="hostSettings.general.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('TenantManagement')}}" *ngIf="hostSettings.tenantManagement">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="m-form">
+                    <h5>{{l("FormBasedRegistration")}}</h5>
+                    <div class="m-checkbox-list">
                         <div class="form-group">
-                            <label for="Timezone">{{l("Timezone")}}</label>
-                            <timezone-combo id="Timezone" [(selectedTimeZone)]="hostSettings.general.timezone" defaultTimezoneScope="{{defaultTimezoneScope}}"></timezone-combo>
+                            <label for="Setting_AllowSelfRegistration" class="m-checkbox">
+                                <input id="Setting_AllowSelfRegistration" type="checkbox" name="AllowSelfRegistration" [(ngModel)]="hostSettings.tenantManagement.allowSelfRegistration">
+                                {{l("AllowTenantsToRegisterThemselves")}}
+                                <span></span>
+                            </label>
+                            <span class="m-form__help">{{l("AllowTenantsToRegisterThemselves_Hint")}}</span>
                         </div>
-                    </tab>
-                    <tab heading="{{l('TenantManagement')}}" *ngIf="hostSettings.tenantManagement" customClass="m-tabs__item">
-                        <div class="m-form">
-                            <h5>{{l("FormBasedRegistration")}}</h5>
-                            <div class="m-checkbox-list">
-                                <div class="form-group">
-                                    <label for="Setting_AllowSelfRegistration" class="m-checkbox">
-                                        <input id="Setting_AllowSelfRegistration" type="checkbox" name="AllowSelfRegistration" [(ngModel)]="hostSettings.tenantManagement.allowSelfRegistration">
-                                        {{l("AllowTenantsToRegisterThemselves")}}
-                                        <span></span>
-                                    </label>
-                                    <span class="m-form__help">{{l("AllowTenantsToRegisterThemselves_Hint")}}</span>
-                                </div>
-                                <div class="form-group">
-                                    <label for="Setting_IsNewRegisteredTenantActiveByDefault" class="m-checkbox" [hidden]="!hostSettings.tenantManagement.allowSelfRegistration">
-                                        <input id="Setting_IsNewRegisteredTenantActiveByDefault" type="checkbox" name="IsNewRegisteredTenantActiveByDefault"
-                                               [(ngModel)]="hostSettings.tenantManagement.isNewRegisteredTenantActiveByDefault">
-                                        {{l("NewRegisteredTenantsIsActiveByDefault")}}
-                                        <span></span>
-                                    </label>
-                                    <span class="m-form__help">{{l("NewRegisteredTenantsIsActiveByDefault_Hint")}}</span>
-                                </div>
-                                <label for="Setting_UseCaptchaOnRegistration" class="m-checkbox" [hidden]="!hostSettings.tenantManagement.allowSelfRegistration">
-                                    <input id="Setting_UseCaptchaOnRegistration" type="checkbox" name="UseCaptchaOnRegistration" [(ngModel)]="hostSettings.tenantManagement.useCaptchaOnRegistration">
-                                    {{l("UseCaptchaOnRegistration")}}
-                                    <span></span>
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label for="DefaultEditionId">{{l("Edition")}}</label>
-                                <select id="DefaultEditionId" class="form-control" [(ngModel)]="hostSettings.tenantManagement.defaultEditionId">
-                                    <option value="">{{emptyText}}</option>
-                                    <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label for="Setting_IsNewRegisteredTenantActiveByDefault" class="m-checkbox" [hidden]="!hostSettings.tenantManagement.allowSelfRegistration">
+                                <input id="Setting_IsNewRegisteredTenantActiveByDefault" type="checkbox" name="IsNewRegisteredTenantActiveByDefault"
+                                       [(ngModel)]="hostSettings.tenantManagement.isNewRegisteredTenantActiveByDefault">
+                                {{l("NewRegisteredTenantsIsActiveByDefault")}}
+                                <span></span>
+                            </label>
+                            <span class="m-form__help">{{l("NewRegisteredTenantsIsActiveByDefault_Hint")}}</span>
                         </div>
-                    </tab>
-                    <tab heading="{{l('UserManagement')}}" *ngIf="hostSettings.userManagement" customClass="m-tabs__item">
+                        <label for="Setting_UseCaptchaOnRegistration" class="m-checkbox" [hidden]="!hostSettings.tenantManagement.allowSelfRegistration">
+                            <input id="Setting_UseCaptchaOnRegistration" type="checkbox" name="UseCaptchaOnRegistration" [(ngModel)]="hostSettings.tenantManagement.useCaptchaOnRegistration">
+                            {{l("UseCaptchaOnRegistration")}}
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultEditionId">{{l("Edition")}}</label>
+                        <select id="DefaultEditionId" class="form-control" [(ngModel)]="hostSettings.tenantManagement.defaultEditionId">
+                            <option value="">{{emptyText}}</option>
+                            <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
+                        </select>
+                    </div>
+                </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('UserManagement')}}" *ngIf="hostSettings.userManagement">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="m-checkbox-list">
+                    <label for="Settings_IsEmailConfirmationRequiredForLogin" class="m-checkbox">
+                        <input id="Settings_IsEmailConfirmationRequiredForLogin" type="checkbox" name="IsEmailConfirmationRequiredForLogin"
+                               [(ngModel)]="hostSettings.userManagement.isEmailConfirmationRequiredForLogin">
+                        {{l("EmailConfirmationRequiredForLogin")}}
+                        <span></span>
+                    </label>
+                    <label for="Settings_SmsVerificationEnabled" class="m-checkbox">
+                        <input id="Settings_SmsVerificationEnabled" class="md-check" type="checkbox" name="SmsVerificationEnabled"
+                               [(ngModel)]="hostSettings.userManagement.smsVerificationEnabled">
+                        {{l("SmsVerificationEnabled")}}
+                        <span></span>
+                    </label>
+                </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Security')}}" *ngIf="hostSettings.security">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                    <h5>{{l("PasswordComplexity")}}</h5>
+                    <label for="Setting_PasswordComplexity_UseDefaultSettings" class="m-checkbox">
+                        <input id="Setting_PasswordComplexity_UseDefaultSettings" type="checkbox" name="Setting_PasswordComplexity_UseDefaultSettings"
+                               [(ngModel)]="hostSettings.security.useDefaultPasswordComplexitySettings">
+                        {{l("UseDefaultSettings")}}
+                        <span></span>
+                    </label>
+                    <div class="m-checkbox-list">
+                        <label for="Setting_PasswordComplexity_RequireDigit" class="m-checkbox">
+                            <input id="Setting_PasswordComplexity_RequireDigit" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
+                                   [(ngModel)]="hostSettings.security.passwordComplexity.requireDigit" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                            <input id="Setting_PasswordComplexity_RequireDigit" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
+                                   [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireDigit" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                                   disabled>
+                            {{l("PasswordComplexity_RequireDigit")}}
+                            <span></span>
+                        </label>
+                        <label for="Setting_PasswordComplexity_RequireLowercase" class="m-checkbox">
+                            <input id="Setting_PasswordComplexity_RequireLowercase" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
+                                   [(ngModel)]="hostSettings.security.passwordComplexity.requireLowercase" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                            <input id="Setting_PasswordComplexity_RequireLowercase" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
+                                   [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireLowercase" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                                   disabled>
+                            {{l("PasswordComplexity_RequireLowercase")}}
+                            <span></span>
+                        </label>
+                        <label for="Setting_PasswordComplexity_RequireNonAlphanumeric" class="m-checkbox">
+                            <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
+                                   [(ngModel)]="hostSettings.security.passwordComplexity.requireNonAlphanumeric" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                            <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
+                                   [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireNonAlphanumeric" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                                   disabled>
+                            {{l("PasswordComplexity_RequireNonAlphanumeric")}}
+                            <span></span>
+                        </label>
+                        <label for="Setting_PasswordComplexity_RequireUppercase" class="m-checkbox">
+                            <input id="Setting_PasswordComplexity_RequireUppercase" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
+                                   [(ngModel)]="hostSettings.security.passwordComplexity.requireUppercase" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                            <input id="Setting_PasswordComplexity_RequireUppercase" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
+                                   [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireUppercase" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                                   disabled>
+                            {{l("PasswordComplexity_RequireUppercase")}}
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>{{l("PasswordComplexity_RequiredLength")}}</label>
+                        <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':hostSettings.security.passwordComplexity.requiredLength}"
+                               [(ngModel)]="hostSettings.security.passwordComplexity.requiredLength" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
+                        <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':hostSettings.security.defaultPasswordComplexity.requiredLength}"
+                               [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requiredLength" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
+                               disabled>
+                    </div>
+                    </div>
+                    <div>
+                        <h5>{{l("UserLockOut")}}</h5>
+                        <div class="form-group">
+                            <label for="Setting_UserLockOut_IsEnabled" class="m-checkbox">
+                                <input id="Setting_UserLockOut_IsEnabled" type="checkbox" name="Setting_UserLockOut_IsEnabled" [(ngModel)]="hostSettings.security.userLockOut.isEnabled">
+                                {{l("EnableUserAccountLockingOnFailedLoginAttemts")}}
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="form-group" *ngIf="hostSettings.security.userLockOut.isEnabled">
+                            <label for="MaxFailedAccessAttemptsBeforeLockout">{{l("MaxFailedAccessAttemptsBeforeLockout")}}</label>
+                            <input id="MaxFailedAccessAttemptsBeforeLockout" type="number" name="MaxFailedAccessAttemptsBeforeLockout" class="form-control" [ngClass]="{'edited':hostSettings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout}"
+                                   [(ngModel)]="hostSettings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout">
+                        </div>
+                        <div class="form-group" *ngIf="hostSettings.security.userLockOut.isEnabled">
+                            <label for="DefaultAccountLockoutDurationAsSeconds">{{l("DefaultAccountLockoutDurationAsSeconds")}}</label>
+                            <input id="DefaultAccountLockoutDurationAsSeconds" type="number" name="DefaultAccountLockoutSeconds" class="form-control" [ngClass]="{'edited':hostSettings.security.userLockOut.defaultAccountLockoutSeconds}"
+                                   [(ngModel)]="hostSettings.security.userLockOut.defaultAccountLockoutSeconds">
+                        </div>
+                    </div>
+                    <div>
+                        <h5>{{l("TwoFactorLogin")}}</h5>
                         <div class="m-checkbox-list">
-                            <label for="Settings_IsEmailConfirmationRequiredForLogin" class="m-checkbox">
-                                <input id="Settings_IsEmailConfirmationRequiredForLogin" type="checkbox" name="IsEmailConfirmationRequiredForLogin"
-                                       [(ngModel)]="hostSettings.userManagement.isEmailConfirmationRequiredForLogin">
-                                {{l("EmailConfirmationRequiredForLogin")}}
+                            <label for="Setting_TwoFactorLogin_IsEnabled" class="m-checkbox">
+                                <input id="Setting_TwoFactorLogin_IsEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsEnabled" [(ngModel)]="hostSettings.security.twoFactorLogin.isEnabled">
+                                {{l("EnableTwoFactorLogin")}}
                                 <span></span>
                             </label>
-                            <label for="Settings_SmsVerificationEnabled" class="m-checkbox">
-                                <input id="Settings_SmsVerificationEnabled" class="md-check" type="checkbox" name="SmsVerificationEnabled"
-                                       [(ngModel)]="hostSettings.userManagement.smsVerificationEnabled">
-                                {{l("SmsVerificationEnabled")}}
+                            <label for="Setting_TwoFactorLogin_IsEmailProviderEnabled" class="m-checkbox" *ngIf="hostSettings.security.twoFactorLogin.isEnabled">
+                                <input id="Setting_TwoFactorLogin_IsEmailProviderEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsEmailProviderEnabled"
+                                       [(ngModel)]="hostSettings.security.twoFactorLogin.isEmailProviderEnabled">
+                                {{l("IsEmailVerificationEnabled")}}
                                 <span></span>
                             </label>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('Security')}}" *ngIf="hostSettings.security" customClass="m-tabs__item">
-                        <div>
-                            <h5>{{l("PasswordComplexity")}}</h5>
-                            <label for="Setting_PasswordComplexity_UseDefaultSettings" class="m-checkbox">
-                                <input id="Setting_PasswordComplexity_UseDefaultSettings" type="checkbox" name="Setting_PasswordComplexity_UseDefaultSettings"
-                                       [(ngModel)]="hostSettings.security.useDefaultPasswordComplexitySettings">
-                                {{l("UseDefaultSettings")}}
+                            <label for="Setting_TwoFactorLogin_IsSmsProviderEnabled" class="m-checkbox" *ngIf="hostSettings.security.twoFactorLogin.isEnabled">
+                                <input id="Setting_TwoFactorLogin_IsSmsProviderEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsSmsProviderEnabled"
+                                       [(ngModel)]="hostSettings.security.twoFactorLogin.isSmsProviderEnabled">
+                                {{l("IsSmsVerificationEnabled")}}
                                 <span></span>
                             </label>
-                            <div class="m-checkbox-list">
-                                <label for="Setting_PasswordComplexity_RequireDigit" class="m-checkbox">
-                                    <input id="Setting_PasswordComplexity_RequireDigit" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
-                                           [(ngModel)]="hostSettings.security.passwordComplexity.requireDigit" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                                    <input id="Setting_PasswordComplexity_RequireDigit" type="checkbox" name="Setting_PasswordComplexity_RequireDigit"
-                                           [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireDigit" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
-                                           disabled>
-                                    {{l("PasswordComplexity_RequireDigit")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_PasswordComplexity_RequireLowercase" class="m-checkbox">
-                                    <input id="Setting_PasswordComplexity_RequireLowercase" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
-                                           [(ngModel)]="hostSettings.security.passwordComplexity.requireLowercase" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                                    <input id="Setting_PasswordComplexity_RequireLowercase" type="checkbox" name="Setting_PasswordComplexity_RequireLowercase"
-                                           [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireLowercase" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
-                                           disabled>
-                                    {{l("PasswordComplexity_RequireLowercase")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_PasswordComplexity_RequireNonAlphanumeric" class="m-checkbox">
-                                    <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
-                                           [(ngModel)]="hostSettings.security.passwordComplexity.requireNonAlphanumeric" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                                    <input id="Setting_PasswordComplexity_RequireNonAlphanumeric" type="checkbox" name="Setting_PasswordComplexity_RequireNonAlphanumeric"
-                                           [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireNonAlphanumeric" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
-                                           disabled>
-                                    {{l("PasswordComplexity_RequireNonAlphanumeric")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_PasswordComplexity_RequireUppercase" class="m-checkbox">
-                                    <input id="Setting_PasswordComplexity_RequireUppercase" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
-                                           [(ngModel)]="hostSettings.security.passwordComplexity.requireUppercase" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                                    <input id="Setting_PasswordComplexity_RequireUppercase" type="checkbox" name="Setting_PasswordComplexity_RequireUppercase"
-                                           [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requireUppercase" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
-                                           disabled>
-                                    {{l("PasswordComplexity_RequireUppercase")}}
-                                    <span></span>
-                                </label>
-                            </div>
-                            <div class="form-group">
-                                <label>{{l("PasswordComplexity_RequiredLength")}}</label>
-                                <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':hostSettings.security.passwordComplexity.requiredLength}"
-                                       [(ngModel)]="hostSettings.security.passwordComplexity.requiredLength" *ngIf="!hostSettings.security.useDefaultPasswordComplexitySettings">
-                                <input type="number" name="RequiredLength" class="form-control" [ngClass]="{'edited':hostSettings.security.defaultPasswordComplexity.requiredLength}"
-                                       [(ngModel)]="hostSettings.security.defaultPasswordComplexity.requiredLength" *ngIf="hostSettings.security.useDefaultPasswordComplexitySettings"
-                                       disabled>
-                            </div>
-                        </div>
-                        <div>
-                            <h5>{{l("UserLockOut")}}</h5>
-                            <div class="form-group">
-                                <label for="Setting_UserLockOut_IsEnabled" class="m-checkbox">
-                                    <input id="Setting_UserLockOut_IsEnabled" type="checkbox" name="Setting_UserLockOut_IsEnabled" [(ngModel)]="hostSettings.security.userLockOut.isEnabled">
-                                    {{l("EnableUserAccountLockingOnFailedLoginAttemts")}}
-                                    <span></span>
-                                </label>
-                            </div>
-                            <div class="form-group" *ngIf="hostSettings.security.userLockOut.isEnabled">
-                                <label for="MaxFailedAccessAttemptsBeforeLockout">{{l("MaxFailedAccessAttemptsBeforeLockout")}}</label>
-                                <input id="MaxFailedAccessAttemptsBeforeLockout" type="number" name="MaxFailedAccessAttemptsBeforeLockout" class="form-control" [ngClass]="{'edited':hostSettings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout}"
-                                       [(ngModel)]="hostSettings.security.userLockOut.maxFailedAccessAttemptsBeforeLockout">
-                            </div>
-                            <div class="form-group" *ngIf="hostSettings.security.userLockOut.isEnabled">
-                                <label for="DefaultAccountLockoutDurationAsSeconds">{{l("DefaultAccountLockoutDurationAsSeconds")}}</label>
-                                <input id="DefaultAccountLockoutDurationAsSeconds" type="number" name="DefaultAccountLockoutSeconds" class="form-control" [ngClass]="{'edited':hostSettings.security.userLockOut.defaultAccountLockoutSeconds}"
-                                       [(ngModel)]="hostSettings.security.userLockOut.defaultAccountLockoutSeconds">
-                            </div>
-                        </div>
-                        <div>
-                            <h5>{{l("TwoFactorLogin")}}</h5>
-                            <div class="m-checkbox-list">
-                                <label for="Setting_TwoFactorLogin_IsEnabled" class="m-checkbox">
-                                    <input id="Setting_TwoFactorLogin_IsEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsEnabled" [(ngModel)]="hostSettings.security.twoFactorLogin.isEnabled">
-                                    {{l("EnableTwoFactorLogin")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_TwoFactorLogin_IsEmailProviderEnabled" class="m-checkbox" *ngIf="hostSettings.security.twoFactorLogin.isEnabled">
-                                    <input id="Setting_TwoFactorLogin_IsEmailProviderEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsEmailProviderEnabled"
-                                           [(ngModel)]="hostSettings.security.twoFactorLogin.isEmailProviderEnabled">
-                                    {{l("IsEmailVerificationEnabled")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_TwoFactorLogin_IsSmsProviderEnabled" class="m-checkbox" *ngIf="hostSettings.security.twoFactorLogin.isEnabled">
-                                    <input id="Setting_TwoFactorLogin_IsSmsProviderEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsSmsProviderEnabled"
-                                           [(ngModel)]="hostSettings.security.twoFactorLogin.isSmsProviderEnabled">
-                                    {{l("IsSmsVerificationEnabled")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled" class="m-checkbox" *ngIf="hostSettings.security.twoFactorLogin.isEnabled">
-                                    <input id="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled"
-                                           [(ngModel)]="hostSettings.security.twoFactorLogin.isGoogleAuthenticatorEnabled">
-                                    {{l("IsGoogleAuthenticatorEnabled")}}
-                                    <span></span>
-                                </label>
-                                <label for="Setting_TwoFactorLogin_IsRememberBrowserEnabled" class="m-checkbox" *ngIf="hostSettings.security.twoFactorLogin.isEnabled">
-                                    <input id="Setting_TwoFactorLogin_IsRememberBrowserEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsRememberBrowserEnabled"
-                                           [(ngModel)]="hostSettings.security.twoFactorLogin.isRememberBrowserEnabled">
-                                    {{l("AllowToRememberBrowserForTwoFactorLogin")}}
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('EmailSmtp')}}" *ngIf="hostSettings.email" customClass="m-tabs__item">
-                        <div class="form-group">
-                            <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
-                            <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [ngClass]="{'edited':hostSettings.email.defaultFromAddress}"
-                                   [(ngModel)]="hostSettings.email.defaultFromAddress" maxlength="256">
-                        </div>
-                        <div class="form-group">
-                            <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
-                            <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [ngClass]="{'edited':hostSettings.email.defaultFromDisplayName}"
-                                   [(ngModel)]="hostSettings.email.defaultFromDisplayName" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="SmtpHost">{{l("SmtpHost")}}</label>
-                            <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':hostSettings.email.smtpHost}" [(ngModel)]="hostSettings.email.smtpHost"
-                                   maxlength="64">
-                        </div>
-                        <div class="form-group">
-                            <label for="SmtpPort">{{l("SmtpPort")}}</label>
-                            <input id="SmtpPort" type="number" name="SmtpPort" class="form-control" [ngClass]="{'edited':hostSettings.email.smtpPort}" [(ngModel)]="hostSettings.email.smtpPort"
-                                   maxlength="5">
-                        </div>
-                        <div class="m-checkbox-list">
-                            <label for="Settings_SmtpEnableSsl" class="m-checkbox">
-                                <input id="Settings_SmtpEnableSsl" type="checkbox" name="SmtpEnableSsl" [(ngModel)]="hostSettings.email.smtpEnableSsl">
-                                {{l("UseSsl")}}
+                            <label for="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled" class="m-checkbox" *ngIf="hostSettings.security.twoFactorLogin.isEnabled">
+                                <input id="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled"
+                                       [(ngModel)]="hostSettings.security.twoFactorLogin.isGoogleAuthenticatorEnabled">
+                                {{l("IsGoogleAuthenticatorEnabled")}}
                                 <span></span>
                             </label>
-                            <label for="Settings_SmtpUseDefaultCredentials" class="m-checkbox">
-                                <input id="Settings_SmtpUseDefaultCredentials" type="checkbox" name="SmtpUseDefaultCredentials" [(ngModel)]="hostSettings.email.smtpUseDefaultCredentials">
-                                {{l("UseDefaultCredentials")}}
+                            <label for="Setting_TwoFactorLogin_IsRememberBrowserEnabled" class="m-checkbox" *ngIf="hostSettings.security.twoFactorLogin.isEnabled">
+                                <input id="Setting_TwoFactorLogin_IsRememberBrowserEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsRememberBrowserEnabled"
+                                       [(ngModel)]="hostSettings.security.twoFactorLogin.isRememberBrowserEnabled">
+                                {{l("AllowToRememberBrowserForTwoFactorLogin")}}
                                 <span></span>
                             </label>
                         </div>
-                        <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
-                            <label for="SmtpDomainName">{{l("DomainName")}}</label>
-                            <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control" [ngClass]="{'edited':hostSettings.email.smtpDomain}"
-                                   [(ngModel)]="hostSettings.email.smtpDomain" maxlength="128">
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('EmailSmtp')}}" *ngIf="hostSettings.email">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div class="form-group">
+                        <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
+                        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control"
+                               [ngClass]="{'edited':hostSettings.email.defaultFromAddress}"
+                               [(ngModel)]="hostSettings.email.defaultFromAddress" maxlength="256">
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
+                        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control"
+                               [ngClass]="{'edited':hostSettings.email.defaultFromDisplayName}"
+                               [(ngModel)]="hostSettings.email.defaultFromDisplayName" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="SmtpHost">{{l("SmtpHost")}}</label>
+                        <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':hostSettings.email.smtpHost}"
+                               [(ngModel)]="hostSettings.email.smtpHost"
+                               maxlength="64">
+                    </div>
+                    <div class="form-group">
+                        <label for="SmtpPort">{{l("SmtpPort")}}</label>
+                        <input id="SmtpPort" type="number" name="SmtpPort" class="form-control"
+                               [ngClass]="{'edited':hostSettings.email.smtpPort}" [(ngModel)]="hostSettings.email.smtpPort"
+                               maxlength="5">
+                    </div>
+                    <div class="m-checkbox-list">
+                        <label for="Settings_SmtpEnableSsl" class="m-checkbox">
+                            <input id="Settings_SmtpEnableSsl" type="checkbox" name="SmtpEnableSsl"
+                                   [(ngModel)]="hostSettings.email.smtpEnableSsl">
+                            {{l("UseSsl")}}
+                            <span></span>
+                        </label>
+                        <label for="Settings_SmtpUseDefaultCredentials" class="m-checkbox">
+                            <input id="Settings_SmtpUseDefaultCredentials" type="checkbox" name="SmtpUseDefaultCredentials"
+                                   [(ngModel)]="hostSettings.email.smtpUseDefaultCredentials">
+                            {{l("UseDefaultCredentials")}}
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                        <label for="SmtpDomainName">{{l("DomainName")}}</label>
+                        <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control"
+                               [ngClass]="{'edited':hostSettings.email.smtpDomain}"
+                               [(ngModel)]="hostSettings.email.smtpDomain" maxlength="128">
+                    </div>
+                    <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                        <label for="SmtpUserName">{{l("UserName")}}</label>
+                        <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
+                               [ngClass]="{'edited':hostSettings.email.smtpUserName}"
+                               [(ngModel)]="hostSettings.email.smtpUserName" maxlength="128">
+                    </div>
+                    <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                        <label for="SmtpPassword">{{l("Password")}}</label>
+                        <input type="text" class="hidden-field">
+                        <input type="password" class="hidden-field">
+                        <input id="SmtpPassword" type="password" name="SmtpPassword" id="SmtpPassword" class="form-control"
+                               [ngClass]="{'edited':hostSettings.email.smtpPassword}" [(ngModel)]="hostSettings.email.smtpPassword"
+                               maxlength="128" autocomplete="off">
+                    </div>
+                    <hr/>
+                    <h5>{{l("TestEmailSettingsHeader")}}</h5>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
                         </div>
-                        <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
-                            <label for="SmtpUserName">{{l("UserName")}}</label>
-                            <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control" [ngClass]="{'edited':hostSettings.email.smtpUserName}"
-                                   [(ngModel)]="hostSettings.email.smtpUserName" maxlength="128">
+                        <div class="form-group col-md-2">
+                            <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{l("SendTestEmail")}}</button>
                         </div>
-                        <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
-                            <label for="SmtpPassword">{{l("Password")}}</label>
-                            <input type="text" class="hidden-field">
-                            <input type="password" class="hidden-field">
-                            <input id="SmtpPassword" type="password" name="SmtpPassword" id="SmtpPassword" class="form-control" [ngClass]="{'edited':hostSettings.email.smtpPassword}" [(ngModel)]="hostSettings.email.smtpPassword"
-                                   maxlength="128" autocomplete="off">
-                        </div>
-                        <hr />
-                        <h5>{{l("TestEmailSettingsHeader")}}</h5>
-                        <div class="row">
-                            <div class="form-group col-md-4">
-                                <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
-                            </div>
-                            <div class="form-group col-md-2">
-                                <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{l("SendTestEmail")}}</button>
-                            </div>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('Base Commerce Link')}}" *ngIf="true" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="BCUserName">{{l("User Name")}}</label>
-                                <input id="BCUserName" type="text" name="BCUserName" class="form-control" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="BCPassword">{{l("Password")}}</label>
-                                <input id="BCPassword" type="password" name="BCPassword" class="form-control" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="BCKey">{{l("Key")}}</label>
-                                <input id="BCKey" type="text" name="BCKey" class="form-control" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
-                            </div>
-                            <h5>{{l("Environment")}}</h5>
-                            <div class="md-checkbox-list">
-                                <label for="BCIsSandBox" class="m-checkbox">
-                                    <input id="BCIsSandBox" class="md-check" type="checkbox" name="BCIsSandBox" [(ngModel)]="baseCommercePaymentSettings.sandBox">
-                                    {{l("SandBox")}}
-                                    <span></span>
-                                </label>
-                            </div>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('PayPal')}}" *ngIf="true" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
-                                <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
-                            </div>
-                            <div class="form-group">
-                                <label for="PayPalClientId">{{l("Client ID")}}</label>
-                                <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="payPalPaymentSettings.clientId">
-                            </div>
-                            <div class="form-group">
-                                <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
-                                <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="payPalPaymentSettings.clientSecret">
-                            </div>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('ACH Works')}}" *ngIf="true" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="achWorksSSS">{{l("SSS")}}</label>
-                                <input id="achWorksSSS" type="text" name="achWorksSSS" class="form-control" [(ngModel)]="achWorksSettings.sss" maxlength="3">
-                            </div>
-                            <div class="form-group">
-                                <label for="achWorksLocID">{{l("LocID")}}</label>
-                                <input id="achWorksLocID" type="text" name="achWorksLocID" class="form-control" [(ngModel)]="achWorksSettings.locID" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="achWorksSOAPUser">{{l("SOAPUser")}}</label>
-                                <input id="achWorksSOAPUser" type="text" name="achWorksSOAPUser" class="form-control" [(ngModel)]="achWorksSettings.soapUser" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="achWorksSOAPKey">{{l("SOAPKey")}}</label>
-                                <input id="achWorksSOAPKey" type="text" name="achWorksSOAPKey" class="form-control" [(ngModel)]="achWorksSettings.soapKey" maxlength="128">
-                            </div>
-                        </div>
-                    </tab>
-                    <tab heading="{{l('Recurly Link')}}" *ngIf="true" customClass="m-tabs__item">
-                        <div>
-                            <div class="form-group">
-                                <label for="RecurlySubdomain">{{l("RecurlySubdomain")}}</label>
-                                <input id="RecurlySubdomain" type="text" name="RecurlySubdomain" class="form-control" [(ngModel)]="recurlySettings.subdomain" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="RecurlyApiKey">{{l("RecurlyApiKey")}}</label>
-                                <input id="RecurlyApiKey" type="text" name="RecurlyApiKey" class="form-control" [(ngModel)]="recurlySettings.apiKey" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="RecurlyPrivateKey">{{l("RecurlyPrivateKey")}}</label>
-                                <input id="RecurlyPrivateKey" type="text" name="RecurlyPrivateKey" class="form-control" [(ngModel)]="recurlySettings.privateKey" maxlength="128">
-                            </div>
-                            <div class="form-group">
-                                <label for="RecurlyPageSize">{{l("RecurlyPageSize")}}</label>
-                                <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
-                            </div>
-                        </div>
-                    </tab>
-                    <tab *ngIf="true" heading="{{l('Invoice')}}" customClass="m-tabs__item">
-                        <!-- *ngIf="true" is a workaround for https://github.com/valor-software/ng2-bootstrap/issues/823 -->
-                        <h5>{{l("InvoiceInformation")}}</h5>
-                        <div class="form-group">
-                            <label for="LegalName">{{l("LegalName")}}</label>
-                            <input id="LegalName" type="text" name="legalName" class="form-control" [ngClass]="{'edited':hostSettings.billing.legalName}" [(ngModel)]="hostSettings.billing.legalName" maxlength="64">
-                        </div>
-                        <div class="form-group">
-                            <label for="Address">{{l("Address")}}</label>
-                            <textarea id="Address" rows="5" name="address" class="form-control" [ngClass]="{'edited':hostSettings.billing.address}" [(ngModel)]="hostSettings.billing.address" maxlength="256"></textarea>
-                        </div>
-                    </tab>
-                </tabset>
-            </div>
-        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Base Commerce Link')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                    <div class="form-group">
+                        <label for="BCUserName">{{l("User Name")}}</label>
+                        <input id="BCUserName" type="text" name="BCUserName" class="form-control" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="BCPassword">{{l("Password")}}</label>
+                        <input id="BCPassword" type="password" name="BCPassword" class="form-control" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="BCKey">{{l("Key")}}</label>
+                        <input id="BCKey" type="text" name="BCKey" class="form-control" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
+                    </div>
+                    <h5>{{l("Environment")}}</h5>
+                    <div class="md-checkbox-list">
+                        <label for="BCIsSandBox" class="m-checkbox">
+                            <input id="BCIsSandBox" class="md-check" type="checkbox" name="BCIsSandBox" [(ngModel)]="baseCommercePaymentSettings.sandBox">
+                            {{l("SandBox")}}
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('PayPal')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                    <div class="form-group">
+                        <label for="PayPalEnvironment">{{l("PayPal environment")}}</label>
+                        <input id="PayPalEnvironment" type="text" name="PayPalEnvironment" class="form-control" [(ngModel)]="payPalPaymentSettings.environment">
+                    </div>
+                    <div class="form-group">
+                        <label for="PayPalClientId">{{l("Client ID")}}</label>
+                        <input id="PayPalClientId" type="text" name="PayPalClientId" class="form-control" [(ngModel)]="payPalPaymentSettings.clientId">
+                    </div>
+                    <div class="form-group">
+                        <label for="PayPalClientSecret">{{l("Client Secret")}}</label>
+                        <input id="PayPalClientSecret" type="text" name="PayPalClientSecret" class="form-control" [(ngModel)]="payPalPaymentSettings.clientSecret">
+                    </div>
+                </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('ACH Works')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                    <div class="form-group">
+                        <label for="achWorksSSS">{{l("SSS")}}</label>
+                        <input id="achWorksSSS" type="text" name="achWorksSSS" class="form-control" [(ngModel)]="achWorksSettings.sss" maxlength="3">
+                    </div>
+                    <div class="form-group">
+                        <label for="achWorksLocID">{{l("LocID")}}</label>
+                        <input id="achWorksLocID" type="text" name="achWorksLocID" class="form-control" [(ngModel)]="achWorksSettings.locID" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="achWorksSOAPUser">{{l("SOAPUser")}}</label>
+                        <input id="achWorksSOAPUser" type="text" name="achWorksSOAPUser" class="form-control" [(ngModel)]="achWorksSettings.soapUser" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="achWorksSOAPKey">{{l("SOAPKey")}}</label>
+                        <input id="achWorksSOAPKey" type="text" name="achWorksSOAPKey" class="form-control" [(ngModel)]="achWorksSettings.soapKey" maxlength="128">
+                    </div>
+                </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Recurly Link')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                    <div class="form-group">
+                        <label for="RecurlySubdomain">{{l("RecurlySubdomain")}}</label>
+                        <input id="RecurlySubdomain" type="text" name="RecurlySubdomain" class="form-control" [(ngModel)]="recurlySettings.subdomain" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="RecurlyApiKey">{{l("RecurlyApiKey")}}</label>
+                        <input id="RecurlyApiKey" type="text" name="RecurlyApiKey" class="form-control" [(ngModel)]="recurlySettings.apiKey" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="RecurlyPrivateKey">{{l("RecurlyPrivateKey")}}</label>
+                        <input id="RecurlyPrivateKey" type="text" name="RecurlyPrivateKey" class="form-control" [(ngModel)]="recurlySettings.privateKey" maxlength="128">
+                    </div>
+                    <div class="form-group">
+                        <label for="RecurlyPageSize">{{l("RecurlyPageSize")}}</label>
+                        <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
+                    </div>
+                </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Invoice')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <h5>{{l("InvoiceInformation")}}</h5>
+                    <div class="form-group">
+                        <label for="LegalName">{{l("LegalName")}}</label>
+                        <input id="LegalName" type="text" name="legalName" class="form-control" [ngClass]="{'edited':hostSettings.billing.legalName}" [(ngModel)]="hostSettings.billing.legalName" maxlength="64">
+                    </div>
+                    <div class="form-group">
+                    <label for="Address">{{l("Address")}}</label>
+                    <textarea id="Address" rows="5" name="address" class="form-control" [ngClass]="{'edited':hostSettings.billing.address}" [(ngModel)]="hostSettings.billing.address" maxlength="256"></textarea>
+                </div>
+                </dx-scroll-view>
+            </mat-tab>
+        </mat-tab-group>
     </div>
 </div>

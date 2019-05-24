@@ -4,6 +4,7 @@
             <a [href]="originUrl">
                 <img *ngIf="appSession.tenant && appSession.tenant.logoId" [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId" alt="logo" width="auto" height="60"/>
             </a>
+            <button class="schedule-call btn">Schedule a Call</button>
         </div>
     </div>
 
@@ -21,7 +22,7 @@
 
     <div class="footer">
         <div class="copyright">
-            {{currentYear}} &copy; {{tenantName}} {{l("Platform")}}
+            <span class="">Powered By</span> <i class="sperse-logo"></i>
         </div>
     </div>
 </div>

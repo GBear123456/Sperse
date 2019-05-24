@@ -13,6 +13,28 @@
         letter-spacing: 0.3px;
         color: #424c56;
     }
+    
+    .sorted-attributes {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        
+        .CC {
+            order: 1;
+        }
+        .SC {
+            order: 2;
+        }
+        .PR {
+            order: 3;
+        }
+        .DS {
+            order: 4;
+        }
+        .PD {
+            order: 5;
+        }
+    }
 
     .fa.fa-angle-right {
         margin-right: 6px;
@@ -88,6 +110,7 @@
 
         dx-text-box {
             margin-right: 10px;
+            width: 100%;
         }
 
         dx-button {
@@ -164,6 +187,10 @@
             line-height: 2.47;
             margin-bottom: 0;
             color: #202b35;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 80%;
         }
 
         .type {

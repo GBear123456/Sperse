@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component, Inject, ViewChild } from '@angular/
 /** Third party imports */
 import { MatHorizontalStepper } from '@angular/material/stepper';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { kebabCase } from 'lodash';
+import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';

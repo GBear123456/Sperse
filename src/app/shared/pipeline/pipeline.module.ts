@@ -11,12 +11,12 @@ import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
-import { TimeAgoPipe } from 'time-ago-pipe';
 import { OrderServiceProxy, LeadServiceProxy, PipelineServiceProxy, 
     ActivityServiceProxy } from '@shared/service-proxies/service-proxies';
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 
+import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -29,6 +29,7 @@ import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-ren
 @NgModule({
     imports: [
         CommonModule,
+        AppCommonModule,
         DragulaModule,
         DxDataGridModule,
         DxRadioGroupModule,
@@ -46,7 +47,6 @@ import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-ren
         FormsModule
     ],
     declarations: [
-        TimeAgoPipe,
         PipelineComponent,
         EntityCancelDialogComponent,
         LeadCompleteDialogComponent,

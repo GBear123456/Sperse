@@ -12,21 +12,6 @@
         }
     }
 
-    .primeNgDataTableTheme(@backgroundColor) {
-        thead th {
-            background-color: @backgroundColor !important;
-            color: white;
-        }
-    }
-
-    .expiring-tenants-table {
-        .primeNgDataTableTheme(#E08283);
-    }
-
-    .recent-tenants-table {
-        .primeNgDataTableTheme(#8877a9);
-    }
-
     .expiring-tenants-table {
         color: green
     }
@@ -70,5 +55,70 @@
 
     .portlet > .portlet-title > .caption > .caption-helper {
         font-size: 11px;
+    }
+
+    .m--bg-brand {
+        background-color: #6aa0ca !important
+    }
+
+    .progress.m-progress--sm {
+        height: 6px
+    }
+
+    .progress.m-progress--sm .progress-bar {
+        border-radius: 3px
+    }
+
+    .progress.m-progress--lg {
+        height: 20px
+    }
+
+    .progress.m-progress--lg .progress-bar {
+        border-radius: 4px
+    }
+
+    .m--font-info {
+        color: #36a3f7 !important
+    }
+
+    .m--bg-brand {
+        background-color: #6aa0ca!important;
+    }
+
+    .m--bg-info {
+        background-color: #36a3f7!important;
+    }
+
+    .m--bg-danger {
+        background-color: #f4516c!important;
+    }
+
+    .m--bg-success {
+        background-color: #34bfa3!important;
+    }
+
+    .btn.m-btn--pill {
+        position: relative;
+        border-radius: 60px;
+    }
+
+    .m-btn--icon.m-btn--icon-only > i {
+        line-height: 0;
+        display: inline-block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+
+    @media (min-width: 1025px) {
+        .m-portlet.m-portlet--full-height {
+            &.income-statistics,
+            &.edition-statistics {
+                .m-portlet__body {
+                    min-height: 470px;
+                }
+            }
+        }
     }
 }

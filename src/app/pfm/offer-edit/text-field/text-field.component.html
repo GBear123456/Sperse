@@ -1,0 +1,13 @@
+<div class="field">
+    <label [for]="name" [title]="label">{{ label }}</label>
+    <dx-text-box [inputAttr]="{ id: name }"
+                 [valueChangeEvent]="'focusout'"
+                 [value]="value"
+                 [placeholder]="!readOnly ? ls.ls('PFM', 'Enter_Value') : ''"
+                 [disabled]="readOnly"
+                 (onValueChanged)="valueChange.emit($event.value)">
+        </dx-text-box>
+    <span [ngClass]="value && !readOnly && 'clear-contact' || 'hidden'" (click)="value = ''">
+        <i class="minus-icon"></i>
+    </span>
+</div>

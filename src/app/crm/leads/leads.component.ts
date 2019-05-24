@@ -19,10 +19,10 @@ import { CacheService } from 'ng2-cache-service';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 import { AppService } from '@app/app.service';
 import {
-    LeadAssignedUsersStoreSelectors,
+    ContactAssignedUsersStoreSelectors,
     AppStore,
     TagsStoreSelectors,
     ListsStoreSelectors,
@@ -62,7 +62,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [ LeadServiceProxy, LifecycleSubjectsService ],
+    providers: [ LeadServiceProxy, LifecycleSubjectsService, PipelineService ],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -93,7 +93,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contactGroups = Object.keys(ContactGroup).map((group) => {
         return {
             text: this.l('ContactGroup_' + group),
-            value: group
+            value: group,
+            disabled: !this.isGranted(ContactGroupPermission[group])
         };
     });
     selectedContactGroup = Object.keys(ContactGroup).shift();
@@ -105,6 +106,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     showPipeline = true;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     selectedClientKeys = [];
+    manageDisabled = true;
 
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
@@ -240,10 +242,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataGrid.instance.showColumnChooser();
     }
 
-    toggleDataLayout(dataLayoutType) {
+    toggleDataLayout(dataLayoutType: DataLayoutType) {
         this.selectedClientKeys = [];
-        this.showPipeline = (dataLayoutType == DataLayoutType.Pipeline);
+        this.showPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType = dataLayoutType;
+        this._pipelineService.toggleDataLayoutType(this.dataLayoutType);
         this.initDataSource();
         if (this.showPipeline)
             this.dataGrid.instance.deselectAll();
@@ -253,7 +256,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
         if (this.filterChanged) {
             this.filterChanged = false;
-            setTimeout(() => this.processFilterInternal());
+            if (!this.showPipeline)
+                setTimeout(() => this.processFilterInternal());
         }
     }
 
@@ -338,7 +342,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(LeadAssignedUsersStoreSelectors.getAssignedUsers)),
+                                dataSource$: this.store$.pipe(this.getAssignedUsersSelector()),
                                 nameField: 'name',
                                 keyExpr: 'id'
                             })
@@ -407,6 +411,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
+        this.manageDisabled = !this.isGranted(
+            ContactGroupPermission[this.selectedContactGroup] + '.Manage');
         this.isActivated() && this._appService.updateToolbar([
             {
                 location: 'before', items: [
@@ -461,12 +467,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
                     },
                     {
                         name: 'stage',
+                        disabled: this.manageDisabled,
                         action: this.toggleStages.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
@@ -474,6 +482,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'lists',
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageListsAndTags'),
                         action: this.toggleLists.bind(this),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
@@ -481,6 +490,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageListsAndTags'),
                         action: this.toggleTags.bind(this),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
@@ -488,6 +498,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageRatingAndStars'),
                         action: this.toggleRating.bind(this),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
@@ -495,6 +506,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'star',
+                        disabled: !this.isGranted(ContactGroupPermission[this.selectedContactGroup] + '.ManageRatingAndStars'),
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
@@ -554,7 +566,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
+                    { name: 'showCompactRowsHeight', action: this.toggleCompactView.bind(this) },
                     { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
                 ]
             },
@@ -639,7 +651,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             callback(options);
     }
 
-    showCompactRowsHeight() {
+    toggleCompactView() {
+        this._pipelineService.toggleContactView();
         this.dataGrid.instance.element().classList.toggle('grid-compact-view');
         this.dataGrid.instance.updateDimensions();
     }
@@ -760,8 +773,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (this.permission.isGranted('Pages.CRM.BulkUpdates')) {
             this.stagesComponent.tooltipVisible = false;
             this._pipelineService.updateEntitiesStage(
-                this.pipelinePurposeId, 
-                this.selectedLeads, 
+                this.pipelinePurposeId,
+                this.selectedLeads,
                 $event.name
             ).subscribe((declinedList) => {
                 this.filterChanged = true;
@@ -774,6 +787,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     else
                         gridInstance.clearSelection();
                 }
+                this.notify.success(this.l('StageSuccessfullyUpdated'));
             });
         }
     }
@@ -785,9 +799,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return;
 
         this.searchClear = false;
-        event.component.cancelEditData();
         let orgId = event.data.OrganizationId;
-        this._router.navigate(['app/crm/client', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
+        event.component && event.component.cancelEditData();
+        this._router.navigate(['app/crm/contact', clientId, 'lead', leadId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/leads', dataLayoutType: this.dataLayoutType } });
     }
 
@@ -893,17 +907,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     onCardClick({entity, entityStageDataSource, loadMethod}) {
-        if (entity && entity.CustomerId && entity.Id) {
-            this._router.navigate(
-                ['app/crm/client', entity.CustomerId, 'lead', entity.Id, 'contact-information'], {
-                    queryParams: {
-                        referrer: 'app/crm/leads',
-                        dataLayoutType: DataLayoutType.Pipeline
-                    }
-                }
-            );
-            this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, entityStageDataSource, loadMethod);
-        }
+        this.showLeadDetails({data: entity});
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, entityStageDataSource, loadMethod);
     }
 
     onLeadStageChanged(lead) {
@@ -917,14 +922,18 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             });
     }
 
-    getAssignedUsersStoreSelectors() {
-        return LeadAssignedUsersStoreSelectors.getAssignedUsers;
+    getAssignedUsersSelector() {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     }
 
     onContactGroupChanged(event) {
         if (event.previousValue != event.value) {
             this.contactGroupId = ContactGroup[event.value];
             this._cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
+            this.filterChanged = true;
+            this.initToolbarConfig();
+            if (!this.showPipeline)
+                this.refresh(false);
         }
     }
 }

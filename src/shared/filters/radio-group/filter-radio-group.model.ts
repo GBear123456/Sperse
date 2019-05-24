@@ -1,6 +1,5 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
-import * as _ from 'lodash';
 
 export class FilterRadioGroupModel extends FilterItemModel {
     list: any[];

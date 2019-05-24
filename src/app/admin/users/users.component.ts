@@ -125,7 +125,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     this.group,
                     (loadOptions.sort || []).map((item) => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
-                    }).join(','), loadOptions.take, loadOptions.skip
+                    }).join(','), loadOptions.take || -1, loadOptions.skip
                 ).toPromise().then(response => {
                     return {
                         data: response.items,
@@ -258,7 +258,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                                 text: this.l('Save as PDF'),
                                 icon: 'pdf',
                             }, {
-                                action: this.exportToExcel.bind(this),
+                                action: this.exportToXLS.bind(this),
                                 text: this.l('Export to Excel'),
                                 icon: 'xls',
                             }, {
@@ -386,7 +386,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
-    filterByGroup(group: Group) {
+    filterByGroup(group: Group) {        
         this.group = group;
 
         this.initToolbarConfig();
@@ -395,6 +395,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     updateGroupFilter(group: Group) {
+        this.dataGrid.export.fileName = group;
         let groupFilterModel = _.findWhere(this.filters, { caption: 'group' });
         if (groupFilterModel) {
             groupFilterModel.isSelected = true;
@@ -428,13 +429,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             this.dataGrid.instance.option('loadPanel.enabled', !quietly);
 
         super.invalidate();
-    }
-
-    exportToExcel(): void {
-        this._userServiceProxy.getUsersToExcel()
-            .subscribe(result => {
-                this._fileDownloadService.downloadTempFile(result);
-            });
     }
 
     createUser(): void {

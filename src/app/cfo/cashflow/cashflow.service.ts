@@ -160,7 +160,7 @@ export class CashflowService {
 
     private getCategoryPath(categoryId: number, categoryTree: GetCategoryTreeOutput): string[] {
         const parentCategoryId = categoryTree.categories[categoryId].parentId;
-        const prevCategories = parentCategoryId  ? this.getCategoryPath(parentCategoryId, categoryTree) : [];
+        const prevCategories = parentCategoryId && categoryTree.categories[parentCategoryId] ? this.getCategoryPath(parentCategoryId, categoryTree) : [];
         const prefix = !!parentCategoryId ? CategorizationPrefixes.SubCategory : CategorizationPrefixes.Category;
         return [ ...prevCategories, prefix + categoryId ];
     }

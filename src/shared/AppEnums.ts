@@ -109,6 +109,14 @@ export class ContactGroup {
     static Vendor = 'V';
 }
 
+export class ContactGroupPermission {
+    static Client = 'Pages.CRM.Customers';
+    static Partner = 'Pages.CRM.Partners';
+    static UserProfile = 'Pages.Administration.Users';
+    static Investor = 'Pages.CRM.Investors';
+    static Vendor = 'Pages.CRM.Vendors';
+}
+
 export class PersonOrgRelationType {
     static Owner = 'O';
     static CoOwner = 'C';
@@ -137,11 +145,4 @@ export enum AccountConnectors {
 export enum ConditionsType {
     Terms = 'Terms',
     Policies = 'Policies'
-}
-
-export enum NoteType {
-    ClientNote = 'C',
-    CompanyNote = 'M',
-    IncomingCall = 'I',
-    OutcomingCall = 'O'
 }

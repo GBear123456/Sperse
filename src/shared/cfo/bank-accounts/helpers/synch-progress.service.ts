@@ -85,7 +85,7 @@ export class SynchProgressService {
             this.cfoService.instanceId,
             forcedSync,
             newOnly,
-            syncType === 'all' ? undefined : 'Q'
+            syncType === 'all' ? undefined : syncType
         ).pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;
             this.runGetStatus();

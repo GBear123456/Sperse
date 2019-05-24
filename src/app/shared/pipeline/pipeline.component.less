@@ -52,24 +52,33 @@
                 border-radius: 0px;
                 border: none;
                 padding: 5px;
-                //background-color: #fff;
                 border-right: 0;
                 margin-bottom: 12px;
-                text-transform: uppercase;
                 font-size: 13px;
                 font-weight: 600; // 500
                 letter-spacing: 0.5px;
                 color: #4b657e;
                 position: relative;
                 background-color: #076943;
-                div {
-                    width: 100%;
-                    bottom: 10px;
-                    color: #FFF;
-                    font-size: 12px;
-                    font-weight: 500;
-                    position: relative;
-                    text-align: center;
+                .toggleAll {
+                    position: absolute;
+                    left: 2px;
+                    z-index: 1;
+                    top: 2px;
+                    margin: auto;
+                    width: 15px;
+                    height: 15px;
+                    display: none;
+                    /deep/ .dx-checkbox-icon {
+                        width: 15px;
+                        height: 15px;
+                    }
+                    &.visible {
+                        display: block;
+                    }
+                }
+                &:hover .toggleAll {
+                    display: block;
                 }
                 span {
                     font-family: Poppins;
@@ -86,6 +95,27 @@
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                }
+                & > span {
+                    text-transform: uppercase;
+                }
+                div {
+                    width: 100%;
+                    bottom: 19px;
+                    color: #FFF;
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+                    span {
+                        width: auto;
+                        font-weight: 400;
+                        font-size: 12px;
+                        margin-top: 5px;
+                        display: inline-flex;
+                        &:last-child {
+                            margin-left: 10px;
+                        }
+                    }
                 }
                 .edit-button {
                     padding: 0;
@@ -274,6 +304,20 @@
                         font-size: 13px;
                         font-weight: 400;
                     }
+                    &.compact {
+                        min-height: 50px;
+                        margin-bottom: 5px;
+                        padding-top: 2px;
+                        .full-name {
+                            margin-left: 30px;
+                        }
+                        .days-ago {
+                            display: none;
+                        }
+                        .pipeline-photo-wrap {
+                            top: 2px;
+                        }
+                    }
                 }
             }
             &.positive {
@@ -301,8 +345,11 @@
                         right: -31px;
                         top: 0px;
                     }
-                    span, div {
+                    & > span, div {
                         padding-left: 30px;
+                    }
+                    .toggleAll {
+                        left: 30px;
                     }
                 }
                 &.column1 {
@@ -421,7 +468,7 @@
                         right: 0px;
                         top: 0px;
                     }
-                    span, div {
+                    & > span, div {
                         padding-right: 30px;
                     }
                     .edit-button {
@@ -678,9 +725,11 @@
     padding: 0px!important;
 
     .stage-actions {
+        margin: 0px;
+        padding: 0px;
         list-style-type: none;
         text-align: left;
-        
+
         .list-group-item {
             margin: 0;
             padding: 0;
@@ -695,7 +744,7 @@
             &:first-child {
                 border-bottom: 1px solid #dfdfdf;
             }
-            &:last-child {                                
+            &:last-child {
                 margin-top: 12px;
                 border-top: 1px solid #dfdfdf;
                 a {
@@ -712,7 +761,7 @@
                     }
                     &.disabled {
                        opacity: 0.5;
-                       pointer-events: none;                        
+                       pointer-events: none;
                    }
                 }
             }
@@ -738,10 +787,10 @@
                     }
                     &.left-arrow {
                         background: url(../../../assets/common/icons/pipeline/left-arrow.svg) no-repeat center;
-                    }                
+                    }
                 }
 
-                & > span {    
+                & > span {
                     vertical-align: super;
                     padding-left: 10px;
                     font-size: 14px;
@@ -755,6 +804,11 @@
 
                 .dx-checkbox-text {
                     margin-left: -16px;
+                }
+                .dx-checkbox-icon {
+                    opacity: 0.6;
+                    width: 19px;
+                    height: 19px;
                 }
             }
         }

@@ -13,6 +13,9 @@ Login page
     display: flex;
     height: 100%;
     flex-direction: column;
+    background-image: url('/assets/common/images/cfo-member/bg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 div.header,
 div.footer {
@@ -37,14 +40,32 @@ div.footer {
 }
 
 .login .logo {
-    background: #1C191C;
+    background: transparent;
     margin: 0 auto;
     text-align: center;
 
     a {
         display: block;
         text-align: left;
-        padding: 0px 30px;
+        padding: 0px 20%;
+    }
+    .schedule-call {
+        width: 170px;
+        height: 36px;
+        float: right;
+        margin: 0 20% 0 0;
+        background-color: #ee8615;
+        text-transform: uppercase;
+        font-size: 14px;
+        font-weight: bold;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: center;
+        color: #ffffff;
+        position: relative;
+        bottom: 49px;
     }
 }
 
@@ -283,11 +304,28 @@ div.footer {
 
 /* footer copyright */
 .login .copyright {
-    text-align: center;
-    margin: 10px auto;
-    padding: 10px;
-    color: #7a8ca5;
-    font-size: 13px;
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+
+    span {
+        text-align: center;
+        padding: 7px 13px;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 600;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.71;
+        letter-spacing: normal;
+        display: inline-block;
+    }
+    .sperse-logo {
+        width: 101px;
+        height: 30px;
+        background-image: url(../../../assets/common/images/cfo-member/sperse-logo.svg);
+        display: inline-block;
+    }
 }
 
 .language-switch-area {
@@ -420,7 +458,7 @@ input.form-control {
         .submit {
             min-width: 300px;
             border-radius: 100px;
-            background-color: #00aeef;
+            background-color: #f4b268;
             font-size: 18px;
             font-weight: 500;
             color: #ffffff;

@@ -5,7 +5,6 @@ import { Observable, of, from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ItemFullInfo } from '@shared/common/item-details-layout/item-full-info';
 import { TargetDirectionEnum } from '@app/crm/contacts/target-direction.enum';
-import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 
 class ItemsDataSource {
     [itemType: string]: {
@@ -17,7 +16,7 @@ class ItemsDataSource {
 @Injectable()
 export class ItemDetailsService {
     private itemsListSource: ItemsDataSource = new ItemsDataSource();
-    constructor(private dataSourceService: DataSourceService) {}
+    constructor() {}
     setItemsSource(itemType: ItemTypeEnum, dataSource: any, loadMethod?: () => Observable<any>) {
         this.itemsListSource[itemType] = {
             dataSource: dataSource,
@@ -28,7 +27,7 @@ export class ItemDetailsService {
     getItemsSource(itemType: ItemTypeEnum): Observable<DataSource> {
         return this.itemsListSource[itemType] && this.itemsListSource[itemType].dataSource
                ? of(this.itemsListSource[itemType].dataSource)
-               : of(null); //this.dataSourceService.getDataSource(itemType, true);
+               : of(null);
     }
 
     /**

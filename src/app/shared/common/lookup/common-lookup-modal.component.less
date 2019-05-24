@@ -1,10 +1,21 @@
-.footer {
-    bottom: 0;
-    position: fixed;
-    width: 98%;
-    padding-bottom: 19px;
+:host {
+    display: block;
+    height: 100%;
+    form {
+        padding: 20px 20px 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
 
-    button{
-        float: right;
+        .primeng-datatable-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
     }
+}
+
+/deep/ .cdk-overlay-pane.common-lookup {
+    max-width: 40vw !important;
 }

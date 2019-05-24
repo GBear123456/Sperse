@@ -9,7 +9,7 @@
     <add-account-button *ngIf="isInstanceAdmin" class="add-link"></add-account-button>
 </div>
 <div class="accountsSummary">
-    <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="bankAccountsService.accountsDataTotalNetWorth$ | async  | currency: 'USD' : 'symbol' : '1.2-2'" [description]="l('Current_Balance')"></info-component>
+    <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferences.selectedCurrencyId:cfoPreferences.selectedCurrencySymbol:'1.2-2'" [description]="l('Current_Balance')"></info-component>
     <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Institutions')"></info-component>
     <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component>
 </div>

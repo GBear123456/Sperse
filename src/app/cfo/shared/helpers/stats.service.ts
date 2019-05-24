@@ -1,16 +1,24 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment-timezone';
+import { CurrencyPipe } from '@angular/common';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Injectable()
 export class StatsService {
 
+    constructor(
+        private currencyPipe: CurrencyPipe,
+        private cfoPreferences: CfoPreferencesService
+    ) {}
+
     /**
-     * Replace string negative value like '$-1000' for the string '$(1000)' (with brackets)
+     * Replace string negative value like '-$1000' for the string '($1000)' (with brackets)
      * @param {string} value
+     * @param {string} currencySymbol
      * @return {string}
      */
-    replaceMinusWithBrackets(value: string) {
-        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)');
+    replaceMinusWithBrackets(value: string, currencySymbol: string) {
+        return value.replace(/\B(?=(\d{3})+\b)/g, ',').replace(/-(.*)/, '($1)').replace('$', currencySymbol);
     }
 
     getTooltipInfoHtml(data, fields, pointInfo) {
@@ -36,29 +44,17 @@ export class StatsService {
             ) {
                 if (field.label == 'Starting Balance') {
                     html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span class="tooltip-item-value">
-                            ${(pointDataObject[field.name] - pointDataObject[field.name + 'Adjustments']).toLocaleString('en-EN', {
-                                style: 'currency',
-                                currency: 'USD'
-                            })}</span></div>`;
+                            ${this.getAmountWithCurrency(pointDataObject[field.name] - pointDataObject[field.name + 'Adjustments'])}</span></div>`;
                 } else if (field.name == 'forecastEndingBalance' || field.name == 'endingBalance') {
                     if (pointDataObject['forecastAdjustments'] !== 0 && pointDataObject['forecastAdjustments'] !== undefined ||
                         pointDataObject['adjustments'] !== 0 && pointDataObject['adjustments'] !== undefined
                     ) {
-                        html += `<div class="tooltip-item ${field.label.toLowerCase()}"><span style="padding: 0 3px; color: rgb(50, 190, 242); font-weight: bold;">!</span> ${field.label} : <span class="tooltip-item-value">${pointDataObject[field.name].toLocaleString('en-EN', {
-                            style: 'currency',
-                            currency: 'USD'
-                        })}</span></div>`;
+                        html += `<div class="tooltip-item ${field.label.toLowerCase()}"><span style="padding: 0 3px; color: rgb(50, 190, 242); font-weight: bold;">!</span> ${field.label} : <span class="tooltip-item-value">${this.getAmountWithCurrency(pointDataObject[field.name])}</span></div>`;
                     } else {
-                        html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span class="tooltip-item-value">${pointDataObject[field.name].toLocaleString('en-EN', {
-                            style: 'currency',
-                            currency: 'USD'
-                        })}</span></div>`;
+                        html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span class="tooltip-item-value">${this.getAmountWithCurrency(pointDataObject[field.name])}</span></div>`;
                     }
                 } else if ((field.name.indexOf('BalanceAdjustments') < 0) || pointDataObject[field.name]) {
-                    html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span class="tooltip-item-value">${pointDataObject[field.name].toLocaleString('en-EN', {
-                        style: 'currency',
-                        currency: 'USD'
-                    })}</span></div>`;
+                    html += `<div class="tooltip-item ${field.label.toLowerCase()}">${field.label} : <span class="tooltip-item-value">${this.getAmountWithCurrency(pointDataObject[field.name])}</span></div>`;
                 }
 
                 if (field.name === 'forecastStartingBalanceAdjustments' ||
@@ -72,4 +68,7 @@ export class StatsService {
         return html;
     }
 
+    private getAmountWithCurrency(amount: string | number) {
+        return this.currencyPipe.transform(amount, this.cfoPreferences.selectedCurrencyId, this.cfoPreferences.selectedCurrencySymbol);
+    }
 }

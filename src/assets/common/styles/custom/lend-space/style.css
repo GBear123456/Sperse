@@ -126,10 +126,10 @@ body.lend-space .alert.m-alert--outline.alert-success {
   color: #000;
 }
 body.lend-space .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon {
-  background: #ffcc00;
+  background: #ffcc00 !important;
 }
 body.lend-space .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon span {
-  border-left-color: #ffcc00;
+  border-left-color: #ffcc00 !important;
 }
 body.lend-space .alert.m-alert--outline .m-alert__icon small.label {
   font-weight: 600;
@@ -446,6 +446,12 @@ body.lend-space .m-scrollable .m-list-timeline__items .m-list-timeline__item.use
 body.lend-space .m-scrollable .m-nav__separator {
   visibility: hidden;
   margin: 10px;
+}
+body.lend-space .primeng-datatable-container table thead tr th {
+  background-color: #fc0 !important;
+}
+body.lend-space .primeng-datatable-container .primeng-no-data {
+  background: #fff;
 }
 .yellow .page-header {
   box-shadow: none!important;

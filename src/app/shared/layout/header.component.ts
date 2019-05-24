@@ -5,7 +5,9 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import * as _ from 'lodash';
+import filter from 'lodash/filter';
+import isEqual from 'lodash/isEqual';
+import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
 import { AbpSessionService } from '@abp/session/abp-session.service';
@@ -119,14 +121,14 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
-        this.languages = _.filter(this.localization.languages, l => (<any>l).isDisabled === false);
+        this.languages = filter(this.localization.languages, l => (<any>l).isDisabled === false);
         this.currentLanguage = this.localization.currentLanguage;
         this.userCompany$ = this.commonUserInfoService.getCompany().pipe(
-            map(x => _.isEqual(x, {}) ? null : x)
+            map(x => isEqual(x, {}) ? null : x)
         );
         let tenant = this.appSession.tenant;
         if (tenant && tenant.customLayoutType && tenant.customLayoutType != TenantLoginInfoDtoCustomLayoutType.Default)
-            this.customLayoutType = _.kebabCase(tenant.customLayoutType);
+            this.customLayoutType = kebabCase(tenant.customLayoutType);
         this.userManagementService.getRecentlyLinkedUsers().subscribe(
             recentlyLinkedUsers => this.recentlyLinkedUsers = recentlyLinkedUsers
         );

@@ -57,7 +57,6 @@
 
               "node_modules/popper.js/dist/umd/popper.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
-              "node_modules/bootstrap-daterangepicker/daterangepicker.js",
               "node_modules/bootstrap-select/dist/js/bootstrap-select.js",
 
               "node_modules/jquery-slimscroll/jquery.slimscroll.js",
@@ -77,13 +76,7 @@
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.toastr.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.blockUI.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.spin.js",
-              "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.sweet-alert.js",
-
-              "src/assets/metronic/src/js/framework/base/app.js",
-              "src/assets/metronic/src/js/framework/base/util.js",
-              "src/assets/metronic/src/js/framework/components/general/dropdown.js",
-              "src/assets/metronic/src/js/framework/components/general/offcanvas.js",
-              "src/assets/metronic/src/js/framework/components/general/header.js"
+              "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.sweet-alert.js"
             ]
           },
           "configurations": {

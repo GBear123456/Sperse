@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from '../models/filter-component';
-import * as _ from 'underscore.string';
+import { splice } from 'underscore.string/splice';
 
 @Component({
     templateUrl: './filter-dates.component.html',
@@ -42,7 +42,7 @@ export class FilterDatesComponent extends AppComponentBase implements OnInit, Fi
 
     validateDate(event) {
         event = event.jQueryEvent.originalEvent;
-        let value = _.splice(event.target.value, this.getCaretPosition(event.target), 0, event.key);
+        let value = splice(event.target.value, this.getCaretPosition(event.target), 0, event.key);
         if (['ArrowRight', 'ArrowLeft', 'Backspace', 'Delete', 'Tab'].indexOf(event.key) >= 0)
             return;
 

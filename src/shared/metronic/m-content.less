@@ -1,0 +1,49 @@
+
+.m-body .m-content {
+    padding: 30px 30px
+}
+
+.m-content--skin-light .m-body {
+    background-color: #fff
+}
+
+.m-content--skin-light2 .m-body {
+    background-color: #f1f5f8
+}
+
+.m-body .m-wrapper {
+    overflow: hidden
+}
+
+body.m-content--skin-light {
+    background-color: #fff
+}
+
+body.m-content--skin-light2 {
+    background-color: #f1f5f8
+}
+
+@media (min-width: 1025px) {
+    .m-header--fixed .m-body {
+        padding-top: 70px !important
+    }
+}
+
+@media (max-width: 1024px) {
+    .m-header--fixed-mobile .m-body {
+        -webkit-transition: padding-top;
+        -moz-transition: padding-top;
+        -ms-transition: padding-top;
+        -o-transition: padding-top;
+        transition: padding-top;
+        padding-top: 60px !important
+    }
+
+    .m-body .m-content {
+        padding: 20px 20px
+    }
+
+    .m-aside-right--enabled .m-body .m-content {
+        padding-bottom: 0
+    }
+}

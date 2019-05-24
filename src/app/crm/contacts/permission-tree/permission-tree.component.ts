@@ -5,7 +5,8 @@ import { Component, Injector, ViewChild, OnInit, OnDestroy } from '@angular/core
 import { finalize } from 'rxjs/operators';
 import DataSource from 'devextreme/data/data_source';
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
-import { includes, flatMap } from 'lodash';
+import includes from 'lodash/includes';
+import flatMap from 'lodash/flatMap';
 
 /** Application imports */
 import { PermissionTreeEditModel } from '@app/admin/shared/permission-tree-edit.model';

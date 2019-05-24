@@ -32,11 +32,12 @@ import {
     toArray,
     withLatestFrom
 } from 'rxjs/operators';
-import { difference } from 'lodash';
 import cloneDeep from 'lodash/cloneDeep';
+import difference from 'lodash/difference';
 import * as $ from 'jquery';
 import * as underscore from 'underscore';
-import * as _ from 'underscore.string';
+import capitalize from 'underscore.string/capitalize';
+import dasherize from 'underscore.string/dasherize';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -99,7 +100,6 @@ import { CategorizationModel } from './models/categorization-model';
 import { CellInfo } from './models/cell-info';
 import { CellInterval } from './models/cell-interval';
 import { IExpandLevel } from './models/expand-level';
-import { IGroupbyItem } from './models/groupbyItem';
 import { IEventDescription } from './models/event-description';
 import { TransactionStatsDtoExtended } from './models/transaction-stats-dto-extended';
 import { WeekInfo } from './models/week-info';
@@ -108,6 +108,7 @@ import { UserPreferencesService } from './preferences-dialog/preferences.service
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
+import { DateHelper } from '@shared/helpers/DateHelper';
 import { CfoStore, CurrenciesStoreActions, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { select, Store } from '@node_modules/@ngrx/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
@@ -218,8 +219,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     detailsSomeHistoricalItemsSelected: boolean;
     detailsSomeForecastsItemsSelected: boolean;
 
-    currencySymbol = '$';
-
     private filterByChangeTimeout: any;
 
     /** Filter by string */
@@ -236,10 +235,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private expandBeforeIndex: number = null;
 
     public set calculatorShowed(value: boolean) {
-        if (this._calculatorShowed = value) {
-            //this.filtersService.fixed = false;
-            //this.filtersService.disable();
-        }
+        this._calculatorShowed = value;
     }
 
     public get calculatorShowed(): boolean {
@@ -287,24 +283,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     ];
 
-    /** posible groupIntervals year, quarter, month, dayofweek, day */
-    private groupbyItems: IGroupbyItem[] = [
-        {
-            'groupInterval': 'year',
-            'optionText': this.l('Years').toUpperCase()
-        },
-        {
-            'groupInterval': 'quarter',
-            'optionText': this.l('Quarters').toUpperCase(),
-            'customizeTextFunction': this.getQuarterHeaderCustomizer
-        },
-        {
-            'groupInterval': 'month',
-            'optionText': this.l('Months').toUpperCase(),
-            'customizeTextFunction': this.getMonthHeaderCustomizer
-        }
-    ];
-
     /** First categorization level items order */
     private leftMenuOrder = [
         StartedBalance,
@@ -325,7 +303,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             allowExpandAll: false,
             allowExpand: false,
             sortOrder: 'asc',
-            dataField: 'level0',
+            areaIndex: 0,
+            dataField: 'levels.level0',
             rowHeaderLayout: 'tree',
             showTotals: true,
             sortingMethod: (firstItem, secondItem) => {
@@ -337,7 +316,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             caption: 'Account Type',
             width: 120,
             area: 'row',
-            dataField: 'level1',
+            dataField: 'levels.level1',
+            areaIndex: 1,
             sortBy: 'displayText',
             sortOrder: 'asc',
             expanded: false,
@@ -353,7 +333,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
-            dataField: 'level2',
+            areaIndex: 2,
+            dataField: 'levels.level2',
             customizeText: this.customizeFieldText.bind(this)
         },
         {
@@ -363,7 +344,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
-            dataField: 'level3',
+            areaIndex: 3,
+            dataField: 'levels.level3',
             customizeText: this.customizeFieldText.bind(this)
         },
         {
@@ -373,7 +355,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             sortBy: 'displayText',
             sortOrder: 'asc',
             resortable: true,
-            dataField: 'level4',
+            areaIndex: 4,
+            dataField: 'levels.level4',
             customizeText: this.customizeFieldText.bind(this)
         },
         {
@@ -1211,7 +1194,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         name: 'total',
-                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this._currencyPipe.transform(this.transactionsTotal, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow')}</span>`
+                        html: `${this.ls('Platform', 'Total')} : <span class="value">${this._currencyPipe.transform(this.transactionsTotal, this._cfoPreferencesService.selectedCurrencyId, this._cfoPreferencesService.selectedCurrencySymbol)}</span>`
                     },
                     {
                         name: 'count',
@@ -1219,7 +1202,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     },
                     {
                         name: 'average',
-                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this._currencyPipe.transform(this.transactionsAverage, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow')}</span>`
+                        html: `${this.l('Cashflow_BottomToolbarAverage')} : <span class="value">${this._currencyPipe.transform(this.transactionsAverage, this._cfoPreferencesService.selectedCurrencyId, this._cfoPreferencesService.selectedCurrencySymbol)}</span>`
                     },
                     {
                         action: this.hideFooterBar.bind(this),
@@ -1329,8 +1312,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     handleGetCashflowGridSettingsResult(cashflowSettingsResult) {
         this.cashflowGridSettings = cloneDeep(cashflowSettingsResult);
-        this.currencySymbol = this._currencyPipe.transform(777, this._cfoPreferencesService.selectedCurrencyId, 'symbol-narrow').substr(0, 1);
-
         this.applySplitMonthIntoSetting(this.cashflowGridSettings.general.splitMonthType);
         this.tabularFontName = this.userPreferencesService.getClassNameFromPreference({
             sourceName: 'fontName',
@@ -1419,6 +1400,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             .pipe(pluck('transactionStats'))
             .subscribe(transactions => {
                 this.startDataLoading = true;
+                this.startLoading();
                 this.handleCashflowData(transactions, period);
                 /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
                 this.overrideCashflowDataPushMethod();
@@ -1430,12 +1412,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.appService.updateToolbar(null);
                 } else {
                     this.gridDataExists = true;
-                    this.initToolbarConfig();
                     this.dataSource = this.getApiDataSource();
-
-                    /** Init footer toolbar with the gathered data from the previous requests */
-                    this.initFooterToolbar();
                 }
+
+                this.initToolbarConfig();
+                this.initFooterToolbar();
+
                 if (completeCallback) {
                     completeCallback.call(this);
                 }
@@ -1465,7 +1447,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let end = underscore.max(this.cashflowData, function (val) { return val.date; }).date.year();
             this.setSliderReportPeriodFilterData(start, end);
         } else {
-            this.cashflowData = [];
+            this.cashflowData = this.getCashflowDataFromTransactions(transactions);
         }
     }
 
@@ -1574,12 +1556,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             /** Get category path in tree */
             const categoryPath: string[] = this.cashflowService.getCategoryFullPath(+categoryId, category, this.categoryTree);
             if (!this.cashflowService.categoryHasTransactions(this.treePathes, categoryPath)) {
+                const parentExists: boolean = !!this.categoryTree.categories[category.parentId];
                 /** Create stub for category */
                 const stubTransaction = this.createStubTransaction({
                     'cashflowTypeId': this.categoryTree.accountingTypes[category.accountingTypeId].typeId,
                     'accountingTypeId': category.accountingTypeId,
-                    'categoryId': category.parentId ? category.parentId : categoryId,
-                    'subCategoryId': category.parentId ? categoryId : undefined,
+                    'categoryId': category.parentId && parentExists ? category.parentId : categoryId,
+                    'subCategoryId': category.parentId && parentExists ? categoryId : undefined,
                     'amount': 0,
                     'date': date,
                     'initialDate': initialDate
@@ -1677,15 +1660,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                    transactionObj.cashflowTypeId === Reconciliation ||
                                    transactionObj.cashflowTypeId === NetChange;
         let key = null;
-        if (transactionObj[`level${levelNumber}`]) {
-            for (let i = levelNumber; i < 5; i++) {
-                if (transactionObj[`level${i}`]) {
-                    delete transactionObj[`level${i}`];
-                }
-            }
-        }
+        transactionObj['levels'] = {};
         this.categorization.every((level) => {
-            if (transactionObj[level.statsKeyName]) {
+            if (transactionObj[level.statsKeyName] || (level.prefix === CategorizationPrefixes.SubCategory && !transactionObj.categoryId)) {
 
                 /** If user doesn't want to show accounting type row - skip it */
                 if (level.prefix === CategorizationPrefixes.AccountingType && !this.cashflowGridSettings.general.showAccountingTypeRow) {
@@ -1696,15 +1673,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 if (level.prefix === CategorizationPrefixes.AccountName) {
                     if (isAccountTransaction) {
                         key = level.prefix + transactionObj[level.statsKeyName];
-                        transactionObj[`level${levelNumber++}`] = key;
+                        transactionObj['levels'][`level${levelNumber++}`] = key;
                         return false;
                     } else {
                         return true;
                     }
                 }
 
-                key = level.prefix + transactionObj[level.statsKeyName];
-                transactionObj[`level${levelNumber++}`] = key;
+                key = transactionObj[level.statsKeyName] ? level.prefix + transactionObj[level.statsKeyName] : transactionObj[level.statsKeyName];
+                transactionObj['levels'][`level${levelNumber++}`] = key;
             }
             return true;
         });
@@ -1718,13 +1695,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      */
     updateTreePathes(transactionObj, removePath = false) {
         let fullPath = [];
-        for (let i = 0; i < 5; i++) {
-            let levelValue = transactionObj[`level${i}`];
-            if (levelValue || i === 1) {
-                fullPath.push(levelValue);
-            }
+        for (let level in transactionObj['levels']) {
+            fullPath.push(transactionObj['levels'][level]);
         }
-
         let stringPath = fullPath.join(',');
         if (!this.treePathes.hasOwnProperty(stringPath)) {
             this.treePathes[stringPath] = 1;
@@ -1969,7 +1942,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     refreshDataGridWithPreferences(options) {
-        const dataSource = this.pivotGrid.instance.getDataSource();
         const preferences = options.model;
         const updateWithNetChange = preferences.general.showNetChangeRow !== this.cashflowGridSettings.general.showNetChangeRow;
         const updateAfterAccountingTypeShowingChange = preferences.general.showAccountingTypeRow !== this.cashflowGridSettings.general.showAccountingTypeRow;
@@ -1984,27 +1956,48 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
          *  appliedTo data methods before reloading the cashflow
          */
 
+        const dataSource = this.pivotGrid && this.pivotGrid.instance.getDataSource();
         /** Clear user preferences cache */
         this.getUserPreferencesForCell.cache = {};
         if (updateMonthSplitting) {
-            let showWeeks = preferences.general.splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
             /** Changed showing of week and projected fields */
-            dataSource.field('Projected', { visible: !showWeeks, expanded: !showWeeks });
-            dataSource.field('Week', { visible: showWeeks });
+            let showWeeks = preferences.general.splitMonthType === CashflowGridGeneralSettingsDtoSplitMonthType.Weeks;
+            const projectedUpdatedProps = { visible: !showWeeks, expanded: !showWeeks };
+            const weekUpdatedProps = { visible: showWeeks };
+            if (dataSource) {
+                dataSource.field('Projected', projectedUpdatedProps);
+                dataSource.field('Week', weekUpdatedProps);
+            } else {
+                let projectedConfigIndex, weekConfigIndex;
+                let projectedConfig = this.apiTableFields.find((field, index) => {
+                    projectedConfigIndex = index;
+                    return field.caption === 'Projected';
+                });
+                let weekConfig = this.apiTableFields.find((field, index) => {
+                    weekConfigIndex = index;
+                    return field.caption === 'Week';
+                });
+                this.apiTableFields[projectedConfigIndex] = { ...projectedConfig, ...projectedUpdatedProps };
+                this.apiTableFields[weekConfigIndex] = { ...weekConfig, ...weekUpdatedProps };
+            }
         }
 
         /** @todo refactor (move to the userPreferencesHandlers to avoid if else structure) */
         if (updateCurrency) {
             this.store$.dispatch(new CurrenciesStoreActions.ChangeCurrencyAction(this.cashflowGridSettings.localizationAndCurrency.currency));
+            /** Hide spinner if nothing change to prevent infinite loading */
+            if (this.cashflowGridSettings.localizationAndCurrency.currency === this._cfoPreferencesService.selectedCurrencyId) {
+                this.finishLoading();
+            }
         } else {
             if (updateWithDiscrepancyChange) {
-                dataSource.reload();
+                dataSource ? dataSource.reload() : this.refreshDataGrid();
             }
             if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange && !updateWithDiscrepancyChange && !updateMonthSplitting) {
-                this.pivotGrid.instance.repaint();
+                this.pivotGrid ? this.pivotGrid.instance.repaint() : this.refreshDataGrid();
             } else {
                 if (!updateWithNetChange && !updateAfterAccountingTypeShowingChange) {
-                    dataSource.reload();
+                    dataSource ? dataSource.reload() : this.refreshDataGrid();
                 } else {
                     if (updateWithNetChange) {
                         /** If user choose to show net change - then add stub data to data source */
@@ -2024,7 +2017,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.dataSource = this.getApiDataSource();
                 }
             }
-            this.pivotGrid.instance.updateDimensions();
+            this.pivotGrid && this.pivotGrid.instance.updateDimensions();
             this.handleBottomHorizontalScrollPosition();
         }
         this.notify.info(this.l('AppliedSuccessfully'));
@@ -2090,9 +2083,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
          *  current for year to current for the grouping period */
         let lowestOpenedCurrentInterval = this.getLowestOpenedCurrentInterval();
         $('.lowestOpenedCurrent').removeClass('lowestOpenedCurrent');
-        let targetCell = lowestOpenedCurrentInterval === 'year' && $(`.dx-pivotgrid-expanded.current${_.capitalize(lowestOpenedCurrentInterval)}`).length ?
-                         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}.dx-total`) :
-                         $(`.current${_.capitalize(lowestOpenedCurrentInterval)}:not(.dx-pivotgrid-expanded)`);
+        let targetCell = lowestOpenedCurrentInterval === 'year' && $(`.dx-pivotgrid-expanded.current${capitalize(lowestOpenedCurrentInterval)}`).length ?
+                         $(`.current${capitalize(lowestOpenedCurrentInterval)}.dx-total`) :
+                         $(`.current${capitalize(lowestOpenedCurrentInterval)}:not(.dx-pivotgrid-expanded)`);
         targetCell.addClass('lowestOpenedCurrent');
 
         this.changeHistoricalColspans(lowestOpenedCurrentInterval);
@@ -2112,7 +2105,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         this.contentReady = true;
-        if (this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
+        if (this.pivotGrid && this.pivotGrid.instance != undefined && !this.pivotGrid.instance.getDataSource().isLoading()) {
             this.finishLoading();
         }
 
@@ -2286,7 +2279,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let rowPathPropertyName = cellObj.area === 'data' ? 'rowPath' : 'path';
             let columnPathPropertyName = cellObj.area === 'data' ? 'columnPath' : 'path';
             return cashflowItem.amount &&
-                   (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => (!fieldValue && !cashflowItem[`level${index}`]) || fieldValue === cashflowItem[`level${index}`])) &&
+                   (cellObj.area === 'column' || cellObj.cell[rowPathPropertyName].every((fieldValue, index) => (!fieldValue && !cashflowItem['levels'][`level${index}`]) || fieldValue === cashflowItem['levels'][`level${index}`])) &&
                    (cellObj.area === 'row' || cellObj.cell[columnPathPropertyName].every((fieldValue, index) => {
                         let field = this.pivotGrid.instance.getDataSource().getAreaFields('column', true)[index];
                         if (field.caption === 'Projected' && fieldValue !== Projected.PastTotal && fieldValue !== Projected.FutureTotal) {
@@ -2357,7 +2350,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getIntervalColspansAmountForCurrent(lowestColumnCaption) {
         let colspanAmount = 0;
         while (lowestColumnCaption) {
-            let currentElement = $(`.dx-pivotgrid-horizontal-headers .lowestOpenedCurrent.current${_.capitalize(lowestColumnCaption)}`);
+            let currentElement = $(`.dx-pivotgrid-horizontal-headers .lowestOpenedCurrent.current${capitalize(lowestColumnCaption)}`);
             if (currentElement.length) {
                 colspanAmount = +currentElement.attr('colspan') || 1;
                 break;
@@ -2413,7 +2406,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     getIntervalColspansAmount(groupInterval, period) {
         let colspansAmount = 0;
         let dataAreaElement = this.getElementRef().nativeElement.querySelector('.dx-area-data-cell');
-        let currentElement = dataAreaElement.querySelector(`.current${_.capitalize(groupInterval)}`);
+        let currentElement = dataAreaElement.querySelector(`.current${capitalize(groupInterval)}`);
         if (dataAreaElement) {
             const tr = dataAreaElement.querySelector('tr');
             if (tr) {
@@ -3543,13 +3536,12 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     updateMovedHistoricals(items: TransactionStatsDtoExtended[], targetData: CellInfo) {
         items.forEach((item: TransactionStatsDtoExtended) => {
+            this.updateTreePathes(item, true);
             item.cashflowTypeId = targetData.cashflowTypeId;
             item.categoryId = targetData.categoryId;
             item.accountingTypeId = targetData.accountingTypeId;
             item.subCategoryId = targetData.subCategoryId;
-            item.transactionDescriptor = targetData.categoryId || targetData.subCategoryId
-                ? targetData.transactionDescriptor || item.transactionDescriptor
-                : null;
+            item.transactionDescriptor = targetData.transactionDescriptor || item.transactionDescriptor;
             this.addCategorizationLevels(item);
         });
     }
@@ -3660,7 +3652,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             forecastInCashflow.cashflowTypeId = targetData.cashflowTypeId;
             forecastInCashflow.accountingTypeId = targetData.accountingTypeId;
             forecastInCashflow.categoryId = targetData.categoryId || targetData.subCategoryId;
-            forecastInCashflow.subCategoryId = targetData.subCategoryId || moveCategoryToCategory && forecastInCashflow.subCategoryId;
+            forecastInCashflow.subCategoryId = targetData.subCategoryId
+                || (moveCategoryToCategory ? forecastInCashflow.subCategoryId : undefined);
             forecastInCashflow.transactionDescriptor = targetData.transactionDescriptor || forecastInCashflow.transactionDescriptor;
 
             /** Update forecast, its totals and net change items with new date if date changed */
@@ -3873,7 +3866,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     addPreferenceStyle(preference) {
-        const cssProperty = _.dasherize(preference['sourceName']);
+        const cssProperty = dasherize(preference['sourceName']);
         for (let area of preference.areas) {
             $(`.dx-area-${area}-cell`).css(cssProperty, preference['sourceValue']);
         }
@@ -3890,7 +3883,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return this._currencyPipe.transform(
             value,
             this._cfoPreferencesService.selectedCurrencyId,
-            'symbol-narrow',
+            this._cfoPreferencesService.selectedCurrencySymbol,
             `0.${fractionDigits}-${fractionDigits}`
         );
     }
@@ -3958,27 +3951,27 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 let cellDateFormated = cellDate.format(periodFormat);
                 let currentDateFormatted = currentDate.format(periodFormat);
                 if (cellDateFormated === currentDateFormatted) {
-                    className = `current${_.capitalize(fieldCaption)}`;
+                    className = `current${capitalize(fieldCaption)}`;
                 } else if (cellDateFormated < currentDateFormatted) {
-                    className = `prev${_.capitalize(fieldCaption)}`;
+                    className = `prev${capitalize(fieldCaption)}`;
                 } else if (cellDateFormated > currentDateFormatted) {
-                    className = `next${_.capitalize(fieldCaption)}`;
+                    className = `next${capitalize(fieldCaption)}`;
                 }
             } else if (fieldCaption === 'projected') {
                 if (cellValue === Projected.Today) {
-                    className = `current${_.capitalize(fieldCaption)}`;
+                    className = `current${capitalize(fieldCaption)}`;
                 } else if (cellValue === Projected.Mtd || cellValue === Projected.PastTotal) {
-                    className = `prev${_.capitalize(fieldCaption)}`;
+                    className = `prev${capitalize(fieldCaption)}`;
                 } else if (cellValue === Projected.Forecast || cellValue === Projected.FutureTotal) {
-                    className = `next${_.capitalize(fieldCaption)}`;
+                    className = `next${capitalize(fieldCaption)}`;
                 }
             } else if (fieldCaption === 'historical') {
                 if (cellValue === Periods.Current) {
-                    className = `current${_.capitalize(fieldCaption)}`;
+                    className = `current${capitalize(fieldCaption)}`;
                 } else if (cellValue === Periods.Historical) {
-                    className = `prev${_.capitalize(fieldCaption)}`;
+                    className = `prev${capitalize(fieldCaption)}`;
                 } else if (cellValue === Periods.Forecast) {
-                    className = `next${_.capitalize(fieldCaption)}`;
+                    className = `next${capitalize(fieldCaption)}`;
                 }
             }
         }
@@ -4097,7 +4090,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 () => {
                     /** Open edit field for double click */
                     this.cashflowService.openEditField(cellObj, {
-                        currencySymbol: this.currencySymbol,
+                        currencySymbol: this._cfoPreferencesService.selectedCurrencySymbol,
                         type: 'text',
                         onValueChanged: this.updateCategory
                     });
@@ -4350,7 +4343,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (
             this.cellIsNotHistorical(cellObj) &&
             clickedCellPrefix !== CategorizationPrefixes.CashflowType &&
-            clickedCellPrefix !== CategorizationPrefixes.AccountingType &&
             clickedCellPrefix !== CategorizationPrefixes.AccountName
         ) {
             /** If we delete another cell then opened in details we get statsDetails for this cell, else - get already loaded details */
@@ -4365,7 +4357,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     switchMap(result => this.removeForecasts(result))
                 ).subscribe(() => {
                     /** If we delete cell that opened in details */
-                    if (this.selectedCell === this.doubleClickedCell) {
+                    if (this.selectedCell && this.doubleClickedCell && this.selectedCell.cellElement === this.doubleClickedCell.cellElement) {
                         /** Clear details result to show No Data instead of deleted rows */
                         this._statsDetailResult.next([]);
                     }
@@ -4421,6 +4413,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     date: item.date,
                                     initialDate: (<any>item).initialDate,
                                     amount: 0,
+                                    accountingTypeId: item.accountingTypeId,
                                     cashflowTypeId: item.cashflowTypeId,
                                     categoryId: item.categoryId,
                                     subCategoryId: item.subCategoryId,
@@ -4565,7 +4558,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: cellObj.cell.value,
             height: element.clientHeight,
-            format: this.currencySymbol + ' #,###.##',
+            format: this._cfoPreferencesService.selectedCurrencySymbol + ' #,###.##',
             onEnterKey: this.saveForecast.bind(this, cellObj)
         });
         this.functionButton = new Button(wrapperButton, {
@@ -4870,9 +4863,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     hasChildsByPath(path): boolean {
         let cellPath = path.join(',');
         let keys = Object.keys(this.treePathes);
-        return path.slice(-1)[0] && keys.some(path => {
+        const containsUnclassified = !path.slice(-1)[0];
+        return keys.some(path => {
             let currentPathIndex = path.indexOf(cellPath);
-            return currentPathIndex !== -1 && path.split(',').length > cellPath.split(',').length;
+            return (!containsUnclassified && currentPathIndex !== -1 && path.split(',').length > cellPath.split(',').length)
+                   || (containsUnclassified && path.indexOf(cellPath + ',') !== -1);
         });
     }
 
@@ -5261,7 +5256,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     isStartingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
-            summaryCell.field('row').dataField === 'level1' &&
+            summaryCell.field('row').dataField === 'levels.level1' &&
             summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === PSB;
     }
 
@@ -5279,13 +5274,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return summaryCell.field('row') &&
                 (
                     summaryCell.value(summaryCell.field('row').dataField) !== undefined ||
-                    summaryCell.field('row').dataField === 'level1'
+                    summaryCell.field('row').dataField === 'levels.level1'
                 );
     }
 
     isEndingBalanceAccountCell(summaryCell) {
         return summaryCell.field('row') !== null &&
-               summaryCell.field('row').dataField === 'level1' &&
+               summaryCell.field('row').dataField === 'levels.level1' &&
                summaryCell.parent('row') && summaryCell.parent('row').value(summaryCell.parent('row').field('row')) === PT;
     }
 
@@ -5475,7 +5470,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onEditorPreparing(event) {
         if (event.dataField == 'debit' || event.dataField == 'credit') {
             event.editorName = 'dxNumberBox';
-            event.editorOptions['format'] = this.currencySymbol + ' #,###.##';
+            event.editorOptions['format'] = this._cfoPreferencesService.selectedCurrencySymbol + ' #,###.##';
         }
     }
 
@@ -5883,7 +5878,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         if (period.start) {
             let from = new Date(period.start + '-01-01');
-            from.setTime(from.getTime() + from.getTimezoneOffset() * 60 * 1000);
+            DateHelper.addTimezoneOffset(from);
             dateFilter.items['from'].setValue(from, dateFilter);
         } else {
             dateFilter.items['from'].setValue('', dateFilter);
@@ -5891,7 +5886,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         if (period.end) {
             let end = new Date(period.end + '-12-31');
-            end.setTime(end.getTime() + end.getTimezoneOffset() * 60 * 1000);
+            DateHelper.addTimezoneOffset(end);
             dateFilter.items['to'].setValue(end, dateFilter);
         } else {
             dateFilter.items['to'].setValue('', dateFilter);
@@ -6033,7 +6028,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         };
         this.modifyingCellNumberBox = new NumberBox(wrapper, {
             value: e.data[e.column.dataField],
-            format: this.currencySymbol + ' #,###.##',
+            format: this._cfoPreferencesService.selectedCurrencySymbol + ' #,###.##',
             width: '86%',
             onEnterKey: this.updateForecastCell.bind(this, e),
             onKeyDown: function(e) {
@@ -6226,7 +6221,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                transactionId: this.transactionId
+                transactionId$: of(this.transactionId)
             }
         });
     }

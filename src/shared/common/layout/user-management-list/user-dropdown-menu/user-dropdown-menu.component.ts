@@ -10,10 +10,14 @@ import { UserManagementService } from 'shared/common/layout/user-management-list
 import { UserDropdownMenuItemModel } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 
+/** @todo Used for chart bar and dropdown. Reimplement in future */
+import 'assets/metronic/src/js/framework/base/util.js';
+import 'assets/metronic/src/js/framework/components/general/dropdown.js';
+
 @Component({
     selector: 'user-dropdown-menu',
     templateUrl: './user-dropdown-menu.component.html',
-    styleUrls: [ './user-dropdown-menu.component.less'],
+    styleUrls: [ '../../../../metronic/m-nav.less', './user-dropdown-menu.component.less'],
     providers: [ CommonUserInfoServiceProxy, ImpersonationService ]
 })
 export class UserDropdownMenuComponent extends AppComponentBase implements OnInit {

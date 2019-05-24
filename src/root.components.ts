@@ -7,7 +7,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { TenantLoginInfoDtoCustomLayoutType } from '@shared/service-proxies/service-proxies';
 
-import { kebabCase } from 'lodash';
+import kebabCase from 'lodash/kebabCase';
 import * as _ from 'underscore';
 
 /*
@@ -107,11 +107,12 @@ export class AppRootComponent implements OnInit {
             if (tenant.customCssId)
                 this.parent.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id);
 
-            if (tenant.customLayoutType)
-                this.parent.hostElement.nativeElement.classList.add(kebabCase(tenant.customLayoutType));
-
-            if (tenant.customLayoutType === TenantLoginInfoDtoCustomLayoutType.LendSpace)
-                this.parent.addStyleSheet('lendSpaceStyles', AppConsts.appBaseHref + 'assets/common/styles/custom/lend-space/style.css');
+            if (tenant.customLayoutType && tenant.customLayoutType !== TenantLoginInfoDtoCustomLayoutType.Default) {
+                let layoutName = kebabCase(tenant.customLayoutType);
+                this.parent.hostElement.nativeElement.classList.add(layoutName);
+                this.parent.addStyleSheet(tenant.customLayoutType + 'Styles', AppConsts.appBaseHref +
+                    'assets/common/styles/custom/' + layoutName + '/style.css');
+            }
 
             this.checkSetGoogleAnalyticsCode(tenant);
         }

@@ -1,17 +1,45 @@
-﻿.audit-log-detail-view {
-    h3.form-section {
-        margin-top: 5px;
+﻿:host {
+    display: block;
+    position: relative;
+    top: 74px;
+    height: 100%;
+    
+    ::ng-deep .mat-tab-group {
+        height: 100%;
+        margin-top: 1px;
     }
-
-    .form-group {
-        margin-bottom: 0;
-
-        p.form-control-static {
-            margin: 0;
+    
+    ::ng-deep .mat-tab-body-content {
+        overflow: hidden;
+    }
+    
+    ::ng-deep #operationsLogsGrid,
+    ::ng-deep #changeLogsGrid {
+        table {
+            direction: rtl;
+            
+            td {
+                direction: ltr;
+                vertical-align: middle;
+            }
         }
-
-        .control-label {
-            font-weight: bold;
+    }
+    
+    .show-details {
+        font-size: 18px;
+        color: #9aa1a7;
+        padding: 5px;
+        cursor: pointer;
+        
+        &:hover {
+            color: darken(#9aa1a7, 50%);
         }
+    }
+    
+    .truncated {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }

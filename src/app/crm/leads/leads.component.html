@@ -40,7 +40,7 @@
                               [filterModel]="filterModelAssignment"
                               [proxyService]="leadService"
                               [permissionKey]="'Pages.CRM.Customers.ManageAssignments'"
-                              [getAssignedUsersSelector]="getAssignedUsersStoreSelectors()">
+                              [assignedUsersSelector]="getAssignedUsersSelector()">
     </crm-user-assignment-list>
     <crm-rating [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelRating"></crm-rating>
     <crm-stars-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelStar"></crm-stars-list>
@@ -122,6 +122,7 @@
                         [filterModelStages]="filterModelStages"
                         [(selectedEntities)]="selectedLeads"
                         [contactGroupId]="contactGroupId"
+                        [moveDisabled]="manageDisabled"
                         (onEntityStageChanged)="onLeadStageChanged($event)"
                         (onStagesLoaded)="onStagesLoaded($event)"                        
                         (onCardClick)="onCardClick($event)">

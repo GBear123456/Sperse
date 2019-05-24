@@ -1,0 +1,28 @@
+﻿:host {
+    position: relative;
+    height: 100%;
+
+    & > div {
+        display: flex;
+        width: 100%;
+        height: 99%;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    /deep/ .dx-datagrid {
+        .dx-datagrid-focus-overlay {
+            border: none;
+        }
+
+        .dx-datagrid-revert-tooltip {
+            display: none;
+        }
+
+        .dx-row {
+            .dx-link.dx-link-edit {
+                width: 19px !important;
+            }
+        }
+    }
+}

@@ -6,21 +6,22 @@ import { RouteReuseStrategy } from '@angular/router';
 import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@node_modules/@ngrx/store';
-import { Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { filter, map, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
-import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput, 
-    PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto, 
-    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo } from '@shared/service-proxies/service-proxies';
+import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput,
+    PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto,
+    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo, ProcessOrderInfo } from '@shared/service-proxies/service-proxies';
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
+import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 
 interface StageColor {
     [stageSortOrder: string]: string;
@@ -39,6 +40,10 @@ export class PipelineService {
         '2': '#86c45d',
         '3': '#46aa6e'
     };
+    private _dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject<DataLayoutType>(DataLayoutType.Pipeline);
+    dataLayoutType$: Observable<DataLayoutType> = this._dataLayoutType.asObservable();
+    private _compactView: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    compactView$: Observable<boolean> = this._compactView.asObservable();
 
     constructor(
         injector: Injector,
@@ -53,6 +58,14 @@ export class PipelineService {
         private store$: Store<CrmStore.State>
     ) {
         this.stageChange = new Subject<any>();
+    }
+
+    toggleDataLayoutType(dataLayoutType: DataLayoutType) {
+        this._dataLayoutType.next(dataLayoutType);
+    }
+
+    toggleContactView() {
+        this._compactView.next(!this._compactView.value);
     }
 
     getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId?: ContactGroup): Observable<PipelineDto> {
@@ -85,17 +98,7 @@ export class PipelineService {
         return _.findWhere(this.getStages(pipelinePurposeId), {name: stageName});
     }
 
-    updateEntityStageById(pipelinePurposeId, entityId, oldStageName, newStageName, complete = null) {
-        let fromStage = this.getStageByName(pipelinePurposeId, oldStageName);
-        if (fromStage) {
-            let entity = _.findWhere(fromStage.entities, {Id: parseInt(entityId)});
-            return entity && this.updateEntityStage(pipelinePurposeId, entity, oldStageName, newStageName, complete);
-        }
-    }
-
-    updateEntityStage(pipelinePurposeId, entity, oldStageName, newStageName, complete = null) {
-        let fromStage = this.getStageByName(pipelinePurposeId, oldStageName),
-            toStage = this.getStageByName(pipelinePurposeId, newStageName);
+    updateEntityStage(pipelinePurposeId, entity, fromStage, toStage, complete = null) {
         if (fromStage && toStage) {
             let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
             if (action && action.sysId && entity && !entity.locked) {
@@ -143,9 +146,11 @@ export class PipelineService {
         if (entity) {
             if (data)
                 entity.data = data;
-            if (!this.updateEntityStage(pipelineId, entity, entity.Stage || entity.stage, targetStage, (data) => {
-                this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
-                delete entity.data;
+            if (!this.updateEntityStage(pipelineId, entity, 
+                this.getStageByName(pipelineId, entity.Stage || entity.stage), 
+                this.getStageByName(pipelineId, targetStage), (data) => {
+                    this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
+                    delete entity.data;
             })) declinedList.push(entity);
         } else
             complete && complete(declinedList);
@@ -158,7 +163,8 @@ export class PipelineService {
     activityTransition(fromStage, toStage, entity, complete) {
         this._activityService.transition(TransitionActivityDto.fromJS({
             id: this.getEntityId(entity),
-            stageId: toStage.id
+            stageId: toStage.id,
+            sortOrder: entity.SortOrder
         })).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
@@ -168,10 +174,12 @@ export class PipelineService {
     }
 
     updateLeadStage(fromStage, toStage, entity, complete) {
+        let prevEntity = this.getPrevEntity(entity, toStage);
         this._leadService.updateLeadStage(
             UpdateLeadStageInfo.fromJS({
                 leadId: this.getEntityId(entity),
-                stageId: toStage.id
+                stageId: toStage.id,
+                sortOrder: entity.SortOrder
             })
         ).pipe(finalize(() => {
             entity.locked = false;
@@ -257,7 +265,8 @@ export class PipelineService {
         this._orderService.updateStage(
             UpdateOrderStageInfo.fromJS({
                 orderId: this.getEntityId(entity),
-                stageId: toStage.id
+                stageId: toStage.id,
+                sortOrder: entity.SortOrder
             })
         ).pipe(finalize(() => {
             entity.locked = false;
@@ -268,8 +277,11 @@ export class PipelineService {
     }
 
     processOrder(fromStage, toStage, entity, complete) {
+        let model: ProcessOrderInfo = new ProcessOrderInfo();
+        model.id = this.getEntityId(entity);
+        model.sortOrder = entity.SortOrder;
         this._orderService.process(
-            this.getEntityId(entity)
+            model
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
@@ -324,6 +336,35 @@ export class PipelineService {
         fromStage.total--;
         toStage.total++;
         this.stageChange.next(entity);
+    }
+
+    getPrevEntity(entity, entities) {
+        for (let i = 0; i < entities.length ; i++) {
+            if (entities[i].Id == entity.Id)
+                return entities[i - 1];
+        }
+    }
+
+    getEntityNewSortOrder(entity, stage) {
+        let entities = stage['entities'];
+        if (entity) {
+            let prevEntity = this.getPrevEntity(entity, entities);
+            return entities.length > 1 ? prevEntity && prevEntity.SortOrder
+                || entities[0].SortOrder + 1: 0;
+        } else 
+            return entities.length && entities.slice(-1).pop().SortOrder || 0;
+    }
+
+    updateEntitySortOrder(pipelineId, entity, complete) {
+        if (!entity.locked) {
+            entity.locked = true;
+            this._pipelineServiceProxy.updateEntitySortOrder(
+                pipelineId, entity.Id, entity.SortOrder
+            ).pipe(finalize(() => {
+                entity.locked = false;
+            })).subscribe(complete, complete);
+        } else 
+            complete && complete();
     }
 
     getStageDefaultColorByStageSortOrder(stageSortOrder: number) {

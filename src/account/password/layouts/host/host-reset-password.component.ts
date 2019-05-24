@@ -12,7 +12,7 @@ import {
 import {LoginService} from 'account/login/login.service';
 import {ResetPasswordModel} from '../../reset-password.model';
 import {finalize} from 'rxjs/operators';
-import {isEqual} from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 @Component({
     templateUrl: './host-reset-password.component.html',

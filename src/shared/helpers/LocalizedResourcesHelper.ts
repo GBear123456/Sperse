@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import filter from 'lodash/filter';
 import * as rtlDetect from 'rtl-detect';
 
 export class LocalizedResourcesHelper {
@@ -23,12 +23,11 @@ export class LocalizedResourcesHelper {
     static loadLocalizedStylesForTheme(theme: string, isRtl: boolean): JQueryPromise<any> {
         let cssPostfix = isRtl ? '-rtl' : '';
         if (abp.session.userId) {
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/' + theme + '/assets/vendors/base/vendors.bundle.css'));
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/' + theme + '/assets/demo/' + theme + '/base/style.bundle' + cssPostfix + '.css'));
+            /** @todo remove after changing Languages and other admin sections to devexttreme */
             $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/primeng/datatable/css/primeng.datatable' + cssPostfix + '.css'));
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/common/styles/themes/' + theme + '/primeng.datatable' + cssPostfix + '.css'));
-        } else
-            $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css'));
+        }
+
+        $('head').append($('<link rel="stylesheet" type="text/css" />').attr('href', './assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css'));
 
         return $.Deferred().resolve().promise();
     }
@@ -115,7 +114,7 @@ export class LocalizedResourcesHelper {
             'zh_TW'];
 
         const mappedCulture = LocalizedResourcesHelper.mapCultureForBootstrapSelect(currentCulture);
-        const foundCultures = _.filter(supportedCultures, sc => sc.indexOf(mappedCulture) === 0);
+        const foundCultures = filter(supportedCultures, sc => sc.indexOf(mappedCulture) === 0);
         if (foundCultures && foundCultures.length > 0) {
             return foundCultures[0];
         }
@@ -181,7 +180,7 @@ export class LocalizedResourcesHelper {
             'zh-TW'];
 
         let mappedCulture = LocalizedResourcesHelper.mapCultureForTimeago(currentCulture);
-        let foundCultures = _.filter(supportedCultures, sc => sc.indexOf(mappedCulture) === 0);
+        let foundCultures = filter(supportedCultures, sc => sc.indexOf(mappedCulture) === 0);
         if (foundCultures && foundCultures.length > 0) {
             return foundCultures[0];
         }

@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { AppConsts } from '@shared/AppConsts';
-import { ProfileServiceProxy, UserLoginAttemptDto, UserLoginServiceProxy } from '@shared/service-proxies/service-proxies';
+import { UserLoginAttemptDto, UserLoginServiceProxy } from '@shared/service-proxies/service-proxies';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -9,7 +9,11 @@ import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-mo
 @Component({
     selector: 'loginAttemptsModal',
     templateUrl: './login-attempts-modal.component.html',
-    styleUrls: ['./login-attempts-modal.component.less'],
+    styleUrls: [
+        '../../../shared/metronic/m-alert.less',
+        '../../../shared/metronic/m-helpers.less',
+        './login-attempts-modal.component.less'
+    ],
     providers: [DialogService]
 })
 export class LoginAttemptsModalComponent extends AppModalDialogComponent implements OnInit {
@@ -20,8 +24,7 @@ export class LoginAttemptsModalComponent extends AppModalDialogComponent impleme
     constructor(
         injector: Injector,
         public dialog: MatDialog,
-        private _userLoginService: UserLoginServiceProxy,
-        private _profileService: ProfileServiceProxy
+        private _userLoginService: UserLoginServiceProxy
     ) {
         super(injector);
         this.localizationSourceName = AppConsts.localization.defaultLocalizationSourceName;
@@ -30,7 +33,7 @@ export class LoginAttemptsModalComponent extends AppModalDialogComponent impleme
     ngOnInit() {
         super.ngOnInit();
 
-        this.data.title = this.l("LoginAttempts");
+        this.data.title = this.l('LoginAttempts');
         this.data.editTitle = false;
         this.data.titleClearButton = false;
         this.data.placeholder = this.l('LoginAttempts');
@@ -41,16 +44,6 @@ export class LoginAttemptsModalComponent extends AppModalDialogComponent impleme
             this.userLoginAttempts = result.items;
             this.profileThumbnailId = this.appSession.user.profileThumbnailId;
         });
-    }
-
-    setProfilePictureClass(userLoginAttemptResult: string): any {
-        const classes = {
-            label: true,
-            'label-success': userLoginAttemptResult === 'Success',
-            'label-danger': userLoginAttemptResult !== 'Success'
-        };
-
-        return classes;
     }
 
     getLoginAttemptTime(userLoginAttempt: UserLoginAttemptDto): string {

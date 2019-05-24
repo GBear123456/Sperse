@@ -62,6 +62,7 @@ import { ImportListComponent } from './import-leads/import-list.component';
 import { ImportLeadsService } from './import-leads/import-leads.service';
 import { ActivityComponent } from './activity/activity.component';
 import { CreateActivityDialogComponent } from './activity/create-activity-dialog/create-activity-dialog.component';
+import { CreateInvoiceDialogComponent } from './shared/create-invoice-dialog/create-invoice-dialog.component';
 import { CrmIntroComponent } from './shared/crm-intro/crm-intro.component';
 import { SharedIntroStepsModule } from '@shared/shared-intro-steps/shared-intro-steps.module';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -136,6 +137,7 @@ import { AppStore } from '@app/store';
       ImportListComponent,
       ImportLeadsComponent,
       DeleteAndReassignDialogComponent,
+      CreateInvoiceDialogComponent,
       CreateActivityDialogComponent,
       CrmIntroComponent,
       ActivityComponent
@@ -147,6 +149,7 @@ import { AppStore } from '@app/store';
         DataSourceService
     ],
     entryComponents: [
+        CreateInvoiceDialogComponent,
         CreateActivityDialogComponent,
         DeleteAndReassignDialogComponent,
         CrmIntroComponent

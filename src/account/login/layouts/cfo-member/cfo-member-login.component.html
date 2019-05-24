@@ -1,4 +1,5 @@
 <div [@routerTransition]>
+    <i class="name"></i>
     <h1 class="sign-in">{{l("Sign in")}}</h1>
     <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
         <div class="form-group icon-input icon-input__user clearfix">
@@ -36,6 +37,6 @@
         </div>
     </form>
     <div class="login-terms-and-condition">
-        <span>{{l('ByContinuingYouAgree')}} <a (click)="openConditionsDialog(conditions.Terms)">{{l('TermsOfUse')}}</a> {{l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{l('PrivacyPolicy')}}</a></span>
+        <span>{{l('ByContinuingYouAgree')}} <br><a (click)="openConditionsDialog(conditions.Terms)">{{l('TermsOfUse')}}</a> {{l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{l('PrivacyPolicy')}}</a></span>
     </div>
 </div>

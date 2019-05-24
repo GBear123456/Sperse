@@ -142,7 +142,8 @@ export class UploadPhotoDialogComponent extends AppComponentBase implements Afte
         this.imgResize().then(() => {
             this.dialogRef.close({
                 origImage: this.imageData.image,
-                thumImage: this.thumbData
+                thumImage: this.thumbData,
+                source: this.fileUrlFormControl.value
             });
         });
     }

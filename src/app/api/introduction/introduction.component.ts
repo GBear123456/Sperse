@@ -6,7 +6,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
 import { MatDialog } from '@angular/material/dialog';
 import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
-import * as _ from 'lodash';
+import remove from 'lodash/remove';
 
 @Component({
     templateUrl: './introduction.component.html',
@@ -72,7 +72,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
                         if (this.apiKeys.length == 1)
                             this.apiKeys = [];
                         else
-                            _.remove(this.apiKeys, x => x.id == data.key);
+                            remove(this.apiKeys, x => x.id == data.key);
 
                         abp.notify.info(this.l('SuccessfullyDeleted'));
                     });

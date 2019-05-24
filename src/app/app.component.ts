@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Injector, OnInit, ViewContainerRef, NgZone, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, OnInit, ViewContainerRef, NgZone, ViewEncapsulation } from '@angular/core';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service';
 import { AppComponentBase } from 'shared/common/app-component-base';
@@ -11,11 +11,12 @@ import { MatDialog } from '@angular/material/dialog';
 @Component({
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less',
-        '../../node_modules/ng2-image-viewer/imageviewer.scss'
+        '../../node_modules/ng2-image-viewer/imageviewer.scss',
+        '../shared/metronic/m-toast.less'
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class AppComponent extends AppComponentBase implements OnInit, AfterViewInit {
+export class AppComponent extends AppComponentBase implements OnInit {
 
     installationMode = false;
 
@@ -69,18 +70,4 @@ export class AppComponent extends AppComponentBase implements OnInit, AfterViewI
         this.installationMode = UrlHelper.isInstallUrl(location.href);
     }
 
-    subscriptionStatusBarVisible(): boolean {
-        return !this.appService.subscriptionStatusBarIsHidden();
-    }
-
-    ngAfterViewInit(): void {
-        if (mApp.initialized) {
-            return;
-        }
-
-        this._ngZone.runOutsideAngular(() => {
-            mApp.init();
-            mApp.initialized = true;
-        });
-    }
 }

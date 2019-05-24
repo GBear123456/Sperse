@@ -13,6 +13,9 @@ import * as moment from 'moment';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import {
     ActivityServiceProxy,
+    CustomerServiceProxy,
+    LeadServiceProxy,
+    OrderServiceProxy,
     CreateActivityDtoType,
     CreateActivityDto,
     UpdateActivityDto
@@ -23,11 +26,17 @@ import { StaticListComponent } from '@app/shared/common/static-list/static-list.
 import { UserAssignmentComponent } from '../../shared/user-assignment-list/user-assignment-list.component';
 import { ActivityAssignedUsersStoreSelectors } from '@app/store';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
+import { select } from '@ngrx/store';
 
 @Component({
     templateUrl: 'create-activity-dialog.component.html',
     styleUrls: ['create-activity-dialog.component.less'],
-    providers: [ActivityServiceProxy, DialogService]
+    providers: [
+        ActivityServiceProxy,
+        CustomerServiceProxy,
+        LeadServiceProxy,
+        OrderServiceProxy,
+        DialogService]
 })
 export class CreateActivityDialogComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
@@ -77,7 +86,11 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
         public dialog: MatDialog,
         private _cacheService: CacheService,
         private _activityProxy: ActivityServiceProxy,
-        private dialogService: DialogService
+        private dialogService: DialogService,
+
+        private ClientsProxy: CustomerServiceProxy,
+        private LeadsProxy: LeadServiceProxy,
+        private OrdersProxy: OrderServiceProxy,
     ) {
         super(injector);
 
@@ -137,7 +150,7 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
 
     lookup(uri, search = '') {
         return new Promise((resolve, reject) => {
-            this._activityProxy['get' + uri](search, this.LOOKUP_RECORDS_COUNT).subscribe((res) => {
+            this[uri + 'Proxy']['getAllByPhrase'](search, this.LOOKUP_RECORDS_COUNT).subscribe((res) => {
                 resolve(res);
             });
         });
@@ -335,7 +348,7 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
 
     getDateWithoutTimezone(date, propertyName = null) {
         if (this.isAllDay) {
-            date = date.getFullYear() + '/' + (date.getMonth()+1) + '/' + date.getDate();
+            date = date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
             date = moment.utc(date);
 
             if (propertyName === 'startDate')
@@ -344,8 +357,7 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
                 date = date.endOf('day');
 
             return date;
-        }
-        else {
+        } else {
             date.setTime(date.getTime() - ((date.getTimezoneOffset() + moment().utcOffset()) * 60 * 1000));
             return moment.utc(date);
         }
@@ -551,8 +563,8 @@ export class CreateActivityDialogComponent extends AppModalDialogComponent imple
         this.dateValidator = $event.component;
     }
 
-    getAssignedUsersStoreSelectors() {
-        return ActivityAssignedUsersStoreSelectors.getAssignedUsers;
+    getAssignedUsersSelector() {
+        return select(ActivityAssignedUsersStoreSelectors.getAssignedUsers);
     }
 
     onUserAssignmentChanged(event) {

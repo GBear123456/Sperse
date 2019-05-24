@@ -33,7 +33,7 @@ import {
     skip,
     withLatestFrom, distinct, toArray
 } from 'rxjs/operators';
-import { kebabCase } from 'lodash';
+import kebabCase from 'lodash/kebabCase';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { MatSliderChange } from '@angular/material/slider';
 
@@ -125,7 +125,7 @@ export class OffersLayoutComponent implements OnInit, OnDestroy {
     readonly defaultVisibleOffersCount = 6;
     visibleOffersCount = this.defaultVisibleOffersCount;
     brands$: BehaviorSubject<SelectFilterModel[]> = new BehaviorSubject<SelectFilterModel[]>([]);
-    category$: Observable<OfferFilterCategory> = this.offersService.getCategoryFromRoute(this.route);
+    category$: Observable<OfferFilterCategory> = OffersService.getCategoryFromRoute(this.route);
     categoryGroup$: Observable<CategoryGroupEnum> = this.category$.pipe(map((category: OfferFilterCategory) => this.offersService.getCategoryGroup(category)));
     categoryDisplayName$: Observable<string> = this.category$.pipe(map(category => this.offersService.getCategoryDisplayName(category)));
 

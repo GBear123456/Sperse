@@ -57,6 +57,7 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
 
     photoOriginalData: string;
     photoThumbnailData: string;
+    photoSourceData: string;
 
     toolbarConfig = [];
 
@@ -235,6 +236,7 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
         input.organizationUnits = this.organizationUnitTree.getSelectedOrganizations();
         input.profilePicture = StringHelper.getBase64(this.photoOriginalData);
         input.profileThumbnail = StringHelper.getBase64(this.photoThumbnailData);
+        input.pictureSource = this.photoSourceData;
 
         this._userService.createOrUpdateUser(input)
             .pipe(finalize(() => { saveButton.disabled = false; }))
@@ -268,6 +270,7 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
             if (result) {
                 this.photoOriginalData = result.origImage;
                 this.photoThumbnailData = result.thumImage;
+                this.photoSourceData = result.source;
             }
         });
         $event.stopPropagation();
@@ -281,6 +284,7 @@ export class CreateUserDialogComponent extends AppModalDialogComponent implement
             this.user = new UserEditDto();
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
+            this.photoSourceData = undefined;
             this.roles.forEach((role, index) => {
                 role.isAssigned = this.initialRoles[index].isAssigned;
             });

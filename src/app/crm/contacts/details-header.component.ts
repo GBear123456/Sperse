@@ -17,6 +17,7 @@ import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
 import { filter, finalize, takeUntil } from 'rxjs/operators';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -27,6 +28,8 @@ import { PersonDialogComponent } from './person-dialog/person-dialog.component';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
+import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import {
     ContactInfoDto,
     PersonContactInfoDto,
@@ -45,7 +48,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 import { NoteAddDialogComponent } from './notes/note-add-dialog/note-add-dialog.component';
 import { AppService } from '@app/app.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { CompanyDialogComponent } from '@app/crm/contacts/company-dialog/company-dialog.component';
 import { ContactsService } from './contacts.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -85,8 +88,14 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     private readonly ADD_FILES_OPTION   = 0;
     private readonly ADD_NOTES_OPTION   = 1;
     private readonly ADD_CONTACT_OPTION = 2;
+    private readonly ADD_INVOICE_OPTION = 3;
     private readonly ADD_OPTION_DEFAULT = this.ADD_FILES_OPTION;
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
+
+    private showRemovingOrgRelationProgress = false;
+
+    groupNames = _.mapObject(_.invert(ContactGroup), (val) => startCase(val));
+    statusNames = _.invert(ContactStatus);
 
     isAdminModule;
     defaultContextMenuItems = [
@@ -106,6 +115,12 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             text: this.l('AddContact'),
             selected: false,
             icon: 'add-contact',
+            contactGroups: [ ContactGroup.Client, ContactGroup.Partner ]
+        },
+        {
+            text: this.l('AddInvoice'),
+            selected: false,
+            icon: 'money',
             contactGroups: [ ContactGroup.Client, ContactGroup.Partner ]
         }
     ];
@@ -163,6 +178,31 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         })).subscribe(() => {});
     }
 
+    removePersonOrgRelation(event) {
+        let companyName = this.data['organizationContactInfo'].fullName;
+        this.dialog.open(ConfirmDialogComponent, {
+            data: {
+                title: this.l('ContactRelationRemovalConfirmationTitle'),
+                message: this.l('ContactRelationRemovalConfirmationMessage', companyName)
+            }
+        }).afterClosed().subscribe(result => {
+            if (result) {
+                this.showRemovingOrgRelationProgress = true;
+                this.dialog.closeAll();
+                let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
+                this._personOrgRelationService.delete(orgRelationId)
+                .pipe(finalize(() => this.showRemovingOrgRelationProgress = false))
+                .subscribe(() => {
+                    let orgRelations = this.data.personContactInfo.orgRelations;
+                    let orgRelationToDelete = _.find(orgRelations, orgRelation => orgRelation.id === orgRelationId);
+                    orgRelations.splice(orgRelations.indexOf(orgRelationToDelete), 1);
+                    this.displayOrgRelation(orgRelationToDelete.organization.id);
+                });
+            }
+        });
+        event.stopPropagation();
+    }
+
     showCompanyDialog(e) {
         let companyInfo = this.data['organizationContactInfo'];
         if (!companyInfo || !companyInfo.id)
@@ -171,7 +211,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.dialog.closeAll();
         this.dialog.open(CompanyDialogComponent, {
             data: {
-                company: companyInfo
+                company: companyInfo,
+                contactInfo: this.data
             },
             panelClass: 'slider',
             maxWidth: '830px'
@@ -184,6 +225,27 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         });
         if (e.stopPropagation) {
             e.stopPropagation();
+        }
+    }
+
+    displayOrgRelation(orgId) {
+        let orgRelations = this.data.personContactInfo.orgRelations;
+        if (this.data.primaryOrganizationContactId == orgId) {
+            let orgRelation = orgRelations && _.sortBy(orgRelations, (orgRelation) => {
+                return orgRelation.id;
+            }).reverse()[0];
+            if (orgRelation) {
+                orgRelation.isPrimary = true;
+                this.data.primaryOrganizationContactId = orgRelation.organization.id;
+                this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
+            } else {
+                this.data.primaryOrganizationContactId = null;
+                this.data.personContactInfo.orgRelations = [];
+                this._contactsService.updateLocation(this.data.id, this.data['leadId']);
+            }
+        } else {
+            let orgRelation = _.find(orgRelations, item => item.isPrimary);
+            this.displaySelectedCompany(orgRelation.organization.id, orgRelation.id);
         }
     }
 
@@ -216,8 +278,9 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     this.contactPhotoServiceProxy.createContactPhoto(
                         CreateContactPhotoInput.fromJS({
                             contactId: this.data[dataField].id,
-                            originalImage: base64OrigImage,
-                            thumbnail: base64ThumbImage
+                            original: base64OrigImage,
+                            thumbnail: base64ThumbImage,
+                            source: result.source
                         })).subscribe((result) => {
                             this.handlePhotoChange(dataField, base64OrigImage, result);
                         });
@@ -376,6 +439,15 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                     }
                 });
             });
+        else if (this.addContextMenuItems[this.ADD_INVOICE_OPTION] && this.addContextMenuItems[this.ADD_INVOICE_OPTION].selected)
+            setTimeout(() => {
+                this.dialog.open(CreateInvoiceDialogComponent, {
+                    panelClass: 'slider',
+                    disableClose: true,
+                    closeOnNavigation: false,
+                    data: { }
+                });
+            });
     }
 
     addCompanyDialog(event) {
@@ -392,22 +464,19 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             if (result == 'addContact')
                 this.addCompanyDialog(event);
             else if (result)
-                this.displaySelectedCompany(result);
+                this.displaySelectedCompany(result.id, result.relation.id);
         });
         event.stopPropagation();
     }
 
-    displaySelectedCompany(contact) {
+    displaySelectedCompany(orgId, orgRelationId) {
         this.startLoading(true);
-        this.personContactInfo.orgRelationId = contact.relation.id;
+        this.personContactInfo.orgRelationId = orgRelationId;
         this.initializePersonOrgRelationInfo();
-        this._orgContactService.getOrganizationContactInfo(contact.id)
+        this._orgContactService.getOrganizationContactInfo(orgId)
             .pipe(finalize(() => this.finishLoading(true))).subscribe((result) => {
-                let isPartner = this.data.groupId == ContactGroup.Partner;
                 this.data['organizationContactInfo'] = result;
-                this._contactsService.updateLocation(
-                    isPartner ? null : this.data.id, this.data['leadId'],
-                    isPartner ? this.data.id : null, result && result.id);
+                this._contactsService.updateLocation(this.data.id, this.data['leadId'], result && result.id);
             });
     }
 

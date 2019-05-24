@@ -1,11 +1,11 @@
 import { Injectable, Injector } from '@angular/core';
-import { Subscription, Subject, Observable } from 'rxjs';
+import { Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
 
 @Injectable()
 export class DashboardWidgetsService  {
-    private _period: Subject<Object> = new Subject<Object>();
-    private _totalsData: Subject<Object>;
+    private _period: BehaviorSubject<Object> = new BehaviorSubject<Object>({});
+    private _totalsData: BehaviorSubject<Object> = new BehaviorSubject<Object>({});
     private _subscribers: Array<Subscription> = [];
     public period$: Observable<Object> = this._period.asObservable();
 
@@ -32,9 +32,7 @@ export class DashboardWidgetsService  {
 
     constructor(injector: Injector,
         private _dashboardServiceProxy: DashboardServiceProxy
-    ) {
-        this._totalsData = new Subject<Object>();
-    }
+    ) { }
 
     subscribePeriodChange(callback: (period: any) => any) {
         this._subscribers.push(

@@ -1,19 +1,20 @@
-import { Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
-import { LanguageServiceProxy, UpdateLanguageTextInput } from '@shared/service-proxies/service-proxies';
-import * as _ from 'lodash';
-import { ModalDirective } from 'ngx-bootstrap';
+/** Core imports */
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Injector, OnInit, Output, ViewChild } from '@angular/core';
+/** Third party imports */
+import find from 'lodash/find';
 import { finalize } from 'rxjs/operators';
+import { MAT_DIALOG_DATA } from '@angular/material';
+/** Application imports */
+import { LanguageServiceProxy, UpdateLanguageTextInput } from '@shared/service-proxies/service-proxies';
+import { AppModalDialogComponent } from '@app/shared/common/dialogs/modal/app-modal-dialog.component';
 
 @Component({
     selector: 'editTextModal',
-    templateUrl: './edit-text-modal.component.html'
+    templateUrl: './edit-text-modal.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditTextModalComponent extends AppComponentBase {
-
+export class EditTextModalComponent extends AppModalDialogComponent implements OnInit {
     @ViewChild('targetValueInput') targetValueInput: ElementRef;
-    @ViewChild('modal') modal: ModalDirective;
-
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     model: UpdateLanguageTextInput = new UpdateLanguageTextInput();
@@ -30,25 +31,28 @@ export class EditTextModalComponent extends AppComponentBase {
         private _languageService: LanguageServiceProxy
     ) {
         super(injector);
+        this.data = injector.get(MAT_DIALOG_DATA);
+        if (this.data) {
+            this.data.title = this.l('EditText');
+            this.model.sourceName = this.data.sourceName;
+            this.model.key = this.data.key;
+            this.model.languageName = this.data.targetLanguageName;
+            this.model.value = this.data.targetValue;
+
+            this.baseText = this.data.baseValue;
+            this.baseLanguage = find(abp.localization.languages, l => l.name === this.data.baseLanguageName);
+            this.targetLanguage = find(abp.localization.languages, l => l.name === this.data.targetLanguageName);
+        }
     }
 
-    show(baseLanguageName: string, targetLanguageName: string, sourceName: string, key: string, baseText: string, targetText: string): void {
-        this.model.sourceName = sourceName;
-        this.model.key = key;
-        this.model.languageName = targetLanguageName;
-        this.model.value = targetText;
-
-        this.baseText = baseText;
-        this.baseLanguage = _.find(abp.localization.languages, l => l.name === baseLanguageName);
-        this.targetLanguage = _.find(abp.localization.languages, l => l.name === targetLanguageName);
-
-        this.active = true;
-
-        this.modal.show();
-    }
-
-    onShown(): void {
-        $(this.targetValueInput.nativeElement).focus();
+    ngOnInit() {
+        this.data.buttons = [
+            {
+                title: this.l('Save'),
+                class: 'primary',
+                action: this.save.bind(this)
+            }
+        ];
     }
 
     save(): void {
@@ -63,11 +67,10 @@ export class EditTextModalComponent extends AppComponentBase {
     }
 
     close(): void {
-        this.active = false;
-        this.modal.hide();
+        this.dialogRef.close();
     }
 
     private findLanguage(name: string): abp.localization.ILanguageInfo {
-        return _.find(abp.localization.languages, l => l.name === name);
+        return find(abp.localization.languages, l => l.name === name);
     }
 }

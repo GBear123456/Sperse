@@ -23,7 +23,7 @@ import { Observable, from, of } from 'rxjs';
 import { finalize, flatMap, tap, pluck, map } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as xmlJs from 'xml-js';
-import { values } from 'lodash';
+import values from 'lodash/values';
 import JSONFormatter from 'json-formatter-js';
 import '@node_modules/ng2-image-viewer/imageviewer.js';
 import * as jszip from 'jszip';

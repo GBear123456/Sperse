@@ -23,7 +23,7 @@
           <dx-scroll-view showScrollbar="onHover" [ngStyle]="{display: dataEmpty == false ? 'block': 'none'}">
               <div class="dashboard-widgets">
                   <counts-and-totals (onDataLoaded)="checkDataEmpty($event)"></counts-and-totals>
-                  <div class="analytics-wrap row">
+                  <div class="analytics-wrap row" *ngIf="dataEmpty == false">
                       <div class="left-side col-xl-4">
                           <new-items-totals></new-items-totals>
                       </div>
@@ -33,7 +33,7 @@
                   </div>
 
                   <div class="analytics-wrap row">
-                      <div class="left-side col-lg-6 col-xl-4">
+                      <div class="left-side col-lg-6 col-xl-4" *ngIf="dataEmpty == false">
                           <totals-by-source></totals-by-source>
                       </div>
                       <div class="right-side col-lg-6 col-xl-8">

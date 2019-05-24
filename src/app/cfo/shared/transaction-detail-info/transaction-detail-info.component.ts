@@ -14,6 +14,7 @@ import {
     UpdateCommentInput
 } from '@shared/service-proxies/service-proxies';
 import * as _ from 'underscore';
+import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
     selector: 'app-transaction-detail-info',
@@ -44,14 +45,17 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
         private _transactionsService: TransactionsServiceProxy,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy,
         private _classificationServiceProxy: ClassificationServiceProxy,
-        private _commentServiceProxy: CommentServiceProxy
+        private _commentServiceProxy: CommentServiceProxy,
+        public cfoPreferencesService: CfoPreferencesService
     ) {
         super(injector);
-        this.transactionId = this.data.transactionId;
     }
 
     ngOnInit() {
-        this.getTransactionDetails();
+        this.data.transactionId$.subscribe((id) => {
+            this.transactionId = id;
+            this.getTransactionDetails();
+        });
         this.getTransactionAttributeTypes();
         this.getCategoryTree();
     }
@@ -240,5 +244,9 @@ export class TransactionDetailInfoComponent extends AppModalDialogComponent impl
 
     refreshParent() {
         this.data.refreshParent && this.data.refreshParent();
+    }
+
+    trackElement(index: number, element: any) {
+        return element ? element.guid : null;
     }
 }

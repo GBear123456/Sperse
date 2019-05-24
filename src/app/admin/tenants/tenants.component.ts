@@ -1,128 +1,313 @@
-import { Component, Injector, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ImpersonationService } from '@app/admin/users/impersonation.service';
-import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
+/** Core imports */
+import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
+
+/** Third party imports */
+import DataSource from 'devextreme/data/data_source';
+import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import * as _ from 'underscore';
+
+/** Application imports */
+import { FiltersService } from '@shared/filters/filters.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { CommonLookupServiceProxy, EntityDtoOfInt64, FindUsersInput, NameValueDto, TenantListDto, TenantServiceProxy } from '@shared/service-proxies/service-proxies';
-import * as moment from 'moment';
-import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
-import { Paginator } from 'primeng/paginator';
-import { Table } from 'primeng/table';
+import { ImpersonationService } from '@app/admin/users/impersonation.service';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import {
+    CommonLookupServiceProxy,
+    EntityDtoOfInt64,
+    NameValueDto,
+    PermissionServiceProxy,
+    TenantListDto,
+    TenantServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { CreateTenantModalComponent } from './create-tenant-modal.component';
 import { EditTenantModalComponent } from './edit-tenant-modal.component';
 import { TenantFeaturesModalComponent } from './tenant-features-modal.component';
+import { AppService } from '@app/app.service';
+import { FilterModel } from '@shared/filters/models/filter.model';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { FilterItemModel } from '@shared/filters/models/filter-item.model';
+import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
+import { MatDialog } from '@angular/material';
+import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
 
 @Component({
     templateUrl: './tenants.component.html',
-    styleUrls: ['./tenants.component.less'],
-    encapsulation: ViewEncapsulation.None,
+    styleUrls: [ './tenants.component.less' ],
     animations: [appModuleAnimation()]
 })
-export class TenantsComponent extends AppComponentBase implements OnInit {
+export class TenantsComponent extends AppComponentBase implements OnDestroy {
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
-    @ViewChild('impersonateUserLookupModal') impersonateUserLookupModal: CommonLookupModalComponent;
-    @ViewChild('createTenantModal') createTenantModal: CreateTenantModalComponent;
-    @ViewChild('editTenantModal') editTenantModal: EditTenantModalComponent;
-    @ViewChild('tenantFeaturesModal') tenantFeaturesModal: TenantFeaturesModalComponent;
-    @ViewChild('dataTable') dataTable: Table;
-    @ViewChild('paginator') paginator: Paginator;
-
-    private _$tenantsTable: JQuery;
-    filters: {
-        filterText: string;
-        creationDateRangeActive: boolean;
-        subscriptionEndDateRangeActive: boolean;
-        subscriptionEndDateStart: moment.Moment;
-        subscriptionEndDateEnd: moment.Moment;
-        creationDateStart: moment.Moment;
-        creationDateEnd: moment.Moment;
-        selectedEditionId: number;
-    } = <any>{};
+    private filters: FilterModel[];
+    public actionMenuItems: any;
+    creationDate: any;
+    public actionRecord: any;
+    public headlineConfig = {
+        names: [this.l('Tenants')],
+        icon: '',
+        onRefresh: this.refreshDataGrid.bind(this),
+        buttons: [
+            {
+                enabled: this.isGranted('Pages.Administration'),
+                action: this.createTenant.bind(this),
+                lable: this.l('CreateNewTenant')
+            }
+        ]
+    };
+    dataSource: DataSource;
+    private rootComponent: any;
+    impersonateTenantId: number;
 
     constructor(
         injector: Injector,
         private _tenantService: TenantServiceProxy,
+        private _appService: AppService,
+        private _filtersService: FiltersService,
+        private _permissionService: PermissionServiceProxy,
         private _commonLookupService: CommonLookupServiceProxy,
-        private _impersonationService: ImpersonationService
+        private _impersonationService: ImpersonationService,
+        private dialog: MatDialog
     ) {
         super(injector);
-        this.setFiltersFromRoute();
-    }
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+        this.initToolbarConfig();
+        this.initFilterConfig();
 
-    setFiltersFromRoute(): void {
-        if (this._activatedRoute.snapshot.queryParams['subscriptionEndDateStart'] != null) {
-            this.filters.subscriptionEndDateRangeActive = true;
-            this.filters.subscriptionEndDateStart = moment(this._activatedRoute.snapshot.queryParams['subscriptionEndDateStart']);
-        } else {
-            this.filters.subscriptionEndDateStart = moment().startOf('day');
-        }
-
-        if (this._activatedRoute.snapshot.queryParams['subscriptionEndDateEnd'] != null) {
-            this.filters.subscriptionEndDateRangeActive = true;
-            this.filters.subscriptionEndDateEnd = moment(this._activatedRoute.snapshot.queryParams['subscriptionEndDateEnd']);
-        } else {
-            this.filters.subscriptionEndDateEnd = moment().add(30, 'days').endOf('day');
-        }
-
-        if (this._activatedRoute.snapshot.queryParams['creationDateStart'] != null) {
-            this.filters.creationDateRangeActive = true;
-            this.filters.creationDateStart = moment(this._activatedRoute.snapshot.queryParams['creationDateStart']);
-        } else {
-            this.filters.creationDateStart = moment().add(-7, 'days').startOf('day');
-        }
-
-        if (this._activatedRoute.snapshot.queryParams['creationDateEnd'] != null) {
-            this.filters.creationDateRangeActive = true;
-            this.filters.creationDateEnd = moment(this._activatedRoute.snapshot.queryParams['creationDateEnd']);
-        } else {
-            this.filters.creationDateEnd = moment().endOf('day');
-        }
-    }
-
-    ngOnInit(): void {
-        this.filters.filterText = this._activatedRoute.snapshot.queryParams['filterText'] || '';
-
-        this.impersonateUserLookupModal.configure({
-            title: this.l('SelectAUser'),
-            dataSource: (skipCount: number, maxResultCount: number, filter: string, tenantId?: number) => {
-                let input = new FindUsersInput();
-                input.filter = filter;
-                input.maxResultCount = maxResultCount;
-                input.skipCount = skipCount;
-                input.tenantId = tenantId;
-                return this._commonLookupService.findUsers(input);
+        this.dataSource = new DataSource({
+            key: 'id',
+            load: () => {
+                return this._tenantService.getTenants(
+                    this.searchValue || undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    1000,
+                    undefined
+                ).toPromise().then(response => {
+                    return {
+                        data: response.items,
+                        totalCount: response.items.length
+                    };
+                });
             }
         });
+
+        this.actionMenuItems = [
+            {
+                text: this.l('LoginAsThisTenant'),
+                visible: this.permission.isGranted('Pages.Tenants.Impersonation'),
+                action: () => {
+                    this.showUserImpersonateLookUpModal(this.actionRecord);
+                }
+            },
+            {
+                text: this.l('Edit'),
+                visible: this.permission.isGranted('Pages.Tenants.Edit'),
+                action: () => {
+                    this.openEditDialog(this.actionRecord.id);
+                }
+            },
+            {
+                text: this.l('Features'),
+                visible: this.permission.isGranted('Pages.Tenants.ChangeFeatures'),
+                action: () => {
+                    this.dialog.open(TenantFeaturesModalComponent, {
+                        panelClass: ['slider'],
+                        data: {
+                            tenantId: this.actionRecord.id
+                        }
+                    });
+                }
+            },
+            {
+                text: this.l('Delete'),
+                visible: this.permission.isGranted('Pages.Tenants.Delete'),
+                action: () => {
+                    this.deleteTenant(this.actionRecord);
+                }
+            },
+            {
+                text: this.l('Unlock'),
+                action: () => {
+                    this.unlockUser(this.actionRecord);
+                }
+            }
+        ].filter(Boolean);
     }
 
-    getTenants(event?: LazyLoadEvent) {
-        if (this.primengTableHelper.shouldResetPaging(event)) {
-            this.paginator.changePage(0);
+    initToolbarConfig() {
+        this._appService.updateToolbar([
+            {
+                location: 'before', items: [
+                    {
+                        name: 'filters',
+                        action: () => {
+                            setTimeout(() => {
+                                this.dataGrid.instance.repaint();
+                            }, 1000);
+                            this._filtersService.fixed = !this._filtersService.fixed;
+                        },
+                        options: {
+                            checkPressed: () => {
+                                return this._filtersService.fixed;
+                            },
+                            mouseover: () => {
+                                this._filtersService.enable();
+                            },
+                            mouseout: () => {
+                                if (!this._filtersService.fixed)
+                                    this._filtersService.disable();
+                            }
+                        },
+                        attr: {
+                            'filter-selected': this._filtersService.hasFilterSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                items: [
+                    {
+                        name: 'search',
+                        widget: 'dxTextBox',
+                        options: {
+                            value: this.searchValue,
+                            width: '279',
+                            mode: 'search',
+                            placeholder: this.l('Search') + ' ' + this.l('Tenants').toLowerCase(),
+                            onValueChanged: (e) => {
+                                this.searchValueChange(e);
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.l('Download'),
+                            items: [{
+                                action: Function(),
+                                text: this.l('Save as PDF'),
+                                icon: 'pdf',
+                            }, {
+                                action: this.exportToXLS.bind(this),
+                                text: this.l('Export to Excel'),
+                                icon: 'xls',
+                            }, {
+                                action: this.exportToCSV.bind(this),
+                                text: this.l('Export to CSV'),
+                                icon: 'sheet'
+                            }, {
+                                action: this.exportToGoogleSheet.bind(this),
+                                text: this.l('Export to Google Sheets'),
+                                icon: 'sheet'
+                            }, { type: 'downloadOptions' }]
+                        }
+                    },
+                    { name: 'print', action: Function() }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    { name: 'showCompactRowsHeight', action: this.showCompactRowsHeight.bind(this) },
+                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'fullscreen',
+                        action: () => {
+                            this.toggleFullscreen(document.documentElement);
+                            setTimeout(() => this.dataGrid.instance.repaint(), 100);
+                        }
+                    }
+                ]
+            }
+        ]);
+    }
 
-            return;
-        }
+    initFilterConfig() {
+        this._filtersService.setup(
+            this.filters = [
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: this.l('Name'),
+                    field: 'name',
+                    items: { name: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: '>=', to: '<=' },
+                    caption: 'creation',
+                    field: 'creationTime',
+                    items: {
+                        from: new FilterItemModel(),
+                        to: new FilterItemModel()
+                    },
+                    options: {method: 'getFilterByDate'}
+                })
+            ]
+        );
 
-        this.primengTableHelper.showLoadingIndicator();
+        this._filtersService.apply(() => {
+            this.initToolbarConfig();
+            let dataSourceFilters = [];
 
-        this._tenantService.getTenants(
-            this.filters.filterText,
-            this.filters.creationDateRangeActive ? this.filters.creationDateStart : undefined,
-            this.filters.creationDateRangeActive ? this.filters.creationDateEnd : undefined,
-            this.filters.selectedEditionId,
-            this.filters.selectedEditionId !== undefined && (this.filters.selectedEditionId + '') !== '-1',
-            this.primengTableHelper.getSorting(this.dataTable),
-            this.primengTableHelper.getMaxResultCount(this.paginator, event),
-            this.primengTableHelper.getSkipCount(this.paginator, event)
-        ).subscribe(result => {
-            this.primengTableHelper.totalRecordsCount = result.totalCount;
-            this.primengTableHelper.records = result.items;
-            this.primengTableHelper.hideLoadingIndicator();
+            for (let filter of this.filters) {
+                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
+                if (filterMethod) {
+                    let customFilters: any[] = filterMethod(filter);
+                    if (customFilters && customFilters.length)
+                        customFilters.forEach((v) => dataSourceFilters.push(v));
+                } else {
+                    if (filter.options && filter.options.method) {
+                        let oDataFilter = filter[filter.options.method]();
+                        for (let filterItem of Object.keys(oDataFilter)) {
+                            for (let operator of Object.keys(oDataFilter[filterItem])) {
+                                dataSourceFilters.push([filterItem, operator, oDataFilter[filterItem][operator]]);
+                            }
+                        }
+                    } else {
+                        _.pairs(filter.items).forEach((pair) => {
+                            let val = pair.pop().value, key = pair.pop();
+                            if (val)
+                                dataSourceFilters.push([key, filter.operator, val]);
+                        });
+                    }
+                }
+            }
+
+            dataSourceFilters = dataSourceFilters.length ? dataSourceFilters : null;
+            this.dataSource.filter(dataSourceFilters);
+            this.dataSource.load();
         });
     }
 
     showUserImpersonateLookUpModal(record: any): void {
-        this.impersonateUserLookupModal.tenantId = record.id;
-        this.impersonateUserLookupModal.show();
+        this.impersonateTenantId = record.id;
+        const impersonateDialog = this.dialog.open(CommonLookupModalComponent, {
+            panelClass: [ 'slider', 'common-lookup' ],
+            data: { tenantId: this.impersonateTenantId }
+        });
+        impersonateDialog.componentInstance.itemSelected.subscribe((item: NameValueDto) => {
+            this.impersonateUser(item);
+        });
     }
 
     unlockUser(record: any): void {
@@ -131,12 +316,47 @@ export class TenantsComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    reloadPage(): void {
-        this.paginator.changePage(this.paginator.getPage());
+    createTenant(): void {
+        this.dialog.open(CreateTenantModalComponent, {
+            panelClass: ['slider', 'tenant-modal'],
+            data: {}
+        });
     }
 
-    createTenant(): void {
-        this.createTenantModal.show();
+    onContentReady() {
+        this.setGridDataLoaded();
+    }
+
+    showActionsMenu(event) {
+        this.actionRecord = event.data;
+        event.cancel = true;
+    }
+
+    onMenuItemClick($event) {
+        $event.itemData.action.call(this);
+        this.actionRecord = null;
+    }
+
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
+    }
+
+    editTenant(event) {
+        if (this.permission.isGranted('Pages.Administration.Roles.Edit')) {
+            let roleId = event.data && event.data.id;
+            if (roleId) {
+                event.component.cancelEditData();
+                this.openEditDialog(roleId);
+            }
+        }
+    }
+
+    private openEditDialog(tenantId: number) {
+        this.dialog.open(EditTenantModalComponent, {
+            panelClass: ['slider', 'tenant-modal'],
+            data: { tenantId: tenantId }
+        });
     }
 
     deleteTenant(tenant: TenantListDto): void {
@@ -146,7 +366,7 @@ export class TenantsComponent extends AppComponentBase implements OnInit {
             isConfirmed => {
                 if (isConfirmed) {
                     this._tenantService.deleteTenant(tenant.id).subscribe(() => {
-                        this.reloadPage();
+                        this.dataGrid.instance.refresh();
                         this.notify.success(this.l('SuccessfullyDeleted'));
                     });
                 }
@@ -155,10 +375,35 @@ export class TenantsComponent extends AppComponentBase implements OnInit {
     }
 
     impersonateUser(item: NameValueDto): void {
-        this._impersonationService
-            .impersonate(
+        this._impersonationService.impersonate(
             parseInt(item.value),
-            this.impersonateUserLookupModal.tenantId
-            );
+            this.impersonateTenantId
+        );
+    }
+
+    showCompactRowsHeight() {
+        this.dataGrid.instance.element().classList.toggle('grid-compact-view');
+    }
+
+    showColumnChooser() {
+        this.dataGrid.instance.showColumnChooser();
+    }
+
+    searchValueChange(e: object) {
+        this.searchValue = e['value'];
+        if (this.searchValue)
+            this.dataGrid.instance.filter(['Name', 'contains', this.searchValue]);
+        else
+            this.dataGrid.instance.clearFilter();
+    }
+
+    refreshDataGrid() {
+        if (this.dataGrid && this.dataGrid.instance)
+            this.dataGrid.instance.refresh();
+    }
+
+    ngOnDestroy() {
+        this.rootComponent.overflowHidden();
+        this._appService.updateToolbar(null);
     }
 }

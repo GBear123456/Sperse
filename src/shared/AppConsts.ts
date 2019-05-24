@@ -67,8 +67,9 @@ export class AppConsts {
     };
 
     static readonly formatting = {
-        date: 'MM/DD/YYYY',
-        dateTime: 'MM/dd/yyyy hh:mm a'
+        date: 'MM/dd/yyyy',
+        dateTime: 'MM/dd/yyyy hh:mm a',
+        dateMoment: 'MM/DD/YYYY'
     };
 
     static readonly otherLinkTypeId = '-';

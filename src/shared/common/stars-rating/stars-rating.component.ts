@@ -6,7 +6,7 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { range } from 'lodash';
+import range from 'lodash/range';
 
 @Component({
     selector: 'stars-rating',

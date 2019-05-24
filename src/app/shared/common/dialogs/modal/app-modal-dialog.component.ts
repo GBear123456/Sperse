@@ -1,4 +1,9 @@
-import { Component, Injector, Output, EventEmitter } from '@angular/core';
+import {
+    Component,
+    Injector,
+    Output,
+    EventEmitter
+} from '@angular/core';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({

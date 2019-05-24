@@ -16,9 +16,9 @@
                 <img src="./assets/common/icons/automatic-payments.svg">
                 {{ l('AutomaticPayments') }}
             </li>
-            <li>
+            <li *ngIf="lastPaymentAmount">
                 <img src="./assets/common/icons/last-payment.svg">
-                {{ l('LastPayment', lastPaymentDate, amountCurrency, lastPaymentAmount) }}
+                {{ l('LastPayment', lastPaymentDate, amountCurrency, (lastPaymentAmount | number : '1.2-2')) }}
             </li>
         </ul>
     </div>
@@ -30,7 +30,7 @@
                     <ul>
                         <li *ngFor="let payment of displayedPayments">
                             <span class="date">{{ formatDate(payment.startDate) + ' - ' + formatDate(payment.endDate) }}</span>
-                            <span class="amount">{{ amountCurrency + payment.amount }}</span>
+                            <span class="amount">{{ amountCurrency + (payment.amount | number : '1.2-2') }}</span>
                         </li>
                     </ul>
                     <button class="viewAllTransactions" *ngIf="displayedPayments.length < (payments$ | async)?.length" (click)="addNewPaymentMethod()" (click)="viewAllTransactions()">{{ l('ViewAllTransactions') }}</button>
