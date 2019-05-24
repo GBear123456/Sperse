@@ -57,16 +57,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
         });
     }
 
+    ngOnInit(): void {
+        this.processFilterInternal();
+    }
+
     onContentReady(event) {
         this.setGridDataLoaded();
         event.component.columnOption('command:edit', {
             visibleIndex: -1,
             width: 40
         });
-    }
-
-    ngOnInit(): void {
-        this.processFilterInternal();
     }
 
     private getDataSource(contactId) {

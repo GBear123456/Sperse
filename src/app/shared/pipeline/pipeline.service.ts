@@ -146,8 +146,8 @@ export class PipelineService {
         if (entity) {
             if (data)
                 entity.data = data;
-            if (!this.updateEntityStage(pipelineId, entity, 
-                this.getStageByName(pipelineId, entity.Stage || entity.stage), 
+            if (!this.updateEntityStage(pipelineId, entity,
+                this.getStageByName(pipelineId, entity.Stage || entity.stage),
                 this.getStageByName(pipelineId, targetStage), (data) => {
                     this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
                     delete entity.data;
@@ -350,8 +350,8 @@ export class PipelineService {
         if (entity) {
             let prevEntity = this.getPrevEntity(entity, entities);
             return entities.length > 1 ? prevEntity && prevEntity.SortOrder
-                || entities[0].SortOrder + 1: 0;
-        } else 
+                || entities[0].SortOrder + 1 : 0;
+        } else
             return entities.length && entities.slice(-1).pop().SortOrder || 0;
     }
 
@@ -363,7 +363,7 @@ export class PipelineService {
             ).pipe(finalize(() => {
                 entity.locked = false;
             })).subscribe(complete, complete);
-        } else 
+        } else
             complete && complete();
     }
 

@@ -85,7 +85,6 @@ export class PlatformSelectComponent extends AppComponentBase {
         ) {
             let navigate = null;
             let moduleConfig = this._appService.getModuleConfig(module.name);
-            console.log(moduleConfig);
             if (module.name === 'PFM' && module.footerItem) {
                 return window.open(location.origin + '/personal-finance', '_blank');
             } else if (moduleConfig.defaultPath) {
