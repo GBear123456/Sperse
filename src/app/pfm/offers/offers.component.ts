@@ -332,7 +332,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
 
         setTimeout(() => {
             this._filtersService.change(this.filterModelStatuses);
-        }, 100);
+        });
     }
 
     filterByCategory(filter) {
