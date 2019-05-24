@@ -94,7 +94,7 @@ function updateBugsnagWithUserInfo(appSessionService: AppSessionService) {
     const user = appSessionService.user;
     const tenantName = appSessionService.tenantName || 'Host';
     const tenant = appSessionService.tenant;
-    if (user.name) {
+    if (user && user.name) {
         bugsnagClient.user = {
             id: tenant ? tenant.id + ':' + appSessionService.userId : appSessionService.userId,
             name: `${tenantName}\\${user.name}`,
