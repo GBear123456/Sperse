@@ -154,14 +154,13 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         this.bankAccountsService.changeSelectedBusinessEntities([], false);
         this.bankAccountsService.changeSelectedBankAccountsIds(businessEntity.BankAccountIds, false);
         this.bankAccountsService.applyFilter();
-        const bankAccountsSelectDialog = this.dialog.open(BankAccountsSelectDialogComponent, {
+        this.dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
             data: {
                 highlightUsedRows: true,
                 showBusinessEntitiesFilter: false
             }
-        });
-        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe(() => {
+        }).componentInstance.onApply.subscribe(() => {
             this.applyBankAccountIds();
         });
     }

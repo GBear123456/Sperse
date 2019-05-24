@@ -273,11 +273,10 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     }
 
     openBankAccountsSelectDialog() {
-        const bankAccountsSelectDialog = this._dialog.open(BankAccountsSelectDialogComponent, {
+        this._dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
             data: { useGlobalCache: true }
-        });
-        bankAccountsSelectDialog.componentInstance.onApplySelected.subscribe(() => {
+        }).componentInstance.onApply.subscribe(() => {
             this.filterByBankAccounts();
         });
     }

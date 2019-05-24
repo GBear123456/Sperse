@@ -22,7 +22,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 })
 export class BankAccountsSelectDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
-    @Output() onApplySelected: EventEmitter<any> = new EventEmitter();
+    @Output() onApply: EventEmitter<any> = new EventEmitter();
     tooltipVisible: boolean;
     selectedBusinessEntitiesIds: any[] = [];
     businessEntities = [];
@@ -56,7 +56,7 @@ export class BankAccountsSelectDialogComponent implements OnInit {
 
     apply() {
         this.bankAccountsService.applyFilter();
-        this.onApplySelected.emit();
+        this.onApply.emit();
         this.modalDialog.close(true);
     }
 
