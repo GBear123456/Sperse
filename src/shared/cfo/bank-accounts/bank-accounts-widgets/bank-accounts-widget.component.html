@@ -21,7 +21,7 @@
             </selection-filter>
             <div class="is-active-filter">
                 <span>{{ bankAccountsService.state.isActive !== false ? l('Active') : l('Disabled') }}</span>
-                <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
+                <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value, saveChangesInCache)" [width]="32"></dx-switch>
             </div>
         </div>
         <div class="center-header col-sm-8">

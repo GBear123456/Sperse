@@ -1133,7 +1133,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.dialog.open(BankAccountsSelectDialogComponent, {
             panelClass: 'slider',
             data: {
-                useGlobalCache: true,
                 highlightedBankAccountIds: this.bankAccounts
             }
         }).componentInstance.onApply.subscribe(() => {

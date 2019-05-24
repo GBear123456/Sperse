@@ -25,6 +25,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
     @ViewChild('header', { read: ElementRef }) header: ElementRef;
     @Input() showSyncDate = false;
+    @Input() saveChangesInCache = true;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
     @Input() nameColumnWidth = 350;
@@ -176,7 +177,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     selectedAccountsChanged() {
         let selectedSyncAccounts = this.mainDataGrid.instance.getVisibleRows().filter(row => row.rowType === 'data');
         const selectedBankAccountsIds = selectedSyncAccounts.reduce((allBankAccounts, row) => allBankAccounts.concat(row.data.bankAccounts.filter(account => account.selected).map(account => account.id)), []);
-        this.bankAccountsService.changeSelectedBankAccountsIds(selectedBankAccountsIds);
+        this.bankAccountsService.changeSelectedBankAccountsIds(selectedBankAccountsIds, this.saveChangesInCache);
         this.selectionChanged.emit(selectedSyncAccounts);
     }
 
@@ -188,7 +189,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this.bankAccountsService.changeState({
             selectedBusinessEntitiesIds: selectedEntitiesIds,
             selectedBankAccountIds: null
-        });
+        }, this.saveChangesInCache);
         this.bankAccountsService.applyFilter();
     }
 

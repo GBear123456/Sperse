@@ -159,8 +159,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     openBankAccountsSelectDialog() {
         this.dialog.open(BankAccountsSelectDialogComponent, {
-            panelClass: 'slider',
-            data: { userGlobalCache: true }
+            panelClass: 'slider'
         });
     }
 
