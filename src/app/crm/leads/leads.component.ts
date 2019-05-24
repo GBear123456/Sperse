@@ -257,7 +257,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
         if (this.filterChanged) {
             this.filterChanged = false;
-            setTimeout(() => this.processFilterInternal());
+            if (!this.showPipeline)
+                setTimeout(() => this.processFilterInternal());
         }
     }
 
@@ -924,7 +925,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         if (event.previousValue != event.value) {
             this.contactGroupId = ContactGroup[event.value];
             this._cacheService.set(this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY), event.value);
-
+            this.filterChanged = true;
             this.initToolbarConfig();
             if (!this.showPipeline)
                 this.refresh(false);
