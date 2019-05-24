@@ -2,7 +2,7 @@
     font-size: 15px;
     text-align: start;
     width: 755px;
-    padding: 1rem 0 0 1rem;
+    padding: 0 0 0 1rem;
 
     /deep/ dx-scroll-view {
         height: 520px;
@@ -95,24 +95,36 @@
     }
 
     /deep/ bank-accounts-widget {
-        .left-header {
-            max-width: 87% !important;
-            flex-basis: 87% !important;
+        .header {
+            padding: 0;
+            .left-header {
+                max-width: 100% !important;
+                flex-basis: 100% !important;
+                order: 2;
+            }
+            .center-header {
+                max-width: 70% !important;
+                flex-basis: 70% !important;
+                border: none !important;
+            }
+            .right-header {
+                max-width: 30% !important;
+                flex-basis: 30% !important;
+            }
+            info-component {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
         }
-        .center-header {
-            max-width: 70% !important;
-            flex-basis: 70% !important;
-            border: none !important;
-        }
-        .right-header {
-            max-width: 30% !important;
-            flex-basis: 30% !important;
-        }
-
     }
 }
 
 /deep/ .dx-overlay-wrapper {
+
+    .cdk-overlay-pane.bank-accounts-select-dialog {
+        width: auto !important;
+    }
+
     .dx-overlay-content {
         &::before {
             display: inline;

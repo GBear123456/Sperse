@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CFOServiceBase } from './cfo-service-base';
-import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, MyFinancesServiceProxy } from 'shared/service-proxies/service-proxies';
+import { InstanceType, GetStatusOutputStatus, MyFinancesServiceProxy } from 'shared/service-proxies/service-proxies';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
-export class UserOnlyCFOService extends CFOServiceBase {    
+export class UserOnlyCFOService extends CFOServiceBase {
     get instanceType() {
         return InstanceType.User;
     }
@@ -14,7 +14,7 @@ export class UserOnlyCFOService extends CFOServiceBase {
         private _myFinancesService: MyFinancesServiceProxy
     ) {
         super();
-      
+
         this.hasStaticInstance = true;
         this.isForUser = true;
 

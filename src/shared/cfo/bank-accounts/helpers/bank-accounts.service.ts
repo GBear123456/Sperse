@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 
 /** Third party imports */
 import { Observable, BehaviorSubject, ReplaySubject, Subject, of, combineLatest, forkJoin } from 'rxjs';
@@ -145,7 +145,6 @@ export class BankAccountsService {
             map((typeName: string) => typeName || this.localizationService.l('NoType')),
             distinct(),
             toArray(),
-            tap(console.log),
             map((types: string[]) => types.sort(this.sortBankAccountsTypes)),
             distinctUntilChanged(this.arrayDistinct)
         );

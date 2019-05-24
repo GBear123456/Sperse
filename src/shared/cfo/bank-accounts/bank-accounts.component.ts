@@ -32,7 +32,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         private _synchProgress: SynchProgressService,
         private _bankAccountsGeneralService: BankAccountsGeneralService,
         private dialog: MatDialog,
-        public bankAccountsService: BankAccountsService,
+        public bankAccountsService: BankAccountsService
     ) {
         super(injector);
         this.subscribeToObservables();

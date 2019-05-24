@@ -8,7 +8,7 @@ import { finalize, switchMap } from 'rxjs/operators';
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { DashboardServiceProxy, InstanceType, GetDailyBalanceStatsOutput } from 'shared/service-proxies/service-proxies';
+import { DashboardServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { DashboardService } from '../dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 

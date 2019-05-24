@@ -24,6 +24,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     private initBankAccountHighlightedTimeout: any;
     @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
     @ViewChild('header', { read: ElementRef }) header: ElementRef;
+    @Input() showSyncDate = false;
     @Input() showAdvancedColumns = true;
     @Input() highlightUsedRows = false;
     @Input() nameColumnWidth = 350;

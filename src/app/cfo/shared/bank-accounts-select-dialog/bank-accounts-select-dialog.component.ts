@@ -5,13 +5,14 @@ import { Component, ChangeDetectionStrategy, Input, Output, OnInit, EventEmitter
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 /** Application imports */
-import { BankAccountsServiceProxy, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';
+import { BankAccountsServiceProxy, BusinessEntityServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { IBankAccountsSelectDialogData } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog-data';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Component({
     templateUrl: './bank-accounts-select-dialog.component.html',
@@ -31,6 +32,7 @@ export class BankAccountsSelectDialogComponent implements OnInit {
     constructor(
         private cfoService: CFOService,
         private bankAccountsService: BankAccountsService,
+        private permissionCheckerService: PermissionCheckerService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: IBankAccountsSelectDialogData
     ) {}
@@ -46,7 +48,8 @@ export class BankAccountsSelectDialogComponent implements OnInit {
                 id: 'saveCompany',
                 title: this.ls.l('Apply'),
                 class: 'primary saveButton',
-                disabled: !this.cfoService.isInstanceAdmin && !this.cfoService.isMemberAccessManage,
+                disabled: !(this.cfoService.instanceType === InstanceType.Main && this.permissionCheckerService.isGranted('Pages.CFO.MainInstanceAccess'))
+                          && !this.permissionCheckerService.isGranted('Pages.CFO.MemberAccess'),
                 action: this.apply.bind(this)
             }
         ];

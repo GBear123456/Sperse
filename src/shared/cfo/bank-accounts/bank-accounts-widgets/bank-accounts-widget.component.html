@@ -20,8 +20,8 @@
                 (selectionChanged)="bankAccountTypesChanged($event)">
             </selection-filter>
             <div class="is-active-filter">
+                <span>{{ bankAccountsService.state.isActive !== false ? l('Active') : l('Disabled') }}</span>
                 <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value)" [width]="32"></dx-switch>
-                <div>{{ bankAccountsService.state.isActive !== false ? l('Active') : l('Disabled') }}</div>
             </div>
         </div>
         <div class="center-header col-sm-8">
@@ -29,7 +29,11 @@
             <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component>
         </div>
         <div class="right-header col-sm-4">
-            <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'" [description]="l('Current_Balance')"></info-component>
+            <ng-container *ngIf="bankAccountsService.accountsDataTotalNetWorth$ | async as totalNetWorth">
+                <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="totalNetWorth | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'" [description]="l('Current_Balance')">
+                    <sup>{{totalNetWorth | customNumber:'0.2-2'}}</sup>
+                </info-component>
+            </ng-container>
         </div>
     </div>
 </div>
@@ -59,8 +63,8 @@
             <dxi-column dataField="selected" caption="" [width]="30" alignment="center" dataType="boolean"></dxi-column>
             <dxi-column dataField="name" [caption]="l('Account')" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
             <dxi-column dataField="syncAccountStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="1" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
-            <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
-            <dxi-column dataField="bankAccounts.length" [width]="10" alignment="left" [sortIndex]="0" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
+            <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
+            <dxi-column dataField="bankAccounts.length" [width]="10" [sortIndex]="0" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
             <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
             <dxi-column dataField="balance" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
             <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false" [(visible)]="allowUpdateAccount" cellTemplate="actionsTemplate"></dxi-column>
@@ -102,18 +106,20 @@
                         <dxi-column dataField="businessEntityId" [allowEditing]="true" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
                         <dxi-column dataField="isActive" [allowEditing]="true" [visible]="false"></dxi-column>
                         <dxi-column dataField="balance" [allowEditing]="false" cssClass="tabular" alignment="right" [allowEditing]="true" cellTemplate="amountTemplate" [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
-                        <dxi-column [width]="200" dataField="availableBalance" cssClass="available-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
+                        <dxi-column [width]="200" dataField="availableBalance" cssClass="available-balance" cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <dxi-column [width]="200" dataField="totalCreditLine" cssClass="totalCreditLine-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <dxi-column [width]="100" dataField="utilized" cellTemplate="utilizedTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text)">
-                                <span class="number-value"> {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}  </span>
+                                <div class="number-value bold">
+                                    {{cell.text | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}<sup>{{cell.text | customNumber:'0.2-2'}}</sup>
+                                </div>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'colorBalanceTemplate'" class="color-div">
                             <ng-container *ngIf="(cell.text)">
                                 <div class="balance-container">
-                                    <span class="number-value"> {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}  </span>
+                                    {{cell.text | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}<sup>{{cell.text | customNumber:'0.2-2'}}</sup>
                                 </div>
                             </ng-container>
                         </div>
@@ -144,7 +150,9 @@
             </div>
             <div *dxTemplate="let cell of 'amountTemplate'">
                 <ng-container *ngIf="(cell.text)">
-                    <div class="number-value bold">{{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</div>
+                    <div class="number-value bold">
+                        {{cell.text | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}<sup>{{cell.text | customNumber:'0.2-2'}}</sup>
+                    </div>
                 </ng-container>
             </div>
             <div *dxTemplate="let cell of 'statusTemplate'">
