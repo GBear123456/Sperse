@@ -556,12 +556,12 @@ export class BankAccountsService {
         return result;
     }
 
-    changeActiveFilter(value: boolean) {
+    changeActiveFilter(value: boolean, saveInCache = false) {
         if (this.state.isActive !== value) {
             this.changeState({
                 isActive: value,
                 selectedBankAccountIds: null
-            }, false);
+            }, saveInCache);
             this._activeStatus.next(value);
         }
     }
