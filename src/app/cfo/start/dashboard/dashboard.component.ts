@@ -60,7 +60,11 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.headlineConfig = {
             names: [this.l('Dashboard_Title')],
             iconSrc: './assets/common/icons/pie-chart.svg',
-            onRefresh: this.refreshWidgets.bind(this),
+            onRefresh: () => {
+                this.refreshWidgets();
+                this.totalsByPeriodComponent.refresh.next(null);
+                this.trendByPeriodComponent.refresh.next(null);
+            },
             buttons: []
         };
         /** Load sync accounts */
@@ -112,8 +116,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     filterByBankAccounts(data) {
         this.accountsComponent.filterByBankAccounts(data);
         this.categorizationStatusComponent.filterByBankAccounts(data);
-        this.totalsByPeriodComponent.filterByBankAccounts(data.selectedBankAccountIds);
-        this.trendByPeriodComponent.filterByBankAccounts(data.selectedBankAccountIds);
     }
 
     refreshWidgets() {
@@ -125,8 +127,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     loadAllWidgetsData() {
         this.accountsComponent.getAccountTotals();
         this.accountsComponent.getDailyStats();
-        this.totalsByPeriodComponent.loadStatsData();
-        this.trendByPeriodComponent.loadStatsData();
         this.categorizationStatusComponent.getCategorizationStatus();
     }
 
@@ -137,7 +137,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     activate() {
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
-
+        this.totalsByPeriodComponent.activate();
+        this.trendByPeriodComponent.activate();
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
             this.filterByBankAccounts(this.bankAccountsService.state);
@@ -146,15 +147,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
         this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
-
-        this.renderWidgets();
-    }
-
-    renderWidgets() {
-        setTimeout(() => {
-            this.totalsByPeriodComponent.render();
-            this.trendByPeriodComponent.render();
-        }, 300);
     }
 
     openBankAccountsSelectDialog() {
