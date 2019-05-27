@@ -1,14 +1,15 @@
-import { Injectable, Injector } from '@angular/core';
-import { Subscription, Observable, BehaviorSubject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Subscription, Observable, ReplaySubject } from 'rxjs';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
+import { PeriodModel } from '@app/shared/common/period/period.model';
+import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class DashboardWidgetsService  {
-    private _period: BehaviorSubject<Object> = new BehaviorSubject<Object>({});
-    private _totalsData: BehaviorSubject<Object> = new BehaviorSubject<Object>({});
+    private _period: ReplaySubject<PeriodModel> = new ReplaySubject<PeriodModel>(1);
+    private _totalsData: ReplaySubject<GetTotalsOutput> = new ReplaySubject<GetTotalsOutput>(1);
     private _subscribers: Array<Subscription> = [];
     public period$: Observable<Object> = this._period.asObservable();
-
     totalsDataFields = [
         {
             title: 'Sales',
@@ -30,9 +31,9 @@ export class DashboardWidgetsService  {
            percent: '0%'
        }];
 
-    constructor(injector: Injector,
+    constructor(
         private _dashboardServiceProxy: DashboardServiceProxy
-    ) { }
+    ) {}
 
     subscribePeriodChange(callback: (period: any) => any) {
         this._subscribers.push(
@@ -40,13 +41,12 @@ export class DashboardWidgetsService  {
         );
     }
 
-    periodChanged(period = undefined) {
+    periodChanged(period?: PeriodModel) {
         this._period.next(period);
-        this._dashboardServiceProxy.getTotals(
-            period && period.from, period && period.to)
-                .subscribe(result => {
-                    this._totalsData.next(result);
-                }
+        this._dashboardServiceProxy.getTotals(period && period.from, period && period.to)
+            .subscribe(result => {
+                this._totalsData.next(result);
+            }
        );
     }
 

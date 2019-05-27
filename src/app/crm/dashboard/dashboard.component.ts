@@ -14,7 +14,6 @@ import { RootStore, StatesStoreActions } from '@root/store';
 import { Module } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { AppConsts } from '@shared/AppConsts';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { RecentClientsComponent } from '@shared/crm/dashboard-widgets/recent-clients/recent-clients.component';
 import { TotalsByPeriodComponent } from '@shared/crm/dashboard-widgets/totals-by-period/totals-by-period.component';

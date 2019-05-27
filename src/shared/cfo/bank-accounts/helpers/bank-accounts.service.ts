@@ -82,7 +82,8 @@ export class BankAccountsService {
     private _activeStatus: BehaviorSubject<boolean> = new BehaviorSubject(this.state.isActive);
     //activeStatus$ = this._activeStatus.asObservable();
 
-    constructor(private cfoService: CFOService,
+    constructor(
+        private cfoService: CFOService,
         private bankAccountsServiceProxy: BankAccountsServiceProxy,
         private businessEntityService: BusinessEntityServiceProxy,
         private cacheService: CacheService,
@@ -226,9 +227,7 @@ export class BankAccountsService {
         this.filteredSyncAccountsWithApply$ =
             this.filteredSyncAccounts$.pipe(
                 first(),
-                switchMap(() => {
-                    return this.applyFilter$;
-                }),
+                switchMap(() => this.applyFilter$),
                 withLatestFrom(this.filteredSyncAccounts$, (apply, filteredAccounts) => {
                     return filteredAccounts;
                 }),
@@ -562,7 +561,7 @@ export class BankAccountsService {
             this.changeState({
                 isActive: value,
                 selectedBankAccountIds: null
-            });
+            }, false);
             this._activeStatus.next(value);
         }
     }

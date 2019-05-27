@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Input, Output, OnInit, EventEmitter, ViewChild, Inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Output, OnInit, EventEmitter, ViewChild, Inject } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material';
@@ -24,7 +24,6 @@ export class BankAccountsSelectDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     tooltipVisible: boolean;
-    selectedBusinessEntitiesIds: any[] = [];
     businessEntities = [];
     isActive = true;
     buttons: IDialogButton[];

@@ -91,7 +91,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     private readonly ADD_INVOICE_OPTION = 3;
     private readonly ADD_OPTION_DEFAULT = this.ADD_FILES_OPTION;
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
-
+    private contactGroup: ContactGroup;
     private showRemovingOrgRelationProgress = false;
 
     groupNames = _.mapObject(_.invert(ContactGroup), (val) => startCase(val));
@@ -153,7 +153,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this._contactInfoBehaviorSubject
             .pipe(filter(Boolean), takeUntil(this.lifeCycleService.destroy$))
             .subscribe(
-                contactInfo => {
+                (contactInfo: ContactInfoDto) => {
+                    this.contactGroup = contactInfo.groupId;
                     this.addContextMenuItems = this.defaultContextMenuItems.filter(menuItem => menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0);
                     this.addOptionsInit();
                 }
@@ -372,18 +373,24 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         ).subscribe(() => {});
     }
 
+    get addOptionCacheKey() {
+        return this.ADD_OPTION_CACHE_KEY + '_' + this.contactGroup;
+    }
+
     addOptionsInit() {
-        let cacheKey = this.getCacheKey(this.ADD_OPTION_CACHE_KEY),
+        let cacheKey = this.getCacheKey(this.addOptionCacheKey),
             selectedIndex = this.ADD_OPTION_DEFAULT;
         if (this._cacheService.exists(cacheKey))
             selectedIndex = this._cacheService.get(cacheKey);
-        this.addContextMenuItems[selectedIndex].selected = true;
-        this.addButtonTitle = this.addContextMenuItems[selectedIndex].text;
+        if (this.addContextMenuItems.length) {
+            this.addContextMenuItems[selectedIndex].selected = true;
+            this.addButtonTitle = this.addContextMenuItems[selectedIndex].text;
+        }
     }
 
     updateSaveOption(option) {
         this.addButtonTitle = option.text;
-        this._cacheService.set(this.getCacheKey(this.ADD_OPTION_CACHE_KEY),
+        this._cacheService.set(this.getCacheKey(this.addOptionCacheKey),
             this.addContextMenuItems.findIndex((elm) => elm.text == option.text).toString());
     }
 

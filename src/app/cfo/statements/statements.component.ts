@@ -418,8 +418,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     openBankAccountsSelectDialog() {
         this._dialog.open(BankAccountsSelectDialogComponent, {
-            panelClass: 'slider',
-            data: { useGlobalCache: true }
+            panelClass: 'slider'
         }).componentInstance.onApply.subscribe(() => {
             this.setBankAccountsFilter(true);
         });

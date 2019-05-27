@@ -52,10 +52,6 @@ export class NotesComponent extends AppComponentBase implements OnInit {
         });
     }
 
-    refreshDataGrid() {
-        this.dataGrid.instance.refresh();
-    }
-
     ngOnInit() {
         let notesData = this._notesService['data'];
         this.data = this._contactService['data'];
@@ -69,6 +65,10 @@ export class NotesComponent extends AppComponentBase implements OnInit {
                     setTimeout(() => this.openNoteAddDialog());
             }
         });
+    }
+
+    refreshDataGrid() {
+        this.dataGrid.instance.refresh();
     }
 
     loadData(): Observable<NoteInfoDto[]> {

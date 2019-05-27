@@ -314,139 +314,141 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
-            {
-                location: 'before', items: [
-                    {
-                        name: 'filters',
-                        action: (event) => {
-                            setTimeout(() => {
-                                this.dataGrid.instance.repaint();
-                            }, 1000);
-                            this._filtersService.fixed = !this._filtersService.fixed;
-                        },
-                        options: {
-                            checkPressed: () => {
-                                return this._filtersService.fixed;
+        if (this.componentIsActivated) {
+            this._appService.updateToolbar([
+                {
+                    location: 'before', items: [
+                        {
+                            name: 'filters',
+                            action: (event) => {
+                                setTimeout(() => {
+                                    this.dataGrid.instance.repaint();
+                                }, 1000);
+                                this._filtersService.fixed = !this._filtersService.fixed;
                             },
-                            mouseover: (event) => {
-                                this._filtersService.enable();
+                            options: {
+                                checkPressed: () => {
+                                    return this._filtersService.fixed;
+                                },
+                                mouseover: (event) => {
+                                    this._filtersService.enable();
+                                },
+                                mouseout: (event) => {
+                                    if (!this._filtersService.fixed)
+                                        this._filtersService.disable();
+                                }
                             },
-                            mouseout: (event) => {
-                                if (!this._filtersService.fixed)
-                                    this._filtersService.disable();
-                            }
-                        },
-                        attr: {
-                            'filter-selected': this._filtersService.hasFilterSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                items: [
-                    {
-                        name: 'search',
-                        widget: 'dxTextBox',
-                        options: {
-                            width: '279',
-                            mode: 'search',
-                            value: this.searchValue,
-                            placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
-                            onValueChanged: (e) => {
-                                this.searchValueChange(e);
+                            attr: {
+                                'filter-selected': this._filtersService.hasFilterSelected
                             }
                         }
-                    }
-                ]
-            },
-            {
-                location: 'before',
-                locateInMenu: 'auto',
-                items: [
-                    { name: 'assign', disabled: true }, {
-                        name: 'stage',
-                        action: this.toggleStages.bind(this),
-                        attr: {
-                            'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
+                    ]
+                },
+                {
+                    location: 'before',
+                    items: [
+                        {
+                            name: 'search',
+                            widget: 'dxTextBox',
+                            options: {
+                                width: '279',
+                                mode: 'search',
+                                value: this.searchValue,
+                                placeholder: this.l('Search') + ' ' + this.l('Orders').toLowerCase(),
+                                onValueChanged: (e) => {
+                                    this.searchValueChange(e);
+                                }
+                            }
                         }
-                    }, { name: 'delete', disabled: true }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'download',
-                        widget: 'dxDropDownMenu',
-                        options: {
-                            hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
-                                action: this.exportToXLS.bind(this),
-                                text: this.l('Export to Excel'),
-                                icon: 'xls',
-                            }, {
-                                action: this.exportToCSV.bind(this),
-                                text: this.l('Export to CSV'),
-                                icon: 'sheet'
-                            }, {
-                                action: this.exportToGoogleSheet.bind(this),
-                                text: this.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            }, { type: 'downloadOptions' }]
+                    ]
+                },
+                {
+                    location: 'before',
+                    locateInMenu: 'auto',
+                    items: [
+                        { name: 'assign', disabled: true }, {
+                            name: 'stage',
+                            action: this.toggleStages.bind(this),
+                            attr: {
+                                'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
+                            }
+                        }, { name: 'delete', disabled: true }
+                    ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            name: 'download',
+                            widget: 'dxDropDownMenu',
+                            options: {
+                                hint: this.l('Download'),
+                                items: [{
+                                    action: Function(),
+                                    text: this.l('Save as PDF'),
+                                    icon: 'pdf',
+                                }, {
+                                    action: this.exportToXLS.bind(this),
+                                    text: this.l('Export to Excel'),
+                                    icon: 'xls',
+                                }, {
+                                    action: this.exportToCSV.bind(this),
+                                    text: this.l('Export to CSV'),
+                                    icon: 'sheet'
+                                }, {
+                                    action: this.exportToGoogleSheet.bind(this),
+                                    text: this.l('Export to Google Sheets'),
+                                    icon: 'sheet'
+                                }, { type: 'downloadOptions' }]
+                            }
+                        },
+                        { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
+                    ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    items: [
+                        { name: 'showCompactRowsHeight', action: () => this.toggleContactView() }
+                    ]
+                },
+                {
+                    location: 'after',
+                    locateInMenu: 'auto',
+                    areItemsDependent: true,
+                    items: [
+                        // {
+                        //     name: 'box',
+                        //     action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
+                        //     options: {
+                        //         checkPressed: () => {
+                        //             return (this.dataLayoutType == DataLayoutType.Box);
+                        //         },
+                        //     }
+                        // },
+                        {
+                            name: 'pipeline',
+                            action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
+                            options: {
+                                checkPressed: () => {
+                                    return (this.dataLayoutType == DataLayoutType.Pipeline);
+                                },
+                            }
+                        },
+                        {
+                            name: 'grid',
+                            action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
+                            options: {
+                                checkPressed: () => {
+                                    return (this.dataLayoutType == DataLayoutType.Grid);
+                                },
+                            }
                         }
-                    },
-                    { name: 'columnChooser', action: this.showColumnChooser.bind(this) }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    { name: 'showCompactRowsHeight', action: () => this.toggleContactView() }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                areItemsDependent: true,
-                items: [
-                    // {
-                    //     name: 'box',
-                    //     action: this.toggleDataLayout.bind(this, DataLayoutType.Box),
-                    //     options: {
-                    //         checkPressed: () => {
-                    //             return (this.dataLayoutType == DataLayoutType.Box);
-                    //         },
-                    //     }
-                    // },
-                     {
-                         name: 'pipeline',
-                         action: this.toggleDataLayout.bind(this, DataLayoutType.Pipeline),
-                         options: {
-                             checkPressed: () => {
-                                 return (this.dataLayoutType == DataLayoutType.Pipeline);
-                             },
-                         }
-                     },
-                     {
-                         name: 'grid',
-                         action: this.toggleDataLayout.bind(this, DataLayoutType.Grid),
-                         options: {
-                             checkPressed: () => {
-                                 return (this.dataLayoutType == DataLayoutType.Grid);
-                             },
-                         }
-                     }
-                ]
-            }
-        ]);
+                    ]
+                }
+            ]);
+        }
     }
 
     toggleStages() {
@@ -506,7 +508,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 name: stage.name,
             };
         });
-
         this.initToolbarConfig();
     }
 

@@ -29,7 +29,9 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 @Component({
     selector: 'createOrEditEditionModal',
     templateUrl: './create-or-edit-edition-modal.component.html',
-    styleUrls: [ '../../../shared/metronic/m-radio.less', './create-or-edit-edition-modal.component.less' ],
+    styleUrls: [
+        './create-or-edit-edition-modal.component.less'
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnInit {

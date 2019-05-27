@@ -32,7 +32,7 @@ declare let require: any;
 export class AppService extends AppServiceBase {
     public topMenu: PanelMenu;
     public toolbarConfig: any = null;
-    public toolbarIsHidden  = false;
+    public toolbarIsHidden = false;
     public narrowingPageContentWhenFixedFilter = true;
     public hideSubscriptionCallback: Function;
     public showContactInfoPanel = false;

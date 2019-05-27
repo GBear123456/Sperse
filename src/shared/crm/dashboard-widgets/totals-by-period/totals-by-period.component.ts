@@ -38,6 +38,7 @@ import { DashboardWidgetsService } from '../dashboard-widgets.service';
 import { AppConsts } from '@shared/AppConsts';
 import { GetCustomerAndLeadStatsOutput } from '@shared/service-proxies/service-proxies';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
+import { PeriodModel } from '@app/shared/common/period/period.model';
 
 @Component({
     selector: 'totals-by-period',
@@ -126,7 +127,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     ngOnInit() {
         this.totalsData$ = combineLatest(
-            this._dashboardWidgetsService.period$.pipe(map(period => this.savePeriod(period))),
+            this._dashboardWidgetsService.period$.pipe(map((period: PeriodModel) => this.savePeriod(period))),
             this.isCumulative$
         ).pipe(
             takeUntil(this.destroy$),
