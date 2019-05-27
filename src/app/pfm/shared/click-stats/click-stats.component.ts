@@ -1,6 +1,6 @@
 /** Core imports */
 import { ChangeDetectionStrategy, OnInit,
-    Component, Input, Inject, Injector, ViewChild } from '@angular/core';
+    Component, Input, Injector, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -12,7 +12,6 @@ import zipObject from 'lodash/zipObject';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { OfferServiceProxy, GroupByPeriod } from 'shared/service-proxies/service-proxies';
 
@@ -29,7 +28,7 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
 
     @Input() refresh$: Observable<null>;
     @Input() campaignId;
-    @Input() 
+    @Input()
     set year(val: number) {
         this._year = val;
         this.invalidate();
@@ -44,7 +43,7 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
     columns = this.months.map((col) => {
         return {
             dataField: col,
-            alignment: "left",
+            alignment: 'left',
             cellTemplate: 'countCell'
         };
     });
@@ -71,7 +70,7 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
                     };
                 });
             }
-        });        
+        });
     }
 
     ngOnInit() {
@@ -79,23 +78,23 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
             .subscribe(() => this.invalidate());
     }
 
-    initTotalColumn() {        
+    initTotalColumn() {
         this.columns.unshift({
             dataField: this.TOTAL_DATA_FIELD,
             caption: 'Monthly Totals Clicks by Day',
-            alignment: "center",
+            alignment: 'center',
             width: 120
         });
     }
 
-    getDataByDay(res) {       
+    getDataByDay(res) {
         let data = new Array(this.MAX_ROW_COUNT);
         data[this.TOTAL_COL_INDEX] = zipObject(
             this.columns.map((col) => col.dataField),
             this.columns.map(() => 0));
 
         res.forEach((item) => {
-            let dayIndex = item.date.date(), 
+            let dayIndex = item.date.date(),
                 month = item.date.format('MMM');
 
             if (!data[dayIndex]) data[dayIndex] = {};
@@ -123,11 +122,17 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
             cellValue = record.data[field],
             totalValue = this.data[this.TOTAL_COL_INDEX][
                 record.rowIndex ? field : this.TOTAL_DATA_FIELD];
-        return cellValue ? (cellValue / totalValue * 100).toFixed(1) + '%': 
-            (record.rowIndex ? '': '0.0%');
+        return cellValue ? (cellValue / totalValue * 100).toFixed(1) + '%' :
+            (record.rowIndex ? '' : '0.0%');
     }
 
     onContentReady(event) {
-        this.freezeFirstRow(event.element);        
+        this.freezeFirstRow(event.element);
+    }
+
+    showVisitors(record) {
+        let date = record.data.day + record.column.dataField + this._year;
+        this._router.navigate(['../visitors'],
+            { relativeTo: this._activatedRoute, queryParams: { from: date, to: date} });
     }
 }
