@@ -282,7 +282,7 @@
                             color: #61c670;
                         }
 
-                        &[aria-level="2"], &[aria-level="3"] {
+                        &.subCategory {
                             td:first-child {
                                 &:before {
                                     background-color: #61c670;
@@ -297,7 +297,7 @@
                             color: #e7326a;
                         }
 
-                        &[aria-level="2"], &[aria-level="3"] {
+                        &.subCategory {
                             td:first-child {
                                 &:before {
                                     background-color: #e7326a;
@@ -312,7 +312,7 @@
                             color: #959595;
                         }
 
-                        &[aria-level="2"], &[aria-level="3"] {
+                        &.subCategory {
                             td:first-child {
                                 &:before {
                                     background-color: #959595;
@@ -329,7 +329,7 @@
                         }
                     }
 
-                    &[aria-level="2"], &[aria-level="3"] {
+                    &.subCategory {
                         td:first-child {
                             &:before {
                                 content: '';
@@ -345,9 +345,6 @@
                         td .category-hover, td .category-drop-area {
                             width: calc(~"100% - 46px");
                         }
-                    }
-
-                    &.subCategory {
                         .dx-treelist-text-content span {
                             font-size: 14px !important;
                             font-weight: 300 !important;
@@ -500,7 +497,7 @@
                     }
 
                     &.dx-edit-row {
-                        &[aria-level="2"], &[aria-level="3"] {
+                        &.subCategory {
                             td:first-child {
                                 &:before {
                                     margin-top: -5px;
