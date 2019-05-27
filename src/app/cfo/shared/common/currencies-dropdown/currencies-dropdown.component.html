@@ -1,7 +1,7 @@
 <dx-select-box [items]="currencies$ | async"
                [displayExpr]="displayExpr"
                valueExpr="id"
-               width="85px"
+               width="90px"
                [value]="selectedCurrencyId$ | async"
                (onOpened)="changeOptionsPopupWidth($event)"
                (onValueChanged)="changeSelectedCurrency($event)">
