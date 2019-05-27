@@ -8,7 +8,7 @@ export class DateHelper {
         return date;
     }
 
-    static removeTimezoneOffset(date: Date, removeUserOffset = false, setTime?: 'to' | 'from'): Date {
+    static removeTimezoneOffset(date: Date, removeUserOffset = false, setTime?: string | 'to' | 'from'): Date {
         setTime && Date.prototype.setHours.apply(date,
             setTime == 'to' ? [23, 59, 59, 999] : [0, 0, 0, 0]);
 

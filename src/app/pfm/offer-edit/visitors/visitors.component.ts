@@ -5,25 +5,21 @@ import {
     Injector,
     OnInit,
     Input,
-    OnDestroy,
     ViewChild,
-    QueryList
+    OnDestroy
 } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import 'devextreme/data/odata/store';
-import { Observable, from, of } from 'rxjs';
-import { finalize, flatMap, tap, pluck, map } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
+import capitalize from 'lodash/capitalize';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
-
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'pfm-offer-visitors',
@@ -40,12 +36,20 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     toolbarConfig: any;
     dataSourceURI = 'PfmOfferRequest';
     formatting = AppConsts.formatting;
+    queryParamsSubscription: any;
 
     constructor(injector: Injector,
-        private _clientService: ContactServiceProxy,
-        private _dialog: MatDialog        
+        private _dialog: MatDialog
     ) {
         super(injector);
+        this.queryParamsSubscription = this._activatedRoute.queryParams.subscribe(params => {
+            ['from', 'to'].map((field) => {
+                if (params[field])
+                    this['date' + capitalize(field)] = moment(
+                        DateHelper.removeTimezoneOffset(new Date(params[field]), true, field)
+                    );
+            });
+        });
     }
 
     refreshDataGrid() {
@@ -78,6 +82,7 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
             result.push({Date: {gt: this.dateFrom.toJSON()}});
         if (this.dateTo)
             result.push({Date: {lt: this.dateTo.toJSON()}});
+
         return result;
     }
 
@@ -118,7 +123,8 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                 items: [{
                     widget: 'dxButton',
                     options: {
-                        text: 'Date Here',
+                        text: (this.dateFrom ? this.dateFrom.format('DD/MM/YYYY') : this.l('Start Date')) +
+                            ' - ' + (this.dateTo ? this.dateTo.format('DD/MM/YYYY') : this.l('End Date')),
                         onClick: (event) => {
                             this.showCalendarDialog();
                         }
@@ -183,9 +189,14 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     searchValueChange(e: object) {
         this.searchValue = e['value'];
         this.initToolbarConfig();
-        this.processODataFilter(this.dataGrid.instance, 
-            this.dataSourceURI, this.getInputFilter(), filter => filter);
+        this.processDataInternal();
         this.startLoading();
+    }
+
+    processDataInternal() {
+        this.startLoading();
+        this.processODataFilter(this.dataGrid.instance,
+            this.dataSourceURI, this.getInputFilter(), filter => filter);
     }
 
     showColumnChooser() {
@@ -198,18 +209,26 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     }
 
     showCalendarDialog() {
+        this._dialog.closeAll();
         this._dialog.open(CalendarDialogComponent, {
             panelClass: 'slider',
             disableClose: false,
             hasBackdrop: false,
             closeOnNavigation: true,
             data: {
-                to: {},
-                from: {},
-                options: {}
+                to: { value: this.dateTo && DateHelper.addTimezoneOffset(this.dateTo.toDate(), true) },
+                from: { value: this.dateFrom && DateHelper.addTimezoneOffset(this.dateFrom.toDate(), true) },
+                options: { }
             }
-        }).afterClosed().subscribe(() => {
-
+        }).afterClosed().subscribe((data) => {
+            if ((this.dateTo ? this.dateTo.diff(data.dateTo, 'days') : data.dateTo) ||
+                (this.dateFrom ? this.dateFrom.diff(data.dateFrom, 'days') : data.dateFrom)
+            ) {
+                this.dateFrom = data.dateFrom && moment(data.dateFrom);
+                this.dateTo = data.dateTo && moment(data.dateTo);
+                this.processDataInternal();
+                this.initToolbarConfig();
+            }
         });
     }
 
@@ -218,12 +237,12 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
         this.finishLoading();
     }
 
-    ngOnDestroy() {
-
-    }
-
     onCellClick(event) {
         this._router.navigate(['app/pfm/contact', event.data.ContactId],
             { queryParams: { referrer: location.pathname } });
+    }
+
+    ngOnDestroy() {
+        this.queryParamsSubscription.unsubscribe();
     }
 }

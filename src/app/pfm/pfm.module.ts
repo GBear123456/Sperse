@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
 /** Application imports */
+import { ContactsModule } from '../crm/contacts/contacts.module';
 import { AppCommonModule } from '../shared/common/app-common.module';
 import { CommonModule } from '@shared/common/common.module';
 import { OffersComponent } from '@app/pfm/offers/offers.component';
@@ -45,6 +46,7 @@ import { VisitorsComponent } from './offer-edit/visitors/visitors.component';
         ngCommon.CommonModule,
         CommonModule,
         AppCommonModule,
+        ContactsModule,
         DxButtonModule,
         DxDataGridModule,
         DxTooltipModule,
