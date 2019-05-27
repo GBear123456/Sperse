@@ -14,13 +14,13 @@
                         <div class="m-radio-inline">
                             <label for="EditEdition_IsFree" class="m-radio">
                                 <input id="EditEdition_IsFree" name="SubscriptionPrice" [(ngModel)]="isFree" (ngModelChange)="resetPrices()" [value]="true" type="radio">
-                                {{ls.l("Free")}}
                                 <span></span>
+                                {{ls.l("Free")}}
                             </label>
                             <label for="EditEdition_IsPaid" class="m-radio">
                                 <input id="EditEdition_IsPaid" name="SubscriptionPrice" [(ngModel)]="isFree" [value]="false" type="radio">
-                                {{ls.l("Paid")}}
                                 <span></span>
+                                {{ls.l("Paid")}}
                             </label>
                         </div>
                         <div class="row" *ngIf="!isFree">
