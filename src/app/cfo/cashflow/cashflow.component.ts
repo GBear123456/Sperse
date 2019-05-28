@@ -912,7 +912,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.initHeadlineConfig();
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
-        this.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
+        this.cashflowService.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
         this.createDragImage();
 
         document.addEventListener('keydown', this.keyDownEventHandler, true);
@@ -946,18 +946,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.getUserPreferencesForCell.cache = {};
                 return [].push.call(this.cashflowData, cashflowItem);
             };
-        }
-    }
-
-    addEvents(element: HTMLElement, events: IEventDescription[]) {
-        for (let event of events) {
-            element.addEventListener(event.name, event.handler, event.useCapture);
-        }
-    }
-
-    removeEvents(element: HTMLElement, events: IEventDescription[]) {
-        for (let event of events) {
-            element.removeEventListener(event.name, event.handler);
         }
     }
 
@@ -1348,7 +1336,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.rootComponent.overflowHidden();
 
         /** Remove cashflow events handlers */
-        this.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
+        this.cashflowService.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
         this.appService.toolbarIsHidden = false;
 
         document.removeEventListener('keydown', this.keyDownEventHandler);
@@ -3264,27 +3252,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         function() { return JSON.stringify(arguments); }
     )
 
-    /**
-     * Return whehter element is cell of cashflow table
-     * @param {HTMLElement} element
-     * @return {boolean}
-     */
-    elementIsDataCell(element: HTMLElement): boolean {
-        return Boolean(element.closest('.dx-area-data-cell'));
-    }
-
     getCellElementFromTarget(target: Element): HTMLTableCellElement | null {
         let element;
         if (target.nodeType === Node.TEXT_NODE) {
             target = target.parentElement;
         }
-        element = target.closest('td');
+        element = target.closest('.dx-scrollable-content > table td');
         return element;
     }
 
     onDragStart(e) {
         let targetCell = this.getCellElementFromTarget(e.target);
-        if (targetCell && this.elementIsDataCell(targetCell)) {
+        if (targetCell && this.cashflowService.elementIsDataCell(targetCell)) {
             let cellObj = this.getCellObjectFromCellElement(targetCell);
 
             if (cellObj.cell.value) {
@@ -3350,11 +3329,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         e.preventDefault();
         e.stopPropagation();
         const targetCell = this.getCellElementFromTarget(e.target);
-        if (targetCell && this.elementIsDataCell(targetCell)) {
+        if (targetCell && this.cashflowService.elementIsDataCell(targetCell)) {
             const hoveredElements = document.querySelectorAll(':hover');
             const lastHoveredElement = hoveredElements[hoveredElements.length - 1];
             const hoveredCell = this.getCellElementFromTarget(lastHoveredElement);
-            if (hoveredCell && this.elementIsDataCell(hoveredCell) && hoveredCell !== targetCell
+            if (hoveredCell && this.cashflowService.elementIsDataCell(hoveredCell) && hoveredCell !== targetCell
                 && hoveredCell.getAttribute('droppable') !== 'true') {
                 /** Show messages */
                 const targetCellObj = this.getCellObjectFromCellElement(hoveredCell);
@@ -3382,7 +3361,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         e.preventDefault();
         e.stopPropagation();
         let targetCell = this.getCellElementFromTarget(e.target);
-        if (targetCell && this.elementIsDataCell(targetCell) && !targetCell.classList.contains('selectedCell')) {
+        if (targetCell && this.cashflowService.elementIsDataCell(targetCell) && !targetCell.classList.contains('selectedCell')) {
             /** change the class for the target cell */
             if (targetCell.getAttribute('droppable') === 'true') {
                 $('[droppable]').removeClass('currentDroppable');
@@ -3396,7 +3375,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         e.preventDefault();
         e.stopPropagation();
         let targetCell = this.getCellElementFromTarget(e.target);
-        if (targetCell && this.elementIsDataCell(targetCell) && !targetCell.classList.contains('selectedCell')) {
+        if (targetCell && this.cashflowService.elementIsDataCell(targetCell) && !targetCell.classList.contains('selectedCell')) {
             /** change the class for the target cell */
             if (targetCell.getAttribute('droppable') === 'true') {
                 $('[droppable]').removeClass('currentDroppable');
@@ -3414,7 +3393,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         e.preventDefault();
         e.stopPropagation();
         let targetCell = this.getCellElementFromTarget(e.target);
-        if (targetCell && this.elementIsDataCell(targetCell)) {
+        if (targetCell && this.cashflowService.elementIsDataCell(targetCell)) {
             let cellObj = this.getCellObjectFromCellElement(targetCell);
             let targetCellData = this.getCellInfo(cellObj);
             const movedCell = JSON.parse(e.dataTransfer.getData('movedCell'));
@@ -3472,7 +3451,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     onMouseOver(e) {
         let targetCell = this.getCellElementFromTarget(e.target);
         let relatedTargetCell = e.relatedTarget && this.getCellElementFromTarget(e.relatedTarget);
-        if (targetCell && this.elementIsDataCell(targetCell) && targetCell !== relatedTargetCell) {
+        if (targetCell && this.cashflowService.elementIsDataCell(targetCell) && targetCell !== relatedTargetCell) {
             let infoButton = targetCell.getElementsByClassName('dx-link-info');
             if (infoButton.length) {
                 let sum = parseFloat(infoButton[0].getAttribute('data-sum'));
@@ -4636,7 +4615,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let newValue = event ? event.component.option('value') : this.modifyingCellNumberBox.option('value');
 
         if (+newValue !== 0) {
-            abp.ui.setBusy();
+            this.startLoading();
             let forecastModel;
             let cashflowTypeId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.CashflowType);
             let categoryId = this.cashflowService.getCategoryValueByPrefix(savedCellObj.cell.rowPath, CategorizationPrefixes.Category);
@@ -4664,7 +4643,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 InstanceType10[this.instanceType],
                 this.instanceId,
                 forecastModel
-            ).subscribe(
+            ).pipe(finalize(() => this.finishLoading()))
+                .subscribe(
                 res => {
                     let dateWithOffset = moment(targetDate).add(new Date(<any>targetDate).getTimezoneOffset(), 'minutes');
                     /** Update data locally */

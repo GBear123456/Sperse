@@ -255,6 +255,11 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
+            <mat-tab label="{{l('System')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <system-settings></system-settings>
+                </dx-scroll-view>
+            </mat-tab>
             <mat-tab label="{{l('EmailSmtp')}}" *ngIf="!isMultiTenancyEnabled">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
@@ -562,7 +567,6 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-
         </mat-tab-group>
     </div>
 </div>

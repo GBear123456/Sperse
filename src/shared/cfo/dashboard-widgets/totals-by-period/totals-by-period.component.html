@@ -1,13 +1,6 @@
 <section class="categorization-status">
     <header>
         <h2 class="title">{{l('Totals_by_period')}}</h2>
-        <div class="select-box-wrap">
-            <!-- dx-select-box [items]="availablePeriods"
-                           [width]="'100px'"
-                           [value]="availablePeriods[availablePeriods.length - 1]"
-                           (onValueChanged)="onValueChanged($event)">
-            </dx-select-box -->
-        </div>
     </header>
     <div class="content-wrap">
         <div [hidden]="!totalData" *ngIf="totalData?.hasOwnProperty('startingBalance')" class="align-data">

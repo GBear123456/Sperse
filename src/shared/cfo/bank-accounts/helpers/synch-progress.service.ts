@@ -112,7 +112,7 @@ export class SynchProgressService {
                 InstanceType[this.cfoService.instanceType],
                 this.cfoService.instanceId
                 );
-        
+
         this.getSyncProgressSubscription = method.pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;
             this.runGetStatus();

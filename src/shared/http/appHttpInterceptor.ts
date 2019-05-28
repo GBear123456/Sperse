@@ -1,7 +1,7 @@
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpRequest, HttpResponse, HttpHandler, HttpHeaders } from '@angular/common/http';
+import { HttpEvent, HttpRequest, HttpHandler, HttpHeaders } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 
@@ -17,17 +17,17 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         super(configuration);
     }
 
-    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {        
-        let key = this.getKeyFromUrl(request.url), 
+    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        let key = this.getKeyFromUrl(request.url),
             pool = this._poolRequests[key] || {request};
 
         this._poolRequests[key] = pool;
         if (pool.subject) {
-            if (pool.request.urlWithParams == request.urlWithParams 
+            if (pool.request.urlWithParams == request.urlWithParams
                 && pool.request.body == request.body
             ) return pool.subject;
 
-            if (request.method == 'GET') {        
+            if (request.method == 'GET') {
                 if (this.EXCEPTION_KEYS.every((item) => key.indexOf(item) < 0)) {
                     if (pool.subject.observers && pool.subject.observers.length)
                         pool.subject.observers.forEach((sub) => {
@@ -37,7 +37,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
                     this._poolRequests[key] = pool;
                     pool.subject.complete();
                 }
-            }           
+            }
         }
 
         return pool.subject = this.interceptInternal(request, next);
@@ -47,11 +47,11 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         let key = this.getKeyFromUrl(request.url),
             interceptObservable = new Subject<HttpEvent<any>>(),
             modifiedRequest = this.normalizeRequestHeaders(request);
-        
+
         this._poolRequests[key].httpSubscriber = next.handle(modifiedRequest)
-            .pipe(finalize(() => {delete this._poolRequests[key];}))
+            .pipe(finalize(() => delete this._poolRequests[key]))
             .subscribe((event: HttpEvent<any>) => {
-                this.handleSuccessResponse(event, interceptObservable);                
+                this.handleSuccessResponse(event, interceptObservable);
             }, (error: any) => {
                 return this.handleErrorResponse(error, interceptObservable);
             });
