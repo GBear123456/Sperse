@@ -313,8 +313,7 @@ export class AppService extends AppServiceBase {
     }
 
     canSendVerificationRequest() {
-        return this.feature.isEnabled('CFO.Partner') &&
-            this.permission.isGranted('Pages.CRM.ActivateUserForContact') &&
+        return this.permission.isGranted('Pages.CRM.ActivateUserForContact') &&
             this.permission.isGranted('Pages.CFO.ClientActivation');
     }
 
@@ -352,11 +351,20 @@ export class AppService extends AppServiceBase {
         });
     }
 
-    isCFOAvailable(userId) {
-        return ((userId != null) && this.checkCFOClientAccessPermission());
+    get isCfoLinkOrVerifyEnabled() {
+        return this.feature.isEnabled('CFO.Partner')
+               && !this.feature.isEnabled('PFM')
+               && (
+                   this.permission.isGranted('Pages.CFO.ClientInstanceAdmin')
+                   || this.canSendVerificationRequest
+               );
     }
 
-    private checkCFOClientAccessPermission() {
+    isCFOAvailable(userId) {
+        return userId != null;
+    }
+
+    checkCFOClientAccessPermission() {
         return this.permission.isGranted('Pages.CFO.ClientInstanceAdmin');
     }
 

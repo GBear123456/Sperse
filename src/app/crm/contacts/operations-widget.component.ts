@@ -181,34 +181,36 @@ export class OperationsWidgetComponent extends AppComponentBase {
                 this.getNavigationConfig(this.isPrevDisabled, this.isNextDisabled)
             ];
 
-            this.toolbarConfig.push(
-                {
-                    location: 'before',
-                    locateInMenu: 'auto',
-                    items: [
-                        {
-                            visible: this.contactInfo
-                                     && this.contactInfo.groupId == ContactGroup.Client
-                                     && !this._featureService.isEnabled('PFM')
-                                     && (
-                                        this.isClientCFOAvailable() || !this.isClientProspective()
-                                        && !(this._userService['data'] && this._userService['data'].userId) &&
-                                        this._appService.canSendVerificationRequest()
-                                     ),
-                            action: () => {
-                                if (this.isClientCFOAvailable())
-                                    this.redirectToCFO();
-                                else
-                                    this.requestVerification();
-                            },
-                            options: {
-                                text: this.l(this.isClientCFOAvailable() ? 'CFO' : 'ClientDetails_RequestVerification'),
-                                icon: this.isClientCFOAvailable() ? 'cfo-icon' : this.toolbarComponent.getImgURI('verify-icon')
+            const isCfoLinkOrVerifyEnabled = this.contactInfo
+                && this.contactInfo.personContactInfo
+                && this.contactInfo.groupId == ContactGroup.Client
+                && this._appService.isCfoLinkOrVerifyEnabled
+                && (
+                    this.isClientCFOAvailable() && this._appService.checkCFOClientAccessPermission
+                    || (!this.isClientCFOAvailable() && this._appService.canSendVerificationRequest && this.contactInfo.statusId === ContactStatus.Active)
+                );
+            if (isCfoLinkOrVerifyEnabled) {
+                this.toolbarConfig.push(
+                    {
+                        location: 'before',
+                        locateInMenu: 'auto',
+                        items: [
+                            {
+                                action: () => {
+                                    if (this.isClientCFOAvailable())
+                                        this.redirectToCFO();
+                                    else
+                                        this.requestVerification();
+                                },
+                                options: {
+                                    text: this.l(this.isClientCFOAvailable() ? 'CFO' : 'ClientDetails_RequestVerification'),
+                                    icon: this.isClientCFOAvailable() ? 'cfo-icon' : this.toolbarComponent.getImgURI('verify-icon')
+                                }
                             }
-                        }
-                    ]
-                }
-            );
+                        ]
+                    }
+                );
+            }
         }, ms);
     }
 
@@ -311,9 +313,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
 
     requestVerification() {
         this._appService.requestVerification(this.contactInfo.personContactInfo.id)
-            .pipe(
-                takeUntil(this.deactivate$)
-            )
+            .pipe(takeUntil(this.deactivate$))
             .subscribe(result => {
                 if (this.contactInfo && this.contactInfo.personContactInfo)
                     this.contactInfo.personContactInfo.userId = result;
