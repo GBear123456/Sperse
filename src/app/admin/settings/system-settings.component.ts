@@ -11,6 +11,7 @@ import { UploadSSLCertificateModalComponent } from './modals/upload-ssl-cert-mod
 import { AddOrEditSSLBindingModal } from './modals/add-or-edit-ssl-binding-modal.component';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 
 @Component({
     selector: 'system-settings',
@@ -36,6 +37,7 @@ export class SystemSettingsComponent implements OnInit {
         private _tenantHostService: TenantHostServiceProxy,
         private _changeDetection: ChangeDetectorRef,
         private _notifyService: NotifyService,
+        public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
     ) {}
 
