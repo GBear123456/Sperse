@@ -301,4 +301,13 @@ export class CashflowService {
             component.lastClickTime = null;
         }
     }
+
+    /**
+     * Return whehter element is cell of cashflow table
+     * @param {HTMLElement} element
+     * @return {boolean}
+     */
+    elementIsDataCell(element: HTMLElement): boolean {
+        return Boolean(element.closest('.dx-area-data-cell'));
+    }
 }
