@@ -25,7 +25,7 @@ export class SetupStepComponent extends CFOComponentBase {
         { caption: 'Permissions', component: '/permissions', visible: this.isInstanceAdmin && this.instanceType == InstanceType.Main, isAlwaysActive: false }
     ];
     @Input() HeaderTitle: string = this.l(this._cfoService.initialized ? 'SetupStep_MainHeader' : 'SetupStep_InitialHeader');
-    @Input() headerLink: string = '/app/cfo/' + this.instanceType.toLowerCase() + '/start';
+    @Input() headerLink: string = this.instanceUri + '/start';
 
     private dialogConfig = new MatDialogConfig();
 
@@ -38,7 +38,7 @@ export class SetupStepComponent extends CFOComponentBase {
 
     onClick(elem) {
         if (this.stepLinkIsEnabled(elem))
-            this._router.navigate(['/app/cfo/' + this.instanceType.toLowerCase() + elem.component]);
+            this._router.navigate([this.instanceUri + elem.component]);
     }
 
     stepLinkIsEnabled(elem) {

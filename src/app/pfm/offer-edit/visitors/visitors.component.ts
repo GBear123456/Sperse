@@ -50,6 +50,9 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                     );
             });
         });
+
+        this.searchColumns = ['FirstName', 'LastName', 'Email', 'PhoneNumber'];
+        this.searchValue = '';
     }
 
     refreshDataGrid() {
@@ -79,23 +82,15 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
     getInputFilter() {
         let result: any = [{CampaignId: this.campaignId}];
         if (this.dateFrom)
-            result.push({Date: {gt: this.dateFrom.toJSON()}});
+            result.push({Date: {gt: this.dateFrom.toDate()}});
         if (this.dateTo)
-            result.push({Date: {lt: this.dateTo.toJSON()}});
+            result.push({Date: {lt: this.dateTo.toDate()}});
 
         return result;
     }
 
     onDataGridInit(e) {
         this.startLoading();
-    }
-
-    startLoading() {
-        super.startLoading(false);
-    }
-
-    finishLoading() {
-        super.finishLoading(false);
     }
 
     initToolbarConfig() {

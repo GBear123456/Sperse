@@ -12,7 +12,8 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
     get isMemberAccessManage() {
         return this._cfoService.isMemberAccessManage;
     }
-    _cfoService: CFOService;
+    protected _cfoService: CFOService;
+    instanceUri: string;
 
     constructor(injector: Injector) {
         super(injector);
@@ -36,12 +37,19 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
                     this._cfoService.instanceType = this.instanceType;
                     this._cfoService.instanceId = this.instanceId;
                     this._cfoService.instanceChangeProcess();
+                    this.updateInstanceUri();
                 }
             });
         } else {
             this.instanceType = this._cfoService.instanceType;
             this.instanceId = this._cfoService.instanceId;
+            this.updateInstanceUri();
         }
+    }
+
+    updateInstanceUri() {
+        this.instanceUri = /\/app\/([\w,-]+)[\/$]?/.exec(location.pathname).shift() + 
+            (this._cfoService.hasStaticInstance ? '': this.instanceType.toLowerCase());
     }
 
     getODataUrl(uri: string, filter?: Object) {
@@ -61,5 +69,4 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
     ngOnDestroy() {
         super.ngOnDestroy();
     }
-
 }

@@ -2,8 +2,8 @@
     <app-headline [config]="headlineConfig"></app-headline>
     <div class="content-wrap">
         <setup-steps SelectedStepIndex="2"></setup-steps>
-        <div class="grid-wrapper">
-            <categorization [width]="'calc(100vw - 744px)'"
+        <div class="grid-wrapper" [ngStyle]="{flex: isInstanceAdmin ? 'unset': 1}">
+            <categorization [width]="isInstanceAdmin ? 'calc(100vw - 744px)': '100%'"
                             [height]="'calc(100vh - 218px)'"
                             [showTitle]="false"
                             [showHeader]="true"
@@ -13,10 +13,10 @@
                             [includeNonCashflowNodes]="true">
             </categorization>
         </div>
-        <div class="right-actions">
+        <div class="right-actions" *ngIf="isInstanceAdmin">
             <div>
                 <p class="title">{{l('CustomCharts_Title')}}</p>
-                <div class="links-wrap" *ngIf="isInstanceAdmin">
+                <div class="links-wrap">
                     <i class="arrow-icon"></i>
                     <import-quick-book-button (onClose)="refreshCategories()" [override]="override"></import-quick-book-button>
                 </div>
@@ -33,7 +33,7 @@
                         {{l('CustomCharts_DownloadExcel')}}
                     </p>
                 </div>
-                <div class="file" *ngIf="isInstanceAdmin">
+                <div class="file">
                     <label class="file-upload links">
                         + {{l('CustomCharts_UploadFile')}}
                         <input type="file" (change)="uploadExcel($event)" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="+ Upload file" class="no-display" />

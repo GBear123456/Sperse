@@ -54,7 +54,10 @@
     <div class="toolbar-wraper">
         <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
     </div>
-    <div *ngIf="similarCustomersAvailable()" class="similar-clients-message" (click)="showSimilarCustomers($event)">{{ls.l('SimilarRecordsFound')}}</div>
+    <div *ngIf="similarCustomersAvailable()"
+         class="similar-clients-message" (click)="showSimilarCustomers($event)">
+        {{ls.l('SimilarRecordsFound')}}
+    </div>
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
             <div class="field">
@@ -74,14 +77,17 @@
                     (onOptionChanged)="companyOptionChanged($event)"
                     (onCustomItemCreating)="onCustomCompanyCreate($event)">
                 </dx-select-box>
-                <dx-text-box #titleComponent
-                    name="title"
+                <dx-text-box #jobTitleComponent
+                    name="jobTitle"
                     [placeholder]="ls.l('Job title')"
                     [valueChangeEvent]="'keyup'"
                     [width]="'270px'"
-                    [(value)]="title">
+                    [(value)]="jobTitle">
                 </dx-text-box>
-                <span [class]="(company || title) && 'clear-contact' || 'hidden'" (click)="company = title = ''"><i class="minus-icon"></i></span>
+                <span [class]="(company || jobTitle) && 'clear-contact' || 'hidden'"
+                      (click)="company = jobTitle = ''">
+                    <i class="minus-icon"></i>
+                </span>
             </div>
             <dx-validation-group (onInitialized)="initValidationGroup($event, 'emailValidators')">
                 <div class="field email">

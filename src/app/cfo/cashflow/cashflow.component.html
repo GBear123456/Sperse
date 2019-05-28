@@ -245,7 +245,7 @@
 <app-no-data
     *ngIf="startDataLoading && (!cashflowData || !cashflowData.length)"
     text=""
-    linkUrl="/app/cfo/main/start"
+    [linkUrl]="instanceUri + 'start'"
     [showLink]="!filteredLoad"
     [linkText]="l('Go_to_sfo_setup')">
 </app-no-data>
