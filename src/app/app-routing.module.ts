@@ -49,7 +49,10 @@ export class CfoActivateService implements CanActivate {
           (this.featureService.isEnabled('CFO.Partner') && this.permissionChecker.isGranted('Pages.CFO.MemberAccess.Manage.Administrate'))
         ) {
             this.router.navigate([this.permissionChecker.isGranted('Pages.CFO.MainInstanceAccess') ? '/app/cfo/main' : '/app/cfo/user' ]);
-        }
+        } else if (this.permissionChecker.isGranted('Pages.CFO.MemberAccess'))
+            this.router.navigate(['/app/cfo-portal']);
+        else
+            this.router.navigate(['/app/access-denied']);
         return false;
     }
 }
