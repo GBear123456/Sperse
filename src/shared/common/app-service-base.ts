@@ -3,7 +3,7 @@ import { Injector } from '@angular/core';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
 
 /** Third party imports */
-import { Subscription, Subject, Observable } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import camelCase from 'lodash/camelCase';
 import * as _ from 'underscore';
 

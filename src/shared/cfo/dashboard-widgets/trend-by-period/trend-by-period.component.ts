@@ -231,11 +231,11 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
 
     private loadStatsData() {
         this.trendData$ = combineLatest(
-            this.refresh$.pipe(tap(x => console.log('refresh', x))),
-            this.period$.pipe(tap(x => console.log('period', x))),
-            this.currencyId$.pipe(tap(x => console.log('currencyId', x))),
-            this.forecastModelId$.pipe(filter(Boolean)).pipe(tap(x => console.log('forecastModelId', x))),
-            this.bankAccountIds$.pipe(tap(x => console.log('bank accounts ids', x)))
+            this.refresh$,
+            this.period$,
+            this.currencyId$,
+            this.forecastModelId$.pipe(filter(Boolean)),
+            this.bankAccountIds$
         ).pipe(
             switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this.startLoading()),
