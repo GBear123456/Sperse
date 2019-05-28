@@ -19,5 +19,6 @@ describe('Custom number pipe', () => {
         expect(pipe.transform(2.718281828459045, '4.5-5')).toBe('0,002.71828');
         expect(pipe.transform(63.949999999999996, '1.0-0')).toBe('63');
         expect(pipe.transform(63.949999999999996, '0.2-2')).toBe('94');
+        expect(pipe.transform(0, '0.2-2')).toBe('00');
     });
 });

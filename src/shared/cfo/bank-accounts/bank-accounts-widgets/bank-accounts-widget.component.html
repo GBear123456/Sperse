@@ -29,11 +29,9 @@
             <info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component>
         </div>
         <div class="right-header col-sm-4">
-            <ng-container *ngIf="bankAccountsService.accountsDataTotalNetWorth$ | async as totalNetWorth">
-                <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="totalNetWorth | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'" [description]="l('Current_Balance')">
-                    <sup>{{totalNetWorth | customNumber:'0.2-2'}}</sup>
-                </info-component>
-            </ng-container>
+            <info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'" [description]="l('Current_Balance')">
+                <sup>{{bankAccountsService.accountsDataTotalNetWorth$ | async | customNumber:'0.2-2'}}</sup>
+            </info-component>
         </div>
     </div>
 </div>
