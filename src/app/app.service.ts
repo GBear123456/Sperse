@@ -67,12 +67,6 @@ export class AppService extends AppServiceBase {
                     isComingSoon: false
                 },
                 {
-                    name: 'API',
-                    showDescription: true,
-                    showInDropdown: true,
-                    isComingSoon: false
-                },
-                {
                     name: 'CFO',
                     showDescription: true,
                     showInDropdown: true,
@@ -97,6 +91,12 @@ export class AppService extends AppServiceBase {
                 },
                 {
                     name: 'PFM',
+                    showDescription: true,
+                    showInDropdown: true,
+                    isComingSoon: false
+                },
+                {
+                    name: 'API',
                     showDescription: true,
                     showInDropdown: true,
                     isComingSoon: false

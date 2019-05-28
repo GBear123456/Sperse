@@ -1,10 +1,13 @@
+@pfm-color: linear-gradient(221deg, #48d8bd, #129064);
+@api-color: linear-gradient(221deg, #91f7c8, #0cab2a);
+
 /deep/ platform-select, .module-select-item {
     &.admin input {
         background-image: linear-gradient(221deg, #cae4cf, #538da9);
     }
 
     &.api input {
-        background-image: linear-gradient(221deg, #91f7c8, #0cab2a);
+        background-image: @api-color;
     }
 
     &.cfo input {
@@ -44,7 +47,7 @@
     }
 
     &.pfm input {
-        background-image: linear-gradient(221deg, #48d8bd, #129064);
+        background-image: @pfm-color;
     }
 }
 
@@ -85,7 +88,7 @@
 }
 
 /deep/ .dx-popup-content[id] {
-    padding: 0!important;    
+    padding: 0!important;
 }
 
 /deep/ .module-description {
@@ -225,34 +228,34 @@
     display: flex;
     flex-flow: column;
     min-height: 490px;
-    
+
     * {
         outline: none;
     }
-    
+
     div,
     footer {
         max-width: 100%;
     }
-    
+
     ul {
         list-style: none;
         padding: 0;
         margin: 0;
     }
-    
+
     .top,
     .menu {
-        
+
         &-row {
             padding: 0 15px;
         }
-        
+
         &__items {
             display: flex;
             list-style-type: none;
         }
-        
+
         &__item {
             padding: 20px 15px;
             max-width: 33%;
@@ -260,11 +263,11 @@
             text-align: center;
             opacity: .9;
             transition: .2s;
-            
+
             &:hover {
                 opacity: 1;
             }
-            
+
             &_title {
                 font-size: 22px;
                 font-weight: bold;
@@ -275,30 +278,30 @@
                 justify-content: center;
                 margin-bottom: 15px;
                 text-transform: uppercase;
-    
+
                 &-image {
                     margin-right: 7px;
                 }
             }
-            
+
             &.cfo {
                 [class$="title"] {
                     color: #f77623;
                 }
             }
-    
+
             &.crm {
                 [class$="title"] {
                     color: #663dbc;
                 }
             }
-    
+
             &.slice {
                 [class$="title"] {
                     color: #1da7e8;
                 }
             }
-    
+
             &.api,
             &.pfm,
             &.hub {
@@ -306,7 +309,7 @@
                     font-size: 16px;
                     font-weight: 500;
                     letter-spacing: 0.5px;
-                    
+
                     &::before {
                         display: inline-block;
                         content: '';
@@ -319,21 +322,23 @@
                     }
                 }
             }
-            
+
             &.api {
                 [class$="title"] {
                     &::before {
-                        background-image: linear-gradient(to bottom, rgba(0, 255, 255, 0), rgba(0, 255, 255, 0)),
-                                          linear-gradient(222deg, #f6b3b2, #f6221d);
+                        background-image: @api-color;
                     }
                 }
             }
-    
-            /*&.pfm {
+
+            &.pfm {
                 [class$="title"] {
+                    &::before {
+                        background-image: @pfm-color;
+                    }
                 }
-            }*/
-    
+            }
+
             &.hub {
                 [class$="title"] {
                     &::before {
@@ -342,27 +347,27 @@
                     }
                 }
             }
-            
+
             &_descr {
                 font-size: 12px;
                 font-weight: 500;
                 color: #5d6369;
             }
-            
+
             &_image {
                 max-width: 100%;
                 width: 100%;
             }
         }
-        
+
         &__link {
             display: block;
             transition: .2s;
             text-decoration: none;
-            
+
             &:hover {
             }
-            
+
             &.disabled {
                 pointer-events: none;
                 cursor: default;
@@ -370,15 +375,15 @@
             }
         }
     }
-    
+
     .menu-row {
         flex: 1;
     }
-    
+
     .top__item_descr {
         margin-bottom: 10px;
     }
-    
+
     .footer {
         &__items {
             display: flex;
@@ -396,23 +401,23 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            
+
             &::after {
                 content: '';
                 display: inline-block;
                 width: 14px;
                 height: 8px;
                 margin-left: 5px;
-    
+
                 background: url('../../../assets/common/images/platform-select/arrow-right.svg') no-repeat;
             }
-            
+
             &:hover {
                 background-color: #dcf4ff;
             }
         }
     }
-    
+
     .coming-soon {
         font-size: 12px;
         margin-top: 12px;
