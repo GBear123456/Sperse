@@ -18,14 +18,11 @@ import { NotificationsComponent } from '@app/shared/layout/notifications/notific
     providers: [ InstanceServiceProxy, TenantSubscriptionServiceProxy ]
 })
 export class HeaderNotificationsComponent extends AppComponentBase implements OnInit {
-
     notifications: IFormattedUserNotification[] = [];
     unreadNotificationCount = 0;
-
     shownLoginInfo: { fullName, email, tenantName?};
     tenancyName = '';
     userName = '';
-
     subscriptionInfoTitle: string;
     subscriptionInfoText: string;
     defaultLogo = './assets/common/images/app-logo-on-' + this.ui.getAsideSkin() + '.png';
@@ -151,7 +148,8 @@ export class HeaderNotificationsComponent extends AppComponentBase implements On
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement');
+        const moduleSubscription = this._appService.getModuleSubscription();
+        return this._appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted('Pages.Administration.Tenant.SubscriptionManagement') && moduleSubscription && moduleSubscription.isUpgradable;
     }
 
     hideDropDown() {

@@ -1,10 +1,15 @@
+/** Core imports */
 import { Injector } from '@angular/core';
-import { Subscription, Subject } from 'rxjs';
 import { DefaultUrlSerializer, UrlTree } from '@angular/router';
+
+/** Third party imports */
+import { Subscription, Subject, Observable } from 'rxjs';
+import camelCase from 'lodash/camelCase';
 import * as _ from 'underscore';
+
+/** Application imports */
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import camelCase from 'lodash/camelCase';
 
 class Module {
     name: string;
@@ -73,7 +78,7 @@ export abstract class AppServiceBase {
             && (!abp.session.tenantId || !config.requiredFeature || this._featureChecker.isEnabled(config.requiredFeature))
             && (!config.requiredPermission || this._permissionChecker.isGranted(config.requiredPermission))
             && (abp.session.tenantId || !config.hostDisabled)
-            );
+        );
     }
 
     initModule() {
