@@ -912,7 +912,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.initHeadlineConfig();
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
-        this.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
+        this.cashflowService.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
         this.createDragImage();
 
         document.addEventListener('keydown', this.keyDownEventHandler, true);
@@ -946,18 +946,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.getUserPreferencesForCell.cache = {};
                 return [].push.call(this.cashflowData, cashflowItem);
             };
-        }
-    }
-
-    addEvents(element: HTMLElement, events: IEventDescription[]) {
-        for (let event of events) {
-            element.addEventListener(event.name, event.handler, event.useCapture);
-        }
-    }
-
-    removeEvents(element: HTMLElement, events: IEventDescription[]) {
-        for (let event of events) {
-            element.removeEventListener(event.name, event.handler);
         }
     }
 
@@ -1348,7 +1336,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.rootComponent.overflowHidden();
 
         /** Remove cashflow events handlers */
-        this.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
+        this.cashflowService.removeEvents(this.getElementRef().nativeElement, this.cashflowEvents);
         this.appService.toolbarIsHidden = false;
 
         document.removeEventListener('keydown', this.keyDownEventHandler);

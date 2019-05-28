@@ -14,6 +14,7 @@ import { CellInterval } from './models/cell-interval';
 import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
 import { BankAccountDto, CategoryDto, GetCategoryTreeOutput } from '@shared/service-proxies/service-proxies';
 import { IModifyingInputOptions } from '@app/cfo/cashflow/modifying-input-options.interface';
+import { IEventDescription } from '@app/cfo/cashflow/models/event-description';
 
 @Injectable()
 export class CashflowService {
@@ -28,6 +29,18 @@ export class CashflowService {
     valueIsChanging = false;
 
     constructor() { }
+
+    addEvents(element: HTMLElement, events: IEventDescription[]) {
+        for (let event of events) {
+            element.addEventListener(event.name, event.handler, event.useCapture);
+        }
+    }
+
+    removeEvents(element: HTMLElement, events: IEventDescription[]) {
+        for (let event of events) {
+            element.removeEventListener(event.name, event.handler);
+        }
+    }
 
     /**
      * Gets categorization properties and their values depend on targets and forecasts data
