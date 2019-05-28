@@ -133,6 +133,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     similarCustomersDialog: any;
     toolbarConfig = [];
     title: string;
+    jobTitle: string;
     isTitleValid = true;
     buttons: IDialogButton[] = [
         {
@@ -345,7 +346,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             addresses: this.getAddressContactInput(),
             links: this.getLinkContactInput(),
             companyName: this.company,
-            title: this.title,
+            title: this.jobTitle,
             photo: this.photoOriginalData ? ContactPhotoInput.fromJS({
                 original: StringHelper.getBase64(this.photoOriginalData),
                 thumbnail: StringHelper.getBase64(this.photoThumbnailData),
@@ -912,7 +913,8 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.save();
     }
 
-    onFullNameKeyUp(event) {
+    onFullNameKeyUp(inputValue: string) {
+        this.title = inputValue;
         this._nameParser.parseIntoPerson(this.title, this.person);
         this.checkSimilarCustomers();
     }
