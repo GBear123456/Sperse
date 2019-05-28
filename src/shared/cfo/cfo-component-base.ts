@@ -12,7 +12,7 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
     get isMemberAccessManage() {
         return this._cfoService.isMemberAccessManage;
     }
-    protected _cfoService: CFOService;
+    _cfoService: CFOService;
     instanceUri: string;
 
     constructor(injector: Injector) {
