@@ -49,7 +49,6 @@ import { ContactServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy,
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { EditContactDialog } from '../contacts/edit-contact-dialog/edit-contact-dialog.component';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
@@ -74,7 +73,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private rootComponent: any;
     private formatting = AppConsts.formatting;
     private subRouteParams: any;
-    private canSendVerificationRequest = false;
     private dependencyChanged = false;
 
     statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
@@ -104,7 +102,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     constructor(injector: Injector,
         public dialog: MatDialog,
         public contactService: ContactServiceProxy,
-        private _appService: AppService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _clientService: ClientService,
@@ -112,8 +109,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
-        public featureService: FeatureCheckerService,
-        private itemDetailsService: ItemDetailsService
+        private itemDetailsService: ItemDetailsService,
+        public appService: AppService
     ) {
         super(injector);
     }
@@ -151,7 +148,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
 
-        this.canSendVerificationRequest = this._appService.canSendVerificationRequest();
         this.activate();
     }
 
@@ -215,10 +211,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }).afterClosed().subscribe(() => this.refresh());
     }
 
-    isClientCFOAvailable(userId) {
-        return this._appService.isCFOAvailable(userId);
-    }
-
     showClientDetails(event) {
         if (!event.data)
             return;
@@ -230,10 +222,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         event.component.cancelEditData();
         this._router.navigate(['app/crm/contact', clientId].concat(orgId ? ['company', orgId] : []),
             { queryParams: { referrer: 'app/crm/clients'} });
-    }
-
-    redirectToCFO(event, userId) {
-        this._appService.redirectToCFO(userId);
     }
 
     calculateAddressColumnValue(data) {
@@ -375,7 +363,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     initToolbarConfig() {
-        this._appService.updateToolbar([
+        this.appService.updateToolbar([
             {
                 location: 'before', items: [
                     {
@@ -624,7 +612,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private requestVerificationInternal(contactId: number) {
-        this._appService.requestVerification(contactId).subscribe(
+        this.appService.requestVerification(contactId).subscribe(
             () => this.dataGrid.instance.refresh()
         );
     }
@@ -690,7 +678,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         super.deactivate();
 
         this.subRouteParams.unsubscribe();
-        this._appService.updateToolbar(null);
+        this.appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Customer, this.dataGrid.instance.getDataSource());

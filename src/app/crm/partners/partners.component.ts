@@ -78,7 +78,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private rootComponent: any;
     private formatting = AppConsts.formatting;
     private subRouteParams: any;
-    private canSendVerificationRequest = false;
     private dependencyChanged = false;
 
     statuses: ContactStatusDto[];
@@ -138,8 +137,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this._pipelineService.stageChange.asObservable().subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this._pipelineService.getStages(AppConsts.PipelinePurposeIds.lead)).name);
         });
-
-        this.canSendVerificationRequest = this._appService.canSendVerificationRequest();
     }
 
     private paramsSubscribe() {

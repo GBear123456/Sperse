@@ -68,17 +68,18 @@
                             </div>
                         </div>
                         <dxi-column dataField="CreationTime" dataType="string" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-                        <dxi-column [visible]="!featureService.isEnabled('PFM')" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'"
-                                    [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxi-column [visible]="appService.isCfoLinkOrVerifyEnabled" name="LinkToCFO" cellTemplate="linkToCFOTemplate" [width]="80" [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
-                            <ng-container [ngSwitch]="isClientCFOAvailable(data.data.UserId)">
-                                <span *ngSwitchCase="true">
-                                    <span [class]="'link-to-cfo-column'" (click)="redirectToCFO($event, data.data.UserId)"></span>
-                                </span>
-                                <span *ngSwitchCase="false">
-                                    <a *ngIf="canSendVerificationRequest" class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
+                            <ng-container *ngIf="appService.isCFOAvailable(data.data.UserId); else verify">
+                                <span *ngIf="appService.checkCFOClientAccessPermission()">
+                                    <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(userId)"></span>
                                 </span>
                             </ng-container>
+                            <ng-template #verify>
+                                <span *ngIf="appService.canSendVerificationRequest()">
+                                    <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
+                                </span>
+                            </ng-template>
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'">
                             {{cellData.value | date: formatting.dateTime : userTimezone }}
