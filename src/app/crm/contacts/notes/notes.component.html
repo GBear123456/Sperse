@@ -4,6 +4,7 @@
             id="gridContainer"
             height="100%"
             [dataSource]="dataSource"
+            [pager]="defaultGridPagerConfig"
             [allowColumnReordering]="true"
             [columnAutoWidth]="true"
             [allowColumnResizing]="true"
@@ -32,8 +33,6 @@
             <dxi-column [fixed]="true" [fixedPosition]="'right'" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
 
             <dxo-load-panel [enabled]="true"></dxo-load-panel>
-            <dxo-scrolling mode="virtual"></dxo-scrolling>
-
             <dxo-sorting mode="multiple"></dxo-sorting>
             <dxo-group-panel [visible]="false"></dxo-group-panel>
         </dx-data-grid>
