@@ -26,22 +26,36 @@ export class CFOService extends CFOServiceBase {
         super();
         this.statusActive = new BehaviorSubject<boolean>(false);
         _appService.subscribeModuleChange(config => {
-            if (config['name'] == 'CFO') {
-                if (this.initialized === undefined) {
-                    if (this._appService.topMenu) {
-                        this._appService.topMenu.items
-                            .forEach((item, i) => {
-                                if (i != 0) {
-                                    item.disabled = true;
-                                }
-                            });
+            switch (config['code']) {
+                case 'CFO':
+                    if (this.hasStaticInstance) {
+                        this.initialized = false;
+                        this.hasStaticInstance = false;
+                        this.instanceType = undefined;
                     }
-                    if (this.instanceType !== undefined) {
+                    if (this.initialized === undefined) {
+                        if (this._appService.topMenu) {
+                            this._appService.topMenu.items
+                                .forEach((item, i) => {
+                                    if (i != 0) {
+                                        item.disabled = true;
+                                    }
+                                });
+                        }
+                        if (this.instanceType !== undefined) {
+                            this.instanceChangeProcess();
+                        }
+                    } else
+                        this.updateMenuItems();
+                    break;
+                case 'CFOP':
+                    if (this.instanceType != InstanceType.User) {
+                        this.initialized = false;
+                        this.instanceId = undefined;
+                        this.instanceType = InstanceType.User;
+                        this.hasStaticInstance = true;
                         this.instanceChangeProcess();
                     }
-                } else {
-                    this.updateMenuItems();
-                }
             }
         });
     }
@@ -83,7 +97,7 @@ export class CFOService extends CFOServiceBase {
                 this.statusActive.next(status);
                 this.initialized = status && data.hasSyncAccounts;
                 this.hasTransactions = this.initialized && data.hasTransactions;
-                this.updateMenuItems();
+                !this.hasStaticInstance && this.updateMenuItems();
                 callback && callback.call(this, this.hasTransactions);
             });
         }
