@@ -79,6 +79,7 @@ import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-i
 import { ContactsModule } from '../crm/contacts/contacts.module';
 import { ModulesEditionsSelectComponent } from '@admin/tenants/modules-edtions-select.component.ts/modules-editions-select.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
     imports: [
@@ -129,7 +130,8 @@ import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item
         EditorModule,
         InputMaskModule,
         PaymentInfoModule,
-        ItemDetailsLayoutModule
+        ItemDetailsLayoutModule,
+        LoadingSpinnerModule
     ],
     declarations: [
         UsersComponent,

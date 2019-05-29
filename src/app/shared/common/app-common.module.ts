@@ -93,8 +93,8 @@ import { RatingComponent } from '@app/crm/shared/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { TypesListComponent } from '@app/crm/shared/types-list/types-list.component';
 import { StaticListComponent } from './static-list/static-list.component';
-import { LoadingSpinnerComponent } from './loading-spinner/loading-spinner.component';
 import { TimeAgoPipe } from 'time-ago-pipe';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
     imports: [
@@ -156,7 +156,8 @@ import { TimeAgoPipe } from 'time-ago-pipe';
         DxTreeListModule,
         DxSliderModule,
         CreditCardDirectivesModule,
-        AngularGooglePlaceModule
+        AngularGooglePlaceModule,
+        LoadingSpinnerModule
     ],
     declarations: [
         TimeAgoPipe,
@@ -194,8 +195,7 @@ import { TimeAgoPipe } from 'time-ago-pipe';
         ListsListComponent,
         RatingComponent,
         StarsListComponent,
-        TypesListComponent,
-        LoadingSpinnerComponent
+        TypesListComponent
     ],
     exports: [
         TimeAgoPipe,
@@ -222,8 +222,7 @@ import { TimeAgoPipe } from 'time-ago-pipe';
         ListsListComponent,
         RatingComponent,
         StarsListComponent,
-        TypesListComponent,
-        LoadingSpinnerComponent
+        TypesListComponent
     ],
     providers: [
         DateTimeService,

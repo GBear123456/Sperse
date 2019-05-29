@@ -1,5 +1,14 @@
 /** Core imports */
-import { Component, AfterViewInit, ViewChild, Injector, OnDestroy } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    AfterViewInit,
+    ViewChild,
+    Injector,
+    OnInit,
+    OnDestroy,
+    ChangeDetectorRef
+} from '@angular/core';
 
 /** Third party imports */
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -27,21 +36,21 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     templateUrl: './dashboard.component.html',
     animations: [appModuleAnimation()],
     styleUrls: ['./dashboard.component.less'],
-    providers: [ DashboardWidgetsService, LifecycleSubjectsService ]
+    providers: [ DashboardWidgetsService, LifecycleSubjectsService ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
+export class DashboardComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(RecentClientsComponent) recentClientsComponent: RecentClientsComponent;
     @ViewChild(TotalsByPeriodComponent) totalsByPeriod: TotalsByPeriodComponent;
     @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
     @ViewChild(PeriodComponent) periodComponent: PeriodComponent;
     private rootComponent: any;
-    private selectedPeriod: any;
-    private openDialogTimeout: any;
-    private loadingContainer: any;
-    public dataEmpty: boolean;
     public headlineConfig = {
         names: [this.l('Dashboard')],
-        onRefresh: this.refresh.bind(this),
+        onRefresh: (refreshLeadsAndClients = true) => {
+            this.refresh(refreshLeadsAndClients);
+            this._dashboardWidgetsService.refresh();
+        },
         text: this.l('statistics and reports'),
         icon: 'globe',
         buttons: [
@@ -53,12 +62,16 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             }
         ]
     };
+    dataEmpty = false;
+    totalsData$ = this._dashboardWidgetsService.totalsData$;
+    dataAvailable$ = this._dashboardWidgetsService.totalsDataAvailable$;
     dialogConfig = new MatDialogConfig();
     leftMenuHidden = true;
     constructor(
         injector: Injector,
         private _appService: AppService,
         private _dashboardWidgetsService: DashboardWidgetsService,
+        private _changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         private store$: Store<RootStore.State>,
         private reuseService: RouteReuseStrategy,
@@ -68,9 +81,26 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
     }
 
+    ngOnInit() {
+        this._dashboardWidgetsService.totalsDataAvailable$.pipe(
+            takeUntil(this.destroy$),
+            filter((dataAvailable: boolean) => this.componentIsActivated && !dataAvailable && this._appService.hasModuleSubscription())
+        ).subscribe(() => {
+            this.openDialog();
+        });
+        this._dashboardWidgetsService.totalsDataAvailable$.subscribe((totalsDataAvailable: boolean) => {
+            this.dataEmpty = !totalsDataAvailable;
+            this._changeDetectorRef.detectChanges();
+        });
+    }
+
+    ngAfterViewInit(): void {
+        this.activate();
+        this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
+        this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
+    }
+
     refresh(refreshLeadsAndClients = true) {
-        this.periodChanged(this.selectedPeriod);
-        this.recentClientsComponent.refresh();
         if (refreshLeadsAndClients) {
             /** Invalidate leads and clients */
             (this.reuseService as CustomReuseStrategy).invalidate('leads');
@@ -78,40 +108,13 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         }
     }
 
-    checkDataEmpty(data) {
-        this.dataEmpty = !data.length;
-        if (this.dataEmpty && this.componentIsActivated) {
-            clearTimeout(this.openDialogTimeout);
-            this.openDialogTimeout = setTimeout(() => {
-                if (this._appService.hasModuleSubscription())
-                    this.openDialog();
-            }, 500);
-        }
-        this.finishLoading(false, this.loadingContainer);
-    }
-
     addClient() {
         this._router.navigate(['app/crm/clients'], { queryParams: { action: 'addNew' } });
-    }
-
-    periodChanged($event) {
-        this._dashboardWidgetsService.periodChanged(
-            this.selectedPeriod = $event
-        );
-    }
-
-    ngAfterViewInit(): void {
-        this.loadingContainer = this.getElementRef().nativeElement.getElementsByClassName('widgets-wrapper')[0];
-        this.startLoading(false, this.loadingContainer);
-        this.activate();
-        this.rootComponent.addScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
-        this.rootComponent.addScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
 
     ngOnDestroy() {
         super.ngOnDestroy();
         this.deactivate();
-
         this.rootComponent.removeScriptLink('https://fast.wistia.com/embed/medias/kqjpmot28u.jsonp');
         this.rootComponent.removeScriptLink('https://fast.wistia.com/assets/external/E-v1.js');
     }
@@ -122,10 +125,7 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.dialogConfig.id = 'crm-intro';
         this.dialogConfig.panelClass = ['crm-intro', 'setup'];
         this.dialogConfig.data = { alreadyStarted: false };
-        const dialogRef = this.dialog.open(CrmIntroComponent, this.dialogConfig);
-        dialogRef.afterClosed().subscribe(result => {
-            // if (result && result.isGetStartedButtonClicked) this.onStart();
-        });
+        this.dialog.open(CrmIntroComponent, this.dialogConfig);
     }
 
     openPaymentWizardDialog() {
@@ -147,12 +147,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.lifeCycleSubject.activate.next();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
         this.subscribeToRefreshParam();
         this._appService.updateToolbar(null);
-
         this.showHostElement();
-        this.renderWidgets();
+        this._changeDetectorRef.detectChanges();
     }
 
     subscribeToRefreshParam() {
@@ -164,27 +162,16 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
             .subscribe(() => this.refresh() );
     }
 
-    renderWidgets() {
-        setTimeout(() => {
-            if (this.totalsByPeriod)
-                this.totalsByPeriod.render();
-            if (this.totalsBySource)
-                this.totalsBySource.render();
-        }, 300);
-    }
-
     invalidate() {
         this.lifeCycleSubject.activate$.pipe(first()).subscribe(() => {
+            this._dashboardWidgetsService.refresh();
             this.refresh(false);
         });
     }
 
     deactivate() {
         super.deactivate();
-
-        this.finishLoading(false, this.loadingContainer);
         this.rootComponent.overflowHidden();
-
         this.hideHostElement();
     }
 }

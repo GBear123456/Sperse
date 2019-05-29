@@ -26,6 +26,7 @@ import { RecentClientsComponent } from './recent-clients/recent-clients.componen
 import { ClientsByRegionComponent } from './clients-by-region/clients-by-region.component';
 import { DashboardWidgetsService } from './dashboard-widgets.service';
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
+import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
 
 @NgModule({
     imports: [
@@ -42,6 +43,7 @@ import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
         DxDataGridModule,
         MatDialogModule,
         DxVectorMapModule,
+        LoadingSpinnerModule,
         ngCommon.CommonModule
     ],
     declarations: [
@@ -52,8 +54,7 @@ import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
         TotalsBySourceComponent,
         RecentClientsComponent
     ],
-    entryComponents: [
-    ],
+    entryComponents: [],
     exports: [
         ClientsByRegionComponent,
         CountsAndTotalsComponent,

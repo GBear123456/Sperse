@@ -1,25 +1,29 @@
 <div class="wrapper">
-    <h2 class="title">{{ l('TotalsByCompanySize') }}</h2>
-    <div *ngIf="totalCount">
-        <div class="totalsNumbers" [ngStyle]="{top: totalNumbersTop}">
-            <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
-            <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCount}}</span>
-            <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>
+    <h2 class="title">{{ ls.l('TotalsByCompanySize') }}</h2>
+    <ng-container *ngIf="customersByCompanySize$ | async as customersByCompanySize">
+        <div *ngIf="totalCustomersCount$ | async; else noData">
+            <div class="totalsNumbers" [ngStyle]="{top: totalNumbersTop}">
+                <span class="range-name" [ngStyle]="{color: rangeColor}">{{percentage && rangeName}}</span>
+                <span class="total-count" [ngStyle]="{color: rangeColor}">{{rangeCount || totalCustomersCount}}</span>
+                <span class="percentage" [ngStyle]="{color: rangeColor}">{{percentage}}</span>
+            </div>
+            <div class="round-progress" >
+                <dx-pie-chart [dataSource]="customersByCompanySize"
+                              [type]="'doughnut'"
+                              [innerRadius]="0.9"
+                              [customizePoint]="customizePoint"
+                              (onPointHoverChanged)="onPointHoverChanged($event)"
+                              (onPointSelectionChanged)="onPointSelectionChanged($event)"
+                              [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}"
+                              (onDrawn)="onDrawn($event)">
+                    <dxo-common-series-settings argumentField="companySizeRange"></dxo-common-series-settings>
+                    <dxi-series valueField="customerCount"></dxi-series>
+                    <dxo-animation [enabled]="false"></dxo-animation>
+                </dx-pie-chart>
+            </div>
         </div>
-        <div class="round-progress" *ngIf="totalsData && totalsData.length">
-            <dx-pie-chart [dataSource]="totalsData"
-                [type]="'doughnut'"
-                [innerRadius]="0.9"
-                [customizePoint]="customizePoint"
-                (onPointHoverChanged)="onPointHoverChanged($event)"
-                (onPointSelectionChanged)="onPointSelectionChanged($event)"
-                [legend]="{verticalAlignment: 'bottom', horizontalAlignment: 'center'}"
-                (onDrawn)="onDrawn($event)">
-                <dxo-common-series-settings argumentField="companySizeRange"></dxo-common-series-settings>
-                <dxi-series valueField="customerCount"></dxi-series>
-                <dxo-animation [enabled]="false"></dxo-animation>
-            </dx-pie-chart>
-        </div>
-    </div>
-    <app-no-data [hidden]="loading || totalCount"></app-no-data>
+        <ng-template #noData>
+            <app-no-data></app-no-data>
+        </ng-template>
+    </ng-container>
 </div>

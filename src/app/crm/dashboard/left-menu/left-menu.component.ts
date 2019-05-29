@@ -4,7 +4,6 @@ import { ChangeDetectionStrategy, Component, Injector, Output, EventEmitter } fr
 /** Third party imports */
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppService } from '@app/app.service';
 
