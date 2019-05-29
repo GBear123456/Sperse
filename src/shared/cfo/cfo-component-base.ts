@@ -48,8 +48,8 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
     }
 
     updateInstanceUri() {
-        this.instanceUri = /\/app\/([\w,-]+)[\/$]?/.exec(location.pathname).shift() + 
-            (this._cfoService.hasStaticInstance ? '': this.instanceType.toLowerCase());
+        this.instanceUri = /\/app\/([\w,-]+)[\/$]?/.exec(location.pathname).shift() +
+            (this._cfoService.hasStaticInstance ? '' : this.instanceType.toLowerCase());
     }
 
     getODataUrl(uri: string, filter?: Object) {
