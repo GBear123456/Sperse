@@ -75,9 +75,9 @@ export abstract class AppServiceBase {
     isModuleActive(name: string) {
         let config = this._configs[camelCase(name)];
         return (config && typeof (config.navigation) == 'object'
-            && (!abp.session.tenantId || !config.requiredFeature || this._featureChecker.isEnabled(config.requiredFeature))
+            && (this.isHostTenant() || !config.requiredFeature || this._featureChecker.isEnabled(config.requiredFeature))
             && (!config.requiredPermission || this._permissionChecker.isGranted(config.requiredPermission))
-            && (abp.session.tenantId || !config.hostDisabled)
+            && (!this.isHostTenant() || !config.hostDisabled)
         );
     }
 
@@ -134,4 +134,6 @@ export abstract class AppServiceBase {
         }
         return url;
     }
+
+    isHostTenant = () => !abp.session.tenantId;
 }

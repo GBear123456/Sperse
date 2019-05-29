@@ -117,6 +117,8 @@ export class CompanyDialogComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        this.modalDialog.buttons = this.buttons;
+
         const company: OrganizationContactInfoDto = this.data.company;
         this.title = this.company.fullName = company.fullName;
         this.company = { ...this.company, ...company.organization };
@@ -178,7 +180,8 @@ export class CompanyDialogComponent implements OnInit {
             }
         }).afterClosed().subscribe(result => {
             if (result) {
-                this._organizationContactServiceProxy.delete(this.company.id).subscribe(() => {
+                let personOrgRelationId = this.data.contactInfo.personContactInfo.orgRelationId;
+                this._organizationContactServiceProxy.delete(this.company.id, personOrgRelationId).subscribe(() => {
                     this.notifyService.success(this.ls.l('SuccessfullyRemoved'));
                     this.modalDialog.close(true);
                 });

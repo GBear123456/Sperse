@@ -17934,12 +17934,15 @@ export class OrganizationContactServiceProxy {
 
     /**
      * @id (optional) 
+     * @currentPersonOrgRelation (optional) 
      * @return Success
      */
-    delete(id: number | null | undefined): Observable<void> {
+    delete(id: number | null | undefined, currentPersonOrgRelation: number | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/Delete?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (currentPersonOrgRelation !== undefined)
+            url_ += "currentPersonOrgRelation=" + encodeURIComponent("" + currentPersonOrgRelation) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
