@@ -1,5 +1,15 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, Injector, Inject, OnDestroy, ViewChild } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnInit,
+    AfterViewInit,
+    Injector,
+    Inject,
+    OnDestroy,
+    ViewChild,
+    ChangeDetectorRef
+} from '@angular/core';
 import { DOCUMENT, DecimalPipe } from '@angular/common';
 
 /** Third party imports */
@@ -14,6 +24,7 @@ import {
     first,
     switchMap,
     takeUntil,
+    tap,
     toArray,
     map,
     mergeAll,
@@ -44,7 +55,8 @@ import { PeriodModel } from '@app/shared/common/period/period.model';
     selector: 'totals-by-period',
     templateUrl: './totals-by-period.component.html',
     styleUrls: ['./totals-by-period.component.less'],
-    providers: [ DashboardServiceProxy, DecimalPipe ]
+    providers: [ DashboardServiceProxy, DecimalPipe ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsByPeriodComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxChartComponent) chartComponent: DxChartComponent;
@@ -115,6 +127,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
         injector: Injector,
         private _dashboardServiceProxy: DashboardServiceProxy,
         private _dashboardWidgetsService: DashboardWidgetsService,
+        private _changeDetectorRef: ChangeDetectorRef,
         private store$: Store<CrmStore.State>,
         private _pipelineService: PipelineService,
         private cacheService: CacheService,
@@ -128,10 +141,14 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     ngOnInit() {
         this.totalsData$ = combineLatest(
             this._dashboardWidgetsService.period$.pipe(map((period: PeriodModel) => this.savePeriod(period))),
-            this.isCumulative$
+            this.isCumulative$,
+            this._dashboardWidgetsService.refresh$
         ).pipe(
             takeUntil(this.destroy$),
-            switchMap(([period, isCumulative]) => this.loadCustomersAndLeadsStats(period, isCumulative)),
+            tap(() => this.startLoading()),
+            switchMap(([period, isCumulative]) => this.loadCustomersAndLeadsStats(period, isCumulative).pipe(
+                finalize(() => { this.finishLoading(); })
+            )),
             publishReplay(),
             refCount()
         );
@@ -197,12 +214,11 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
     }
 
     private loadCustomersAndLeadsStats(period: any, isCumulative: boolean): Observable<GetCustomerAndLeadStatsOutput[]> {
-        this.startLoading();
         return this._dashboardServiceProxy.getCustomerAndLeadStats(
             GroupBy2[(period.name as GroupBy2)],
             period.amount,
             isCumulative
-        ).pipe(finalize(() => { this.finishLoading(); }) );
+        );
     }
 
     private convertLeadsStatsToSeriesConfig(data): Observable<any> {
@@ -317,6 +333,7 @@ export class TotalsByPeriodComponent extends AppComponentBase implements OnInit,
 
     toggleFullLegend() {
         this.showFullLegend = !this.showFullLegend;
+        this._changeDetectorRef.detectChanges();
     }
 
     ngOnDestroy() {

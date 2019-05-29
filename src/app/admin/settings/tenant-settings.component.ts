@@ -41,7 +41,7 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 @Component({
     templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()],
-    styleUrls: ['./tenant-settings.component.less'],
+    styleUrls: ['../../shared/_checkbox-radio.less', './tenant-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         TenantSettingsCreditReportServiceProxy,

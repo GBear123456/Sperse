@@ -551,7 +551,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     createInvoice() {
         this.dialog.open(CreateInvoiceDialogComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'min-width-0'],
             disableClose: true,
             closeOnNavigation: false,
             data: {

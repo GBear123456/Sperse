@@ -423,7 +423,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         else if (this.addContextMenuItems[this.ADD_FILES_OPTION] && this.addContextMenuItems[this.ADD_FILES_OPTION].selected)
             setTimeout(() => {
                 this.dialog.open(UploadDocumentsDialogComponent, {
-                    panelClass: 'slider',
+                    panelClass: ['slider', 'min-width-0'],
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,
@@ -435,7 +435,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         else if (this.addContextMenuItems[this.ADD_NOTES_OPTION] && this.addContextMenuItems[this.ADD_NOTES_OPTION].selected)
             setTimeout(() => {
                 this.dialog.open(NoteAddDialogComponent, {
-                    panelClass: 'slider',
+                    panelClass: ['slider', 'min-width-0'],
                     disableClose: false,
                     hasBackdrop: false,
                     closeOnNavigation: true,

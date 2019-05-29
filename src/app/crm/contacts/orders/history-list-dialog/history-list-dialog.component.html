@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{l("Order History")}}<span class="close" (click)="close()"></span></h2>
 <mat-dialog-content>
-    <div class="content">
+    <div class="content orders-history">
         <ng-container *ngIf="ordersHistory$ | async as ordersHistory">
             <dx-scroll-view showScrollbar="onHover" *ngIf="ordersHistory.length; else empty">
                 <div *ngFor="let record of ordersHistory" class="record">

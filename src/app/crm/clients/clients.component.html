@@ -72,7 +72,7 @@
                         <div *dxTemplate="let data of 'linkToCFOTemplate'">
                             <ng-container *ngIf="appService.isCFOAvailable(data.data.UserId); else verify">
                                 <span *ngIf="appService.checkCFOClientAccessPermission()">
-                                    <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(userId)"></span>
+                                    <span [class]="'link-to-cfo-column'" (click)="appService.redirectToCFO(data.data.UserId)"></span>
                                 </span>
                             </ng-container>
                             <ng-template #verify>

@@ -11,7 +11,7 @@ import { DecimalPipe } from '@angular/common';
 export class CustomNumberPipe extends DecimalPipe implements PipeTransform {
     transform(value: any, digitsInfo?: string): string | null {
         let result = super.transform(value, digitsInfo);
-        if (digitsInfo) {
+        if (value !== undefined && digitsInfo) {
             const [minIntegerDigits, minFractionDigits, maxFractionDigits] = digitsInfo.split(/[.-]+/).map(digit => +digit);
             value = +value;
             if (minFractionDigits === 0 && maxFractionDigits === 0) {

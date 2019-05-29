@@ -1,24 +1,25 @@
 <div class="wrapper">
     <header>
-        <h2 class="title"><i class="icon-people"></i>{{l('CRMDashboard_RecentClients')}}<span>{{l('CRMDashboard_LastNClientsRecords', [recordsCount])}}</span><a routerLink="/app/crm/clients">{{l('CRMDashboard_SeeAllRecords')}} <i class="fa fa-angle-right"></i></a></h2>
+        <h2 class="title"><i class="icon-people"></i>{{ls.l('CRMDashboard_RecentClients')}}<span>{{ls.l('CRMDashboard_LastNClientsRecords', 'CRM',  [recordsCount])}}</span><a routerLink="/app/crm/clients">{{ls.l('CRMDashboard_SeeAllRecords')}} <i class="fa fa-angle-right"></i></a></h2>
     </header>
 
-    <div class="grid-wrapper" [hidden]="isDataLoaded && !totalRowCount">
-        <dx-data-grid id="gridContainer" class="grid-compact-view"
-                      [dataSource]="dataSource"
-                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
-                      (onCellClick)="onCellClick($event)">
-            <dxi-column dataField="fullName" caption="{{l('Customer.Name')}}"></dxi-column>
-            <dxi-column dataField="creationTime" caption="{{l('Created')}}" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
-            <div *dxTemplate="let cellData of 'dateCell'">
-                {{cellData.value | date: formatting.dateTime : userTimezone}}
-            </div>
-            <dxo-paging [pageSize]="10"></dxo-paging>
-        </dx-data-grid>
-    </div>
+    <ng-container *ngIf="recentlyCreatedCustomers$ | async as recentlyCreatedCustomers">
+        <div class="grid-wrapper" *ngIf="recentlyCreatedCustomers && recentlyCreatedCustomers.length; else noData">
+            <dx-data-grid id="gridContainer" class="grid-compact-view"
+                          [dataSource]="recentlyCreatedCustomers"
+                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+                          (onCellClick)="onCellClick($event)">
+                <dxi-column dataField="fullName" [caption]="ls.l('Customer.Name')"></dxi-column>
+                <dxi-column dataField="creationTime" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                <div *dxTemplate="let cellData of 'dateCell'">
+                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                </div>
+                <dxo-paging [pageSize]="10"></dxo-paging>
+            </dx-data-grid>
+        </div>
+    </ng-container>
 </div>
 
-<app-no-data
-    [hidden]="!isDataLoaded || totalRowCount"
-    [showLink]="false">
-</app-no-data>
+<ng-template #noData>
+    <app-no-data [showLink]="false"></app-no-data>
+</ng-template>

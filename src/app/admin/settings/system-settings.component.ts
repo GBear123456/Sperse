@@ -16,7 +16,7 @@ import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 @Component({
     selector: 'system-settings',
     templateUrl: './system-settings.component.html',
-    styleUrls: ['./system-settings.component.less'],
+    styleUrls: ['../../shared/_checkbox-radio.less', './system-settings.component.less'],
     animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantSslCertificateServiceProxy, TenantHostServiceProxy ]

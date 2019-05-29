@@ -1034,4 +1034,20 @@ body > .blockUI.blockOverlay{
     }
 }
 
-@import "_checkbox-radio";
+.cdk-overlay-container {
+    .cdk-overlay-pane.slider {
+        transition: margin 1s!important;
+        min-width: 40vw;
+        &.min-width-0 {
+            min-width: 0;
+        }
+        .mat-dialog-container {
+            overflow: visible;
+            padding: 0;
+            margin: 0;
+        }
+        @media(min-width: 1200px) {
+            max-width: 50vw !important;
+        }
+    }
+}
