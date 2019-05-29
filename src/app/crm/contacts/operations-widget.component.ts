@@ -100,15 +100,15 @@ export class OperationsWidgetComponent extends AppComponentBase {
     };
     constructor(
         injector: Injector,
-        private _clientService: ContactsService,
         private _appService: AppService,
         private _userService: UserServiceProxy,
+        private _contactService: ContactsService,
         private _featureService: FeatureCheckerService,
         public localizationService: AppLocalizationService,
     ) {
         super(injector);
 
-        _clientService.toolbarSubscribe((config) => {
+        _contactService.toolbarSubscribe((config) => {
             this.initToolbarConfig(config);
         });
     }
@@ -122,39 +122,47 @@ export class OperationsWidgetComponent extends AppComponentBase {
             let items = [
                 {
                     name: 'assign',
-                    action: this.toggleUserAssignment.bind(this)
+                    action: this.toggleUserAssignment.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageAssignments')
                 },
                 this.leadId ? {
                     name: 'stage',
-                    action: this.toggleStages.bind(this)
+                    action: this.toggleStages.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType)
                 } :
                 {
                     name: 'status',
-                    action: this.toggleStatus.bind(this)
+                    action: this.toggleStatus.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType)
                 }
             ];
             if (this.customerType == ContactGroup.Partner) {
                 items.push({
                     name: 'partnerType',
-                    action: this.togglePartnerTypes.bind(this)
+                    action: this.togglePartnerTypes.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType)
                 });
             }
             items = items.concat([
                 {
                     name: 'lists',
-                    action: this.toggleLists.bind(this)
+                    action: this.toggleLists.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
                 },
                 {
                     name: 'tags',
-                    action: this.toggleTags.bind(this)
+                    action: this.toggleTags.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageListsAndTags')
                 },
                 {
                     name: 'rating',
                     action: this.toggleRating.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
                 },
                 {
                     name: 'star',
                     action: this.toggleStars.bind(this),
+                    disabled: !this._contactService.checkCGPermission(this.customerType, 'ManageRatingAndStars')
                 }
             ]);
             this.toolbarConfig = this._enabled ? [

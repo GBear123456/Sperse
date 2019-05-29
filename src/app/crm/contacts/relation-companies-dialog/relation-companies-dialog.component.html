@@ -7,8 +7,10 @@
             <div class="job-title">
                 <h6>{{ contact?.relation?.relationType?.name }}{{ contact?.relation?.jobTitle ? ', ' + contact?.relation?.jobTitle: ''}}</h6>
             </div>
-            <a *ngIf="info.primaryOrganizationContactId != contact.id; else primary" (click)="setPrimary($event, contact)" class="set-primary">{{l('Set Primary')}}</a>
-            <ng-template #primary><i>{{l('Primary Company')}}</i></ng-template>
+            <div *ngIf="manageAllowed">
+                <a *ngIf="info.primaryOrganizationContactId != contact.id; else primary" (click)="setPrimary($event, contact)" class="set-primary">{{l('Set Primary')}}</a>
+                <ng-template #primary><i>{{l('Primary Company')}}</i></ng-template>
+            </div>
         </div>
     </ng-template>
 </contact-list-dialog>

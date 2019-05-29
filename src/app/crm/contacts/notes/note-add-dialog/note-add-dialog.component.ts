@@ -123,7 +123,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             });
         });
 
-        this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, 
+        this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
             { contactGroup: this._contactInfo.groupId })).subscribe((result) => {
                 this.users = result;
         });
@@ -279,6 +279,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         let contact = this.getContactById(this.contactId);
         let dialogData = {
             contactId: this.contactId,
+            groupId: this._contactInfo.groupId,
             field: 'phoneNumber',
             name: 'Phone',
             isConfirmed: false,

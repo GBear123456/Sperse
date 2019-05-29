@@ -15,16 +15,6 @@ import includes from 'lodash/includes';
     styleUrls: ['./organization-units-tree.component.less']
 })
 export class OrganizationUnitsTreeComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxTreeViewComponent) organizationUnitsTree: DxTreeViewComponent;
-
-    public oranizationUnitsDataSource: DataSource;
-    public searchEnabled = false;
-    public sortTreeDesc = false;
-
-    isEditAllowed = false;
-
-    private userId: number;
-    private organizationUnitsData: OrganizationUnitDto[];
 
     constructor(injector: Injector,
         private _userOrgUnitsService: OrganizationUnitServiceProxy,
@@ -39,6 +29,65 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
 
         this.isEditAllowed = this.isGranted('Pages.Administration.OrganizationUnits.ManageMembers');
     }
+    @ViewChild(DxTreeViewComponent) organizationUnitsTree: DxTreeViewComponent;
+
+    public oranizationUnitsDataSource: DataSource;
+    public searchEnabled = false;
+    public sortTreeDesc = false;
+
+    isEditAllowed = false;
+
+    private userId: number;
+    private organizationUnitsData: OrganizationUnitDto[];
+
+    toolbarConfig = [
+        {
+            location: 'before', items: [
+                {
+                    name: 'find',
+                    action: (event) => {
+                        event.event.stopPropagation();
+                        event.event.preventDefault();
+
+                        this.searchEnabled = !this.searchEnabled;
+                    }
+                },
+                {
+                    name: 'sort',
+                    action: (event) => {
+                        event.event.stopPropagation();
+                        event.event.preventDefault();
+
+                        this.sortTreeDesc = !this.sortTreeDesc;
+                        this.oranizationUnitsDataSource.sort({ getter: 'displayName', desc: this.sortTreeDesc });
+                        this.oranizationUnitsDataSource.load();
+                    }
+                },
+                {
+                    name: 'expandTree',
+                    widget: 'dxDropDownMenu',
+                    options: {
+                        hint: this.l('Expand'),
+                        items: [{
+                            action: this.processExpandTree.bind(this, 1),
+                            text: this.l('Expand 1st level')
+                        }, {
+                            action: this.processExpandTree.bind(this, 2),
+                            text: this.l('Expand 2nd level')
+                        }, {
+                            action: this.processExpandTree.bind(this, 10),
+                            text: this.l('Expand all')
+                        }, {
+                            type: 'delimiter'
+                        }, {
+                            action: this.processExpandTree.bind(this, 0),
+                            text: this.l('Collapse all'),
+                        }]
+                    }
+                }
+            ]
+        }
+    ];
 
     setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], memberedOrganizationUnits: string[]) {
         this.organizationUnitsData = orgUnits;
@@ -96,55 +145,6 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             this.notify.info(this.l('SavedSuccessfully'));
         });
     }
-
-    toolbarConfig = [
-        {
-            location: 'before', items: [
-                {
-                    name: 'find',
-                    action: (event) => {
-                        event.event.stopPropagation();
-                        event.event.preventDefault();
-
-                        this.searchEnabled = !this.searchEnabled;
-                    }
-                },
-                {
-                    name: 'sort',
-                    action: (event) => {
-                        event.event.stopPropagation();
-                        event.event.preventDefault();
-
-                        this.sortTreeDesc = !this.sortTreeDesc;
-                        this.oranizationUnitsDataSource.sort({ getter: 'displayName', desc: this.sortTreeDesc });
-                        this.oranizationUnitsDataSource.load();
-                    }
-                },
-                {
-                    name: 'expandTree',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.l('Expand'),
-                        items: [{
-                            action: this.processExpandTree.bind(this, 1),
-                            text: this.l('Expand 1st level')
-                        }, {
-                            action: this.processExpandTree.bind(this, 2),
-                            text: this.l('Expand 2nd level')
-                        }, {
-                            action: this.processExpandTree.bind(this, 10),
-                            text: this.l('Expand all')
-                        }, {
-                            type: 'delimiter'
-                        }, {
-                            action: this.processExpandTree.bind(this, 0),
-                            text: this.l('Collapse all'),
-                        }]
-                    }
-                }
-            ]
-        }
-    ];
 
     ngOnDestroy() {
         this._contactsService.unsubscribe(this.constructor.name);

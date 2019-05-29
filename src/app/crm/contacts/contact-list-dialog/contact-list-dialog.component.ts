@@ -13,6 +13,7 @@ export class ContactListDialogComponent extends AppComponentBase {
     displayList: any[];
     title = this.l('RelatedContacts');
     addNewTitle = this.l('AddRelatedContact');
+    manageAllowed = false;
     photoType;
 
     @ContentChild(TemplateRef)

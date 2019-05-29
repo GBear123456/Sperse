@@ -14,6 +14,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CountryStateDto, CountryDto } from '@shared/service-proxies/service-proxies';
 import { AddressUsageTypesStoreActions, AddressUsageTypesStoreSelectors } from '@app/store';
+import { ContactsService } from '../contacts.service';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -40,11 +41,12 @@ export class EditAddressDialog extends AppComponentBase {
                 private elementRef: ElementRef,
                 @Inject(MAT_DIALOG_DATA) public data: any,
                 public dialogRef: MatDialogRef<EditAddressDialog>,
+                private _contactsService: ContactsService,
                 private _angularGooglePlaceService: AngularGooglePlaceService,
                 private store$: Store<RootStore.State>
     ) {
         super(injector);
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
+        this.isEditAllowed = this._contactsService.checkCGPermission(this.data.groupId);
         if (this.validateAddress(data)) {
             this.action = 'Edit';
             this.address =
@@ -161,6 +163,6 @@ export class EditAddressDialog extends AppComponentBase {
     }
 
     getUsageTypeHint(item) {
-        return item ? this.l('ContactInformation_AddressTypeTooltip_' + item.id): '';
+        return item ? this.l('ContactInformation_AddressTypeTooltip_' + item.id) : '';
     }
 }

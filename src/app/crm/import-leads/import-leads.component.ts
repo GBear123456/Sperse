@@ -31,6 +31,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: 'import-leads.component.html',
@@ -217,6 +218,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         private _partnerService: PartnerServiceProxy,
         private zipFormatterPipe: ZipCodeFormatterPipe,
         public importWizardService: ImportWizardService,
+        private _contactService: ContactsService,
         private store$: Store<AppStore.State>
     ) {
         super(injector);
@@ -594,6 +596,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     initToolbarConfig() {
+        let disabledManage = !this._contactService.checkCGPermission(this.contactGroupId);
         this.toolbarConfig = [
             {
                 location: 'before',
@@ -608,12 +611,13 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             selectedIndex: this.importTypeIndex,
                             hint: this.l('Import Type'),
                             items: Object.keys(ImportInputImportType).map((type) => {
-                                let isClient = type == ImportInputImportType.Client;
+                                if (type == ImportInputImportType.Lead)
+                                    type = 'Client';
+                                if (type == ImportInputImportType.Employee)
+                                    type = 'UserProfile';
                                 return {
-                                    disabled: type == ImportInputImportType.Order || type != ImportInputImportType.Lead
-                                        && !this.isGranted(type == ImportInputImportType.Employee ?
-                                            'Pages.Administration.Users' :
-                                            'Pages.CRM.' + (isClient ? 'Customers' : type + 's')),
+                                    disabled: type == ImportInputImportType.Order
+                                        || !this._contactService.checkCGPermission(ContactGroup[type]),
                                     action: this.importTypeChanged.bind(this),
                                     text: this.l(type + 's'),
                                     value: ImportInputImportType[type]
@@ -630,6 +634,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'assign',
                         action: () => this.userAssignmentComponent.toggle(),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.isUserSelected
                         }
@@ -640,7 +645,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         attr: {
                             'filter-selected': !!this.selectedStageId
                         },
-                        disabled: !this.contactGroupId
+                        disabled: !this.contactGroupId || disabledManage
                     },
                     {
                         name: 'partnerType',
@@ -648,11 +653,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         attr: {
                             'filter-selected': !!this.selectedPartnerTypeName
                         },
-                        disabled: this.importType != ImportInputImportType.Partner
+                        disabled: this.importType != ImportInputImportType.Partner || disabledManage
                     },
                     {
                         name: 'lists',
                         action: () => this.listsComponent.toggle(),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.isListsSelected
                         }
@@ -660,6 +666,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'tags',
                         action: () => this.tagsComponent.toggle(),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.isTagsSelected
                         }
@@ -667,6 +674,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'rating',
                         action: () => this.ratingComponent.toggle(),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.isRatingSelected
                         }
@@ -677,6 +685,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                             width: 30,
                         },
                         action: () => this.starsListComponent.toggle(),
+                        disabled: !this._contactService.checkCGPermission(this.contactGroupId, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.isStarSelected
                         }
@@ -715,5 +724,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 != this.wizard.UPLOAD_STEP_INDEX;
         else
             setTimeout(() => this.initToolbarConfig());
+    }
+
+    getUserAssignmentPermissionKey() {
+        return this._contactService.getCGPermissionKey(this.contactGroupId, 'ManageAssignments');
     }
 }

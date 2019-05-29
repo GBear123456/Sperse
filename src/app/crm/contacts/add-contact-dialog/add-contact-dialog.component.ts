@@ -10,7 +10,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
-import { PersonContactInfoDto } from '@shared/service-proxies/service-proxies';
+import { ContactInfoDto } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@app/crm/shared/name-parser/name-parser.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class AddContactDialogComponent extends AppComponentBase implements OnIni
 
     private slider: any;
     constructor(injector: Injector,
-                @Inject(MAT_DIALOG_DATA) public data: PersonContactInfoDto,
+                @Inject(MAT_DIALOG_DATA) public data: ContactInfoDto,
                 private elementRef: ElementRef,
                 private fullNameParser: NameParserService,
                 public dialogRef: MatDialogRef<AddContactDialogComponent>,
@@ -62,7 +62,7 @@ export class AddContactDialogComponent extends AppComponentBase implements OnIni
 
     onValueChanged(event) {
         this.fullNameParser.parseIntoPerson(
-            this.data.fullName, this.data.person);
+            this.data.personContactInfo.fullName, this.data.personContactInfo.person);
     }
 
     onSave(event) {

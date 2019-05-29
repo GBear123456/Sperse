@@ -13,7 +13,7 @@
           </dx-validator>
         </dx-text-box>
         <dx-validation-group>
-            <person-info [data]="data"></person-info>
+            <person-info [data]="data?.personContactInfo" [groupId]="data?.groupId"></person-info>
         </dx-validation-group>      
     </mat-dialog-content>
     <mat-dialog-actions>

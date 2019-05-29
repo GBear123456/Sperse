@@ -50,7 +50,6 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
                 private dialogService: DialogService
     ) {
         super(injector);
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
     }
 
     getDialogPossition(event) {
@@ -93,6 +92,7 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
             id: data && data.id,
             value: data && data[field],
             name: this.getFieldName(field),
+            groupId: this.contactInfo.groupId,
             contactId: data && data.contactId
                 || this.contactInfoData && this.contactInfoData.contactId,
             emailAddress: data && data.emailAddress,
@@ -279,5 +279,6 @@ export class ContactsAreaComponent extends AppComponentBase implements OnInit {
     }
 
     ngOnInit() {
+        this.isEditAllowed = this._contactsService.checkCGPermission(this.contactInfo.groupId);
     }
 }

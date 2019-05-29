@@ -90,6 +90,7 @@
                         [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'CreationTime', 'StageId', 'Stage', 'PhotoPublicId']"
                         [pipelinePurposeId]="pipelinePurposeId"
                         [filterModelStages]="filterModelStages"
+                        [moveDisabled]="manageDisabled"
                         [(selectedEntities)]="selectedOrders"
                         (onEntityStageChanged)="onOrderStageChanged($event)"
                         (onStagesLoaded)="onStagesLoaded($event)"

@@ -49,18 +49,19 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { ContactStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, PartnerServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './partners.component.html',
     styleUrls: ['./partners.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy, ContactServiceProxy ]
+    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -96,7 +97,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         onRefresh: this.invalidate.bind(this),
         buttons: [
             {
-                enabled: true,
+                enabled: this._contactService.checkCGPermission(ContactGroup.Partner),
                 action: this.createPartner.bind(this),
                 lable: this.l('CreateNewPartner')
             }
@@ -107,7 +108,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        public contactService: ContactServiceProxy,
+        private _contactService: ContactsService,
         private _partnerService: PartnerServiceProxy,
         private _appService: AppService,
         private _pipelineService: PipelineService,
@@ -415,6 +416,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -429,6 +431,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'partnerType',
                         action: this.toggleType.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner),
                         attr: {
                             'filter-selected': this.filterModelTypes && this.filterModelTypes.isSelected
                         }
@@ -436,6 +439,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -443,6 +447,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -450,6 +455,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -457,6 +463,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Partner, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }

@@ -26,7 +26,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     @Input() targetSelector = '[aria-label="Assign"]';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
-    @Input() permissionKey: string = '';
+    @Input() permissionKey = '';
     @Input() get selectedItemKey() {
         return this.multiSelection ? this.selectedItemKeys :
             (this.selectedItemKeys && this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined);
@@ -163,7 +163,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     }
 
     reset() {
-        this.selectedItemKey = this.multiSelection ? []: null;
+        this.selectedItemKey = this.multiSelection ? [] : null;
     }
 
     highlightSelectedFilters() {

@@ -32,7 +32,7 @@ export class StarsListComponent extends AppComponentBase implements OnInit {
     }
     private selectedItemKeys = [];
 
-    @Input() targetSelector = "[aria-label='star-icon']";
+    @Input() targetSelector = '[aria-label=\'star-icon\']';
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     list: any;
 

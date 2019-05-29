@@ -45,19 +45,20 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
-import { ContactServiceProxy, CreateContactEmailInput, ContactEmailServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
+import { CreateContactEmailInput, ContactEmailServiceProxy, ContactStatusDto } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@root/root-routing.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { EditContactDialog } from '../contacts/edit-contact-dialog/edit-contact-dialog.component';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, LifecycleSubjectsService, ContactServiceProxy ]
+    providers: [ ClientService, LifecycleSubjectsService ]
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -92,7 +93,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         onRefresh: this.refresh.bind(this),
         buttons: [
             {
-                enabled: true,
+                enabled: this._contactService.checkCGPermission(ContactGroup.Client),
                 action: this.createClient.bind(this),
                 lable: this.l('CreateNewCustomer')
             }
@@ -101,7 +102,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(injector: Injector,
         public dialog: MatDialog,
-        public contactService: ContactServiceProxy,
+        public appService: AppService,
+        private _contactService: ContactsService,
         private _pipelineService: PipelineService,
         private _filtersService: FiltersService,
         private _clientService: ClientService,
@@ -109,8 +111,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private store$: Store<AppStore.State>,
         private _reuseService: RouteReuseStrategy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
-        private itemDetailsService: ItemDetailsService,
-        public appService: AppService
+        private itemDetailsService: ItemDetailsService
     ) {
         super(injector);
     }
@@ -417,6 +418,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
                         }
@@ -431,6 +433,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -438,6 +441,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageListsAndTags'),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -445,6 +449,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -452,6 +457,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
+                        disabled: !this._contactService.checkCGPermission(ContactGroup.Client, 'ManageRatingAndStars'),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
@@ -588,16 +594,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     updateClientStatuses(status) {
-        let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
-        this._clientService.updateContactStatuses(
-            selectedIds,
-            ContactGroup.Client,
-            status.id,
-            () => {
-                this.refresh();
-                this.dataGrid.instance.clearSelection();
-            }
-        );
+        if (this._contactService.checkCGPermission(ContactGroup.Client)) {
+            let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+            this._clientService.updateContactStatuses(
+                selectedIds,
+                ContactGroup.Client,
+                status.id,
+                () => {
+                    this.refresh();
+                    this.dataGrid.instance.clearSelection();
+                }
+            );
+        }
     }
 
     onCellClick($event) {

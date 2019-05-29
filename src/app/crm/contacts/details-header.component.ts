@@ -1,14 +1,5 @@
 /** Core imports */
-import {
-    Component,
-    OnInit,
-    Injector,
-    Input,
-    Output,
-    ViewChild,
-    EventEmitter,
-    OnDestroy
-} from '@angular/core';
+import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter, OnDestroy } from '@angular/core';
 
 /** Third party import */
 import { MatDialog } from '@angular/material/dialog';
@@ -16,7 +7,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
 import { BehaviorSubject } from 'rxjs';
-import { filter, finalize, takeUntil } from 'rxjs/operators';
+import { filter, finalize, takeUntil, map } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
@@ -64,7 +55,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     @Input()
     public set data(data: ContactInfoDto) {
-        this._contactInfoBehaviorSubject.next(data);
+        data && this._contactInfoBehaviorSubject.next(data);
     }
     public get data(): ContactInfoDto {
         return this._contactInfoBehaviorSubject.getValue();
@@ -98,6 +89,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     statusNames = _.invert(ContactStatus);
 
     isAdminModule;
+    manageAllowed;
     defaultContextMenuItems = [
         {
             text: this.l('AddFiles'),
@@ -155,6 +147,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
             .subscribe(
                 (contactInfo: ContactInfoDto) => {
                     this.contactGroup = contactInfo.groupId;
+                    this.manageAllowed = this._contactsService.checkCGPermission(contactInfo.groupId);
                     this.addContextMenuItems = this.defaultContextMenuItems.filter(menuItem => menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0);
                     this.addOptionsInit();
                 }
@@ -308,37 +301,42 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     getNameInplaceEditData(field = 'personContactInfo') {
-        let contactInfo = this.data && this.data[field];
-        if (contactInfo)
-            return {
-                id: contactInfo.id,
-                value: (contactInfo.fullName || '').trim(),
-                validationRules: [
-                    {type: 'required', message: this.l('FullNameIsRequired')},
-                    {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
-                ],
-                isEditDialogEnabled: true,
-                lEntityName: 'Name',
-                lEditPlaceholder: this.l('ClientNamePlaceholder')
-            };
+        return this._contactInfoBehaviorSubject.asObservable().pipe(map((data) => {
+            let contactInfo = this.data && this.data[field];
+            if (contactInfo)
+                return {
+                    id: contactInfo.id,
+                    isReadOnlyField: !this.manageAllowed,
+                    value: (contactInfo.fullName || '').trim(),
+                    validationRules: [
+                        {type: 'required', message: this.l('FullNameIsRequired')},
+                        {type: 'pattern', pattern: AppConsts.regexPatterns.fullName, message: this.l('FullNameIsNotValid')}
+                    ],
+                    isEditDialogEnabled: true,
+                    lEntityName: 'Name',
+                    lEditPlaceholder: this.l('ClientNamePlaceholder')
+                };
+        }));
     }
 
     getJobTitleInplaceEditData() {
-        let orgRelationInfo = this.personContactInfo
-            && this.personContactInfo['personOrgRelationInfo'];
-        if (orgRelationInfo)
-            return {
-                id: orgRelationInfo.id,
-                value: (orgRelationInfo.jobTitle || '').trim(),
-                lEntityName: 'JobTitle',
-                lEditPlaceholder: this.l('JobTitle')
-            };
+        return this._personContactInfoBehaviorSubject.asObservable().pipe(map((data) => {
+            let orgRelationInfo = data && data['personOrgRelationInfo'];
+            if (orgRelationInfo)
+                return {
+                    id: orgRelationInfo.id,
+                    isReadOnlyField: !this.manageAllowed,
+                    value: (orgRelationInfo.jobTitle || '').trim(),
+                    lEntityName: 'JobTitle',
+                    lEditPlaceholder: this.l('JobTitle')
+                };
+        }));
     }
 
     showEditPersonDialog(event) {
         this.dialog.closeAll();
         this.dialog.open(PersonDialogComponent, {
-            data: this.data.personContactInfo,
+            data: this.data,
             hasBackdrop: false,
             position: this.dialogService.calculateDialogPosition(
                 event, event.target.closest('div'), 200, -12)
@@ -458,7 +456,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     }
 
     addCompanyDialog(event) {
-        this._contactsService.addCompanyDialog(event, this.data).subscribe(result => {});
+        if (this.manageAllowed)
+            this._contactsService.addCompanyDialog(event, this.data).subscribe(result => {});
     }
 
     showCompanyList(event) {

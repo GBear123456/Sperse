@@ -44,7 +44,7 @@
     [selectedItemKey]="userId" [bulkUpdateMode]="true"
     [hideButtons]="true"
     (onSelectionChanged)="onUserAssignmentChanged($event)"
-    [permissionKey]="'Pages.CRM.Customers.ManageAssignments'"
+    [permissionKey]="getUserAssignmentPermissionKey()"
     [assignedUsersSelector]="getAssignedUsersSelector()">
 </crm-user-assignment-list>
 <app-static-list #stagesList

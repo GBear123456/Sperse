@@ -729,10 +729,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getAssignmentsPermissinKey = () => {
-        if (this.contactGroup == ContactGroup.Partner)
-            return 'Pages.CRM.Partners.ManageAssignments';
-
-        return 'Pages.CRM.Customers.ManageAssignments';
+        return this._contactsService.getCGPermissionKey(this.contactGroup, 'ManageAssignments');
     }
 
     getProxyService = () => {

@@ -10,7 +10,7 @@ import { VerificationChecklistItem, VerificationChecklistItemStatus } from './ve
 })
 export class VerificationChecklistComponent extends AppComponentBase implements OnInit {
     @Input() data: VerificationChecklistItem[];
-    collapsed: boolean = false;
+    collapsed = false;
 
     constructor(injector: Injector) {
         super(injector);
@@ -19,7 +19,7 @@ export class VerificationChecklistComponent extends AppComponentBase implements 
     ngOnInit() {
     }
 
-    getItemName(item: VerificationChecklistItem):string {
+    getItemName(item: VerificationChecklistItem): string {
         return this.l(`Verification_Checklist_${this.capitalize(item.type)}`);
     }
 

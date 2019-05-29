@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, Input } from '@angular/core';
+import { Component, Injector, Input, OnInit } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -31,7 +31,7 @@ import * as _ from 'underscore';
     styleUrls: ['./socials.component.less'],
     providers: [ DialogService ]
 })
-export class SocialsComponent extends AppComponentBase {
+export class SocialsComponent extends AppComponentBase implements OnInit {
     @Input() isCompany;
     @Input() contactInfo: ContactInfoDto;
     @Input() contactInfoData: ContactInfoDetailsDto;
@@ -50,8 +50,11 @@ export class SocialsComponent extends AppComponentBase {
     ) {
         super(injector);
 
-        this.isEditAllowed = this.isGranted('Pages.CRM.Customers.Manage');
         this.linkTypesLoad();
+    }
+
+    ngOnInit() {
+        this.isEditAllowed = this._contactsService.checkCGPermission(this.contactInfo.groupId);
     }
 
     linkTypesLoad() {
@@ -102,6 +105,7 @@ export class SocialsComponent extends AppComponentBase {
             id: data && data.id,
             value: data && data.url,
             name: this.l('Link'),
+            groupId: this.contactInfo.groupId,
             contactId: data && data.contactId
             || this.contactInfoData && this.contactInfoData.contactId,
             url: data && data.url,

@@ -25,7 +25,7 @@ import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/
 export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() filterModel: any;
     @Input() selectedKeys: any;
-    @Input() targetSelector = "[aria-label='Lists']";
+    @Input() targetSelector = '[aria-label=\'Lists\']';
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() set selectedItems(value) {

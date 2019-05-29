@@ -61,6 +61,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.selectedOrderKeys = orders.map((item) => item.Id);
     }
 
+    manageDisabled = true;
     filterModelStages: FilterModel;
 
     private rootComponent: any;
@@ -315,6 +316,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     initToolbarConfig() {
         if (this.componentIsActivated) {
+            this.manageDisabled = !this.isGranted('Pages.CRM.Orders.Manage');
             this._appService.updateToolbar([
                 {
                     location: 'before', items: [
@@ -366,13 +368,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     location: 'before',
                     locateInMenu: 'auto',
                     items: [
-                        { name: 'assign', disabled: true }, {
+                        {
+                            name: 'assign',
+                            disabled: this.manageDisabled
+                        },
+                        {
                             name: 'stage',
                             action: this.toggleStages.bind(this),
+                            disabled: this.manageDisabled,
                             attr: {
                                 'filter-selected': this.filterModelStages && this.filterModelStages.isSelected
                             }
-                        }, { name: 'delete', disabled: true }
+                        },
+                        {
+                            name: 'delete',
+                            disabled: this.manageDisabled
+                        }
                     ]
                 },
                 {
