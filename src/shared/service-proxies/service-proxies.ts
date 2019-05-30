@@ -17933,16 +17933,18 @@ export class OrganizationContactServiceProxy {
     }
 
     /**
-     * @id (optional) 
-     * @currentPersonOrgRelation (optional) 
      * @return Success
      */
-    delete(id: number | null | undefined, currentPersonOrgRelation: number | null | undefined): Observable<void> {
+    delete(id: number, currentPersonOrgRelationId: number): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/Delete?";
-        if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
-        if (currentPersonOrgRelation !== undefined)
-            url_ += "currentPersonOrgRelation=" + encodeURIComponent("" + currentPersonOrgRelation) + "&"; 
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "Id=" + encodeURIComponent("" + id) + "&"; 
+        if (currentPersonOrgRelationId === undefined || currentPersonOrgRelationId === null)
+            throw new Error("The parameter 'currentPersonOrgRelationId' must be defined and cannot be null.");
+        else
+            url_ += "CurrentPersonOrgRelationId=" + encodeURIComponent("" + currentPersonOrgRelationId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
