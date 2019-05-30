@@ -6,7 +6,8 @@ import {
     AfterViewInit,
     ElementRef,
     Input,
-    Output, EventEmitter
+    Output,
+    EventEmitter
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -29,7 +30,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() buttons: IDialogButton[];
     @Input() options: IDialogOption[];
     @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
-    @Output() onTitleChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() titleChange: EventEmitter<string> = new EventEmitter<string>();
     private slider: any;
 
     constructor(
@@ -72,7 +73,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     titleChanged(event) {
         let title = event.element.getElementsByTagName('input')[0].value;
         this.isTitleValid = Boolean(title);
-        this.onTitleChanged.emit(title);
+        this.titleChange.emit(title);
     }
 
     titleKeyUp(event) {
