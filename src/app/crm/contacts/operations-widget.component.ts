@@ -1,5 +1,10 @@
+/** Core imports */
 import { Component, Injector, Input, Output, ViewChild, EventEmitter } from '@angular/core';
 
+/** Third party imports */
+import { takeUntil } from 'rxjs/operators';
+
+/** Application imports */
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
 import { ListsListComponent } from '../shared/lists-list/lists-list.component';
@@ -15,9 +20,6 @@ import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { AppService } from '@app/app.service';
-import { AppConsts } from '@shared/AppConsts';
-import { takeUntil } from 'rxjs/operators';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
     selector: 'operations-widget',
@@ -103,7 +105,6 @@ export class OperationsWidgetComponent extends AppComponentBase {
         private _appService: AppService,
         private _userService: UserServiceProxy,
         private _contactService: ContactsService,
-        private _featureService: FeatureCheckerService,
         public localizationService: AppLocalizationService,
     ) {
         super(injector);
@@ -195,7 +196,7 @@ export class OperationsWidgetComponent extends AppComponentBase {
                 && this._appService.isCfoLinkOrVerifyEnabled
                 && (
                     this.isClientCFOAvailable() && this._appService.checkCFOClientAccessPermission
-                    || (!this.isClientCFOAvailable() && this._appService.canSendVerificationRequest && this.contactInfo.statusId === ContactStatus.Active)
+                    || (!this.isClientCFOAvailable() && this._appService.canSendVerificationRequest() && this.contactInfo.statusId === ContactStatus.Active)
                 );
             if (isCfoLinkOrVerifyEnabled) {
                 this.toolbarConfig.push(
