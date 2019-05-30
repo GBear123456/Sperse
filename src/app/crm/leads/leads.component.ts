@@ -43,7 +43,7 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { FilterStatesComponent } from '@shared/filters/states/filter-states.component';
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { LeadServiceProxy } from '@shared/service-proxies/service-proxies';
+import { LeadServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateClientDialogComponent } from '../shared/create-client-dialog/create-client-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
@@ -63,7 +63,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 @Component({
     templateUrl: './leads.component.html',
     styleUrls: ['./leads.component.less'],
-    providers: [ LeadServiceProxy, LifecycleSubjectsService, PipelineService ],
+    providers: [ LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, PipelineService ],
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -143,6 +143,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        public contactProxy: ContactServiceProxy,
         private _contactService: ContactsService,
         private _leadService: LeadServiceProxy,
         private _pipelineService: PipelineService,

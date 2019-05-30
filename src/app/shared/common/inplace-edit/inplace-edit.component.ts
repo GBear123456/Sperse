@@ -117,7 +117,7 @@ export class InplaceEditComponent extends AppComponentBase {
                 this._clickCounter = 0;
                 this.changeDetector.detectChanges();
             }, 250);
-        } else 
+        } else
             this.showInput(isEnabled);
     }
 
@@ -125,7 +125,7 @@ export class InplaceEditComponent extends AppComponentBase {
         enabled && this.updateWidth();
         this.isEditModeEnabled = enabled;
         this.valueOriginal = this._data.value;
-        enabled && setTimeout(() => 
+        enabled && setTimeout(() =>
             this.textBox.instance.focus());
     }
 
