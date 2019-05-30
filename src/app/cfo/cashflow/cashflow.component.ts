@@ -825,8 +825,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     ngOnInit() {
         this.displayedStatsDetails$.subscribe((details) => this.displayedStatsDetails = details);
         this.statsDetailResult$.subscribe(details => {
-            this.detailsContainsHistorical = this.isInstanceAdmin && details.some(item => !!item.date);
-            this.detailsContainsForecasts = this.isInstanceAdmin && details.some(item => !!item.forecastId);
+            let detailsAllowed = this.isInstanceAdmin || this.isMemberAccessManage;
+            this.detailsContainsHistorical = detailsAllowed && details.some(item => !!item.date);
+            this.detailsContainsForecasts = detailsAllowed && details.some(item => !!item.forecastId);
             this.statsDetailResult = details;
             this.detailsTab.next('all');
         });
@@ -1169,7 +1170,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         },
                         {
                             name: 'forecastModelAdd',
-                            visible: this.isInstanceAdmin,
+                            visible: this.isInstanceAdmin || this.isMemberAccessManage,
                             action: (event) => {
                                 if (!event.element.getElementsByClassName('addModel').length)
                                     this.showForecastAddingInput(event);

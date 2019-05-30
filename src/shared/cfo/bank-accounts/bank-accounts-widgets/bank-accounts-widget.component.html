@@ -83,7 +83,7 @@
                                   (onContentReady)="detailContentReady($event)"
                                   (onRowUpdating)="detailsRowUpdating($event)">
                         <dxo-scrolling showScrollbar="never"></dxo-scrolling>
-                        <dxo-editing mode="popup"
+                        <dxo-editing [mode]="allowEditing ? 'popup': 'row'"
                                      [allowUpdating]="false">
                             <dxo-popup #editingPopup
                                        accessKey="accountsEditingPopup"
@@ -96,13 +96,13 @@
                         <dxo-filter-row [visible]="false"></dxo-filter-row>
                         <dxi-column dataField="id" [allowEditing]="false" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
                         <dxi-column dataField="selected" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
-                        <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="true"></dxi-column>
+                        <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing"></dxi-column>
 
-                        <dxi-column dataField="accountNumber" cssClass="accountNumber" [allowEditing]="false" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="true"></dxi-column>
+                        <dxi-column dataField="accountNumber" cssClass="accountNumber" [allowEditing]="false" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="allowEditing"></dxi-column>
                         <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
                                     cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
-                        <dxi-column dataField="businessEntityId" [allowEditing]="true" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
-                        <dxi-column dataField="isActive" [allowEditing]="true" [visible]="false"></dxi-column>
+                        <dxi-column dataField="businessEntityId" [allowEditing]="allowEditing" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
+                        <dxi-column dataField="isActive" [allowEditing]="allowEditing" [visible]="false"></dxi-column>
                         <dxi-column dataField="balance" [allowEditing]="false" cssClass="tabular" alignment="right" [allowEditing]="true" cellTemplate="amountTemplate" [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
                         <dxi-column [width]="200" dataField="availableBalance" cssClass="available-balance" cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <dxi-column [width]="200" dataField="totalCreditLine" cssClass="totalCreditLine-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>

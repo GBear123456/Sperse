@@ -53,6 +53,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Output() reloadDataSource: EventEmitter<any> = new EventEmitter();
     @Output() onDataChange: EventEmitter<any> = new EventEmitter();
 
+    allowEditing = false;
     bankAccountIdsForHighlight = [];
     editingStarted = false;
 
@@ -94,6 +95,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     ) {
         super(injector);
         this.cfoService = injector.get(CFOService, null);
+        this.allowEditing = this.isInstanceAdmin || this.isMemberAccessManage;
     }
 
     ngOnInit(): void {
