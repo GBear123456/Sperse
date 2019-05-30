@@ -19,6 +19,7 @@ class Module {
     footerItem?: boolean;
     uri?: string;
     isComingSoon?: boolean;
+    isMemberPortal?: boolean;
 }
 
 export abstract class AppServiceBase {

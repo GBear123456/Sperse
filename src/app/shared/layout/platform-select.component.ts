@@ -30,7 +30,7 @@ export class PlatformSelectComponent extends AppComponentBase {
         super(injector);
 
         _appService.getModules().forEach((module) => {
-            if (_appService.isModuleActive(module.name)) this.activeModuleCount++;
+            if (_appService.isModuleActive(module.name) && !module.isMemberPortal) this.activeModuleCount++;
             let config = _appService.getModuleConfig(module.name);
             if (module.showInDropdown) {
                 let moduleConfig = {
@@ -62,7 +62,6 @@ export class PlatformSelectComponent extends AppComponentBase {
                         && this.feature.isEnabled('PFM.Applications')
                     ) {
                         this.modules.footerItems = this.modules.footerItems.filter((item) => item.name !== 'CFO');
-                        // if (this.modules.footerItems.length > 1) this.modules.footerItems.pop();
                         this.modules.footerItems.push(moduleConfig);
                     }
                 } else if (module.showInDropdown) {
@@ -85,15 +84,17 @@ export class PlatformSelectComponent extends AppComponentBase {
         ) {
             let navigate = null;
             let moduleConfig = this._appService.getModuleConfig(module.name);
-            if (module.name === 'PFM' && module.footerItem) {
-                return window.open(location.origin + '/personal-finance', '_blank');
-            } else if (moduleConfig.defaultPath) {
+            if (moduleConfig.defaultPath) {
                 navigate = this._router.navigate([moduleConfig.defaultPath]);
+            } else if (module.name === 'PFM' && module.footerItem) {
+                return window.open(location.origin + '/personal-finance', '_blank');
+            } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted('Pages.CFO.MemberAccess')) {
+                return window.open(location.origin + '/app/cfo-portal', '_blank');
             } else {
                 navigate = this._router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);
             }
             this._dropDown.option('disabled', true);
-            navigate.then((result) => {
+            navigate && navigate.then((result) => {
                 if (result) {
                     this.module = module.name;
                     this.uri = module.uri;
