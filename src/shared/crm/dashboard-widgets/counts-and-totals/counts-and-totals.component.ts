@@ -23,7 +23,6 @@ export class CountsAndTotalsComponent implements OnInit, OnDestroy {
     data: GetTotalsOutput;
     fields = this._dashboardService.totalsDataFields;
     totalsDataLoading$ = this._dashboardService.totalsDataLoading$.pipe(takeUntil(this._lifeCycleService.destroy$));
-    totalsLoading = true;
 
     constructor(
         private _dashboardService: DashboardWidgetsService,
@@ -45,7 +44,6 @@ export class CountsAndTotalsComponent implements OnInit, OnDestroy {
                         totalsData[field.name]
                     );
                 });
-                this.totalsLoading = false;
                 this._changeDetectorRef.detectChanges();
             });
 

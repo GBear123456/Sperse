@@ -130,8 +130,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.categorizationStatusComponent.getCategorizationStatus();
     }
 
-    periodChanged($event) {
-        this._dashboardService.periodChanged($event);
+    periodChanged(period: string) {
+        this._dashboardService.periodChanged(period);
     }
 
     activate() {

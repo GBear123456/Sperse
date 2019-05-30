@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
 /** Third party imports */
 import { BehaviorSubject, Subscription, Observable, ReplaySubject, combineLatest } from 'rxjs';
 import { finalize, switchMap, map, tap } from 'rxjs/operators';
-import * as moment from 'moment';
 
 /** Application imports */
 import { DashboardServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -12,24 +11,11 @@ import { PeriodModel } from '@app/shared/common/period/period.model';
 import { GetTotalsOutput } from '@shared/service-proxies/service-proxies';
 import { CacheService } from '@node_modules/ng2-cache-service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { PeriodService } from '@app/shared/common/period/period.service';
 
 @Injectable()
 export class DashboardWidgetsService  {
-    private readonly PERIOD_CACHE_KEY = 'crm.dashboard.selected.period';
-    availablePeriods = [
-        this._ls.l('Today'),
-        this._ls.l('Yesterday'),
-        this._ls.l('This_Week'),
-        this._ls.l('This_Month'),
-        this._ls.l('Last_Month'),
-        this._ls.l('This_Year'),
-        this._ls.l('Last_Year'),
-        this._ls.l('All_Periods')
-    ];
-    selectedPeriod: string = this._cacheService.exists(this.PERIOD_CACHE_KEY)
-                     ? this._cacheService.get(this.PERIOD_CACHE_KEY)
-                     : this._ls.l('This_Month') || this.availablePeriods[this.availablePeriods.length - 1];
-    private _period: BehaviorSubject<PeriodModel> = new BehaviorSubject<PeriodModel>(this.getDatePeriodFromName(this.selectedPeriod));
+    private _period: BehaviorSubject<PeriodModel> = new BehaviorSubject<PeriodModel>(this._periodService.selectedPeriod);
     private _totalsData: ReplaySubject<GetTotalsOutput> = new ReplaySubject<GetTotalsOutput>(1);
     totalsData$: Observable<GetTotalsOutput> = this._totalsData.asObservable();
     totalsDataAvailable$: Observable<boolean> = this.totalsData$.pipe(
@@ -65,7 +51,8 @@ export class DashboardWidgetsService  {
     constructor(
         private _dashboardServiceProxy: DashboardServiceProxy,
         private _cacheService: CacheService,
-        private _ls: AppLocalizationService
+        private _ls: AppLocalizationService,
+        private _periodService: PeriodService
     ) {
         combineLatest(
             this.period$,
@@ -82,61 +69,12 @@ export class DashboardWidgetsService  {
         this._refresh.next(null);
     }
 
-    periodChanged(period?: PeriodModel) {
-        this._period.next(period);
-        this._cacheService.set(this.PERIOD_CACHE_KEY, period.name);
+    periodChanged(period: string) {
+        this._period.next(this._periodService.getDatePeriodFromName(period));
     }
 
     getPercentage(value, total) {
         return (total ? Math.round(value / total * 100) : 0)  + '%';
-    }
-
-    getDatePeriodFromName(name: string): PeriodModel {
-        let period: string;
-        let startDate: moment.Moment = moment();
-        let endDate: moment.Moment = moment();
-        switch (name) {
-            case this._ls.l('Today'):
-                period = 'day';
-                break;
-            case this._ls.l('Yesterday'):
-                period = 'day';
-                startDate.subtract(1, 'day');
-                endDate.subtract(1, 'day');
-                break;
-            case this._ls.l('This_Week'):
-                period = 'week';
-                break;
-            case this._ls.l('This_Month'):
-                period = 'month';
-                break;
-            case this._ls.l('Last_Month'):
-                period = 'month';
-                startDate.subtract(1, 'month');
-                endDate.subtract(1, 'month');
-                break;
-            case this._ls.l('This_Year'):
-                period = 'year';
-                break;
-            case this._ls.l('Last_Year'):
-                period = 'year';
-                startDate.subtract(1, 'year');
-                endDate.subtract(1, 'year');
-                break;
-            case this._ls.l('All_Periods'):
-                period = 'all';
-                break;
-            default:
-                period = 'all';
-                break;
-        }
-
-        return {
-            name: name,
-            period: period,
-            from: period !== 'all' ? startDate.startOf(period) : undefined,
-            to: period !== 'all' ? endDate.endOf(period) : undefined
-        };
     }
 
     unsubscribe() {

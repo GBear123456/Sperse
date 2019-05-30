@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
+import { PeriodService } from '@app/shared/common/period/period.service';
 
 @Component({
     selector: 'app-period',
@@ -8,14 +8,15 @@ import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard
 })
 export class PeriodComponent  {
     @Output() onChange = new EventEmitter();
-    selectedPeriod: string = this._dashboardWidgetsService.selectedPeriod;
-    availablePeriods: string[] = this._dashboardWidgetsService.availablePeriods;
+    selectedPeriod: string = this.periodService.selectedPeriod.name;
+    availablePeriods: string[] = this.periodService.availablePeriods;
 
     constructor(
-        private _dashboardWidgetsService: DashboardWidgetsService
+        private periodService: PeriodService
     ) {}
 
     onPeriodChanged($event) {
-        this._dashboardWidgetsService.periodChanged(this._dashboardWidgetsService.getDatePeriodFromName($event.value));
+        this.periodService.saveSelectedPeriodInCache($event.value);
+        this.onChange.emit($event.value);
     }
 }

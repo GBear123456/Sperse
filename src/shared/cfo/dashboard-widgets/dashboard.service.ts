@@ -1,14 +1,23 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
-import { ReplaySubject, Subscription } from 'rxjs';
+
+/** Third party imports */
+import { BehaviorSubject, Subscription, Observable } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
+
+/** Application imports */
 import { PeriodModel } from '@app/shared/common/period/period.model';
-import { Observable } from '@node_modules/rxjs';
-import { distinctUntilChanged } from '@node_modules/rxjs/internal/operators';
+import { PeriodService } from '@app/shared/common/period/period.service';
 
 @Injectable()
-export class DashboardService  {
-    private _period: ReplaySubject<PeriodModel> = new ReplaySubject(1);
+export class DashboardService {
+    private _period: BehaviorSubject<PeriodModel> = new BehaviorSubject(this.periodService.selectedPeriod);
     period$: Observable<PeriodModel> = this._period.asObservable().pipe(distinctUntilChanged());
     private _subscribers: Array<Subscription> = [];
+
+    constructor(
+        private periodService: PeriodService
+    ) {}
 
     subscribePeriodChange(callback: (period: PeriodModel) => any) {
         this._subscribers.push(
@@ -16,8 +25,8 @@ export class DashboardService  {
         );
     }
 
-    periodChanged(period) {
-        this._period.next(period);
+    periodChanged(period: string) {
+        this._period.next(this.periodService.getDatePeriodFromName(period));
     }
 
     unsubscribe() {

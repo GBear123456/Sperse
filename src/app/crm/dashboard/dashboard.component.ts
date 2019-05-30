@@ -128,6 +128,10 @@ export class DashboardComponent extends AppComponentBase implements AfterViewIni
         this.dialog.open(CrmIntroComponent, this.dialogConfig);
     }
 
+    periodChanged(period: string) {
+        this._dashboardWidgetsService.periodChanged(period);
+    }
+
     openPaymentWizardDialog() {
         this.dialog.open(PaymentWizardComponent, {
             height: '800px',
