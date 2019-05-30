@@ -1,44 +1,37 @@
 :host {
-    padding: 5px 10px 5px 43px;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    .icon {
-        position: absolute;
-        left: 10px;
-        top: 0;
-        bottom: 0;
-        img {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            margin: auto;
+    & > div {
+        margin-left: 10px;
+        .value {
+            color: #212C36;
+            font-size: 22px;
+            font-weight: 500;
+            cursor: pointer;
+            overflow: hidden;
+            display: block;
+            padding-right: 20px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .description {
+            color: #677380;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 0.2px;
+            line-height: 20px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            .filtered {
+                color: red;
+            }
         }
     }
 
-    .value {
-        color: #212C36;
-        font-size: 22px;
-        font-weight: 500;
-        cursor: pointer;
-        display: block;
-        padding-right: 20px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .description {
-        color: #677380;
-        font-size: 14px;
-        font-weight: 300;
-        letter-spacing: 0.2px;
-        line-height: 20px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-
-        .filtered {
-            color: red;
-        }
-    }
 }

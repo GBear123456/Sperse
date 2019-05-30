@@ -80,7 +80,8 @@ export class AppService extends AppServiceBase {
                     showInDropdown: true,
                     footerItem: true,
                     uri: 'user',
-                    isComingSoon: false
+                    isComingSoon: false,
+                    isMemberPortal: true
                 },
                 {
                     name: 'CRM',
@@ -106,7 +107,8 @@ export class AppService extends AppServiceBase {
                     showDescription: true,
                     showInDropdown: true,
                     footerItem: true,
-                    isComingSoon: false
+                    isComingSoon: false,
+                    isMemberPortal: true
                 },
                 {
                     name: 'Cloud',

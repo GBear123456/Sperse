@@ -11,15 +11,26 @@
         /deep/ bank-accounts-widget {
 
             .header .row {
-                flex-direction: column-reverse;
 
                 .left-header,
-                .center-header {
+                .right-header {
                     flex-basis: 100% !important;
                     max-width: 100% !important;
                 }
 
-                .right-header {
+                .left-header {
+                    order: 1;
+                }
+
+                .connections,
+                .accounts,
+                .entities,
+                .types {
+                    flex-basis: 50% !important;
+                    max-width: 50% !important;
+                }
+                .current-balance,
+                .is-active-filter {
                     display: none;
                 }
             }

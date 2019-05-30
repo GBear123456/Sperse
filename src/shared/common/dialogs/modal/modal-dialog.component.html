@@ -6,7 +6,7 @@
             [readOnly]="!editTitle"
             [showClearButton]="titleClearButton"
             [placeholder]="placeholder"
-            [(value)]="title"
+            [value]="title"
             [isValid]="isTitleValid == undefined || isTitleValid"
             (onInput)="titleChanged($event)"
             (onKeyUp)="titleKeyUp($event)">

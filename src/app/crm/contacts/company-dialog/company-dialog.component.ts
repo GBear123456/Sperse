@@ -142,7 +142,7 @@ export class CompanyDialogComponent implements OnInit {
         }
 
         this.modalDialog.startLoading();
-        this.title = this.company.companyName = this.company.fullName = this.data.title;
+        this.company.companyName = this.company.fullName = this.title;
         let input = new UpdateOrganizationInfoInput(this.company);
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
         let size = _.find(this.companySizes, item => item.id === this.company.sizeId);

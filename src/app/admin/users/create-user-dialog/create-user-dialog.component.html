@@ -5,7 +5,7 @@
               [buttons]="buttons"
               [placeholder]="ls.l('FullNamePlaceholder')"
               (onTitleKeyUp)="onFullNameKeyUp($event)"
-              (onTitleChanged)="onFullNameKeyUp($event)">
+              (titleChange)="onFullNameKeyUp($event)">
     <dx-scroll-view showScrollbar="onHover">
         <dx-context-menu
             [selectByClick]="true"
