@@ -12,9 +12,11 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
-import { LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput,
+import {
+    LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput,
     PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto,
-    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo, ProcessOrderInfo } from '@shared/service-proxies/service-proxies';
+    OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo, ProcessOrderInfo, StageDto
+} from '@shared/service-proxies/service-proxies';
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -86,7 +88,7 @@ export class PipelineService {
         );
     }
 
-    getStages(pipelinePurposeId: string): any {
+    getStages(pipelinePurposeId: string): StageDto[] {
         return this.getPipeline(pipelinePurposeId).stages;
     }
 
@@ -94,7 +96,7 @@ export class PipelineService {
         return this._pipelineDefinitions[pipelinePurposeId];
     }
 
-    getStageByName(pipelinePurposeId: string, stageName: string) {
+    getStageByName(pipelinePurposeId: string, stageName: string): StageDto {
         return _.findWhere(this.getStages(pipelinePurposeId), {name: stageName});
     }
 
