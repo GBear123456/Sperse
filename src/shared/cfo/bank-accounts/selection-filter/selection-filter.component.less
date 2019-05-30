@@ -1,8 +1,5 @@
 :host {
-    display: flex;
-    vertical-align: middle;
-    align-items: center;
-    height: 100%;
+    width: calc(100% - 33px);
 
     .label {
         font-size: 17px;
@@ -12,8 +9,6 @@
     }
 
     /deep/ .selectionList {
-        min-width: 200px;
-
         .tag-value,
         .dx-placeholder {
             font-size: 17px;
@@ -24,35 +19,50 @@
             top: 0;
             bottom: 0;
         }
-        .tag-value {
-            display: block;
-            padding-left: 14px;
-        }
 
         .dx-texteditor-container {
             padding-top: 0;
+            padding-right: 0;
+            display: flex;
+            align-items: center;
             .dx-tag {
-                position: relative;
+                display: flex;
+                width: 100%;
+                max-width: 100%;
+                .dx-template-wrapper {
+                    width: 100%;
+                    display: flex;
+                    .tag-value {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        display: block;
+                        white-space: nowrap;
+                        padding: 0;
+                    }
+                }
             }
         }
 
         .dx-placeholder,
-        .dx-tag {
+        .dx-tag .dx-template-wrapper {
+            &:before {
+                padding-left: 0;
+            }
             &:after {
                 content: '';
                 background: url('../../../../assets/common/icons/down-arrow-icon.svg') no-repeat;
                 width: 8px;
                 height: 4px;
-                position: absolute;
-                right: -5px;
-                top: 0;
-                bottom: 0;
-                margin: auto;
+                margin: auto 0 auto 5px;
             }
         }
 
         .dx-placeholder {
             line-height: 1.8em;
+            padding-left: 0;
+            &:before {
+                padding-right: 4px;
+            }
         }
 
         .dx-dropdowneditor-active {

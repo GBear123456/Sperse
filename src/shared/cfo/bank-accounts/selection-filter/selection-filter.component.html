@@ -1,4 +1,4 @@
-<div class="label"><span>{{title}}</span></div>
+<div class="label" *ngIf="title"><span>{{title}}</span></div>
 <div class="selectionList">
     <ng-container *ngIf="!selectionList">
         <div class="label-container">
@@ -19,7 +19,7 @@
                     (onSelectAllValueChanged)="selectAllValueChanged($event)"
                     (onMultiTagPreparing)="onMultiTagPreparing($event)">
             <div *dxTemplate="let tag of 'customTagTemplate'">
-                <span class="tag-value">{{tag.name || tag}}</span>
+                <span class="tag-value" [title]="tag.name || tag">{{tag.name || tag}}</span>
             </div>
             <div *dxTemplate="let tag of 'itemTemplate'">
                 <span [title]="tag.name || tag">{{tag.name || tag}}</span>

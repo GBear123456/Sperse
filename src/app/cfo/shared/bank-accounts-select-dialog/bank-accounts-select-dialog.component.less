@@ -96,24 +96,46 @@
 
     /deep/ bank-accounts-widget {
         .header {
-            padding: 0;
             .left-header {
                 max-width: 100% !important;
                 flex-basis: 100% !important;
                 order: 2;
-            }
-            .center-header {
-                max-width: 70% !important;
-                flex-basis: 70% !important;
-                border: none !important;
+                .selectionList .tag-value {
+                    padding-left: 0;
+                }
             }
             .right-header {
-                max-width: 30% !important;
-                flex-basis: 30% !important;
+                max-width: 100% !important;
+                flex-basis: 100% !important;
+                .row > div:first-child {
+                    border-left: none !important;
+                }
+                .connections {
+                    padding-left: 39px !important;
+                }
             }
             info-component {
+                justify-content: flex-start;
                 padding-top: 0;
                 padding-bottom: 0;
+            }
+
+            .types,
+            .accounts {
+                flex: 0 0 25%;
+                max-width: 25%;
+            }
+
+            .is-active-filter,
+            .current-balance {
+                flex: 0 0 33.33333%;
+                max-width: 33.33333%;
+            }
+
+            .entities,
+            .connections {
+                flex: 0 0 41.66667%;
+                max-width: 41.66667%;
             }
         }
     }
