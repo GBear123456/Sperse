@@ -26,7 +26,7 @@ import {
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { TagsListComponent } from '../shared/tags-list/tags-list.component';
@@ -85,7 +85,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelStar: FilterModel;
 
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
-
+    contactStatus = ContactStatus;
     selectedClientKeys: any = [];
     public headlineConfig = {
         names: [this.l('Customers')],

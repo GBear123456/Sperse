@@ -76,7 +76,7 @@
                                 </span>
                             </ng-container>
                             <ng-template #verify>
-                                <span *ngIf="appService.canSendVerificationRequest()">
+                                <span *ngIf="appService.canSendVerificationRequest() && data.data.StatusId === contactStatus.Active">
                                     <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
                                 </span>
                             </ng-template>

@@ -672,10 +672,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if (this._pipelineService.updateEntityStage(pipelineId, this.leadInfo, sourceStage, targetStage, () => {
             this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId = targetStage.id]);
         })) {
-            this.leadInfo.stage = targetStage;
+            this.leadInfo.stage = targetStage.name;
             this.notify.success(this.l('StageSuccessfullyUpdated'));
         } else
-            this.message.warn(this.l('CannotChangeLeadStage', sourceStage, targetStage));
+            this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
 
         this.toolbarComponent.refresh();
         $event.event.stopPropagation();
