@@ -5,7 +5,7 @@
           name="fullName"
           width="350px"
           [placeholder]="l('FullName')"
-          [(value)]="data.fullName"
+          [(value)]="data.personContactInfo.fullName"
           [valueChangeEvent]="'keyup'"
           (onKeyUp)="onValueChanged($event)">
           <dx-validator>
