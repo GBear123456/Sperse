@@ -13,7 +13,7 @@ import {
 import { Store, select } from '@ngrx/store';
 import { AppStore } from './index';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
-import { timeout, filter } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Injectable()
@@ -25,14 +25,14 @@ export class AppStoreService {
     ) {}
 
     private dispatchContactGroupActions(keyList) {
-        if (keyList.length) {    
-            let contactGroup = keyList.pop(), 
+        if (keyList.length) {
+            let contactGroup = keyList.pop(),
                 groupId = ContactGroup[contactGroup];
             if (this._permission.isGranted(ContactGroupPermission[contactGroup] + '.ManageAssignments')) {
                 this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction(groupId));
                 this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: groupId }))
                     .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchContactGroupActions(keyList), 100));
-            } else 
+            } else
                 this.dispatchContactGroupActions(keyList);
         }
     }

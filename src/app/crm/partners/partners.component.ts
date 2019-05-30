@@ -49,7 +49,7 @@ import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { ContactStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactStatusDto, BulkUpdatePartnerTypeInput, PartnerTypeServiceProxy, PartnerServiceProxy, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -61,7 +61,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
     templateUrl: './partners.component.html',
     styleUrls: ['./partners.component.less'],
     animations: [appModuleAnimation()],
-    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy ]
+    providers: [ ClientService, PartnerServiceProxy, PartnerTypeServiceProxy, ContactServiceProxy ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
@@ -108,6 +108,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(injector: Injector,
         public dialog: MatDialog,
+        public contactProxy: ContactServiceProxy,
         private _contactService: ContactsService,
         private _partnerService: PartnerServiceProxy,
         private _appService: AppService,

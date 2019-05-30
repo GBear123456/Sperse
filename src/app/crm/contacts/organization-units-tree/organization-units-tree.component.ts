@@ -15,20 +15,6 @@ import includes from 'lodash/includes';
     styleUrls: ['./organization-units-tree.component.less']
 })
 export class OrganizationUnitsTreeComponent extends AppComponentBase implements OnDestroy {
-
-    constructor(injector: Injector,
-        private _userOrgUnitsService: OrganizationUnitServiceProxy,
-        private _contactsService: ContactsService
-    ) {
-        super(injector);
-
-        _contactsService.orgUnitsSubscribe((userData) => {
-            this.userId = userData.user.id;
-            this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
-        }, this.constructor.name);
-
-        this.isEditAllowed = this.isGranted('Pages.Administration.OrganizationUnits.ManageMembers');
-    }
     @ViewChild(DxTreeViewComponent) organizationUnitsTree: DxTreeViewComponent;
 
     public oranizationUnitsDataSource: DataSource;
@@ -88,6 +74,20 @@ export class OrganizationUnitsTreeComponent extends AppComponentBase implements 
             ]
         }
     ];
+
+    constructor(injector: Injector,
+        private _userOrgUnitsService: OrganizationUnitServiceProxy,
+        private _contactsService: ContactsService
+    ) {
+        super(injector);
+
+        _contactsService.orgUnitsSubscribe((userData) => {
+            this.userId = userData.user.id;
+            this.setOrganizationUnitsData(userData.allOrganizationUnits, userData.memberedOrganizationUnits);
+        }, this.constructor.name);
+
+        this.isEditAllowed = this.isGranted('Pages.Administration.OrganizationUnits.ManageMembers');
+    }
 
     setOrganizationUnitsData(orgUnits: OrganizationUnitDto[], memberedOrganizationUnits: string[]) {
         this.organizationUnitsData = orgUnits;
