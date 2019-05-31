@@ -111,8 +111,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     ) {
         super(injector);
 
-        this.manageAllowed = this._cfoService.checkMemberAccessPermission(
-            'ClassifyTransaction', this.isInstanceAdmin);
+        this.manageAllowed = this._cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit() {

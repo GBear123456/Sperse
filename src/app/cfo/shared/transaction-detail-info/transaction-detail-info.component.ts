@@ -63,8 +63,7 @@ export class TransactionDetailInfoComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
         this.transactionId = this.data.transactionId;
-        this.isEditAllowed = _cfoService.checkMemberAccessPermission(
-            'ClassifyTransaction', _cfoService.isInstanceAdmin);
+        this.isEditAllowed = _cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit() {

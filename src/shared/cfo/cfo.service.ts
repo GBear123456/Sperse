@@ -69,6 +69,10 @@ export class CFOService extends CFOServiceBase {
         return this.checkMemberAccessPermission('Manage', false);
     }
 
+    get classifyTransactionsAllowed() {
+        return this.checkMemberAccessPermission('ClassifyTransaction', this.isInstanceAdmin);
+    }
+
     checkMemberAccessPermission(permission, defaultResult = true) {
         if (this.instanceType == InstanceType.User && !this.instanceId)
             return this._permission.isGranted('Pages.CFO.MemberAccess.' + permission);

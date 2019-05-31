@@ -149,8 +149,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.searchColumns = ['Description', 'CashflowSubCategoryName', 'CashflowCategoryName', 'Descriptor'];
         this.searchValue = '';
-        this.manageAllowed = this._cfoService.checkMemberAccessPermission(
-                'ClassifyTransaction', this.isInstanceAdmin);
+        this.manageAllowed = this._cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit(): void {
