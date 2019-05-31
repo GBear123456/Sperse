@@ -48,6 +48,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
         maxDate: null
     };
     totalCount = 3;
+    selectedGroupByIndex = 0;
 
     constructor(injector: Injector,
         private _filtersService: FiltersService,
@@ -129,6 +130,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                                 options: {
                                     hint: this.l('CashflowToolbar_Group_By'),
                                     width: 175,
+                                    selectedIndex: this.selectedGroupByIndex,
                                     items: [
                                         {
                                             action: this.groupBy.bind(this),
@@ -140,7 +142,12 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
                                             action: this.groupBy.bind(this),
                                             text: 'Months'
                                         }
-                                    ]
+                                    ],
+                                    onSelectionChanged: (e) => {
+                                        if (e) {
+                                            this.selectedGroupByIndex = e.itemIndex;
+                                        }
+                                    }
                                 }
                             }
                         ]
