@@ -5313,9 +5313,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     /** Finish loading animation */
     finishLoading() {
-        abp.ui.clearBusy();
-        let pivotGridElement = document.querySelector('.pivot-grid');
-        if (pivotGridElement) pivotGridElement.classList.remove('invisible');
+        setTimeout(() => {
+            abp.ui.clearBusy();
+            let pivotGridElement = document.querySelector('.pivot-grid');
+            if (pivotGridElement) pivotGridElement.classList.remove('invisible');
+        }, 1000);
     }
 
     searchValueChange(value) {
