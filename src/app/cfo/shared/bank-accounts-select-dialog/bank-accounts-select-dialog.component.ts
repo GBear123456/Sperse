@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, Output, OnInit, EventEmitter, ViewChild, Inject } from '@angular/core';
+import { Component, Output, OnInit, EventEmitter, ViewChild, Inject } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material';
@@ -15,8 +15,7 @@ import { IBankAccountsSelectDialogData } from '@app/cfo/shared/bank-accounts-sel
 @Component({
     templateUrl: './bank-accounts-select-dialog.component.html',
     styleUrls: ['./bank-accounts-select-dialog.component.less'],
-    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy ]
 })
 export class BankAccountsSelectDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
