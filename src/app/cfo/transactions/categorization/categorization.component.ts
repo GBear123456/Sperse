@@ -99,7 +99,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     private currentTypeId: any;
     private readonly _expandedCacheKey = `Categorization_Tree_Expanded_${abp.session.tenantId}_${abp.session.userId}`;
 
-    manageAllowed = false;
     toolbarConfig: any;
     excelData = [];
 
@@ -110,14 +109,13 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy
     ) {
         super(injector);
-
-        this.manageAllowed = this._cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit() {
         this.initSettings();
         this.refreshCategories(true);
-        this.showAddEntity = this.manageAllowed;
+        this.showAddEntity = this.showAddEntity 
+            && this.isInstanceAdmin;
 
         this.initToolbarConfig();
 
@@ -135,7 +133,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     ngAfterViewInit(): void {
-        if (this.manageAllowed) {
+        if (this.isInstanceAdmin) {
             this.categoryList.editing.allowAdding = true;
             this.categoryList.editing.allowUpdating = true;
             this.categoryList.instance.refresh();
@@ -215,7 +213,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                         widget: 'dxDropDownMenu',
                         visible: !!(this.showAddEntity && this.settings.showAT),
                         options: {
-                            text: this.l('AddAccountingType'),
+//                            text: this.l('AddAccountingType'),
                             hint: this.l('AddAccountingType'),
                             items: addEntityItems
                         }
@@ -412,7 +410,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     initDragAndDropEvents($event) {
-        if (!this.manageAllowed)
+        if (!this.isInstanceAdmin)
             return true;
 
         let img = new Image();
@@ -911,7 +909,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             this.categoryList.instance.deselectRows([$event.key]);
         this.categoryList.instance.cancelEditData();
         this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
-        if (this.manageAllowed && $event.level >= 0) {
+        if (this.isInstanceAdmin && $event.level >= 0) {
             let nowDate = new Date();
             if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
                 $event.event.originalEvent.preventDefault();

@@ -418,6 +418,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             })).subscribe(result => {
                 this.loadLeadData(result['personContactInfo']);
                 this.fillContactDetails(result);
+                if (leadId)
+                    this.loadLeadsStages();
                 if (this.contactGroup == ContactGroup.Partner) {
                     setTimeout(() => {
                         this.startLoading(true);
@@ -433,9 +435,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     });
                 }
             });
-        }
-        if (leadId) {
-            this.loadLeadsStages();
         }
         return contactInfo$;
     }
@@ -463,7 +462,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if (this.leadStages && this.leadStages.length)
             callback && callback();
         else
-            this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead)
+            this._pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.contactGroup)
                 .subscribe(result => {
                     this.leadStages = result.stages.map((stage) => {
                         return {

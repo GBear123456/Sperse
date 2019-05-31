@@ -77,11 +77,11 @@
         <dx-scroll-view showScrollbar="onHover">
             <div class="user-info row" #row>
                 <div class="col-md-7" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
-                    <div class="section-item">
+                    <div class="section-item clearfix">
                         <div class="item-edit-label">{{l("EmailAddress")}}:</div>
                         <inplace-edit #InPlaceEmail [data]="this.getPropData(EMAIL_FIELD)" (valueChanged)="updateValue($event, EMAIL_FIELD)" (openDialog)="InPlaceEmail.showInput(true)"></inplace-edit>
                     </div>
-                    <div class="section-item">
+                    <div class="section-item clearfix">
                         <div class="item-edit-label">{{l("PhoneNumber")}}:</div>
                         <ul *ngIf="!phoneInplaceEdit">
                             <li (dblclick)="phoneInPlaceEdit()">{{ data?.user?.phoneNumber | phone }}<i class="edit-phone fa fa-pencil" (click)="phoneInPlaceEdit()"></i></li>

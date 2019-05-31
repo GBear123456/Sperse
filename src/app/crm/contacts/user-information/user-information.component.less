@@ -138,8 +138,9 @@
     }
 
     .item-edit-label {
-        display: inline-block;
-        min-width: 130px;
+        display: block;
+        //min-width: 130px;
+        width: 130px;
         font-size: 13px;
         font-weight: normal;
         line-height: 35px;
@@ -153,11 +154,20 @@
     }
 
     .section-item {
-        display: flex;
         line-height: 35px;
+        
+        div,
+        inplace-edit {
+            display: block;
+            float: left;
+        }
+        
+        inplace-edit {
+            width: calc(~"100% - 130px");
+        }
 
         ul {
-            margin-bottom: 0px;
+            margin-bottom: 0;
             li {
                 white-space: nowrap;
                 .edit-phone {
