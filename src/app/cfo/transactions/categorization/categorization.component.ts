@@ -99,6 +99,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     private currentTypeId: any;
     private readonly _expandedCacheKey = `Categorization_Tree_Expanded_${abp.session.tenantId}_${abp.session.userId}`;
 
+    manageAllowed = false;
     toolbarConfig: any;
     excelData = [];
 
@@ -109,14 +110,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         private _categoryTreeServiceProxy: CategoryTreeServiceProxy
     ) {
         super(injector);
+
+        this.manageAllowed = this._cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit() {
         this.initSettings();
         this.refreshCategories(true);
-
-        if (!this.isInstanceAdmin)
-            this.showAddEntity = false;
+        this.showAddEntity = this.manageAllowed;
 
         this.initToolbarConfig();
 
@@ -134,7 +135,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     ngAfterViewInit(): void {
-        if (this.isInstanceAdmin) {
+        if (this.manageAllowed) {
             this.categoryList.editing.allowAdding = true;
             this.categoryList.editing.allowUpdating = true;
             this.categoryList.instance.refresh();
@@ -411,7 +412,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     initDragAndDropEvents($event) {
-        if (!this._cfoService.checkMemberAccessPermission('ClassifyTransaction'))
+        if (!this.manageAllowed)
             return true;
 
         let img = new Image();
@@ -426,35 +427,33 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         };
 
         let element = <any>$($event.element);
-        if (this.isInstanceAdmin) {
-            element.find('.dx-data-row')
-                .off('dragstart').off('dragend')
-                .on('dragstart', (e) => {
-                    if (this.categoryList.instance.element().querySelector('.dx-edit-row')) {
-                        e.originalEvent.preventDefault();
-                        return;
-                    }
+        element.find('.dx-data-row')
+            .off('dragstart').off('dragend')
+            .on('dragstart', (e) => {
+                if (this.categoryList.instance.element().querySelector('.dx-edit-row')) {
+                    e.originalEvent.preventDefault();
+                    return;
+                }
 
-                    sourceCategory = {};
-                    sourceCategory.element = e.currentTarget;
-                    sourceCategory.key = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
-                    let categoryName = this.categorization.categories[sourceCategory.key].name;
-                    e.originalEvent.dataTransfer.setData('Text', categoryName);
-                    e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
-                    e.originalEvent.dropEffect = 'move';
+                sourceCategory = {};
+                sourceCategory.element = e.currentTarget;
+                sourceCategory.key = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
+                let categoryName = this.categorization.categories[sourceCategory.key].name;
+                e.originalEvent.dataTransfer.setData('Text', categoryName);
+                e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
+                e.originalEvent.dropEffect = 'move';
 
-                    sourceCategory.cashType = this.getCashflowTypeFromClassList(sourceCategory.element.classList);
-                    let droppableQuery: string;
-                    if (sourceCategory.cashType == 'unknown')
-                        droppableQuery = 'dx-tree-list .dx-data-row';
-                    else
-                        droppableQuery = 'dx-tree-list .dx-data-row.unknown, dx-tree-list .dx-data-row.' + sourceCategory.cashType;
+                sourceCategory.cashType = this.getCashflowTypeFromClassList(sourceCategory.element.classList);
+                let droppableQuery: string;
+                if (sourceCategory.cashType == 'unknown')
+                    droppableQuery = 'dx-tree-list .dx-data-row';
+                else
+                    droppableQuery = 'dx-tree-list .dx-data-row.unknown, dx-tree-list .dx-data-row.' + sourceCategory.cashType;
 
-                    $(droppableQuery).addClass('droppable');
-                }).on('dragend', (e) => {
-                    clearDragAndDrop();
-                });
-        }
+                $(droppableQuery).addClass('droppable');
+            }).on('dragend', (e) => {
+                clearDragAndDrop();
+            });
 
         element.find('.category-drop-area')
             .off('dragenter').off('dragover').off('dragleave').off('drop')
@@ -912,7 +911,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             this.categoryList.instance.deselectRows([$event.key]);
         this.categoryList.instance.cancelEditData();
         this._selectedKeys = this.categoryList.instance.getSelectedRowKeys();
-        if (this.isInstanceAdmin && $event.level >= 0) {
+        if (this.manageAllowed && $event.level >= 0) {
             let nowDate = new Date();
             if (nowDate.getTime() - this._prevClickDate.getTime() < 500) {
                 $event.event.originalEvent.preventDefault();

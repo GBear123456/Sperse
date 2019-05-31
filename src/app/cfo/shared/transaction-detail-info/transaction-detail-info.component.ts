@@ -41,7 +41,7 @@ export class TransactionDetailInfoComponent implements OnInit {
     };
     transactionInfo = new TransactionDetailsDto();
     transactionAttributeTypes: any;
-    isEditAllowed = true;
+    isEditAllowed = false;
     private _itemInEditMode: any;
     categorization: GetCategoryTreeOutput;
     categories: any;
@@ -63,6 +63,7 @@ export class TransactionDetailInfoComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
         this.transactionId = this.data.transactionId;
+        this.isEditAllowed = _cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit() {
@@ -115,7 +116,6 @@ export class TransactionDetailInfoComponent implements OnInit {
 
     inPlaceEdit(field, item) {
         if (this.isEditAllowed) {
-
             item.inplaceEdit = true;
             item.original = item[field];
 

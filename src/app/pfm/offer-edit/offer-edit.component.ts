@@ -349,7 +349,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
                         this.offerAnnouncementService.sendAnnouncement(
                             offerId,
                             offerPublicLink,
-                            null
+                            ''
                         ).pipe(finalize(() => abp.ui.clearBusy()))
                             .subscribe(() => this.notifyService.success(this.ls.ls('PFM', 'AnnouncementsHaveBeenSent')));
                     }

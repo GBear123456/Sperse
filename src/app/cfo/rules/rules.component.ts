@@ -203,7 +203,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
     }
 
     ngAfterViewInit(): void {
-        if (this.isInstanceAdmin) {
+        if (this._cfoService.classifyTransactionsAllowed) {
             this.treeList.editing.allowAdding = true;
             this.treeList.editing.allowDeleting = true;
             this.treeList.editing.allowUpdating = true;

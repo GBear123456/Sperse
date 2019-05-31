@@ -87,6 +87,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private cashFlowCategoryFilter = [];
     public transactionsFilterQuery: any[];
 
+    public manageAllowed = false;
     public dragInProgress = false;
     private draggedTransactionRow;
     public selectedCashflowCategoryKey: any;
@@ -148,6 +149,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.searchColumns = ['Description', 'CashflowSubCategoryName', 'CashflowCategoryName', 'Descriptor'];
         this.searchValue = '';
+        this.manageAllowed = this._cfoService.classifyTransactionsAllowed;
     }
 
     ngOnInit(): void {
@@ -893,7 +895,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onSelectionChanged($event, initial = false) {
         this.getTotalValues();
 
-        if (!this._cfoService.checkMemberAccessPermission('ClassifyTransaction'))
+        if (!this.manageAllowed)
             return ;
 
         let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
@@ -938,7 +940,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onCellClick($event) {
         if ($event.rowType === 'data') {
-            if (this.isInstanceAdmin &&
+            if (this.manageAllowed &&
                 (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
                 ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId))) {
                 this.dialog.open(RuleDialogComponent, {

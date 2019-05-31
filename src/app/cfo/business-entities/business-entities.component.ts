@@ -75,7 +75,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
     }
 
     onNextClick() {
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/start']);
+        this._router.navigate([this.instanceUri + '/start']);
     }
 
     onToolbarPreparing(e) {
