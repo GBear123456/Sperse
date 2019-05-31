@@ -101,7 +101,7 @@ export class CFOService extends CFOServiceBase {
                 this.statusActive.next(status);
                 this.initialized = status && data.hasSyncAccounts;
                 this.hasTransactions = this.initialized && data.hasTransactions;
-                !this.hasStaticInstance && this.updateMenuItems();
+                this.updateMenuItems();
                 callback && callback.call(this, this.hasTransactions);
             });
         }
@@ -110,8 +110,9 @@ export class CFOService extends CFOServiceBase {
     private updateMenuItems() {
         this._appService.topMenu.items
             .forEach((item, i) => {
-                if (i == 0) {
-                    item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard' : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
+                if (!i) {
+                    if (!this.hasStaticInstance)
+                        item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard' : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
                 } else if (i == 1) {
                     item.disabled = !this.initialized;
                 } else {
