@@ -31,7 +31,6 @@ export class InplaceEditComponent extends AppComponentBase {
             this._data = model;
             this.valueOriginal = model.value;
             this.changeDetector.detectChanges();
-            setTimeout(() => this.updateWidth());
         }
     }
     get data(): InplaceEditModel {
@@ -41,7 +40,6 @@ export class InplaceEditComponent extends AppComponentBase {
     mask: string;
     @Input()
     maskInvalidMessage: string;
-    width = 'auto';
 
     @Output()
     valueChanged: EventEmitter<any> = new EventEmitter();
@@ -63,11 +61,6 @@ export class InplaceEditComponent extends AppComponentBase {
         private changeDetector: ChangeDetectorRef
     ) {
         super(injector);
-    }
-
-    updateWidth() {
-        this.width = this.editTextRef.nativeElement.offsetWidth + 30;
-        this.changeDetector.detectChanges();
     }
 
     deleteItem(event) {
@@ -93,7 +86,6 @@ export class InplaceEditComponent extends AppComponentBase {
                 this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;
             this.changeDetector.detectChanges();
-            setTimeout(() => this.updateWidth());
         }
     }
 
@@ -122,7 +114,6 @@ export class InplaceEditComponent extends AppComponentBase {
     }
 
     showInput(enabled) {
-        enabled && this.updateWidth();
         this.isEditModeEnabled = enabled;
         this.valueOriginal = this._data.value;
         enabled && setTimeout(() =>
