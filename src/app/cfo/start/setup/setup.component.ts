@@ -18,7 +18,7 @@ import { AppService } from '@app/app.service';
 export class SetupComponent extends CFOComponentBase implements AfterViewInit, OnInit, OnDestroy {
     private rootComponent: any;
     public headlineConfig;
-    isDisabled = false;
+    isDisabled = true;
     dialogConfig = new MatDialogConfig();
     setupContainerElement: Element;
 
@@ -60,7 +60,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         }};
 
         this.dialog.open(AccountConnectorDialogComponent, dialogConfig).afterClosed().subscribe(() => {
-            this.isDisabled = false;
+            this.isDisabled = this.isInstanceAdmin;
         });
     }
 
@@ -71,7 +71,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         if (this._cfoService.instanceId == null)
             this._instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).subscribe(
                 data => { this._cfoService.instanceChangeProcess(); },
-                () => this.isDisabled = false
+                () => this.isDisabled = this.isInstanceAdmin
             );
     }
 
