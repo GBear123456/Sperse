@@ -2719,7 +2719,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     isCopyable(cellObj) {
-        return this._cfoService.isInstanceAdmin && cellObj.area === 'data' && 
+        return this._cfoService.isInstanceAdmin && cellObj.area === 'data' &&
             (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && cellObj.cell.value;
     }
 
@@ -4801,7 +4801,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let transactions = this.cashFlowGrid.instance.getSelectedRowKeys().filter(item => item.date && item.cashflowTypeId !== StartedBalance);
         if (transactions.length) {
             let config: any = {
-                panelClass: 'slider',
+                panelClass: [ 'slider', 'max-width-60' ],
                 data: {
                     transactions: transactions.map((obj) => {
                         return {
@@ -5395,7 +5395,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (!e.event.target.closest('.calculator-number-box'))
             this.hideModifyingNumberBox();
 
-        this.cashflowService.handleDoubleSingleClick(e, this.onDetailsCellSingleClick.bind(this), 
+        this.cashflowService.handleDoubleSingleClick(e, this.onDetailsCellSingleClick.bind(this),
             this._cfoService.isInstanceAdmin ? this.onDetailsCellDoubleClick.bind(this) : Function());
 
         if (e.rowType === 'data' && !e.column.command) {

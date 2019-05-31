@@ -944,7 +944,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
                 ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId))) {
                 this.dialog.open(RuleDialogComponent, {
-                    panelClass: 'slider',
+                    panelClass: [ 'slider', 'max-width-60' ],
                     data: {
                         categoryId: $event.column.dataField == 'CashflowCategoryName' ? $event.data.CashflowCategoryId : $event.data.CashflowSubCategoryId,
                         categoryCashflowTypeId: $event.CashFlowTypeId,
@@ -1052,7 +1052,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
                     if ($event.showRuleDialog) {
                         this.dialog.open(RuleDialogComponent, {
-                            panelClass: 'slider',
+                            panelClass: [ 'slider', 'max-width-60' ],
                             data: {
                                 categoryId: $event.categoryId,
                                 categoryCashflowTypeId: $event.categoryCashType,

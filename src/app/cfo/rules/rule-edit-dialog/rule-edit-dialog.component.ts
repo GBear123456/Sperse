@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, Inject, ElementRef, OnInit, AfterViewInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA } from '@angular/material';
@@ -25,8 +25,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     selector: 'rule-dialog',
     templateUrl: 'rule-edit-dialog.component.html',
     styleUrls: ['rule-edit-dialog.component.less'],
-    providers: [ CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    providers: [ CashflowServiceProxy, ClassificationServiceProxy, TransactionsServiceProxy ]
 })
 export class RuleDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
@@ -82,7 +81,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                     request$.pipe(finalize(() => {
                                 this.modalDialog.finishLoading();
                                 event.target.disabled = false;
-                                this._changeDetectorRef.detectChanges();
                             }))
                             .subscribe(this.updateDataHandler.bind(this));
                 }
@@ -102,7 +100,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         private _transactionsServiceProxy: TransactionsServiceProxy,
         private _notifyService: NotifyService,
         private _elementRef: ElementRef,
-        private _changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
@@ -194,7 +191,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                 this.attributesAndKeywords = this.getAtributesAndKeywords(false);
                 this.showOverwriteWarning = data.sourceTransactionsAreMatchingExistingRules;
             }
-            this._changeDetectorRef.detectChanges();
         });
         if (this.data.transactions && this.data.transactions.length)
             this.buttons.unshift({
@@ -220,7 +216,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                                 ).pipe(finalize(() => {
                                     this.modalDialog.finishLoading();
                                     event.target.disabled = false;
-                                    this._changeDetectorRef.detectChanges();
                                 }))
                                     .subscribe(this.updateDataHandler.bind(this));
                             };
@@ -248,7 +243,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                 this.onTransactionCategoryChanged(null);
             if (this.selectedTransactionTypes && this.selectedTransactionTypes.length)
                 this.onTransactionTypesChanged(null);
-            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -411,11 +405,9 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         if (this.selectedTransactionCategory)
             setTimeout(() => {
                 this.transactionTypes = this.transactionTypesAndCategoriesData.types.filter((t) => t.categories.some((c) => c == this.selectedTransactionCategory));
-                this._changeDetectorRef.detectChanges();
             });
         else
             this.transactionTypes = this.transactionTypesAndCategoriesData.types;
-        this._changeDetectorRef.detectChanges();
     }
 
     onTransactionTypesChanged(e) {
@@ -426,18 +418,15 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
             categories = _.uniq(_.flatten(categories));
             setTimeout(() => {
                 this.transactionCategories = this.transactionTypesAndCategoriesData.categories.filter((c) => categories.some(x => x == c.id));
-                this._changeDetectorRef.detectChanges();
             });
         } else {
             this.transactionCategories = this.transactionTypesAndCategoriesData.categories;
         }
-        this._changeDetectorRef.detectChanges();
         this.syncTreeViewSelection(e);
     }
 
     onMultipleDropDownChange(event) {
         this.selectedTransactionTypes = event.component.getSelectedNodesKeys();
-        this._changeDetectorRef.detectChanges();
     }
 
     syncTreeViewSelection(e) {
@@ -506,7 +495,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         $event.component && $event.component.option('inputAttr', {'attribute-selected': Boolean(attrType)});
         if (!this.title && $event.value)
             this.title = attrType && attrType.name || $event.value;
-        this._changeDetectorRef.detectChanges();
     }
 
     onAttributeInitNewRow($event) {
@@ -517,12 +505,10 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         $event.data.id = this.attributesAndKeywords.length;
         this.attributeEditData = $event.data;
         this.keyAttributeValuesDataSource = [];
-        this._changeDetectorRef.detectChanges();
     }
 
     onEditingStart($event) {
         this.keyAttributeValuesDataSource = this.getKeyAttributeValues($event.data.attributeTypeId);
-        this._changeDetectorRef.detectChanges();
     }
 
     attributeGridDropDownInitialized($event, cell) {
@@ -534,7 +520,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
                     _.findWhere(this.gridAttributeTypes, {id: attrId})
                 );
                 this.availableGridAttributeTypes = list;
-                this._changeDetectorRef.detectChanges();
             }
         }
 
@@ -544,23 +529,19 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         this.keyAttributeValuesDataSource =
             this.getKeyAttributeValues($event.value);
         cell.setValue($event.value);
-        this._changeDetectorRef.detectChanges();
     }
 
     attributeGridDropDownDisposing($event, cell) {
         this.attributeEditData = null;
-        this._changeDetectorRef.detectChanges();
     }
 
     onEditorPreparing($event) {
         this.attributeEditData = $event.row.data;
-        this._changeDetectorRef.detectChanges();
     }
 
     onCustomDescriptorCreating($event) {
         setTimeout(() => {
             this.descriptor = $event.text;
-            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -577,7 +558,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
     onAttributeKeyEnter($event, cell) {
         if ($event.keyCode == 13) {
             this.attributeEditData = null;
-            this._changeDetectorRef.detectChanges();
         }
     }
 
@@ -587,7 +567,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         if (this.transactionAttributeTypes[this.descriptor] || !this.descriptor)
             this.descriptor = '';
         this.descriptor += (this.descriptor ? ' - ' : '') + value.name;
-        this._changeDetectorRef.detectChanges();
     }
 
     selectedGridAttributeValue($event, value) {
@@ -595,7 +574,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         this.attributeEditData.conditionValue = value.name;
         setTimeout(() => {
             this.attributeList.instance.repaintRows([0]);
-            this._changeDetectorRef.detectChanges();
         }, 100);
     }
 
@@ -621,7 +599,6 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         });
         if (this.availableGridAttributeTypes.length != list.length)
             this.availableGridAttributeTypes = list;
-        this._changeDetectorRef.detectChanges();
     }
 
     attributeDisplayValue = ((data) => {
