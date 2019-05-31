@@ -1,7 +1,7 @@
 import { CanActivate } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { CFOService } from '@shared/cfo/cfo.service';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { InstanceServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
 
@@ -14,13 +14,23 @@ export class CfoInstanceStatusGuard implements CanActivate {
 
     canActivate() {
         /** Setup instance before moving to the page if it hasn't initialized yet */
-        if (!this.cfoService.statusActive.value) {
-            const setupInstanceRequest = this.instanceServiceProxy.setup(InstanceType[this.cfoService.instanceType], undefined);
-            return setupInstanceRequest.pipe(
+        if (this.cfoService.initialized)
+            return this.setup();
+        else
+            return Observable.create(observer =>
+                this.cfoService.instanceChangeProcess(() => {
+                    observer.next(this.setup());
+                })
+            );
+
+    }
+
+    setup() {
+        if (!this.cfoService.statusActive.value)
+            return this.instanceServiceProxy.setup(InstanceType[this.cfoService.instanceType], undefined).pipe(
                 map(() => true),
                 catchError(() => of(false))
             );
-        }
         return true;
     }
 }
