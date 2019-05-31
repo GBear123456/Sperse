@@ -112,7 +112,7 @@ export class ContactGroup {
 export class ContactGroupPermission {
     static Client = 'Pages.CRM.Customers';
     static Partner = 'Pages.CRM.Partners';
-    static UserProfile = 'Pages.Administration.Users';
+    static UserProfile = 'Pages.CRM.Employees';
     static Investor = 'Pages.CRM.Investors';
     static Vendor = 'Pages.CRM.Vendors';
 }
