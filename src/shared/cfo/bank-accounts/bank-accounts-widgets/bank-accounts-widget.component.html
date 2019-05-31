@@ -18,6 +18,7 @@
                     <selection-filter
                         [allItemsText]="l('All_Types')"
                         [title]=""
+                        popupWidth="150px"
                         [itemsText]="l('Types')"
                         [selectionList]="bankAccountsService.existingBankAccountsTypes$ | async"
                         [selectedItems]="bankAccountsService.selectedBankAccountTypes$ | async"
