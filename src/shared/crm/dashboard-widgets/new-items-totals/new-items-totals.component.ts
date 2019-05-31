@@ -35,16 +35,10 @@ export class NewItemsTotalsComponent implements OnDestroy, OnInit {
     }
 
     ngOnInit() {
-        this.totalsDataLoading$.pipe(
-            filter((loading: boolean) => !!loading)
-        ).subscribe(() => {
-            this._loadingService.startLoading(this._elementRef.nativeElement);
-        });
-
-        this.totalsDataLoading$.pipe(
-            filter((loading: boolean) => !loading)
-        ).subscribe(() => {
-            this._loadingService.finishLoading(this._elementRef.nativeElement);
+        this.totalsDataLoading$.pipe(takeUntil(this._lifeCycleService.destroy$)).subscribe((loading: boolean) => {
+            loading
+                ? this._loadingService.startLoading(this._elementRef.nativeElement)
+                : this._loadingService.finishLoading(this._elementRef.nativeElement);
         });
     }
 

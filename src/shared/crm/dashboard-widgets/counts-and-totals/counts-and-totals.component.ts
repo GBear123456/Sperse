@@ -48,15 +48,11 @@ export class CountsAndTotalsComponent implements OnInit, OnDestroy {
             });
 
         this.totalsDataLoading$.pipe(
-            filter((loading: boolean) => !!loading)
-        ).subscribe(() => {
-            this._loadingService.startLoading(this._elementRef.nativeElement);
-        });
-
-        this.totalsDataLoading$.pipe(
-            filter((loading: boolean) => !loading)
-        ).subscribe(() => {
-            this._loadingService.finishLoading(this._elementRef.nativeElement);
+            takeUntil(this._lifeCycleService.destroy$)
+        ).subscribe((loading: boolean) => {
+            loading
+                ? this._loadingService.startLoading(this._elementRef.nativeElement)
+                : this._loadingService.finishLoading(this._elementRef.nativeElement);
         });
     }
 

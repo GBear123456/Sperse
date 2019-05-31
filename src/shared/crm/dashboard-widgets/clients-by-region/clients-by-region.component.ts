@@ -3,7 +3,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     ViewChild,
-    AfterViewChecked,
     OnInit,
     ElementRef,
     ChangeDetectorRef, OnDestroy
@@ -32,7 +31,7 @@ import { GetContactsByRegionOutput } from '@shared/service-proxies/service-proxi
     providers: [ LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ClientsByRegionComponent implements AfterViewChecked, OnInit, OnDestroy {
+export class ClientsByRegionComponent implements OnInit, OnDestroy {
     @ViewChild(DxVectorMapComponent) mapComponent: DxVectorMapComponent;
     usaMap: any = mapsData.usa;
     gdpData: any = {};
@@ -70,10 +69,6 @@ export class ClientsByRegionComponent implements AfterViewChecked, OnInit, OnDes
             this.mapComponent.instance.getLayerByName('areas').getDataSource().reload();
             this._changeDetectorRef.detectChanges();
         });
-    }
-
-    ngAfterViewChecked() {
-        this.mapComponent.instance.render();
     }
 
     customizeTooltip = (arg) => {
