@@ -213,13 +213,15 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     selectAll(e) {
-        this.mainDataGrid.instance.getVisibleRows().forEach(row => {
-            row.isSelected = e.value;
-            row.data.bankAccounts.forEach(account => {
-                account.selected = e.value;
+        if (e.event) {
+            this.mainDataGrid.instance.getVisibleRows().forEach(row => {
+                row.isSelected = e.value;
+                row.data.bankAccounts.forEach(account => {
+                    account.selected = e.value;
+                });
             });
-        });
-        this.selectedAccountsChanged();
+            this.selectedAccountsChanged();
+        }
     }
 
     detailCellClick(cell) {
