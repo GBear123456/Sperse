@@ -3,6 +3,9 @@ import { Component, OnInit, Injector, ViewChild, OnDestroy, AfterViewInit } from
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
+import { select, Store } from '@ngrx/store';
+import { of } from 'rxjs';
+import { first, mapTo, skip, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -12,12 +15,14 @@ import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/ba
 import { SyncAccountServiceProxy, InstanceType91 } from '@shared/service-proxies/service-proxies';
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'bank-accounts',
     templateUrl: './bank-accounts-general.component.html',
     styleUrls: ['./bank-accounts-general.component.less'],
-    providers: [ BankAccountsGeneralService, SyncAccountServiceProxy ]
+    providers: [ BankAccountsGeneralService, SyncAccountServiceProxy, LifecycleSubjectsService ]
 })
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy  {
     @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
@@ -32,7 +37,9 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         private _syncAccountServiceProxy: SyncAccountServiceProxy,
         private _bankAccountsGeneralService: BankAccountsGeneralService,
         private _dialog: MatDialog,
-        public cfoPreferencesService: CfoPreferencesService
+        public cfoPreferencesService: CfoPreferencesService,
+        private store$: Store<CfoStore.State>,
+        private _lifeCycleService: LifecycleSubjectsService
     ) {
         super(injector);
         this._synchProgress.needRefreshSync$.subscribe(() => {
@@ -47,13 +54,21 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
 
     ngOnInit() {
         this.initHeadlineConfig();
+        const selectedCurrencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId));
+
+        selectedCurrencyId$.pipe(
+            skip(1),
+            switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
+        ).subscribe(() => {
+            this.refreshBankAccounts();
+        });
     }
 
     private initHeadlineConfig() {
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('Accounts')],
             iconSrc: './assets/common/icons/magic-stick-icon.svg',
-            onRefresh: this.onRefreshClick.bind(this),
+            onRefresh: this.refreshBankAccounts.bind(this),
             buttons: [
                 {
                     enabled: (this.isInstanceAdmin || this.isMemberAccessManage) && this.createAccountAvailable,
@@ -78,7 +93,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this._dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig);
     }
 
-    onRefreshClick() {
+    refreshBankAccounts() {
         this._bankAccountsGeneralService.refreshBankAccounts();
     }
 
@@ -91,6 +106,10 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
     ngAfterViewInit(): void {
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+    }
+
+    activate() {
+        this._lifeCycleService.activate.next();
     }
 
     ngOnDestroy() {
