@@ -895,7 +895,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onSelectionChanged($event, initial = false) {
         this.getTotalValues();
 
-        if (!this._cfoService.checkMemberAccessPermission('ClassifyTransaction'))
+        if (!this._cfoService.classifyTransactionsAllowed)
             return ;
 
         let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
