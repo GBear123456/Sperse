@@ -61,9 +61,9 @@ export class SynchProgressService {
         this.needRefreshSync.next();
     }
 
-    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q') {
+    public startSynchronization(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q', syncAccountIds = []) {
         this.appHttpConfiguration.avoidErrorHandling = true;
-        this.runSyncAll(forcedSync, newOnly, syncType)
+        this.runSync(forcedSync, newOnly, syncType, syncAccountIds)
             .subscribe(() => {
                 this.tryCount = 0;
                 this.hasFailedAccounts = false;
@@ -81,16 +81,24 @@ export class SynchProgressService {
         this.cancelRequests();
     }
 
-    private runSyncAll(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q') {
+    private runSync(forcedSync: boolean = false, newOnly: boolean = false, syncType = 'Q', syncAccountIds = []) {
         const method = this.cfoService.isForUser && syncType == 'Q'
             ? this.myFinanceService.syncAllQuovoAccounts(forcedSync, newOnly)
-            : this.syncServiceProxy.syncAllAccounts(
+            : (
+                syncAccountIds && syncAccountIds.length
+                ? this.syncServiceProxy.requestSyncForAccounts(
+                    InstanceType[this.cfoService.instanceType],
+                    this.cfoService.instanceId,
+                    syncAccountIds
+                )
+                : this.syncServiceProxy.syncAllAccounts(
                     InstanceType[this.cfoService.instanceType],
                     this.cfoService.instanceId,
                     forcedSync,
                     newOnly,
                     syncType === 'all' ? undefined : syncType
-                );
+                )
+            );
 
         return method.pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;
@@ -151,7 +159,7 @@ export class SynchProgressService {
                             /** Run sync All after 10 sec and then syncProgress 3 times*/
                             this.timeoutsIds.push(setTimeout(
                                 () => {
-                                    this.runSyncAll(true).subscribe(
+                                    this.runSync(true).subscribe(
                                         () => this.runSynchProgress(),
                                         this.syncAllFailed.bind(this)
                                     );

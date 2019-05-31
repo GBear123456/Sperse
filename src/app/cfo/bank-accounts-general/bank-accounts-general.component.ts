@@ -53,7 +53,7 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         this.headlineConfig = {
             names: [this.l('Setup_Title'), this.l('Accounts')],
             iconSrc: './assets/common/icons/magic-stick-icon.svg',
-            onRefresh: this.onRefreshClick.bind(this),
+            onRefresh: this.refresh.bind(this),
             buttons: [
                 {
                     enabled: (this.isInstanceAdmin || this.isMemberAccessManage) && this.createAccountAvailable,
@@ -75,10 +75,13 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
         if (!this.createAccountAvailable)
             return;
 
-        this._dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig);
+        const accountConnectorDialog = this._dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig);
+        accountConnectorDialog.componentInstance.onComplete.subscribe(() => {
+            this.refresh();
+        });
     }
 
-    onRefreshClick() {
+    refresh() {
         this._bankAccountsGeneralService.refreshBankAccounts();
     }
 

@@ -1,4 +1,6 @@
 :host {
+    height: 100%;
+    display: block;
     .modal-wrapper {
         height: 100%;
         position: relative;
@@ -263,7 +265,10 @@
             footer .footer-links {
                 padding-bottom: 30px;
                 .import-category-tree-checkbox {
-                    margin-bottom: 10px;
+                    margin-bottom: 5px;
+                    &.hidden {
+                        visibility: hidden;
+                    }
                 }
                 ul {
                     padding: 12px 10px 12px 17px;

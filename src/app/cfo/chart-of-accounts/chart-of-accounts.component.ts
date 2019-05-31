@@ -105,7 +105,7 @@ export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit
                 this.override
             )
                 .pipe(finalize(() => { abp.ui.clearBusy(); }))
-                .subscribe((result) => {
+                .subscribe(() => {
                     this.refreshCategories();
                 });
         };

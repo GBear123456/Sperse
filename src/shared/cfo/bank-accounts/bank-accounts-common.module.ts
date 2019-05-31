@@ -34,7 +34,6 @@ import { AddAccountButtonComponent } from './add-account-button/add-account-butt
 
 import { QuovoService } from './quovo/QuovoService';
 import { AddQuovoAccountButtonComponent } from './quovo/add-quovo-account-button/add-quovo-account-button.component';
-import { XeroLoginButtonComponent } from './xero/xero-login-button/xero-login-button.component';
 import { ImportXeroChartOfAccountsButtonComponent } from './xero/import-xero-chart-of-accounts-button/import-xero-chart-of-accounts-button.component';
 
 import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
@@ -75,8 +74,6 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         BankAccountsQuovoComponent,
         QuovoPfmComponent,
         AddAccountButtonComponent,
-
-        XeroLoginButtonComponent,
         ImportXeroChartOfAccountsButtonComponent,
         ChooseXeroAccountComponent,
         AddQuovoAccountButtonComponent,
@@ -90,8 +87,6 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         BankAccountsQuovoComponent,
         QuovoPfmComponent,
         AddAccountButtonComponent,
-
-        XeroLoginButtonComponent,
         ImportXeroChartOfAccountsButtonComponent,
         ChooseXeroAccountComponent,
         AddQuovoAccountButtonComponent,

@@ -10,7 +10,7 @@
     <ng-template [ngIf]="selectedConnector === accountConnectors.Xero">
         <xero-login
             [operationType]="data?.operationType ? data.operationType : 'add'"
-            [importCategoryTree]="data?.importCategoryTree"
+            [overwriteCurrentCategoryTree]="data?.overwriteCurrentCategoryTree ? data.overwriteCurrentCategoryTree : false"
             [accountId]="data?.config?.accountId"
             [isSyncBankAccountsEnabled]="(data?.config?.isSyncBankAccountsEnabled !== null) ? data?.config?.isSyncBankAccountsEnabled : xeroLogin.isSyncBankAccountsEnabled"
             (onClose)="closeDialog($event)"

@@ -63,7 +63,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         const elementForSpinner = document.querySelector('.frame-wrap');
         abp.ui.setBusy(elementForSpinner);
         this.bankAccountsService.load(false)
-            .pipe(finalize(() => { abp.ui.clearBusy(elementForSpinner); }))
+            .pipe(finalize(() => abp.ui.clearBusy(elementForSpinner)))
             .subscribe();
     }
 

@@ -61,7 +61,10 @@
         </div>
         <footer>
             <div class="footer-links">
-                <dx-check-box *ngIf="operationType === 'add'" [text]="ls.l('ImportAndOverwriteCurrentChartOfAccounts')" [(value)]="importCategoryTree" class="import-category-tree-checkbox"> </dx-check-box>
+                <ng-container *ngIf="operationType === 'add'">
+                    <dx-check-box [text]="ls.l('ImportNewChartOfAccounts')" [(value)]="importNewCategoryTree" class="import-category-tree-checkbox"> </dx-check-box>
+                    <dx-check-box [ngClass]="{ hidden: !importNewCategoryTree }" [text]="ls.l('OverwriteCurrentChartOfAccounts')" [(value)]="overwriteCurrentCategoryTree" class="import-category-tree-checkbox"> </dx-check-box>
+                </ng-container>
                 <ul>
                     <li>
                         <a [href]="xeroAppsLink" target="_blank" class="link">
