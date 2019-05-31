@@ -13,6 +13,7 @@
                     [showSelectionControls]="true"
                     tagTemplate="customTagTemplate"
                     itemTemplate="itemTemplate"
+                    (onOpened)="changePopupWidth($event)"
                     [maxDisplayedTags]="1"
                     [(value)]="selectedItems"
                     (onValueChanged)="selectedItemsChange()"

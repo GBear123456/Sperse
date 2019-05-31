@@ -12,6 +12,7 @@ export class SelectionFilterComponent {
     @Input() selectionList = [];
     @Input() selectedItems: any[] = [];
     @Input() itemsText = this.localization.l('entities');
+    @Input() popupWidth: string;
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
 
     constructor(
@@ -29,6 +30,12 @@ export class SelectionFilterComponent {
 
     onMultiTagPreparing(e) {
         e.text = this.getSelectedTitle();
+    }
+
+    changePopupWidth(e) {
+        if (this.popupWidth) {
+            e.component._popup.option('width', this.popupWidth);
+        }
     }
 
     selectAllValueChanged($event) {
