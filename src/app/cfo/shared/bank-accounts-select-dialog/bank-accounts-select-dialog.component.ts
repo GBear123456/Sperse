@@ -46,8 +46,6 @@ export class BankAccountsSelectDialogComponent implements OnInit {
                 id: 'saveCompany',
                 title: this.ls.l('Apply'),
                 class: 'primary saveButton',
-                disabled: !this.cfoService.isMemberAccessManage
-                    && !this.cfoService.isInstanceAdmin,
                 action: this.apply.bind(this)
             }
         ];
