@@ -117,6 +117,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
 
     onEditingStart(e) {
         this.showEditDialog(e.data);
+        e.cancel = true;
     }
 
     onShowingPopup(e) {
@@ -149,7 +150,7 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
 
     showEditDialog(data = {}) {
         this.dialog.open(RuleDialogComponent, {
-            panelClass: 'slider', data: _.extend(data, {
+            panelClass: [ 'slider', 'max-width-60' ], data: _.extend(data, {
                 refershParent: this.refreshList.bind(this)
             })
         }).afterClosed().subscribe(() => {});
