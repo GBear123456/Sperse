@@ -299,7 +299,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
         }
 
-        this.operationsEnabled = (result.groupId != ContactGroup.UserProfile);
+        this.operationsEnabled = !(result.groupId == ContactGroup.UserProfile && 
+            result.personContactInfo.userId && result.statusId != ContactStatus.Prospective);
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
