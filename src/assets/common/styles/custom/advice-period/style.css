@@ -55,7 +55,7 @@ body.advice-period contact-info-panel .full_name h1 {
   color: #fff!important;
 }
 body.advice-period .swal-modal {
-  background: #ee8615;
+  background: #f19f45;
 }
 body.advice-period .swal-modal .swal-icon.swal-icon--error,
 body.advice-period .swal-modal .swal-icon.swal-icon--warning,
@@ -210,3 +210,4 @@ body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-head
     background: #FFF!important;
   }
 }
+
