@@ -5407,7 +5407,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellSingleClick(e) {
-        if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId && !e.row.inserted && e.data.cashflowTypeId !== Reconciliation) {
+        if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId && !e.row.inserted && e.data.cashflowTypeId !== Reconciliation && e.data.cashflowTypeId !== StartedBalance) {
             this.transactionId = e.data.id;
             this.showTransactionDetailsInfo();
         } else if (this._cfoService.isInstanceAdmin && e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
