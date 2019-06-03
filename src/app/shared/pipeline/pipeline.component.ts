@@ -122,7 +122,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
     }
 
-    initPipeline() {
+    private initPipeline() {
         this.startLoading();
         this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
             setTimeout(() => this._changeDetector.detectChanges());
@@ -136,9 +136,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 if (value[1].classList.contains('selected')) {
                     this.getSelectedEntities().forEach((entity, index, selectedList) => {
 			let isLastItem = (index >= selectedList.length - 1);
-                        let oldStage = find(this.stages, (stage) => {
-                            return stage.id == entity.StageId;
-                        });
+                        let oldStage = this.stages.find(stage => stage.id == entity.StageId);
 
                         if (oldStage['isFinal']) {
                             if (isLastItem)
@@ -146,7 +144,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                             return false;
 			}
 
-                        if (entity)  {
+                        if (entity) {
                             entity.SortOrder = newSortOrder;
                             this.updateEntityStage(entity, newStage, oldStage, () => {
                                 this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);
@@ -522,6 +520,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         })).pipe(
             finalize(() => {
                 this.disabled = false;
+                this.finishLoading();
                 this._changeDetector.detectChanges();
             })
         ).subscribe();
@@ -532,11 +531,17 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.disabled = true;
             setTimeout(() => {
                 this.startLoading();
+                const fullComplete = () => {
+                    this.disabled = false;
+                    this.finishLoading();
+                    complete && complete();
+                    this._changeDetector.detectChanges();
+                };
                 if (newStage.name != oldStage.name) {
                     this._pipelineService.updateEntityStage(
-                        this.pipelinePurposeId, entity, oldStage, newStage, complete);
+                        this.pipelinePurposeId, entity, oldStage, newStage, fullComplete);
                 } else
-                    this._pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);
+                    this._pipelineService.updateEntitySortOrder(this.pipeline.id, entity, fullComplete);
             });
         }
     }
