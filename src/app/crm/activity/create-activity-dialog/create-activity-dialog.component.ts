@@ -282,7 +282,7 @@ export class CreateActivityDialogComponent implements OnInit {
                     {
                         name: 'star',
                         disabled: true,
-                        action: () => this.starsListComponent.toggle(),
+                        action: this.toggleStarsList.bind(this),
                         options: {
                             width: 20,
                         },
@@ -434,14 +434,22 @@ export class CreateActivityDialogComponent implements OnInit {
 
     toggleStages() {
         this.stagesComponent.toggle();
+        this.changeDetectorRef.detectChanges();
     }
 
     toggleLeadList() {
         this.leadsList.toggle();
+        this.changeDetectorRef.detectChanges();
     }
 
     toggleClientLists() {
         this.clientsList.toggle();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    toggleStarsList() {
+        this.starsListComponent.toggle()
+        this.changeDetectorRef.detectChanges();
     }
 
     onLeadSelected(e) {
@@ -486,6 +494,7 @@ export class CreateActivityDialogComponent implements OnInit {
 
     toggleUserAssignmen() {
         this.userAssignmentComponent.toggle();
+        this.changeDetectorRef.detectChanges();
     }
 
     getInputElementValue(event) {
