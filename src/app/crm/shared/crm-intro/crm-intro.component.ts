@@ -12,6 +12,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ModuleType, ModuleType2, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
+import { AppService } from '@app/app.service';
 
 
 @Component({
@@ -34,6 +35,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
 
     constructor(
         injector: Injector,
+        public appService: AppService,
         private _userService: UserServiceProxy,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
@@ -41,7 +43,7 @@ export class CrmIntroComponent extends AppComponentBase implements OnInit {
         this.moduleName = AppConsts.modules.CRMModule;
         this.dialogRef = <any>injector.get(MatDialogRef);
 
-        this.showImportUsersStep = (!abp.session.tenantId || this.feature.isEnabled('Admin'))
+        this.showImportUsersStep = (appService.isHostTenant || this.feature.isEnabled('Admin'))
             && this.permission.isGranted('Pages.Administration.Users')
             && this.permission.isGranted('Pages.Administration.Users.Create')
             && this.permission.isGranted('Pages.Administration.Roles');
