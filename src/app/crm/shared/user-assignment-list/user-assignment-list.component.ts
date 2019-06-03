@@ -13,6 +13,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppConsts } from '@shared/AppConsts';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AssignUserInput, AssignUserForEachInput } from '@shared/service-proxies/service-proxies';
+import { AppStoreService } from '@app/store/app-store.service';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     selector: 'crm-user-assignment-list',
@@ -48,10 +50,13 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
 
     constructor(
         injector: Injector,
+	private _appStoreService: AppStoreService,
         private _filtersService: FiltersService,
         private store$: Store<AppStore.State>,
     ) {
         super(injector);
+
+	_appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
     }
 
     private moveSelectedItemsToTop() {

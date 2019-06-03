@@ -24,23 +24,21 @@ export class AppStoreService {
         private _permission: PermissionCheckerService
     ) {}
 
-    private dispatchContactGroupActions(keyList) {
+    dispatchUserAssignmentsActions(keyList) {
         if (keyList.length) {
             let contactGroup = keyList.pop(),
                 groupId = ContactGroup[contactGroup];
             if (this._permission.isGranted(ContactGroupPermission[contactGroup] + '.ManageAssignments')) {
                 this.store$.dispatch(new ContactAssignedUsersStoreActions.LoadRequestAction(groupId));
                 this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: groupId }))
-                    .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchContactGroupActions(keyList), 100));
+                    .pipe(filter((res) => Boolean(res))).subscribe(() => setTimeout(() => this.dispatchUserAssignmentsActions(keyList), 100));
             } else
-                this.dispatchContactGroupActions(keyList);
+                this.dispatchUserAssignmentsActions(keyList);
         }
     }
 
     loadUserDictionaries() {
         /** @todo check permissions */
-        this.dispatchContactGroupActions(Object.keys(ContactGroup));
-
         this.store$.dispatch(new PartnerTypesStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new StarsStoreActions.LoadRequestAction(false));
         this.store$.dispatch(new StatusesStoreActions.LoadRequestAction(false));
