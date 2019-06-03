@@ -5,6 +5,7 @@ export const environment = {
     appConfig: 'appconfig.devstaging.json',
     appBaseUrl: 'http://localhost:7200',
     appBaseHref: 'https://testuicdn.azureedge.net/current/',
+    releaseStage: 'development',
 
     /* Custom tenant domains */
     LENDSPACE_DOMAIN: 'http://localhost:9000',

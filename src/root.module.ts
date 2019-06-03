@@ -34,12 +34,14 @@ import { RootRoutingModule, CustomReuseStrategy, AppPreloadingStrategy } from '.
 import { RootStoreModule } from '@root/store';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { environment } from './environments/environment';
 
 const { version } = require('../package.json');
 const bugsnagClient = bugsnag({
     apiKey: '891a02ce4c67b5a7f91f4ff0c33384f5',
     appType: 'WebUI',
-    appVersion: version
+    appVersion: version,
+    releaseStage: environment.releaseStage
 });
 export function errorHandlerFactory() {
     return new BugsnagErrorHandler(bugsnagClient);
