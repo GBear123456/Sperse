@@ -13,7 +13,6 @@ import { CacheService } from 'ng2-cache-service';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
 import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
 import filter from 'lodash/filter';
-import bugsnag from '@bugsnag/js';
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 
 /** Application imports */
@@ -34,23 +33,21 @@ import { RootRoutingModule, CustomReuseStrategy, AppPreloadingStrategy } from '.
 import { RootStoreModule } from '@root/store';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { environment } from './environments/environment';
+import { BugsnagService } from '@shared/common/bugsnag/bugsnag.service';
 
-const { version } = require('../package.json');
-const bugsnagClient = bugsnag({
-    apiKey: '891a02ce4c67b5a7f91f4ff0c33384f5',
-    appType: 'WebUI',
-    appVersion: version,
-    releaseStage: environment.releaseStage
-});
-export function errorHandlerFactory() {
-    return new BugsnagErrorHandler(bugsnagClient);
+export function errorHandlerFactory(
+    bugsnagService: BugsnagService
+) {
+    return bugsnagService.bugsnagApiKey
+        ? new BugsnagErrorHandler(bugsnagService.bugsnagClient)
+        : new ErrorHandler();
 }
 
 export function appInitializerFactory(
     injector: Injector,
     platformLocation: PlatformLocation,
-    faviconService: FaviconService
+    faviconService: FaviconService,
+    bugsnagService: BugsnagService
 ) {
     return () => {
         let appAuthService = injector.get(AppAuthService);
@@ -65,7 +62,7 @@ export function appInitializerFactory(
                     (result) => {
                         //set og meta tags
                         updateMetadata(appSessionService.tenant, ui);
-                        updateBugsnagWithUserInfo(appSessionService);
+                        bugsnagService.updateBugsnagWithUserInfo(appSessionService);
                         let customizations = appSessionService.tenant && appSessionService.tenant.tenantCustomizations;
                         if (customizations && customizations.favicons && customizations.favicons.length)
                             faviconService.updateFavicons(customizations.favicons, customizations.faviconBaseUrl);
@@ -89,26 +86,6 @@ export function appInitializerFactory(
                 );
             }, Function(), reject);
         });
-    };
-}
-
-function updateBugsnagWithUserInfo(appSessionService: AppSessionService) {
-    const user = appSessionService.user;
-    const tenantName = appSessionService.tenantName || 'Host';
-    const tenant = appSessionService.tenant;
-    if (user && user.name) {
-        bugsnagClient.user = {
-            id: tenant ? tenant.id + ':' + appSessionService.userId : appSessionService.userId,
-            name: `${tenantName}\\${user.name}`,
-            email: user.emailAddress ? user.emailAddress : (user.name.indexOf('@') > -1 ? user.name : '')
-        };
-    }
-    bugsnagClient.metaData = {
-        tenant: {
-            tenantId: tenant ? tenant.id : '',
-            tenantName: tenantName,
-            tenancyName: appSessionService.tenancyName
-        }
     };
 }
 
@@ -195,6 +172,7 @@ function handleLogoutRequest(authService: AppAuthService) {
     providers: [
         AppPreloadingStrategy,
         AppLocalizationService,
+        BugsnagService,
         AppUiCustomizationService,
         AppAuthService,
         RouteGuard,
@@ -214,7 +192,7 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: APP_INITIALIZER,
             useFactory: appInitializerFactory,
-            deps: [ Injector, PlatformLocation, FaviconService ],
+            deps: [ Injector, PlatformLocation, FaviconService, BugsnagService ],
             multi: true
         },
         {
@@ -231,7 +209,8 @@ function handleLogoutRequest(authService: AppAuthService) {
         },
         {
             provide: ErrorHandler,
-            useFactory: errorHandlerFactory
+            useFactory: errorHandlerFactory,
+            deps: [ BugsnagService ]
         }
     ],
     bootstrap: [ RootComponent ]
