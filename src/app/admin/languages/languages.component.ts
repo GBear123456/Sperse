@@ -33,7 +33,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         onRefresh: this.refreshDataGrid.bind(this),
         buttons: [
             {
-                enabled: this.isGranted('Pages.Administration.Languages.Create') && this._appService.isHostTenant(),
+                enabled: this.isGranted('Pages.Administration.Languages.Create') && this._appService.isHostTenant,
                 action: this.createNewLanguage.bind(this),
                 lable: this.l('CreateNewLanguage')
             }
@@ -74,7 +74,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.actionMenuItems = [
             {
                 text: this.l('Edit'),
-                visible: this.permission.isGranted('Pages.Administration.Languages.Edit')  && this._appService.isHostTenant(),
+                visible: this.permission.isGranted('Pages.Administration.Languages.Edit')  && this._appService.isHostTenant,
                 action: () => {
                     this.openCreateOrEditLanguageModal(this.actionRecord.id);
                 }
@@ -95,7 +95,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             },
             {
                 text: this.l('Delete'),
-                visible: this.permission.isGranted('Pages.Administration.Languages.Delete')  && this._appService.isHostTenant(),
+                visible: this.permission.isGranted('Pages.Administration.Languages.Delete')  && this._appService.isHostTenant,
                 action: () => {
                     this.deleteLanguage(this.actionRecord);
                 }
