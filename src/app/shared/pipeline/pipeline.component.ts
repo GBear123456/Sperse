@@ -135,10 +135,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
                 if (value[1].classList.contains('selected')) {
                     this.getSelectedEntities().forEach((entity, index, selectedList) => {
+                        let isLastItem = (index >= selectedList.length - 1);
                         let oldStage = this.stages.find(stage => stage.id == entity.StageId);
 
-                        if (oldStage['isFinal'])
+                        if (oldStage['isFinal']) {
+                            if (isLastItem)
+                                this.reloadStagesInternal(reloadStageList);
                             return false;
+                        }
 
                         if (entity) {
                             entity.SortOrder = newSortOrder;
@@ -150,7 +154,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                                     if (!entities.length)
                                         reloadStageList.push(oldStage['stageIndex']);
                                 }
-                                if (index >= selectedList.length - 1)
+                                if (isLastItem)
                                     this.reloadStagesInternal(reloadStageList);
                             });
                         }
@@ -366,7 +370,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (!isNaN(stage['lastSortOrder']) && page)
                 filter['SortOrder'] = {lt: stage['lastSortOrder']};
 
-            dataSource.pageSize(this.stagePageCount);
+            dataSource.pageSize(!page && stage['entities'] &&
+                stage['entities'].length || this.stagePageCount);
             dataSource.sort({getter: 'SortOrder', desc: true});
             response = from(this._odataService.loadDataSource(
                 dataSource,

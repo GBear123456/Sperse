@@ -16,6 +16,7 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { ExternalLoginProvider, LoginService } from '../../login.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import * as moment from 'moment';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './host-login.component.html',
@@ -38,7 +39,8 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
         public loginService: LoginService,
         private _sessionService: AbpSessionService,
         private _sessionAppService: SessionServiceProxy,
-        private _appSession: AppSessionService
+        private _appSession: AppSessionService,
+        public appService: AppService,
     ) {
         super(injector);
     }
@@ -97,7 +99,7 @@ export class HostLoginComponent extends AppComponentBase implements OnInit {
     }
 
     getLoginPlaceholder(): string {
-        return abp.session.tenantId ? this.l('UserNameOrEmail') : this.l('EmailAddress');
+        return !this.appService.isHostTenant ? this.l('UserNameOrEmail') : this.l('EmailAddress');
     }
 
     showHidePassword(event) {

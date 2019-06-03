@@ -163,7 +163,7 @@ export class AppService extends AppServiceBase {
         this._tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
 
         this.toolbarSubject = new Subject<undefined>();
-        if (this.isNotHostTenant()) {
+        if (!this.isHostTenant) {
             this.expiredModule = new Subject<string>();
             this.loadModeuleSubscriptions();
         }
@@ -228,7 +228,7 @@ export class AppService extends AppServiceBase {
         if (this.hasRecurringBilling(sub))
             return false;
 
-        if (this.isNotHostTenant() && sub && sub.endDate) {
+        if (!this.isHostTenant && sub && sub.endDate) {
             let diff = sub.endDate.diff(moment().utc(), 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionExpireNootifyDayCount);
         }
@@ -245,7 +245,7 @@ export class AppService extends AppServiceBase {
         if (this.hasRecurringBilling(sub))
             return false;
 
-        if (this.isNotHostTenant() && sub && sub.endDate) {
+        if (!this.isHostTenant && sub && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionGracePeriod);
         }
@@ -264,14 +264,10 @@ export class AppService extends AppServiceBase {
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
 
-    isNotHostTenant() {
-        return abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT;
-    }
-
     hasModuleSubscription(name?: string) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
-        return !this.isNotHostTenant() || !module || !module.endDate ||
+        return this.isHostTenant || !module || !module.endDate ||
             this.hasRecurringBilling(module) || (module.endDate > moment().utc());
     }
 
@@ -376,5 +372,9 @@ export class AppService extends AppServiceBase {
 
     toolbarRefresh() {
         this.toolbarSubject.next();
+    }
+
+    isFeatureEnable(featureName: string): boolean {
+        return this.isHostTenant || !featureName || this.feature.isEnabled(featureName);
     }
 }

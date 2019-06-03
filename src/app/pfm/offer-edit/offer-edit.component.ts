@@ -51,7 +51,9 @@ import {
     OfferCategoryDto,
     OfferDetailsForEditDto,
     OfferManagementServiceProxy,
-    OfferAnnouncementServiceProxy
+    OfferAnnouncementServiceProxy,
+    SendAnnouncementRequest,
+    SendAnnouncementRequestServiceName
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -346,10 +348,12 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
                 swal(swalParams).then((confirmed) => {
                     if (confirmed) {
                         abp.ui.setBusy();
+                        let request = new SendAnnouncementRequest();
+                        request.campaignId = offerId;
+                        request.offerDetailsLink = offerPublicLink;
+                        //request.serviceName = SendAnnouncementRequestServiceName.IAge;
                         this.offerAnnouncementService.sendAnnouncement(
-                            offerId,
-                            offerPublicLink,
-                            ''
+                            request
                         ).pipe(finalize(() => abp.ui.clearBusy()))
                             .subscribe(() => this.notifyService.success(this.ls.ls('PFM', 'AnnouncementsHaveBeenSent')));
                     }

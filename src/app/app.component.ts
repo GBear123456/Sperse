@@ -31,7 +31,7 @@ export class AppComponent extends AppComponentBase implements OnInit {
     ) {
         super(injector);
 
-        if (appService.isNotHostTenant()) {
+        if (!appService.isHostTenant) {
             let paymentDialogTimeout;
             appService.expiredModuleSubscribe((name) => {
                 let moduleName = name.toLowerCase();
