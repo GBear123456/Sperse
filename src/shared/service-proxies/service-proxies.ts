@@ -16764,22 +16764,17 @@ export class OfferAnnouncementServiceProxy {
     }
 
     /**
-     * @campaignId (optional) 
-     * @offerDetailsLink (optional) 
-     * @emailAddresses (optional) 
+     * @request (optional) 
      * @return Success
      */
-    sendAnnouncement(campaignId: number | null | undefined, offerDetailsLink: string | null | undefined, emailAddresses: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/PFM/OfferAnnouncement/SendAnnouncement?";
-        if (campaignId !== undefined)
-            url_ += "campaignId=" + encodeURIComponent("" + campaignId) + "&"; 
-        if (offerDetailsLink !== undefined)
-            url_ += "offerDetailsLink=" + encodeURIComponent("" + offerDetailsLink) + "&"; 
-        if (emailAddresses !== undefined)
-            url_ += "emailAddresses=" + encodeURIComponent("" + emailAddresses) + "&"; 
+    sendAnnouncement(request: SendAnnouncementRequest | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/PFM/OfferAnnouncement/SendAnnouncement";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(request);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -51047,6 +51042,58 @@ export interface IGetMemberInfoResponse {
     testMode: boolean | undefined;
 }
 
+export class SendAnnouncementRequest implements ISendAnnouncementRequest {
+    campaignId!: number;
+    offerDetailsLink!: string;
+    serviceName!: SendAnnouncementRequestServiceName;
+    listName!: string | undefined;
+    emailAddresses!: string | undefined;
+
+    constructor(data?: ISendAnnouncementRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.campaignId = data["campaignId"];
+            this.offerDetailsLink = data["offerDetailsLink"];
+            this.serviceName = data["serviceName"];
+            this.listName = data["listName"];
+            this.emailAddresses = data["emailAddresses"];
+        }
+    }
+
+    static fromJS(data: any): SendAnnouncementRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendAnnouncementRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["campaignId"] = this.campaignId;
+        data["offerDetailsLink"] = this.offerDetailsLink;
+        data["serviceName"] = this.serviceName;
+        data["listName"] = this.listName;
+        data["emailAddresses"] = this.emailAddresses;
+        return data; 
+    }
+}
+
+export interface ISendAnnouncementRequest {
+    campaignId: number;
+    offerDetailsLink: string;
+    serviceName: SendAnnouncementRequestServiceName;
+    listName: string | undefined;
+    emailAddresses: string | undefined;
+}
+
 export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     daysOfWeekAvailability!: string | undefined;
     effectiveTimeOfDay!: string | undefined;
@@ -62715,6 +62762,13 @@ export enum GetMemberInfoResponseCreditScore {
     Good = "Good", 
     Fair = "Fair", 
     Poor = "Poor", 
+}
+
+export enum SendAnnouncementRequestServiceName {
+    EPCVIP = "EPCVIP", 
+    IAge = "IAge", 
+    Ongage = "Ongage", 
+    Platform = "Platform", 
 }
 
 export enum OfferDetailsForEditDtoTrafficSource {
