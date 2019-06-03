@@ -5,6 +5,7 @@ export const environment = {
     appConfig: 'appconfig.beta.json',
     appBaseUrl: 'https://beta.sperse.com',
     appBaseHref: 'https://sperseuicdn.azureedge.net/current/',
+    releaseStage: 'beta',
 
     /* Custom tenant domains */
     LENDSPACE_DOMAIN: 'https://betaweb.lendspace.com',

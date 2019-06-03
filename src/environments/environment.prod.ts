@@ -5,6 +5,7 @@ export const environment = {
     appConfig: 'appconfig.prod.json',
     appBaseUrl: 'https://app.sperse.com',
     appBaseHref: 'https://cdn.sperse.com/current/',
+    releaseStage: 'production',
 
     /* Custom tenant domains */
     LENDSPACE_DOMAIN: 'https://www.lendspace.com',

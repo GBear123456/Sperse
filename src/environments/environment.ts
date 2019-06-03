@@ -10,6 +10,7 @@ export const environment = {
     appBaseUrl: 'http://localhost:7200',
     appBaseHref: 'https://testuicdn.azureedge.net/current/',
     appConfig: 'appconfig.json',
+    releaseStage: 'development',
 
     /* Custom tenant domains */
     LENDSPACE_DOMAIN: 'http://localhost:9000',
