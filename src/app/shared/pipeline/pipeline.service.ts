@@ -124,7 +124,6 @@ export class PipelineService {
                     complete && complete();
                 }
             } else {
-                this.moveEntityTo(entity, toStage, fromStage);
                 entity.Name && this._notify.warn(this._ls.l('StageCannotBeUpdated',
                     AppConsts.localization.defaultLocalizationSourceName, entity.Name));
                 complete && setTimeout(() => complete());
@@ -137,8 +136,14 @@ export class PipelineService {
     updateEntitiesStage(pipelineId, entities, targetStage) {
         let subject = new Subject<any>();
 
-        this.updateEntitiesStageInternal(pipelineId, entities.slice(0),
-            targetStage, null, (declinedList) => subject.next(declinedList), []);
+        this.updateEntitiesStageInternal(
+            pipelineId,
+            entities.slice(0),
+            targetStage,
+            null,
+            (declinedList) => subject.next(declinedList),
+            []
+        );
 
         return subject.asObservable();
     }
@@ -148,12 +153,18 @@ export class PipelineService {
         if (entity) {
             if (data)
                 entity.data = data;
-            if (!this.updateEntityStage(pipelineId, entity,
-                this.getStageByName(pipelineId, entity.Stage || entity.stage),
-                this.getStageByName(pipelineId, targetStage), (data) => {
-                    this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
-                    delete entity.data;
-            })) declinedList.push(entity);
+            if (
+                !this.updateEntityStage(
+                    pipelineId,
+                    entity,
+                    this.getStageByName(pipelineId, entity.Stage || entity.stage),
+                    this.getStageByName(pipelineId, targetStage),
+                    (data) => {
+                        this.updateEntitiesStageInternal(pipelineId, entities, targetStage, data || entity.data, complete, declinedList);
+                        delete entity.data;
+                    }
+                )
+            ) declinedList.push(entity);
         } else
             complete && complete(declinedList);
     }
@@ -205,7 +216,7 @@ export class PipelineService {
                         if (data)
                             this.processLeadInternal(entity, {...data, fromStage, toStage}, complete);
                         else {
-                            this.moveEntityTo(entity, toStage, fromStage);
+                            this.moveEntityTo(entity, fromStage, toStage);
                             complete && complete();
                         }
                     });
@@ -242,7 +253,7 @@ export class PipelineService {
                 if (data)
                     this.cancelLeadInternal(entity, {...data, fromStage, toStage}, complete);
                 else {
-                    this.moveEntityTo(entity, toStage, fromStage);
+                    this.moveEntityTo(entity, fromStage, toStage);
                     complete && complete();
                 }
             });
@@ -302,7 +313,7 @@ export class PipelineService {
                 if (data)
                     this.cancelOrderInternal(entity, {...data, fromStage, toStage}, complete);
                 else {
-                    this.moveEntityTo(entity, toStage, fromStage);
+                    this.moveEntityTo(entity, fromStage, toStage);
                     complete && complete();
                 }
             });
@@ -325,8 +336,8 @@ export class PipelineService {
     moveEntityTo(entity, sourceStage, targetStage) {
         if (sourceStage.entities && targetStage.entities)
             targetStage.entities.unshift(
-                sourceStage.entities.splice(
-                    sourceStage.entities.indexOf(entity), 1).pop());
+                sourceStage.entities.splice(sourceStage.entities.indexOf(entity), 1).pop()
+            );
         entity.StageId = targetStage.id;
         entity.stage = entity.Stage = targetStage.name;
         entity.locked = false;
