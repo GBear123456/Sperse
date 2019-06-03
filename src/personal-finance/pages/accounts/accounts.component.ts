@@ -178,7 +178,6 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
             this._myFinanceService.setupUserInstance(undefined)
                 .subscribe(
                     () => {
-                        this.checkInstanceChangeProcess();
                         this.addAccount();
                     },
                     () => this.isStartDisabled = false

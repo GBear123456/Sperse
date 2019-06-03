@@ -15825,13 +15825,10 @@ export class MyFinancesServiceProxy {
     }
 
     /**
-     * @invalidateCache (optional) 
      * @return Success
      */
-    getUserInstanceStatus(invalidateCache: boolean | null | undefined): Observable<GetStatusOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetUserInstanceStatus?";
-        if (invalidateCache !== undefined)
-            url_ += "invalidateCache=" + encodeURIComponent("" + invalidateCache) + "&"; 
+    getUserInstanceStatus(): Observable<GetStatusOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetUserInstanceStatus";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -15877,58 +15874,6 @@ export class MyFinancesServiceProxy {
             }));
         }
         return _observableOf<GetStatusOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getSyncProgress(): Observable<SyncProgressOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetSyncProgress";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSyncProgress(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetSyncProgress(<any>response_);
-                } catch (e) {
-                    return <Observable<SyncProgressOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SyncProgressOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetSyncProgress(response: HttpResponseBase): Observable<SyncProgressOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SyncProgressOutput.fromJS(resultData200) : new SyncProgressOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SyncProgressOutput>(<any>null);
     }
 }
 
@@ -49582,114 +49527,6 @@ export interface ISyncAllAccountsOutput {
     failedSyncAccountsCount: number | undefined;
 }
 
-export class SyncProgressOutput implements ISyncProgressOutput {
-    lastSyncDate!: moment.Moment | undefined;
-    totalProgress!: SyncProgressDto | undefined;
-    accountProgresses!: SyncProgressDto[] | undefined;
-
-    constructor(data?: ISyncProgressOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
-            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
-            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
-                this.accountProgresses = [];
-                for (let item of data["accountProgresses"])
-                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): SyncProgressOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SyncProgressOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
-        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
-        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
-            data["accountProgresses"] = [];
-            for (let item of this.accountProgresses)
-                data["accountProgresses"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ISyncProgressOutput {
-    lastSyncDate: moment.Moment | undefined;
-    totalProgress: SyncProgressDto | undefined;
-    accountProgresses: SyncProgressDto[] | undefined;
-}
-
-export class SyncProgressDto implements ISyncProgressDto {
-    accountId!: number | undefined;
-    accountName!: string | undefined;
-    syncStatusMessage!: string | undefined;
-    progressPercent!: number | undefined;
-    syncStatus!: SyncProgressDtoSyncStatus | undefined;
-    lastSyncDate!: moment.Moment | undefined;
-
-    constructor(data?: ISyncProgressDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.accountId = data["accountId"];
-            this.accountName = data["accountName"];
-            this.syncStatusMessage = data["syncStatusMessage"];
-            this.progressPercent = data["progressPercent"];
-            this.syncStatus = data["syncStatus"];
-            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): SyncProgressDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SyncProgressDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accountId"] = this.accountId;
-        data["accountName"] = this.accountName;
-        data["syncStatusMessage"] = this.syncStatusMessage;
-        data["progressPercent"] = this.progressPercent;
-        data["syncStatus"] = this.syncStatus;
-        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISyncProgressDto {
-    accountId: number | undefined;
-    accountName: string | undefined;
-    syncStatusMessage: string | undefined;
-    progressPercent: number | undefined;
-    syncStatus: SyncProgressDtoSyncStatus | undefined;
-    lastSyncDate: moment.Moment | undefined;
-}
-
 export class NoteInfoDto implements INoteInfoDto {
     contactId!: number | undefined;
     id!: number | undefined;
@@ -55982,6 +55819,114 @@ export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
 
 export interface IGetSetupAccountsLinkOutput {
     setupAccountsLink: string | undefined;
+}
+
+export class SyncProgressOutput implements ISyncProgressOutput {
+    lastSyncDate!: moment.Moment | undefined;
+    totalProgress!: SyncProgressDto | undefined;
+    accountProgresses!: SyncProgressDto[] | undefined;
+
+    constructor(data?: ISyncProgressOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
+            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
+                this.accountProgresses = [];
+                for (let item of data["accountProgresses"])
+                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SyncProgressOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncProgressOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
+        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
+            data["accountProgresses"] = [];
+            for (let item of this.accountProgresses)
+                data["accountProgresses"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISyncProgressOutput {
+    lastSyncDate: moment.Moment | undefined;
+    totalProgress: SyncProgressDto | undefined;
+    accountProgresses: SyncProgressDto[] | undefined;
+}
+
+export class SyncProgressDto implements ISyncProgressDto {
+    accountId!: number | undefined;
+    accountName!: string | undefined;
+    syncStatusMessage!: string | undefined;
+    progressPercent!: number | undefined;
+    syncStatus!: SyncProgressDtoSyncStatus | undefined;
+    lastSyncDate!: moment.Moment | undefined;
+
+    constructor(data?: ISyncProgressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountId = data["accountId"];
+            this.accountName = data["accountName"];
+            this.syncStatusMessage = data["syncStatusMessage"];
+            this.progressPercent = data["progressPercent"];
+            this.syncStatus = data["syncStatus"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SyncProgressDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncProgressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountId"] = this.accountId;
+        data["accountName"] = this.accountName;
+        data["syncStatusMessage"] = this.syncStatusMessage;
+        data["progressPercent"] = this.progressPercent;
+        data["syncStatus"] = this.syncStatus;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISyncProgressDto {
+    accountId: number | undefined;
+    accountName: string | undefined;
+    syncStatusMessage: string | undefined;
+    progressPercent: number | undefined;
+    syncStatus: SyncProgressDtoSyncStatus | undefined;
+    lastSyncDate: moment.Moment | undefined;
 }
 
 export class SyncAccountDto implements ISyncAccountDto {
@@ -62558,14 +62503,6 @@ export enum RegisterMemberRequestGender {
     _1 = 1, 
 }
 
-export enum SyncProgressDtoSyncStatus {
-    InProgress = "InProgress", 
-    ActionRequired = "ActionRequired", 
-    SyncPending = "SyncPending", 
-    Unavailable = "Unavailable", 
-    Completed = "Completed", 
-}
-
 export enum NoteInfoDtoNoteType {
     Note = "Note", 
     IncomingCall = "IncomingCall", 
@@ -63153,6 +63090,14 @@ export enum TenantLoginInfoDtoCustomLayoutType {
 export enum TenantLoginInfoDtoPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum SyncProgressDtoSyncStatus {
+    InProgress = "InProgress", 
+    ActionRequired = "ActionRequired", 
+    SyncPending = "SyncPending", 
+    Unavailable = "Unavailable", 
+    Completed = "Completed", 
 }
 
 export enum CheckHostNameDnsMappingInputTenantHostType {
