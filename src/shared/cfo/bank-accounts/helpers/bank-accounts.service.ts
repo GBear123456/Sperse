@@ -187,7 +187,7 @@ export class BankAccountsService {
                     state.visibleBankAccountIds, state.isActive
                 ));
             }),
-            distinctUntilChanged(this.arrayDistinct)
+            distinctUntilChanged()
         );
 
         let filteredBankAccountsAmount$ = filteredSyncAccountsAmount$.pipe(
@@ -197,7 +197,7 @@ export class BankAccountsService {
                     }, 0
                 );
             }),
-            distinctUntilChanged(this.arrayDistinct)
+            distinctUntilChanged()
         );
 
         /** Stream of posible bank accounts */
@@ -342,7 +342,7 @@ export class BankAccountsService {
                     const selectedBankAccounts = bankAccounts.filter(bankAccount => bankAccount.selected);
                     return selectedBankAccounts.length === totalAmount
                         ? selectedBankAccounts.length.toString()
-                        : `${selectedBankAccounts .length} of ${totalAmount}`;
+                        : `${selectedBankAccounts.length} of ${totalAmount}`;
                 }),
                 distinctUntilChanged()
             );
