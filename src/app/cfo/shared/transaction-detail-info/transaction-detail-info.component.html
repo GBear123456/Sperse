@@ -1,12 +1,12 @@
 <modal-dialog>
    <header class="container">
         <h1>
-            <span (click)="inPlaceEdit('transactionDescriptor', transactionInfo, $event, i)" *ngIf="transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
+            <span (click)="inPlaceEdit('transactionDescriptor', transactionInfo)" *ngIf="transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
                 {{ transactionInfo?.transactionDescriptor }} <i class="icon blue-edit-pencil">&nbsp;</i>
             </span>
             <span *ngIf="!transactionInfo?.transactionDescriptor && !transactionInfo['inplaceEdit']">
                 <a (click)="inPlaceEdit('transactionDescriptor', transactionInfo)">
-                    {{ls.l("Add_descriptor")}} <i class="plus">+</i>
+                    {{ls.l("TransactionDetail_Add_descriptor")}} <i class="plus">+</i>
                 </a>
             </span>
             <span *ngIf="transactionInfo['inplaceEdit']" class="inplace-edit-wrapper">
