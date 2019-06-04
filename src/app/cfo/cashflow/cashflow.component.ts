@@ -913,7 +913,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.initHeadlineConfig();
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
-        if (this._cfoService.isInstanceAdmin){
+        if (this._cfoService.isInstanceAdmin) {
             this.cashflowService.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
             this.createDragImage();
 
@@ -2527,20 +2527,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex;
         /** Change historical field for different date intervals */
         this.closeTransactionsDetail();
-        this.expandAll(itemIndex);
-        this.pivotGrid ? this.pivotGrid.instance.repaint() : this.finishLoading();
-    }
-
-    getMonthsPaths(columns) {
-        let monthsPaths = [];
-        let monthIndex = this.pivotGrid.instance.getDataSource().field('Month').areaIndex;
-        for (let stringPath in columns._cacheByPath) {
-            let path = stringPath.split('.');
-            if (path.length === monthIndex + 1) {
-                monthsPaths.push(path);
+        if (this.pivotGrid) {
+            if (this.expandAll(itemIndex)) {
+                this.pivotGrid.instance.repaint();
             }
+        } else {
+            /** Update later when new pivot grid reinit */
+            this.expandBeforeIndex = itemIndex;
+            this.finishLoading();
         }
-        return monthsPaths;
     }
 
     downloadData(event) {
