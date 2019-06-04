@@ -410,7 +410,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     initDragAndDropEvents($event) {
-        if (!this.isInstanceAdmin)
+        if (!this.isInstanceAdmin && !this._cfoService.classifyTransactionsAllowed)
             return true;
 
         let img = new Image();
@@ -425,7 +425,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         };
 
         let element = <any>$($event.element);
-        element.find('.dx-data-row')
+        this.isInstanceAdmin && element.find('.dx-data-row')
             .off('dragstart').off('dragend')
             .on('dragstart', (e) => {
                 if (this.categoryList.instance.element().querySelector('.dx-edit-row')) {
@@ -511,7 +511,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     checkCanDrop(targetElement, sourceCategory): boolean {
-        if (sourceCategory) {
+        if (sourceCategory && this.isInstanceAdmin) {
             let targetCashType = this.getCashflowTypeFromClassList(targetElement.classList);
             if (sourceCategory.element == targetElement ||
                 (targetCashType != 'unknown' && sourceCategory.cashType != 'unknown' && sourceCategory.cashType != targetCashType))

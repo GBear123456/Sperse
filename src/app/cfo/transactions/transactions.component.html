@@ -177,7 +177,7 @@
                                                     <span class="classification-item-percent">{{(creditTransactionCount - creditClassifiedTransactionCount) / creditTransactionCount | percent}}</span>
                                                 </li>
                                             </ul>
-                                            <div class="btns-wrap clearfix" *ngIf="manageAllowed">
+                                            <div class="btns-wrap clearfix" *ngIf="isInstanceAdmin">
                                                 <a (click)="openDialog('credit');" class="small-button btn-layout">
                                                     {{l('Unclassify_Btn')}}
                                                 </a>
@@ -217,7 +217,7 @@
                                                     <span class="classification-item-percent">{{(debitTransactionCount - debitClassifiedTransactionCount) / debitTransactionCount | percent}}</span>
                                                 </li>
                                             </ul>
-                                            <div class="btns-wrap clearfix" *ngIf="manageAllowed">
+                                            <div class="btns-wrap clearfix" *ngIf="isInstanceAdmin">
                                                 <a (click)="openDialog('debit');" class="small-button btn-layout">
                                                     {{l('Unclassify_Btn')}}
                                                 </a>
@@ -266,7 +266,7 @@
                                                     <span class="classification-item-percent">{{(transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount)) / transactionCount | percent}}</span>
                                                 </li>
                                             </ul>
-                                            <div class="btns-wrap clearfix" *ngIf="manageAllowed">
+                                            <div class="btns-wrap clearfix" *ngIf="isInstanceAdmin">
                                                 <a (click)="openDialog('total');" class="small-button btn-layout">
                                                     {{l('Unclassify_Btn')}}
                                                 </a>

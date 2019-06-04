@@ -108,7 +108,7 @@ export class CFOService extends CFOServiceBase {
     }
 
     private updateMenuItems() {
-        this._appService.topMenu.items
+        this._appService.topMenu && this._appService.topMenu.items
             .forEach((item, i) => {
                 if (!i) {
                     if (!this.hasStaticInstance)

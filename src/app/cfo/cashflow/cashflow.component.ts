@@ -913,10 +913,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.initHeadlineConfig();
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
-        if (this._cfoService.isInstanceAdmin) {
+        if (this.isInstanceAdmin || this._cfoService.classifyTransactionsAllowed) {
             this.cashflowService.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
             this.createDragImage();
-
             document.addEventListener('keydown', this.keyDownEventHandler, true);
         }
     }
@@ -2714,7 +2713,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     isCopyable(cellObj) {
-        return this._cfoService.isInstanceAdmin && cellObj.area === 'data' &&
+        return this.isInstanceAdmin && cellObj.area === 'data' &&
             (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && cellObj.cell.value;
     }
 
@@ -3154,7 +3153,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             }
 
-            if (this._cfoService.isInstanceAdmin && this.isReconciliationRows(cell) && cell.value !== 0) {
+            if (this.isInstanceAdmin && this.isReconciliationRows(cell) && cell.value !== 0) {
                 let actionButton = this.createActionButton('discard');
                 options.elementsToAppend.push(actionButton);
             }
@@ -4037,7 +4036,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let isProjectedCellOfCurrentMonth = isProjectedHeaderCell ? this.isProjectedCellOfCurrentMonth(cellObj) : false;
 
         /** If user double click on category - open edit field */
-        if (this._cfoService.isInstanceAdmin && this.cashflowService.isCategoryCell(cellObj.cell, cellObj.area)) {
+        if (this.isInstanceAdmin && this.cashflowService.isCategoryCell(cellObj.cell, cellObj.area)) {
             /** Cancel all clicks types - single and double */
             cellObj.cancel = true;
             /** Handle double click */
@@ -4431,7 +4430,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                  */
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                 const cellIsNotHistorical = this.cellIsNotHistorical(cellObj);
-                if (
+                if (this.isInstanceAdmin &&
                     /** disallow adding historical periods */
                     cellIsNotHistorical &&
                     /** allow adding only for empty cells */
@@ -5391,7 +5390,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.hideModifyingNumberBox();
 
         this.cashflowService.handleDoubleSingleClick(e, this.onDetailsCellSingleClick.bind(this),
-            this._cfoService.isInstanceAdmin ? this.onDetailsCellDoubleClick.bind(this) : Function());
+            this.isInstanceAdmin || this._cfoService.classifyTransactionsAllowed ? this.onDetailsCellDoubleClick.bind(this) : Function());
 
         if (e.rowType === 'data' && !e.column.command) {
             if (!e.cellElement.classList.contains('selectedCell')) {
@@ -5405,7 +5404,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId && !e.row.inserted && e.data.cashflowTypeId !== Reconciliation && e.data.cashflowTypeId !== StartedBalance) {
             this.transactionId = e.data.id;
             this.showTransactionDetailsInfo();
-        } else if (this._cfoService.isInstanceAdmin && e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
+        } else if (this.isInstanceAdmin && e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
 
@@ -5413,7 +5412,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (e.column && (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'descriptor' || e.column.dataField == 'accountNumber'))
             e.component.editCell(e.rowIndex, e.column.dataField);
 
-        if (e.column && e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
+        if (this.isInstanceAdmin && e.column && e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
 
