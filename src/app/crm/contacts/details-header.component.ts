@@ -20,7 +20,6 @@ import { CreateClientDialogComponent } from '../shared/create-client-dialog/crea
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { RelationCompaniesDialogComponent } from './relation-companies-dialog/relation-companies-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
-import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import {
     ContactInfoDto,
     PersonContactInfoDto,
@@ -174,16 +173,10 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
 
     removePersonOrgRelation(event) {
         let companyName = this.data['organizationContactInfo'].fullName;
-        this.dialog.open(ConfirmDialogComponent, {
-            data: {
-                title: this.l('ContactRelationRemovalConfirmationTitle'),
-                message: this.l('ContactRelationRemovalConfirmationMessage', companyName)
-            }
-        }).afterClosed().subscribe(result => {
+        this.message.confirm(this.l('ContactRelationRemovalConfirmationMessage', companyName), (result) => {
             if (result) {
-                this.showRemovingOrgRelationProgress = true;
-                this.dialog.closeAll();
                 let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
+                this.showRemovingOrgRelationProgress = true;
                 this._personOrgRelationService.delete(orgRelationId)
                 .pipe(finalize(() => this.showRemovingOrgRelationProgress = false))
                 .subscribe(() => {
@@ -194,7 +187,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
                 });
             }
         });
-        event.stopPropagation();
+        event && event.stopPropagation();
     }
 
     showCompanyDialog(e) {
@@ -206,7 +199,8 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.dialog.open(CompanyDialogComponent, {
             data: {
                 company: companyInfo,
-                contactInfo: this.data
+                contactInfo: this.data,
+                invalidate: this.onInvalidate
             },
             panelClass: 'slider',
             maxWidth: '830px'
@@ -491,7 +485,7 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
         this.lifeCycleService.destroy.next();
     }
 
-    refresh(event) {
-        this.onInvalidate.emit(event);
+    refresh() {
+        this.onInvalidate.emit();
     }
 }
