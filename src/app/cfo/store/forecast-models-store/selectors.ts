@@ -21,7 +21,7 @@ export const getForecastModels = createSelector(
 export const getSelectedForecastModelId = createSelector(
     getForecastModelsState,
     getForecastModels,
-    (state: State, forecastModels: Partial<ForecastModelDto>[]) => state.selectedForecastModelId || (forecastModels && forecastModels[0].id)
+    (state: State, forecastModels: Partial<ForecastModelDto>[], props) => state.selectedForecastModelId || (props && props.hasOwnProperty('defaultId') ? props.defaultValue : (forecastModels && forecastModels[0].id))
 );
 
 export const getSelectedForecastModelIndex = createSelector(
