@@ -28,8 +28,7 @@
                      </div>
                  </dx-tooltip>
                 <div class="value" id="valueDaily">
-                    {{ dailyStatsAmount | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
-                    <span>.{{ ( dailyStatsAmount ? dailyStatsAmount : 1 ) | customNumber : '0.2-2' }}</span>
+                    {{ dailyStatsAmount | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}<span>.{{ ( dailyStatsAmount ? dailyStatsAmount : 1 ) | customNumber : '0.2-2' }}</span>
                 </div>
                 <div class="name">{{dailyStatsText}}</div>
             </div>

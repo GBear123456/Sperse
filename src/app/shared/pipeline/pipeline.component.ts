@@ -138,16 +138,16 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         this.selectedEntities.splice(this.selectedEntities.indexOf(entity), 1);
                         if (!this.selectedEntities.length)
                             this.reloadStagesInternal(reloadStageList);
-                    }
-                    this.getSelectedEntities().forEach((entity, index, selectedList) => {
+                    };
+                    this.getSelectedEntities().forEach((entity) => {
                         let oldStage = this.stages.find(stage => stage.id == entity.StageId);
-                        if (oldStage['isFinal'])                    
+                        if (oldStage['isFinal'])
                             return checkReloadStages(entity);
 
                         if (entity) {
                             entity.SortOrder = newSortOrder;
                             this.updateEntityStage(entity, newStage, oldStage, () => {
-                                this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);                                
+                                this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);
                                 let entities = oldStage['entities'];
                                 if (entity.Id != entityId)
                                     entities.splice(entities.indexOf(entity), 1);
@@ -367,7 +367,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             if (!isNaN(stage['lastSortOrder']) && page)
                 filter['SortOrder'] = {lt: stage['lastSortOrder']};
 
-            dataSource.pageSize(Math.max(!page && stage['entities'] 
+            dataSource.pageSize(Math.max(!page && stage['entities']
                 && stage['entities'].length || 0, this.stagePageCount));
             dataSource.sort({getter: 'SortOrder', desc: true});
             response = from(this._odataService.loadDataSource(
