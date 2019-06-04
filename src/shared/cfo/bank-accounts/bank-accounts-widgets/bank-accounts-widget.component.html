@@ -35,8 +35,10 @@
             <div class="row">
                 <div class="col-sm-3 connections"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.syncAccountsAmount$ | async" [description]="l('Connections')"></info-component></div>
                 <div class="col-sm-3 accounts"><info-component imgSrc="assets/common/icons/total-icon.svg" [value]="bankAccountsService.accountsAmount$ | async" [description]="l('Accounts')"></info-component></div>
-                <div class="col-sm-6 current-balance"><info-component imgSrc="assets/common/icons/coins-icon.svg" [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'" [description]="l('Current_Balance')">
-                    <sup>{{bankAccountsService.accountsDataTotalNetWorth$ | async | customNumber:'0.2-2'}}</sup>
+                <div class="col-sm-6 current-balance">
+                    <info-component imgSrc="assets/common/icons/coins-icon.svg"
+                                    [value]="bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'"
+                                    [description]="l('Current_Balance')">
                 </info-component></div>
             </div>
         </div>
@@ -117,14 +119,14 @@
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="(cell.text)">
                                 <div class="number-value bold">
-                                    {{cell.text | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}<sup>{{cell.text | customNumber:'0.2-2'}}</sup>
+                                    {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                                 </div>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'colorBalanceTemplate'" class="color-div">
                             <ng-container *ngIf="(cell.text)">
                                 <div class="balance-container">
-                                    {{cell.text | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}<sup>{{cell.text | customNumber:'0.2-2'}}</sup>
+                                    {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                                 </div>
                             </ng-container>
                         </div>
@@ -156,7 +158,7 @@
             <div *dxTemplate="let cell of 'amountTemplate'">
                 <ng-container *ngIf="(cell.text)">
                     <div class="number-value bold">
-                        {{cell.text | customNumber:'1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}<sup>{{cell.text | customNumber:'0.2-2'}}</sup>
+                        {{cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                     </div>
                 </ng-container>
             </div>

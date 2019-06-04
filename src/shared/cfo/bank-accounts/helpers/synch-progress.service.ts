@@ -113,19 +113,18 @@ export class SynchProgressService {
     }
 
     private runSynchProgress() {
-        this.appHttpConfiguration.avoidErrorHandling = true;
-        const method = this.cfoService.isForUser
-            ? this.myFinanceService.getSyncProgress()
-            : this.syncServiceProxy.getSyncProgress(
-                InstanceType[this.cfoService.instanceType],
-                this.cfoService.instanceId
-                );
+        if (this.cfoService.isForUser)
+            return;
 
-        this.getSyncProgressSubscription = method.pipe(finalize(() => {
+        this.appHttpConfiguration.avoidErrorHandling = true;
+        this.getSyncProgressSubscription = this.syncServiceProxy.getSyncProgress(
+            InstanceType[this.cfoService.instanceType],
+            this.cfoService.instanceId
+        ).pipe(finalize(() => {
             this.appHttpConfiguration.avoidErrorHandling = false;
             this.runGetStatus();
-        }))
-         .subscribe(syncData => this.syncData$.next(syncData));
+        })
+        ).subscribe(syncData => this.syncData$.next(syncData));
     }
 
     private subscribeToProgress() {
