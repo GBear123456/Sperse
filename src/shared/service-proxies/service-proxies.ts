@@ -58575,6 +58575,8 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
     accessToken!: string | undefined;
     encryptedAccessToken!: string | undefined;
     expireInSeconds!: number | undefined;
+    shouldResetPassword!: boolean | undefined;
+    passwordResetCode!: string | undefined;
 
     constructor(data?: IImpersonatedAuthenticateResultModel) {
         if (data) {
@@ -58590,6 +58592,8 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
             this.accessToken = data["accessToken"];
             this.encryptedAccessToken = data["encryptedAccessToken"];
             this.expireInSeconds = data["expireInSeconds"];
+            this.shouldResetPassword = data["shouldResetPassword"];
+            this.passwordResetCode = data["passwordResetCode"];
         }
     }
 
@@ -58605,6 +58609,8 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
         data["accessToken"] = this.accessToken;
         data["encryptedAccessToken"] = this.encryptedAccessToken;
         data["expireInSeconds"] = this.expireInSeconds;
+        data["shouldResetPassword"] = this.shouldResetPassword;
+        data["passwordResetCode"] = this.passwordResetCode;
         return data; 
     }
 }
@@ -58613,6 +58619,8 @@ export interface IImpersonatedAuthenticateResultModel {
     accessToken: string | undefined;
     encryptedAccessToken: string | undefined;
     expireInSeconds: number | undefined;
+    shouldResetPassword: boolean | undefined;
+    passwordResetCode: string | undefined;
 }
 
 export class SwitchedAccountAuthenticateResultModel implements ISwitchedAccountAuthenticateResultModel {

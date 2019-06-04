@@ -3087,7 +3087,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** @todo check for memory leak */
                     let accountNumberElement = document.createElement('span');
                     accountNumberElement.className = 'accountNumber';
-                    accountNumberElement.innerText = '***' + account.accountNumber.slice(-4);
+                    accountNumberElement.innerText = account.accountNumber;
                     options.elementsToAppend.push(accountNumberElement);
                 }
                 options.general['isAccountHeaderCell'] = true;
