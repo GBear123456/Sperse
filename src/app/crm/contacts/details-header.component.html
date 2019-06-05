@@ -4,9 +4,6 @@
         <div class="photo-area" (click)="showUploadPhotoDialog($event)" [ngStyle]="{'background-image': data?.personContactInfo?.primaryPhoto ? 'url(data:image/png;base64,' + data.personContactInfo.primaryPhoto + ')': ''}"></div>
     </div>
     <div class="personal_info">
-        <div *ngIf="data?.groupId" class="status-group-wrapper">
-            <span>{{statusNames[data?.statusId]}} {{groupNames[data?.groupId]}}</span>
-        </div>
         <div class="full_name">
             <h1 *ngIf="data && data?.personContactInfo">
                 <inplace-edit [data]="getNameInplaceEditData() | async" (valueChanged)="updatePrimaryContactName($event)" (openDialog)="showEditPersonDialog($event)"></inplace-edit>
