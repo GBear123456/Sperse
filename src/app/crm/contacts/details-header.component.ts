@@ -47,7 +47,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     selector: 'details-header',
     templateUrl: './details-header.component.html',
     styleUrls: ['./details-header.component.less'],
-    providers: [ AppService, ContactPhotoServiceProxy, LifecycleSubjectsService ]
+    providers: [ ContactPhotoServiceProxy, LifecycleSubjectsService ]
 })
 export class DetailsHeaderComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
