@@ -110,7 +110,7 @@ export class AppPreBootstrap {
             abp.multiTenancy.setTenantIdCookie();
             if (result.shouldResetPassword) 
                 location.href = location.origin + '/account/reset-password?resetCode=' +
-                    result.passwordResetCode + '&userId=' + result.userId;
+                    result.passwordResetCode + '&tenantId=' + tenantId + '&userId=' + result.userId;
             else
                 location.search = '';
         }).fail(() => {
