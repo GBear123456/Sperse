@@ -7191,19 +7191,16 @@ export class ContactServiceProxy {
     }
 
     /**
-     * @includePhotos (optional) 
      * @searchPhrase (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getAllowedAssignableUsers(contactGroupId: string, includePhotos: boolean | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
+    getAllowedAssignableUsers(contactGroupId: string, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAllowedAssignableUsers?";
         if (contactGroupId === undefined || contactGroupId === null)
             throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
         else
             url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
-        if (includePhotos !== undefined)
-            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
@@ -15657,13 +15654,10 @@ export class MyFinancesServiceProxy {
     }
 
     /**
-     * @syncTypeId (optional) 
      * @return Success
      */
-    createUserInstanceProviderUIToken(syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/CreateUserInstanceProviderUIToken?";
-        if (syncTypeId !== undefined)
-            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
+    getUserInstanceStatus(): Observable<GetStatusOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetUserInstanceStatus";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -15675,21 +15669,21 @@ export class MyFinancesServiceProxy {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateUserInstanceProviderUIToken(response_);
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserInstanceStatus(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateUserInstanceProviderUIToken(<any>response_);
+                    return this.processGetUserInstanceStatus(<any>response_);
                 } catch (e) {
-                    return <Observable<GetProviderUITokenOutput>><any>_observableThrow(e);
+                    return <Observable<GetStatusOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetProviderUITokenOutput>><any>_observableThrow(response_);
+                return <Observable<GetStatusOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateUserInstanceProviderUIToken(response: HttpResponseBase): Observable<GetProviderUITokenOutput> {
+    protected processGetUserInstanceStatus(response: HttpResponseBase): Observable<GetStatusOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -15700,7 +15694,7 @@ export class MyFinancesServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
+            result200 = resultData200 ? GetStatusOutput.fromJS(resultData200) : new GetStatusOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -15708,7 +15702,7 @@ export class MyFinancesServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetProviderUITokenOutput>(<any>null);
+        return _observableOf<GetStatusOutput>(<any>null);
     }
 
     /**
@@ -15767,6 +15761,61 @@ export class MyFinancesServiceProxy {
     }
 
     /**
+     * @syncTypeId (optional) 
+     * @return Success
+     */
+    createUserInstanceProviderUIToken(syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/CreateUserInstanceProviderUIToken?";
+        if (syncTypeId !== undefined)
+            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateUserInstanceProviderUIToken(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateUserInstanceProviderUIToken(<any>response_);
+                } catch (e) {
+                    return <Observable<GetProviderUITokenOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetProviderUITokenOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateUserInstanceProviderUIToken(response: HttpResponseBase): Observable<GetProviderUITokenOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetProviderUITokenOutput>(<any>null);
+    }
+
+    /**
      * @forcedSync (optional) 
      * @newOnly (optional) 
      * @return Success
@@ -15822,58 +15871,6 @@ export class MyFinancesServiceProxy {
             }));
         }
         return _observableOf<SyncAllAccountsOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getUserInstanceStatus(): Observable<GetStatusOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetUserInstanceStatus";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetUserInstanceStatus(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetUserInstanceStatus(<any>response_);
-                } catch (e) {
-                    return <Observable<GetStatusOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetStatusOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetUserInstanceStatus(response: HttpResponseBase): Observable<GetStatusOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetStatusOutput.fromJS(resultData200) : new GetStatusOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetStatusOutput>(<any>null);
     }
 }
 
@@ -28037,15 +28034,12 @@ export class UserAssignmentServiceProxy {
     }
 
     /**
-     * @includePhotos (optional) 
      * @searchPhrase (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getAllowedAssignableUsersForActivity(includePhotos: boolean | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
+    getAllowedAssignableUsersForActivity(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetAllowedAssignableUsersForActivity?";
-        if (includePhotos !== undefined)
-            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
@@ -34495,6 +34489,8 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
     category!: string;
     parentCategory!: string | undefined;
     sortId!: number | undefined;
+    reportingCategoryCode!: string | undefined;
+    reportingCategoryName!: string | undefined;
 
     constructor(data?: IAccountingCategoryDto) {
         if (data) {
@@ -34513,6 +34509,8 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
             this.category = data["category"];
             this.parentCategory = data["parentCategory"];
             this.sortId = data["sortId"];
+            this.reportingCategoryCode = data["reportingCategoryCode"];
+            this.reportingCategoryName = data["reportingCategoryName"];
         }
     }
 
@@ -34531,6 +34529,8 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
         data["category"] = this.category;
         data["parentCategory"] = this.parentCategory;
         data["sortId"] = this.sortId;
+        data["reportingCategoryCode"] = this.reportingCategoryCode;
+        data["reportingCategoryName"] = this.reportingCategoryName;
         return data; 
     }
 }
@@ -34542,6 +34542,8 @@ export interface IAccountingCategoryDto {
     category: string;
     parentCategory: string | undefined;
     sortId: number | undefined;
+    reportingCategoryCode: string | undefined;
+    reportingCategoryName: string | undefined;
 }
 
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
@@ -50883,8 +50885,8 @@ export class SendAnnouncementRequest implements ISendAnnouncementRequest {
     campaignId!: number;
     offerDetailsLink!: string;
     serviceName!: SendAnnouncementRequestServiceName;
-    listName!: string | undefined;
-    emailAddresses!: string | undefined;
+    contactListName!: string | undefined;
+    emailAddresses!: string[] | undefined;
 
     constructor(data?: ISendAnnouncementRequest) {
         if (data) {
@@ -50900,8 +50902,12 @@ export class SendAnnouncementRequest implements ISendAnnouncementRequest {
             this.campaignId = data["campaignId"];
             this.offerDetailsLink = data["offerDetailsLink"];
             this.serviceName = data["serviceName"];
-            this.listName = data["listName"];
-            this.emailAddresses = data["emailAddresses"];
+            this.contactListName = data["contactListName"];
+            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
+                this.emailAddresses = [];
+                for (let item of data["emailAddresses"])
+                    this.emailAddresses.push(item);
+            }
         }
     }
 
@@ -50917,8 +50923,12 @@ export class SendAnnouncementRequest implements ISendAnnouncementRequest {
         data["campaignId"] = this.campaignId;
         data["offerDetailsLink"] = this.offerDetailsLink;
         data["serviceName"] = this.serviceName;
-        data["listName"] = this.listName;
-        data["emailAddresses"] = this.emailAddresses;
+        data["contactListName"] = this.contactListName;
+        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
+            data["emailAddresses"] = [];
+            for (let item of this.emailAddresses)
+                data["emailAddresses"].push(item);
+        }
         return data; 
     }
 }
@@ -50927,8 +50937,8 @@ export interface ISendAnnouncementRequest {
     campaignId: number;
     offerDetailsLink: string;
     serviceName: SendAnnouncementRequestServiceName;
-    listName: string | undefined;
-    emailAddresses: string | undefined;
+    contactListName: string | undefined;
+    emailAddresses: string[] | undefined;
 }
 
 export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
