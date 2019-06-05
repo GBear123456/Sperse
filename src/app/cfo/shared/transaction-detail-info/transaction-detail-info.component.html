@@ -86,7 +86,6 @@
                                        [disabled]="!isEditAllowed"
                                        [inputAttr]="{ title: accountingTypes.length ? '' : ls.l('TransactionDetail_Choose_Accounting_Type')}"
                                        [placeholder]="ls.l('TransactionDetail_Choose_Accounting_Type')"
-                                       [(value)]="selectedAccountingType"
                                        itemTemplate="itemTemplate"
                                        (onOpened)="getAccountingTypes()"
                                        (onItemClick)="getAccountingTypes()"
