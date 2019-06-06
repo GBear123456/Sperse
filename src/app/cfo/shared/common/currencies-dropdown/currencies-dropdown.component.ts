@@ -12,7 +12,10 @@ import { CurrencyInfo } from '@shared/service-proxies/service-proxies';
 @Component({
     selector: 'currencies-dropdown',
     templateUrl: './currencies-dropdown.component.html',
-    styleUrls: [ '../../../../shared/common/styles/select-box.less' ]
+    styleUrls: [
+        '../../../../shared/common/styles/select-box.less',
+        './currencies-dropdown.component.less'
+    ]
 })
 export class CurrenciesDropdownComponent implements OnInit {
     public currencies$: Observable<Partial<CurrencyInfo>[]> = this.store$.pipe(select(CurrenciesStoreSelectors.getCurrencies));

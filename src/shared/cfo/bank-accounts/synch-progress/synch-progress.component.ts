@@ -1,6 +1,5 @@
-import { Component, OnInit, Injector, EventEmitter, Output, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, Injector, EventEmitter, Input, Output, OnDestroy, ViewChild } from '@angular/core';
 import { SyncProgressOutput, SyncProgressDtoSyncStatus } from 'shared/service-proxies/service-proxies';
-import { AppConsts } from 'shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
@@ -12,6 +11,7 @@ import { takeUntil } from 'rxjs/operators';
     selector: 'synch-progress'
 })
 export class SynchProgressComponent extends CFOComponentBase implements OnInit, OnDestroy {
+    @Input() isSyncAccountButtonShown = false;
     @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
     @Output() onComplete = new EventEmitter();
     completed = true;
@@ -61,6 +61,12 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.accountProgressTooltipText = message;
 
         setTimeout(() => this.accountProgressTooltip.instance.repaint());
+    }
+
+    syncAll() {
+        setTimeout(() => {
+            this.syncProgressService.startSynchronization(true, false, 'all');
+        }, 300);
     }
 
     activate() {
