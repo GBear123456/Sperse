@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription, Subject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { FilterModel } from './models/filter.model';
 import * as _ from 'underscore';
 
 @Injectable()
 export class FiltersService {
     private filters: FilterModel[];
-    private subjectFilters: Subject<FilterModel[]>;
-    private subjectFilter: Subject<FilterModel>;
-    public  subjectFilterDisable: Subject<undefined>;
+    private subjectFilters: Subject<FilterModel[]> = new Subject<FilterModel[]>();
+    private subjectFilter: Subject<FilterModel> = new Subject<FilterModel>();
+    public  subjectFilterDisable: Subject<undefined> = new Subject();
     private subscribers: Array<Subscription> = [];
     private disableTimeout: any;
 
@@ -16,15 +17,21 @@ export class FiltersService {
     public fixed = false;
     public hasFilterSelected = false;
 
-    constructor() {
-        this.subjectFilters = new Subject<FilterModel[]>();
-        this.subjectFilter = new Subject<FilterModel>();
-        this.subjectFilterDisable = new Subject();
-    }
+    filtersValues$: Observable<any> = this.subjectFilter.pipe(
+        map(() => {
+            let filtersValues = {};
+            this.filters.forEach((filterModel: FilterModel) => {
+                filtersValues = {
+                    ...filtersValues,
+                    ...filterModel.getValues()
+                };
+            });
+            return filtersValues;
+        })
+    );
 
     setup(filters: FilterModel[], initialValues?: any, applyFilterImmediately = true) {
         this.subjectFilters.next(this.filters = filters);
-
         if (initialValues && initialValues.filters) {
             let initFilters = JSON.parse(decodeURIComponent(initialValues.filters));
             filters.forEach((filter) => {
