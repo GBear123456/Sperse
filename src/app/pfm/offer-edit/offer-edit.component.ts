@@ -37,7 +37,6 @@ import * as moment from 'moment-timezone';
 import { RootComponent } from 'root.components';
 import {
     CountryStateDto,
-    CreditScores2,
     ExtendOfferDtoCampaignProviderType,
     ExtendOfferDtoCardNetwork,
     ExtendOfferDtoCardType,
@@ -121,7 +120,6 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     cardNetworkEnum = ExtendOfferDtoCardNetwork;
     targetAudienceEnum = ExtendOfferDtoTargetAudience;
     securingTypeEnum = ExtendOfferDtoSecuringType;
-    creditScoresEnum = CreditScores2;
     offerCollectionEnum = ExtendOfferDtoOfferCollection;
     model: OfferDetailsForEditDto;
     initialModel: OfferDetailsForEditDto;
