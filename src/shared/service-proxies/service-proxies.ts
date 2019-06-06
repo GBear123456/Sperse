@@ -19279,6 +19279,62 @@ export class PersonContactServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    activateUserForContact(input: ActivateUserForContactInput | null | undefined): Observable<ActivateUserForContactOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/ActivateUserForContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processActivateUserForContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processActivateUserForContact(<any>response_);
+                } catch (e) {
+                    return <Observable<ActivateUserForContactOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ActivateUserForContactOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processActivateUserForContact(response: HttpResponseBase): Observable<ActivateUserForContactOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ActivateUserForContactOutput.fromJS(resultData200) : new ActivateUserForContactOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ActivateUserForContactOutput>(<any>null);
+    }
 }
 
 @Injectable()
@@ -26836,62 +26892,6 @@ export class UserServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @input (optional) 
-     * @return Success
-     */
-    activateUserForContact(input: ActivateUserForContactInput | null | undefined): Observable<ActivateUserForContactOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/User/ActivateUserForContact";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processActivateUserForContact(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processActivateUserForContact(<any>response_);
-                } catch (e) {
-                    return <Observable<ActivateUserForContactOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ActivateUserForContactOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processActivateUserForContact(response: HttpResponseBase): Observable<ActivateUserForContactOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ActivateUserForContactOutput.fromJS(resultData200) : new ActivateUserForContactOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ActivateUserForContactOutput>(<any>null);
     }
 
     /**
@@ -53883,6 +53883,78 @@ export interface ICreateUserForContactInput {
     assignedRoleNames: string[];
 }
 
+export class ActivateUserForContactInput implements IActivateUserForContactInput {
+    contactId!: number;
+
+    constructor(data?: IActivateUserForContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+        }
+    }
+
+    static fromJS(data: any): ActivateUserForContactInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActivateUserForContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        return data; 
+    }
+}
+
+export interface IActivateUserForContactInput {
+    contactId: number;
+}
+
+export class ActivateUserForContactOutput implements IActivateUserForContactOutput {
+    userId!: number | undefined;
+
+    constructor(data?: IActivateUserForContactOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): ActivateUserForContactOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActivateUserForContactOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IActivateUserForContactOutput {
+    userId: number | undefined;
+}
+
 export class CreatePersonOrgRelationInput implements ICreatePersonOrgRelationInput {
     personId!: number;
     organizationId!: number | undefined;
@@ -59715,78 +59787,6 @@ export class UiCustomizationFooterSettingsEditDto implements IUiCustomizationFoo
 
 export interface IUiCustomizationFooterSettingsEditDto {
     fixedFooter: boolean | undefined;
-}
-
-export class ActivateUserForContactInput implements IActivateUserForContactInput {
-    contactId!: number;
-
-    constructor(data?: IActivateUserForContactInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-        }
-    }
-
-    static fromJS(data: any): ActivateUserForContactInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new ActivateUserForContactInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        return data; 
-    }
-}
-
-export interface IActivateUserForContactInput {
-    contactId: number;
-}
-
-export class ActivateUserForContactOutput implements IActivateUserForContactOutput {
-    userId!: number | undefined;
-
-    constructor(data?: IActivateUserForContactOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.userId = data["userId"];
-        }
-    }
-
-    static fromJS(data: any): ActivateUserForContactOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new ActivateUserForContactOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        return data; 
-    }
-}
-
-export interface IActivateUserForContactOutput {
-    userId: number | undefined;
 }
 
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
