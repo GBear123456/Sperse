@@ -1,4 +1,10 @@
 <div class="header" #header>
+    <div class="row first-sub-header">
+        <search-input [width]="searchInputWidth" (onInput)="searchChanged($event)" [value]="bankAccountsService.searchValue.value"></search-input>
+        <sort-button [items]="sortItems" (onChange)="changeSorting($event)"></sort-button>
+        <expand-button [items]="expandItems" (onExpand)="expand($event)"></expand-button>
+        <add-account-button *ngIf="showAddAccountButton" (onComplete)="bankAccountsService.next(null)"></add-account-button>
+    </div>
     <div class="row">
         <div class="left-header col-sm-12">
             <div class="row">
@@ -26,8 +32,8 @@
                     </selection-filter>
                 </div>
                 <div class="col-sm-2 is-active-filter">
-                    <span>{{ bankAccountsService.state.isActive !== false ? l('Active') : l('Disabled') }}</span>
-                    <dx-switch [value]="bankAccountsService.state.isActive !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value, saveChangesInCache)" [width]="32"></dx-switch>
+                    <span>{{ bankAccountsService.activeStatus.value !== false ? l('Active') : l('Disabled') }}</span>
+                    <dx-switch [value]="bankAccountsService.activeStatus.value !== false" (onValueChanged)="bankAccountsService.changeActiveFilter($event.value, saveChangesInCache)" [width]="32"></dx-switch>
                 </div>
             </div>
         </div>
@@ -66,14 +72,14 @@
             <dxo-scrolling showScrollbar="never"></dxo-scrolling>
             <dxo-paging [enabled]="false"></dxo-paging>
             <dxo-filter-row [visible]="false"></dxo-filter-row>
-            <dxi-column dataField="id" [visible]="false" sortOrder="desc" [sortIndex]="1"></dxi-column>
+            <dxi-column dataField="id" [visible]="false" sortOrder="desc"></dxi-column>
             <dxi-column dataField="selected" caption="" [width]="30" alignment="center" dataType="boolean"></dxi-column>
-            <dxi-column dataField="name" [caption]="l('Account')" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
-            <dxi-column dataField="syncAccountStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="1" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
+            <dxi-column dataField="name" [caption]="l('Account')" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"  ></dxi-column>
+            <dxi-column dataField="syncAccountStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="2" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
             <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
-            <dxi-column dataField="bankAccounts.length" [width]="10" [sortIndex]="0" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
-            <dxi-column [width]="30" alignment="right" [allowEditing]="false" cellTemplate="expandTemplate"></dxi-column>
-            <dxi-column dataField="balance" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false" [(visible)]="showAdvancedColumns"></dxi-column>
+            <dxi-column dataField="bankAccounts.length" [visible]="showAdvancedColumns" [width]="10" [sortIndex]="1" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>
+            <dxi-column [width]="30" alignment="right" [allowEditing]="false" [visible]="showAdvancedColumns" cellTemplate="expandTemplate"></dxi-column>
+            <dxi-column dataField="balance" [caption]="l('BankAccountsWidget_Value')" cellTemplate="amountTemplate" alignment="right" [allowEditing]="false"></dxi-column>
             <dxi-column [width]="40" alignment="right" dataField="syncRef" [allowEditing]="false" [(visible)]="allowUpdateAccount" cellTemplate="actionsTemplate"></dxi-column>
             <div *dxTemplate="let syncAccount of 'detail'">
                 <div class="bank-accounts-grid-container">
@@ -107,12 +113,12 @@
                         <dxi-column dataField="selected" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
                         <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing"></dxi-column>
 
-                        <dxi-column dataField="accountNumber" cssClass="accountNumber" [allowEditing]="false" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="allowEditing"></dxi-column>
+                        <dxi-column dataField="accountNumber" cssClass="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="allowEditing"></dxi-column>
                         <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
                                     cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
                         <dxi-column dataField="businessEntityId" [allowEditing]="allowEditing" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
                         <dxi-column dataField="isActive" [allowEditing]="allowEditing" [visible]="false"></dxi-column>
-                        <dxi-column dataField="balance" [allowEditing]="false" cssClass="tabular" alignment="right" [allowEditing]="true" cellTemplate="amountTemplate" [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
+                        <dxi-column dataField="balance" cssClass="tabular" alignment="right" cellTemplate="amountTemplate" [(visible)]="showAdvancedColumns" [allowEditing]="false"></dxi-column>
                         <dxi-column [width]="200" dataField="availableBalance" cssClass="available-balance" cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <dxi-column [width]="200" dataField="totalCreditLine" cssClass="totalCreditLine-balance"  cellTemplate="colorBalanceTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
                         <dxi-column [width]="100" dataField="utilized" cellTemplate="utilizedTemplate" alignment="right" [allowEditing]="false" [(visible)]="showCreditInfo"></dxi-column>
@@ -164,8 +170,10 @@
             </div>
             <div *dxTemplate="let cell of 'statusTemplate'">
                 <ng-container *ngIf="(cell.text)">
-                    <div [class]="'account-status ' + cell.text | lowercase">
-                        {{l('SyncStatus_' + cell.text) | uppercase}}
+                    <div [class]="'account-status ' + cell.text | lowercase" [ngClass]="{'short': !showStatusText}">
+                        <ng-container *ngIf="showStatusText">
+                            {{l('SyncStatus_' + cell.text) | uppercase}}
+                        </ng-container>
                     </div>
                 </ng-container>
             </div>
@@ -181,7 +189,6 @@
                     <div class="sync-date">Last sync: {{cell.text | date: 'MMM d, y ' : userTimezone}}</div>
                 </ng-container>
             </div>
-
         </dx-data-grid>
     </div>
     <dx-context-menu [items]="contextMenuItems"
@@ -200,7 +207,7 @@
               [width]="350"
               [height]="250"
               [showTitle]="true"
-              title="{{l('Edit_Bank_Account_Name')}}"
+              [title]="l('Edit_Bank_Account_Name')"
               [dragEnabled]="false"
               [closeOnOutsideClick]="true"
               [(visible)]="popupVisible">

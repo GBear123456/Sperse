@@ -71,12 +71,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
             onRefresh: this.refresh.bind(this),
             buttons: [
                 {
-                    enabled: (this.isInstanceAdmin || this.isMemberAccessManage) && this.createAccountAvailable,
-                    class: 'btn-default',
-                    lable: '+ ' + this.l('Add_account'),
-                    action: this.openAddAccountDialog.bind(this)
-                },
-                {
                     enabled: true,
                     action: this.syncAll.bind(this),
                     lable: this.l('SyncAll'),
@@ -84,16 +78,6 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
                 }
             ]
         };
-    }
-
-    private openAddAccountDialog() {
-        if (!this.createAccountAvailable)
-            return;
-
-        const accountConnectorDialog = this._dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig);
-        accountConnectorDialog.componentInstance.onComplete.subscribe(() => {
-            this.refresh();
-        });
     }
 
     refresh() {

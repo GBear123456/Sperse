@@ -1,0 +1,15 @@
+<dx-select-box [text]="ls.l('Expand')"
+               [hint]="ls.l('Expand')"
+               placeholder=""
+               [items]="items"
+               displayExpr="text"
+               valueExpr="key"
+               width="100px"
+               fieldTemplate="selectTemplate"
+               (onOpened)="changeOptionsPopupWidth($event)"
+               (onItemClick)="itemClicked($event)">
+    <div *dxTemplate="let data of 'selectTemplate'">
+        <span>{{ ls.l('Expand') }}</span>
+        <dx-text-box [visible]="false"></dx-text-box>
+    </div>
+</dx-select-box>

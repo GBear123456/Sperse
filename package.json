@@ -19,7 +19,7 @@
     "build:widgets:beta": "ng build package-chooser-widget --configuration=beta && node widgets-build.js",
     "build:widgets:prod": "ng build package-chooser-widget --configuration=prod && node widgets-build.js",
     "start": "ng serve --host 0.0.0.0 --port 7200 --configuration=dev",
-    "start-staging": "ng serve --host 0.0.0.0 --port 7200 --configuration=devstaging",
+    "start-staging": "ng serve --host 0.0.0.0 --poll 1000 --port 7200 --configuration=devstaging",
     "start-beta": "ng serve --host 0.0.0.0 --port 7200 --configuration=devbeta",
     "start-beta-ssl": "ng serve --host 0.0.0.0 --port 7200 --configuration=devbeta --ssl --ssl-cert ssl/server.crt --ssl-key ssl/server.key",
     "start-staging-ssl": "ng serve --host 0.0.0.0 --port 7200 --configuration=devstaging --ssl --ssl-cert ssl/server.crt --ssl-key ssl/server.key",
