@@ -196,7 +196,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             withLatestFrom(this.offerId$, this.section$),
             filter(itemFullInfo => !!itemFullInfo)
         ).subscribe(([itemFullInfo, offerId, section]: [ItemFullInfo, number, string]) => {
-            if (offerId !== itemFullInfo.itemData.CampaignId) {
+            if (itemFullInfo && offerId !== itemFullInfo.itemData.CampaignId) {
                 this.router.navigate(
                     ['../..', itemFullInfo.itemData.CampaignId, section],
                     { relativeTo: this.route }
