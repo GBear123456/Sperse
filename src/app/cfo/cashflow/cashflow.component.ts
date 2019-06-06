@@ -6112,12 +6112,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
+    toggleGridOpacity() {
+        let style = this.pivotGrid.instance.element().parentNode['style'];
+        style.opacity = style.opacity == '0' ? 1 : 0;
+    }
+
     activate() {
         this.initToolbarConfig();
         this.setupFilters(this.filters);
         this.initFiltering();
         if (this.pivotGrid && this.pivotGrid.instance) {
             this.pivotGrid.instance.repaint();
+            setTimeout(() => this.toggleGridOpacity());
         }
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
@@ -6135,6 +6141,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     deactivate() {
+        this.toggleGridOpacity();
         this.appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
