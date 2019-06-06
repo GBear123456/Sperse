@@ -19,32 +19,13 @@ export abstract class CFOComponentBase extends AppComponentBase implements OnDes
         super(injector);
         this._cfoService = injector.get(CFOService);
 
-        if (!this._cfoService.hasStaticInstance &&
-            this.constructor == this._activatedRoute.component
-        ) {
-            this._activatedRoute.params.pipe(
-                takeUntil(this.destroy$)
-            ).subscribe(params => {
-                let instance = params['instance'];
-                if (!(this.instanceId = parseInt(instance))) {
-                    this.instanceId = undefined;
-                }
-                this.instanceType = this.capitalize(instance);
+        this.updateInstance();
+    }
 
-                if (this.instanceType !== this._cfoService.instanceType
-                    || this.instanceId !== this._cfoService.instanceId) {
-                    this._cfoService.instanceTypeChanged.next(this.instanceType);
-                    this._cfoService.instanceType = this.instanceType;
-                    this._cfoService.instanceId = this.instanceId;
-                    this._cfoService.instanceChangeProcess();
-                    this.updateInstanceUri();
-                }
-            });
-        } else {
-            this.instanceType = this._cfoService.instanceType;
-            this.instanceId = this._cfoService.instanceId;
-            this.updateInstanceUri();
-        }
+    updateInstance() {
+        this.instanceType = this._cfoService.instanceType;
+        this.instanceId = this._cfoService.instanceId;
+        this.updateInstanceUri();
     }
 
     updateInstanceUri() {

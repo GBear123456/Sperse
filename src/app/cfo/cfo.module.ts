@@ -1,6 +1,7 @@
 /** Core imports */
 import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
+import { Router, RoutesRecognized } from '@angular/router';
 
 /** Third party imports */
 import { MatDialogModule } from '@angular/material/dialog';
@@ -39,6 +40,8 @@ import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxPopupModule } from 'devextreme-angular/ui/popup';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { ModalModule } from 'ngx-bootstrap';
+import { Observable, of } from 'rxjs';
+import { filter, map, mergeMap } from 'rxjs/operators';
 
 /** Application imports */
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
@@ -85,6 +88,7 @@ import { CurrenciesDropdownComponent } from '@app/cfo/shared/common/currencies-d
 import { SearchInputModule } from '@app/shared/common/search-input/search-input.module';
 import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-button.module';
 import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.module';
+import { CFOService } from '@shared/cfo/cfo.service';
 
 let COMPONENTS = [
     StartComponent,
@@ -194,4 +198,22 @@ let COMPONENTS = [
     ]
 })
 
-export class CfoModule { }
+export class CfoModule {
+    constructor(
+        private router: Router,
+        private cfoService: CFOService
+    ) {
+        this.router.events.pipe(
+            filter(event => event instanceof RoutesRecognized),
+            map(event => (event as RoutesRecognized).state.root),
+            map(route => {
+                while (route.firstChild)
+                    route = route.firstChild;
+                return route;
+            }),
+            filter(route => route.outlet === 'primary'),
+            mergeMap(route => of(route.params)),
+            filter(params => this.cfoService.checkInstanceChanged(params))
+        ).subscribe();
+    }
+}

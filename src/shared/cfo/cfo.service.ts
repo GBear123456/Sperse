@@ -1,11 +1,17 @@
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { Subject, Subscription, Observable, of } from 'rxjs';
+import { finalize, filter, first, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject } from '@node_modules/rxjs';
+import capitalize from 'lodash/capitalize';
+
+/** Application imports */
 import { AppService } from '@app/app.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CFOServiceBase } from 'shared/cfo/cfo-service-base';
 import { InstanceServiceProxy, InstanceType, GetStatusOutputStatus, ContactServiceProxy } from 'shared/service-proxies/service-proxies';
-import { Subject, Subscription, Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { BehaviorSubject } from '@node_modules/rxjs';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@shared/AppConsts';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
@@ -14,7 +20,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 export class CFOService extends CFOServiceBase {
     instanceTypeChanged: Subject<string> = new Subject<null>();
     instanceTypeChanged$: Observable<string> = this.instanceTypeChanged.asObservable();
-    getStatusSubscription: Subscription;
+    instanceStatus$: Observable<any>;
     constructor(
         private _appService: AppService,
         private _appLocalizationService: AppLocalizationService,
@@ -34,16 +40,9 @@ export class CFOService extends CFOServiceBase {
                         this.instanceType = undefined;
                     }
                     if (this.initialized === undefined) {
-                        if (this._appService.topMenu) {
-                            this._appService.topMenu.items
-                                .forEach((item, i) => {
-                                    if (i != 0) {
-                                        item.disabled = true;
-                                    }
-                                });
-                        }
+                        this.updateMenuItems(true);
                         if (this.instanceType !== undefined) {
-                            this.instanceChangeProcess();
+                            this.instanceChangeProcess().subscribe();
                         }
                     } else
                         this.updateMenuItems();
@@ -54,11 +53,29 @@ export class CFOService extends CFOServiceBase {
                         this.instanceId = undefined;
                         this.instanceType = InstanceType.User;
                         this.hasStaticInstance = true;
-                        this.instanceChangeProcess();
-                    } else 
+                        this.instanceChangeProcess().subscribe();
+                    } else
                         this.updateMenuItems();
             }
         });
+    }
+
+    checkInstanceChanged(params) {
+        let instance = params['instance'];
+        if (instance === undefined)
+            return false;
+
+        let instanceId = parseInt(instance) || undefined,
+            instanceType = instance && capitalize(instance) || undefined,
+            changed = instanceType !== this.instanceType || instanceId !== this.instanceId;
+
+        if (changed) {
+            this.instanceId = instanceId;
+            this.instanceTypeChanged.next(
+                this.instanceType = instanceType);
+        }
+
+        return changed;
     }
 
     get isInstanceAdmin() {
@@ -87,15 +104,14 @@ export class CFOService extends CFOServiceBase {
         });
     }
 
-    instanceChangeProcess(callback: any = null, invalidateServerCache: boolean = false) {
-        if (this.instanceId != null) {
+    instanceChangeProcess(invalidateServerCache: boolean = false) {
+        if (this.instanceId) {
             this._appService.setContactInfoVisibility(true);
             this._layoutService.hideDefaultPageHeader();
         }
-        if (!this.getStatusSubscription) {
-            this.getStatusSubscription = this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId, invalidateServerCache)
-            .pipe(finalize(() => this.getStatusSubscription = undefined))
-            .subscribe((data) => {
+        if (!this.instanceStatus$)
+            this.instanceStatus$ = this._instanceServiceProxy.getStatus(InstanceType[this.instanceType], this.instanceId, invalidateServerCache)
+            .pipe(finalize(() => this.instanceStatus$ = undefined), map((data) => {
                 if (this.instanceId && data.userId)
                     this.initContactInfo(data.userId);
                 const status = data.status == GetStatusOutputStatus.Active;
@@ -103,12 +119,12 @@ export class CFOService extends CFOServiceBase {
                 this.initialized = status && data.hasSyncAccounts;
                 this.hasTransactions = this.initialized && data.hasTransactions;
                 this.updateMenuItems();
-                callback && callback.call(this, this.hasTransactions);
-            });
-        }
+                return this.hasTransactions;
+            }));
+        return this.instanceStatus$;
     }
 
-    private updateMenuItems() {        
+    private updateMenuItems(disabled?) {
         setTimeout(() => {
             let menu = this._appService.topMenu;
             menu && menu.items.forEach((item, i) => {
@@ -117,11 +133,11 @@ export class CFOService extends CFOServiceBase {
                         item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'
                             : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
                 } else if (i == 1) {
-                    item.disabled = !this.initialized;
+                    item.disabled = isNaN(disabled) ? !this.initialized : disabled;
                 } else {
-                    item.disabled = !this.hasTransactions;
+                    item.disabled = isNaN(disabled) ? !this.hasTransactions : disabled;
                 }
-            })
+            });
         });
     }
 }

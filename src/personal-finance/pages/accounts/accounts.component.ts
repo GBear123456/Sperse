@@ -85,7 +85,7 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private checkInstanceChangeProcess() {
-        this._cfoService.instanceChangeProcess(() => {
+        this._cfoService.instanceChangeProcess().subscribe(() => {
             this.isInstanceInfoLoaded = true;
             this.loadQouvoPfm();
         });

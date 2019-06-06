@@ -17,11 +17,11 @@ export class StartComponent extends CFOComponentBase implements OnInit, OnDestro
     }
 
     ngOnInit(): void {
-        this._cfoService.instanceChangeProcess();
+        this._cfoService.instanceChangeProcess().subscribe();
     }
 
     activate() {
-        this._cfoService.instanceChangeProcess();
+        this._cfoService.instanceChangeProcess().subscribe();
         if (this.dashboardComponent) {
             this.dashboardComponent.activate();
         }

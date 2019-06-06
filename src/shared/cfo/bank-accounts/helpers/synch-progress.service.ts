@@ -108,7 +108,7 @@ export class SynchProgressService {
 
     private runGetStatus() {
         if (!this.cfoService.hasTransactions) {
-            this.cfoService.instanceChangeProcess(null, true);
+            this.cfoService.instanceChangeProcess(true).subscribe();
         }
     }
 
@@ -181,7 +181,7 @@ export class SynchProgressService {
             !accountProgresses.every(account => {
                 return account.progressPercent < 100;
             })
-        ) this.cfoService.instanceChangeProcess(hasTransactions => {
+        ) this.cfoService.instanceChangeProcess().subscribe(hasTransactions => {
             this.statusCheckCompleted = hasTransactions;
         });
     }
