@@ -163,7 +163,10 @@
                                             [(visible)]="defaultCreditTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
                                         <div class="tooltip-wrap classification-status">
-                                            <header>{{l('Classification_Status')}}</header>
+                                            <header>
+                                                {{l('Classification_Status')}}
+                                                <span class="click-to-filter">{{l('ClickToFilter')}}</span>
+                                            </header>
                                             <ul class="classification-list">
 
                                                 <li class="classification-item classified" (click)="applyTotalFilters(true, true, false)">
@@ -177,7 +180,7 @@
                                                     <span class="classification-item-percent">{{(creditTransactionCount - creditClassifiedTransactionCount) / creditTransactionCount | percent}}</span>
                                                 </li>
                                             </ul>
-                                            <div class="btns-wrap clearfix" *ngIf="manageAllowed">
+                                            <div class="btns-wrap clearfix" *ngIf="isInstanceAdmin">
                                                 <a (click)="openDialog('credit');" class="small-button btn-layout">
                                                     {{l('Unclassify_Btn')}}
                                                 </a>
@@ -204,7 +207,10 @@
                                             [(visible)]="defaultDebitTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
                                         <div class="tooltip-wrap classification-status">
-                                            <header>{{l('Classification_Status')}}</header>
+                                            <header>
+                                                {{l('Classification_Status')}}
+                                                <span class="click-to-filter">{{l('ClickToFilter')}}</span>
+                                            </header>
                                             <ul class="classification-list">
                                                 <li class="classification-item classified" (click)="applyTotalFilters(true, false, true)">
                                                     <span class="classified-item-title"><span class="border">{{l('Classified')}}</span></span>
@@ -217,7 +223,7 @@
                                                     <span class="classification-item-percent">{{(debitTransactionCount - debitClassifiedTransactionCount) / debitTransactionCount | percent}}</span>
                                                 </li>
                                             </ul>
-                                            <div class="btns-wrap clearfix" *ngIf="manageAllowed">
+                                            <div class="btns-wrap clearfix" *ngIf="isInstanceAdmin">
                                                 <a (click)="openDialog('debit');" class="small-button btn-layout">
                                                     {{l('Unclassify_Btn')}}
                                                 </a>
@@ -253,7 +259,10 @@
                                             [(visible)]="defaultTotalTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
                                         <div class="tooltip-wrap classification-status">
-                                            <header>{{l('Classification_Status')}}</header>
+                                            <header>
+                                                {{l('Classification_Status')}}
+                                                <span class="click-to-filter">{{l('ClickToFilter')}}</span>
+                                            </header>
                                             <ul class="classification-list">
                                                 <li class="classification-item classified" (click)="applyTotalFilters(true, false, false)">
                                                     <span class="classified-item-title"><span class="border">{{l('Classified')}}</span></span>
@@ -266,7 +275,7 @@
                                                     <span class="classification-item-percent">{{(transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount)) / transactionCount | percent}}</span>
                                                 </li>
                                             </ul>
-                                            <div class="btns-wrap clearfix" *ngIf="manageAllowed">
+                                            <div class="btns-wrap clearfix" *ngIf="isInstanceAdmin">
                                                 <a (click)="openDialog('total');" class="small-button btn-layout">
                                                     {{l('Unclassify_Btn')}}
                                                 </a>

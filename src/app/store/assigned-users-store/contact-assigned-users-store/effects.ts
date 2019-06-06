@@ -35,7 +35,7 @@ export class ContactAssignedUsersStoreEffects {
                 return empty();
             }
 
-            return this._contactService.getAllowedAssignableUsers(payload, true, undefined, undefined)
+            return this._contactService.getAllowedAssignableUsers(payload, undefined, undefined)
                 .pipe(
                     map((users: UserInfoDto[]) => {
                         return new assignedUsersActions.LoadSuccessAction({
