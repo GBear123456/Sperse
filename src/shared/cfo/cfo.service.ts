@@ -55,7 +55,7 @@ export class CFOService extends CFOServiceBase {
                         this.instanceType = InstanceType.User;
                         this.hasStaticInstance = true;
                         this.instanceChangeProcess();
-                    } else 
+                    } else
                         this.updateMenuItems();
             }
         });
@@ -108,7 +108,7 @@ export class CFOService extends CFOServiceBase {
         }
     }
 
-    private updateMenuItems() {        
+    private updateMenuItems() {
         setTimeout(() => {
             let menu = this._appService.topMenu;
             menu && menu.items.forEach((item, i) => {
@@ -121,7 +121,7 @@ export class CFOService extends CFOServiceBase {
                 } else {
                     item.disabled = !this.hasTransactions;
                 }
-            })
+            });
         });
     }
 }
