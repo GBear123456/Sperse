@@ -13,7 +13,6 @@ import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { SyncAccountServiceProxy, InstanceType91 } from '@shared/service-proxies/service-proxies';
-import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
