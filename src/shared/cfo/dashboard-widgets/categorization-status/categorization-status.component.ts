@@ -3,49 +3,73 @@ import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DashboardServiceProxy, ClassificationServiceProxy, InstanceType, AutoClassifyDto, ResetClassificationDto } from 'shared/service-proxies/service-proxies';
 import { MatDialog } from '@angular/material/dialog';
 import {ChooseResetRulesComponent} from './choose-reset-rules/choose-reset-rules.component';
+import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
+import { Store, select } from '@ngrx/store';
+import { filter, tap, switchMap, finalize, takeUntil, first, mapTo } from 'rxjs/operators';
+import { BankAccountsService } from '../../bank-accounts/helpers/bank-accounts.service';
+import { DashboardService } from '../dashboard.service';
+import { combineLatest, of } from 'rxjs';
+import { LifecycleSubjectsService } from '@root/shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'app-categorization-status',
     templateUrl: './categorization-status.component.html',
     styleUrls: ['./categorization-status.component.less'],
-    providers: [DashboardServiceProxy, ClassificationServiceProxy]
+    providers: [DashboardServiceProxy, ClassificationServiceProxy, LifecycleSubjectsService]
 })
 export class CategorizationStatusComponent extends CFOComponentBase implements OnInit {
-    @Input() waitForBankAccounts = false;
-    bankAccountFilterData: any = { };
     categorySynchData: any;
     private autoClassifyData = new AutoClassifyDto();
     resetRules = new ResetClassificationDto();
+    currencyId$ = this.store$.pipe(
+        select(CurrenciesStoreSelectors.getSelectedCurrencyId),
+        filter(Boolean)
+    );
+
     constructor(
         injector: Injector,
-        private _dashboardService: DashboardServiceProxy,
+        private _dashboardService: DashboardService,
+        private _bankAccountService: BankAccountsService,
+        private _dashboardServiceProxy: DashboardServiceProxy,
         private _classificationService: ClassificationServiceProxy,
+        private _lifeCycleService: LifecycleSubjectsService,
+        private store$: Store<CfoStore.State>,
         public dialog: MatDialog
     ) {
         super(injector);
     }
 
     ngOnInit() {
-        this.getCategorizationStatus();
+        this.load();
+    }
+    
+    activate() {
+        this._lifeCycleService.activate.next();
     }
 
-    getCategorizationStatus(): void {
-        if (!this.waitForBankAccounts) {
-            this.startLoading();
-            this._dashboardService.getCategorizationStatus(InstanceType[this.instanceType], this.instanceId, this.bankAccountFilterData.selectedBankAccountIds)
-                .subscribe((result) => {
-                    this.categorySynchData = result;
-                    this.categorySynchData.totalCount = this.categorySynchData.classifiedTransactionCount + this.categorySynchData.unclassifiedTransactionCount;
-                    this.finishLoading();
-                });
-        }
+    load(): void {
+        combineLatest(
+            this._dashboardService.refresh$,
+            this.currencyId$,
+            this._bankAccountService.selectedBankAccountsIds$
+        ).pipe(
+            switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
+            tap(() => this.startLoading()),
+            switchMap(([, currencyId, bankAccountIds]: [null,  string, number[]]) => this._dashboardServiceProxy.getCategorizationStatus(
+                InstanceType[this.instanceType], this.instanceId, currencyId, bankAccountIds
+            ).pipe(finalize(() => this.finishLoading()))),
+            takeUntil(this.destroy$)
+        ).subscribe((result) => {
+            this.categorySynchData = result;
+            this.categorySynchData.totalCount = this.categorySynchData.classifiedTransactionCount + this.categorySynchData.unclassifiedTransactionCount;
+        });
     }
 
     autoClassify(): void {
         this.notify.info('Auto-classification has started');
         this._classificationService.autoClassify(InstanceType[this.instanceType], this.instanceId, this.autoClassifyData)
             .subscribe((result) => {
-                this.getCategorizationStatus();
+                this.load();
                 this.notify.info('Auto-classification has ended');
                 return result;
             });
@@ -55,7 +79,7 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
         this.notify.info('Reset process has started');
         this._classificationService.reset(InstanceType[this.instanceType], this.instanceId, this.resetRules)
             .subscribe((result) => {
-                this.getCategorizationStatus();
+                this.load();
                 this.notify.info('Reset process has ended');
                 return result;
             });
@@ -82,9 +106,9 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
             }
         };
 
-        if (this.bankAccountFilterData.selectedBankAccountIds && this.bankAccountFilterData.selectedBankAccountIds.length) {
+        if (this._bankAccountService.state.selectedBankAccountIds && this._bankAccountService.state.selectedBankAccountIds.length) {
             filter['Account'] = {
-                element: this.bankAccountFilterData.selectedBankAccountIds
+                element: this._bankAccountService.state.selectedBankAccountIds
             };
         }
 
@@ -94,11 +118,5 @@ export class CategorizationStatusComponent extends CFOComponentBase implements O
             filter.classified.no = true;
 
         this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/transactions'], { queryParams: { filters: encodeURIComponent(JSON.stringify(filter)) } });
-    }
-
-    filterByBankAccounts(data) {
-        this.waitForBankAccounts = false;
-        this.bankAccountFilterData = data;
-        this.getCategorizationStatus();
     }
 }

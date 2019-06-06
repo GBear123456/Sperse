@@ -98,8 +98,7 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
             };
         })
     );
-    refresh: BehaviorSubject<any> = new BehaviorSubject<null>(null);
-    refresh$: Observable<null> = this.refresh.asObservable();
+    refresh$: Observable<null> = this._dashboardService.refresh$;
     currencyId$ = this.store$.pipe(
         select(CurrenciesStoreSelectors.getSelectedCurrencyId),
         filter(Boolean)

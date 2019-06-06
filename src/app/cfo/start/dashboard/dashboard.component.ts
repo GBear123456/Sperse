@@ -61,9 +61,8 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
             names: [this.l('Dashboard_Title')],
             iconSrc: './assets/common/icons/pie-chart.svg',
             onRefresh: () => {
+                this._dashboardService.refresh.next(null);
                 this.refreshWidgets();
-                this.totalsByPeriodComponent.refresh.next(null);
-                this.trendByPeriodComponent.refresh.next(null);
             },
             buttons: []
         };
@@ -115,7 +114,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     filterByBankAccounts(data) {
         this.accountsComponent.filterByBankAccounts(data);
-        this.categorizationStatusComponent.filterByBankAccounts(data);
     }
 
     refreshWidgets() {
@@ -127,7 +125,6 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
     loadAllWidgetsData() {
         this.accountsComponent.getAccountTotals();
         this.accountsComponent.getDailyStats();
-        this.categorizationStatusComponent.getCategorizationStatus();
     }
 
     periodChanged(period: string) {
@@ -139,6 +136,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
         this.bankAccountsService.load();
         this.totalsByPeriodComponent.activate();
         this.trendByPeriodComponent.activate();
+        this.categorizationStatusComponent.activate();
         /** If selected accounts changed in another component - update widgets */
         if (this.updateAfterActivation) {
             this.filterByBankAccounts(this.bankAccountsService.state);

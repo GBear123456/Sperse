@@ -143,8 +143,7 @@ export class TrendByPeriodComponent extends CFOComponentBase implements OnInit {
         }
     ];
     selectedPeriod: TrendByPeriodModel = this.periods.find(period => period.name === 'month');
-    refresh: BehaviorSubject<any> = new BehaviorSubject<null>(null);
-    refresh$: Observable<null> = this.refresh.asObservable();
+    refresh$: Observable<null> = this._dashboardService.refresh$;
     period$ = this._dashboardService.period$.pipe(
         map((period: PeriodModel) => {
             let periodName = period.period;

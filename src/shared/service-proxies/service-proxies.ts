@@ -10400,14 +10400,18 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getCategorizationStatus(instanceType: InstanceType70 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<CategorizationStatus> {
+    getCategorizationStatus(instanceType: InstanceType70 | null | undefined, instanceId: number | null | undefined, currencyId: string, bankAccountIds: number[] | null | undefined): Observable<CategorizationStatus> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetCategorizationStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
         if (bankAccountIds !== undefined)
-            bankAccountIds && bankAccountIds.forEach(item => { url_ += "bankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+            bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -58582,6 +58586,7 @@ export interface ISendTwoFactorAuthCodeModel {
 }
 
 export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthenticateResultModel {
+    userId!: number | undefined;
     accessToken!: string | undefined;
     encryptedAccessToken!: string | undefined;
     expireInSeconds!: number | undefined;
@@ -58599,6 +58604,7 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
 
     init(data?: any) {
         if (data) {
+            this.userId = data["userId"];
             this.accessToken = data["accessToken"];
             this.encryptedAccessToken = data["encryptedAccessToken"];
             this.expireInSeconds = data["expireInSeconds"];
@@ -58616,6 +58622,7 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
         data["accessToken"] = this.accessToken;
         data["encryptedAccessToken"] = this.encryptedAccessToken;
         data["expireInSeconds"] = this.expireInSeconds;
@@ -58626,6 +58633,7 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
 }
 
 export interface IImpersonatedAuthenticateResultModel {
+    userId: number | undefined;
     accessToken: string | undefined;
     encryptedAccessToken: string | undefined;
     expireInSeconds: number | undefined;
@@ -59186,15 +59194,6 @@ export interface IGetTransactionDetailsOutput {
 }
 
 export class TransactionDetailsDto implements ITransactionDetailsDto {
-    cashflowCategoryId!: number | undefined;
-    cashflowCategory!: string | undefined;
-    cashflowSubCategoryId!: number | undefined;
-    cashflowSubCategory!: string | undefined;
-    accountingTypeId!: number | undefined;
-    accountingType!: string | undefined;
-    transactionDescriptor!: string | undefined;
-    comments!: TransactionCommentDto[] | undefined;
-    attributes!: TransactionAttributeDto[] | undefined;
     id!: number | undefined;
     bankAccountBankName!: string | undefined;
     bankAccountNumber!: string | undefined;
@@ -59205,6 +59204,15 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
     description!: string | undefined;
     cashFlowTypeId!: string | undefined;
     transactionStatus!: TransactionDetailsDtoTransactionStatus | undefined;
+    cashflowCategoryId!: number | undefined;
+    cashflowCategory!: string | undefined;
+    cashflowSubCategoryId!: number | undefined;
+    cashflowSubCategory!: string | undefined;
+    accountingTypeId!: number | undefined;
+    accountingType!: string | undefined;
+    transactionDescriptor!: string | undefined;
+    comments!: TransactionCommentDto[] | undefined;
+    attributes!: TransactionAttributeDto[] | undefined;
 
     constructor(data?: ITransactionDetailsDto) {
         if (data) {
@@ -59217,6 +59225,16 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
+            this.bankAccountBankName = data["bankAccountBankName"];
+            this.bankAccountNumber = data["bankAccountNumber"];
+            this.bankAccountName = data["bankAccountName"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.currency = data["currency"];
+            this.amount = data["amount"];
+            this.description = data["description"];
+            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.transactionStatus = data["transactionStatus"];
             this.cashflowCategoryId = data["cashflowCategoryId"];
             this.cashflowCategory = data["cashflowCategory"];
             this.cashflowSubCategoryId = data["cashflowSubCategoryId"];
@@ -59234,16 +59252,6 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
                 for (let item of data["attributes"])
                     this.attributes.push(TransactionAttributeDto.fromJS(item));
             }
-            this.id = data["id"];
-            this.bankAccountBankName = data["bankAccountBankName"];
-            this.bankAccountNumber = data["bankAccountNumber"];
-            this.bankAccountName = data["bankAccountName"];
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
-            this.currency = data["currency"];
-            this.amount = data["amount"];
-            this.description = data["description"];
-            this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.transactionStatus = data["transactionStatus"];
         }
     }
 
@@ -59256,6 +59264,16 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["bankAccountBankName"] = this.bankAccountBankName;
+        data["bankAccountNumber"] = this.bankAccountNumber;
+        data["bankAccountName"] = this.bankAccountName;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["currency"] = this.currency;
+        data["amount"] = this.amount;
+        data["description"] = this.description;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["transactionStatus"] = this.transactionStatus;
         data["cashflowCategoryId"] = this.cashflowCategoryId;
         data["cashflowCategory"] = this.cashflowCategory;
         data["cashflowSubCategoryId"] = this.cashflowSubCategoryId;
@@ -59273,30 +59291,11 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
             for (let item of this.attributes)
                 data["attributes"].push(item.toJSON());
         }
-        data["id"] = this.id;
-        data["bankAccountBankName"] = this.bankAccountBankName;
-        data["bankAccountNumber"] = this.bankAccountNumber;
-        data["bankAccountName"] = this.bankAccountName;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["currency"] = this.currency;
-        data["amount"] = this.amount;
-        data["description"] = this.description;
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["transactionStatus"] = this.transactionStatus;
         return data; 
     }
 }
 
 export interface ITransactionDetailsDto {
-    cashflowCategoryId: number | undefined;
-    cashflowCategory: string | undefined;
-    cashflowSubCategoryId: number | undefined;
-    cashflowSubCategory: string | undefined;
-    accountingTypeId: number | undefined;
-    accountingType: string | undefined;
-    transactionDescriptor: string | undefined;
-    comments: TransactionCommentDto[] | undefined;
-    attributes: TransactionAttributeDto[] | undefined;
     id: number | undefined;
     bankAccountBankName: string | undefined;
     bankAccountNumber: string | undefined;
@@ -59307,6 +59306,15 @@ export interface ITransactionDetailsDto {
     description: string | undefined;
     cashFlowTypeId: string | undefined;
     transactionStatus: TransactionDetailsDtoTransactionStatus | undefined;
+    cashflowCategoryId: number | undefined;
+    cashflowCategory: string | undefined;
+    cashflowSubCategoryId: number | undefined;
+    cashflowSubCategory: string | undefined;
+    accountingTypeId: number | undefined;
+    accountingType: string | undefined;
+    transactionDescriptor: string | undefined;
+    comments: TransactionCommentDto[] | undefined;
+    attributes: TransactionAttributeDto[] | undefined;
 }
 
 export class TransactionCommentDto implements ITransactionCommentDto {
