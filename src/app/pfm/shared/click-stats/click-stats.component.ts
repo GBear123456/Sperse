@@ -88,7 +88,7 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
     }
 
     getDataByDay(res) {
-        let data = new Array(this.MAX_ROW_COUNT).fill().map((row, index) => {            
+        let data = new Array(this.MAX_ROW_COUNT).fill(0).map((row, index) => {            
             return index == this.TOTAL_COL_INDEX ?
                 zipObject(
                     this.columns.map((col) => col.dataField),
