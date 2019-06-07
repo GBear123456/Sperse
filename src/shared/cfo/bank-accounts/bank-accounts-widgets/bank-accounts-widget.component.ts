@@ -291,7 +291,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     dataCellClick(cell) {
         /** If to click for checkbox */
-        if (cell.column.dataField === 'selected') {
+        if (cell.column && cell.column.dataField === 'selected') {
             cell.data.selected = !cell.data.selected;
             this.masterSelectionChanged(cell);
             cell.event.stopImmediatePropagation();
