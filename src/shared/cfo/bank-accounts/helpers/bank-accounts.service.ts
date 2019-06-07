@@ -14,7 +14,6 @@ import {
     refCount,
     pluck,
     publishReplay,
-    tap,
     toArray,
     withLatestFrom,
     switchMap
@@ -334,10 +333,10 @@ export class BankAccountsService {
                     }
                 } else {
                     /** If selected are differ from saved in store - update store */
-                    if (ArrayHelper.dataChanged(selectedAccountsIds, this.state.selectedBankAccountIds)) {
-                        this.state.selectedBankAccountIds = selectedAccountsIds;
-                        this.cacheService.set(this.bankAccountsCacheKey, this.state);
-                    }
+                    // if (ArrayHelper.dataChanged(selectedAccountsIds, this.state.selectedBankAccountIds)) {
+                    //     this.state.selectedBankAccountIds = selectedAccountsIds;
+                    //     this.cacheService.set(this.bankAccountsCacheKey, this.state);
+                    // }
                 }
             }
         );
@@ -351,8 +350,8 @@ export class BankAccountsService {
             );
 
         this.allSyncAccountAreSelected$ = this.filteredSyncAccounts$.pipe(
-            map((syncAccounts: any[]) => {
-                const selectedSyncAccounts = syncAccounts.filter(syncAccount => syncAccount.selected !== false);
+            map((syncAccounts: SyncAccountBankDto[]) => {
+                const selectedSyncAccounts = syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length || syncAccount['selected'] !== false);
                 return selectedSyncAccounts.length === syncAccounts.length;
             })
         );
@@ -484,11 +483,9 @@ export class BankAccountsService {
 
     filterByBankAccountTypes(syncAccounts, selectedTypes: string[], allTypes) {
         let filteredSyncAccounts = [];
-
         syncAccounts.forEach(syncAccount => {
             let syncAccountCopy: any = { ...{}, ...syncAccount };
             syncAccountCopy['bankAccounts'] = [];
-
             if (!selectedTypes.length || selectedTypes.length === allTypes.length) {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount });
@@ -577,7 +574,7 @@ export class BankAccountsService {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     const isBankAccountMatchesTheSearch = isSyncAccountNameMatchesTheSearch
                         || bankAccount.accountName && bankAccount.accountName.toLowerCase().indexOf(searchValue) >= 0
-                        || bankAccount.accountName && bankAccount.accountNumber.toLowerCase().indexOf(searchValue) >= 0;
+                        || bankAccount.accountNumber && bankAccount.accountNumber.toLowerCase().indexOf(searchValue) >= 0;
                     if (isBankAccountMatchesTheSearch && (!businessEntitiesIds.length || (bankAccount.businessEntityId && _.contains(businessEntitiesIds, bankAccount.businessEntityId)))
                         && this.bankAccountMatchTheStatuses(bankAccount, statuses)
                     ) {
