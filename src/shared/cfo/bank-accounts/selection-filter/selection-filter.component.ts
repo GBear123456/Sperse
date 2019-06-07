@@ -40,6 +40,7 @@ export class SelectionFilterComponent {
 
     selectAllValueChanged($event) {
         $event.component._$list.find('.dx-list-select-all-label').text(
-            ($event.value ? this.localization.l('Clear') : this.localization.l('Select')) + ' ' + this.localization.l('All'));
+            ($event.value ? this.localization.l('Clear') : this.localization.l('Select')) + ' ' + this.localization.l('All')
+        );
     }
 }

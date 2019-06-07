@@ -105,6 +105,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         }
     ];
     mainGridFieldsSorting = [
+        'name',
         'bankAccounts.length',
         'syncAccountStatus'
     ];
@@ -266,6 +267,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     bankAccountTypesChanged(e) {
         this.bankAccountsService.changeBankAccountTypes(e);
+    }
+
+    statusesChanged(e) {
+        this.bankAccountsService.changeStatusesFilter(e, this.saveChangesInCache);
     }
 
     entitiesItemsChanged(selectedEntitiesIds: number[]) {
