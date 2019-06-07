@@ -21,7 +21,7 @@ import { AppConsts } from '@shared/AppConsts';
 export class SideBarComponent extends AppComponentBase {
     filters: FilterModel[] = [];
     activeFilter: FilterModel;
-
+    disableFilterScroll: boolean;
     constructor(
         private _eref: ElementRef,
         private _appService: AppService,
@@ -67,7 +67,6 @@ export class SideBarComponent extends AppComponentBase {
         this._filtersService
             .change(this.activeFilter);
         this.activeFilter = undefined;
-
         this.checkFilterDisable(event);
         event.stopPropagation &&
             event.stopPropagation();
@@ -75,6 +74,7 @@ export class SideBarComponent extends AppComponentBase {
 
     showFilterDialog(event, filter) {
         this.activeFilter = filter;
+        this.disableFilterScroll = this.activeFilter && this.activeFilter.items && this.activeFilter.items.element && this.activeFilter.items.element.disableOuterScroll;
         event.stopPropagation();
     }
 
