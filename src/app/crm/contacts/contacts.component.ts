@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { ActivationEnd, Params } from '@angular/router';
 
 /** Third party imports */
@@ -299,7 +299,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
         }
 
-        this.operationsEnabled = !(result.groupId == ContactGroup.UserProfile && 
+        this.operationsEnabled = !(result.groupId == ContactGroup.UserProfile &&
             result.personContactInfo.userId && result.statusId != ContactStatus.Prospective);
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;

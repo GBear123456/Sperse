@@ -1,23 +1,21 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component } from '@angular/core';
 import { FilterComponent } from '../models/filter-component';
+import capitalize from 'lodash/capitalize';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     templateUrl: './filter-inputs.component.html',
     styleUrls: ['./filter-inputs.component.less']
 })
-export class FilterInputsComponent extends AppComponentBase implements OnInit, FilterComponent {
+export class FilterInputsComponent implements FilterComponent {
     items: {};
-  	apply: (event) => void;
+    apply: (event) => void;
+    capitalize = capitalize;
 
-    constructor(injector: Injector) {
-      super(injector);
-    }
+    constructor(public ls: AppLocalizationService) {}
 
     getItems(): string[] {
       return Object.keys(this.items);
     }
 
-    ngOnInit(): void {
-    }
 }

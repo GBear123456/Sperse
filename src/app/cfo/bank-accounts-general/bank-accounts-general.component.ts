@@ -68,25 +68,12 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
             names: [this.l('Setup_Title'), this.l('Accounts')],
             iconSrc: './assets/common/icons/magic-stick-icon.svg',
             onRefresh: this.refresh.bind(this),
-            buttons: [
-                {
-                    enabled: true,
-                    action: this.syncAll.bind(this),
-                    lable: this.l('SyncAll'),
-                    class: 'btn-layout next-button'
-                }
-            ]
+            buttons: []
         };
     }
 
     refresh() {
         this._bankAccountsGeneralService.refreshBankAccounts();
-    }
-
-    syncAll() {
-        setTimeout(() => {
-            this._synchProgress.startSynchronization(true, false, 'all');
-        }, 300);
     }
 
     ngAfterViewInit(): void {

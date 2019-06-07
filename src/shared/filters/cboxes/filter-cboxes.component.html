@@ -1,20 +1,20 @@
 <div class="wrapper">
-  <p>
-    <dx-check-box
-      name="all"
-      [value]="selectAll"
-      (onValueChanged)="selectAllChanged($event)"
-      text="{{l('All')}}">
-    </dx-check-box>
-  </p>
-  <ng-template ngFor let-item [ngForOf]="getItems()" let-i="index">
     <p>
-      <dx-check-box
-        name="item"
-        [(value)]="items[item].value"
-        (onValueChanged)="updateSelectAll($event)"
-        text="{{l(capitalize(item))}}">
-      </dx-check-box>
+        <dx-check-box
+            name="all"
+            [value]="selectAll"
+            (onValueChanged)="selectAllChanged($event)"
+            text="{{l('All')}}">
+        </dx-check-box>
     </p>
-  </ng-template>
+    <ng-template ngFor let-item [ngForOf]="getItems()" let-i="index">
+        <p>
+            <dx-check-box
+                name="item"
+                [(value)]="items[item].value"
+                (onValueChanged)="updateSelectAll($event)"
+                text="{{l(capitalize(item))}}">
+            </dx-check-box>
+        </p>
+    </ng-template>
 </div>

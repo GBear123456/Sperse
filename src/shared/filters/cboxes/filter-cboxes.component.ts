@@ -3,39 +3,39 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterComponent } from '../models/filter-component';
 
 @Component({
-  templateUrl: './filter-cboxes.component.html',
-	styleUrls: ['./filter-cboxes.component.less']
+    templateUrl: './filter-cboxes.component.html',
+    styleUrls: ['./filter-cboxes.component.less']
 })
 export class FilterCBoxesComponent extends AppComponentBase implements OnInit, FilterComponent {
-  items: {};   
-	apply: (event) => void;
-  selectAll: boolean;
-	
-  constructor(injector: Injector) {
-    super(injector);
-  }
-  
-  getItems(): string[] {
-    return Object.keys(this.items);
-  }
+    items: {};
+    apply: (event) => void;
+    selectAll: boolean;
 
-  selectAllChanged(event){
-    if (event.jQueryEvent)
-      for (let item in this.items)
-        this.items[item].value = event.value;
-  }
+    constructor(injector: Injector) {
+        super(injector);
+    }
 
-  updateSelectAll(event?){
-    if (event && !event.jQueryEvent)
-      return;
+    getItems(): string[] {
+        return Object.keys(this.items);
+    }
 
-    this.selectAll = true;
-    for (let item in this.items)
-      this.selectAll = this.selectAll 
-        && this.items[item].value;
-  }
+    selectAllChanged(event) {
+        if (event.jQueryEvent)
+            for (let item in this.items)
+                this.items[item].value = event.value;
+    }
 
-  ngOnInit(): void {
-    this.updateSelectAll();
-  }
+    updateSelectAll(event?) {
+        if (event && !event.jQueryEvent)
+            return;
+
+        this.selectAll = true;
+        for (let item in this.items)
+            this.selectAll = this.selectAll
+                && this.items[item].value;
+    }
+
+    ngOnInit(): void {
+        this.updateSelectAll();
+    }
 }

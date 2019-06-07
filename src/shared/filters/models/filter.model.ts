@@ -1,9 +1,15 @@
+/** Core imports */
 import { Type } from '@angular/core';
-import { FilterItemModel, DisplayElement } from './filter-item.model';
-import { FilterComponent } from './filter-component';
+
+/** Third party imports */
 import { Observable } from 'rxjs';
 import * as _ from 'underscore';
+import camelCase from 'lodash/camelCase';
 import capitalize from 'underscore.string/capitalize';
+
+/** Application imports */
+import { FilterItemModel, DisplayElement } from './filter-item.model';
+import { FilterComponent } from './filter-component';
 import { DateHelper } from '@shared/helpers/DateHelper';
 
 export class FilterModelBase<T extends FilterItemModel> {
@@ -39,12 +45,33 @@ export class FilterModelBase<T extends FilterItemModel> {
     clearFilterItems() {
         _.each(this.items, i => i.removeFilterItem(this));
     }
+
+    getValues() {
+        let values = {};
+        if (this.options && this.options.method) {
+            values = this[this.options.method](this.options.params);
+        } else {
+            for (let key in this.items) {
+                const propName = key !== 'element' ? camelCase(key) : this.field || this.caption;
+                values[propName] = this.items[key].value;
+            }
+        }
+        return values;
+    }
 }
 
 export class FilterModel extends FilterModelBase<FilterItemModel> {
     public static _wordRegex = /\b(\w|'|@|.|_)+\b/gim;
     public static _removeFromEnd = ['at', 'on', 'and'];
     public static _remove = ['and', 'or', 'no', 'if', 'from', 'to', 'etc', 'for', 'like at'];
+
+    public static getSearchKeyWords(value: string) {
+        let words = value.match(this._wordRegex);
+        let noisyWords = _.union(this._removeFromEnd, this._remove);
+        let keywords = _.difference(words, noisyWords);
+        return keywords;
+    }
+
     public getODataFilterObject() {
         if (this.options && this.options.method)
             return this[this.options.method].call(this, this.options.params);
@@ -61,13 +88,6 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
                     }
                     return obj;
                 }, {});
-    }
-
-    public static getSearchKeyWords(value: string) {
-        let words = value.match(this._wordRegex);
-        let noisyWords = _.union(this._removeFromEnd, this._remove);
-        let keywords = _.difference(words, noisyWords);
-        return keywords;
     }
 
     private processContainsOperator(val: string, key: string) {
