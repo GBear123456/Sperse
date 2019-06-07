@@ -105,9 +105,8 @@ export class AppAuthService implements OnDestroy {
             if (this._appLocalizationService)
                 warningMessage = this._appLocalizationService.ls(AppConsts.localization.defaultLocalizationSourceName, 'UserHasChangedWarning');
             abp.message.warn(warningMessage).done(() => location.reload());
-        } else {
-            this.tokenCheckTimeout = setTimeout(() => this.checkAuthToken(initialToken), 3000);
-        }
+        } else
+            this.startTokenCheck();
         this.tokenCheckBusy = false;
     }
 }
