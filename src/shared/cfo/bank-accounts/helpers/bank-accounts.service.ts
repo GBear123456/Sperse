@@ -488,6 +488,7 @@ export class BankAccountsService {
         syncAccounts.forEach(syncAccount => {
             let syncAccountCopy: any = { ...{}, ...syncAccount };
             syncAccountCopy['bankAccounts'] = [];
+
             if (!selectedTypes.length || selectedTypes.length === allTypes.length) {
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     syncAccountCopy.bankAccounts.push({ ...{}, ...bankAccount });
@@ -562,7 +563,7 @@ export class BankAccountsService {
         visibleBankAccountsIds = !visibleBankAccountsIds || !selectedAccountsIds || selectedAccountsIds.length === 0 ? [] : visibleBankAccountsIds;
 
         syncAccounts.forEach((syncAccount: SyncAccountBankDto) => {
-            const isSyncAccountNameMatchesTheSearch = !searchValue || syncAccount.name.toLowerCase().indexOf(searchValue) >= 0;
+            const isSyncAccountNameMatchesTheSearch = !searchValue || syncAccount.name && syncAccount.name.toLowerCase().indexOf(searchValue) >= 0;
             /** If business entities hasn't been chosen and search is among all business entities */
             if ((!businessEntitiesIds || !businessEntitiesIds.length) && (!syncAccount.bankAccounts || !syncAccount.bankAccounts.length)) {
                 if (isSyncAccountNameMatchesTheSearch) {
@@ -575,8 +576,8 @@ export class BankAccountsService {
                 let bankAccounts: BankAccountDto[] = [];
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     const isBankAccountMatchesTheSearch = isSyncAccountNameMatchesTheSearch
-                        || bankAccount.accountName.toLowerCase().indexOf(searchValue) >= 0
-                        || bankAccount.accountNumber.toLowerCase().indexOf(searchValue) >= 0;
+                        || bankAccount.accountName && bankAccount.accountName.toLowerCase().indexOf(searchValue) >= 0
+                        || bankAccount.accountName && bankAccount.accountNumber.toLowerCase().indexOf(searchValue) >= 0;
                     if (isBankAccountMatchesTheSearch && (!businessEntitiesIds.length || (bankAccount.businessEntityId && _.contains(businessEntitiesIds, bankAccount.businessEntityId)))
                         && this.bankAccountMatchTheStatuses(bankAccount, statuses)
                     ) {
