@@ -7,8 +7,8 @@
     </ng-container>
     <ng-container *ngIf="selectionList && selectionList.length">
         <dx-tag-box [dataSource]="selectionList"
-                    [displayExpr]="selectionList && selectionList[0].id ? 'name' : null"
-                    [valueExpr]="selectionList && selectionList[0].id ? 'id' : null"
+                    [displayExpr]="selectionList && selectionList[0].id !== undefined ? 'name' : null"
+                    [valueExpr]="selectionList && selectionList[0].id !== undefined ? 'id' : null"
                     [placeholder]="allItemsText"
                     [showSelectionControls]="true"
                     tagTemplate="customTagTemplate"
@@ -18,12 +18,18 @@
                     [(value)]="selectedItems"
                     (onValueChanged)="selectedItemsChange()"
                     (onSelectAllValueChanged)="selectAllValueChanged($event)"
-                    (onMultiTagPreparing)="onMultiTagPreparing($event)">
+                    (onMultiTagPreparing)="onMultiTagPreparing($event)"
+                    accessKey="selectionFilter">
             <div *dxTemplate="let tag of 'customTagTemplate'">
                 <span class="tag-value" [title]="tag.name || tag">{{tag.name || tag}}</span>
             </div>
             <div *dxTemplate="let tag of 'itemTemplate'">
-                <span [title]="tag.name || tag">{{tag.name || tag}}</span>
+                <div class="selection-list-item">
+                    <span [title]="tag.name || tag">{{tag.name || tag}}</span>
+                    <span *ngIf="tag.count">
+                    ({{tag.count}})
+                </span>
+                </div>
             </div>
         </dx-tag-box>
     </ng-container>

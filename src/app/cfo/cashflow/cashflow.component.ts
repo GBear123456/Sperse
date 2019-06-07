@@ -118,6 +118,7 @@ import {
     ForecastModelsStoreSelectors
 } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -5866,7 +5867,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     setBankAccountsFilter(emitFilterChange = false) {
         this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
-        this.allowChangingForecast = this._bankAccountsService.state.isActive;
+        this.allowChangingForecast = this._bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
     }
 
     discardDiscrepancy(cellObj) {
@@ -6113,8 +6114,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     toggleGridOpacity() {
-        let style = this.pivotGrid.instance.element().parentNode['style'];
-        style.opacity = style.opacity == '0' ? 1 : 0;
+        if (this.pivotGrid) {
+            let style = this.pivotGrid.instance.element().parentNode['style'];
+            style.opacity = style.opacity == '0' ? 1 : 0;
+        }
     }
 
     activate() {
