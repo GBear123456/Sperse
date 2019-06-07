@@ -46,8 +46,7 @@
             {{ls('Platform', 'Apply')}}
         </button>
     </div>
-
-    <dx-scroll-view showScrollbar="onHover">
+    <dx-scroll-view [showScrollbar]="disableFilterScroll ? 'never' : 'onHover'" [disabled]="disableFilterScroll">
         <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>
     </dx-scroll-view>
 </div>

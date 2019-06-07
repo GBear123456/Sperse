@@ -20,7 +20,7 @@
                         (selectionChanged)="entitiesItemsChanged($event)">
                     </selection-filter>
                 </div>
-                <div class="col-sm-4 types">
+                <div class="col-sm-3 types">
                     <selection-filter
                         [allItemsText]="l('All_Types')"
                         [title]=""
@@ -31,7 +31,7 @@
                         (selectionChanged)="bankAccountTypesChanged($event)">
                     </selection-filter>
                 </div>
-                <div class="col-sm-2 is-active-filter">
+                <div class="col-sm-3 is-active-filter">
                     <selection-filter
                         [allItemsText]="l('All_Statuses')"
                         [title]=""
@@ -60,6 +60,7 @@
 <div class="grid-container {{highlightUsedRows ? 'highlight-used-rows' : '' }}">
     <dx-data-grid id="gridContainer"
                   [width]="'100%'"
+                  [height]="scrollHeight"
                   [dataSource]="dataSource"
                   [masterDetail]="{ enabled: false, template: 'detail' }"
                   keyExpr="syncAccountId"
@@ -86,7 +87,6 @@
                   #syncAccountsGrid>
 
         <dxo-editing mode="cell" [allowUpdating]="false"></dxo-editing>
-        <dxo-scrolling showScrollbar="never"></dxo-scrolling>
         <dxo-paging [enabled]="false"></dxo-paging>
         <dxo-filter-row [visible]="false"></dxo-filter-row>
         <dxi-column dataField="id" [visible]="false" sortOrder="desc"></dxi-column>

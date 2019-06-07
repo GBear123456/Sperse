@@ -291,7 +291,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     dataCellClick(cell) {
         /** If to click for checkbox */
-        if (cell.column.dataField === 'selected') {
+        if (cell.column && cell.column.dataField === 'selected') {
             cell.data.selected = !cell.data.selected;
             this.masterSelectionChanged(cell);
             cell.event.stopImmediatePropagation();
@@ -423,7 +423,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     calculateHeight() {
         /** Get bottom position of previous element */
         let filtersBottomPosition = this.header.nativeElement.getBoundingClientRect().bottom;
-        this.scrollHeight = window.innerHeight - filtersBottomPosition - 20;
+        this.scrollHeight = window.innerHeight - filtersBottomPosition;
     }
 
     removeAccount(syncAccountId) {
