@@ -86,12 +86,6 @@ export class HeaderComponent extends AppComponentBase implements OnInit {
             onClick: (e) => this.userManagementService.changeMySettings(e)
         },
         {
-            name: this.l('VisualSettings'),
-            visible: !this.isGranted('Pages.Administration.UiCustomization'),
-            iconClass: 'flaticon-medical',
-            onClick: () => this._router.navigate(['app/admin/ui-customization'])
-        },
-        {
             name: this.l('Help'),
             iconClass: 'flaticon-info',
             onClick: () => {

@@ -205,7 +205,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     setHighlighted() {
-        this.dataSource.forEach(syncAccount => {
+        this.dataSource && this.dataSource.forEach(syncAccount => {
             let highlightedBankAccountExist = false;
             syncAccount.bankAccounts.forEach(bankAccount => {
                 let isBankAccountHighlighted = _.contains(this.bankAccountIdsForHighlight, bankAccount.id);

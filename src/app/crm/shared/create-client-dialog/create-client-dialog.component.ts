@@ -132,7 +132,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     similarCustomers: SimilarContactOutput[] = [];
     similarCustomersDialog: any;
     toolbarConfig = [];
-    title: string;
+    title: string = '';
     jobTitle: string;
     isTitleValid = true;
     buttons: IDialogButton[] = [

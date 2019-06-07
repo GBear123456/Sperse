@@ -1,6 +1,5 @@
 import {
     Component,
-    ChangeDetectionStrategy,
     Inject,
     OnInit,
     AfterViewInit,
@@ -18,8 +17,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 @Component({
     selector: 'modal-dialog',
     templateUrl: 'modal-dialog.component.html',
-    styleUrls: ['modal-dialog.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['modal-dialog.component.less']
 })
 export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() title: string;
@@ -86,7 +84,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
 
     finishLoading() {
         this.loadingService.finishLoading(this.elementRef.nativeElement);
-    }
+    }  
 
     close(slide: boolean = false, closeData = null) {
         if (slide) {
