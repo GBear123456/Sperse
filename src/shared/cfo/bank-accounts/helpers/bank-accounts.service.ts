@@ -560,7 +560,7 @@ export class BankAccountsService {
         visibleBankAccountsIds = !visibleBankAccountsIds || !selectedAccountsIds || selectedAccountsIds.length === 0 ? [] : visibleBankAccountsIds;
 
         syncAccounts.forEach((syncAccount: SyncAccountBankDto) => {
-            const isSyncAccountNameMatchesTheSearch = !searchValue || syncAccount.name.toLowerCase().indexOf(searchValue) >= 0;
+            const isSyncAccountNameMatchesTheSearch = !searchValue || syncAccount.name && syncAccount.name.toLowerCase().indexOf(searchValue) >= 0;
             /** If business entities hasn't been chosen and search is among all business entities */
             if ((!businessEntitiesIds || !businessEntitiesIds.length) && (!syncAccount.bankAccounts || !syncAccount.bankAccounts.length)) {
                 if (isSyncAccountNameMatchesTheSearch) {
