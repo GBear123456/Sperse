@@ -423,7 +423,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     calculateHeight() {
         /** Get bottom position of previous element */
         let filtersBottomPosition = this.header.nativeElement.getBoundingClientRect().bottom;
-        this.scrollHeight = window.innerHeight - filtersBottomPosition - 20;
+        this.scrollHeight = window.innerHeight - filtersBottomPosition;
     }
 
     removeAccount(syncAccountId) {
