@@ -573,10 +573,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             let searchInputBlock = document.createElement('div');
                             searchInputBlock.id = 'findInputBlock';
                             searchInputBlock.innerHTML = '<div></div>';
-                            let textBoxInstance = new TextBox(searchInputBlock.children[0], {
+                            new TextBox(searchInputBlock.children[0], {
                                 showClearButton: true,
                                 mode: 'search',
-                                onFocusOut: e => {
+                                onFocusOut: () => {
                                     searchInputBlock.style.display = 'none';
                                 },
                                 onInput: e => {
