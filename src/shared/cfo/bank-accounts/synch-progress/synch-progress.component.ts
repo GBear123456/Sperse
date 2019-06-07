@@ -17,7 +17,6 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     completed = true;
     syncData: SyncProgressOutput;
     currentProgress: number;
-    showComponent = true;
     hasFailedAccounts = false;
     syncFailed = false;
     tooltipVisible: boolean;
@@ -41,7 +40,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     toggleComponent() {
-        this.showComponent = !this.showComponent;
+        this.isSyncAccountButtonShown = !this.isSyncAccountButtonShown;
         this.tooltipVisible = false;
     }
 
@@ -66,6 +65,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     syncAll() {
         setTimeout(() => {
             this.syncProgressService.startSynchronization(true, false, 'all');
+            this.toggleComponent();
         }, 300);
     }
 
