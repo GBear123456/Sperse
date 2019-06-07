@@ -15,6 +15,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
     @Output() onComplete = new EventEmitter();
     completed = true;
+    showProgress = true;
     syncData: SyncProgressOutput;
     currentProgress: number;
     hasFailedAccounts = false;
@@ -40,7 +41,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     toggleComponent() {
-        this.isSyncAccountButtonShown = !this.isSyncAccountButtonShown;
+        this.showProgress = !this.showProgress;
         this.tooltipVisible = false;
     }
 
