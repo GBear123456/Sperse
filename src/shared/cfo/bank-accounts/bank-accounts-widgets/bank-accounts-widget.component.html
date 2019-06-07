@@ -5,7 +5,7 @@
         <expand-button [items]="expandItems" (onExpand)="expand($event)"></expand-button>
         <add-account-button *ngIf="showAddAccountButton" (onComplete)="bankAccountsService.next(null)"></add-account-button>
     </div>
-    <div class="row">
+    <div class="row second-sub-header">
         <div class="left-header col-sm-12">
             <div class="row">
                 <div class="col-sm-6 entities">
@@ -90,7 +90,7 @@
         <dxo-paging [enabled]="false"></dxo-paging>
         <dxo-filter-row [visible]="false"></dxo-filter-row>
         <dxi-column dataField="id" [visible]="false" sortOrder="desc"></dxi-column>
-        <dxi-column dataField="selected" caption="" [width]="30" alignment="center" dataType="boolean"></dxi-column>
+        <dxi-column dataField="selected" caption="" [width]="30" cssClass="checkbox" alignment="center" dataType="boolean"></dxi-column>
         <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"  ></dxi-column>
         <dxi-column dataField="syncAccountStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="2" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
         <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
@@ -127,7 +127,7 @@
                     <dxo-selection [deferred]="true"></dxo-selection>
                     <dxo-filter-row [visible]="false"></dxo-filter-row>
                     <dxi-column dataField="id" [allowEditing]="false" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
-                    <dxi-column dataField="selected" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
+                    <dxi-column dataField="selected" cssClass="checkbox" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
                     <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing"></dxi-column>
 
                     <dxi-column dataField="accountNumber" cssClass="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="allowEditing"></dxi-column>

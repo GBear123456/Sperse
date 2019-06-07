@@ -9,6 +9,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class SearchInputComponent {
     @Input() value = '';
     @Input() width = 279;
+    @Input() placeholder = this.ls.l('Find');
     @Output() onInput: EventEmitter<string> = new EventEmitter();
     constructor(public ls: AppLocalizationService) {}
 

@@ -178,7 +178,6 @@ export class BankAccountsService {
                     return types;
                 }, []);
             }),
-            tap(x => console.log('types', x)),
             map((types: { name: string, count: number }[]) => types.sort(this.sortBankAccountsTypes)),
             distinctUntilChanged(this.arrayDistinct)
         );
