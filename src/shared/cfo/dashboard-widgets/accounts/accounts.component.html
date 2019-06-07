@@ -13,7 +13,10 @@
                 </div>
             </div>
         </dx-tooltip>
-        <div class="value" id="valueTotal">{{ bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</div>
+        <div class="value" id="valueTotal">
+            {{ bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
+            <span>.{{ bankAccountsService.accountsDataTotalNetWorth$ | async | customNumber:'0.2-2'}}</span>
+        </div>
         <div class="name">{{l('Current_Balance')}}</div>
     </div>
     <div class="account-item dailyStats">

@@ -52,10 +52,9 @@ export class HostResetPasswordComponent extends AppComponentBase implements OnIn
         } else {
             this.model.userId = this._activatedRoute.snapshot.queryParams['userId'];
             this.model.resetCode = this._activatedRoute.snapshot.queryParams['resetCode'];
-            this._appSessionService.changeTenantIfNeeded(
-                this.parseTenantId(
-                    this._activatedRoute.snapshot.queryParams['tenantId']
-                ), false
+            let tenantId = this._activatedRoute.snapshot.queryParams['tenantId'];
+            tenantId && this._appSessionService.changeTenantIfNeeded(
+                this.parseTenantId(tenantId), false
             );
         }
     }
