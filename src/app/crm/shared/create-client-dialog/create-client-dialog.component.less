@@ -16,7 +16,7 @@
 
 :host {
     /deep/ .mat-dialog-header {
-        padding: 0px 10px 0px 130px!important;
+        padding: 0 10px 0 130px!important;
     }
 
     /deep/ .mat-dialog-actions {
@@ -25,18 +25,15 @@
         }
     }
 
-    .toolbar-wraper {
-        width: 100%;
-        app-toolbar {
-            float: right;
-        }
+    /deep/ app-toolbar {
+        margin-left: 120px;
+        display: block;
     }
 
     .form-content {
         display: flex;
-        margin-top: 70px;
         flex-direction: column;
-        padding: 30px 0px 30px 50px;
+        padding: 30px 0 30px 50px;
         height: calc(~"100vh - 150px");
 
         .drop-down-box-wrapper {
@@ -46,14 +43,14 @@
             overflow: hidden;
             display: inline-block;
             /deep/ .dx-widget {
-                margin: 0px;
+                margin: 0;
                 input {
                     font-size: 15px;
                     font-weight: 400;
                     line-height: 1.79;
                     letter-spacing: 0.3px;
                     color: #424c56;
-                    padding: 0px;
+                    padding: 0;
                 }
                 .dx-texteditor-buttons-container {
                     left: 97px;
@@ -67,7 +64,7 @@
         /deep/ .field {
             margin-bottom: 30px;
             &.addr {
-                margin-bottom: 0px;
+                margin-bottom: 0;
             }
             &.notes {
                 margin-top: 20px;
@@ -114,31 +111,31 @@
                 white-space: nowrap;
                 &.phone {
                     &.H, &.P {
-                        background: url("../../../../assets/common/icons/phone.svg") no-repeat 260px 0px;
+                        background: url("../../../../assets/common/icons/phone.svg") no-repeat 260px 0;
                     }
 
                     &.W {
-                        background: url("../../../../assets/common/icons/phone-work.svg") no-repeat 260px 0px;
+                        background: url("../../../../assets/common/icons/phone-work.svg") no-repeat 260px 0;
                     }
                     &.M {
-                        background: url("../../../../assets/common/icons/phone-mobile.svg") no-repeat 260px 0px;
+                        background: url("../../../../assets/common/icons/phone-mobile.svg") no-repeat 260px 0;
                     }
                 }
                 &.address {
                     padding-left: 60px;
                     &.P {
-                        background: url("../../../../assets/common/icons/address-primary.png") no-repeat 30px 0px;
+                        background: url("../../../../assets/common/icons/address-primary.png") no-repeat 30px 0;
                     }
                     &.H {
-                        background: url("../../../../assets/common/icons/address-home.png") no-repeat 30px 0px;
+                        background: url("../../../../assets/common/icons/address-home.png") no-repeat 30px 0;
                     }
                     &.S, &.W {
-                        background: url("../../../../assets/common/icons/address-shipping.png") no-repeat 30px 0px;
+                        background: url("../../../../assets/common/icons/address-shipping.png") no-repeat 30px 0;
                     }
                 }
                 span {
-                    top: 0px;
-                    right: 0px;
+                    top: 0;
+                    right: 0;
                     position: absolute;
                     width: 20px;
                     height: 20px;
@@ -154,7 +151,7 @@
                 line-height: 1.79;
                 letter-spacing: 0.3px;
                 color: #424c56;
-                padding: 0px;
+                padding: 0;
                 vertical-align: top;
                 margin-left: 30px;
                 &::placeholder {
@@ -186,7 +183,7 @@
                     font-weight: 400;
                     line-height: 1.79;
                     letter-spacing: 0.3px;
-                    padding: 0px;
+                    padding: 0;
                 }
             }
             dx-select-box[name="company"] {
@@ -217,7 +214,7 @@
                     line-height: 32px;
                     font-size: 12px;
                     margin: 0;
-                    top: 0px;
+                    top: 0;
                 }
                 .flagInput .dropdown .btn span.arrow-down {
                     margin-top: 5px;
