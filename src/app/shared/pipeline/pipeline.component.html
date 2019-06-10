@@ -1,6 +1,6 @@
 <div class="pipeline-wrapper" [ngClass]="{disabled: disabled}">
-    <div *ngFor="let stage of stages; let i = index;" class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}}">
-        <div class="column-title">
+    <div *ngFor="let stage of stages; let i = index;" class="column column{{stage.index + ' ' + (stage.sortOrder && (stage.sortOrder > 0 ? 'positive': 'negative') || 'focused')}} color-{{stage.color}}">
+        <div class="column-title" [hidden]="allStagesEntitiesTotal == undefined" [ngStyle]="{width: columnItems.offsetWidth + 'px'}">
             <span class="stageName">{{stage.name}}</span>
             <div>
                 <span>
@@ -48,7 +48,7 @@
                 </div>
             </dx-tooltip>
         </div>
-        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.entities" accessKey="{{stage?.id}}" (click)="hideStageHighlighting()">
+        <div class="column-items" [ngClass]="{'drag-allowed': stage?.dragAllowed}" [dragula]="dragulaName" [dragulaModel]="stage?.entities" accessKey="{{stage?.id}}" (click)="hideStageHighlighting()" #columnItems>
             <ng-container *ngFor="let entity of stage.entities">
                 <div class="card" [ngClass]="{ locked: entity?.locked, selected: entity?.selected, compact: compactView }" [accessKey]="entity?.Id" (click)="onCardClickInternal(entity, $event)" [attr.stage]="entity?.StageId" count="">
                     <div class="container-fluid">
