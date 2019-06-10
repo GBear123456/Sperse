@@ -53,7 +53,11 @@ import { PeriodService } from '@app/shared/common/period/period.service';
         TrendByPeriodComponent,
         ChooseResetRulesComponent
     ],
-    providers: [ PeriodService, DashboardService ]
+    providers: [
+        { provide: 'considerSettingsTimezone', useValue: false },
+        PeriodService,
+        DashboardService
+    ]
 })
 export class DashboardWidgetsModule {
 }

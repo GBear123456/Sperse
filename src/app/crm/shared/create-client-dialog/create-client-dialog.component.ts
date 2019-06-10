@@ -144,6 +144,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             action: this.save.bind(this)
         }
     ];
+    contactGroups = ContactGroup;
 
     private isUserSelected = true;
     private isPartnerTypeSelected = false;
@@ -193,111 +194,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.linkTypesLoad();
         if (this.data.isInLeadMode)
             this.leadStagesLoad();
-
-        this.initToolbarConfig();
         this.saveOptionsInit();
-    }
-
-    initToolbarConfig() {
-        this.toolbarConfig = [
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'assign',
-                        action: this.toggleUserAssignment.bind(this),
-                        options: {
-                            accessKey: 'ClientAssign'
-                        },
-                        attr: {
-                            'filter-selected': this.isUserSelected
-                        }
-                    },
-                    this.data.isInLeadMode ? {
-                        name: 'stage',
-                        action: this.toggleStages.bind(this),
-                        options: {
-                            accessKey: 'CreateLeadStage'
-                        },
-                        attr: {
-                            'filter-selected': this.isStageSelected
-                        }
-                    } : this.data.customerType == ContactGroup.Client ? {
-                            name: 'status',
-                            widget: 'dxDropDownMenu',
-                            disabled: true,
-                            options: {
-                                hint: 'Status',
-                                items: [
-                                    {
-                                        action: Function(),
-                                        text: 'Active',
-                                    }, {
-                                        action: Function(),
-                                        text: 'Inactive',
-                                    }
-                                ]
-                            },
-                            attr: {
-                                'filter-selected': this.isStatusSelected
-                            }
-                        } :
-                        {
-                            name: 'partnerType',
-                            action: this.togglePartnerTypes.bind(this),
-                            options: {
-                                accessKey: 'PartnerTypesList'
-                            },
-                            attr: {
-                                'filter-selected': this.isPartnerTypeSelected
-                            }
-                        },
-                    {
-                        name: 'lists',
-                        action: this.toggleLists.bind(this),
-                        options: {
-                            accessKey: 'ClientLists'
-                        },
-                        attr: {
-                            'filter-selected': this.isListsSelected
-                        }
-                    },
-                    {
-                        name: 'tags',
-                        action: this.toggleTags.bind(this),
-                        options: {
-                            accessKey: 'ClientTags'
-                        },
-                        attr: {
-                            'filter-selected': this.isTagsSelected
-                        }
-                    },
-                    {
-                        name: 'rating',
-                        action: this.toggleRating.bind(this),
-                        options: {
-                            accessKey: 'ClientRating'
-                        },
-                        attr: {
-                            'filter-selected': this.isRatingSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                areItemsDependent: true,
-                items: [
-                    {
-                        name: 'discard',
-                        action: this.resetFullDialog.bind(this, false)
-                    }
-                ]
-            }
-        ];
-        this._changeDetectorRef.detectChanges();
     }
 
     saveOptionsInit() {
@@ -950,13 +847,11 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     onStagesChanged(event) {
         this.stageId = event.id;
         this.isStageSelected = true;
-        this.initToolbarConfig();
     }
 
     onPartnerTypeChanged(event) {
         this.partnerTypesComponent.apply();
         this.isPartnerTypeSelected = Boolean(event.selectedRowKeys.length);
-        this.initToolbarConfig();
     }
 
     getAssignmentsPermissinKey() {
@@ -968,22 +863,18 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     onUserAssignmentChanged(event) {
         this.isUserSelected = Boolean(event.addedItems.length);
-        this.initToolbarConfig();
     }
 
     onListsSelected(event) {
         this.isListsSelected = Boolean(event.selectedRowKeys.length);
-        this.initToolbarConfig();
     }
 
     onTagsSelected(event) {
         this.isTagsSelected = Boolean(event.selectedRowKeys.length);
-        this.initToolbarConfig();
     }
 
-    onRatingchanged(event) {
+    onRatingChanged(event) {
         this.isRatingSelected = Boolean(event.value);
-        this.initToolbarConfig();
     }
 
     close() {

@@ -4413,7 +4413,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     cellIsNotHistorical(cellObj): boolean {
         let path = cellObj.cell.path || cellObj.cell.columnPath;
         let cellDateInterval = this.formattingDate(path);
-        let currentDate = moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc');
+        let currentDate = DateHelper.getCurrentUtcDate();
         return  cellDateInterval.endDate.isAfter(currentDate, 'day') ||
                 currentDate.isBetween(cellDateInterval.startDate, cellDateInterval.endDate, 'day') ||
                 (currentDate.isSame(cellDateInterval.startDate, 'day') && currentDate.isSame(cellDateInterval.endDate, 'day'));
