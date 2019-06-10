@@ -42,7 +42,8 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
     styleUrls: ['./pipeline.component.less'],
     providers: [ StageServiceProxy ],
     host: {
-        '(window:keyup)': 'onKeyUp($event)'
+        '(window:keyup)': 'onKeyUp($event)',
+        '(window:resize)': 'onResize($event)'
     },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -609,6 +610,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     onKeyUp(event) {
         if (event.keyCode == 16/*SHIFT*/)
             this.shiftStartEntity = null;
+    }
+
+    onResize(event) {
+        this._changeDetector.detectChanges();
     }
 
     getStageSelectedEntitiesCount(stage): number {
