@@ -143,6 +143,16 @@
                             {{l("EmailConfirmationRequiredForLogin")}}
                             <span></span>
                         </label>
+                        <div class="form-group">
+                            <label for="DefaultModuleType">{{l("DefaultModuleType")}}</label>
+                            <select id="DefaultModuleType"
+                                    name="DefaultModuleType"
+                                    class="form-control"
+                                    [(ngModel)]="settings.userManagement.defaultModuleType">
+                                <option></option>
+                                <option *ngFor="let moduleType of moduleTypes" [value]="moduleType">{{moduleType}}</option>
+                            </select>
+                        </div>
                     </div>
                 </dx-scroll-view>
             </mat-tab>
