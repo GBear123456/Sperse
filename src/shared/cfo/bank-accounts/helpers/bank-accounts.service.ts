@@ -20,6 +20,7 @@ import {
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
+import difference from 'lodash/difference';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -75,6 +76,8 @@ export class BankAccountsService {
     _syncAccounts: ReplaySubject<SyncAccountBankDto[]> = new ReplaySubject(1);
     _businessEntities: ReplaySubject<BusinessEntityDto[]> = new ReplaySubject(1);
     syncAccounts$: Observable<SyncAccountBankDto[]>;
+    bankAccountsIds$: Observable<number[]>;
+    bankAccountsIds: number[];
     businessEntities$: Observable<BusinessEntityDto[]>;
     syncAccountsRequest$;
     businessEntitiesRequest$;
@@ -113,15 +116,29 @@ export class BankAccountsService {
         });
         this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
         this.businessEntities$ = this._businessEntities.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
-/*
-        this.bankAccounts$ = this.syncAccounts$
+        this.bankAccountsIds$ = this.syncAccounts$
             .pipe(
-                mergeMap(x => x),
-                reduce((bankAccounts: BankAccountDto[], syncAccount: SyncAccountBankDto) => {
-                    return bankAccounts.concat(syncAccount.bankAccounts);
-                }, [])
+                map(syncAccounts => {
+                    let bankAccountsIds = [];
+                    syncAccounts.forEach((syncAccount: SyncAccountBankDto) => {
+                        syncAccount.bankAccounts.forEach((bankAccount: BankAccountDto) => {
+                            bankAccountsIds.push(bankAccount.id);
+                        });
+                    });
+                    return bankAccountsIds;
+                }),
+                distinctUntilChanged(this.arrayDistinct)
             );
-*/
+        this.bankAccountsIds$.subscribe((bankAccountsIds: number[]) => {
+            if (this.bankAccountsIds) {
+                /** Select newly added bank accounts */
+                this.changeSelectedBankAccountsIds([
+                    ...this.state.selectedBankAccountIds,
+                    ...difference(bankAccountsIds, this.bankAccountsIds)]
+                );
+            }
+            this.bankAccountsIds = bankAccountsIds;
+        });
         this.businessEntitiesAmount$ = this.businessEntities$.pipe(
             map(businessEntities => businessEntities.length),
             distinctUntilChanged()

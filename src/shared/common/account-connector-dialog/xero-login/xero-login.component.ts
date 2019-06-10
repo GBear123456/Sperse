@@ -41,7 +41,7 @@ export class XeroLoginComponent {
     @Input() accountId: number;
     @Input() isSyncBankAccountsEnabled = true;
     @Input() overwriteCurrentCategoryTree = false;
-    @Output() onComplete: EventEmitter<null> = new EventEmitter();
+    @Output() onComplete: EventEmitter<number> = new EventEmitter();
     @Output() onClose: EventEmitter<null> = new EventEmitter();
     importNewCategoryTree = true;
     consumerKey: string;
@@ -104,7 +104,7 @@ export class XeroLoginComponent {
             )
             .subscribe((syncAccountId: number) => {
                 this._notifyService.info(this.ls.l('SavedSuccessfully'));
-                this.onComplete.emit();
+                this.onComplete.emit(syncAccountId);
                 this.onClose.emit();
                 this._syncProgressService.startSynchronization(true, false, 'X', [ syncAccountId ]);
             });
