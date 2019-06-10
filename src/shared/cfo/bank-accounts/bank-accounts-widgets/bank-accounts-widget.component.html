@@ -91,7 +91,7 @@
         <dxo-filter-row [visible]="false"></dxo-filter-row>
         <dxi-column dataField="id" [visible]="false" sortOrder="desc"></dxi-column>
         <dxi-column dataField="selected" caption="" [width]="30" cssClass="checkbox" alignment="center" dataType="boolean"></dxi-column>
-        <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"  ></dxi-column>
+        <dxi-column dataField="name" [caption]="l('Account')" [sortIndex]="0" sortOrder="asc" [width]="nameColumnWidth" alignment="left" [allowEditing]="false" cssClass="bold"></dxi-column>
         <dxi-column dataField="syncAccountStatus" [caption]="l('BankAccountsWidget_Sync_status')" [width]="200" alignment="center" sortOrder="asc" [sortIndex]="2" cellTemplate="statusTemplate" [allowEditing]="false"></dxi-column>
         <dxi-column dataField="lastSyncDate" alignment="left" [caption]="l('BankAccountsWidget_Last_sync')" [width]="510" [allowEditing]="false" cellTemplate="syncDateTemplate" [visible]="showSyncDate"></dxi-column>
         <dxi-column dataField="bankAccounts.length" [visible]="showAdvancedColumns" [width]="10" [sortIndex]="1" sortOrder="asc" [calculateSortValue]="calculateSyncAccountSortValue" alignment="right" [calculateDisplayValue]="calculateSyncAccountDisplayValue" [allowEditing]="false"></dxi-column>

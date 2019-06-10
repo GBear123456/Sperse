@@ -97,11 +97,16 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     sortItems: ISortItem[] = [
         {
             text: this.l('Sort by connection'),
-            key: 'name'
+            key: 'name',
+            direction: 'asc'
         },
         {
             text: this.l('Sort by total balance'),
             key: 'balance'
+        },
+        {
+            text: this.l('Sort by status'),
+            key: 'syncAccountStatus'
         }
     ];
     mainGridFieldsSorting = [
