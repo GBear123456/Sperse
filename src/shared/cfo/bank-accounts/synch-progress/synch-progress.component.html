@@ -1,12 +1,19 @@
 <div class="synch-progress-wrapper">
-    <div class="synch-container" *ngIf="showComponent">
-        <div *ngIf="!syncFailed && ((!completed && syncData) || (completed && hasFailedAccounts))" id="synchProgressContainer" (mouseenter)="toggleTooltip()">
-            <div *ngIf="!completed" class="loadindicator" [class.error]="hasFailedAccounts"></div>
+    <button *ngIf="isSyncAccountButtonShown && !showProgress"
+            class="sync-account-button"
+            (click)="syncAll()">
+        <img src="./assets/common/icons/sync-account-icon.svg" alt="Sync Accounts">
+        {{l('SyncAllAccounts')}}
+    </button>
+    <div class="synch-container" *ngIf="showProgress">
+        <div *ngIf="!syncFailed && ((!completed && syncData) || (completed && hasFailedAccounts))"
+             id="synchProgressContainer" (mouseenter)="toggleTooltip()">
+            <div *ngIf="!completed" class="loadindicator" [class.in-progress]="!completed"></div>
             <h3>{{l('Sync_status')}}</h3>
             <dx-progress-bar #progressBar
                              id="progress-bar-status"
                              width="210"
-                             [ngClass]="{ 'error': hasFailedAccounts, 'complete': completed }"
+                             [ngClass]="{ 'error': hasFailedAccounts, 'complete': completed, 'in-progress': !completed }"
                              [min]="0"
                              [max]="100"
                              [showStatus]="false"

@@ -7191,19 +7191,16 @@ export class ContactServiceProxy {
     }
 
     /**
-     * @includePhotos (optional) 
      * @searchPhrase (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getAllowedAssignableUsers(contactGroupId: string, includePhotos: boolean | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
+    getAllowedAssignableUsers(contactGroupId: string, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAllowedAssignableUsers?";
         if (contactGroupId === undefined || contactGroupId === null)
             throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
         else
             url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
-        if (includePhotos !== undefined)
-            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
@@ -10403,14 +10400,18 @@ export class DashboardServiceProxy {
      * @bankAccountIds (optional) 
      * @return Success
      */
-    getCategorizationStatus(instanceType: InstanceType70 | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined): Observable<CategorizationStatus> {
+    getCategorizationStatus(instanceType: InstanceType70 | null | undefined, instanceId: number | null | undefined, currencyId: string, bankAccountIds: number[] | null | undefined): Observable<CategorizationStatus> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetCategorizationStatus?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        if (currencyId === undefined || currencyId === null)
+            throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
+        else
+            url_ += "CurrencyId=" + encodeURIComponent("" + currencyId) + "&"; 
         if (bankAccountIds !== undefined)
-            bankAccountIds && bankAccountIds.forEach(item => { url_ += "bankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+            bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -15657,13 +15658,10 @@ export class MyFinancesServiceProxy {
     }
 
     /**
-     * @syncTypeId (optional) 
      * @return Success
      */
-    createUserInstanceProviderUIToken(syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/CreateUserInstanceProviderUIToken?";
-        if (syncTypeId !== undefined)
-            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
+    getUserInstanceStatus(): Observable<GetStatusOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetUserInstanceStatus";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -15675,21 +15673,21 @@ export class MyFinancesServiceProxy {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateUserInstanceProviderUIToken(response_);
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserInstanceStatus(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateUserInstanceProviderUIToken(<any>response_);
+                    return this.processGetUserInstanceStatus(<any>response_);
                 } catch (e) {
-                    return <Observable<GetProviderUITokenOutput>><any>_observableThrow(e);
+                    return <Observable<GetStatusOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetProviderUITokenOutput>><any>_observableThrow(response_);
+                return <Observable<GetStatusOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateUserInstanceProviderUIToken(response: HttpResponseBase): Observable<GetProviderUITokenOutput> {
+    protected processGetUserInstanceStatus(response: HttpResponseBase): Observable<GetStatusOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -15700,7 +15698,7 @@ export class MyFinancesServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
+            result200 = resultData200 ? GetStatusOutput.fromJS(resultData200) : new GetStatusOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -15708,7 +15706,7 @@ export class MyFinancesServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetProviderUITokenOutput>(<any>null);
+        return _observableOf<GetStatusOutput>(<any>null);
     }
 
     /**
@@ -15767,6 +15765,61 @@ export class MyFinancesServiceProxy {
     }
 
     /**
+     * @syncTypeId (optional) 
+     * @return Success
+     */
+    createUserInstanceProviderUIToken(syncTypeId: string | null | undefined): Observable<GetProviderUITokenOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/CreateUserInstanceProviderUIToken?";
+        if (syncTypeId !== undefined)
+            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateUserInstanceProviderUIToken(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateUserInstanceProviderUIToken(<any>response_);
+                } catch (e) {
+                    return <Observable<GetProviderUITokenOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetProviderUITokenOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateUserInstanceProviderUIToken(response: HttpResponseBase): Observable<GetProviderUITokenOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetProviderUITokenOutput.fromJS(resultData200) : new GetProviderUITokenOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetProviderUITokenOutput>(<any>null);
+    }
+
+    /**
      * @forcedSync (optional) 
      * @newOnly (optional) 
      * @return Success
@@ -15822,113 +15875,6 @@ export class MyFinancesServiceProxy {
             }));
         }
         return _observableOf<SyncAllAccountsOutput>(<any>null);
-    }
-
-    /**
-     * @invalidateCache (optional) 
-     * @return Success
-     */
-    getUserInstanceStatus(invalidateCache: boolean | null | undefined): Observable<GetStatusOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetUserInstanceStatus?";
-        if (invalidateCache !== undefined)
-            url_ += "invalidateCache=" + encodeURIComponent("" + invalidateCache) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetUserInstanceStatus(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetUserInstanceStatus(<any>response_);
-                } catch (e) {
-                    return <Observable<GetStatusOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetStatusOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetUserInstanceStatus(response: HttpResponseBase): Observable<GetStatusOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetStatusOutput.fromJS(resultData200) : new GetStatusOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetStatusOutput>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getSyncProgress(): Observable<SyncProgressOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/MyFinances/GetSyncProgress";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSyncProgress(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetSyncProgress(<any>response_);
-                } catch (e) {
-                    return <Observable<SyncProgressOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SyncProgressOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetSyncProgress(response: HttpResponseBase): Observable<SyncProgressOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? SyncProgressOutput.fromJS(resultData200) : new SyncProgressOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SyncProgressOutput>(<any>null);
     }
 }
 
@@ -19332,6 +19278,62 @@ export class PersonContactServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    activateUserForContact(input: ActivateUserForContactInput | null | undefined): Observable<ActivateUserForContactOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/ActivateUserForContact";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processActivateUserForContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processActivateUserForContact(<any>response_);
+                } catch (e) {
+                    return <Observable<ActivateUserForContactOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ActivateUserForContactOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processActivateUserForContact(response: HttpResponseBase): Observable<ActivateUserForContactOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ActivateUserForContactOutput.fromJS(resultData200) : new ActivateUserForContactOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ActivateUserForContactOutput>(<any>null);
     }
 }
 
@@ -26893,62 +26895,6 @@ export class UserServiceProxy {
     }
 
     /**
-     * @input (optional) 
-     * @return Success
-     */
-    activateUserForContact(input: ActivateUserForContactInput | null | undefined): Observable<ActivateUserForContactOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/User/ActivateUserForContact";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(input);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processActivateUserForContact(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processActivateUserForContact(<any>response_);
-                } catch (e) {
-                    return <Observable<ActivateUserForContactOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ActivateUserForContactOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processActivateUserForContact(response: HttpResponseBase): Observable<ActivateUserForContactOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ActivateUserForContactOutput.fromJS(resultData200) : new ActivateUserForContactOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ActivateUserForContactOutput>(<any>null);
-    }
-
-    /**
      * @filter (optional) 
      * @permissions (optional) 
      * @role (optional) 
@@ -28092,15 +28038,12 @@ export class UserAssignmentServiceProxy {
     }
 
     /**
-     * @includePhotos (optional) 
      * @searchPhrase (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getAllowedAssignableUsersForActivity(includePhotos: boolean | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
+    getAllowedAssignableUsersForActivity(searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<UserInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/UserAssignment/GetAllowedAssignableUsersForActivity?";
-        if (includePhotos !== undefined)
-            url_ += "IncludePhotos=" + encodeURIComponent("" + includePhotos) + "&"; 
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (topCount !== undefined)
@@ -34550,6 +34493,8 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
     category!: string;
     parentCategory!: string | undefined;
     sortId!: number | undefined;
+    reportingCategoryCode!: string | undefined;
+    reportingCategoryName!: string | undefined;
 
     constructor(data?: IAccountingCategoryDto) {
         if (data) {
@@ -34568,6 +34513,8 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
             this.category = data["category"];
             this.parentCategory = data["parentCategory"];
             this.sortId = data["sortId"];
+            this.reportingCategoryCode = data["reportingCategoryCode"];
+            this.reportingCategoryName = data["reportingCategoryName"];
         }
     }
 
@@ -34586,6 +34533,8 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
         data["category"] = this.category;
         data["parentCategory"] = this.parentCategory;
         data["sortId"] = this.sortId;
+        data["reportingCategoryCode"] = this.reportingCategoryCode;
+        data["reportingCategoryName"] = this.reportingCategoryName;
         return data; 
     }
 }
@@ -34597,6 +34546,8 @@ export interface IAccountingCategoryDto {
     category: string;
     parentCategory: string | undefined;
     sortId: number | undefined;
+    reportingCategoryCode: string | undefined;
+    reportingCategoryName: string | undefined;
 }
 
 export class GetUserChatFriendsWithSettingsOutput implements IGetUserChatFriendsWithSettingsOutput {
@@ -49582,114 +49533,6 @@ export interface ISyncAllAccountsOutput {
     failedSyncAccountsCount: number | undefined;
 }
 
-export class SyncProgressOutput implements ISyncProgressOutput {
-    lastSyncDate!: moment.Moment | undefined;
-    totalProgress!: SyncProgressDto | undefined;
-    accountProgresses!: SyncProgressDto[] | undefined;
-
-    constructor(data?: ISyncProgressOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
-            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
-            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
-                this.accountProgresses = [];
-                for (let item of data["accountProgresses"])
-                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): SyncProgressOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SyncProgressOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
-        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
-        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
-            data["accountProgresses"] = [];
-            for (let item of this.accountProgresses)
-                data["accountProgresses"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ISyncProgressOutput {
-    lastSyncDate: moment.Moment | undefined;
-    totalProgress: SyncProgressDto | undefined;
-    accountProgresses: SyncProgressDto[] | undefined;
-}
-
-export class SyncProgressDto implements ISyncProgressDto {
-    accountId!: number | undefined;
-    accountName!: string | undefined;
-    syncStatusMessage!: string | undefined;
-    progressPercent!: number | undefined;
-    syncStatus!: SyncProgressDtoSyncStatus | undefined;
-    lastSyncDate!: moment.Moment | undefined;
-
-    constructor(data?: ISyncProgressDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.accountId = data["accountId"];
-            this.accountName = data["accountName"];
-            this.syncStatusMessage = data["syncStatusMessage"];
-            this.progressPercent = data["progressPercent"];
-            this.syncStatus = data["syncStatus"];
-            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): SyncProgressDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new SyncProgressDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["accountId"] = this.accountId;
-        data["accountName"] = this.accountName;
-        data["syncStatusMessage"] = this.syncStatusMessage;
-        data["progressPercent"] = this.progressPercent;
-        data["syncStatus"] = this.syncStatus;
-        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISyncProgressDto {
-    accountId: number | undefined;
-    accountName: string | undefined;
-    syncStatusMessage: string | undefined;
-    progressPercent: number | undefined;
-    syncStatus: SyncProgressDtoSyncStatus | undefined;
-    lastSyncDate: moment.Moment | undefined;
-}
-
 export class NoteInfoDto implements INoteInfoDto {
     contactId!: number | undefined;
     id!: number | undefined;
@@ -51046,8 +50889,8 @@ export class SendAnnouncementRequest implements ISendAnnouncementRequest {
     campaignId!: number;
     offerDetailsLink!: string;
     serviceName!: SendAnnouncementRequestServiceName;
-    listName!: string | undefined;
-    emailAddresses!: string | undefined;
+    contactListName!: string | undefined;
+    emailAddresses!: string[] | undefined;
 
     constructor(data?: ISendAnnouncementRequest) {
         if (data) {
@@ -51063,8 +50906,12 @@ export class SendAnnouncementRequest implements ISendAnnouncementRequest {
             this.campaignId = data["campaignId"];
             this.offerDetailsLink = data["offerDetailsLink"];
             this.serviceName = data["serviceName"];
-            this.listName = data["listName"];
-            this.emailAddresses = data["emailAddresses"];
+            this.contactListName = data["contactListName"];
+            if (data["emailAddresses"] && data["emailAddresses"].constructor === Array) {
+                this.emailAddresses = [];
+                for (let item of data["emailAddresses"])
+                    this.emailAddresses.push(item);
+            }
         }
     }
 
@@ -51080,8 +50927,12 @@ export class SendAnnouncementRequest implements ISendAnnouncementRequest {
         data["campaignId"] = this.campaignId;
         data["offerDetailsLink"] = this.offerDetailsLink;
         data["serviceName"] = this.serviceName;
-        data["listName"] = this.listName;
-        data["emailAddresses"] = this.emailAddresses;
+        data["contactListName"] = this.contactListName;
+        if (this.emailAddresses && this.emailAddresses.constructor === Array) {
+            data["emailAddresses"] = [];
+            for (let item of this.emailAddresses)
+                data["emailAddresses"].push(item);
+        }
         return data; 
     }
 }
@@ -51090,8 +50941,8 @@ export interface ISendAnnouncementRequest {
     campaignId: number;
     offerDetailsLink: string;
     serviceName: SendAnnouncementRequestServiceName;
-    listName: string | undefined;
-    emailAddresses: string | undefined;
+    contactListName: string | undefined;
+    emailAddresses: string[] | undefined;
 }
 
 export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
@@ -54032,6 +53883,78 @@ export interface ICreateUserForContactInput {
     assignedRoleNames: string[];
 }
 
+export class ActivateUserForContactInput implements IActivateUserForContactInput {
+    contactId!: number;
+
+    constructor(data?: IActivateUserForContactInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+        }
+    }
+
+    static fromJS(data: any): ActivateUserForContactInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActivateUserForContactInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        return data; 
+    }
+}
+
+export interface IActivateUserForContactInput {
+    contactId: number;
+}
+
+export class ActivateUserForContactOutput implements IActivateUserForContactOutput {
+    userId!: number | undefined;
+
+    constructor(data?: IActivateUserForContactOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): ActivateUserForContactOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ActivateUserForContactOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IActivateUserForContactOutput {
+    userId: number | undefined;
+}
+
 export class CreatePersonOrgRelationInput implements ICreatePersonOrgRelationInput {
     personId!: number;
     organizationId!: number | undefined;
@@ -55982,6 +55905,114 @@ export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
 
 export interface IGetSetupAccountsLinkOutput {
     setupAccountsLink: string | undefined;
+}
+
+export class SyncProgressOutput implements ISyncProgressOutput {
+    lastSyncDate!: moment.Moment | undefined;
+    totalProgress!: SyncProgressDto | undefined;
+    accountProgresses!: SyncProgressDto[] | undefined;
+
+    constructor(data?: ISyncProgressOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+            this.totalProgress = data["totalProgress"] ? SyncProgressDto.fromJS(data["totalProgress"]) : <any>undefined;
+            if (data["accountProgresses"] && data["accountProgresses"].constructor === Array) {
+                this.accountProgresses = [];
+                for (let item of data["accountProgresses"])
+                    this.accountProgresses.push(SyncProgressDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SyncProgressOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncProgressOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        data["totalProgress"] = this.totalProgress ? this.totalProgress.toJSON() : <any>undefined;
+        if (this.accountProgresses && this.accountProgresses.constructor === Array) {
+            data["accountProgresses"] = [];
+            for (let item of this.accountProgresses)
+                data["accountProgresses"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ISyncProgressOutput {
+    lastSyncDate: moment.Moment | undefined;
+    totalProgress: SyncProgressDto | undefined;
+    accountProgresses: SyncProgressDto[] | undefined;
+}
+
+export class SyncProgressDto implements ISyncProgressDto {
+    accountId!: number | undefined;
+    accountName!: string | undefined;
+    syncStatusMessage!: string | undefined;
+    progressPercent!: number | undefined;
+    syncStatus!: SyncProgressDtoSyncStatus | undefined;
+    lastSyncDate!: moment.Moment | undefined;
+
+    constructor(data?: ISyncProgressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.accountId = data["accountId"];
+            this.accountName = data["accountName"];
+            this.syncStatusMessage = data["syncStatusMessage"];
+            this.progressPercent = data["progressPercent"];
+            this.syncStatus = data["syncStatus"];
+            this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SyncProgressDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SyncProgressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["accountId"] = this.accountId;
+        data["accountName"] = this.accountName;
+        data["syncStatusMessage"] = this.syncStatusMessage;
+        data["progressPercent"] = this.progressPercent;
+        data["syncStatus"] = this.syncStatus;
+        data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISyncProgressDto {
+    accountId: number | undefined;
+    accountName: string | undefined;
+    syncStatusMessage: string | undefined;
+    progressPercent: number | undefined;
+    syncStatus: SyncProgressDtoSyncStatus | undefined;
+    lastSyncDate: moment.Moment | undefined;
 }
 
 export class SyncAccountDto implements ISyncAccountDto {
@@ -58627,9 +58658,12 @@ export interface ISendTwoFactorAuthCodeModel {
 }
 
 export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthenticateResultModel {
+    userId!: number | undefined;
     accessToken!: string | undefined;
     encryptedAccessToken!: string | undefined;
     expireInSeconds!: number | undefined;
+    shouldResetPassword!: boolean | undefined;
+    passwordResetCode!: string | undefined;
 
     constructor(data?: IImpersonatedAuthenticateResultModel) {
         if (data) {
@@ -58642,9 +58676,12 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
 
     init(data?: any) {
         if (data) {
+            this.userId = data["userId"];
             this.accessToken = data["accessToken"];
             this.encryptedAccessToken = data["encryptedAccessToken"];
             this.expireInSeconds = data["expireInSeconds"];
+            this.shouldResetPassword = data["shouldResetPassword"];
+            this.passwordResetCode = data["passwordResetCode"];
         }
     }
 
@@ -58657,17 +58694,23 @@ export class ImpersonatedAuthenticateResultModel implements IImpersonatedAuthent
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
         data["accessToken"] = this.accessToken;
         data["encryptedAccessToken"] = this.encryptedAccessToken;
         data["expireInSeconds"] = this.expireInSeconds;
+        data["shouldResetPassword"] = this.shouldResetPassword;
+        data["passwordResetCode"] = this.passwordResetCode;
         return data; 
     }
 }
 
 export interface IImpersonatedAuthenticateResultModel {
+    userId: number | undefined;
     accessToken: string | undefined;
     encryptedAccessToken: string | undefined;
     expireInSeconds: number | undefined;
+    shouldResetPassword: boolean | undefined;
+    passwordResetCode: string | undefined;
 }
 
 export class SwitchedAccountAuthenticateResultModel implements ISwitchedAccountAuthenticateResultModel {
@@ -59223,15 +59266,6 @@ export interface IGetTransactionDetailsOutput {
 }
 
 export class TransactionDetailsDto implements ITransactionDetailsDto {
-    cashflowCategoryId!: number | undefined;
-    cashflowCategory!: string | undefined;
-    cashflowSubCategoryId!: number | undefined;
-    cashflowSubCategory!: string | undefined;
-    accountingTypeId!: number | undefined;
-    accountingType!: string | undefined;
-    transactionDescriptor!: string | undefined;
-    comments!: TransactionCommentDto[] | undefined;
-    attributes!: TransactionAttributeDto[] | undefined;
     id!: number | undefined;
     bankAccountBankName!: string | undefined;
     bankAccountNumber!: string | undefined;
@@ -59242,6 +59276,15 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
     description!: string | undefined;
     cashFlowTypeId!: string | undefined;
     transactionStatus!: TransactionDetailsDtoTransactionStatus | undefined;
+    cashflowCategoryId!: number | undefined;
+    cashflowCategory!: string | undefined;
+    cashflowSubCategoryId!: number | undefined;
+    cashflowSubCategory!: string | undefined;
+    accountingTypeId!: number | undefined;
+    accountingType!: string | undefined;
+    transactionDescriptor!: string | undefined;
+    comments!: TransactionCommentDto[] | undefined;
+    attributes!: TransactionAttributeDto[] | undefined;
 
     constructor(data?: ITransactionDetailsDto) {
         if (data) {
@@ -59254,6 +59297,16 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
+            this.bankAccountBankName = data["bankAccountBankName"];
+            this.bankAccountNumber = data["bankAccountNumber"];
+            this.bankAccountName = data["bankAccountName"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.currency = data["currency"];
+            this.amount = data["amount"];
+            this.description = data["description"];
+            this.cashFlowTypeId = data["cashFlowTypeId"];
+            this.transactionStatus = data["transactionStatus"];
             this.cashflowCategoryId = data["cashflowCategoryId"];
             this.cashflowCategory = data["cashflowCategory"];
             this.cashflowSubCategoryId = data["cashflowSubCategoryId"];
@@ -59271,16 +59324,6 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
                 for (let item of data["attributes"])
                     this.attributes.push(TransactionAttributeDto.fromJS(item));
             }
-            this.id = data["id"];
-            this.bankAccountBankName = data["bankAccountBankName"];
-            this.bankAccountNumber = data["bankAccountNumber"];
-            this.bankAccountName = data["bankAccountName"];
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
-            this.currency = data["currency"];
-            this.amount = data["amount"];
-            this.description = data["description"];
-            this.cashFlowTypeId = data["cashFlowTypeId"];
-            this.transactionStatus = data["transactionStatus"];
         }
     }
 
@@ -59293,6 +59336,16 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["bankAccountBankName"] = this.bankAccountBankName;
+        data["bankAccountNumber"] = this.bankAccountNumber;
+        data["bankAccountName"] = this.bankAccountName;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["currency"] = this.currency;
+        data["amount"] = this.amount;
+        data["description"] = this.description;
+        data["cashFlowTypeId"] = this.cashFlowTypeId;
+        data["transactionStatus"] = this.transactionStatus;
         data["cashflowCategoryId"] = this.cashflowCategoryId;
         data["cashflowCategory"] = this.cashflowCategory;
         data["cashflowSubCategoryId"] = this.cashflowSubCategoryId;
@@ -59310,30 +59363,11 @@ export class TransactionDetailsDto implements ITransactionDetailsDto {
             for (let item of this.attributes)
                 data["attributes"].push(item.toJSON());
         }
-        data["id"] = this.id;
-        data["bankAccountBankName"] = this.bankAccountBankName;
-        data["bankAccountNumber"] = this.bankAccountNumber;
-        data["bankAccountName"] = this.bankAccountName;
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["currency"] = this.currency;
-        data["amount"] = this.amount;
-        data["description"] = this.description;
-        data["cashFlowTypeId"] = this.cashFlowTypeId;
-        data["transactionStatus"] = this.transactionStatus;
         return data; 
     }
 }
 
 export interface ITransactionDetailsDto {
-    cashflowCategoryId: number | undefined;
-    cashflowCategory: string | undefined;
-    cashflowSubCategoryId: number | undefined;
-    cashflowSubCategory: string | undefined;
-    accountingTypeId: number | undefined;
-    accountingType: string | undefined;
-    transactionDescriptor: string | undefined;
-    comments: TransactionCommentDto[] | undefined;
-    attributes: TransactionAttributeDto[] | undefined;
     id: number | undefined;
     bankAccountBankName: string | undefined;
     bankAccountNumber: string | undefined;
@@ -59344,6 +59378,15 @@ export interface ITransactionDetailsDto {
     description: string | undefined;
     cashFlowTypeId: string | undefined;
     transactionStatus: TransactionDetailsDtoTransactionStatus | undefined;
+    cashflowCategoryId: number | undefined;
+    cashflowCategory: string | undefined;
+    cashflowSubCategoryId: number | undefined;
+    cashflowSubCategory: string | undefined;
+    accountingTypeId: number | undefined;
+    accountingType: string | undefined;
+    transactionDescriptor: string | undefined;
+    comments: TransactionCommentDto[] | undefined;
+    attributes: TransactionAttributeDto[] | undefined;
 }
 
 export class TransactionCommentDto implements ITransactionCommentDto {
@@ -59744,78 +59787,6 @@ export class UiCustomizationFooterSettingsEditDto implements IUiCustomizationFoo
 
 export interface IUiCustomizationFooterSettingsEditDto {
     fixedFooter: boolean | undefined;
-}
-
-export class ActivateUserForContactInput implements IActivateUserForContactInput {
-    contactId!: number;
-
-    constructor(data?: IActivateUserForContactInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.contactId = data["contactId"];
-        }
-    }
-
-    static fromJS(data: any): ActivateUserForContactInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new ActivateUserForContactInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
-        return data; 
-    }
-}
-
-export interface IActivateUserForContactInput {
-    contactId: number;
-}
-
-export class ActivateUserForContactOutput implements IActivateUserForContactOutput {
-    userId!: number | undefined;
-
-    constructor(data?: IActivateUserForContactOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.userId = data["userId"];
-        }
-    }
-
-    static fromJS(data: any): ActivateUserForContactOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new ActivateUserForContactOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["userId"] = this.userId;
-        return data; 
-    }
-}
-
-export interface IActivateUserForContactOutput {
-    userId: number | undefined;
 }
 
 export class PagedResultDtoOfUserListDto implements IPagedResultDtoOfUserListDto {
@@ -62558,14 +62529,6 @@ export enum RegisterMemberRequestGender {
     _1 = 1, 
 }
 
-export enum SyncProgressDtoSyncStatus {
-    InProgress = "InProgress", 
-    ActionRequired = "ActionRequired", 
-    SyncPending = "SyncPending", 
-    Unavailable = "Unavailable", 
-    Completed = "Completed", 
-}
-
 export enum NoteInfoDtoNoteType {
     Note = "Note", 
     IncomingCall = "IncomingCall", 
@@ -63153,6 +63116,14 @@ export enum TenantLoginInfoDtoCustomLayoutType {
 export enum TenantLoginInfoDtoPaymentPeriodType {
     _30 = 30, 
     _365 = 365, 
+}
+
+export enum SyncProgressDtoSyncStatus {
+    InProgress = "InProgress", 
+    ActionRequired = "ActionRequired", 
+    SyncPending = "SyncPending", 
+    Unavailable = "Unavailable", 
+    Completed = "Completed", 
 }
 
 export enum CheckHostNameDnsMappingInputTenantHostType {

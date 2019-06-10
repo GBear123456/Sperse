@@ -51,7 +51,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                         this.modules.footerItems.push(moduleConfig);
                     } else if (module.name === 'CFO'
                         && this._appService.isModuleActive(module.name)
-                        && abp.session.tenantId
+                        && !_appService.isHostTenant
                         && this.feature.isEnabled('CFO.Partner')
                         && this.permission.isGranted('Pages.CFO.MemberAccess')
                     ) {

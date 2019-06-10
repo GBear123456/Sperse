@@ -123,14 +123,14 @@ export class TopBarComponent extends AppComponentBase {
     private checkMenuItemPermission(item): boolean {
         //!!VP Should be considered on module configuration level
         if (this.config['name'] == 'CRM') {
-            if (this._appService.isNotHostTenant()) {
+            if (!this._appService.isHostTenant) {
                 if (['Editions'].indexOf(item.text) >= 0)
                     return false;
             } else if (['Products'].indexOf(item.text) >= 0)
                 return false;
         }
 
-        return this.isFeatureEnable(item.featureName) && ((item.permissionName && this.isGranted(item.permissionName)) ||
+        return this._appService.isFeatureEnable(item.featureName) && ((item.permissionName && this.isGranted(item.permissionName)) ||
             (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permissionName));
     }
 

@@ -8,12 +8,28 @@
     }
 
     .header {
-        border-bottom: 2px solid #e5e9ec;
-        padding: 8px;
+        border-bottom: 1px solid #e5e9ec;
+        padding: 0 8px;
         .row {
             align-items: center;
             margin-right: -8px;
             margin-left: -8px;
+
+            &.first-sub-header {
+                border-bottom: 1px solid #e5e9ec;
+                padding: 10px 0;
+                flex-wrap: nowrap;
+                /deep/ search-input {
+                    margin-right: auto;
+                    margin-left: 10px;
+                }
+                /deep/ add-account-button {
+                    margin: 0 30px 0 0;
+                }
+            }
+            &.second-sub-header {
+                padding: 8px 0;
+            }
             [class*="col-"] {
                 padding-right: 8px;
                 padding-left: 8px;
@@ -24,6 +40,7 @@
                     align-items: center;
                     /deep/ .dx-checkbox {
                         margin-right: 13px;
+                        margin-left: 8px;
                     }
                 }
             }
@@ -89,7 +106,6 @@
     }
 
     /deep/ #gridContainer {
-        height: 100% !important;
         font-size: 12px;
 
         .dx-datagrid-headers .dx-datagrid-content,
@@ -162,7 +178,7 @@
                         box-shadow: none !important;
 
                         td {
-                            padding: 3px 8px !important;
+                            padding: 3px 8px;
                             font-weight: 500;
                             color: #67737f;
                         }
@@ -229,6 +245,17 @@
                         background: #f45a34;
                     }
                 }
+                &.short {
+                    background: transparent;
+                    width: 8px;
+                    height: 8px;
+                    display: block;
+                    padding: 0 !important;
+                    &:before {
+                        position: relative;
+                        left: 0 !important;
+                    }
+                }
             }
 
             .dx-datagrid-rowsview {
@@ -238,7 +265,8 @@
             }
 
             .dx-row.dx-data-row {
-                border: 1px solid #e5e9ec;
+                border-top: 1px solid #e5e9ec;
+                border-bottom: 1px solid #e5e9ec;
                 border-radius: 4px;
 
                 td {
@@ -252,6 +280,9 @@
                     .dx-checkbox-container,
                     &.dx-editor-cell {
                         text-overflow: clip;
+                    }
+                    &.checkbox {
+                        padding-left: 16px !important;
                     }
                 }
                 &:first-child {

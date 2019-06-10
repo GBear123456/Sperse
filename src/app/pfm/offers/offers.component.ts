@@ -316,7 +316,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
         this.dataSource = new DataSource({
             store: {
                 type: 'odata',
-                url: this.getODataUrl(this.dataSourceURI, 
+                url: this.getODataUrl(this.dataSourceURI,
                     this.filterByStatus(this.filterModelStatuses)),
                 deserializeDates: false,
                 version: AppConsts.ODataVersion,

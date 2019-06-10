@@ -13,7 +13,10 @@
                 </div>
             </div>
         </dx-tooltip>
-        <div class="value" id="valueTotal">{{ bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</div>
+        <div class="value" id="valueTotal">
+            {{ bankAccountsService.accountsDataTotalNetWorth$ | async | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
+            <span>.{{ bankAccountsService.accountsDataTotalNetWorth$ | async | customNumber:'0.2-2'}}</span>
+        </div>
         <div class="name">{{l('Current_Balance')}}</div>
     </div>
     <div class="account-item dailyStats">
@@ -28,8 +31,7 @@
                      </div>
                  </dx-tooltip>
                 <div class="value" id="valueDaily">
-                    {{ dailyStatsAmount | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
-                    <span>.{{ ( dailyStatsAmount ? dailyStatsAmount : 1 ) | customNumber : '0.2-2' }}</span>
+                    {{ dailyStatsAmount | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}<span>.{{ ( dailyStatsAmount ? dailyStatsAmount : 1 ) | customNumber : '0.2-2' }}</span>
                 </div>
                 <div class="name">{{dailyStatsText}}</div>
             </div>
@@ -46,7 +48,8 @@
         <a class="view-details">{{l('Select')}}</a>
         <div class="value">{{ bankAccountsService.accountsAmount$ | async }}</div>
         <div class="name">
-            {{(bankAccountsService.filteredBankAccounts$ | async)?.length ? l((bankAccountsService.filteredBankAccountsStatus$ | async) ? 'Active' : 'Disabled') : ''}} {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}
+            {{ bankAccountsService.filteredBankAccountsStatus$ | async }}
+            {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}
             <ng-container *ngIf="(bankAccountsService.filteredBankAccounts$ | async)?.length">
                 <span class="filtered">*</span>
             </ng-container>

@@ -29,7 +29,6 @@ import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationCo
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
@@ -110,7 +109,7 @@ export class CompanyDialogComponent implements OnInit {
         private store$: Store<RootStore.State>,
         private changeDetectorRef: ChangeDetectorRef,
         private maskPipe: MaskPipe,
-        private clientService: ContactsService,
+        private contactService: ContactsService,
         private notifyService: NotifyService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
@@ -167,26 +166,32 @@ export class CompanyDialogComponent implements OnInit {
             }))
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(
-                () => this.clientService.invalidate('notes')
+                () => this.contactService.invalidate('notes')
             );
         }
     }
 
     delete() {
-        this.dialog.open(ConfirmDialogComponent, {
-            data: {
-                title: this.ls.l('CompanyRemovalConfirmationTitle'),
-                message: this.ls.l('CompanyRemovalConfirmationMessage', this.company.fullName),
+        abp.message.confirm(this.ls.l('CompanyRemovalConfirmationMessage', 
+            AppConsts.localization.CRMLocalizationSourceName, this.company.fullName), (result) => {
+                if (result) {
+                    let personOrgRelationId = this.data.contactInfo.personContactInfo.orgRelationId;
+                    this._organizationContactServiceProxy.delete(this.company.id, personOrgRelationId).subscribe(() => {
+                        this.dialog.closeAll();
+                        this.notifyService.success(this.ls.l('SuccessfullyRemoved'));
+                        let contactInfo = this.data.contactInfo;
+                        this.contactService.updateLocation(contactInfo.Id, contactInfo['leadId'], 
+                            undefined, contactInfo.personContactInfo.userId);
+                        this.data.invalidate.emit({
+                            contactId: contactInfo.id,
+                            leadId: contactInfo['leadId'],
+                            companyId: undefined,
+                            userId: contactInfo.personContactInfo.userId
+                        });
+                    });
+                }
             }
-        }).afterClosed().subscribe(result => {
-            if (result) {
-                let personOrgRelationId = this.data.contactInfo.personContactInfo.orgRelationId;
-                this._organizationContactServiceProxy.delete(this.company.id, personOrgRelationId).subscribe(() => {
-                    this.notifyService.success(this.ls.l('SuccessfullyRemoved'));
-                    this.modalDialog.close(true);
-                });
-            }
-        });
+        );
     }
 
     private getMomentFromDateWithoutTime(date: any): moment.Moment {

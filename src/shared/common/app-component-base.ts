@@ -147,10 +147,6 @@ export abstract class AppComponentBase implements OnDestroy {
         return this.localizationService.ls(sourcename, key, ...args);
     }
 
-    isFeatureEnable(featureName: string): boolean {
-        return !abp.session.tenantId || !featureName || this.feature.isEnabled(featureName);
-    }
-
     isGranted(permissionName: string): boolean {
         return this.permission.isGranted(permissionName);
     }

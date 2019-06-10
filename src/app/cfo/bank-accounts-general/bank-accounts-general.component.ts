@@ -13,7 +13,6 @@ import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsGeneralService } from '@shared/cfo/bank-accounts/helpers/bank-accounts-general.service';
 import { SyncAccountServiceProxy, InstanceType91 } from '@shared/service-proxies/service-proxies';
-import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { CfoStore, CurrenciesStoreSelectors } from '@app/cfo/store';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -69,41 +68,12 @@ export class BankAccountsGeneralComponent extends CFOComponentBase implements On
             names: [this.l('Setup_Title'), this.l('Accounts')],
             iconSrc: './assets/common/icons/magic-stick-icon.svg',
             onRefresh: this.refresh.bind(this),
-            buttons: [
-                {
-                    enabled: (this.isInstanceAdmin || this.isMemberAccessManage) && this.createAccountAvailable,
-                    class: 'btn-default',
-                    lable: '+ ' + this.l('Add_account'),
-                    action: this.openAddAccountDialog.bind(this)
-                },
-                {
-                    enabled: true,
-                    action: this.syncAll.bind(this),
-                    lable: this.l('SyncAll'),
-                    class: 'btn-layout next-button'
-                }
-            ]
+            buttons: []
         };
-    }
-
-    private openAddAccountDialog() {
-        if (!this.createAccountAvailable)
-            return;
-
-        const accountConnectorDialog = this._dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig);
-        accountConnectorDialog.componentInstance.onComplete.subscribe(() => {
-            this.refresh();
-        });
     }
 
     refresh() {
         this._bankAccountsGeneralService.refreshBankAccounts();
-    }
-
-    syncAll() {
-        setTimeout(() => {
-            this._synchProgress.startSynchronization(true, false, 'all');
-        }, 300);
     }
 
     ngAfterViewInit(): void {

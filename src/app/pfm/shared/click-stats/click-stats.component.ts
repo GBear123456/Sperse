@@ -88,19 +88,16 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
     }
 
     getDataByDay(res) {
-        let data = new Array(this.MAX_ROW_COUNT);
-        data[this.TOTAL_COL_INDEX] = zipObject(
-            this.columns.map((col) => col.dataField),
-            this.columns.map(() => 0));
+        let data = new Array(this.MAX_ROW_COUNT).fill(0).map((row, index) => {
+            return index == this.TOTAL_COL_INDEX ?
+                zipObject(
+                    this.columns.map((col) => col.dataField),
+                    this.columns.map(() => 0)) : {[this.TOTAL_DATA_FIELD]: index};
+        });
 
         res.forEach((item) => {
-            let dayIndex = item.date.date(),
-                month = item.date.format('MMM');
-
-            if (!data[dayIndex]) data[dayIndex] = {};
-            data[dayIndex][this.TOTAL_DATA_FIELD] = dayIndex;
-            data[dayIndex][month] = item.count;
-
+            let month = item.date.format('MMM');
+            data[item.date.date()][month] = item.count;
             data[this.TOTAL_COL_INDEX][month] += item.count;
             data[this.TOTAL_COL_INDEX][this.TOTAL_DATA_FIELD] += item.count;
         });

@@ -142,8 +142,7 @@
                         <div *dxTemplate="let data of 'startBalanceTotal'">
                             <div class="informer starting-balance">
                                 <h2 class="count">
-                                    {{adjustmentStartingBalanceTotal  | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}
-                                    <span class="cent">.{{adjustmentStartingBalanceTotalCent | number:'2.0-0'}}</span>
+                                    {{adjustmentStartingBalanceTotal  | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}
                                 </h2>
                                 <span class="name">{{l('Starting_Balance')}}</span>
                             </div>
@@ -152,8 +151,7 @@
                         <div *dxTemplate="let data of 'creditTotal'">
                             <div class="informer">
                                 <h2 class="count positive-values">
-                                    {{ creditTransactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}
-                                    <span class="cent">.{{creditTransactionTotalCent | number:'2.0-0'}}</span>
+                                    {{ creditTransactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                                 </h2>
                                 <span class="name" (click)="toggleCreditDefault()">
                                     {{l('Credits')}} <span class="name-count">{{creditTransactionCount | number}}</span> <i id="creditDetails" class="arrow"></i>
@@ -163,7 +161,10 @@
                                             [(visible)]="defaultCreditTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
                                         <div class="tooltip-wrap classification-status">
-                                            <header>{{l('Classification_Status')}}</header>
+                                            <header>
+                                                {{l('Classification_Status')}}
+                                                <span class="click-to-filter">{{l('ClickToFilter')}}</span>
+                                            </header>
                                             <ul class="classification-list">
 
                                                 <li class="classification-item classified" (click)="applyTotalFilters(true, true, false)">
@@ -177,7 +178,7 @@
                                                     <span class="classification-item-percent">{{(creditTransactionCount - creditClassifiedTransactionCount) / creditTransactionCount | percent}}</span>
                                                 </li>
                                             </ul>
-                                            <div class="btns-wrap clearfix" *ngIf="manageAllowed">
+                                            <div class="btns-wrap clearfix" *ngIf="isInstanceAdmin">
                                                 <a (click)="openDialog('credit');" class="small-button btn-layout">
                                                     {{l('Unclassify_Btn')}}
                                                 </a>
@@ -194,8 +195,7 @@
                         <div *dxTemplate="let data of 'debitTotal'">
                             <div class="informer">
                                 <h2 class="count negative-values">
-                                    {{ debitTransactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}
-                                    <span class="cent">.{{debitTransactionTotalCent | number:'2.0-0'}}</span>
+                                    {{ debitTransactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                                 </h2>
                                 <span class="name" (click)="toggleDebitDefault()">
                                     {{l('Debits')}} <span class="name-count">{{debitTransactionCount | number}}</span> <i id="debitDetails" class="arrow"></i>
@@ -204,7 +204,10 @@
                                             [(visible)]="defaultDebitTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
                                         <div class="tooltip-wrap classification-status">
-                                            <header>{{l('Classification_Status')}}</header>
+                                            <header>
+                                                {{l('Classification_Status')}}
+                                                <span class="click-to-filter">{{l('ClickToFilter')}}</span>
+                                            </header>
                                             <ul class="classification-list">
                                                 <li class="classification-item classified" (click)="applyTotalFilters(true, false, true)">
                                                     <span class="classified-item-title"><span class="border">{{l('Classified')}}</span></span>
@@ -217,7 +220,7 @@
                                                     <span class="classification-item-percent">{{(debitTransactionCount - debitClassifiedTransactionCount) / debitTransactionCount | percent}}</span>
                                                 </li>
                                             </ul>
-                                            <div class="btns-wrap clearfix" *ngIf="manageAllowed">
+                                            <div class="btns-wrap clearfix" *ngIf="isInstanceAdmin">
                                                 <a (click)="openDialog('debit');" class="small-button btn-layout">
                                                     {{l('Unclassify_Btn')}}
                                                 </a>
@@ -234,8 +237,7 @@
                         <div *dxTemplate="let data of 'transactionTotal'">
                             <div class="informer">
                                 <h2 class="count">
-                                    {{ transactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0' }}
-                                    <span class="cent">.{{transactionTotalCent | number:'2.0-0'}}</span>
+                                    {{ transactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
                                 </h2>
                                 <span class="name" (click)="toggleTotalDefault()">
                                     <span id="adjustments" *ngIf="adjustmentTotal !== 0">!</span> {{l('Net_Amount')}} <span class="name-count">{{transactionCount | number}}</span> <i id="totalDetails" class="arrow"></i>
@@ -253,7 +255,10 @@
                                             [(visible)]="defaultTotalTooltipVisible">
                                     <div *dxTemplate="let data = data of 'content'">
                                         <div class="tooltip-wrap classification-status">
-                                            <header>{{l('Classification_Status')}}</header>
+                                            <header>
+                                                {{l('Classification_Status')}}
+                                                <span class="click-to-filter">{{l('ClickToFilter')}}</span>
+                                            </header>
                                             <ul class="classification-list">
                                                 <li class="classification-item classified" (click)="applyTotalFilters(true, false, false)">
                                                     <span class="classified-item-title"><span class="border">{{l('Classified')}}</span></span>
@@ -266,7 +271,7 @@
                                                     <span class="classification-item-percent">{{(transactionCount - (debitClassifiedTransactionCount + creditClassifiedTransactionCount)) / transactionCount | percent}}</span>
                                                 </li>
                                             </ul>
-                                            <div class="btns-wrap clearfix" *ngIf="manageAllowed">
+                                            <div class="btns-wrap clearfix" *ngIf="isInstanceAdmin">
                                                 <a (click)="openDialog('total');" class="small-button btn-layout">
                                                     {{l('Unclassify_Btn')}}
                                                 </a>

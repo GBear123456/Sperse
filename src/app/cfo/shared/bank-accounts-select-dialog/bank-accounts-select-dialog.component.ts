@@ -42,7 +42,8 @@ export class BankAccountsSelectDialogComponent implements OnInit {
                 id: 'saveCompany',
                 title: this.ls.l('Apply'),
                 class: 'primary saveButton',
-                action: this.apply.bind(this)
+                action: this.apply.bind(this),
+                disabled: this.data && this.data.applyDisabled
             }
         ];
     }

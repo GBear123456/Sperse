@@ -4,15 +4,26 @@ import { Component, Injector, Input, Output, ViewChild, OnInit, EventEmitter, El
 /** Third party imports */
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import Form from 'devextreme/ui/form';
-import { forkJoin } from 'rxjs';
+import { BehaviorSubject, Observable, forkJoin } from 'rxjs';
+import { finalize, map } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
-import { BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy, SyncAccountBankDto, UpdateBankAccountDto, RenameSyncAccountInput } from 'shared/service-proxies/service-proxies';
+import {
+    BankAccountsServiceProxy,
+    BusinessEntityServiceProxy,
+    SyncAccountServiceProxy,
+    SyncServiceProxy,
+    SyncAccountBankDto,
+    UpdateBankAccountDto,
+    RenameSyncAccountInput
+} from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { ISortItem } from '@app/shared/common/sort-button/sort-item.interface';
+import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -35,6 +46,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     @Input() showSyncAccountWithoutBankAccounts = true;
     @Input() showCreditInfo = false;
     @Input() showBusinessEntitiesFilter = true;
+    @Input() showStatusText = true;
+    @Input() showAddAccountButton = true;
+    @Input() searchInputWidth = 279;
     dataSource: any;
     @Input('highlightedBankAccountIds')
     set highlightedBankAccountIds(highlightedBankAccountIds) {
@@ -59,16 +73,13 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     /** Editing form instance */
     dxFormInstance: Form;
-
     instanceType;
     instanceId;
 
     /** Default empty business entity */
     businessEntities = [{ id: null, name: '' }];
-
     accountsTypes;
     cfoService: CFOService;
-
     isContextMenuVisible = false;
     contextMenuItems = [
         { text: this.l('Edit_Name') },
@@ -83,6 +94,45 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     popupVisible = false;
     bankAccountInfo: RenameSyncAccountInput = new RenameSyncAccountInput();
     scrollHeight: number;
+    sortItems: ISortItem[] = [
+        {
+            text: this.l('Sort by connection'),
+            key: 'name',
+            direction: 'asc'
+        },
+        {
+            text: this.l('Sort by total balance'),
+            key: 'balance'
+        },
+        {
+            text: this.l('Sort by status'),
+            key: 'syncAccountStatus'
+        }
+    ];
+    mainGridFieldsSorting = [
+        'name',
+        'bankAccounts.length',
+        'syncAccountStatus'
+    ];
+    expandItems: IExpandItem[] = [
+        {
+            text: this.l('Expand all'),
+            key: 'expandAll'
+        },
+        {
+            text: this.l('Collapse all'),
+            key: 'collapseAll'
+        }
+    ];
+    refresh$: BehaviorSubject<null> = new BehaviorSubject<null>(null);
+    syncAccounts$: Observable<SyncAccountBankDto[]> = this.bankAccountsService.distinctUntilChangedFilteredSyncAccounts$.pipe(
+        map((syncAccounts) => {
+            if (!this.showSyncAccountWithoutBankAccounts) {
+                syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length);
+            }
+            return syncAccounts;
+        })
+    );
 
     constructor(
         injector: Injector,
@@ -99,16 +149,51 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     ngOnInit(): void {
+
+        this.syncAccounts$.subscribe((syncAccounts) => {
+            this.dataSource = syncAccounts;
+        });
+
         if (!this.isInstanceAdmin && !this.isMemberAccessManage) {
             this.contextMenuItems = [
                 { text: this.l('Sync_Now') }
             ];
         }
-        this.bankAccountsService.distinctUntilChangedFilteredSyncAccounts$.subscribe((syncAccounts) => {
-            if (!this.showSyncAccountWithoutBankAccounts) {
-                syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length);
+    }
+
+    refresh() {
+        this.loadingService.startLoading(this.getElementRef().nativeElement);
+        this.bankAccountsService.load(false)
+            .pipe(finalize(() => this.loadingService.finishLoading(this.getElementRef().nativeElement)))
+            .subscribe();
+    }
+
+    changeSorting(sorting: ISortItem) {
+        const mainGrid = this.mainDataGrid.instance;
+        mainGrid.clearSorting();
+        mainGrid.getVisibleColumns().forEach(column => {
+            const columnSortingIndex = this.mainGridFieldsSorting.indexOf(column.dataField);
+            if (column.dataField === sorting.key) {
+                mainGrid.columnOption(column.dataField, 'sortIndex', 0);
+                mainGrid.columnOption(column.dataField, 'sortOrder', sorting.direction);
+            } else if (columnSortingIndex  >= 0) {
+                mainGrid.columnOption(column.dataField, 'sortIndex', columnSortingIndex + 1);
+            } else {
+                mainGrid.columnOption(column.dataField, 'sortIndex', undefined);
+                mainGrid.columnOption(column.dataField, 'sortOrder', undefined);
             }
-            this.dataSource = syncAccounts;
+        });
+    }
+
+    expand(expandKey: string) {
+        const visibleRows = this.mainDataGrid.instance.getVisibleRows();
+        const method = expandKey === 'expandAll'
+              ? this.mainDataGrid.instance.expandRow
+              : this.mainDataGrid.instance.collapseRow;
+        visibleRows.forEach((row) => {
+            if (row.data.bankAccounts.length) {
+                method(row.key);
+            }
         });
     }
 
@@ -125,7 +210,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     setHighlighted() {
-        this.dataSource.forEach(syncAccount => {
+        this.dataSource && this.dataSource.forEach(syncAccount => {
             let highlightedBankAccountExist = false;
             syncAccount.bankAccounts.forEach(bankAccount => {
                 let isBankAccountHighlighted = _.contains(this.bankAccountIdsForHighlight, bankAccount.id);
@@ -138,11 +223,13 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     masterRowExpandChange(e) {
-        if (e.isExpanded) {
-            this.mainDataGrid.instance.collapseRow(e.key);
-        } else {
-            if (e.data.bankAccounts.length) {
-                this.mainDataGrid.instance.expandRow(e.key);
+        if (e.rowType === 'data') {
+            if (e.isExpanded) {
+                this.mainDataGrid.instance.collapseRow(e.key);
+            } else {
+                if (e.data.bankAccounts.length) {
+                    this.mainDataGrid.instance.expandRow(e.key);
+                }
             }
         }
     }
@@ -187,6 +274,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this.bankAccountsService.changeBankAccountTypes(e);
     }
 
+    statusesChanged(e) {
+        this.bankAccountsService.changeStatusesFilter(e, this.saveChangesInCache);
+    }
+
     entitiesItemsChanged(selectedEntitiesIds: number[]) {
         this.bankAccountsService.changeState({
             selectedBusinessEntitiesIds: selectedEntitiesIds,
@@ -205,7 +296,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     dataCellClick(cell) {
         /** If to click for checkbox */
-        if (cell.column.dataField === 'selected') {
+        if (cell.column && cell.column.dataField === 'selected') {
             cell.data.selected = !cell.data.selected;
             this.masterSelectionChanged(cell);
             cell.event.stopImmediatePropagation();
@@ -337,7 +428,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     calculateHeight() {
         /** Get bottom position of previous element */
         let filtersBottomPosition = this.header.nativeElement.getBoundingClientRect().bottom;
-        this.scrollHeight = window.innerHeight - filtersBottomPosition - 20;
+        this.scrollHeight = window.innerHeight - filtersBottomPosition;
     }
 
     removeAccount(syncAccountId) {
@@ -429,5 +520,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         else if (ratio > 30) return '#ed9d1a';
         else if (ratio > 15) return '#f7d930';
         else return '#34be75';
+    }
+
+    searchChanged(searchValue: string) {
+        this.bankAccountsService.changeSearchString(searchValue);
     }
 }

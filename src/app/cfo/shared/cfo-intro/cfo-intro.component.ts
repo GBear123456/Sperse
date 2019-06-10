@@ -12,6 +12,7 @@ import { InstanceType, ModuleType, ModuleType2, UserServiceProxy } from 'shared/
 import { AppConsts } from '@shared/AppConsts';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'app-cfo-intro',
@@ -34,13 +35,14 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     constructor(
         injector: Injector,
         private _userService: UserServiceProxy,
+        public appService: AppService,
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
         super(injector);
         this.moduleName = AppConsts.modules.CFOModule;
         this.dialogRef = <any>injector.get(MatDialogRef);
         this.showImportUsersStep = this.instanceType == InstanceType.Main &&
-            (!abp.session.tenantId || this.feature.isEnabled('Admin'))
+            (appService.isHostTenant || this.feature.isEnabled('Admin'))
             && this.permission.isGranted('Pages.Administration.Users')
             && this.permission.isGranted('Pages.Administration.Users.Create')
             && this.permission.isGranted('Pages.Administration.Roles');

@@ -37,7 +37,6 @@ import * as moment from 'moment-timezone';
 import { RootComponent } from 'root.components';
 import {
     CountryStateDto,
-    CreditScores2,
     ExtendOfferDtoCampaignProviderType,
     ExtendOfferDtoCardNetwork,
     ExtendOfferDtoCardType,
@@ -121,10 +120,10 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     cardNetworkEnum = ExtendOfferDtoCardNetwork;
     targetAudienceEnum = ExtendOfferDtoTargetAudience;
     securingTypeEnum = ExtendOfferDtoSecuringType;
-    creditScoresEnum = CreditScores2;
     offerCollectionEnum = ExtendOfferDtoOfferCollection;
     model: OfferDetailsForEditDto;
     initialModel: OfferDetailsForEditDto;
+    creditScoresString: string;
     section$: Observable<string>;
     offerIsUpdating = false;
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
@@ -187,6 +186,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         });
         this.offerDetails$.subscribe(details => {
             this.model = details;
+            this.creditScoresString = this.model.creditScores && this.model.creditScores.join(', ');
             this.updateInitialModel();
         });
         this.targetEntity$.pipe(
@@ -198,7 +198,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             withLatestFrom(this.offerId$, this.section$),
             filter(itemFullInfo => !!itemFullInfo)
         ).subscribe(([itemFullInfo, offerId, section]: [ItemFullInfo, number, string]) => {
-            if (offerId !== itemFullInfo.itemData.CampaignId) {
+            if (itemFullInfo && offerId !== itemFullInfo.itemData.CampaignId) {
                 this.router.navigate(
                     ['../..', itemFullInfo.itemData.CampaignId, section],
                     { relativeTo: this.route }

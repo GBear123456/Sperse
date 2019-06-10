@@ -34,13 +34,15 @@ export class PipelineService {
     public stageChange: Subject<any>;
     private _pipelineDefinitions: any = {};
     private defaultStagesColors: StageColor = {
+        '-4': '#f02929',
         '-3': '#f05b29',
         '-2': '#f4ae55',
         '-1': '#f7d15e',
         '0': '#00aeef',
         '1': '#b6cf5e',
         '2': '#86c45d',
-        '3': '#46aa6e'
+        '3': '#46aa6e',
+        '4': '#0e9360'
     };
     private _dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject<DataLayoutType>(DataLayoutType.Pipeline);
     dataLayoutType$: Observable<DataLayoutType> = this._dataLayoutType.asObservable();

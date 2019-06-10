@@ -1,7 +1,9 @@
+/** Core imports */
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
-import { CommonModule } from '@shared/common/common.module';
 
+/** Third party imports */
+import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
@@ -21,32 +23,37 @@ import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxListModule } from 'devextreme-angular/ui/list';
 
-//import { AppCommonModule } from '@app/shared/common/app-common.module';
-import { SyncServiceProxy, ContactServiceProxy, BankAccountsServiceProxy, BusinessEntityServiceProxy } from '@shared/service-proxies/service-proxies';
-import { RoundProgressModule } from 'angular-svg-round-progressbar';
-
+/** Application imports */
+import { CommonModule } from '@shared/common/common.module';
+import {
+    SyncServiceProxy,
+    ContactServiceProxy,
+    BankAccountsServiceProxy,
+    BusinessEntityServiceProxy,
+    MyFinancesServiceProxy
+} from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from './helpers/bank-accounts.service';
 import { BankAccountsComponent } from './bank-accounts.component';
 import { BankAccountsWidgetComponent } from './bank-accounts-widgets/bank-accounts-widget.component';
 import { BankAccountsQuovoComponent } from './bank-accounts-quovo/bank-accounts-quovo.component';
 import { QuovoPfmComponent } from './quovo-pfm/quovo-pfm.component';
 import { AddAccountButtonComponent } from './add-account-button/add-account-button.component';
-
 import { QuovoService } from './quovo/QuovoService';
 import { AddQuovoAccountButtonComponent } from './quovo/add-quovo-account-button/add-quovo-account-button.component';
 import { ImportXeroChartOfAccountsButtonComponent } from './xero/import-xero-chart-of-accounts-button/import-xero-chart-of-accounts-button.component';
-
 import { SelectionFilterComponent } from './selection-filter/selection-filter.component';
 import { SynchProgressComponent } from './synch-progress/synch-progress.component';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { ChooseXeroAccountComponent } from './xero/import-xero-chart-of-accounts-button/choose-xero-account/choose-xero-account.component';
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
+import { SearchInputModule } from '@app/shared/common/search-input/search-input.module';
+import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.module';
+import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-button.module';
 
 @NgModule({
     imports: [
         CommonModule,
         ngCommon.CommonModule,
-//        AppCommonModule,
         RoundProgressModule,
         DxDropDownBoxModule,
         DxTabsModule,
@@ -66,7 +73,10 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
         DxValidatorModule,
         AccountConnectorDialogModule,
         DxValidationSummaryModule,
-        DxRadioGroupModule
+        DxRadioGroupModule,
+        SearchInputModule,
+        SortButtonModule,
+        ExpandButtonModule
     ],
     declarations: [
         BankAccountsComponent,
@@ -99,6 +109,7 @@ import { AccountConnectorDialogModule } from '@shared/common/account-connector-d
     ],
     providers: [
         QuovoService,
+        MyFinancesServiceProxy,
         ContactServiceProxy,
         BusinessEntityServiceProxy,
         BankAccountsServiceProxy,

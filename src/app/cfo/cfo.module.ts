@@ -82,6 +82,9 @@ import { KeyPhrasesComponent } from './transactions/key-phrases/key-phrases.comp
 import { AccountConnectorDialogModule } from '@shared/common/account-connector-dialog/account-connector-dialog.module';
 import { CfoStoreModule } from '@app/cfo/store';
 import { CurrenciesDropdownComponent } from '@app/cfo/shared/common/currencies-dropdown/currencies-dropdown.component';
+import { SearchInputModule } from '@app/shared/common/search-input/search-input.module';
+import { ExpandButtonModule } from '@app/shared/common/expand-button/expand-button.module';
+import { SortButtonModule } from '@app/shared/common/sort-button/sort-button.module';
 
 let COMPONENTS = [
     StartComponent,
@@ -163,7 +166,10 @@ let COMPONENTS = [
         BankAccountsCommonModule,
         SharedIntroStepsModule,
         AccountConnectorDialogModule,
-        CfoStoreModule
+        CfoStoreModule,
+        SearchInputModule,
+        SortButtonModule,
+        ExpandButtonModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

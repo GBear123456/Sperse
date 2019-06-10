@@ -55,7 +55,8 @@ export class CFOService extends CFOServiceBase {
                         this.instanceType = InstanceType.User;
                         this.hasStaticInstance = true;
                         this.instanceChangeProcess();
-                    }
+                    } else
+                        this.updateMenuItems();
             }
         });
     }
@@ -108,16 +109,19 @@ export class CFOService extends CFOServiceBase {
     }
 
     private updateMenuItems() {
-        this._appService.topMenu.items
-            .forEach((item, i) => {
+        setTimeout(() => {
+            let menu = this._appService.topMenu;
+            menu && menu.items.forEach((item, i) => {
                 if (!i) {
                     if (!this.hasStaticInstance)
-                        item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard' : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
+                        item.text = this._appLocalizationService.l(this.initialized ? 'Navigation_Dashboard'
+                            : 'Navigation_Setup', AppConsts.localization.CFOLocalizationSourceName);
                 } else if (i == 1) {
                     item.disabled = !this.initialized;
                 } else {
                     item.disabled = !this.hasTransactions;
                 }
             });
+        });
     }
 }

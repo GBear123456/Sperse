@@ -118,6 +118,7 @@ import {
     ForecastModelsStoreSelectors
 } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -572,10 +573,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             let searchInputBlock = document.createElement('div');
                             searchInputBlock.id = 'findInputBlock';
                             searchInputBlock.innerHTML = '<div></div>';
-                            let textBoxInstance = new TextBox(searchInputBlock.children[0], {
+                            new TextBox(searchInputBlock.children[0], {
                                 showClearButton: true,
                                 mode: 'search',
-                                onFocusOut: e => {
+                                onFocusOut: () => {
                                     searchInputBlock.style.display = 'none';
                                 },
                                 onInput: e => {
@@ -913,10 +914,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.initHeadlineConfig();
 
         /** Add event listeners for cashflow component (delegation for cashflow cells mostly) */
-        if (this._cfoService.isInstanceAdmin){
+        if (this.isInstanceAdmin || this._cfoService.classifyTransactionsAllowed) {
             this.cashflowService.addEvents(this.getElementRef().nativeElement, this.cashflowEvents);
             this.createDragImage();
-
             document.addEventListener('keydown', this.keyDownEventHandler, true);
         }
     }
@@ -2527,20 +2527,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let itemIndex = event.itemData.itemIndex !== undefined ? event.itemData.itemIndex : event.itemIndex;
         /** Change historical field for different date intervals */
         this.closeTransactionsDetail();
-        this.expandAll(itemIndex);
-        this.pivotGrid ? this.pivotGrid.instance.repaint() : this.finishLoading();
-    }
-
-    getMonthsPaths(columns) {
-        let monthsPaths = [];
-        let monthIndex = this.pivotGrid.instance.getDataSource().field('Month').areaIndex;
-        for (let stringPath in columns._cacheByPath) {
-            let path = stringPath.split('.');
-            if (path.length === monthIndex + 1) {
-                monthsPaths.push(path);
+        if (this.pivotGrid) {
+            if (this.expandAll(itemIndex)) {
+                this.pivotGrid.instance.repaint();
             }
+        } else {
+            /** Update later when new pivot grid reinit */
+            this.expandBeforeIndex = itemIndex;
+            this.finishLoading();
         }
-        return monthsPaths;
     }
 
     downloadData(event) {
@@ -2719,7 +2714,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     isCopyable(cellObj) {
-        return this._cfoService.isInstanceAdmin && cellObj.area === 'data' &&
+        return this.isInstanceAdmin && cellObj.area === 'data' &&
             (cellObj.cell.rowPath[0] === PI || cellObj.cell.rowPath[0] === PE) && cellObj.cell.value;
     }
 
@@ -3093,7 +3088,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** @todo check for memory leak */
                     let accountNumberElement = document.createElement('span');
                     accountNumberElement.className = 'accountNumber';
-                    accountNumberElement.innerText = '***' + account.accountNumber.slice(-4);
+                    accountNumberElement.innerText = account.accountNumber;
                     options.elementsToAppend.push(accountNumberElement);
                 }
                 options.general['isAccountHeaderCell'] = true;
@@ -3159,7 +3154,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }
             }
 
-            if (this._cfoService.isInstanceAdmin && this.isReconciliationRows(cell) && cell.value !== 0) {
+            if (this.isInstanceAdmin && this.isReconciliationRows(cell) && cell.value !== 0) {
                 let actionButton = this.createActionButton('discard');
                 options.elementsToAppend.push(actionButton);
             }
@@ -4042,7 +4037,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let isProjectedCellOfCurrentMonth = isProjectedHeaderCell ? this.isProjectedCellOfCurrentMonth(cellObj) : false;
 
         /** If user double click on category - open edit field */
-        if (this._cfoService.isInstanceAdmin && this.cashflowService.isCategoryCell(cellObj.cell, cellObj.area)) {
+        if (this.isInstanceAdmin && this.cashflowService.isCategoryCell(cellObj.cell, cellObj.area)) {
             /** Cancel all clicks types - single and double */
             cellObj.cancel = true;
             /** Handle double click */
@@ -4436,7 +4431,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                  */
                 let clickedCellPrefix = cellObj.cell.rowPath.slice(-1)[0] ? cellObj.cell.rowPath.slice(-1)[0].slice(0, 2) : undefined;
                 const cellIsNotHistorical = this.cellIsNotHistorical(cellObj);
-                if (
+                if (this.isInstanceAdmin &&
                     /** disallow adding historical periods */
                     cellIsNotHistorical &&
                     /** allow adding only for empty cells */
@@ -5396,7 +5391,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.hideModifyingNumberBox();
 
         this.cashflowService.handleDoubleSingleClick(e, this.onDetailsCellSingleClick.bind(this),
-            this._cfoService.isInstanceAdmin ? this.onDetailsCellDoubleClick.bind(this) : Function());
+            this.isInstanceAdmin || this._cfoService.classifyTransactionsAllowed ? this.onDetailsCellDoubleClick.bind(this) : Function());
 
         if (e.rowType === 'data' && !e.column.command) {
             if (!e.cellElement.classList.contains('selectedCell')) {
@@ -5407,10 +5402,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onDetailsCellSingleClick(e) {
-        if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId && !e.row.inserted && e.data.cashflowTypeId !== Reconciliation) {
+        if (e.rowType === 'data' && e.column.dataField == 'description' && !e.key.forecastId && !e.row.inserted && e.data.cashflowTypeId !== Reconciliation && e.data.cashflowTypeId !== StartedBalance) {
             this.transactionId = e.data.id;
             this.showTransactionDetailsInfo();
-        } else if (this._cfoService.isInstanceAdmin && e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
+        } else if (this.isInstanceAdmin && e.row && e.row.inserted && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
 
@@ -5418,7 +5413,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (e.column && (e.column.dataField == 'forecastDate' || e.column.dataField == 'description' || e.column.dataField == 'descriptor' || e.column.dataField == 'accountNumber'))
             e.component.editCell(e.rowIndex, e.column.dataField);
 
-        if (e.column && e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
+        if (this.isInstanceAdmin && e.column && e.component.option('editing.mode') != 'row' && (e.column.dataField == 'debit' || e.column.dataField == 'credit'))
             this.onAmountCellEditStart(e);
     }
 
@@ -5872,7 +5867,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     setBankAccountsFilter(emitFilterChange = false) {
         this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
-        this.allowChangingForecast = this._bankAccountsService.state.isActive;
+        this.allowChangingForecast = this._bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
     }
 
     discardDiscrepancy(cellObj) {
@@ -6118,12 +6113,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
+    toggleGridOpacity() {
+        if (this.pivotGrid) {
+            let style = this.pivotGrid.instance.element().parentNode['style'];
+            style.opacity = style.opacity == '0' ? 1 : 0;
+        }
+    }
+
     activate() {
         this.initToolbarConfig();
         this.setupFilters(this.filters);
         this.initFiltering();
         if (this.pivotGrid && this.pivotGrid.instance) {
             this.pivotGrid.instance.repaint();
+            setTimeout(() => this.toggleGridOpacity());
         }
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
@@ -6141,6 +6144,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     deactivate() {
+        this.toggleGridOpacity();
         this.appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();

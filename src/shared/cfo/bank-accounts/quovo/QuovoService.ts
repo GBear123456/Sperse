@@ -44,7 +44,6 @@ export class QuovoService {
         private localizationService: AppLocalizationService
     ) {
         this.cfoService = injector.get(CFOService);
-        
         this.tokenLoading$ = this.cfoService.isForUser
             ? this.myFinanceService.createUserInstanceProviderUIToken('Q')
             : this.syncService.createProviderUIToken(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId, 'Q');
@@ -162,7 +161,6 @@ export class QuovoService {
             case 'InputError' : errorMessage = `Quovo.InputError ${err.message} reconnecting...`; break;
             case 'TimingError' : errorMessage = `Quovo.TimingError ${err.message} reconnecting...`; break;
             case 'TokenError' : errorMessage = `Quovo.TokenError ${err.message} reconnecting...`; break;
-            case 'ElementNotFoundError' : errorMessage = `Quovo.ElementNotFoundError ${err.message} reconnecting...`; break;
             case 'ConnectError': errorMessage = `Quovo.ConnectError ${err.message} reconnecting...`; break;
             default: errorMessage = `Quovo ${err.message} reconnecting...`;
         }

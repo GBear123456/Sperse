@@ -23,10 +23,10 @@ export class UserOnlyCFOService extends CFOServiceBase {
     }
 
     instanceChangeProcess(callback: any = null, invalidateServerCache: boolean = false) {
-        this._myFinancesService.getUserInstanceStatus(invalidateServerCache).subscribe((data) => {
+        this._myFinancesService.getUserInstanceStatus().subscribe((data) => {
             const statusActive = data.status == GetStatusOutputStatus.Active;
             this.statusActive.next(statusActive);
-            this.initialized = statusActive && data.hasSyncAccounts;
+            this.initialized = statusActive;
             this.hasTransactions = this.initialized && data.hasTransactions;
             callback && callback.call(this, this.hasTransactions);
         });

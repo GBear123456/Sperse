@@ -38,8 +38,8 @@
                      (onSelectionChanged)="changeDetailsTab($event)">
             </dx-tabs>
             <div class="detailsButtons">
-                <dx-button [text]="'+ ' + l('AddForecastTransaction')" (onClick)="addNewForecast()" [disabled]="!_cfoService.isInstanceAdmin || disableAddForecastButton"></dx-button>
-                <dx-button *ngIf="detailsContainsForecasts" [disabled]="!_cfoService.isInstanceAdmin || !detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
+                <dx-button [text]="'+ ' + l('AddForecastTransaction')" (onClick)="addNewForecast()" [disabled]="!isInstanceAdmin || disableAddForecastButton"></dx-button>
+                <dx-button *ngIf="detailsContainsForecasts" [disabled]="!isInstanceAdmin || !detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
                 <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!showAllVisible" (onClick)="refreshTransactionDetail(false)"></dx-button>
                 <dx-button class="showall-btn" [text]="l('Show all')" [visible]="showAllVisible" (onClick)="refreshTransactionDetail(true)" [disabled]="showAllDisable"></dx-button>
                 <dx-button class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!_cfoService.classifyTransactionsAllowed || !detailsSomeHistoricalItemsSelected" (onClick)="reclassifyTransactions($event)"></dx-button>
@@ -64,7 +64,7 @@
                       (onRowUpdating)="onDetailsRowUpdating($event)"
                       (onSelectionChanged)="onDetailsSelectionChanged($event)">
             <dxo-editing mode="cell"
-                         [allowUpdating]="_cfoService.isInstanceAdmin"
+                         [allowUpdating]="isInstanceAdmin"
                          texts="{'confirmDeleteMessage': ''}">
             </dxo-editing>
 
@@ -146,7 +146,7 @@
                         [allowFiltering]="false"
                         [cssClass]="tabularFontName"
                         [allowEditing]="false"
-                        visible="false">
+                        [visible]="false">
             </dxi-column>
             <dxi-column [caption]="l('DetailsHeaders_Type')"
                         dataField="cashflowTypeId"

@@ -14,6 +14,11 @@
             background: #FFFFFF url('../../../../assets/common/icons/total-icon.svg') 45px 50% no-repeat;
             border-radius: 4px;
             position: relative;
+            
+            .col-8,
+            .col-4 {
+                padding-right: 0;
+            }
 
             @media (max-width: 1540px) {
                 padding-left: 60px !important;
@@ -24,7 +29,6 @@
                 background-image: url('../../../../assets/common/icons/coins-icon-2.svg');
 
                 .value {
-                    font-size: 24px;
                     font-weight: 400;
                     color: #677380;
 
@@ -106,15 +110,30 @@
 
             &.networth {
                 background-image: url('../../../../assets/common/icons/coins-icon.svg');
+    
+                .value {
+                    font-weight: 400;
+                    color: #677380;
+        
+                    span {
+                        font-size: 14px;
+                        line-height: 2.4;
+                        letter-spacing: 0.2px;
+                        vertical-align: top;
+                        display: inline-block;
+                        margin-top: -1px;
+                        position: relative;
+                        left: -4px;
+                    }
+                }
             }
 
             .value {
                 color: #212C36;
-                font-size: 26px;
+                font-size: 24px;
                 font-weight: 500;
                 cursor: pointer;
                 display: block;
-                padding-right: 20px;
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;

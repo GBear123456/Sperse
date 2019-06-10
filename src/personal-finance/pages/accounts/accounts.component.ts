@@ -176,27 +176,25 @@ export class AccountsComponent extends AppComponentBase implements OnInit, OnDes
         else {
             abp.ui.setBusy(this.contentElement);
             this._myFinanceService.setupUserInstance(undefined)
-                .subscribe(
-                    () => {
-                        this.checkInstanceChangeProcess();
+                .subscribe(() => {
+                    this._cfoService.instanceChangeProcess(() => {
+                        abp.ui.clearBusy(this.contentElement);
+                        this.isInstanceInfoLoaded = true;
                         this.addAccount();
-                    },
-                    () => this.isStartDisabled = false
-                );
+                    });
+                }, () => this.isStartDisabled = false);
         }
     }
 
     private addAccount() {
-        const dialogConfig = {
+        this.dialog.open(AccountConnectorDialogComponent, {
             ...AccountConnectorDialogComponent.defaultConfig,
             ...{
                 data: {
                     connector: AccountConnectors.Quovo
                 }
             }
-        };
-        const dialogRef = this.dialog.open(AccountConnectorDialogComponent, dialogConfig);
-        dialogRef.afterClosed().subscribe(e => {
+        }).afterClosed().subscribe(e => {
             this.onQuovoClose(e);
         });
     }

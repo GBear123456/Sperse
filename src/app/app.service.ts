@@ -14,7 +14,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     InstanceServiceProxy,
-    UserServiceProxy,
+    PersonContactServiceProxy,
     ActivateUserForContactInput,
     SetupInput,
     GetUserInstanceInfoOutputStatus,
@@ -46,7 +46,7 @@ export class AppService extends AppServiceBase {
     private permission: PermissionCheckerService;
     private feature: FeatureCheckerService;
     private instanceServiceProxy: InstanceServiceProxy;
-    private userServiceProxy: UserServiceProxy;
+    private personContactServiceProxy: PersonContactServiceProxy;
     private notify: NotifyService;
     private appLocalizationService: AppLocalizationService;
     private _setToolbarTimeout: number;
@@ -157,13 +157,13 @@ export class AppService extends AppServiceBase {
         this.permission = injector.get(PermissionCheckerService);
         this.feature = injector.get(FeatureCheckerService);
         this.instanceServiceProxy = injector.get(InstanceServiceProxy);
-        this.userServiceProxy = injector.get(UserServiceProxy);
+        this.personContactServiceProxy = injector.get(PersonContactServiceProxy);
         this.notify = injector.get(NotifyService);
         this.appLocalizationService = injector.get(AppLocalizationService);
         this._tenantSubscriptionProxy = injector.get(TenantSubscriptionServiceProxy);
 
         this.toolbarSubject = new Subject<undefined>();
-        if (this.isNotHostTenant()) {
+        if (!this.isHostTenant) {
             this.expiredModule = new Subject<string>();
             this.loadModeuleSubscriptions();
         }
@@ -228,7 +228,7 @@ export class AppService extends AppServiceBase {
         if (this.hasRecurringBilling(sub))
             return false;
 
-        if (this.isNotHostTenant() && sub && sub.endDate) {
+        if (!this.isHostTenant && sub && sub.endDate) {
             let diff = sub.endDate.diff(moment().utc(), 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionExpireNootifyDayCount);
         }
@@ -245,7 +245,7 @@ export class AppService extends AppServiceBase {
         if (this.hasRecurringBilling(sub))
             return false;
 
-        if (this.isNotHostTenant() && sub && sub.endDate) {
+        if (!this.isHostTenant && sub && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionGracePeriod);
         }
@@ -264,14 +264,10 @@ export class AppService extends AppServiceBase {
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
 
-    isNotHostTenant() {
-        return abp.session.multiTenancySide == abp.multiTenancy.sides.TENANT;
-    }
-
     hasModuleSubscription(name?: string) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
-        return !this.isNotHostTenant() || !module || !module.endDate ||
+        return this.isHostTenant || !module || !module.endDate ||
             this.hasRecurringBilling(module) || (module.endDate > moment().utc());
     }
 
@@ -327,7 +323,7 @@ export class AppService extends AppServiceBase {
                     if (isConfirmed) {
                         let request = new ActivateUserForContactInput();
                         request.contactId = contactId;
-                        this.userServiceProxy.activateUserForContact(request).subscribe(result => {
+                        this.personContactServiceProxy.activateUserForContact(request).subscribe(result => {
                             let setupInput = new SetupInput();
                             setupInput.userId = result.userId;
                             this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(() => {
@@ -376,5 +372,9 @@ export class AppService extends AppServiceBase {
 
     toolbarRefresh() {
         this.toolbarSubject.next();
+    }
+
+    isFeatureEnable(featureName: string): boolean {
+        return this.isHostTenant || !featureName || this.feature.isEnabled(featureName);
     }
 }

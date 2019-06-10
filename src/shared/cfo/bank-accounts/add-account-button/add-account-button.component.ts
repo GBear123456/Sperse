@@ -13,9 +13,7 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
     providers: [ SyncAccountServiceProxy ]
 })
 export class AddAccountButtonComponent extends CFOComponentBase {
-    @Output() onClose: EventEmitter<any> = new EventEmitter();
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
-    tooltipVisible = false;
     createAccountAvailable: boolean;
     constructor(
         injector: Injector,
@@ -35,7 +33,10 @@ export class AddAccountButtonComponent extends CFOComponentBase {
         if (!this.createAccountAvailable)
             return;
 
-        this.dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig);
+        const accountConnectorDialog = this.dialog.open(AccountConnectorDialogComponent, AccountConnectorDialogComponent.defaultConfig);
+        accountConnectorDialog.componentInstance.onComplete.subscribe(() => {
+            this.onComplete.emit();
+        });
     }
 
 }

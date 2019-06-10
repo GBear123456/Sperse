@@ -55,13 +55,13 @@ body.advice-period contact-info-panel .full_name h1 {
   color: #fff!important;
 }
 body.advice-period .swal-modal {
-  background: #f19f45;
+  background: #fee192;
 }
 body.advice-period .swal-modal .swal-icon.swal-icon--error,
 body.advice-period .swal-modal .swal-icon.swal-icon--warning,
 body.advice-period .swal-modal .swal-icon.swal-icon--info {
   background: #FFF;
-  border: 10px solid #FFD564;
+  border: 10px solid #ffdb7d;
   box-shadow: none;
 }
 body.advice-period .swal-modal .swal-icon.swal-icon--success {
@@ -73,7 +73,7 @@ body.advice-period .swal-modal .swal-icon.swal-icon--success .swal-icon--success
 }
 body.advice-period .swal-modal .swal-icon.swal-icon--success:before,
 body.advice-period .swal-modal .swal-icon.swal-icon--success:after {
-  width: 0px!important;
+  width: 0!important;
 }
 body.advice-period .swal-modal .swal-icon.swal-icon--warning:before {
   content: "\2713";
@@ -210,4 +210,3 @@ body.advice-period .cdk-overlay-pane.user-info app-modal-dialog .mat-dialog-head
     background: #FFF!important;
   }
 }
-

@@ -4,7 +4,10 @@ import { PeriodService } from '@app/shared/common/period/period.service';
 @Component({
     selector: 'app-period',
     templateUrl: './period.component.html',
-    styleUrls: [ '../../../shared/common/styles/select-box.less']
+    styleUrls: [
+        '../../../shared/common/styles/select-box.less',
+        './period.component.less'
+    ]
 })
 export class PeriodComponent  {
     @Output() onChange = new EventEmitter();
