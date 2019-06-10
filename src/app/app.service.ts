@@ -15,8 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import {
     InstanceServiceProxy,
     PersonContactServiceProxy,
-    ActivateUserForContactInput,
-    SetupInput,
+    RegisterMemberInput,
     GetUserInstanceInfoOutputStatus,
     TenantSubscriptionServiceProxy,
     ModuleSubscriptionInfoDtoModule,
@@ -311,8 +310,7 @@ export class AppService extends AppServiceBase {
     }
 
     canSendVerificationRequest() {
-        return this.permission.isGranted('Pages.CRM.ActivateUserForContact') &&
-            this.permission.isGranted('Pages.CFO.ClientActivation');
+        return this.permission.isGranted('Pages.CFO.ClientActivation');
     }
 
     requestVerification(contactId: number): Observable<number> {
@@ -321,16 +319,13 @@ export class AppService extends AppServiceBase {
                 'Please confirm user activation',
                 (isConfirmed) => {
                     if (isConfirmed) {
-                        let request = new ActivateUserForContactInput();
+                        let request = new RegisterMemberInput();
                         request.contactId = contactId;
-                        this.personContactServiceProxy.activateUserForContact(request).subscribe(result => {
-                            let setupInput = new SetupInput();
-                            setupInput.userId = result.userId;
-                            this.instanceServiceProxy.setupAndGrantPermissionsForUser(setupInput).subscribe(() => {
-                                abp.notify.info('User was activated and email sent successfully');
-                                observer.next(result.userId);
-                            }, () => { }, observer.complete);
-                        }, () => observer.complete());
+                        request.channelCode = 'CRM';
+                        this.instanceServiceProxy.registerMember(request).subscribe((result) => {
+                            abp.notify.info('User was activated and email sent successfully');
+                            observer.next(result.userId);
+                        }, () => { }, observer.complete);
                     } else
                         observer.complete();
                 }
