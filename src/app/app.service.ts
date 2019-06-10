@@ -310,7 +310,7 @@ export class AppService extends AppServiceBase {
     }
 
     canSendVerificationRequest() {
-        return this.permission.isGranted('Pages.CFO.ClientActivation');
+        return this.permission.isGranted('Pages.CFO.MembersAdministration.NewMemberRegistration');
     }
 
     requestVerification(contactId: number): Observable<number> {
@@ -348,7 +348,7 @@ export class AppService extends AppServiceBase {
         return this.feature.isEnabled('CFO.Partner')
                && !this.feature.isEnabled('PFM')
                && (
-                   this.permission.isGranted('Pages.CFO.ClientInstanceAdmin')
+                   this.permission.isGranted('Pages.CFO.MembersAdministration.AllMemberInstancesAdmin')
                    || this.canSendVerificationRequest
                );
     }
@@ -358,7 +358,7 @@ export class AppService extends AppServiceBase {
     }
 
     checkCFOClientAccessPermission() {
-        return this.permission.isGranted('Pages.CFO.ClientInstanceAdmin');
+        return this.permission.isGranted('Pages.CFO.MembersAdministration.AllMemberInstancesAdmin');
     }
 
     toolbarSubscribe(callback) {
