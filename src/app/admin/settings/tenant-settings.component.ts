@@ -10,7 +10,7 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { TokenService } from '@abp/auth/token.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, ModuleType } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -35,7 +35,6 @@ import {
 
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
-    TenantUserManagementSettingsEditDtoDefaultModuleType,
     
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
@@ -148,7 +147,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         if (this.isPFMApplicationsFeatureEnabled) {
             this.epcvipEmailServers = Object.keys(EPCVIPMailerSettingsEditDtoServer);
         }
-        this.moduleTypes = Object.keys(TenantUserManagementSettingsEditDtoDefaultModuleType);
+
+        this.moduleTypes = Object.keys(ModuleType).filter(v => !isNaN(Number(ModuleType[v])) && (ModuleType[v] & ModuleType[v] - 1) == 0);
 
         forkJoin(requests)
             .pipe(
