@@ -33,7 +33,10 @@ export class AdResetPasswordHostDirective {
 
 @Component({
     templateUrl: './reset-password.component.html',
-    animations: [accountModuleAnimation()]
+    animations: [accountModuleAnimation()],
+    styleUrls: [
+        './reset-password.component.less'
+    ],
 })
 export class ResetPasswordComponent extends AppComponentBase implements OnInit {
     @ViewChild(AdResetPasswordHostDirective) adResetPasswordHost: AdResetPasswordHostDirective;
