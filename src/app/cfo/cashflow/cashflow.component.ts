@@ -118,6 +118,7 @@ import {
     ForecastModelsStoreSelectors
 } from '@app/cfo/store';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
 
 /** Constants */
 const StartedBalance = 'B',
@@ -572,10 +573,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                             let searchInputBlock = document.createElement('div');
                             searchInputBlock.id = 'findInputBlock';
                             searchInputBlock.innerHTML = '<div></div>';
-                            let textBoxInstance = new TextBox(searchInputBlock.children[0], {
+                            new TextBox(searchInputBlock.children[0], {
                                 showClearButton: true,
                                 mode: 'search',
-                                onFocusOut: e => {
+                                onFocusOut: () => {
                                     searchInputBlock.style.display = 'none';
                                 },
                                 onInput: e => {
@@ -5866,7 +5867,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
     setBankAccountsFilter(emitFilterChange = false) {
         this._bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
-        this.allowChangingForecast = this._bankAccountsService.state.isActive;
+        this.allowChangingForecast = this._bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
     }
 
     discardDiscrepancy(cellObj) {
@@ -6112,12 +6113,20 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
+    toggleGridOpacity() {
+        if (this.pivotGrid) {
+            let style = this.pivotGrid.instance.element().parentNode['style'];
+            style.opacity = style.opacity == '0' ? 1 : 0;
+        }
+    }
+
     activate() {
         this.initToolbarConfig();
         this.setupFilters(this.filters);
         this.initFiltering();
         if (this.pivotGrid && this.pivotGrid.instance) {
             this.pivotGrid.instance.repaint();
+            setTimeout(() => this.toggleGridOpacity());
         }
 
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
@@ -6135,6 +6144,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     deactivate() {
+        this.toggleGridOpacity();
         this.appService.updateToolbar(null);
         this._filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();

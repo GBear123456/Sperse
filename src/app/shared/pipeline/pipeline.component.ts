@@ -191,7 +191,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         of(pipeline).pipe(delayWhen(() => {
                             return this.dataSource$;
                         }));
-                }), mergeMap(pipeline => pipeline)
+                }), switchMap(pipeline => pipeline)
             ).subscribe((pipeline: PipelineDto) => {
                 this.pipeline = pipeline;
                 this.createStageInput.pipelineId = this.pipeline.id;

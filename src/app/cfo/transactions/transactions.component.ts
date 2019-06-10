@@ -97,21 +97,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public bankAccounts: number[];
     public creditTransactionCount = 0;
     public creditTransactionTotal = 0;
-    public creditTransactionTotalCent = 0;
     public creditClassifiedTransactionCount = 0;
 
     public debitTransactionCount = 0;
     public debitTransactionTotal = 0;
-    public debitTransactionTotalCent = 0;
     public debitClassifiedTransactionCount = 0;
 
     public transactionCount = 0;
     public transactionTotal = 0;
-    public transactionTotalCent = 0;
 
     public adjustmentTotal = 0;
     public adjustmentStartingBalanceTotal = 0;
-    public adjustmentStartingBalanceTotalCent = 0;
     headlineConfig: any;
 
     private _categoriesShowedBefore = true;
@@ -591,14 +587,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.adjustmentTotal = 0;
             }
 
-        this.adjustmentStartingBalanceTotalCent = this.getFloatPart(this.adjustmentStartingBalanceTotal);
-        this.adjustmentStartingBalanceTotal = Math.trunc(this.adjustmentStartingBalanceTotal);
-        this.creditTransactionTotalCent = this.getFloatPart(this.creditTransactionTotal);
-        this.creditTransactionTotal = Math.trunc(this.creditTransactionTotal);
-        this.debitTransactionTotalCent = this.getFloatPart(this.debitTransactionTotal);
-        this.debitTransactionTotal = Math.trunc(this.debitTransactionTotal);
-        this.transactionTotalCent = this.getFloatPart(this.transactionTotal);
-        this.transactionTotal = Math.trunc(this.transactionTotal);
         this._changeDetectionRef.detectChanges();
     }
 
@@ -1133,7 +1121,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     openBankAccountsSelectDialog() {
         this.dialog.open(BankAccountsSelectDialogComponent, {
-            panelClass: 'slider',
+            panelClass: ['slider', 'width-45'],
             data: {
                 highlightedBankAccountIds: this.bankAccounts
             }

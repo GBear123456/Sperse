@@ -56,7 +56,7 @@ export class UserAssignmentComponent extends AppComponentBase implements OnInit 
     ) {
         super(injector);
 
-	_appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
+        _appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
     }
 
     private moveSelectedItemsToTop() {

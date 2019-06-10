@@ -5,7 +5,6 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, ReplaySubject, of, combineLatest, forkJoin } from 'rxjs';
 import {
     debounceTime,
-    distinct,
     distinctUntilChanged,
     first,
     finalize,
@@ -21,6 +20,7 @@ import {
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
+import difference from 'lodash/difference';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -31,6 +31,8 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
+import { BankAccountType } from '@shared/cfo/bank-accounts/helpers/bank-account-type.model';
 
 @Injectable()
 export class BankAccountsService {
@@ -46,7 +48,9 @@ export class BankAccountsService {
     bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${this.cfoService.instanceType}`;
     state: BankAccountsState = {
         selectedBankAccountIds: [],
-        isActive: true,
+        statuses: [
+            BankAccountStatus.Active
+        ],
         usedBankAccountIds: [],
         visibleBankAccountIds: [],
         selectedBusinessEntitiesIds: []
@@ -54,9 +58,8 @@ export class BankAccountsService {
     filteredBankAccounts$: Observable<BankAccountDto[]>;
     filteredBankAccountsIds: number[];
     filteredBankAccountsIds$: Observable<number[]>;
-    filteredBankAccountsStatus$: Observable<boolean>;
+    filteredBankAccountsStatus$: Observable<string>;
     selectedBankAccounts$: Observable<BankAccountDto[]>;
-    //posibleSelectedBankAccountsIds$: Observable<number[]>;
     selectedBankAccountsIds$: Observable<number[]>;
     _syncAccountsState: BehaviorSubject<BankAccountsState> = new BehaviorSubject(this.state);
     syncAccountsState$: Observable<BankAccountsState> = this._syncAccountsState.asObservable();
@@ -64,7 +67,7 @@ export class BankAccountsService {
     allSyncAccountAreSelected$: Observable<boolean>;
     syncAccountsAmount$: Observable<string>;
     accountsAmount$: Observable<string>;
-    existingBankAccountsTypes$: Observable<string[]>;
+    existingBankAccountsTypes$: Observable<BankAccountType[]>;
     private _selectedBankAccountTypes: BehaviorSubject<string[]> = new BehaviorSubject([]);
     selectedBankAccountTypes$: Observable<string[]> = this._selectedBankAccountTypes.asObservable();
 
@@ -73,7 +76,8 @@ export class BankAccountsService {
     _syncAccounts: ReplaySubject<SyncAccountBankDto[]> = new ReplaySubject(1);
     _businessEntities: ReplaySubject<BusinessEntityDto[]> = new ReplaySubject(1);
     syncAccounts$: Observable<SyncAccountBankDto[]>;
-    bankAccounts$: Observable<BankAccountDto[]>;
+    bankAccountsIds$: Observable<number[]>;
+    bankAccountsIds: number[];
     businessEntities$: Observable<BusinessEntityDto[]>;
     syncAccountsRequest$;
     businessEntitiesRequest$;
@@ -84,8 +88,18 @@ export class BankAccountsService {
         map(searchString => searchString.toLowerCase())
     );
 
-    activeStatus: BehaviorSubject<boolean> = new BehaviorSubject(this.state.isActive);
-    //activeStatus$ = this._activeStatus.asObservable();
+    allStatuses = [
+        {
+            name: this.ls.l('Active'),
+            id: BankAccountStatus.Active
+        },
+        {
+            name: this.ls.l('Disabled'),
+            id: BankAccountStatus.Disabled
+        }
+    ];
+    selectedStatuses: BehaviorSubject<BankAccountStatus[]> = new BehaviorSubject(this.state.statuses);
+    selectedStatuses$ = this.selectedStatuses.asObservable();
 
     constructor(
         private cfoService: CFOService,
@@ -94,22 +108,37 @@ export class BankAccountsService {
         private cacheService: CacheService,
         private _filtersService: FiltersService,
         private localizationService: AppLocalizationService,
-        private cfoPreferencesService: CfoPreferencesService
+        private cfoPreferencesService: CfoPreferencesService,
+        private ls: AppLocalizationService
     ) {
         this.cfoService.instanceTypeChanged$.subscribe(instanceType => {
             this.bankAccountsCacheKey = `Dashboard_BankAccounts_${abp.session.tenantId}_${abp.session.userId}_${instanceType}`;
         });
         this.syncAccounts$ = this._syncAccounts.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
         this.businessEntities$ = this._businessEntities.asObservable().pipe(distinctUntilChanged(this.arrayDistinct));
-/*
-        this.bankAccounts$ = this.syncAccounts$
+        this.bankAccountsIds$ = this.syncAccounts$
             .pipe(
-                mergeMap(x => x),
-                reduce((bankAccounts: BankAccountDto[], syncAccount: SyncAccountBankDto) => {
-                    return bankAccounts.concat(syncAccount.bankAccounts);
-                }, [])
+                map(syncAccounts => {
+                    let bankAccountsIds = [];
+                    syncAccounts.forEach((syncAccount: SyncAccountBankDto) => {
+                        syncAccount.bankAccounts.forEach((bankAccount: BankAccountDto) => {
+                            bankAccountsIds.push(bankAccount.id);
+                        });
+                    });
+                    return bankAccountsIds;
+                }),
+                distinctUntilChanged(this.arrayDistinct)
             );
-*/
+        this.bankAccountsIds$.subscribe((bankAccountsIds: number[]) => {
+            if (this.bankAccountsIds) {
+                /** Select newly added bank accounts */
+                this.changeSelectedBankAccountsIds([
+                    ...this.state.selectedBankAccountIds,
+                    ...difference(bankAccountsIds, this.bankAccountsIds)]
+                );
+            }
+            this.bankAccountsIds = bankAccountsIds;
+        });
         this.businessEntitiesAmount$ = this.businessEntities$.pipe(
             map(businessEntities => businessEntities.length),
             distinctUntilChanged()
@@ -149,9 +178,23 @@ export class BankAccountsService {
             mergeAll(),
             pluck('typeName'),
             map((typeName: string) => typeName || this.localizationService.l('NoType')),
-            distinct(),
             toArray(),
-            map((types: string[]) => types.sort(this.sortBankAccountsTypes)),
+            map((types) => {
+                return types.reduce((types: BankAccountType[], type: string) => {
+                    let currentType = types.find(t => t.name === type);
+                    if (currentType) {
+                        currentType.count += 1;
+                    } else {
+                        types.push({
+                            id: type,
+                            name: type,
+                            count: 1
+                        });
+                    }
+                    return types;
+                }, []);
+            }),
+            map((types: { name: string, count: number }[]) => types.sort(this.sortBankAccountsTypes)),
             distinctUntilChanged(this.arrayDistinct)
         );
 
@@ -181,7 +224,7 @@ export class BankAccountsService {
                     state.selectedBankAccountIds,
                     state.visibleBankAccountIds,
                     searchValue,
-                    state.isActive
+                    state.statuses
                 ));
             }),
             distinctUntilChanged(this.arrayDistinct)
@@ -191,7 +234,7 @@ export class BankAccountsService {
             mergeMap(([syncAccounts, state, searchValue]) => {
                 return of(this.filterDataSource(
                     syncAccounts, [], state.selectedBankAccountIds,
-                    state.visibleBankAccountIds, searchValue, state.isActive
+                    state.visibleBankAccountIds, searchValue, state.statuses
                 ));
             }),
             distinctUntilChanged()
@@ -269,8 +312,14 @@ export class BankAccountsService {
         });
 
         this.filteredBankAccountsStatus$ = this.filteredBankAccounts$.pipe(
-            map(bankAccounts => {
-                return bankAccounts && bankAccounts.length ? bankAccounts[0].isActive : this.state.isActive;
+            switchMap((bankAccounts: BankAccountDto[]) => {
+                return bankAccounts && bankAccounts.length
+                    ? this.selectedStatuses$.pipe(
+                         map((statuses: BankAccountStatus[]) => {
+                             return statuses.length === this.allStatuses.length ? this.ls.l('All') : statuses.map(status => this.allStatuses.find(s => s.id === status).name).join(', ');
+                         })
+                      )
+                    : of('');
             }),
             distinctUntilChanged()
         );
@@ -301,10 +350,10 @@ export class BankAccountsService {
                     }
                 } else {
                     /** If selected are differ from saved in store - update store */
-                    if (ArrayHelper.dataChanged(selectedAccountsIds, this.state.selectedBankAccountIds)) {
-                        this.state.selectedBankAccountIds = selectedAccountsIds;
-                        this.cacheService.set(this.bankAccountsCacheKey, this.state);
-                    }
+                    // if (ArrayHelper.dataChanged(selectedAccountsIds, this.state.selectedBankAccountIds)) {
+                    //     this.state.selectedBankAccountIds = selectedAccountsIds;
+                    //     this.cacheService.set(this.bankAccountsCacheKey, this.state);
+                    // }
                 }
             }
         );
@@ -318,8 +367,8 @@ export class BankAccountsService {
             );
 
         this.allSyncAccountAreSelected$ = this.filteredSyncAccounts$.pipe(
-            map((syncAccounts: any[]) => {
-                const selectedSyncAccounts = syncAccounts.filter(syncAccount => syncAccount.selected !== false);
+            map((syncAccounts: SyncAccountBankDto[]) => {
+                const selectedSyncAccounts = syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length || syncAccount['selected'] !== false);
                 return selectedSyncAccounts.length === syncAccounts.length;
             })
         );
@@ -434,9 +483,9 @@ export class BankAccountsService {
      */
     private sortBankAccountsTypes = (type1, type2) => {
         let result = 0;
-        if (type2 === this.localizationService.l('NoType') || type1 < type2) {
+        if (type2.name === this.localizationService.l('NoType') || type1.name < type2.name) {
             result = -1;
-        } else if (type1 === this.localizationService.l('NoType') || type2 > type1) {
+        } else if (type1.name === this.localizationService.l('NoType') || type2.name > type1.name) {
             result = 1;
         }
         return result;
@@ -451,7 +500,6 @@ export class BankAccountsService {
 
     filterByBankAccountTypes(syncAccounts, selectedTypes: string[], allTypes) {
         let filteredSyncAccounts = [];
-
         syncAccounts.forEach(syncAccount => {
             let syncAccountCopy: any = { ...{}, ...syncAccount };
             syncAccountCopy['bankAccounts'] = [];
@@ -524,12 +572,12 @@ export class BankAccountsService {
     //     }).map(account => account.id);
     // }
 
-    filterDataSource(syncAccounts: SyncAccountBankDto[], businessEntitiesIds: number[], selectedAccountsIds: number[], visibleBankAccountsIds: number[], searchValue: string, isActive = null): SyncAccountBankDto[] {
+    filterDataSource(syncAccounts: SyncAccountBankDto[], businessEntitiesIds: number[], selectedAccountsIds: number[], visibleBankAccountsIds: number[], searchValue: string, statuses = null): SyncAccountBankDto[] {
         let result: SyncAccountBankDto[] = [];
         visibleBankAccountsIds = !visibleBankAccountsIds || !selectedAccountsIds || selectedAccountsIds.length === 0 ? [] : visibleBankAccountsIds;
 
         syncAccounts.forEach((syncAccount: SyncAccountBankDto) => {
-            const isSyncAccountNameMatchesTheSearch = !searchValue || syncAccount.name.toLowerCase().indexOf(searchValue) >= 0;
+            const isSyncAccountNameMatchesTheSearch = !searchValue || syncAccount.name && syncAccount.name.toLowerCase().indexOf(searchValue) >= 0;
             /** If business entities hasn't been chosen and search is among all business entities */
             if ((!businessEntitiesIds || !businessEntitiesIds.length) && (!syncAccount.bankAccounts || !syncAccount.bankAccounts.length)) {
                 if (isSyncAccountNameMatchesTheSearch) {
@@ -542,10 +590,10 @@ export class BankAccountsService {
                 let bankAccounts: BankAccountDto[] = [];
                 syncAccount.bankAccounts.forEach(bankAccount => {
                     const isBankAccountMatchesTheSearch = isSyncAccountNameMatchesTheSearch
-                        || bankAccount.accountName.toLowerCase().indexOf(searchValue) >= 0
-                        || bankAccount.accountNumber.toLowerCase().indexOf(searchValue) >= 0;
+                        || bankAccount.accountName && bankAccount.accountName.toLowerCase().indexOf(searchValue) >= 0
+                        || bankAccount.accountNumber && bankAccount.accountNumber.toLowerCase().indexOf(searchValue) >= 0;
                     if (isBankAccountMatchesTheSearch && (!businessEntitiesIds.length || (bankAccount.businessEntityId && _.contains(businessEntitiesIds, bankAccount.businessEntityId)))
-                        && (isActive === null || bankAccount.isActive === isActive)
+                        && this.bankAccountMatchTheStatuses(bankAccount, statuses)
                     ) {
                         let bankAccountClone = _.clone(bankAccount);
                         let isBankAccountSelected = (selectedAccountsIds ? _.contains(selectedAccountsIds, bankAccountClone.id) : true)
@@ -578,13 +626,19 @@ export class BankAccountsService {
         return result;
     }
 
-    changeActiveFilter(value: boolean, saveInCache = false) {
-        if (this._syncAccountsState.value.isActive !== value) {
+    private bankAccountMatchTheStatuses(bankAccount: BankAccountDto, statuses: BankAccountStatus[]) {
+        return !statuses || !statuses.length
+            || bankAccount.isActive === true && statuses.find((status: BankAccountStatus) => status === BankAccountStatus.Active) !== undefined
+            || bankAccount.isActive === false && statuses.find((status: BankAccountStatus) => status === BankAccountStatus.Disabled) !== undefined;
+    }
+
+    changeStatusesFilter(value: BankAccountStatus[], saveInCache = false) {
+        if (this.selectedStatuses.value !== value) {
             this.changeState({
-                isActive: value,
+                statuses: value,
                 selectedBankAccountIds: null
             }, saveInCache);
-            this.activeStatus.next(value);
+            this.selectedStatuses.next(value);
         }
     }
 

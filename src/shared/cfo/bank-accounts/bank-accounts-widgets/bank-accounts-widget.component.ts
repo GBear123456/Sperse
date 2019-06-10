@@ -97,14 +97,20 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     sortItems: ISortItem[] = [
         {
             text: this.l('Sort by connection'),
-            key: 'name'
+            key: 'name',
+            direction: 'asc'
         },
         {
             text: this.l('Sort by total balance'),
             key: 'balance'
+        },
+        {
+            text: this.l('Sort by status'),
+            key: 'syncAccountStatus'
         }
     ];
     mainGridFieldsSorting = [
+        'name',
         'bankAccounts.length',
         'syncAccountStatus'
     ];
@@ -204,7 +210,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     setHighlighted() {
-        this.dataSource.forEach(syncAccount => {
+        this.dataSource && this.dataSource.forEach(syncAccount => {
             let highlightedBankAccountExist = false;
             syncAccount.bankAccounts.forEach(bankAccount => {
                 let isBankAccountHighlighted = _.contains(this.bankAccountIdsForHighlight, bankAccount.id);
@@ -268,6 +274,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this.bankAccountsService.changeBankAccountTypes(e);
     }
 
+    statusesChanged(e) {
+        this.bankAccountsService.changeStatusesFilter(e, this.saveChangesInCache);
+    }
+
     entitiesItemsChanged(selectedEntitiesIds: number[]) {
         this.bankAccountsService.changeState({
             selectedBusinessEntitiesIds: selectedEntitiesIds,
@@ -286,7 +296,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     dataCellClick(cell) {
         /** If to click for checkbox */
-        if (cell.column.dataField === 'selected') {
+        if (cell.column && cell.column.dataField === 'selected') {
             cell.data.selected = !cell.data.selected;
             this.masterSelectionChanged(cell);
             cell.event.stopImmediatePropagation();
@@ -418,7 +428,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     calculateHeight() {
         /** Get bottom position of previous element */
         let filtersBottomPosition = this.header.nativeElement.getBoundingClientRect().bottom;
-        this.scrollHeight = window.innerHeight - filtersBottomPosition - 20;
+        this.scrollHeight = window.innerHeight - filtersBottomPosition;
     }
 
     removeAccount(syncAccountId) {

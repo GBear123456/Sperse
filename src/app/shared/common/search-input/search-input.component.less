@@ -1,0 +1,21 @@
+:host {
+
+    /deep/ .dx-textbox {
+
+        .dx-texteditor-input {
+            border-bottom: 1px solid transparent;
+            padding-top: 11px;
+            padding-bottom: 11px;
+        }
+
+        &.dx-state-focused {
+            .dx-texteditor-input {
+                border-bottom: 1px solid #dfdfdf;
+            }
+        }
+
+        .dx-icon-search:before {
+            content: url('../../../../assets/common/icons/find-icon.svg');
+        }
+    }
+}

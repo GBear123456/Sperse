@@ -67,7 +67,7 @@ export class CreateUserDialogComponent implements OnInit {
     photoThumbnailData: string;
     photoSourceData: string;
     toolbarConfig = [];
-    title: string;
+    title: string = '';
     buttons: IDialogButton[] = [
         {
             id: this.saveButtonId,

@@ -84,9 +84,6 @@ export class DetailsHeaderComponent extends AppComponentBase implements OnInit, 
     private contactGroup: ContactGroup;
     private showRemovingOrgRelationProgress = false;
 
-    groupNames = _.mapObject(_.invert(ContactGroup), (val) => startCase(val));
-    statusNames = _.invert(ContactStatus);
-
     isAdminModule;
     manageAllowed;
     defaultContextMenuItems = [
