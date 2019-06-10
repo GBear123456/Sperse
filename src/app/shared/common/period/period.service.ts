@@ -1,8 +1,14 @@
-import { Injectable } from '@angular/core';
-import { CacheService } from '@node_modules/ng2-cache-service';
+/** Core imports */
+import { Injectable, Inject, Optional } from '@angular/core';
+
+/** Third party imports */
+import { CacheService } from 'ng2-cache-service';
+import * as moment from 'moment';
+
+/** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PeriodModel } from '@app/shared/common/period/period.model';
-import * as moment from 'moment';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Injectable()
 export class PeriodService {
@@ -21,11 +27,17 @@ export class PeriodService {
         ? this.cacheService.get(this.PERIOD_CACHE_KEY)
         : this.ls.l('This_Month')
     );
+    considerSettingsTimezone = true;
 
     constructor(
         private cacheService: CacheService,
-        private ls: AppLocalizationService
-    ) {}
+        private ls: AppLocalizationService,
+        @Inject('considerSettingsTimezone') @Optional() considerSettingsTimezone?: boolean
+    ) {
+        if (considerSettingsTimezone !== null) {
+            this.considerSettingsTimezone = considerSettingsTimezone;
+        }
+    }
 
     saveSelectedPeriodInCache(period: string) {
         this.cacheService.set(this.PERIOD_CACHE_KEY, period);
@@ -33,8 +45,8 @@ export class PeriodService {
 
     getDatePeriodFromName(name: string): PeriodModel {
         let period: string;
-        let startDate: moment.Moment = moment();
-        let endDate: moment.Moment = moment();
+        let startDate: moment.Moment = this.considerSettingsTimezone ? moment() : DateHelper.getCurrentUtcDate();
+        let endDate: moment.Moment = this.considerSettingsTimezone ? moment() : DateHelper.getCurrentUtcDate();
         switch (name) {
             case this.ls.l('Today'):
                 period = 'day';
@@ -45,7 +57,7 @@ export class PeriodService {
                 endDate.subtract(1, 'day');
                 break;
             case this.ls.l('This_Week'):
-                period = 'week';
+                period = 'isoWeek';
                 break;
             case this.ls.l('This_Month'):
                 period = 'month';

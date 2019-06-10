@@ -21,4 +21,8 @@ export class DateHelper {
         return moment(date).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset();
     }
 
+    static getCurrentUtcDate(): moment.Moment {
+        return moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc');
+    }
+
 }
