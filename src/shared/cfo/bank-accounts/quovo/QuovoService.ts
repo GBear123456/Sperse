@@ -51,12 +51,16 @@ export class QuovoService {
     }
 
     connect() {
-        /** Load quovo script (jquery getScript to observable) */
+        /** Load quovo script (create script element and convert onload event to observable next) */
         const quovoLoading$ = new Observable(observer => {
-            jQuery.getScript('https://app.quovo.com/ui.js').done(() => {
+            const quovoLoadScript = document.createElement('script');
+            quovoLoadScript.setAttribute('type', 'text/javascript');
+            quovoLoadScript.setAttribute('src', 'https://app.quovo.com/ui.js');
+            document.getElementsByTagName('head')[0].appendChild(quovoLoadScript);
+            quovoLoadScript.onload = () => {
                 observer.next();
                 observer.complete();
-            });
+            };
         });
 
         if (!this.quovo) {
