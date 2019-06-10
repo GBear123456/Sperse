@@ -3,14 +3,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, OnInit
 
 /** Third party imports */
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
+import { Observable, combineLatest, of } from 'rxjs';
 import {
     filter,
     first,
     finalize,
     map,
     mapTo,
-    mergeMap,
+    mergeAll,
     scan,
     tap,
     switchMap,
@@ -139,45 +139,47 @@ export class TotalsByPeriodComponent extends CFOComponentBase implements OnInit 
                 period.startDate,
                 period.endDate,
                 period.selectedPeriod
-            ).pipe(finalize(() => {
-                this.finishLoading();
-                this._changeDetectorRef.detectChanges();
-            }))),
-            tap(result => {
-                if (!result || !result.length) {
-                    this.totalData = null;
+            ).pipe(
+                finalize(() => {
+                    this.finishLoading();
                     this._changeDetectorRef.detectChanges();
-                }
-            }),
-            mergeMap(x => x),
-            scan(
-                (prevStatsItem, currentStatsItem: any) => {
-                    let credit = currentStatsItem.credit + prevStatsItem.credit;
-                    let debit = currentStatsItem.debit + prevStatsItem.debit;
-                    let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
-                    let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
-                    return {
-                        'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
-                        'endingBalance': currentStatsItem.endingBalance,
-                        'credit': credit,
-                        'debit': debit,
-                        'adjustments': adjustments,
-                        'startingBalanceAdjustments': startingBalanceAdjustments,
-                        'netChange': credit - Math.abs(debit),
-                        'date': currentStatsItem.date
-                    };
-                },
-                {
-                    'credit': 0,
-                    'debit': 0,
-                    'netChange': 0,
-                    'adjustments': 0,
-                    'startingBalance': 0,
-                    'endingBalance': 0,
-                    'startingBalanceAdjustments': 0,
-                    'date': 'date'
-                }
-            ),
+                }),
+                tap(result => {
+                    if (!result || !result.length) {
+                        this.totalData = null;
+                        this._changeDetectorRef.detectChanges();
+                    }
+                }),
+                mergeAll(),
+                scan(
+                    (prevStatsItem, currentStatsItem: any) => {
+                        let credit = currentStatsItem.credit + prevStatsItem.credit;
+                        let debit = currentStatsItem.debit + prevStatsItem.debit;
+                        let adjustments = currentStatsItem.adjustments + prevStatsItem.adjustments;
+                        let startingBalanceAdjustments = currentStatsItem.startingBalanceAdjustments + prevStatsItem.startingBalanceAdjustments;
+                        return {
+                            'startingBalance': prevStatsItem.hasOwnProperty('startingBalance') ? prevStatsItem['startingBalance'] : currentStatsItem.startingBalance - currentStatsItem.startingBalanceAdjustments,
+                            'endingBalance': currentStatsItem.endingBalance,
+                            'credit': credit,
+                            'debit': debit,
+                            'adjustments': adjustments,
+                            'startingBalanceAdjustments': startingBalanceAdjustments,
+                            'netChange': credit - Math.abs(debit),
+                            'date': currentStatsItem.date
+                        };
+                    },
+                    {
+                        'credit': 0,
+                        'debit': 0,
+                        'netChange': 0,
+                        'adjustments': 0,
+                        'startingBalance': 0,
+                        'endingBalance': 0,
+                        'startingBalanceAdjustments': 0,
+                        'date': 'date'
+                    }
+                )
+            )),
             map((totalData: TotalDataModel) => {
                 const maxValue = Math.max(
                     Math.abs(totalData.credit),

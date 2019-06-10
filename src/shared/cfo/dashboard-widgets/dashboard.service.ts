@@ -13,10 +13,10 @@ import { PeriodService } from '@app/shared/common/period/period.service';
 export class DashboardService {
     private _period: BehaviorSubject<PeriodModel> = new BehaviorSubject(this.periodService.selectedPeriod);
     period$: Observable<PeriodModel> = this._period.asObservable().pipe(distinctUntilChanged());
-    
+
     refresh: BehaviorSubject<any> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this.refresh.asObservable();
-    
+
     private _subscribers: Array<Subscription> = [];
 
     constructor(
