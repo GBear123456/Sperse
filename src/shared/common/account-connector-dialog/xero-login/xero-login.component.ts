@@ -18,7 +18,7 @@ import {
     CreateSyncAccountInput,
     CategoryTreeServiceProxy,
     InstanceType43,
-    InstanceType87,
+    InstanceType89,
     InstanceType88,
     UpdateSyncAccountInput
 } from 'shared/service-proxies/service-proxies';
@@ -75,7 +75,7 @@ export class XeroLoginComponent {
     connectToXero(e) {
         abp.ui.setBusy(this._elementRef.nativeElement);
         this._syncAccountServiceProxy.create(
-            this._cfoService.instanceType as InstanceType87,
+            this._cfoService.instanceType as InstanceType88,
             this._cfoService.instanceId,
             new CreateSyncAccountInput({
                 typeId: 'X',
@@ -113,7 +113,7 @@ export class XeroLoginComponent {
     updateSyncAccount() {
         abp.ui.setBusy(this._elementRef.nativeElement);
         const accountId = this.accountId;
-        this._syncAccountServiceProxy.update(this._cfoService.instanceType as InstanceType88, this._cfoService.instanceId,
+        this._syncAccountServiceProxy.update(this._cfoService.instanceType as InstanceType89, this._cfoService.instanceId,
             new UpdateSyncAccountInput({
                 id: accountId,
                 consumerKey: this.consumerKey,

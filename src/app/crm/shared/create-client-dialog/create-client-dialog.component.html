@@ -38,7 +38,9 @@
 <crm-user-assignment-list
     targetSelector="#ClientAssign"
     [permissionKey]="getAssignmentsPermissinKey()"
+    [assignedUsersSelector]="getAssignedUsersSelector()"
     [selectedItemKey]="currentUserId"
+    [proxyService]="contactService"
     [hideButtons]="true"
     (onSelectionChanged)="onUserAssignmentChanged($event)">
 </crm-user-assignment-list>

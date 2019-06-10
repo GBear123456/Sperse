@@ -23,6 +23,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import {
+    ContactAssignedUsersStoreSelectors,
     AddressUsageTypesStoreActions,
     AddressUsageTypesStoreSelectors,
     EmailUsageTypesStoreActions,
@@ -155,9 +156,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     constructor(
         public dialog: MatDialog,
+        private contactService: ContactServiceProxy,
         private _cacheService: CacheService,
         private _router: Router,
-        private _contactService: ContactServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
@@ -266,7 +267,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.contactId, result.id));
         else
-            this._contactService.createContact(CreateContactInput.fromJS(dataObj))
+            this.contactService.createContact(CreateContactInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.id));
     }
@@ -452,7 +453,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
-            this._contactService.getSimilarContacts(
+            this.contactService.getSimilarContacts(
                 field ? undefined : person.namePrefix || undefined,
                 field ? undefined : person.firstName || undefined,
                 field ? undefined : person.middleName || undefined,
@@ -781,7 +782,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
-            this.title = undefined;
+            this.title = '';
             this.tagsComponent.reset();
             this.listsComponent.reset();
             this.partnerTypesComponent.reset();
@@ -878,5 +879,11 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     close() {
         this._dialogRef.close();
+    }
+
+    getAssignedUsersSelector() {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, {
+            contactGroup: this.partnerTypesComponent.selectedItems.length ? ContactGroup.Partner : ContactGroup.Client
+        });
     }
 }
