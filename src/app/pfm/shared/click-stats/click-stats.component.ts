@@ -81,7 +81,7 @@ export class ClickStatsComponent extends AppComponentBase implements OnInit {
     initTotalColumn() {
         this.columns.unshift({
             dataField: this.TOTAL_DATA_FIELD,
-            caption: 'Monthly Totals Clicks by Day',
+            caption: 'Monthly Totals',
             alignment: 'center',
             width: 120
         });
