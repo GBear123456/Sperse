@@ -199,7 +199,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
             this.loadStatsData();
         });
 
-        this.bankAccountsService.accountsAmount$.subscribe(amount => {
+        this.bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
             this.bankAccountsCount = amount;
             this.initToolbarConfig();
         });

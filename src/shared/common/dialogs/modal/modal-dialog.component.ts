@@ -84,7 +84,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
 
     finishLoading() {
         this.loadingService.finishLoading(this.elementRef.nativeElement);
-    }  
+    }
 
     close(slide: boolean = false, closeData = null) {
         if (slide) {

@@ -46,7 +46,7 @@
     </div>
     <div class="account-item total-accounts" id="totalaccounts" (click)="totalAccountsMouseenter()">
         <a class="view-details">{{l('Select')}}</a>
-        <div class="value">{{ bankAccountsService.accountsAmount$ | async }}</div>
+        <div class="value">{{ bankAccountsService.accountsAmountWithApply$ | async }}</div>
         <div class="name">
             {{ bankAccountsService.filteredBankAccountsStatus$ | async }}
             {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}

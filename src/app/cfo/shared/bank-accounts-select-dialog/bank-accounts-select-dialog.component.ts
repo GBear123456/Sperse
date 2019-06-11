@@ -2,7 +2,7 @@
 import { Component, Output, OnInit, EventEmitter, ViewChild, Inject } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 /** Application imports */
 import { BankAccountsServiceProxy, BusinessEntityServiceProxy } from 'shared/service-proxies/service-proxies';
@@ -12,6 +12,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { IBankAccountsSelectDialogData } from '@app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog-data';
+
 @Component({
     templateUrl: './bank-accounts-select-dialog.component.html',
     styleUrls: ['./bank-accounts-select-dialog.component.less'],
@@ -27,6 +28,7 @@ export class BankAccountsSelectDialogComponent implements OnInit {
     constructor(
         private cfoService: CFOService,
         private bankAccountsService: BankAccountsService,
+        private dialogRef: MatDialogRef<BankAccountsSelectDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: IBankAccountsSelectDialogData
     ) {}
@@ -46,6 +48,12 @@ export class BankAccountsSelectDialogComponent implements OnInit {
                 disabled: this.data && this.data.applyDisabled
             }
         ];
+        this.dialogRef.afterOpen().subscribe(() => {
+            this.bankAccountsService.clearTempState();
+        });
+        this.dialogRef.afterClosed().subscribe(() => {
+            this.bankAccountsService.clearTempState();
+        });
     }
 
     apply() {
@@ -53,5 +61,4 @@ export class BankAccountsSelectDialogComponent implements OnInit {
         this.onApply.emit();
         this.modalDialog.close(true);
     }
-
 }

@@ -283,7 +283,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             selectedBusinessEntitiesIds: selectedEntitiesIds,
             selectedBankAccountIds: null
         }, this.saveChangesInCache);
-        this.bankAccountsService.applyFilter();
     }
 
     contentReady() {

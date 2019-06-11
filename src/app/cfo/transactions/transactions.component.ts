@@ -322,7 +322,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             });
         });
 
-        this._bankAccountsService.accountsAmount$.subscribe(amount => {
+        this._bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
             this.bankAccountCount = amount;
             this.initToolbarConfig();
             this._changeDetectionRef.detectChanges();
