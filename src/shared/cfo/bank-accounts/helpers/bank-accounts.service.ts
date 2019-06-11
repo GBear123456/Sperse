@@ -12,6 +12,7 @@ import {
     mergeMap,
     map,
     refCount,
+    pairwise,
     pluck,
     publishReplay,
     toArray,
@@ -79,7 +80,6 @@ export class BankAccountsService {
     _businessEntities: ReplaySubject<BusinessEntityDto[]> = new ReplaySubject(1);
     syncAccounts$: Observable<SyncAccountBankDto[]>;
     bankAccountsIds$: Observable<number[]>;
-    bankAccountsIds: number[];
     businessEntities$: Observable<BusinessEntityDto[]>;
     syncAccountsRequest$;
     businessEntitiesRequest$;
@@ -131,15 +131,14 @@ export class BankAccountsService {
                 }),
                 distinctUntilChanged(this.arrayDistinct)
             );
-        this.bankAccountsIds$.subscribe((bankAccountsIds: number[]) => {
-            if (this.bankAccountsIds) {
-                /** Select newly added bank accounts */
-                this.changeSelectedBankAccountsIds([
-                    ...this.state.selectedBankAccountIds,
-                    ...difference(bankAccountsIds, this.bankAccountsIds)]
-                );
-            }
-            this.bankAccountsIds = bankAccountsIds;
+        this.bankAccountsIds$.pipe(
+            pairwise()
+        ).subscribe(([prevBankAccountsIds, nextBankAccountsIds]) => {
+            /** Select newly added bank accounts */
+            this.changeSelectedBankAccountsIds([
+                ...this.state.selectedBankAccountIds,
+                ...difference(nextBankAccountsIds, prevBankAccountsIds)
+            ]);
         });
         this.businessEntitiesAmount$ = this.businessEntities$.pipe(
             map(businessEntities => businessEntities.length),
