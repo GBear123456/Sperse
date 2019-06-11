@@ -175,7 +175,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         private _changeDetectorRef: ChangeDetectorRef,
         private store$: Store<RootStore.State>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) private data: any
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.company = this.data.company;
         this.googleAutoComplete = Boolean(window['google']);
