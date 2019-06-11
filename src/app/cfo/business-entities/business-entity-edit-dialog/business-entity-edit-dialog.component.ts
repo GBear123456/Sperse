@@ -25,7 +25,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
-    styleUrls: [ '../../../shared/form.less', 'business-entity-edit-dialog.component.less' ],
+    styleUrls: [ '../../../shared/common/styles/form.less', 'business-entity-edit-dialog.component.less' ],
     providers: [ BusinessEntityServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

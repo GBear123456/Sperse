@@ -2,6 +2,7 @@
 import {
     Component,
     ChangeDetectionStrategy,
+    AfterViewInit,
     OnInit,
     ViewChild,
     Inject,
@@ -63,11 +64,11 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
-    styleUrls: [ '../../../shared/form.less', 'create-client-dialog.component.less' ],
+    styleUrls: [ '../../../shared/common/styles/form.less', 'create-client-dialog.component.less' ],
     providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateClientDialogComponent implements OnInit, OnDestroy {
+export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
@@ -195,6 +196,10 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         if (this.data.isInLeadMode)
             this.leadStagesLoad();
         this.saveOptionsInit();
+    }
+
+    ngAfterViewInit() {
+        this.modalDialog.slider.classList.add('min-width-910');
     }
 
     saveOptionsInit() {
