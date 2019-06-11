@@ -1189,6 +1189,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
+        this.dataGrid.instance.repaint();
     }
 
     deactivate() {
