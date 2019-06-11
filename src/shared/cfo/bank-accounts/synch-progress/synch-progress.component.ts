@@ -15,7 +15,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     @ViewChild('accountProgressTooltip') accountProgressTooltip: DxTooltipComponent;
     @Output() onComplete = new EventEmitter();
     completed = true;
-    showProgress = false;
+    showProgress = true;
     syncData: SyncProgressOutput;
     currentProgress: number;
     hasFailedAccounts = false;
@@ -67,6 +67,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         setTimeout(() => {
             this.syncProgressService.startSynchronization(true, false, 'all');
             this.toggleComponent();
+            if (!this.syncFailed && this.completed && !this.hasFailedAccounts) this.notify.info(this.l('SynchronizationFinished'));
         }, 300);
     }
 
@@ -75,9 +76,12 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
         this.syncProgressService.syncData$.pipe(takeUntil(this.deactivate$)).subscribe(syncData => {
             this.syncData = syncData;
         });
-        this.syncProgressService.currentProgress$.pipe(takeUntil(this.deactivate$)).subscribe(currentProgress => this.currentProgress = currentProgress);
-        this.syncProgressService.syncFailed$.pipe(takeUntil(this.deactivate$)).subscribe(() => this.syncFailed = true);
-        this.syncProgressService.hasFailedAccounts$.pipe(takeUntil(this.deactivate$)).subscribe(hasFailedAccounts => this.hasFailedAccounts = hasFailedAccounts);
+        this.syncProgressService.currentProgress$.pipe(takeUntil(this.deactivate$))
+            .subscribe(currentProgress => this.currentProgress = currentProgress);
+        this.syncProgressService.syncFailed$.pipe(takeUntil(this.deactivate$))
+            .subscribe(() => this.syncFailed = true);
+        this.syncProgressService.hasFailedAccounts$.pipe(takeUntil(this.deactivate$))
+            .subscribe(hasFailedAccounts => this.hasFailedAccounts = hasFailedAccounts);
         this.syncProgressService.syncCompleted$.pipe(takeUntil(this.deactivate$)).subscribe(completed => {
             this.completed = completed;
             if (this.completed) {
