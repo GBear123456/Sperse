@@ -13,30 +13,34 @@
                  [selectedItems]=""
                  [hideButtons]="true"
                  [highlightSelected]="true"
-                 [targetSelector]="'[accessKey=CreateLeadStage]'"
+                 targetSelector="#CreateLeadStage"
                  (onItemSelected)="onStagesChanged($event)"
                  [showTitle]="false"
                  [list]="stages"
                  [funnelStyling]="true"
                  [disableHindmost]="true">
 </app-static-list>
-<crm-rating [targetSelector]="'[accesskey=\'ClientRating\']'" [hideButtons]="true" (onValueChanged)="onRatingchanged($event)"></crm-rating>
-<crm-types-list [targetSelector]="'[accesskey=\'PartnerTypesList\']'"
+<crm-rating targetSelector="#ClientRating"
+            [hideButtons]="true"
+            (onValueChanged)="onRatingChanged($event)"></crm-rating>
+<crm-types-list targetSelector="#PartnerTypesList"
                 [hideButtons]="true"
                 (onSelectedChanged)="onPartnerTypeChanged($event)">
 </crm-types-list>
-<crm-tags-list [targetSelector]="'[accesskey=\'ClientTags\']'"
+<crm-tags-list targetSelector="#ClientTags"
                [hideButtons]="true"
                (onSelectedChanged)="onTagsSelected($event)">
 </crm-tags-list>
-<crm-lists-list [targetSelector]="'[accesskey=\'ClientLists\']'"
+<crm-lists-list targetSelector="#ClientLists"
                 [hideButtons]="true"
                 (onSelectionChanged)="onListsSelected($event)">
 </crm-lists-list>
 <crm-user-assignment-list
-    [targetSelector]="'[accesskey=\'ClientAssign\']'"
+    targetSelector="#ClientAssign"
     [permissionKey]="getAssignmentsPermissinKey()"
+    [assignedUsersSelector]="getAssignedUsersSelector()"
     [selectedItemKey]="currentUserId"
+    [proxyService]="contactService"
     [hideButtons]="true"
     (onSelectionChanged)="onUserAssignmentChanged($event)">
 </crm-user-assignment-list>
@@ -51,9 +55,69 @@
     <div class="photo-area" (click)="showUploadPhoto($event)"
         [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 
-    <div class="toolbar-wraper">
-        <app-toolbar [config]="toolbarConfig" width="700px"></app-toolbar>
-    </div>
+    <app-toolbar>
+        <ng-container before>
+            <dx-button [icon]="'./assets/common/icons/assign-icon.svg'"
+                       [text]="ls.l('Assign')"
+                       id="ClientAssign"
+                       [ngClass]="{ selected: isUserSelected, 'drop-down-icon': true }"
+                       (onClick)="toggleUserAssignment()">
+            </dx-button>
+
+            <dx-button *ngIf="data.isInLeadMode; else notLead"
+                       [icon]="'./assets/common/icons/status-icon.svg'"
+                       [text]="ls.l('Stage')"
+                       id="CreateLeadStage"
+                       [ngClass]="{ selected: isStageSelected, 'drop-down-icon': true }"
+                       (onClick)="toggleStages()">
+            </dx-button>
+            <ng-template #notLead>
+                <dx-button *ngIf="data.customerType === contactGroups.Client; else partner"
+                           [icon]="'./assets/common/icons/status-icon.svg'"
+                           [text]="ls.l('Status')"
+                           [disabled]="true"
+                           [ngClass]="{ selected: isStatusSelected }">
+                </dx-button>
+                <ng-template #partner>
+                    <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
+                               [text]="ls.l('Type')"
+                               id="PartnerTypesList"
+                               [ngClass]="{ selected: isPartnerTypeSelected, 'drop-down-icon': true }"
+                               (onClick)="togglePartnerTypes()">
+                    </dx-button>
+                </ng-template>
+            </ng-template>
+
+            <dx-button [icon]="'./assets/common/icons/folder.svg'"
+                       [text]="ls.l('Lists')"
+                       id="ClientLists"
+                       [ngClass]="{ selected: isListsSelected, 'drop-down-icon': true }"
+                       (onClick)="toggleLists()">
+            </dx-button>
+
+            <dx-button [icon]="'./assets/common/icons/pen.svg'"
+                       [text]="ls.l('Tags')"
+                       id="ClientTags"
+                       [ngClass]="{ selected: isTagsSelected, 'drop-down-icon': true }"
+                       (onClick)="toggleTags()">
+            </dx-button>
+
+            <dx-button [icon]="'./assets/common/icons/flag-icon.svg'"
+                       [text]="ls.l('Rating')"
+                       id="ClientRating"
+                       [ngClass]="{ selected: isRatingSelected, 'drop-down-icon': true }"
+                       (onClick)="toggleRating()">
+            </dx-button>
+        </ng-container>
+
+        <ng-container after>
+            <dx-button [icon]="'./assets/common/icons/delete-icon.svg'"
+                       [text]="ls.l('Discard')"
+                       [ngClass]="'discard-button'"
+                       (onClick)="resetFullDialog(false)">
+            </dx-button>
+        </ng-container>
+    </app-toolbar>
     <div *ngIf="similarCustomersAvailable()"
          class="similar-clients-message" (click)="showSimilarCustomers($event)">
         {{ls.l('SimilarRecordsFound')}}

@@ -10,7 +10,7 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { TokenService } from '@abp/auth/token.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, ModuleType } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -34,7 +34,8 @@ import {
     EPCVIPMailerSettingsEditDtoServer,
 
     OngageSettingsEditDto,
-    IAgeSettingsEditDto
+    IAgeSettingsEditDto,
+    
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 
@@ -68,6 +69,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
+    moduleTypes: string[] = [];
 
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
     epcvipEmailServers: string[] = [];
@@ -92,7 +94,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         icon: '',
         buttons: [
             {
-                enabled: this.isGranted('Pages.Administration.Languages.Create'),
+                enabled: true,//this.isGranted('Pages.Administration.Languages.Create'),
                 action: this.saveAll.bind(this),
                 icon: 'la la la-floppy-o',
                 lable: this.l('SaveAll')
@@ -145,6 +147,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         if (this.isPFMApplicationsFeatureEnabled) {
             this.epcvipEmailServers = Object.keys(EPCVIPMailerSettingsEditDtoServer);
         }
+
+        this.moduleTypes = Object.keys(ModuleType).filter(v => !isNaN(Number(ModuleType[v])) && (ModuleType[v] & ModuleType[v] - 1) == 0);
 
         forkJoin(requests)
             .pipe(

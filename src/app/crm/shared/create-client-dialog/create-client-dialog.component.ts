@@ -23,6 +23,7 @@ import { NameParserService } from '@app/crm/shared/name-parser/name-parser.servi
 import { CountriesStoreActions, CountriesStoreSelectors } from '@app/store';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import {
+    ContactAssignedUsersStoreSelectors,
     AddressUsageTypesStoreActions,
     AddressUsageTypesStoreSelectors,
     EmailUsageTypesStoreActions,
@@ -132,7 +133,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     similarCustomers: SimilarContactOutput[] = [];
     similarCustomersDialog: any;
     toolbarConfig = [];
-    title: string = '';
+    title = '';
     jobTitle: string;
     isTitleValid = true;
     buttons: IDialogButton[] = [
@@ -143,6 +144,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             action: this.save.bind(this)
         }
     ];
+    contactGroups = ContactGroup;
 
     private isUserSelected = true;
     private isPartnerTypeSelected = false;
@@ -154,9 +156,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     constructor(
         public dialog: MatDialog,
+        private contactService: ContactServiceProxy,
         private _cacheService: CacheService,
         private _router: Router,
-        private _contactService: ContactServiceProxy,
         private _contactPhoneService: ContactPhoneServiceProxy,
         private _contactEmailService: ContactEmailServiceProxy,
         private _contactAddressService: ContactAddressServiceProxy,
@@ -192,111 +194,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.linkTypesLoad();
         if (this.data.isInLeadMode)
             this.leadStagesLoad();
-
-        this.initToolbarConfig();
         this.saveOptionsInit();
-    }
-
-    initToolbarConfig() {
-        this.toolbarConfig = [
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                items: [
-                    {
-                        name: 'assign',
-                        action: this.toggleUserAssignment.bind(this),
-                        options: {
-                            accessKey: 'ClientAssign'
-                        },
-                        attr: {
-                            'filter-selected': this.isUserSelected
-                        }
-                    },
-                    this.data.isInLeadMode ? {
-                        name: 'stage',
-                        action: this.toggleStages.bind(this),
-                        options: {
-                            accessKey: 'CreateLeadStage'
-                        },
-                        attr: {
-                            'filter-selected': this.isStageSelected
-                        }
-                    } : this.data.customerType == ContactGroup.Client ? {
-                            name: 'status',
-                            widget: 'dxDropDownMenu',
-                            disabled: true,
-                            options: {
-                                hint: 'Status',
-                                items: [
-                                    {
-                                        action: Function(),
-                                        text: 'Active',
-                                    }, {
-                                        action: Function(),
-                                        text: 'Inactive',
-                                    }
-                                ]
-                            },
-                            attr: {
-                                'filter-selected': this.isStatusSelected
-                            }
-                        } :
-                        {
-                            name: 'partnerType',
-                            action: this.togglePartnerTypes.bind(this),
-                            options: {
-                                accessKey: 'PartnerTypesList'
-                            },
-                            attr: {
-                                'filter-selected': this.isPartnerTypeSelected
-                            }
-                        },
-                    {
-                        name: 'lists',
-                        action: this.toggleLists.bind(this),
-                        options: {
-                            accessKey: 'ClientLists'
-                        },
-                        attr: {
-                            'filter-selected': this.isListsSelected
-                        }
-                    },
-                    {
-                        name: 'tags',
-                        action: this.toggleTags.bind(this),
-                        options: {
-                            accessKey: 'ClientTags'
-                        },
-                        attr: {
-                            'filter-selected': this.isTagsSelected
-                        }
-                    },
-                    {
-                        name: 'rating',
-                        action: this.toggleRating.bind(this),
-                        options: {
-                            accessKey: 'ClientRating'
-                        },
-                        attr: {
-                            'filter-selected': this.isRatingSelected
-                        }
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                locateInMenu: 'auto',
-                areItemsDependent: true,
-                items: [
-                    {
-                        name: 'discard',
-                        action: this.resetFullDialog.bind(this, false)
-                    }
-                ]
-            }
-        ];
-        this._changeDetectorRef.detectChanges();
     }
 
     saveOptionsInit() {
@@ -369,7 +267,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
                 .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.contactId, result.id));
         else
-            this._contactService.createContact(CreateContactInput.fromJS(dataObj))
+            this.contactService.createContact(CreateContactInput.fromJS(dataObj))
                 .pipe(finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }))
                 .subscribe(result => this.afterSave(result.id));
     }
@@ -555,7 +453,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
         clearTimeout(this.similarCustomersTimeout);
         this.similarCustomersTimeout = setTimeout(() => {
-            this._contactService.getSimilarContacts(
+            this.contactService.getSimilarContacts(
                 field ? undefined : person.namePrefix || undefined,
                 field ? undefined : person.firstName || undefined,
                 field ? undefined : person.middleName || undefined,
@@ -884,7 +782,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
-            this.title = undefined;
+            this.title = '';
             this.tagsComponent.reset();
             this.listsComponent.reset();
             this.partnerTypesComponent.reset();
@@ -949,13 +847,11 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     onStagesChanged(event) {
         this.stageId = event.id;
         this.isStageSelected = true;
-        this.initToolbarConfig();
     }
 
     onPartnerTypeChanged(event) {
         this.partnerTypesComponent.apply();
         this.isPartnerTypeSelected = Boolean(event.selectedRowKeys.length);
-        this.initToolbarConfig();
     }
 
     getAssignmentsPermissinKey() {
@@ -967,25 +863,27 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
 
     onUserAssignmentChanged(event) {
         this.isUserSelected = Boolean(event.addedItems.length);
-        this.initToolbarConfig();
     }
 
     onListsSelected(event) {
         this.isListsSelected = Boolean(event.selectedRowKeys.length);
-        this.initToolbarConfig();
     }
 
     onTagsSelected(event) {
         this.isTagsSelected = Boolean(event.selectedRowKeys.length);
-        this.initToolbarConfig();
     }
 
-    onRatingchanged(event) {
+    onRatingChanged(event) {
         this.isRatingSelected = Boolean(event.value);
-        this.initToolbarConfig();
     }
 
     close() {
         this._dialogRef.close();
+    }
+
+    getAssignedUsersSelector() {
+        return select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, {
+            contactGroup: this.partnerTypesComponent.selectedItems.length ? ContactGroup.Partner : ContactGroup.Client
+        });
     }
 }

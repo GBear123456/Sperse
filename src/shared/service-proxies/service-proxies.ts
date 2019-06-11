@@ -34187,7 +34187,7 @@ export interface IAccountingTypeDto {
 export class CategoryDto implements ICategoryDto {
     accountingTypeId!: number | undefined;
     parentId!: number | undefined;
-    coAID!: number | undefined;
+    coAID!: string | undefined;
     name!: string | undefined;
     isActive!: boolean | undefined;
 
@@ -34231,7 +34231,7 @@ export class CategoryDto implements ICategoryDto {
 export interface ICategoryDto {
     accountingTypeId: number | undefined;
     parentId: number | undefined;
-    coAID: number | undefined;
+    coAID: string | undefined;
     name: string | undefined;
     isActive: boolean | undefined;
 }
@@ -34239,7 +34239,7 @@ export interface ICategoryDto {
 export class CreateCategoryInput implements ICreateCategoryInput {
     accountingTypeId!: number;
     parentId!: number | undefined;
-    coAID!: number | undefined;
+    coAID!: string | undefined;
     name!: string;
 
     constructor(data?: ICreateCategoryInput) {
@@ -34280,13 +34280,13 @@ export class CreateCategoryInput implements ICreateCategoryInput {
 export interface ICreateCategoryInput {
     accountingTypeId: number;
     parentId: number | undefined;
-    coAID: number | undefined;
+    coAID: string | undefined;
     name: string;
 }
 
 export class UpdateCategoryInput implements IUpdateCategoryInput {
     id!: number;
-    coAID!: number | undefined;
+    coAID!: string | undefined;
     name!: string;
     accountingTypeId!: number;
     parentId!: number | undefined;
@@ -34330,7 +34330,7 @@ export class UpdateCategoryInput implements IUpdateCategoryInput {
 
 export interface IUpdateCategoryInput {
     id: number;
-    coAID: number | undefined;
+    coAID: string | undefined;
     name: string;
     accountingTypeId: number;
     parentId: number | undefined;
@@ -34501,7 +34501,7 @@ export interface ISyncDto {
 }
 
 export class AccountingCategoryDto implements IAccountingCategoryDto {
-    coAID!: number | undefined;
+    coAID!: string | undefined;
     cashType!: string | undefined;
     accountingType!: string;
     category!: string;
@@ -34554,7 +34554,7 @@ export class AccountingCategoryDto implements IAccountingCategoryDto {
 }
 
 export interface IAccountingCategoryDto {
-    coAID: number | undefined;
+    coAID: string | undefined;
     cashType: string | undefined;
     accountingType: string;
     category: string;
@@ -57313,6 +57313,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
     isNewRegisteredUserActiveByDefault!: boolean | undefined;
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     useCaptchaOnRegistration!: boolean | undefined;
+    defaultModuleType!: TenantUserManagementSettingsEditDtoDefaultModuleType | undefined;
 
     constructor(data?: ITenantUserManagementSettingsEditDto) {
         if (data) {
@@ -57329,6 +57330,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
             this.isNewRegisteredUserActiveByDefault = data["isNewRegisteredUserActiveByDefault"];
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.useCaptchaOnRegistration = data["useCaptchaOnRegistration"];
+            this.defaultModuleType = data["defaultModuleType"];
         }
     }
 
@@ -57345,6 +57347,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
         data["isNewRegisteredUserActiveByDefault"] = this.isNewRegisteredUserActiveByDefault;
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["useCaptchaOnRegistration"] = this.useCaptchaOnRegistration;
+        data["defaultModuleType"] = this.defaultModuleType;
         return data; 
     }
 }
@@ -57354,6 +57357,7 @@ export interface ITenantUserManagementSettingsEditDto {
     isNewRegisteredUserActiveByDefault: boolean | undefined;
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     useCaptchaOnRegistration: boolean | undefined;
+    defaultModuleType: TenantUserManagementSettingsEditDtoDefaultModuleType | undefined;
 }
 
 export class LdapSettingsEditDto implements ILdapSettingsEditDto {
@@ -63099,6 +63103,13 @@ export enum UpdateSslBindingCertificateInputTenantHostType {
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
     PlatformApp = "PlatformApp", 
+}
+
+export enum TenantUserManagementSettingsEditDtoDefaultModuleType {
+    CFO = "CFO", 
+    CRM = "CRM", 
+    CFO_CRM = "CFO_CRM", 
+    PFM = "PFM", 
 }
 
 export enum EPCVIPMailerSettingsEditDtoServer {

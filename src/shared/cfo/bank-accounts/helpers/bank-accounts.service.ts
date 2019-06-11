@@ -64,7 +64,7 @@ export class BankAccountsService {
     _syncAccountsState: BehaviorSubject<BankAccountsState> = new BehaviorSubject(this.state);
     syncAccountsState$: Observable<BankAccountsState> = this._syncAccountsState.asObservable();
     accountsDataTotalNetWorth$: Observable<number>;
-    allSyncAccountAreSelected$: Observable<boolean>;
+    allSyncAccountAreSelected$: Observable<boolean | undefined>;
     syncAccountsAmount$: Observable<string>;
     accountsAmount$: Observable<string>;
     existingBankAccountsTypes$: Observable<BankAccountType[]>;
@@ -369,7 +369,7 @@ export class BankAccountsService {
         this.allSyncAccountAreSelected$ = this.filteredSyncAccounts$.pipe(
             map((syncAccounts: SyncAccountBankDto[]) => {
                 const selectedSyncAccounts = syncAccounts.filter(syncAccount => !syncAccount.bankAccounts.length || syncAccount['selected'] !== false);
-                return selectedSyncAccounts.length === syncAccounts.length;
+                return selectedSyncAccounts.length ? (selectedSyncAccounts.length === syncAccounts.length ? true : undefined) : false;
             })
         );
 

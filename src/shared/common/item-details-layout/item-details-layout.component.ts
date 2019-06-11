@@ -17,8 +17,6 @@ export class ItemDetailsLayoutComponent implements OnInit {
         this.rightSideVisible = innerWidth > 1200;
     }
 
-    constructor() { }
-
     ngOnInit() {
         this.onResize();
     }

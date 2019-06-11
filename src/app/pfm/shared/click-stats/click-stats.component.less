@@ -3,14 +3,18 @@
     display: block;
     height: 100%;
     width: 100%;
+    top: -20px;
 
     /deep/ dx-data-grid {
-        height: calc(100vh - 220px);
+        height: calc(100vh - 180px);
+        .dx-row > td {
+            padding: 0;
+        }
         .dx-datagrid-headers table {
             tr.dx-header-row td {
-                padding: 10px 0;
+                padding: 3px 0px;
                 div {
-                    height: 40px;
+                    height: auto;
                     display: flex;
                     justify-content: center;
                     align-items: center;
