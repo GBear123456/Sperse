@@ -25,6 +25,14 @@
             <h3>{{l('Accounts_synchronization_failed')}}</h3>
             <i class="fa fa-times-circle red-icon" (click)="toggleComponent()"></i>
         </div>
+        <div *ngIf="!syncFailed && completed && !hasFailedAccounts">
+            <button *ngIf="isSyncAccountButtonShown"
+                    class="sync-account-button"
+                    (click)="syncAll()">
+                <img src="./assets/common/icons/sync-account-icon.svg" alt="Sync Accounts">
+                {{l('SyncAllAccounts')}}
+            </button>
+        </div>
     </div>
 
     <dx-tooltip target="#synchProgressContainer"
