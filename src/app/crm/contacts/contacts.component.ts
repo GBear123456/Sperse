@@ -497,6 +497,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     this.updateStatusInternal(status.id)
                         .subscribe(() => {
                             this.contactInfo.statusId = status.id;
+                            let userData = this._userService['data'];
+                            if (userData && userData.user) {
+                                userData.user.isActive = status.id == ContactStatus.Active;
+                            }
                             this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
                             this.notify.success(this.l('StatusSuccessfullyUpdated'));
                         });
