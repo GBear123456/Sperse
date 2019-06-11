@@ -411,17 +411,20 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 publishReplay(),
                 refCount()
             );
-            contactInfo$.pipe(finalize(() => {
-                this.finishLoading(true);
-            }), switchMap(result => {
-                this.loadLeadData(result['personContactInfo']);
-                this.fillContactDetails(result);
-                if (leadId)
-                    this.loadLeadsStages();
-                if (this.contactGroup == ContactGroup.Partner)
-                    return this._partnerService.get(contactId);
-                return of(null);
-            })).subscribe(result => {
+            contactInfo$.pipe(
+                finalize(() => {
+                    this.finishLoading(true);
+                }),
+                switchMap(result => {
+                    this.loadLeadData(result['personContactInfo']);
+                    this.fillContactDetails(result);
+                    if (leadId)
+                        this.loadLeadsStages();
+                    if (this.contactGroup == ContactGroup.Partner)
+                        return this._partnerService.get(contactId);
+                    return of(null);
+                })
+            ).subscribe(result => {
                 if (result) {
                     this.fillPartnerDetails(result);
                     this.loadPartnerTypes();
