@@ -60,7 +60,7 @@ export class OperationsComponent extends AppComponentBase implements OnInit, OnD
     }
 
     ngOnInit() {
-        this._bankAccountsService.accountsAmount$.subscribe( amount => {
+        this._bankAccountsService.accountsAmountWithApply$.subscribe( amount => {
             this.bankAccountCount = amount;
         });
     }
