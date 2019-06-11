@@ -21,6 +21,10 @@ export class DateHelper {
         return moment(date).tz(abp.timing.timeZoneInfo.iana.timeZoneId).utcOffset();
     }
 
+    /**
+     * Returns moment with user date in utc timezone without hours, minutes and seconds
+     * @return {moment.Moment}
+     */
     static getCurrentUtcDate(): moment.Moment {
         return moment.tz(moment().format('DD-MM-YYYY'), 'DD-MM-YYYY', 'utc');
     }
