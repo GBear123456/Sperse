@@ -24,6 +24,11 @@
                 padding-left: 60px !important;
                 background-position: 15px 50% !important;
             }
+    
+            @media (max-width: 1370px) {
+                padding-left: 46px !important;
+                background-position: 11px 50% !important;
+            }
 
             &.dailyStats {
                 background-image: url('../../../../assets/common/icons/coins-icon-2.svg');
@@ -137,6 +142,16 @@
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
+    
+                @media (max-width: 1370px) {
+                    font-size: 20px;
+                }
+                
+                span {
+                    @media (max-width: 1370px) {
+                        margin-top: -3px !important;
+                    }
+                }
             }
 
             .name {

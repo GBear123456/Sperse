@@ -35,7 +35,6 @@ import {
 
     OngageSettingsEditDto,
     IAgeSettingsEditDto,
-    TenantUserManagementSettingsEditDtoDefaultModuleType,
     
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
@@ -70,7 +69,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
-    moduleTypes: string[] = [];
 
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
     epcvipEmailServers: string[] = [];
@@ -148,7 +146,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         if (this.isPFMApplicationsFeatureEnabled) {
             this.epcvipEmailServers = Object.keys(EPCVIPMailerSettingsEditDtoServer);
         }
-        this.moduleTypes = Object.keys(TenantUserManagementSettingsEditDtoDefaultModuleType);
 
         forkJoin(requests)
             .pipe(

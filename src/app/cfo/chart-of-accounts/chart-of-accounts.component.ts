@@ -17,7 +17,7 @@ class UploadCategoryModel {
     'Parent Category': string;
     'Parent Category Id': number;
     'Transaction Count': number;
-    'COAID': number;
+    'COAID': string;
 }
 
 @Component({
