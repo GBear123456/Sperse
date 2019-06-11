@@ -146,17 +146,17 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     ];
     contactGroups = ContactGroup;
 
-    private isUserSelected = true;
-    private isPartnerTypeSelected = false;
-    private isStageSelected = true;
-    private isStatusSelected = false;
-    private isListsSelected = false;
-    private isTagsSelected = false;
-    private isRatingSelected = true;
+    isUserSelected = true;
+    isPartnerTypeSelected = false;
+    isStageSelected = true;
+    isStatusSelected = false;
+    isListsSelected = false;
+    isTagsSelected = false;
+    isRatingSelected = true;
 
     constructor(
         public dialog: MatDialog,
-        private contactService: ContactServiceProxy,
+        public contactService: ContactServiceProxy,
         private _cacheService: CacheService,
         private _router: Router,
         private _contactPhoneService: ContactPhoneServiceProxy,
