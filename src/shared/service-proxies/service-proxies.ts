@@ -57433,7 +57433,6 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
     isNewRegisteredUserActiveByDefault!: boolean | undefined;
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     useCaptchaOnRegistration!: boolean | undefined;
-    defaultModuleType!: TenantUserManagementSettingsEditDtoDefaultModuleType | undefined;
 
     constructor(data?: ITenantUserManagementSettingsEditDto) {
         if (data) {
@@ -57450,7 +57449,6 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
             this.isNewRegisteredUserActiveByDefault = data["isNewRegisteredUserActiveByDefault"];
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.useCaptchaOnRegistration = data["useCaptchaOnRegistration"];
-            this.defaultModuleType = data["defaultModuleType"];
         }
     }
 
@@ -57467,7 +57465,6 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
         data["isNewRegisteredUserActiveByDefault"] = this.isNewRegisteredUserActiveByDefault;
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["useCaptchaOnRegistration"] = this.useCaptchaOnRegistration;
-        data["defaultModuleType"] = this.defaultModuleType;
         return data; 
     }
 }
@@ -57477,7 +57474,6 @@ export interface ITenantUserManagementSettingsEditDto {
     isNewRegisteredUserActiveByDefault: boolean | undefined;
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     useCaptchaOnRegistration: boolean | undefined;
-    defaultModuleType: TenantUserManagementSettingsEditDtoDefaultModuleType | undefined;
 }
 
 export class LdapSettingsEditDto implements ILdapSettingsEditDto {
@@ -63223,13 +63219,6 @@ export enum UpdateSslBindingCertificateInputTenantHostType {
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
     PlatformApp = "PlatformApp", 
-}
-
-export enum TenantUserManagementSettingsEditDtoDefaultModuleType {
-    CFO = "CFO", 
-    CRM = "CRM", 
-    CFO_CRM = "CFO_CRM", 
-    PFM = "PFM", 
 }
 
 export enum EPCVIPMailerSettingsEditDtoServer {
