@@ -25,7 +25,7 @@ import { CreateClientDialogComponent } from '../create-client-dialog/create-clie
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
-    styleUrls: [ '../../../shared/form.less', 'create-invoice-dialog.component.less' ],
+    styleUrls: [ '../../../shared/common/styles/form.less', 'create-invoice-dialog.component.less' ],
     providers: [ CacheHelper, CustomerServiceProxy, DialogService, InvoiceServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

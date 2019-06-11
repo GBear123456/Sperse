@@ -30,7 +30,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     selector: 'createOrEditEditionModal',
     templateUrl: './create-or-edit-edition-modal.component.html',
     styleUrls: [
-        '../../shared/_checkbox-radio.less',
+        '../../shared/common/styles/checkbox-radio.less',
         './create-or-edit-edition-modal.component.less'
     ],
     changeDetection: ChangeDetectionStrategy.OnPush

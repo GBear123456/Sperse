@@ -29,7 +29,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() options: IDialogOption[];
     @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
     @Output() titleChange: EventEmitter<string> = new EventEmitter<string>();
-    private slider: any;
+    public slider: any;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,

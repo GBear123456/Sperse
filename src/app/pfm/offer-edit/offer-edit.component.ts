@@ -70,7 +70,7 @@ import { CurrencyPipe } from '@angular/common';
 @Component({
     selector: 'offer-edit',
     templateUrl: './offer-edit.component.html',
-    styleUrls: [ '../../shared/form.less', './offer-edit.component.less' ],
+    styleUrls: [ '../../shared/common/styles/form.less', './offer-edit.component.less' ],
     providers: [ CurrencyPipe, OfferAnnouncementServiceProxy, OfferManagementServiceProxy, OfferServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

@@ -30,7 +30,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
-    styleUrls: [ '../../../shared/_checkbox-radio.less', 'create-user-dialog.component.less' ],
+    styleUrls: [ '../../../shared/common/styles/checkbox-radio.less', 'create-user-dialog.component.less' ],
     providers: [ CacheHelper, DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
