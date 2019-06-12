@@ -534,17 +534,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.disabled = true;
             setTimeout(() => {
                 this.startLoading();
-                const fullComplete = () => {
-                    this.disabled = false;
-                    this.finishLoading();
-                    complete && complete();
-                    this.detectChanges();
-                };
                 if (newStage.name != oldStage.name) {
                     this._pipelineService.updateEntityStage(
-                        this.pipelinePurposeId, entity, oldStage, newStage, fullComplete);
+                        this.pipelinePurposeId, entity, oldStage, newStage, complete);
                 } else
-                    this._pipelineService.updateEntitySortOrder(this.pipeline.id, entity, fullComplete);
+                    this._pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);
             });
         }
     }

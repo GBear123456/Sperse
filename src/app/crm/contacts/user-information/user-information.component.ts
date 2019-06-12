@@ -21,6 +21,7 @@ import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { ContactsService } from '../contacts.service';
 import { ResetPasswordDialog } from './reset-password-dialog/reset-password-dialog.component';
+import { ContactStatus } from '@root/shared/AppEnums';
 
 @Component({
     selector: 'user-information',
@@ -270,9 +271,12 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
             sub = this._userService.updateEmail(UpdateUserEmailDto.fromJS(data));
         else if (fieldName == this.PHONE_FIELD)
             sub = this._userService.updatePhone(UpdateUserPhoneDto.fromJS(data));
-        else if ([this.ACTIVE_FIELD, this.LOCKOUT_FIELD, this.TWO_FACTOR_FIELD].indexOf(fieldName) >= 0)
+        else if ([this.ACTIVE_FIELD, this.LOCKOUT_FIELD, this.TWO_FACTOR_FIELD].indexOf(fieldName) >= 0) {
             sub = this._userService.updateOptions(UpdateUserOptionsDto.fromJS(data));
-        else
+            if (fieldName == this.ACTIVE_FIELD && value == true) {
+                this._contactService['data'].contactInfo.statusId = ContactStatus.Active;
+            }
+        } else {
             sub = this._userService.createOrUpdateUser(CreateOrUpdateUserInput.fromJS({
                 user: this.userData.user,
                 setRandomPassword: this.userData.user['setRandomPassword'],
@@ -281,6 +285,7 @@ export class UserInformationComponent extends AppComponentBase implements OnInit
                 tenantHostType: <any>TenantHostType.PlatformApp,
                 organizationUnits: this.selectedOrgUnits
             }));
+        }
 
         this.startLoading();
         sub.pipe(finalize(() => this.finishLoading())).subscribe(() => {

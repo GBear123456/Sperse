@@ -797,7 +797,7 @@ export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDes
             this.listsComponent.reset();
             this.partnerTypesComponent.reset();
             this.userAssignmentComponent.selectedItemKey = this.currentUserId;
-            this.stageId = this.stages.length ? this.stages.find(v => v.sortOrder === this.defaultStageSortOrder).id : undefined;
+            this.stageId = this.stages.length ? this.stages.find(v => v.index === this.defaultStageSortOrder).id : undefined;
             this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
             this._changeDetectorRef.detectChanges();
         };
@@ -814,9 +814,9 @@ export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDes
     onSaveOptionSelectionChanged($event) {
         let option = $event.addedItems.pop() || $event.removedItems.pop() ||
             this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
-        option.selected = true;
-        $event.component.option('selectedItem', option);
-
+        this.saveContextMenuItems.forEach((item) => {
+            item.selected = option.text === item.text;
+        });
         this.updateSaveOption(option);
         this.save();
     }
