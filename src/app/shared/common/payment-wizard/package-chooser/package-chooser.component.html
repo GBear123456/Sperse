@@ -10,13 +10,13 @@
                     <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
                     <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
                 </div>
-                <div class="billingPeriod" [ngClass]="{'both-active': configurator == 'slider'}">
-                    <div class="monthly" [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('Monthly') }}</div>
+                <div class="sperse-toggle" [ngClass]="{'both-active': configurator == 'slider'}">
+                    <div class="left" [ngClass]="{ 'active': getActiveStatus('month') }">{{ l('Monthly') }}</div>
                     <mat-slide-toggle
                         [checked]="selectedBillingPeriod === billingPeriod.Yearly"
                         (change)="billingPeriodChanged($event)">
                     </mat-slide-toggle>
-                    <div class="annually" [ngClass]="{ 'active': getActiveStatus('year') }">
+                    <div class="right" [ngClass]="{ 'active': getActiveStatus('year') }">
                         <p class="year-discount">{{ 'SAVE ' + yearDiscount + '%'}}<span> {{ l('OrMore') }}</span></p>
                         {{ l('Annually') }}
                     </div>

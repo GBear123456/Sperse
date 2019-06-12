@@ -1,0 +1,51 @@
+:host {
+    display: block;
+    a {
+        font-weight: 600;
+    }
+    header {
+        text-align: center;
+    }
+    .lists {
+        &.hidden {
+            visibility: hidden;
+        }
+    }
+    .are-you-sure {
+        text-align: center;
+        margin: 70px 0 44px 0;
+    }
+    .sperse-toggle {
+        .left {
+            left: 30px !important;
+        }
+        .right {
+            right: -3px !important;
+        }
+    }
+    .mat-dialog-actions {
+        display: flex;
+        justify-content: center;
+        button {
+            width: 100px;
+        }
+    }
+    .dx-select-box {
+        max-width: 400px;
+        margin: auto;
+    }
+}
+
+/deep/ .cdk-overlay-pane.offer-announcement-dialog {
+    border-radius: 5px;
+    min-height: 260px;
+    .mat-dialog-container {
+        border-radius: 5px;
+    }
+}
+
+/deep/ body.lend-space .cdk-overlay-pane.offer-announcement-dialog {
+    .mat-dialog-container {
+        background: #FDC84D;
+    }
+}
