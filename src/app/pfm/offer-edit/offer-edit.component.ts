@@ -52,7 +52,8 @@ import {
     OfferManagementServiceProxy,
     OfferAnnouncementServiceProxy,
     SendAnnouncementRequest,
-    SendAnnouncementRequestServiceName
+    SendAnnouncementRequestServiceName,
+    CreditScores
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -123,7 +124,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     offerCollectionEnum = ExtendOfferDtoOfferCollection;
     model: OfferDetailsForEditDto;
     initialModel: OfferDetailsForEditDto;
-    creditScoresString: string;
+    creditScores: string[];
     section$: Observable<string>;
     offerIsUpdating = false;
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
@@ -147,6 +148,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
         this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted('Pages.PFM.Applications.SendOfferAnnouncements');
+        this.creditScores = Object.keys(CreditScores);
     }
 
     ngOnInit() {
@@ -186,7 +188,6 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         });
         this.offerDetails$.subscribe(details => {
             this.model = details;
-            this.creditScoresString = this.model.creditScores && this.model.creditScores.join(', ');
             this.updateInitialModel();
         });
         this.targetEntity$.pipe(

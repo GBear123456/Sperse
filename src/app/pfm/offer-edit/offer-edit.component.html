@@ -198,11 +198,11 @@
                                        [dataSource]="states$ | async"
                                        [(value)]="model.extendedInfo.states">
                             </tag-field>
-
-                            <text-field name="creditScores"
-                                        [readOnly]="true"
-                                        [value]="creditScoresString">
-                            </text-field>
+                            
+                            <tag-field name="creditScores"
+                                       [dataSource]="creditScores"
+                                       [(value)]="model.extendedInfo.creditScores">
+                            </tag-field>
 
                             <from-to-field fromName="minAnnualIncome"
                                            toName="maxAnnualIncome"

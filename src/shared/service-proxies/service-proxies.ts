@@ -50974,7 +50974,6 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
     termsOfService!: string | undefined;
     trafficSource!: OfferDetailsForEditDtoTrafficSource | undefined;
     categories!: OfferCategoryDto[] | undefined;
-    creditScores!: CreditScores2[] | undefined;
     description!: string | undefined;
     countries!: string[] | undefined;
     extendedInfo!: ExtendOfferDto | undefined;
@@ -51007,11 +51006,6 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
                 this.categories = [];
                 for (let item of data["categories"])
                     this.categories.push(OfferCategoryDto.fromJS(item));
-            }
-            if (data["creditScores"] && data["creditScores"].constructor === Array) {
-                this.creditScores = [];
-                for (let item of data["creditScores"])
-                    this.creditScores.push(item);
             }
             this.description = data["description"];
             if (data["countries"] && data["countries"].constructor === Array) {
@@ -51050,11 +51044,6 @@ export class OfferDetailsForEditDto implements IOfferDetailsForEditDto {
             for (let item of this.categories)
                 data["categories"].push(item.toJSON());
         }
-        if (this.creditScores && this.creditScores.constructor === Array) {
-            data["creditScores"] = [];
-            for (let item of this.creditScores)
-                data["creditScores"].push(item);
-        }
         data["description"] = this.description;
         if (this.countries && this.countries.constructor === Array) {
             data["countries"] = [];
@@ -51081,7 +51070,6 @@ export interface IOfferDetailsForEditDto {
     termsOfService: string | undefined;
     trafficSource: OfferDetailsForEditDtoTrafficSource | undefined;
     categories: OfferCategoryDto[] | undefined;
-    creditScores: CreditScores2[] | undefined;
     description: string | undefined;
     countries: string[] | undefined;
     extendedInfo: ExtendOfferDto | undefined;
@@ -51174,6 +51162,7 @@ export class ExtendOfferDto implements IExtendOfferDto {
     campaignProviderType!: ExtendOfferDtoCampaignProviderType | undefined;
     parameterHandlerType!: ExtendOfferDtoParameterHandlerType | undefined;
     flags!: Flags | undefined;
+    creditScores!: CreditScores2[] | undefined;
     states!: string[] | undefined;
 
     constructor(data?: IExtendOfferDto) {
@@ -51237,6 +51226,11 @@ export class ExtendOfferDto implements IExtendOfferDto {
             this.campaignProviderType = data["campaignProviderType"];
             this.parameterHandlerType = data["parameterHandlerType"];
             this.flags = data["flags"] ? Flags.fromJS(data["flags"]) : <any>undefined;
+            if (data["creditScores"] && data["creditScores"].constructor === Array) {
+                this.creditScores = [];
+                for (let item of data["creditScores"])
+                    this.creditScores.push(item);
+            }
             if (data["states"] && data["states"].constructor === Array) {
                 this.states = [];
                 for (let item of data["states"])
@@ -51304,6 +51298,11 @@ export class ExtendOfferDto implements IExtendOfferDto {
         data["campaignProviderType"] = this.campaignProviderType;
         data["parameterHandlerType"] = this.parameterHandlerType;
         data["flags"] = this.flags ? this.flags.toJSON() : <any>undefined;
+        if (this.creditScores && this.creditScores.constructor === Array) {
+            data["creditScores"] = [];
+            for (let item of this.creditScores)
+                data["creditScores"].push(item);
+        }
         if (this.states && this.states.constructor === Array) {
             data["states"] = [];
             for (let item of this.states)
@@ -51352,6 +51351,7 @@ export interface IExtendOfferDto {
     campaignProviderType: ExtendOfferDtoCampaignProviderType | undefined;
     parameterHandlerType: ExtendOfferDtoParameterHandlerType | undefined;
     flags: Flags | undefined;
+    creditScores: CreditScores2[] | undefined;
     states: string[] | undefined;
 }
 
@@ -57313,7 +57313,6 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
     isNewRegisteredUserActiveByDefault!: boolean | undefined;
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     useCaptchaOnRegistration!: boolean | undefined;
-    defaultModuleType!: TenantUserManagementSettingsEditDtoDefaultModuleType | undefined;
 
     constructor(data?: ITenantUserManagementSettingsEditDto) {
         if (data) {
@@ -57330,7 +57329,6 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
             this.isNewRegisteredUserActiveByDefault = data["isNewRegisteredUserActiveByDefault"];
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.useCaptchaOnRegistration = data["useCaptchaOnRegistration"];
-            this.defaultModuleType = data["defaultModuleType"];
         }
     }
 
@@ -57347,7 +57345,6 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
         data["isNewRegisteredUserActiveByDefault"] = this.isNewRegisteredUserActiveByDefault;
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["useCaptchaOnRegistration"] = this.useCaptchaOnRegistration;
-        data["defaultModuleType"] = this.defaultModuleType;
         return data; 
     }
 }
@@ -57357,7 +57354,6 @@ export interface ITenantUserManagementSettingsEditDto {
     isNewRegisteredUserActiveByDefault: boolean | undefined;
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     useCaptchaOnRegistration: boolean | undefined;
-    defaultModuleType: TenantUserManagementSettingsEditDtoDefaultModuleType | undefined;
 }
 
 export class LdapSettingsEditDto implements ILdapSettingsEditDto {
@@ -62711,14 +62707,6 @@ export enum OfferDetailsForEditDtoTrafficSource {
     PPC_Display = "PPC_Display", 
 }
 
-export enum CreditScores2 {
-    NotSure = "NotSure", 
-    Excellent = "Excellent", 
-    Good = "Good", 
-    Fair = "Fair", 
-    Poor = "Poor", 
-}
-
 export enum OfferDetailsForEditDtoSystemType {
     EPCVIP = "EPCVIP", 
 }
@@ -62930,6 +62918,14 @@ export interface IFlags {
     newest: boolean | undefined;
 }
 
+export enum CreditScores2 {
+    NotSure = "NotSure", 
+    Excellent = "Excellent", 
+    Good = "Good", 
+    Fair = "Fair", 
+    Poor = "Poor", 
+}
+
 export enum OfferFilterStatus {
     PendingReview = "PendingReview", 
     Active = "Active", 
@@ -63103,13 +63099,6 @@ export enum UpdateSslBindingCertificateInputTenantHostType {
 
 export enum UpdateSslBindingIsActiveInputTenantHostType {
     PlatformApp = "PlatformApp", 
-}
-
-export enum TenantUserManagementSettingsEditDtoDefaultModuleType {
-    CFO = "CFO", 
-    CRM = "CRM", 
-    CFO_CRM = "CFO_CRM", 
-    PFM = "PFM", 
 }
 
 export enum EPCVIPMailerSettingsEditDtoServer {
