@@ -232,10 +232,11 @@ export abstract class AppComponentBase implements OnDestroy {
         this.loading = false;
     }
 
-    showHostElement() {
+    showHostElement(callback?) {
         setTimeout(() => {
             this.getElementRef().nativeElement.style.display = 'block';
             this.dataGrid && this.dataGrid.instance && this.dataGrid.instance.repaint();
+            callback && callback();
         }, 100);
     }
 
