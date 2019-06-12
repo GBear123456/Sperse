@@ -47,7 +47,7 @@ export class PlatformSelectComponent extends AppComponentBase {
                 if (module.focusItem) {
                     this.modules.topItems.push(moduleConfig);
                 } else if (module.footerItem) {
-                    if (module.name !== 'CFO' && module.name !== 'PFM') {
+                    if (module.name !== 'CFO' && module.name !== 'PFM' && !this.isDisabled(module.name)) {
                         this.modules.footerItems.push(moduleConfig);
                     } else if (module.name === 'CFO'
                         && this._appService.isModuleActive(module.name)
