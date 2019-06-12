@@ -61,6 +61,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
@@ -69,7 +70,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
         '../../../shared/common/toolbar/toolbar.component.less',
         'create-client-dialog.component.less'
     ],
-    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ],
+    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy, ToolbarService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -180,6 +181,7 @@ export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDes
         private _changeDetectorRef: ChangeDetectorRef,
         private store$: Store<RootStore.State>,
         public ls: AppLocalizationService,
+        public toolbarService: ToolbarService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.company = this.data.company;
@@ -524,7 +526,6 @@ export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDes
         this.store$.pipe(select(CountriesStoreSelectors.getCountries))
         .subscribe(result => {
             this.countries = result;
-            this._changeDetectorRef.detectChanges();
         });
     }
 
