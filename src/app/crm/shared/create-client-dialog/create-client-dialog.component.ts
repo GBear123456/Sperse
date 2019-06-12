@@ -64,7 +64,11 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
-    styleUrls: [ '../../../shared/common/styles/form.less', 'create-client-dialog.component.less' ],
+    styleUrls: [
+        '../../../shared/common/styles/form.less',
+        '../../../shared/common/toolbar/toolbar.component.less',
+        'create-client-dialog.component.less'
+    ],
     providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
