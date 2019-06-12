@@ -55,18 +55,13 @@
     <div class="photo-area" (click)="showUploadPhoto($event)"
         [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 
-    <dx-toolbar>
+    <dx-toolbar (onItemRendered)="toolbarService.onItemRendered($event)">
         <dxi-item location="before" template="clientAssign"></dxi-item>
         <div *dxTemplate="let data of 'clientAssign'">
             <dx-button [icon]="'./assets/common/icons/assign-icon.svg'"
                        [text]="ls.l('Assign')"
                        id="ClientAssign"
-                       [elementAttr]="{
-                           'group-item-position': 'first',
-                           'group-item-count': 5,
-                           'group-item-index': 5
-                       }"
-                       [ngClass]="{ selected: isUserSelected, 'drop-down-icon': true }"
+                       [ngClass]="{ 'filter-selected': isUserSelected }"
                        (onClick)="toggleUserAssignment()">
             </dx-button>
         </div>
@@ -77,12 +72,7 @@
                 [icon]="'./assets/common/icons/status-icon.svg'"
                 [text]="ls.l('Stage')"
                 id="CreateLeadStage"
-                [elementAttr]="{
-                    'group-item-position': 'inside',
-                    'group-item-count': 5,
-                    'group-item-index': 4
-                }"
-                [ngClass]="{ selected: isStageSelected, 'drop-down-icon': true }"
+                [ngClass]="{ 'filter-selected': isStageSelected }"
                 (onClick)="toggleStages()">
             </dx-button>
         </div>
@@ -93,12 +83,7 @@
                 <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
                            [text]="ls.l('Status')"
                            [disabled]="true"
-                           [elementAttr]="{
-                                'group-item-position': 'inside',
-                                'group-item-count': 5,
-                                'group-item-index': 4
-                            }"
-                           [ngClass]="{ selected: isStatusSelected }">
+                           [ngClass]="{ 'filter-selected': isStatusSelected }">
                 </dx-button>
             </div>
 
@@ -108,12 +93,7 @@
                     <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
                                [text]="ls.l('Type')"
                                id="PartnerTypesList"
-                               [elementAttr]="{
-                                    'group-item-position': 'inside',
-                                    'group-item-count': 5,
-                                    'group-item-index': 4
-                               }"
-                               [ngClass]="{ selected: isPartnerTypeSelected, 'drop-down-icon': true }"
+                               [ngClass]="{ 'filter-selected': isPartnerTypeSelected }"
                                (onClick)="togglePartnerTypes()">
                     </dx-button>
                 </div>
@@ -125,12 +105,7 @@
             <dx-button [icon]="'./assets/common/icons/folder.svg'"
                        [text]="ls.l('Lists')"
                        id="ClientLists"
-                       [elementAttr]="{
-                           'group-item-position': 'inside',
-                           'group-item-count': 5,
-                           'group-item-index': 3
-                       }"
-                       [ngClass]="{ selected: isListsSelected, 'drop-down-icon': true }"
+                       [ngClass]="{ 'filter-selected': isListsSelected }"
                        (onClick)="toggleLists()">
             </dx-button>
         </div>
@@ -140,12 +115,7 @@
             <dx-button [icon]="'./assets/common/icons/pen.svg'"
                        [text]="ls.l('Tags')"
                        id="ClientTags"
-                       [elementAttr]="{
-                           'group-item-position': 'inside',
-                           'group-item-count': 5,
-                           'group-item-index': 2
-                       }"
-                       [ngClass]="{ selected: isTagsSelected, 'drop-down-icon': true }"
+                       [ngClass]="{ 'filter-selected': isTagsSelected }"
                        (onClick)="toggleTags()">
             </dx-button>
         </div>
@@ -155,12 +125,7 @@
             <dx-button [icon]="'./assets/common/icons/flag-icon.svg'"
                        [text]="ls.l('Rating')"
                        id="ClientRating"
-                       [elementAttr]="{
-                           'group-item-position': 'last',
-                           'group-item-count': 5,
-                           'group-item-index': 1
-                       }"
-                       [ngClass]="{ selected: isRatingSelected, 'drop-down-icon': true }"
+                       [ngClass]="{ 'filter-selected': isRatingSelected }"
                        (onClick)="toggleRating()">
             </dx-button>
         </div>
@@ -170,11 +135,6 @@
             <dx-button [icon]="'./assets/common/icons/delete-icon.svg'"
                        [text]="ls.l('Discard')"
                        [ngClass]="'discard-button'"
-                       [elementAttr]="{
-                           'group-item-position': 'single',
-                           'group-item-count': 1,
-                           'group-item-index': 1
-                       }"
                        (onClick)="resetFullDialog(false)">
             </dx-button>
         </div>
