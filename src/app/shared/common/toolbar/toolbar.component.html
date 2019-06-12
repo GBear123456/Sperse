@@ -1,19 +1,6 @@
 <dx-toolbar
-    *ngIf="items.length"
     [width]="width"
     [items]="items"
     [elementAttr]="{ compact: compact }"
     (onItemRendered)="onItemRendered($event)">
 </dx-toolbar>
-
-<div class="toolbar-wrapper" *ngIf="!items.length">
-    <div class="before">
-        <ng-content select="[before]"></ng-content>
-    </div>
-    <div class="center">
-        <ng-content select="[center]"></ng-content>
-    </div>
-    <div class="after">
-        <ng-content select="[after]"></ng-content>
-    </div>
-</div>
