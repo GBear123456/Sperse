@@ -125,7 +125,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
     showHistory(data) {
         setTimeout(() =>
             this.dialog.open(HistoryListDialogComponent, {
-                panelClass: ['slider', 'min-width-0'],
+                panelClass: ['slider'],
                 disableClose: false,
                 hasBackdrop: false,
                 closeOnNavigation: true,

@@ -47,7 +47,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
         this.dialogRef.disableClose = true;
         this.slider = this.elementRef.nativeElement.closest('.slider');
         if (this.slider) {
-            this.slider.classList.add('hide');
+            this.addClass('hide');
             this.dialogRef.updateSize(this.data && this.data.width, '0px');
             this.dialogRef.updatePosition({
                 right: '-100vw'
@@ -80,6 +80,10 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
 
     startLoading() {
         this.loadingService.startLoading(this.elementRef.nativeElement);
+    }
+
+    addClass(className: string) {
+        if (this.slider) this.slider.classList.add(className);
     }
 
     finishLoading() {

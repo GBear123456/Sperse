@@ -45,7 +45,7 @@ export class UploadDocumentsDialogComponent extends AppComponentBase implements 
     ngOnInit() {
         this.dialogRef.disableClose = true;
         this.slider = this.elementRef.nativeElement.closest('.slider');
-        this.slider.classList.add('hide');
+        this.slider.classList.add('hide', 'min-width-0');
         this.dialogRef.updateSize('0px', '0px');
         this.dialogRef.updatePosition({
             top: '75px',
