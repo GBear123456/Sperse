@@ -28,7 +28,7 @@ export class ChangePasswordModalComponent implements OnInit {
     buttons: IDialogButton[] = [
         {
             title: this.ls.l('SaveAndClose'),
-            class: 'primary menu',
+            class: 'primary',
             action: this.save.bind(this)
         }
     ];
