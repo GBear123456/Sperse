@@ -203,7 +203,7 @@ export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDes
     }
 
     ngAfterViewInit() {
-        this.modalDialog.slider.classList.add('min-width-910');
+        this.modalDialog.addClass('min-width-910');
     }
 
     saveOptionsInit() {
