@@ -280,8 +280,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     entitiesItemsChanged(selectedEntitiesIds: number[]) {
         this.bankAccountsService.changeState({
-            selectedBusinessEntitiesIds: selectedEntitiesIds,
-            selectedBankAccountIds: null
+            selectedBusinessEntitiesIds: selectedEntitiesIds
         }, this.saveChangesInCache);
     }
 
