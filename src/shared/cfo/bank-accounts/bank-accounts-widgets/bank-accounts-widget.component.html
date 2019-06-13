@@ -128,10 +128,9 @@
                     <dxo-selection [deferred]="true"></dxo-selection>
                     <dxo-filter-row [visible]="false"></dxo-filter-row>
                     <dxi-column dataField="id" [allowEditing]="false" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
-                    <dxi-column dataField="selected" cssClass="checkbox" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
-                    <dxi-column dataField="accountName" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing"></dxi-column>
-
-                    <dxi-column dataField="accountNumber" cssClass="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="allowEditing"></dxi-column>
+                    <dxi-column dataField="selected" cssClass="checkbox" [visibleIndex]="0" [allowEditing]="false" [width]="30" alignment="center" dataType="boolean" caption=""></dxi-column>
+                    <dxi-column dataField="accountNumber" [visibleIndex]="2" cssClass="accountNumber" cssClass="tabular" [width]="166" alignment="left" [allowEditing]="allowEditing" [editorOptions]="{ disabled: true }"></dxi-column>
+                    <dxi-column dataField="accountName" [visibleIndex]="1" [width]="nameColumnWidth" alignment="left" [allowEditing]="allowEditing"></dxi-column>
                     <dxi-column dataField="typeName" cssClass="type-container" [width]="160" alignment="left" [allowEditing]="false"
                                 cellTemplate="typeTemplate" [(visible)]="showAdvancedColumns"></dxi-column>
                     <dxi-column dataField="businessEntityId" [allowEditing]="allowEditing" [visible]="false" editCellTemplate="businessEntityEditSelect"></dxi-column>
