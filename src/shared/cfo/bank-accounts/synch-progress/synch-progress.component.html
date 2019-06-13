@@ -6,7 +6,10 @@
         {{l('SyncAllAccounts')}}
     </button>
     <div class="synch-container" *ngIf="showProgress">
-        <div *ngIf="!syncFailed && ((!completed && syncData) || (completed && hasFailedAccounts))"
+        <div class="loader" *ngIf="showLoader">
+            <div class="loadindicator"></div>
+        </div>
+        <div *ngIf="!syncFailed && ((!completed && syncData) || (completed && hasFailedAccounts)) && !showLoader"
              id="synchProgressContainer" (mouseenter)="toggleTooltip()">
             <div *ngIf="!completed" class="loadindicator" [class.in-progress]="!completed"></div>
             <h3>{{l('Sync_status')}}</h3>
@@ -21,11 +24,11 @@
             </dx-progress-bar>
             <i *ngIf="completed" class="fa fa-times-circle red-icon" (click)="toggleComponent()"></i>
         </div>
-        <div *ngIf="syncFailed">
+        <div *ngIf="syncFailed && !showLoader">
             <h3>{{l('Accounts_synchronization_failed')}}</h3>
             <i class="fa fa-times-circle red-icon" (click)="toggleComponent()"></i>
         </div>
-        <div *ngIf="!syncFailed && completed && !hasFailedAccounts">
+        <div *ngIf="!syncFailed && completed && !hasFailedAccounts && !showLoader">
             <button *ngIf="isSyncAccountButtonShown"
                     class="sync-account-button"
                     (click)="syncAll()">
