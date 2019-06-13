@@ -16,6 +16,7 @@
             <dx-select-box [items]="lists$ | async"
                            displayExpr="name"
                            valueExpr="id"
+                           [placeholder]="ls.l('OfferNotifyDialog_SelectLeadsList')"
                            [(value)]="selectedListId">
             </dx-select-box>
         </div>

@@ -61,7 +61,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
     selectedTransactionTypes: string[] = [];
     showOverwriteWarning = false;
     isCategoryValid = true;
-    title: string;
+    title = '';
     isTitleValid: boolean;
     buttons = [
         {
