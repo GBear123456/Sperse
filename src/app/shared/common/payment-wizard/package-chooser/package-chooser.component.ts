@@ -8,7 +8,6 @@ import {
     Input,
     Output,
     ViewChildren,
-    ViewEncapsulation,
     QueryList,
     HostBinding
 } from '@angular/core';
@@ -40,11 +39,9 @@ import { LocalizationResolver } from '@root/shared/common/localization-resolver'
 @Component({
     selector: 'package-chooser',
     templateUrl: './package-chooser.component.html',
-    styleUrls: [
-        '../../styles/sperse-toggle.less',
+    styleUrls: [        
         './package-chooser.component.less'
     ],
-    encapsulation: ViewEncapsulation.Emulated,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PackageChooserComponent implements OnInit {
