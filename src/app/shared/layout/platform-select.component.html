@@ -18,9 +18,13 @@
                         <div class="top__item_descr">
                             {{l(item.code + 'ModuleDescription')}}
                         </div>
-                        <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
-                             class="top__item_image"
-                             [alt]="item.name">
+                        <div class="top__item_image-wrapper">
+                            <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.png"
+                                 class="top__item_image"
+                                 width="210"
+                                 height="139"
+                                 [alt]="item.name">
+                        </div>
                         <div class="coming-soon" *ngIf="item.isComingSoon">
                             Coming soon...
                         </div>
