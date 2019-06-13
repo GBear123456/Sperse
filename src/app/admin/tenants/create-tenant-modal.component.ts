@@ -7,6 +7,7 @@ import {
     Output,
     OnInit,
     ViewChild,
+    AfterViewInit,
     ChangeDetectorRef
 } from '@angular/core';
 
@@ -36,9 +37,11 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     selector: 'createTenantModal',
     templateUrl: './create-tenant-modal.component.html',
     providers: [ TenantsService ],
+//!!VP should be reimplemnted to use Dx text box instead of inputs
+    styles: ['/deep/ .form-control-feedback { color: #f4516c!important; }'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateTenantModalComponent implements OnInit {
+export class CreateTenantModalComponent implements OnInit, AfterViewInit {
     @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
@@ -82,6 +85,10 @@ export class CreateTenantModalComponent implements OnInit {
             });
     }
 
+    ngAfterViewInit() {
+        this.modalDialog.addClass('min-width-810');        
+    }
+
     init(): void {
         this.tenant = new CreateTenantInput();
         this.tenant.isActive = true;
@@ -105,5 +112,4 @@ export class CreateTenantModalComponent implements OnInit {
                 this.modalSave.emit(null);
             });
     }
-
 }
