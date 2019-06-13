@@ -1144,9 +1144,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (!this.transactionDetailDialogRef) {
             this.transactionDetailDialogRef = this.dialog.open(TransactionDetailInfoComponent, {
                 panelClass: 'slider',
-                disableClose: true,
+                disableClose: false,
                 hasBackdrop: false,
-                closeOnNavigation: false,
+                closeOnNavigation: true,
                 data: {
                     refreshParent: this.invalidate.bind(this),
                     transactionId$: this.transId$
@@ -1196,6 +1196,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     deactivate() {
+        this.dialog.closeAll();
         this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
