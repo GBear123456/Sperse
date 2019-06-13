@@ -306,6 +306,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             ];
             this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();
+            this._bankAccountsService.syncAccounts$.subscribe((syncAccounts) => {
+                this.syncAccounts = syncAccounts;
+            });
             /** After selected accounts change */
             this._bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
                 this.applyTotalBankAccountFilter(true);
