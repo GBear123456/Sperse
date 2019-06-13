@@ -51,6 +51,71 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
     }
 
+    ngOnInit(): void {
+        this.refreshList();
+        this.filtersService.setup(
+            this.filters = [
+                new FilterModel({
+                    component: FilterInputsComponent,
+                    operator: 'contains',
+                    caption: 'Name',
+                    field: 'name',
+                    items: { name: new FilterItemModel() }
+                }),
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    operator: { from: '>=', to: '<=' },
+                    caption: 'CreationDate',
+                    field: 'creationTime',
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+                })
+            ]
+        );
+
+        this.filtersService.apply(() => {
+            this.initToolbarConfig();
+
+            let dataSourceFilters = [];
+            for (let filter of this.filters) {
+                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
+                if (filterMethod) {
+                    let customFilters: any[] = filterMethod(filter);
+                    if (customFilters && customFilters.length)
+                        customFilters.forEach((v) => dataSourceFilters.push(v));
+                } else {
+                    _.pairs(filter.items).forEach((pair) => {
+                        let val = pair.pop().value, key = pair.pop(), operator = {};
+                        if (val)
+                            dataSourceFilters.push([key, filter.operator, val]);
+                    });
+                }
+            }
+
+            dataSourceFilters = dataSourceFilters.length ? dataSourceFilters : null;
+            this.ruleTreeListDataSource.filter(dataSourceFilters);
+            this.ruleTreeListDataSource.load();
+        });
+    }
+
+    ngAfterViewInit(): void {
+        if (this._cfoService.classifyTransactionsAllowed) {
+            this.treeList.editing.allowAdding = true;
+            this.treeList.editing.allowDeleting = true;
+            this.treeList.editing.allowUpdating = true;
+            this.treeList.instance.refresh();
+
+            this.headlineConfig.buttons.push({
+                enabled: true,
+                action: this.showEditDialog.bind(this),
+                lable: this.l('+ Add New')
+            });
+        }
+
+        this.rootComponent = this.getRootComponent();
+        this.rootComponent.overflowHidden(true);
+    }
+
     initToolbarConfig() {
         this._appService.updateToolbar([
             {
@@ -150,75 +215,10 @@ export class RulesComponent extends CFOComponentBase implements OnInit, AfterVie
 
     showEditDialog(data = {}) {
         this.dialog.open(RuleDialogComponent, {
-            panelClass: [ 'slider', 'max-width-60' ], data: _.extend(data, {
+            panelClass: [ 'slider', 'max-width-80' ], data: _.extend(data, {
                 refershParent: this.refreshList.bind(this)
             })
         }).afterClosed().subscribe(() => {});
-    }
-
-    ngOnInit(): void {
-        this.refreshList();
-        this.filtersService.setup(
-            this.filters = [
-                new FilterModel({
-                    component: FilterInputsComponent,
-                    operator: 'contains',
-                    caption: 'Name',
-                    field: 'name',
-                    items: { name: new FilterItemModel() }
-                }),
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    operator: { from: '>=', to: '<=' },
-                    caption: 'CreationDate',
-                    field: 'creationTime',
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-                })
-            ]
-        );
-
-        this.filtersService.apply(() => {
-            this.initToolbarConfig();
-
-            let dataSourceFilters = [];
-            for (let filter of this.filters) {
-                let filterMethod = this['filterBy' + this.capitalize(filter.caption)];
-                if (filterMethod) {
-                    let customFilters: any[] = filterMethod(filter);
-                    if (customFilters && customFilters.length)
-                        customFilters.forEach((v) => dataSourceFilters.push(v));
-                } else {
-                    _.pairs(filter.items).forEach((pair) => {
-                        let val = pair.pop().value, key = pair.pop(), operator = {};
-                        if (val)
-                            dataSourceFilters.push([key, filter.operator, val]);
-                    });
-                }
-            }
-
-            dataSourceFilters = dataSourceFilters.length ? dataSourceFilters : null;
-            this.ruleTreeListDataSource.filter(dataSourceFilters);
-            this.ruleTreeListDataSource.load();
-        });
-    }
-
-    ngAfterViewInit(): void {
-        if (this._cfoService.classifyTransactionsAllowed) {
-            this.treeList.editing.allowAdding = true;
-            this.treeList.editing.allowDeleting = true;
-            this.treeList.editing.allowUpdating = true;
-            this.treeList.instance.refresh();
-
-            this.headlineConfig.buttons.push({
-                enabled: true,
-                action: this.showEditDialog.bind(this),
-                lable: this.l('+ Add New')
-            });
-        }
-
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
     }
 
     ngOnDestroy() {

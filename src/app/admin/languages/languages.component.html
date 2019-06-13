@@ -22,6 +22,7 @@
                       [hoverStateEnabled]="true"
                       [pager]="defaultGridPagerConfig"
                       (onEditingStart)="showActionsMenu($event)"
+                      (onCellPrepared)="onCellPrepared($event)"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
             <dxi-column dataField="isEnabled" caption="{{l('IsEnabled')}}" cellTemplate="isEnabledTemplate"></dxi-column>

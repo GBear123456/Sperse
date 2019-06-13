@@ -38,7 +38,9 @@ export class BankAccountsSelectDialogComponent implements OnInit {
             {
                 title: this.ls.l('Cancel'),
                 class: 'default',
-                action: () => this.modalDialog.close(true)
+                action: () => {
+                    this.modalDialog.close(true, true);
+                }
             },
             {
                 id: 'saveCompany',
@@ -51,8 +53,12 @@ export class BankAccountsSelectDialogComponent implements OnInit {
         this.dialogRef.afterOpen().subscribe(() => {
             this.bankAccountsService.clearTempState();
         });
-        this.dialogRef.afterClosed().subscribe(() => {
+        this.dialogRef.afterClosed().subscribe((resetState: boolean) => {
             this.bankAccountsService.clearTempState();
+            if (resetState) {
+                /** Reset state */
+                this.bankAccountsService.resetState();
+            }
         });
     }
 

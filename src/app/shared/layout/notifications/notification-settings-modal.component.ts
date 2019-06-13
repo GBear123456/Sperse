@@ -44,13 +44,6 @@ export class NotificationSettingsModalComponent implements OnInit  {
         this.getSettings(() => {});
     }
 
-    onShown(): void {
-        $('#ReceiveNotifications').bootstrapSwitch('state', this.settings.receiveNotifications);
-        $('#ReceiveNotifications').bootstrapSwitch('onSwitchChange', (el, value) => {
-            this.settings.receiveNotifications = value;
-        });
-    }
-
     save(): void {
         this.modalDialog.startLoading();
         const input = new UpdateNotificationSettingsInput();

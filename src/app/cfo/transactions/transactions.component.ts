@@ -306,6 +306,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             ];
             this.filtersService.setup(this.filters, this._activatedRoute.snapshot.queryParams, false);
             this.initFiltering();
+            this._bankAccountsService.syncAccounts$.subscribe((syncAccounts) => {
+                this.syncAccounts = syncAccounts;
+            });
             /** After selected accounts change */
             this._bankAccountsService.selectedBankAccountsIds$.pipe(first()).subscribe(() => {
                 this.applyTotalBankAccountFilter(true);
@@ -932,7 +935,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 (($event.column.dataField == 'CashflowCategoryName' && $event.data.CashflowCategoryId) ||
                 ($event.column.dataField == 'CashflowSubCategoryName' && $event.data.CashflowSubCategoryId))) {
                 this.dialog.open(RuleDialogComponent, {
-                    panelClass: [ 'slider', 'max-width-60' ],
+                    panelClass: [ 'slider', 'max-width-80' ],
                     data: {
                         categoryId: $event.column.dataField == 'CashflowCategoryName' ? $event.data.CashflowCategoryId : $event.data.CashflowSubCategoryId,
                         categoryCashflowTypeId: $event.CashFlowTypeId,
@@ -1040,7 +1043,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
                     if ($event.showRuleDialog) {
                         this.dialog.open(RuleDialogComponent, {
-                            panelClass: [ 'slider', 'max-width-60' ],
+                            panelClass: [ 'slider', 'max-width-80' ],
                             data: {
                                 categoryId: $event.categoryId,
                                 categoryCashflowTypeId: $event.categoryCashType,
@@ -1141,9 +1144,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (!this.transactionDetailDialogRef) {
             this.transactionDetailDialogRef = this.dialog.open(TransactionDetailInfoComponent, {
                 panelClass: 'slider',
-                disableClose: true,
+                disableClose: false,
                 hasBackdrop: false,
-                closeOnNavigation: false,
+                closeOnNavigation: true,
                 data: {
                     refreshParent: this.invalidate.bind(this),
                     transactionId$: this.transId$
@@ -1193,6 +1196,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     deactivate() {
+        this.dialog.closeAll();
         this._appService.updateToolbar(null);
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();

@@ -280,8 +280,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     entitiesItemsChanged(selectedEntitiesIds: number[]) {
         this.bankAccountsService.changeState({
-            selectedBusinessEntitiesIds: selectedEntitiesIds,
-            selectedBankAccountIds: null
+            selectedBusinessEntitiesIds: selectedEntitiesIds
         }, this.saveChangesInCache);
     }
 
@@ -336,10 +335,10 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         if (this.allowBankAccountsEditing && this.cfoService && this.businessEntities.length === 1 && !this.accountsTypes) {
             this.instanceType = <any>this.cfoService.instanceType;
             this.instanceId = <any>this.cfoService.instanceId;
-            let businessEntitiesObservable = this._businessEntityService.getBusinessEntities(this.instanceType, this.instanceId);
+            const businessEntities$ = this._businessEntityService.getBusinessEntities(this.instanceType, this.instanceId);
             /** @todo update when api will be ready */
             //let accountsTypesObservable = this._bankAccountsServiceProxy.getAccountsTypes(this.instanceType, this.instanceId);
-            forkJoin(businessEntitiesObservable/*, accountsTypesObservable*/)
+            forkJoin(businessEntities$/*, accountsTypesObservable*/)
                 .subscribe(result => {
                     this.businessEntities = this.businessEntities.concat(result[0]);
                     //this.accountsTypes = result[1];

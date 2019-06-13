@@ -15,6 +15,7 @@ import {
     pairwise,
     pluck,
     publishReplay,
+    tap,
     toArray,
     withLatestFrom,
     switchMap
@@ -66,6 +67,7 @@ export class BankAccountsService {
     _syncAccountsState: BehaviorSubject<BankAccountsState> = new BehaviorSubject(this.state);
     syncAccountsState$: Observable<BankAccountsState> = this._syncAccountsState.asObservable();
     accountsDataTotalNetWorth$: Observable<number>;
+    accountsDataTotalNetWorthWithApply$: Observable<number>;
     allSyncAccountAreSelected$: Observable<boolean | undefined>;
     syncAccountsAmount$: Observable<string>;
     accountsAmount$: Observable<string>;
@@ -307,9 +309,7 @@ export class BankAccountsService {
         );
 
         this.selectedBankAccounts$ = this.filteredBankAccounts$.pipe(
-            map((bankAccounts: any) => {
-                return bankAccounts.filter(bankAccount => bankAccount.selected);
-            }),
+            map(this.getSelectedBankAccounts),
             distinctUntilChanged(this.arrayDistinct)
         );
 
@@ -340,13 +340,17 @@ export class BankAccountsService {
             }
         );
 
-        this.accountsDataTotalNetWorth$ = this.selectedBankAccounts$
-            .pipe(
-                map(bankAccounts => bankAccounts.reduce((sum, bankAccount) => {
-                    return sum + bankAccount.balance;
-                }, 0)),
-                distinctUntilChanged()
-            );
+        this.accountsDataTotalNetWorth$ = this.getFilteredBankAccounts(this.filteredSyncAccounts$).pipe(
+            map(this.getSelectedBankAccounts),
+            map(this.getAccountsTotalBalance),
+            distinctUntilChanged()
+        );
+
+        this.accountsDataTotalNetWorthWithApply$ = this.getFilteredBankAccounts(this.filteredSyncAccountsWithApply$).pipe(
+            map(this.getSelectedBankAccounts),
+            map(this.getAccountsTotalBalance),
+            distinctUntilChanged()
+        );
 
         this.allSyncAccountAreSelected$ = this.filteredSyncAccounts$.pipe(
             map((syncAccounts: SyncAccountBankDto[]) => {
@@ -366,17 +370,21 @@ export class BankAccountsService {
             distinctUntilChanged()
         );
 
-        this.accountsAmount$ = combineLatest(this.getFilteredBankAccounts(this.filteredSyncAccounts$), filteredBankAccountsAmount$)
-            .pipe(
-                map(this.getBankAccountsAmount),
-                distinctUntilChanged()
-            );
+        this.accountsAmount$ = combineLatest(
+            this.getFilteredBankAccounts(this.filteredSyncAccounts$),
+            filteredBankAccountsAmount$
+        ).pipe(
+            map(this.getBankAccountsAmount),
+            distinctUntilChanged()
+        );
 
-        this.accountsAmountWithApply$ = combineLatest(this.getFilteredBankAccounts(this.filteredSyncAccountsWithApply$), filteredBankAccountsAmount$)
-            .pipe(
-                map(this.getBankAccountsAmount),
-                distinctUntilChanged()
-            );
+        this.accountsAmountWithApply$ = combineLatest(
+            this.getFilteredBankAccounts(this.filteredSyncAccountsWithApply$),
+            filteredBankAccountsAmount$
+        ).pipe(
+            map(this.getBankAccountsAmount),
+            distinctUntilChanged()
+        );
 
     }
 
@@ -390,14 +398,6 @@ export class BankAccountsService {
             this.changeSelectedBankAccountsIds(this.filteredBankAccountsIds);
             this.applyFilter();
         }
-
-        /** @todo think about application state handling with posibleAccountsIds stream */
-        /** Start pause to avoid multiple filtering in combine latest */
-        //this._pauser.next(true);
-        //this._activeStatus.next(this.state.isActive);
-        //this.selectedBusinessEntitiesIds$
-        /** Finish pause */
-        //this._pauser.next(false);
     }
 
     load(acceptFilterOnlyOnApply = true) {
@@ -444,6 +444,14 @@ export class BankAccountsService {
         });
 
         return combinedRequest;
+    }
+
+    private getAccountsTotalBalance = bankAccounts => bankAccounts.reduce((sum, bankAccount) => {
+        return sum + bankAccount.balance;
+    }, 0)
+
+    private getSelectedBankAccounts = (bankAccounts: any) => {
+        return bankAccounts.filter(bankAccount => bankAccount.selected);
     }
 
     private getBankAccountsAmount([bankAccounts, totalAmount]: [any[], number]) {
@@ -525,6 +533,10 @@ export class BankAccountsService {
             this.tempState = tempFilter;
         }
         this._syncAccountsState.next(tempFilter);
+    }
+
+    resetState() {
+        this.changeState(this.state, true);
     }
 
     clearTempState() {
