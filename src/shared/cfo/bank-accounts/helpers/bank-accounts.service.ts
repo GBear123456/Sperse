@@ -366,17 +366,21 @@ export class BankAccountsService {
             distinctUntilChanged()
         );
 
-        this.accountsAmount$ = combineLatest(this.getFilteredBankAccounts(this.filteredSyncAccounts$), filteredBankAccountsAmount$)
-            .pipe(
-                map(this.getBankAccountsAmount),
-                distinctUntilChanged()
-            );
+        this.accountsAmount$ = combineLatest(
+            this.getFilteredBankAccounts(this.filteredSyncAccounts$),
+            filteredBankAccountsAmount$
+        ).pipe(
+            map(this.getBankAccountsAmount),
+            distinctUntilChanged()
+        );
 
-        this.accountsAmountWithApply$ = combineLatest(this.getFilteredBankAccounts(this.filteredSyncAccountsWithApply$), filteredBankAccountsAmount$)
-            .pipe(
-                map(this.getBankAccountsAmount),
-                distinctUntilChanged()
-            );
+        this.accountsAmountWithApply$ = combineLatest(
+            this.getFilteredBankAccounts(this.filteredSyncAccountsWithApply$),
+            filteredBankAccountsAmount$
+        ).pipe(
+            map(this.getBankAccountsAmount),
+            distinctUntilChanged()
+        );
 
     }
 
@@ -390,14 +394,6 @@ export class BankAccountsService {
             this.changeSelectedBankAccountsIds(this.filteredBankAccountsIds);
             this.applyFilter();
         }
-
-        /** @todo think about application state handling with posibleAccountsIds stream */
-        /** Start pause to avoid multiple filtering in combine latest */
-        //this._pauser.next(true);
-        //this._activeStatus.next(this.state.isActive);
-        //this.selectedBusinessEntitiesIds$
-        /** Finish pause */
-        //this._pauser.next(false);
     }
 
     load(acceptFilterOnlyOnApply = true) {
