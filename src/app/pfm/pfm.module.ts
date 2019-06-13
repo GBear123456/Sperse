@@ -17,6 +17,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 /** Application imports */
 import { ContactsModule } from '../crm/contacts/contacts.module';
@@ -39,6 +40,7 @@ import { GroupFieldComponent } from './offer-edit/group-field/group-field.compon
 import { DataSourceService } from '@app/shared/common/data-source/data-source.service';
 import { ClickStatsComponent } from './shared/click-stats/click-stats.component';
 import { VisitorsComponent } from './offer-edit/visitors/visitors.component';
+import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dialog/offer-notify-dialog.component';
 
 @NgModule({
     imports: [
@@ -61,12 +63,14 @@ import { VisitorsComponent } from './offer-edit/visitors/visitors.component';
         MatCheckboxModule,
         MatInputModule,
         MatSelectModule,
+        MatSlideToggleModule,
         ItemDetailsLayoutModule,
         StarsRatingModule
     ],
     declarations: [
         OffersComponent,
         OfferEditComponent,
+        OfferNotifyDialogComponent,
         TextFieldComponent,
         DropdownFieldComponent,
         NumberFieldComponent,
@@ -79,7 +83,9 @@ import { VisitorsComponent } from './offer-edit/visitors/visitors.component';
         ClickStatsComponent,
         VisitorsComponent
     ],
-    entryComponents: [],
+    entryComponents: [
+        OfferNotifyDialogComponent
+    ],
     providers: [
         DataSourceService
     ]

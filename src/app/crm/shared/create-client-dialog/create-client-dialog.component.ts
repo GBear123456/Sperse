@@ -2,6 +2,7 @@
 import {
     Component,
     ChangeDetectionStrategy,
+    AfterViewInit,
     OnInit,
     ViewChild,
     Inject,
@@ -60,14 +61,19 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 
 @Component({
     templateUrl: 'create-client-dialog.component.html',
-    styleUrls: [ '../../../shared/form.less', 'create-client-dialog.component.less' ],
-    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy ],
+    styleUrls: [
+        '../../../shared/common/styles/form.less',
+        '../../../shared/common/toolbar/toolbar.component.less',
+        'create-client-dialog.component.less'
+    ],
+    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, LeadServiceProxy, ToolbarService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateClientDialogComponent implements OnInit, OnDestroy {
+export class CreateClientDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList') stagesComponent: StaticListComponent;
     @ViewChild(RatingComponent) ratingComponent: RatingComponent;
@@ -146,17 +152,17 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     ];
     contactGroups = ContactGroup;
 
-    private isUserSelected = true;
-    private isPartnerTypeSelected = false;
-    private isStageSelected = true;
-    private isStatusSelected = false;
-    private isListsSelected = false;
-    private isTagsSelected = false;
-    private isRatingSelected = true;
+    isUserSelected = true;
+    isPartnerTypeSelected = false;
+    isStageSelected = true;
+    isStatusSelected = false;
+    isListsSelected = false;
+    isTagsSelected = false;
+    isRatingSelected = true;
 
     constructor(
         public dialog: MatDialog,
-        private contactService: ContactServiceProxy,
+        public contactService: ContactServiceProxy,
         private _cacheService: CacheService,
         private _router: Router,
         private _contactPhoneService: ContactPhoneServiceProxy,
@@ -175,7 +181,8 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         private _changeDetectorRef: ChangeDetectorRef,
         private store$: Store<RootStore.State>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) private data: any
+        public toolbarService: ToolbarService,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.company = this.data.company;
         this.googleAutoComplete = Boolean(window['google']);
@@ -195,6 +202,10 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         if (this.data.isInLeadMode)
             this.leadStagesLoad();
         this.saveOptionsInit();
+    }
+
+    ngAfterViewInit() {
+        this.modalDialog.addClass('min-width-910');
     }
 
     saveOptionsInit() {
@@ -515,7 +526,6 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
         this.store$.pipe(select(CountriesStoreSelectors.getCountries))
         .subscribe(result => {
             this.countries = result;
-            this._changeDetectorRef.detectChanges();
         });
     }
 
@@ -787,7 +797,7 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
             this.listsComponent.reset();
             this.partnerTypesComponent.reset();
             this.userAssignmentComponent.selectedItemKey = this.currentUserId;
-            this.stageId = this.stages.length ? this.stages.find(v => v.sortOrder === this.defaultStageSortOrder).id : undefined;
+            this.stageId = this.stages.length ? this.stages.find(v => v.index === this.defaultStageSortOrder).id : undefined;
             this.ratingComponent.selectedItemKey = this.ratingComponent.ratingMin;
             this._changeDetectorRef.detectChanges();
         };
@@ -804,9 +814,9 @@ export class CreateClientDialogComponent implements OnInit, OnDestroy {
     onSaveOptionSelectionChanged($event) {
         let option = $event.addedItems.pop() || $event.removedItems.pop() ||
             this.saveContextMenuItems[this.SAVE_OPTION_DEFAULT];
-        option.selected = true;
-        $event.component.option('selectedItem', option);
-
+        this.saveContextMenuItems.forEach((item) => {
+            item.selected = option.text === item.text;
+        });
         this.updateSaveOption(option);
         this.save();
     }

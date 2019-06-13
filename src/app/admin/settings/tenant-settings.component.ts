@@ -10,7 +10,7 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { TokenService } from '@abp/auth/token.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppTimezoneScope, ModuleType } from '@shared/AppEnums';
+import { AppTimezoneScope } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -42,7 +42,7 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 @Component({
     templateUrl: './tenant-settings.component.html',
     animations: [appModuleAnimation()],
-    styleUrls: ['../../shared/_checkbox-radio.less', './tenant-settings.component.less'],
+    styleUrls: ['../../shared/common/styles/checkbox-radio.less', './tenant-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         TenantSettingsCreditReportServiceProxy,
@@ -69,7 +69,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled('PFM.CreditReport');
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled('PFM') && abp.features.isEnabled('PFM.Applications');
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
-    moduleTypes: string[] = [];
 
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
     epcvipEmailServers: string[] = [];
@@ -147,8 +146,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         if (this.isPFMApplicationsFeatureEnabled) {
             this.epcvipEmailServers = Object.keys(EPCVIPMailerSettingsEditDtoServer);
         }
-
-        this.moduleTypes = Object.keys(ModuleType).filter(v => !isNaN(Number(ModuleType[v])) && (ModuleType[v] & ModuleType[v] - 1) == 0);
 
         forkJoin(requests)
             .pipe(

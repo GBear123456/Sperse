@@ -37,7 +37,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 @Component({
     selector: 'company-dialog',
     templateUrl: './company-dialog.component.html',
-    styleUrls: [ '../../../shared/form.less', './company-dialog.component.less' ],
+    styleUrls: [ '../../../shared/common/styles/form.less', './company-dialog.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ContactPhotoServiceProxy, MaskPipe]
 })

@@ -29,7 +29,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() options: IDialogOption[];
     @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
     @Output() titleChange: EventEmitter<string> = new EventEmitter<string>();
-    private slider: any;
+    public slider: any;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -47,7 +47,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
         this.dialogRef.disableClose = true;
         this.slider = this.elementRef.nativeElement.closest('.slider');
         if (this.slider) {
-            this.slider.classList.add('hide');
+            this.addClass('hide');
             this.dialogRef.updateSize(this.data && this.data.width, '0px');
             this.dialogRef.updatePosition({
                 right: '-100vw'
@@ -82,9 +82,13 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
         this.loadingService.startLoading(this.elementRef.nativeElement);
     }
 
+    addClass(className: string) {
+        if (this.slider) this.slider.classList.add(className);
+    }
+
     finishLoading() {
         this.loadingService.finishLoading(this.elementRef.nativeElement);
-    }  
+    }
 
     close(slide: boolean = false, closeData = null) {
         if (slide) {

@@ -233,8 +233,10 @@ button {
         cursor: pointer;
     }
     &[disabled] {
-        cursor: default;
-        background-color: #b1b0b3;
+        cursor: default !important;
+        background-color: #b1b0b3 !important;
+        border-color: #b1b0b3;
+        color: #ddd;
     }
     &.menu {
         padding: 0px 45px 0px 30px;
@@ -350,10 +352,6 @@ button {
 /* Make user menu wider */
 .page-header.navbar .top-menu .navbar-nav > li.dropdown-dark .dropdown-menu {
     width: 250px;
-}
-
-.dx-selectbox .dx-texteditor-input:read-only {
-    text-align: center;
 }
 
 /* devExpress common styles */
@@ -1048,6 +1046,12 @@ body > .blockUI.blockOverlay{
         min-width: 40vw;
         &.min-width-0 {
             min-width: 0;
+        }
+        &.min-width-810 {
+            min-width: 810px;
+        }
+        &.min-width-910 {
+            min-width: 910px;
         }
         .mat-dialog-container {
             overflow: visible;

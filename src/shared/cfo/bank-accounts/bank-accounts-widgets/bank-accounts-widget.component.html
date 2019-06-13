@@ -15,6 +15,7 @@
                     <selection-filter
                         [allItemsText]="l('All_Entities')"
                         [title]=""
+                        popupWidth="280px"
                         [selectionList]="bankAccountsService.businessEntities$ | async"
                         [selectedItems]="bankAccountsService.selectedBusinessEntitiesIds$ | async"
                         (selectionChanged)="entitiesItemsChanged($event)">

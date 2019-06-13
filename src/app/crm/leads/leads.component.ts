@@ -880,8 +880,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initToolbarConfig();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
-
-        this.showHostElement();
+        this.showHostElement(() => 
+            this.pipelineComponent.detectChanges());
     }
 
     deactivate() {

@@ -1,15 +1,15 @@
 <div class="accounts-list">
-    <div class="account-item networth">
+    <div class="account-item networth" #networth>
         <dx-tooltip
             target="#valueTotal"
             showEvent="dxhoverstart"
             hideEvent="dxhoverend">
             <div *dxTemplate="let data = data of 'content'">
-                <div class="tooltip-wrap">
-                    <div>{{l('Accounts_BalanceToolTip_WithoutPendingTransactions')}}: <span>{{accountsData?.totalNetWorth - accountsData?.totalPending | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
-                    <div>{{l('Accounts_BalanceToolTip_PendingTransactions')}}: <span>{{accountsData?.totalPending | currency: cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
+                <div class="tooltip-wrap" *ngIf="accountsData$ | async as accountsData">
+                    <div>{{l('Accounts_BalanceToolTip_WithoutPendingTransactions')}}: <span>{{accountsData.totalNetWorth - accountsData.totalPending | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
+                    <div>{{l('Accounts_BalanceToolTip_PendingTransactions')}}: <span>{{accountsData.totalPending | currency: cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
                     <hr/>
-                    <div class="total">{{l('Accounts_BalanceToolTip_WithPendingTransactions')}}: <span>{{accountsData?.totalNetWorth | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
+                    <div class="total">{{l('Accounts_BalanceToolTip_WithPendingTransactions')}}: <span>{{accountsData.totalNetWorth | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}</span></div>
                 </div>
             </div>
         </dx-tooltip>
@@ -19,7 +19,7 @@
         </div>
         <div class="name">{{l('Current_Balance')}}</div>
     </div>
-    <div class="account-item dailyStats">
+    <div class="account-item dailyStats" #dailyStats>
         <div class="row">
             <div class="col-8">
                  <dx-tooltip
@@ -27,26 +27,26 @@
                      showEvent="dxhoverstart"
                      hideEvent="dxhoverend">
                      <div *dxTemplate="let data = data of 'content'">
-                         {{ dailyStatsAmount | currency: cfoPreferencesService.selectedCurrencyId : 'symbol' : '1.2-2'}}
+                         {{ dailyStatsAmount$ | async | currency: cfoPreferencesService.selectedCurrencyId : 'symbol' : '1.2-2'}}
                      </div>
                  </dx-tooltip>
                 <div class="value" id="valueDaily">
-                    {{ dailyStatsAmount | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}<span>.{{ ( dailyStatsAmount ? dailyStatsAmount : 1 ) | customNumber : '0.2-2' }}</span>
+                    {{ dailyStatsAmount$ | async | customNumber : '1.0-0' | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.0-0'}}<span>.{{ dailyStatsAmount$ | async | customNumber : '0.2-2' }}</span>
                 </div>
-                <div class="name">{{dailyStatsText}}</div>
+                <div class="name">{{ dailyStatsText$ | async }}</div>
             </div>
             <div class="col-4">
                 <ul>
-                    <li *ngFor="let item of dailyStatsToggleValues; let i = index" (click)="changeDailyStatsToggleValue(i)" [class.selected]='i == dailyStatsSliderSelected'>
+                    <li *ngFor="let item of dailyStatsToggleValues; let i = index" (click)="changeDailyStatsToggleValue(i)" [class.selected]='i == dailyStatsSliderSelected.value'>
                         {{item}}
                     </li>
                 </ul>
             </div>
         </div>
     </div>
-    <div class="account-item total-accounts" id="totalaccounts" (click)="totalAccountsMouseenter()">
+    <div class="account-item total-accounts" id="totalaccounts" (click)="totalAccountsMouseEnter()">
         <a class="view-details">{{l('Select')}}</a>
-        <div class="value">{{ bankAccountsService.accountsAmount$ | async }}</div>
+        <div class="value">{{ bankAccountsService.accountsAmountWithApply$ | async }}</div>
         <div class="name">
             {{ bankAccountsService.filteredBankAccountsStatus$ | async }}
             {{l(((bankAccountsService.filteredBankAccounts$ | async)?.length ? '' : 'Total_') + 'Accounts')}}

@@ -2,10 +2,7 @@
 import { Component, Injector } from '@angular/core';
 
 /** Third party imports */
-import { Store, select } from '@ngrx/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { filter } from 'rxjs/operators';
-import { CacheService } from 'ng2-cache-service';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -23,9 +20,7 @@ export class FilterTreeListComponent extends AppComponentBase implements FilterC
     component: any;
     apply: (event) => void;
 
-    constructor(injector: Injector,
-        private _cacheService: CacheService
-    ) {
+    constructor(injector: Injector) {
         super(injector);
     }
 

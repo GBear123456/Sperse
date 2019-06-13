@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, AfterViewInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -30,11 +30,11 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
-    styleUrls: [ '../../../shared/_checkbox-radio.less', 'create-user-dialog.component.less' ],
+    styleUrls: [ '../../../shared/common/styles/checkbox-radio.less', 'create-user-dialog.component.less' ],
     providers: [ CacheHelper, DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateUserDialogComponent implements OnInit {
+export class CreateUserDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild('organizationUnitTree') organizationUnitTree: OrganizationUnitsTreeComponent;
@@ -102,6 +102,10 @@ export class CreateUserDialogComponent implements OnInit {
         this.userDataInit();
         this.initToolbarConfig();
         this.saveOptionsInit();
+    }
+
+    ngAfterViewInit() {
+        this.modalDialog.addClass('min-width-810');
     }
 
     userDataInit() {

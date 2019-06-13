@@ -55,69 +55,90 @@
     <div class="photo-area" (click)="showUploadPhoto($event)"
         [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"></div>
 
-    <app-toolbar>
-        <ng-container before>
+    <dx-toolbar (onItemRendered)="toolbarService.onItemRendered($event)">
+        <dxi-item location="before" template="clientAssign"></dxi-item>
+        <div *dxTemplate="let data of 'clientAssign'">
             <dx-button [icon]="'./assets/common/icons/assign-icon.svg'"
                        [text]="ls.l('Assign')"
                        id="ClientAssign"
-                       [ngClass]="{ selected: isUserSelected, 'drop-down-icon': true }"
+                       [ngClass]="{ 'filter-selected': isUserSelected }"
                        (onClick)="toggleUserAssignment()">
             </dx-button>
+        </div>
 
-            <dx-button *ngIf="data.isInLeadMode; else notLead"
-                       [icon]="'./assets/common/icons/status-icon.svg'"
-                       [text]="ls.l('Stage')"
-                       id="CreateLeadStage"
-                       [ngClass]="{ selected: isStageSelected, 'drop-down-icon': true }"
-                       (onClick)="toggleStages()">
+        <dxi-item *ngIf="data.isInLeadMode; else notLead" template="stages" location="before"></dxi-item>
+        <div *dxTemplate="let data of 'stages'">
+            <dx-button
+                [icon]="'./assets/common/icons/status-icon.svg'"
+                [text]="ls.l('Stage')"
+                id="CreateLeadStage"
+                [ngClass]="{ 'filter-selected': isStageSelected }"
+                (onClick)="toggleStages()">
             </dx-button>
-            <ng-template #notLead>
-                <dx-button *ngIf="data.customerType === contactGroups.Client; else partner"
-                           [icon]="'./assets/common/icons/status-icon.svg'"
+        </div>
+
+        <ng-template #notLead>
+            <dxi-item *ngIf="data.customerType === contactGroups.Client; else partner" location="before" template="status"></dxi-item>
+            <div *dxTemplate="let data of 'status'">
+                <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
                            [text]="ls.l('Status')"
                            [disabled]="true"
-                           [ngClass]="{ selected: isStatusSelected }">
+                           [ngClass]="{ 'filter-selected': isStatusSelected }">
                 </dx-button>
-                <ng-template #partner>
+            </div>
+
+            <ng-template #partner>
+                <dxi-item location="before" template="type"></dxi-item>
+                <div *dxTemplate="let data of 'type'">
                     <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
                                [text]="ls.l('Type')"
                                id="PartnerTypesList"
-                               [ngClass]="{ selected: isPartnerTypeSelected, 'drop-down-icon': true }"
+                               [ngClass]="{ 'filter-selected': isPartnerTypeSelected }"
                                (onClick)="togglePartnerTypes()">
                     </dx-button>
-                </ng-template>
+                </div>
             </ng-template>
+        </ng-template>
 
+        <dxi-item location="before" template="lists"></dxi-item>
+        <div *dxTemplate="let data of 'lists'">
             <dx-button [icon]="'./assets/common/icons/folder.svg'"
                        [text]="ls.l('Lists')"
                        id="ClientLists"
-                       [ngClass]="{ selected: isListsSelected, 'drop-down-icon': true }"
+                       [ngClass]="{ 'filter-selected': isListsSelected }"
                        (onClick)="toggleLists()">
             </dx-button>
+        </div>
 
+        <dxi-item location="before" template="tags"></dxi-item>
+        <div *dxTemplate="let data of 'tags'">
             <dx-button [icon]="'./assets/common/icons/pen.svg'"
                        [text]="ls.l('Tags')"
                        id="ClientTags"
-                       [ngClass]="{ selected: isTagsSelected, 'drop-down-icon': true }"
+                       [ngClass]="{ 'filter-selected': isTagsSelected }"
                        (onClick)="toggleTags()">
             </dx-button>
+        </div>
 
+        <dxi-item location="before" template="rating"></dxi-item>
+        <div *dxTemplate="let data of 'rating'">
             <dx-button [icon]="'./assets/common/icons/flag-icon.svg'"
                        [text]="ls.l('Rating')"
                        id="ClientRating"
-                       [ngClass]="{ selected: isRatingSelected, 'drop-down-icon': true }"
+                       [ngClass]="{ 'filter-selected': isRatingSelected }"
                        (onClick)="toggleRating()">
             </dx-button>
-        </ng-container>
+        </div>
 
-        <ng-container after>
+        <dxi-item location="after" template="discardTemplate"></dxi-item>
+        <div *dxTemplate="let data of 'discardTemplate'">
             <dx-button [icon]="'./assets/common/icons/delete-icon.svg'"
                        [text]="ls.l('Discard')"
                        [ngClass]="'discard-button'"
                        (onClick)="resetFullDialog(false)">
             </dx-button>
-        </ng-container>
-    </app-toolbar>
+        </div>
+    </dx-toolbar>
     <div *ngIf="similarCustomersAvailable()"
          class="similar-clients-message" (click)="showSimilarCustomers($event)">
         {{ls.l('SimilarRecordsFound')}}

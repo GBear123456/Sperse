@@ -12,7 +12,6 @@ import * as _ from 'underscore';
 import { AppStore, ListsStoreActions, ListsStoreSelectors } from '@app/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AppConsts } from '@shared/AppConsts';
 import { ContactListsServiceProxy, ContactListInput } from '@shared/service-proxies/service-proxies';
 import { DeleteAndReassignDialogComponent } from '../delete-and-reassign-dialog/delete-and-reassign-dialog.component';
 
@@ -67,7 +66,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }
     }
 
-    apply(isRemove: boolean = false, selectedKeys = undefined) {
+    apply(isRemove: boolean = false, selectedKeys?: number[]) {
         if (this.listComponent) {
             this.selectedLists = this.listComponent.option('selectedRowKeys');
             this.selectedKeys = selectedKeys || this.selectedKeys;
@@ -99,7 +98,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 this._listsService.removeContactsFromLists(contactIds, this.selectedLists
                 ).pipe(finalize(() => {
                     this.listComponent.deselectAll();
-                })).subscribe((result) => {
+                })).subscribe(() => {
                     this.notify.success(this.l('ListsUnassigned'));
                 });
             else {
@@ -173,7 +172,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
-            this.addActionButton('delete', $event.cellElement, (event) => {
+            this.addActionButton('delete', $event.cellElement, () => {
                 if ($event.data.hasOwnProperty('id'))
                     this.listComponent.deleteRow(
                         this.listComponent.getRowIndexByKey($event.data.id));
@@ -181,7 +180,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     $event.component.cancelEditData();
             });
             if (this.filterModel && Number.isInteger($event.data.id))
-                this.addActionButton('filter', $event.cellElement, (event) => {
+                this.addActionButton('filter', $event.cellElement, () => {
                     this.clearFiltersHighlight();
 
                     let modelItems = this.filterModel.items.element.value;

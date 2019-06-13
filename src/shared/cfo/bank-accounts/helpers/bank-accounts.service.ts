@@ -12,6 +12,7 @@ import {
     mergeMap,
     map,
     refCount,
+    pairwise,
     pluck,
     publishReplay,
     toArray,
@@ -55,6 +56,7 @@ export class BankAccountsService {
         visibleBankAccountIds: [],
         selectedBusinessEntitiesIds: []
     };
+    tempState: BankAccountsState;
     filteredBankAccounts$: Observable<BankAccountDto[]>;
     filteredBankAccountsIds: number[];
     filteredBankAccountsIds$: Observable<number[]>;
@@ -67,6 +69,7 @@ export class BankAccountsService {
     allSyncAccountAreSelected$: Observable<boolean | undefined>;
     syncAccountsAmount$: Observable<string>;
     accountsAmount$: Observable<string>;
+    accountsAmountWithApply$: Observable<string>;
     existingBankAccountsTypes$: Observable<BankAccountType[]>;
     private _selectedBankAccountTypes: BehaviorSubject<string[]> = new BehaviorSubject([]);
     selectedBankAccountTypes$: Observable<string[]> = this._selectedBankAccountTypes.asObservable();
@@ -77,7 +80,6 @@ export class BankAccountsService {
     _businessEntities: ReplaySubject<BusinessEntityDto[]> = new ReplaySubject(1);
     syncAccounts$: Observable<SyncAccountBankDto[]>;
     bankAccountsIds$: Observable<number[]>;
-    bankAccountsIds: number[];
     businessEntities$: Observable<BusinessEntityDto[]>;
     syncAccountsRequest$;
     businessEntitiesRequest$;
@@ -129,15 +131,14 @@ export class BankAccountsService {
                 }),
                 distinctUntilChanged(this.arrayDistinct)
             );
-        this.bankAccountsIds$.subscribe((bankAccountsIds: number[]) => {
-            if (this.bankAccountsIds) {
-                /** Select newly added bank accounts */
-                this.changeSelectedBankAccountsIds([
-                    ...this.state.selectedBankAccountIds,
-                    ...difference(bankAccountsIds, this.bankAccountsIds)]
-                );
-            }
-            this.bankAccountsIds = bankAccountsIds;
+        this.bankAccountsIds$.pipe(
+            pairwise()
+        ).subscribe(([prevBankAccountsIds, nextBankAccountsIds]) => {
+            /** Select newly added bank accounts */
+            this.changeSelectedBankAccountsIds([
+                ...this.state.selectedBankAccountIds,
+                ...difference(nextBankAccountsIds, prevBankAccountsIds)
+            ]);
         });
         this.businessEntitiesAmount$ = this.businessEntities$.pipe(
             map(businessEntities => businessEntities.length),
@@ -249,25 +250,6 @@ export class BankAccountsService {
             }),
             distinctUntilChanged()
         );
-
-        /** Stream of posible bank accounts */
-        // this.posibleSelectedBankAccountsIds$ =
-        //     /** Implemented pauser to allow to update all values and then run combineLatest (it runs only once) */
-        //     this._pauser.pipe(
-        //         switchMap(paused => {
-        //             return paused ? never() : combineLatest(
-        //                 this.bankAccounts$,
-        //                 this.selectedBusinessEntitiesIds$,
-        //                 this.selectedBankAccountType$,
-        //                 this.activeStatus$
-        //             ).pipe(
-        //                 mergeMap(([bankAccounts, selectedBusinessEntities, selectedType, activeStatus]) => {
-        //                     return (this.getPosibleSelectedBankAccountsIds(bankAccounts, activeStatus, selectedBusinessEntities, selectedType));
-        //                 }),
-        //                 distinctUntilChanged(this.arrayDistinct)
-        //             );
-        //         })
-        //     );
 
         this.distinctUntilChangedFilteredSyncAccounts$ = this.filteredSyncAccounts$
             .pipe(
@@ -386,12 +368,13 @@ export class BankAccountsService {
 
         this.accountsAmount$ = combineLatest(this.getFilteredBankAccounts(this.filteredSyncAccounts$), filteredBankAccountsAmount$)
             .pipe(
-                map(([bankAccounts, totalAmount]: [any[], number]) => {
-                    const selectedBankAccounts = bankAccounts.filter(bankAccount => bankAccount.selected);
-                    return selectedBankAccounts.length === totalAmount
-                        ? selectedBankAccounts.length.toString()
-                        : `${selectedBankAccounts.length} of ${totalAmount}`;
-                }),
+                map(this.getBankAccountsAmount),
+                distinctUntilChanged()
+            );
+
+        this.accountsAmountWithApply$ = combineLatest(this.getFilteredBankAccounts(this.filteredSyncAccountsWithApply$), filteredBankAccountsAmount$)
+            .pipe(
+                map(this.getBankAccountsAmount),
                 distinctUntilChanged()
             );
 
@@ -463,6 +446,13 @@ export class BankAccountsService {
         return combinedRequest;
     }
 
+    private getBankAccountsAmount([bankAccounts, totalAmount]: [any[], number]) {
+        const selectedBankAccounts = bankAccounts.filter(bankAccount => bankAccount.selected);
+        return selectedBankAccounts.length === totalAmount
+            ? selectedBankAccounts.length.toString()
+            : `${selectedBankAccounts.length} of ${totalAmount}`;
+    }
+
     private getFilteredBankAccounts(syncAccounts$: Observable<SyncAccountBankDto[]>) {
         return syncAccounts$.pipe(
             map(syncAccounts => {
@@ -528,16 +518,30 @@ export class BankAccountsService {
     }
 
     changeState(state: BankAccountsState, saveInCache = true) {
-        let tempFilter = { ...this.state, ...state};
+        let tempFilter = { ...this.state, ...this.tempState, ...state };
         if (saveInCache) {
-            this.state = tempFilter;
-            this.cacheService.set(this.bankAccountsCacheKey, this.state);
+            this.saveStateInCache(tempFilter);
+        } else {
+            this.tempState = tempFilter;
         }
         this._syncAccountsState.next(tempFilter);
     }
 
+    clearTempState() {
+        this.tempState = null;
+    }
+
     applyFilter() {
+        if (this.tempState) {
+            this.saveStateInCache(this.tempState);
+            this.clearTempState();
+        }
         this._applyFilter.next(null);
+    }
+
+    private saveStateInCache(state: BankAccountsState) {
+        this.state = state;
+        this.cacheService.set(this.bankAccountsCacheKey, this.state);
     }
 
     changeSelectedBankAccountsIds(selectedBankAccountsIds: number[], saveInCache = true) {

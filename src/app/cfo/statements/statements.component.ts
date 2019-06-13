@@ -130,7 +130,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         this.bankAccountsService.load();
         this.store$.dispatch(new ForecastModelsStoreActions.LoadRequestAction());
         let syncAccounts$ = this.bankAccountsService.syncAccounts$.pipe(first());
-        this.bankAccountsService.accountsAmount$.subscribe(amount => {
+        this.bankAccountsService.accountsAmountWithApply$.subscribe(amount => {
             this.bankAccountCount = amount;
             this.initToolbarConfig();
         });

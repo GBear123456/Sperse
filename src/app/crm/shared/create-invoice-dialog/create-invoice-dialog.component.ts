@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, OnInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, AfterViewInit, ViewChild, Inject, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -25,11 +25,11 @@ import { CreateClientDialogComponent } from '../create-client-dialog/create-clie
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
-    styleUrls: [ '../../../shared/form.less', 'create-invoice-dialog.component.less' ],
+    styleUrls: [ '../../../shared/common/styles/form.less', 'create-invoice-dialog.component.less' ],
     providers: [ CacheHelper, CustomerServiceProxy, DialogService, InvoiceServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateInvoiceDialogComponent implements OnInit {
+export class CreateInvoiceDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild(DxDataGridComponent) linesComponent: DxDataGridComponent;
@@ -126,6 +126,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         this.initInvoiceData();
         this.saveOptionsInit();
+    }
+
+    ngAfterViewInit() {
+        this.modalDialog.addClass('min-width-0');
     }
 
     initInvoiceData() {

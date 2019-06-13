@@ -411,27 +411,25 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 publishReplay(),
                 refCount()
             );
-            contactInfo$.pipe(finalize(() => {
-                if (this.contactGroup != ContactGroup.Partner)
+            contactInfo$.pipe(
+                finalize(() => {
                     this.finishLoading(true);
-                if (!this.contactInfo)
+                }),
+                switchMap(result => {
+                    this.loadLeadData(result['personContactInfo']);
+                    this.fillContactDetails(result);
+                    if (leadId)
+                        this.loadLeadsStages();
+                    if (this.contactGroup == ContactGroup.Partner)
+                        return this._partnerService.get(contactId);
+                    return of(null);
+                })
+            ).subscribe(result => {
+                if (result) {
+                    this.fillPartnerDetails(result);
+                    this.loadPartnerTypes();
+                } else if (!this.contactInfo)
                     this.close(true);
-            })).subscribe(result => {
-                this.loadLeadData(result['personContactInfo']);
-                this.fillContactDetails(result);
-                if (leadId)
-                    this.loadLeadsStages();
-                if (this.contactGroup == ContactGroup.Partner) {
-                    this._partnerService.get(contactId)
-                    .pipe(finalize(() => {
-                        this.finishLoading(true);
-                        if (!this.partnerInfo)
-                            this.close(true);
-                    })).subscribe(result => {
-                        this.fillPartnerDetails(result);
-                        this.loadPartnerTypes();
-                    });
-                }
             });
         }
         return contactInfo$;
@@ -499,6 +497,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     this.updateStatusInternal(status.id)
                         .subscribe(() => {
                             this.contactInfo.statusId = status.id;
+                            let userData = this._userService['data'];
+                            if (userData && userData.user) {
+                                userData.user.isActive = status.id == ContactStatus.Active;
+                            }
                             this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
                             this.notify.success(this.l('StatusSuccessfullyUpdated'));
                         });

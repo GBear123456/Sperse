@@ -9,10 +9,11 @@ import {
     OnInit,
     HostListener
 } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
-import { NotifyService } from '@abp/notify/notify.service';
+import { MatDialog } from '@angular/material';
 import { BehaviorSubject, Observable, Subject, of, merge } from 'rxjs';
 import {
     debounceTime,
@@ -30,10 +31,10 @@ import {
 } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import cloneDeep from 'lodash/cloneDeep';
-import swal from 'sweetalert';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
+import { NotifyService } from '@abp/notify/notify.service';
 import { RootComponent } from 'root.components';
 import {
     CountryStateDto,
@@ -51,8 +52,6 @@ import {
     OfferDetailsForEditDto,
     OfferManagementServiceProxy,
     OfferAnnouncementServiceProxy,
-    SendAnnouncementRequest,
-    SendAnnouncementRequestServiceName,
     CreditScores
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -66,12 +65,12 @@ import { ICloseComponent } from '@app/shared/common/close-component.service/clos
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppConsts } from '@shared/AppConsts';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
-import { CurrencyPipe } from '@angular/common';
+import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dialog/offer-notify-dialog.component';
 
 @Component({
     selector: 'offer-edit',
     templateUrl: './offer-edit.component.html',
-    styleUrls: [ '../../shared/form.less', './offer-edit.component.less' ],
+    styleUrls: [ '../../shared/common/styles/form.less', './offer-edit.component.less' ],
     providers: [ CurrencyPipe, OfferAnnouncementServiceProxy, OfferManagementServiceProxy, OfferServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -139,12 +138,13 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         private offerManagementService: OfferManagementServiceProxy,
         private applicationRef: ApplicationRef,
         private router: Router,
-        public ls: AppLocalizationService,
         private store$: Store<RootStore.State>,
         private notifyService: NotifyService,
         private changeDetector: ChangeDetectorRef,
         private itemDetailsService: ItemDetailsService,
-        private permissionChecker: PermissionCheckerService
+        private permissionChecker: PermissionCheckerService,
+        private dialog: MatDialog,
+        public ls: AppLocalizationService
     ) {
         this.rootComponent = injector.get(this.applicationRef.componentTypes[0]);
         this.sentAnnouncementPermissionGranted = this.permissionChecker.isGranted('Pages.PFM.Applications.SendOfferAnnouncements');
@@ -327,36 +327,12 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
             this.offerId$.pipe(first()).subscribe((offerId: number) => {
                 const offerCategory = OffersService.getCategoryRouteNameByCategoryEnum(this.model.categories[0].category as any);
                 const offerPublicLink = AppConsts.appBaseUrl + '/personal-finance/offers/' + offerCategory + '/' + offerId;
-                const el = document.createElement('div');
-                el.innerHTML = `<h5>${this.ls.ls('PFM', 'OfferLinkWillBeSentToUsers')}:</h5>
-                                <a href="${offerPublicLink}" target="_blank" style="font-weight:600;">${offerPublicLink}</a>`;
-                const swalParams: any = {
-                    title: '',
-                    content: el,
-                    buttons: {
-                        confirm: {
-                            text: this.ls.ls('PFM', 'Confirm'),
-                            value: true,
-                            visible: true
-                        },
-                        cancel: {
-                            text: this.ls.ls('PFM', 'Cancel'),
-                            value: false,
-                            visible: true
-                        }
-                    }
-                };
-                swal(swalParams).then((confirmed) => {
-                    if (confirmed) {
-                        abp.ui.setBusy();
-                        let request = new SendAnnouncementRequest();
-                        request.campaignId = offerId;
-                        request.offerDetailsLink = offerPublicLink;
-                        //request.serviceName = SendAnnouncementRequestServiceName.IAge;
-                        this.offerAnnouncementService.sendAnnouncement(
-                            request
-                        ).pipe(finalize(() => abp.ui.clearBusy()))
-                            .subscribe(() => this.notifyService.success(this.ls.ls('PFM', 'AnnouncementsHaveBeenSent')));
+                this.dialog.open(OfferNotifyDialogComponent, {
+                    width: '520px',
+                    panelClass: 'offer-announcement-dialog',
+                    data: {
+                        offerPublicLink: offerPublicLink,
+                        offerId: offerId
                     }
                 });
             });

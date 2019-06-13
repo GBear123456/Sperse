@@ -1,29 +1,42 @@
 /** Core imports */
-import { Component, Injector, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Injector, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 
 /** Third party libraries */
+import { Store, select } from '@ngrx/store';
 import * as moment from 'moment';
-import { finalize, switchMap } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { first, filter, finalize, switchMap, takeUntil, map, mapTo, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { DashboardServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
+import {
+    DashboardServiceProxy,
+    GetDailyBalanceStatsOutput,
+    InstanceType
+} from 'shared/service-proxies/service-proxies';
 import { DashboardService } from '../dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
+import { CurrenciesStoreSelectors } from '@app/cfo/store';
+import { CfoStore } from '@app/cfo/store';
+import { BehaviorSubject, Observable, of } from '@node_modules/rxjs';
+import { AccountTotals } from '@shared/service-proxies/service-proxies';
+import { PeriodModel } from '@app/shared/common/period/period.model';
+import { DailyStatsPeriodModel } from '@shared/cfo/dashboard-widgets/accounts/daily-stats-period.model';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 
 @Component({
     selector: 'app-accounts',
     templateUrl: './accounts.component.html',
     styleUrls: ['./accounts.component.less'],
-    providers: [ DashboardServiceProxy ]
+    providers: [ DashboardServiceProxy, LifecycleSubjectsService ]
 })
 export class AccountsComponent extends CFOComponentBase implements OnInit {
-    @Output() onTotalAccountsMouseenter: EventEmitter<any> = new EventEmitter();
-
-    accountsData: any;
-    bankAccountIds: number[] = [];
-
+    @ViewChild('networth') networth: ElementRef;
+    @ViewChild('dailyStats') dailyStats: ElementRef;
+    @Output() onTotalAccountsMouseEnter: EventEmitter<any> = new EventEmitter();
+    accountsData$: Observable<AccountTotals>;
     dailyStatsToggleValues: any[] = [
         this.l('Highest'),
         this.l('Average'),
@@ -31,105 +44,131 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
     ];
 
     startDate: moment.Moment = null;
-    endDate: moment.Moment;
-    dailyStatsData: any/*GetDailyBalanceStatsOutput*/;
-    dailyStatsAmount: number;
-    dailyStatsText: string;
-    dailyStatsSliderSelected = 1;
-    isActive = null;
-    visibleAccountCount = 0;
+    endDate: moment.Moment = moment().utc().startOf('day');
+    dailyStatsAmount$: Observable<number>;
+    dailyStatsText$: Observable<string>;
+    dailyStatsSliderSelected: BehaviorSubject<number> = new BehaviorSubject<number>(1);
+    dailyStatsSliderSelected$: Observable<number> = this.dailyStatsSliderSelected.asObservable();
+    currencyId$ = this.store$.pipe(select(CurrenciesStoreSelectors.getSelectedCurrencyId), filter(Boolean));
+    bankAccountIds$: Observable<number[]> = this.bankAccountsService.selectedBankAccountsIds$;
+    period$ = this._dashboardService.period$.pipe(
+        map((period: PeriodModel) => this.getDailyStatsPeriod(period))
+    );
 
     constructor(
         injector: Injector,
         private _dashboardService: DashboardService,
         private _dashboardProxy: DashboardServiceProxy,
+        private _loadingService: LoadingService,
+        private _lifeCycleService: LifecycleSubjectsService,
+        private store$: Store<CfoStore.State>,
         public bankAccountsService: BankAccountsService,
-        public cfoPreferencesService: CfoPreferencesService
+        public cfoPreferencesService: CfoPreferencesService,
     ) {
         super(injector);
-
-        this.endDate = moment().utc().startOf('day');
-
-        this._dashboardService.subscribePeriodChange(
-            this.onDailyStatsPeriodChanged.bind(this));
     }
 
     ngOnInit() {
-        this.getAccountTotals();
+        this.accountsData$ =  combineLatest(
+            this.currencyId$,
+            this.bankAccountIds$,
+            this._dashboardService.refresh$
+        ).pipe(
+            takeUntil(this.destroy$),
+            switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
+            tap(() => this._loadingService.startLoading(this.networth.nativeElement)),
+            switchMap(([currencyId, bankAccountIds]: [ string, number[]]) => {
+                return this._dashboardProxy.getAccountTotals(
+                    InstanceType[this.instanceType],
+                    this.instanceId,
+                    bankAccountIds,
+                    currencyId
+                ).pipe(
+                    finalize(() => this._loadingService.finishLoading(this.networth.nativeElement))
+                );
+            })
+        );
+
+        const dailyStatsData$: Observable<GetDailyBalanceStatsOutput> = combineLatest(
+            this.currencyId$,
+            this.bankAccountIds$,
+            this.period$,
+            this._dashboardService.refresh$
+        ).pipe(
+            takeUntil(this.destroy$),
+            switchMap((data) => this.componentIsActivated ? of(data) : this._lifeCycleService.activate$.pipe(first(), mapTo(data))),
+            tap(() => this._loadingService.startLoading(this.dailyStats.nativeElement)),
+            switchMap(([currencyId, bankAccountIds, period]: [string, number[], DailyStatsPeriodModel]) => {
+                return this._dashboardProxy.getDailyBalanceStats(
+                    InstanceType[this.instanceType],
+                    this.instanceId,
+                    bankAccountIds,
+                    period.startDate,
+                    period.endDate,
+                    currencyId
+                ).pipe(
+                    finalize(() => this._loadingService.finishLoading(this.dailyStats.nativeElement))
+                );
+            })
+        );
+
+        this.dailyStatsAmount$ = combineLatest(
+            dailyStatsData$,
+            this.dailyStatsSliderSelected$
+        ).pipe(
+            map(([dailyStatsData, dailyStatsSliderSelected]: [GetDailyBalanceStatsOutput, number]) => {
+                return this.getDailyStatsAmount(dailyStatsData, dailyStatsSliderSelected);
+            })
+        );
+
+        this.dailyStatsText$ = this.dailyStatsSliderSelected$.pipe(
+            map((dailyStatsSliderSelected: number) => {
+                return this.l(this.dailyStatsToggleValues[dailyStatsSliderSelected]) + ' ' + this.l('Balance');
+            })
+        );
     }
 
-    getAccountTotals(): void {
-        this.cfoPreferencesService.getCurrencyId().pipe(
-            switchMap((currencyId: string) => this._dashboardProxy.getAccountTotals(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, currencyId))
-        ).subscribe((result) => {
-            this.accountsData = result;
-        });
-    }
-
-    getDailyStats(): void {
-        this.startLoading();
-        this.cfoPreferencesService.getCurrencyId().pipe(
-            switchMap((currencyId: string) => this._dashboardProxy.getDailyBalanceStats(InstanceType[this.instanceType], this.instanceId, this.bankAccountIds, this.startDate, this.endDate, currencyId)),
-            finalize(() => this.finishLoading())
-        ).subscribe(result => {
-            this.dailyStatsData = result;
-            this.setDailyStatsAmount();
-        });
-    }
-
-    navigateTo() {
-        this._router.navigate(['app/cfo/' + this.instanceType.toLowerCase() + '/linkaccounts']);
-    }
-
-    filterByBankAccounts(bankAccountData) {
-        //this.waitForBankAccounts = false;
-        this.isActive = bankAccountData.isActive;
-        this.visibleAccountCount = bankAccountData.visibleAccountCount;
-        this.bankAccountIds = bankAccountData.selectedBankAccountIds;
-        this.getAccountTotals();
-        this.getDailyStats();
-    }
-
-    totalAccountsMouseenter() {
-        this.onTotalAccountsMouseenter.emit();
+    totalAccountsMouseEnter() {
+        this.onTotalAccountsMouseEnter.emit();
     }
 
     changeDailyStatsToggleValue(index) {
-        this.dailyStatsSliderSelected = index;
-        this.setDailyStatsAmount();
+        this.dailyStatsSliderSelected.next(index);
     }
 
-    onDailyStatsPeriodChanged(period) {
+    getDailyStatsPeriod(period: PeriodModel): DailyStatsPeriodModel {
         let currentDate = moment().utc().startOf('day');
-
+        let result = {
+            startDate: null,
+            endDate: currentDate
+        };
         if (period) {
-            this.startDate = period.from ? period.from.startOf('day') : null;
-            this.endDate = period.to ? period.to.startOf('day') : null;
+            result.startDate = period.from ? period.from.startOf('day') : null;
+            result.endDate = period.to ? period.to.startOf('day') : null;
 
-            this.endDate = !this.endDate || currentDate.isBefore(this.endDate) ? currentDate : this.endDate;
-            this.startDate = this.startDate && this.endDate.isBefore(this.startDate) ? this.endDate : this.startDate;
-        } else {
-            this.startDate = null;
-            this.endDate = currentDate;
+            result.endDate = !result.endDate || currentDate.isBefore(result.endDate) ? currentDate : result.endDate;
+            result.startDate = result.startDate && result.endDate.isBefore(result.startDate) ? result.endDate : result.startDate;
         }
-
-        //this.waitForPeriods = false;
-        this.getDailyStats();
+        return result;
     }
 
-    setDailyStatsAmount(): void {
-        switch (this.dailyStatsSliderSelected) {
+    getDailyStatsAmount(dailyStatsData: GetDailyBalanceStatsOutput, dailyStatsSliderSelected: number): number {
+        let amount;
+        switch (dailyStatsSliderSelected) {
             case 0:
-                this.dailyStatsAmount = this.dailyStatsData.maxBalance;
+                amount = dailyStatsData.maxBalance;
                 break;
             case 1:
-                this.dailyStatsAmount = this.dailyStatsData.avarageBalance;
+                amount = dailyStatsData.avarageBalance;
                 break;
             case 2:
-                this.dailyStatsAmount = this.dailyStatsData.minBalance;
+                amount = dailyStatsData.minBalance;
                 break;
         }
+        return amount;
+    }
 
-        this.dailyStatsText = this.l(this.dailyStatsToggleValues[this.dailyStatsSliderSelected]) + ' ' + this.l('Balance');
+    activate() {
+        this._lifeCycleService.activate.next();
     }
 }

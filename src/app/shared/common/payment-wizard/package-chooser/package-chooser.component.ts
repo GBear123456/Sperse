@@ -40,7 +40,10 @@ import { LocalizationResolver } from '@root/shared/common/localization-resolver'
 @Component({
     selector: 'package-chooser',
     templateUrl: './package-chooser.component.html',
-    styleUrls: ['./package-chooser.component.less'],
+    styleUrls: [
+        '../../styles/sperse-toggle.less',
+        './package-chooser.component.less'
+    ],
     encapsulation: ViewEncapsulation.Emulated,
     changeDetection: ChangeDetectionStrategy.OnPush
 })

@@ -123,10 +123,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
     }
 
+    detectChanges() {
+        this._changeDetector.detectChanges();
+    }
+
     private initPipeline() {
         this.startLoading();
         this.subscribers.push(this._dragulaService.drop.subscribe((value) => {
-            setTimeout(() => this._changeDetector.detectChanges());
+            setTimeout(() => this.detectChanges());
             if (value[0] == this.dragulaName) {
                 let entityId = this.getAccessKey(value[1]),
                     newStage = this.getStageByElement(value[2]),
@@ -264,7 +268,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this._pipelineService.compactView$.pipe(takeUntil(this.destroy$)).subscribe((compactView: boolean) => {
             this.compactView = compactView;
             this.stagePageCount = compactView ? this.COMPACT_VIEW_PAGE_COUNT : this.DEFAULT_PAGE_COUNT;
-            this._changeDetector.detectChanges();
+            this.detectChanges();
         });
         this._pipelineService.compactView$.pipe(
             takeUntil(this.destroy$),
@@ -382,7 +386,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 finalize(() => {
                     if (this.isAllStagesLoaded())
                         setTimeout(() => {
-                            this._changeDetector.detectChanges();
+                            this.detectChanges();
                             this.finishLoading();
                         });
                     if (!skipTotalRequest && oneStageOnly && stage['full'])
@@ -460,7 +464,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         <= stage['entities'].length;
                     this.allStagesEntitiesTotal += stage['total'];
                 });
-                this._changeDetector.detectChanges();
+                this.detectChanges();
             });
         }
     }
@@ -520,7 +524,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             finalize(() => {
                 this.disabled = false;
                 this.finishLoading();
-                this._changeDetector.detectChanges();
+                this.detectChanges();
             })
         ).subscribe();
     }
@@ -530,17 +534,11 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.disabled = true;
             setTimeout(() => {
                 this.startLoading();
-                const fullComplete = () => {
-                    this.disabled = false;
-                    this.finishLoading();
-                    complete && complete();
-                    this._changeDetector.detectChanges();
-                };
                 if (newStage.name != oldStage.name) {
                     this._pipelineService.updateEntityStage(
-                        this.pipelinePurposeId, entity, oldStage, newStage, fullComplete);
+                        this.pipelinePurposeId, entity, oldStage, newStage, complete);
                 } else
-                    this._pipelineService.updateEntitySortOrder(this.pipeline.id, entity, fullComplete);
+                    this._pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);
             });
         }
     }
@@ -610,7 +608,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onResize(event) {
-        this._changeDetector.detectChanges();
+        this.detectChanges();
     }
 
     getStageSelectedEntitiesCount(stage): number {
