@@ -7,15 +7,9 @@
         <div class="modal-body" *ngIf="settings">
             <h4>{{ls.l("ReceiveNotifications")}}</h4>
             <div>
-                <input type="checkbox"
-                       id="ReceiveNotifications"
-                       jq-plugin="bootstrapSwitch"
-                       name="ReceiveNotifications"
-                       attr.switch-size="small"
-                       [attr.switch-on-text]="ls.l('On')"
-                       [attr.switch-off-text]="ls.l('Off')" />
-                <div class="help-block">{{ls.l("ReceiveNotifications_Definition")}}</div>
+                <dx-check-box [text]="ls.l('ReceiveNotifications_Definition')" [(value)]="settings.receiveNotifications"></dx-check-box>
             </div>
+            <br>
             <h4 *ngIf="settings.notifications.length" class="m--margin-top-20">{{ls.l("NotificationTypes")}}</h4>
             <p *ngIf="settings.notifications.length && !settings.receiveNotifications" class="text-danger">
                 <small>{{ls.l("ReceiveNotifications_DisableInfo")}}</small>
