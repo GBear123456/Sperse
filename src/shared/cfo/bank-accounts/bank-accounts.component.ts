@@ -35,6 +35,7 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, O
         public bankAccountsService: BankAccountsService
     ) {
         super(injector);
+        this.refresh();
         this.subscribeToObservables();
     }
 
