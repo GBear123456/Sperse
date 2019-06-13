@@ -4796,7 +4796,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         let transactions = this.cashFlowGrid.instance.getSelectedRowKeys().filter(item => item.date && item.cashflowTypeId !== StartedBalance);
         if (transactions.length) {
             let config: any = {
-                panelClass: [ 'slider', 'max-width-60' ],
+                panelClass: [ 'slider', 'max-width-80' ],
                 data: {
                     transactions: transactions.map((obj) => {
                         return {
