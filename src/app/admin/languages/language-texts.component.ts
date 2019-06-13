@@ -43,6 +43,7 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     baseLanguageName: string;
     targetValueFilter: string;
     filterText: string;
+    name: string;
 
     constructor(
         injector: Injector,
@@ -72,20 +73,22 @@ export class LanguageTextsComponent extends AppComponentBase implements AfterVie
     ngAfterViewInit(): void {
         this.dataSource = new DataSource({
             key: 'id',
-            load: () => {
+            load: (loadOptions) => {
                 return this._languageService.getLanguageTexts(
-                    1000,
-                    undefined,
-                    undefined,
-                    this.sourceName,
-                    this.baseLanguageName,
-                    this.targetLanguageName,
+                    loadOptions.take,
+                    loadOptions.skip,
+                    (loadOptions.sort || []).map((item) => {
+                        return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
+                    }).join(','),
+                    this.sourceName || this.name || undefined,
+                    this.baseLanguageName || undefined,
+                    this.targetLanguageName || undefined,
                     this.targetValueFilter,
                     this.filterText
                 ).toPromise().then(response => {
                     return {
                         data: response.items,
-                        totalCount: response.items.length
+                        totalCount: response.totalCount
                     };
                 });
             }
