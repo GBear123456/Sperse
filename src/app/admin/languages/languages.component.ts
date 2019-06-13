@@ -60,6 +60,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             load: () => {
                 return this._languageService.getLanguages(
                 ).toPromise().then(response => {
+                    this.defaultLanguageName = response.defaultLanguageName;
                     return {
                         data: response.items,
                         totalCount: response.items.length,
@@ -289,5 +290,9 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         dialogRef.componentInstance.modalSave.subscribe(() => {
             this.refreshDataGrid();
         });
+    }
+
+    onCellPrepared(event) {
+    
     }
 }

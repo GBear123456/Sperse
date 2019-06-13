@@ -5,12 +5,12 @@
         <div class="portlet-body">
             <div>
                 <dx-data-grid id="gridContainer"
-                                [allowColumnReordering]="true"
-                                [columnAutoWidth]="true"
-                                [allowColumnResizing]="true"
-                                [hoverStateEnabled]="true"
-                                [pager]="defaultGridPagerConfig"
-                                [dataSource]="dataSource">
+                              [allowColumnReordering]="true"
+                              [columnAutoWidth]="true"
+                              [allowColumnResizing]="true"
+                              [hoverStateEnabled]="true"
+                              [pager]="defaultGridPagerConfig"
+                              [dataSource]="dataSource">
                     <dxi-column caption="{{l('Key')}}" dataField="key"></dxi-column>
                     <dxi-column caption="{{l('BaseValue')}}" dataField="baseValue"></dxi-column>
                     <dxi-column caption="{{l('TargetValue')}}" dataField="targetValue"></dxi-column>
