@@ -535,6 +535,10 @@ export class BankAccountsService {
         this._syncAccountsState.next(tempFilter);
     }
 
+    resetState() {
+        this.changeState(this.state, true);
+    }
+
     clearTempState() {
         this.tempState = null;
     }
