@@ -15,7 +15,6 @@ import {
     pairwise,
     pluck,
     publishReplay,
-    tap,
     toArray,
     withLatestFrom,
     switchMap
@@ -340,17 +339,8 @@ export class BankAccountsService {
             }
         );
 
-        this.accountsDataTotalNetWorth$ = this.getFilteredBankAccounts(this.filteredSyncAccounts$).pipe(
-            map(this.getSelectedBankAccounts),
-            map(this.getAccountsTotalBalance),
-            distinctUntilChanged()
-        );
-
-        this.accountsDataTotalNetWorthWithApply$ = this.getFilteredBankAccounts(this.filteredSyncAccountsWithApply$).pipe(
-            map(this.getSelectedBankAccounts),
-            map(this.getAccountsTotalBalance),
-            distinctUntilChanged()
-        );
+        this.accountsDataTotalNetWorth$ = this.getAccountsTotalNetWorth(this.filteredSyncAccounts$);
+        this.accountsDataTotalNetWorthWithApply$ = this.getAccountsTotalNetWorth(this.filteredSyncAccountsWithApply$);
 
         this.allSyncAccountAreSelected$ = this.filteredSyncAccounts$.pipe(
             map((syncAccounts: SyncAccountBankDto[]) => {
@@ -487,6 +477,14 @@ export class BankAccountsService {
             result = 1;
         }
         return result;
+    }
+
+    private getAccountsTotalNetWorth(syncAccounts$: Observable<SyncAccountBankDto[]>): Observable<number> {
+        return this.getFilteredBankAccounts(syncAccounts$).pipe(
+            map(this.getSelectedBankAccounts),
+            map(this.getAccountsTotalBalance),
+            distinctUntilChanged()
+        );
     }
 
     /** Check if sync accounts and bank accounts changed */
