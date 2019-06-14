@@ -44,7 +44,7 @@ export class RecentClientsComponent implements OnInit {
         }
     ];
 
-    private selectedItem: BehaviorSubject<any> = new BehaviorSubject<any>(this.selectItems[0]);
+    selectedItem: BehaviorSubject<any> = new BehaviorSubject<any>(this.selectItems[0]);
     selectedItem$: Observable<any> = this.selectedItem.asObservable().pipe(distinctUntilChanged());
 
     constructor(
