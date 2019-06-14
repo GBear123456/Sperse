@@ -17,7 +17,10 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 @Component({
     selector: 'modal-dialog',
     templateUrl: 'modal-dialog.component.html',
-    styleUrls: ['modal-dialog.component.less']
+    styleUrls: ['modal-dialog.component.less'],
+    host: {
+        '(window:keydown)': 'onKeydown($event)'
+    }
 })
 export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() title: string;
@@ -100,5 +103,10 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
             }, 300);
         } else
             this.dialogRef.close(closeData);
+    }
+
+    onKeydown(event) {
+        if (event.key == 'Escape')
+            this.close(true);
     }
 }
