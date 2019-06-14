@@ -155,7 +155,7 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
         this.bankAccountsService.changeSelectedBankAccountsIds(businessEntity.BankAccountIds, false);
         this.bankAccountsService.applyFilter();
         this.dialog.open(BankAccountsSelectDialogComponent, {
-            panelClass: ['slider', 'width-45'],
+            panelClass: 'slider',
             data: {
                 applyDisabled: !this.isInstanceAdmin &&
                     !this.isMemberAccessManage,

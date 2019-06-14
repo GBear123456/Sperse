@@ -456,7 +456,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
 
     openBankAccountsSelectDialog() {
         this._dialog.open(BankAccountsSelectDialogComponent, {
-            panelClass: ['slider', 'width-45']
+            panelClass: 'slider',
         }).componentInstance.onApply.subscribe(() => {
             this.setBankAccountsFilter(true);
         });
