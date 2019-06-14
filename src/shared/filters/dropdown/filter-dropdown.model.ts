@@ -2,7 +2,6 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 
 export class FilterDropDownModel extends FilterItemModel {
-    displayName = 'test';
     displayElementExp: any;
     valueElementExp: string;
     elements: any;
