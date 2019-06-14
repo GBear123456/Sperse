@@ -27,7 +27,7 @@
                         [title]=""
                         popupWidth="250px"
                         [itemsText]="l('Types')"
-                        [selectionList]="bankAccountsService.existingBankAccountsTypes$ | async"
+                        [selectionList]="bankAccountsService.existingBankAccountsTypesWithFilteredCounts$ | async"
                         [selectedItems]="bankAccountsService.selectedBankAccountTypes$ | async"
                         (selectionChanged)="bankAccountTypesChanged($event)">
                     </selection-filter>

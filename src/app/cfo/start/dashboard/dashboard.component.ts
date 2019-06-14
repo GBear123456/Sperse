@@ -76,7 +76,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     refreshWidgets() {
         /** @todo check requests */
-        this.bankAccountsService.load().subscribe();
+        this.bankAccountsService.load(true, false).subscribe();
     }
 
     periodChanged(period: string) {

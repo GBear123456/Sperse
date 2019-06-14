@@ -612,7 +612,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     refreshDataGrid() {
         this.noRefreshedAfterSync = false;
         this.initHeadlineConfig();
-        this._bankAccountsService.load().subscribe(
+        this._bankAccountsService.load(true, false).subscribe(
             () => this.applyTotalBankAccountFilter()
         );
         this.categorizationComponent.refreshCategories(false, false);

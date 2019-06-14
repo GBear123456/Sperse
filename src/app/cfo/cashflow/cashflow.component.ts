@@ -1902,7 +1902,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.monthsDaysLoadedPathes = [];
         this.anotherPeriodAccountsValues.clear();
         this.reloadCategoryTree();
-        this._bankAccountsService.load().subscribe(() => {
+        this._bankAccountsService.load(true, false).subscribe(() => {
             this.setBankAccountsFilter(true);
             this.finishLoading();
         });
