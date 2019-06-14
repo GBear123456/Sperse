@@ -5,6 +5,7 @@ import { Component, ChangeDetectionStrategy, Injector, ViewChild, OnDestroy, OnI
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail-modal.component';
@@ -139,10 +140,12 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     }
 
     ngOnInit() {
-        this._filtersService.filtersValues$.subscribe(filtersValues => {
-            this.filtersValues = filtersValues;
-            this.refreshData();
-        });
+        this._filtersService.filtersValues$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(filtersValues => {
+                this.filtersValues = filtersValues;
+                this.refreshData();
+            });
         this.operationLogsDataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {

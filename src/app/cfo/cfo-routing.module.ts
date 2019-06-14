@@ -25,7 +25,7 @@ import { CfoInstanceStatusGuard } from '@app/cfo/cfo-instance-status-guard';
                     { path: 'start', component: StartComponent, data: { permission: '', reuse: true } },
                     {
                         path: 'linkaccounts',
-                        data: { permission: '' },
+                        data: { permission: '', reuse: true },
                         component: BankAccountsGeneralComponent,
                         children: [
                             {

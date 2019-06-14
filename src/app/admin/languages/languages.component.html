@@ -22,13 +22,13 @@
                       [hoverStateEnabled]="true"
                       [pager]="defaultGridPagerConfig"
                       (onEditingStart)="showActionsMenu($event)"
-                      (onCellPrepared)="onCellPrepared($event)"
+                      (onRowPrepared)="onRowPrepared($event)"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-editing mode="popup" [allowUpdating]="true"></dxo-editing>
-            <dxi-column dataField="isEnabled" caption="{{l('IsEnabled')}}" cellTemplate="isEnabledTemplate"></dxi-column>
-            <dxi-column dataField="creationTime" dataType="date" caption="{{l('CreationTime')}}"></dxi-column>
-            <dxi-column dataField="name" caption="{{l('Code')}}"></dxi-column>
-            <dxi-column dataField="displayName" caption="{{l('Name')}}"></dxi-column>
+            <dxi-column dataField="isEnabled" [caption]="l('IsEnabled')" cellTemplate="isEnabledTemplate"></dxi-column>
+            <dxi-column dataField="creationTime" dataType="date" [caption]="l('CreationTime')"></dxi-column>
+            <dxi-column dataField="name" [sortingMethod]="sortLanguages" [sortIndex]="0" sortOrder="asc" [caption]="l('Code')"></dxi-column>
+            <dxi-column dataField="displayName" [caption]="l('Name')"></dxi-column>
             <div *dxTemplate="let cellData of 'isEnabledTemplate'">
                 <span class="status" [ngClass]="cellData ? 'enabled' : 'disabled'">{{ cellData ? 'Yes' : 'No' }}</span>
             </div>

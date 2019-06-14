@@ -208,7 +208,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             elements: null,
                             filterField: 'paymentTypeId',
                             onElementSelect: (event, filter: FilterModelBase<FilterDropDownModel>) => {
-                                filter.items['paymentType'].value = event.value;
+                                filter.items['paymentType'].value = event && event.value;
                             }
                         })
                     }

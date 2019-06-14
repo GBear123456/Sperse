@@ -3,7 +3,7 @@ import { SyncProgressOutput, SyncProgressDtoSyncStatus } from 'shared/service-pr
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, filter, first } from 'rxjs/operators';
 
 @Component({
     templateUrl: './synch-progress.component.html',
@@ -24,6 +24,7 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     accountProgressTooltipTarget;
     accountProgressTooltipVisible = false;
     accountProgressTooltipText: string;
+    showLoader = false;
 
     constructor(
         injector: Injector,
@@ -64,11 +65,12 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
     }
 
     syncAll() {
-        setTimeout(() => {
-            this.syncProgressService.startSynchronization(true, false, 'all');
-            this.toggleComponent();
-            if (!this.syncFailed && this.completed && !this.hasFailedAccounts) this.notify.info(this.l('SynchronizationFinished'));
-        }, 300);
+        this.showLoader = true;
+        this.syncProgressService.startSynchronization(true, false, 'all');
+        this.showProgress = !this.showProgress;
+        this.syncProgressService.syncCompleted$.pipe(filter(completed => !completed), first()).subscribe(
+            () => this.showLoader = false
+        );
     }
 
     activate() {
@@ -82,11 +84,15 @@ export class SynchProgressComponent extends CFOComponentBase implements OnInit, 
             .subscribe(() => this.syncFailed = true);
         this.syncProgressService.hasFailedAccounts$.pipe(takeUntil(this.deactivate$))
             .subscribe(hasFailedAccounts => this.hasFailedAccounts = hasFailedAccounts);
-        this.syncProgressService.syncCompleted$.pipe(takeUntil(this.deactivate$)).subscribe(completed => {
+        this.syncProgressService.syncCompleted$.pipe(takeUntil(this.destroy$)).subscribe(completed => {
             this.completed = completed;
             if (this.completed) {
                 this.onComplete.emit();
             }
+        });
+
+        this.syncProgressService.syncCompletedDistinct$.pipe(takeUntil(this.deactivate$)).subscribe(() => {
+            this.notify.info(this.l('SynchronizationFinished'));
         });
     }
 

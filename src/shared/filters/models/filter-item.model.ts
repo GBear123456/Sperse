@@ -50,6 +50,5 @@ export class DisplayElement {
     parentCode?: any;
     sortField?: any;
     readonly?: boolean;
-
     args?: any;
 }
