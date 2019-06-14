@@ -50,7 +50,7 @@
             </ul>
         </div>
 
-        <footer *ngIf="modules.footerItems.length">
+        <footer>
             <ul class="footer__items">
                 <li class="footer__item {{item.code | lowercase }}" *ngFor="let item of modules.footerItems">
                     <a class="footer__link" (click)="onItemClick(item)">
