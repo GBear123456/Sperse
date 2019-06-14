@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnInit, NgZone, ViewEncapsulation } from '@angular/core';
+import { Component, Injector, OnInit, NgZone, ViewEncapsulation, HostBinding, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
@@ -24,8 +24,16 @@ import { FiltersService } from '@shared/filters/filters.service';
     encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit {
-
     installationMode = false;
+
+    @HostBinding('class.fullscreen') isFullscreenMode = false;
+    @HostListener('document:webkitfullscreenchange', ['$event'])
+    @HostListener('document:mozfullscreenchange', ['$event'])
+    @HostListener('document:fullscreenchange', ['$event'])
+    onWebkitFullscreenChange($event) {
+        this.isFullscreenMode = document['fullScreen']
+            || document['mozFullScreen'] || document.webkitIsFullScreen;
+    }
 
     public constructor(
         private _ngZone: NgZone,

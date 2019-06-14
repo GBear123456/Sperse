@@ -2,7 +2,7 @@
 import { Component, Injector, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import capitalize from 'lodash/capitalize';
+import capitalize from 'underscore.string/capitalize';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
